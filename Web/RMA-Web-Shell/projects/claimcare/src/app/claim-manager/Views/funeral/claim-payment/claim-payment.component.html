@@ -1,0 +1,250 @@
+<h1 class="page-header">Payment Details</h1>
+<mat-card class="payment-details">
+    <div *ngIf="isLoading">
+        <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+        <span *ngIf="isLoading" class="site-font grey" style="margin-top: 15px;"><i>Processing, please wait...</i></span>
+    </div>
+    <mat-horizontal-stepper #stepper linear>
+        <mat-step [stepControl]="beneficiaryDetailsFormGroup" label="Beneficiary Details">
+            <form [formGroup]="beneficiaryDetailsFormGroup" (ngSubmit)="save()" class="mat-container" novalidate style="width:100%; padding-bottom:20px;">
+                   <mat-card>
+                    <mat-card-content>
+                        <mat-form-field>
+                            <label class="mat-label other-label">Policy Number</label>
+                            <input matInput id="txtPolicyNumber" name="txtPolicyNumber" formControlName="txtPolicyNumber" disabled readonly>
+                        </mat-form-field>
+                        <mat-form-field class="mat-form-field-right">
+                            <label class="mat-label other-label">First Name</label>
+                            <input matInput id="txtFirstName" name="txtFirstName" formControlName="txtFirstName" disabled readonly>
+                        </mat-form-field>
+                        <mat-form-field>
+                            <label class="mat-label other-label">Identity Number</label>
+                            <input matInput id="txtIdentityNumber" name="txtIdentityNumber" formControlName="txtIdentityNumber" disabled readonly>
+                        </mat-form-field>
+                        <mat-form-field class="mat-form-field-right">
+                            <label class="mat-label other-label">Date of Birth</label>
+                            <input matInput id="txtDateOfBirth" name="txtDateOfBirth" formControlName="txtDateOfBirth" disabled readonly>
+                        </mat-form-field>
+                        <mat-form-field>
+                            <label class="mat-label other-label">Contact Number</label>
+                            <input matInput id="txtContactNumber" name="txtContactNumber" formControlName="txtContactNumber" disabled readonly>
+                        </mat-form-field>
+                         <mat-form-field class="mat-form-field-right">
+                            <label class="mat-label other-label">Email</label>
+                            <input matInput id="txtEmail" name="txtEmail" formControlName="txtEmail" disabled readonly>
+                        </mat-form-field>
+                        <mat-form-field>
+                            <label class="mat-label other-label">Claim Number</label>
+                            <input matInput id="txtClaimNumber" name="txtClaimNumber" formControlName="txtClaimNumber" disabled readonly>
+                        </mat-form-field>
+                        <mat-form-field class="mat-form-field-right">
+                            <label class="mat-label other-label">Last Name</label>
+                            <input matInput id="txtLastName" name="txtLastName" formControlName="txtLastName" disabled readonly>
+                        </mat-form-field>
+                        <mat-form-field>
+                            <label class="mat-label other-label">Passport Number (if foreigner)</label>
+                            <input matInput id="txtPassportNumber" name="txtPassportNumber" formControlName="txtPassportNumber" disabled readonly>
+                        </mat-form-field>
+                        <mat-form-field class="mat-form-field-right">
+                            <label class="mat-label other-label">Relation to deceased</label>
+                            <input matInput id="txtRelationToDeceased" name="txtRelationToDeceased" formControlName="txtRelationToDeceased" [disabled]="true" readonly>
+                        </mat-form-field>
+                    </mat-card-content>       
+                </mat-card>
+                <div style="padding-left:30px;">
+                    <button type="button" matStepperPrevious class="button submit-button ng-star-inserted" (click)="back()">Back</button>
+                    <button type="button" matStepperNext class="button submit-button ng-star-inserted">Next</button>
+                </div>
+            </form>
+        </mat-step>
+        <mat-step [stepControl]="bankingDetailsFormGroup" label="Banking Details">
+            <form [formGroup]="bankingDetailsFormGroup" (ngSubmit)="save()" class="mat-container" novalidate style="width:100%; padding-bottom:20px;">
+                <mat-card>
+                    <mat-card-content>
+                        <mat-form-field>
+                            <label class="mat-label other-label">Name of account holder</label>
+                            <input matInput id="txtNameOfAccountHolder" name="txtNameOfAccountHolder" formControlName="txtNameOfAccountHolder" disabled readonly>
+                        </mat-form-field>
+                        <mat-form-field class="mat-form-field-right">
+                            <label class="mat-label other-label">Account Number</label>
+                            <input matInput id="txtAccountNumber" name="txtAccountNumber" formControlName="txtAccountNumber" disabled readonly>
+                        </mat-form-field>
+                        <mat-form-field>
+                            <label class="mat-label other-label">Account Verification Result</label>
+                            <textarea matInput aria-multiline="true" rows="5" id="txtBankMessage" name="txtBankMessage" formControlName="txtBankMessage" disabled readonly style="min-height: 100px"></textarea>
+                        </mat-form-field>
+                        <mat-form-field class="mat-form-field-right">
+                            <label class="mat-label other-label">Name of bank</label>
+                            <input matInput id="txtNameOfBank" name="txtNameOfBank" formControlName="txtNameOfBank" disabled readonly>
+                        </mat-form-field>
+                        <mat-form-field>
+                            <label class="mat-label other-label">Account Type</label>
+                            <input matInput id="txtAccountType" name="txtAccountType" formControlName="txtAccountType" disabled readonly>
+                        </mat-form-field>
+                        <mat-form-field class="mat-form-field-right">
+                            <label class="mat-label other-label">Branch Code</label>
+                            <input matInput id="txtBranchCode" name="txtBranchCode" formControlName="txtBranchCode" disabled readonly>
+                        </mat-form-field>
+                        <mat-checkbox formControlName="chkApproveBankingDetails" [disabled]="disableChkBankingDet">
+                            <label class="mat-label other-label">Banking Details Verified</label>
+                        </mat-checkbox>
+                    </mat-card-content>
+                </mat-card>
+                <div style="padding-left:30px;">
+                    <button type="button" matStepperPrevious class="button submit-button ng-star-inserted">Back</button>
+                    <button type="button" matStepperNext class="button submit-button ng-star-inserted">Next</button>
+                </div>
+            </form>
+        </mat-step>
+        <mat-step [stepControl]="unclaimedBenefitFormGroup" *ngIf="isUnclaimedBenefit" label="Unclaimed Benefits Details">
+            <form [formGroup]="unclaimedBenefitFormGroup" (ngSubmit)="save()" class="mat-container" novalidate style="width:100%; padding-bottom:20px;">
+                <mat-card>
+                    <mat-card-content>
+                        <mat-form-field>
+                            <label class="mat-label other-label">Unclaimed Benefit Amount</label>
+                            <input matInput maxlength="50" formControlName="unclaimedBenefitAmount" name="unclaimedBenefitAmount" id="unclaimedBenefitAmount" NumberOnly="true" readonly ng-model="unclaimedBenefitAmount | number: 2" />
+                        </mat-form-field>
+                        <mat-form-field class="mat-form-field-right">
+                            <label class="mat-label other-label">Start Date</label>
+                            <input readonly matInput [max]="minDate" formControlName="startDate" [matDatepicker]="startDate" name="startDate" id="startDate" (ngModelChange)="startDateChanged($event)" />
+                            <mat-datepicker-toggle matSuffix style="position: absolute;right: 0;top: 13px;" [for]="startDate">
+                            </mat-datepicker-toggle>
+                            <mat-datepicker touchUi="true" #startDate></mat-datepicker>
+                        </mat-form-field>
+                        <mat-form-field>
+                            <label class="mat-label other-label">End Date</label>
+                            <input readonly matInput [min]="minDate" formControlName="endDate" [matDatepicker]="endDate" name="endDate" id="endDate" (ngModelChange)="endDateChanged($event)" [disabled]="!isEndDate" />
+                            <mat-datepicker-toggle matSuffix style="position: absolute;right: 0;top: 13px;" [for]="endDate">
+                            </mat-datepicker-toggle>
+                            <mat-datepicker touchUi="true" #endDate></mat-datepicker>
+                        </mat-form-field>
+                        <mat-form-field class="mat-form-field-right">
+                            <label class="mat-label other-label">Investigation Fee Amount</label>
+                            <input matInput maxlength="50" formControlName="investigationAmount" name="investigationAmount" id="investigationAmount" NumberOnly="true" readonly/>
+                        </mat-form-field>
+                        <mat-form-field>
+                            <label class="mat-label other-label">Investigation Fee Payment Date</label>
+                            <input readonly matInput formControlName="investigationFeeDate" [matDatepicker]="investigationFeeDate" name="investigationFeeDate" id="investigationFeeDate" disabled/>
+                            <mat-datepicker-toggle matSuffix style="position: absolute;right: 0;top: 13px;" [for]="investigationFeeDate"></mat-datepicker-toggle>
+                            <mat-datepicker touchUi="true" #investigationFeeDate></mat-datepicker>
+                        </mat-form-field>
+                    </mat-card-content>
+                </mat-card>
+                <div style="padding-left:30px;">
+                    <button type="button" matStepperPrevious class="button submit-button ng-star-inserted" (click)="back()">Back</button>
+                    <button type="button" matStepperNext class="button submit-button ng-star-inserted" (click)="calculateUnclaimedBenefit(stepper)" [disabled]="!datesCaptured">Next</button>
+                </div>
+            </form>
+        </mat-step>
+        <mat-step [stepControl]="paymentDetailsFormGroup" label="Payment Details">
+            <form [formGroup]="paymentDetailsFormGroup" (ngSubmit)="save()" class="mat-container" novalidate style="width:100%; padding-bottom:20px;">
+                <mat-card>
+                    <mat-card-content>
+                        <mat-form-field>
+                            <label class="mat-label other-label">Benefit Cover Amount</label>
+                            <input matInput id="txtBenefitCoverAmount" name="txtBenefitCoverAmount" formControlName="txtBenefitCoverAmount" [attr.disabled]="disableBeneficiaryCoverAmount || null">
+                        </mat-form-field>
+                        <mat-form-field class="mat-form-field-right">
+                            <label class="mat-label other-label">Refund</label>
+                            <input matInput id="txtRefund" name="txtRefund" formControlName="txtRefund" [attr.disabled]="disableRefund">
+                        </mat-form-field>
+                        <mat-form-field>
+                            <label class="mat-label other-label">Interest Factor</label>
+                            <input matInput id="txtUnclaimedAmount" NumberOnly="true" name="txtUnclaimedAmount" formControlName="txtUnclaimedAmount" (focusout)="onInterestChange($event)" [attr.disabled]="disableUnclaimedInterestAmount || null">
+                        </mat-form-field>
+                        <mat-form-field class="mat-form-field-right">
+                            <label class="mat-label other-label">Total Claim Amount</label>
+                            <input matInput id="txtTotalClaim" name="txtTotalClaim" formControlName="txtTotalClaim" type="number">
+                            <label class="mat-label other-label" style="color: rgb(190, 17, 17);" *ngIf="claimInvoice && isMessageText">{{claimInvoice.messageText}}</label>
+                            <mat-error *ngIf="paymentDetailsFormGroup.get('txtTotalClaim').hasError('required')">
+                                Total Claim Amount <strong>is required</strong>
+                            </mat-error>
+                            <mat-error *ngIf="paymentDetailsFormGroup.get('txtTotalClaim').hasError('max')">
+                                Total Claim Amount can not exceed <strong>Benefit Cover Amount</strong>
+                            </mat-error>
+                            <mat-error *ngIf="paymentDetailsFormGroup.get('txtTotalClaim').hasError('min')">
+                                Total Claim Amount <strong>must be greater than 0</strong>
+                            </mat-error>
+                        </mat-form-field>
+                        <mat-form-field>
+                            <label class="mat-label other-label">Allocation %</label>
+                            <input matInput id="txtAllocationPercentage" name="txtAllocationPercentage" formControlName="txtAllocationPercentage" disabled readonly [attr.disabled]="true">
+                        </mat-form-field>
+                        <mat-form-field class="mat-form-field-right">
+                            <label class="mat-label other-label">Outstanding Premiums</label>
+                            <input matInput id="txtOutstandingPremiums" name="txtOutstandingPremiums" formControlName="txtOutstandingPremiums" [attr.disabled]="disableOutstanding">
+                            <input type="hidden" id="hdnBeneficiaryId" name="hdnBeneficiaryId" formControlName="hdnBeneficiaryId">
+                            <input type="hidden" id="hdnClaimPaymentId" name="hdnClaimPaymentId" formControlName="hdnClaimPaymentId">
+                            <input type="hidden" id="hdnPolicyId" name="hdnPolicyId" formControlName="hdnPolicyId">
+                            <input type="hidden" id="hdnProductId" name="hdnProductId" formControlName="hdnProductId">
+                        </mat-form-field>
+                        <mat-form-field>
+                            <label class="mat-label other-label">Tracing Fee</label>
+                            <input matInput id="txtTracingFee" NumberOnly="true" name="txtTracingFee" formControlName="txtTracingFee" (focusout)="onTraceFeeChanged($event)" [attr.disabled]="disableTracingFee || null">
+                        </mat-form-field>
+                    </mat-card-content>
+                </mat-card>
+                <div style="padding-left:30px;">
+                    <button type="button" matStepperPrevious class="button submit-button ng-star-inserted">Back</button>
+                    <button type="button" matStepperNext class="button submit-button ng-star-inserted">Next</button>
+                </div>
+            </form>
+        </mat-step>
+        <mat-step [stepControl]="decisionFormGroup" label="Decision">
+            <form [formGroup]="decisionFormGroup" (ngSubmit)="save()" class="mat-container" novalidate style="width:100%;padding-bottom:20px;">
+
+                <mat-card>
+                    <mat-card-content>
+                        <mat-form-field>
+                            <label class="mat-label other-label">Claim Decision</label>
+                            <mat-select name="claimDecision" id="claimDecision" formControlName="claimDecision" (selectionChange)="claimDecisionChanged($event)">
+                                <mat-option *ngFor="let decisionType of decisionTypes" [value]="decisionType.id">
+                                    {{ decisionType.name}}
+                                </mat-option>
+                            </mat-select>
+                            <mat-error *ngIf="decisionFormGroup.get('claimDecision').hasError('required')">
+                                Claim decision <strong> is required</strong>
+                            </mat-error>
+                        </mat-form-field>
+                        <mat-form-field class="mat-form-field-right">
+                            <label class="mat-label other-label">Reason</label>
+                            <mat-select id="reason" [disabled]="disableReason" name="reason" matInput formControlName="reason" formControlName="reason" [style.display]="showDecisionReason ? 'block' : 'none'">
+                            <mat-option *ngFor="let claimDeclineReason of claimDeclineReasons" [value]="claimDeclineReason">
+                                {{formatText(claimDeclineReason)}}
+                            </mat-option>
+                            </mat-select>
+                            <mat-select id="reverseReason" [disabled]="disableReverseReason" name="reverseReason" matInput formControlName="reverseReason" formControlName="reverseReason" [style.display]="showReverseReason ? 'block' : 'none'">
+                                <mat-option *ngFor="let reverseReason of reverseReasons;" [value]="reverseReason.id">
+                                    {{reverseReason.reverseReason}}
+                                </mat-option>
+                            </mat-select>
+                        </mat-form-field>
+                        <mat-form-field >
+                            <label class="mat-label other-label">Note</label>
+                            <textarea matInput aria-multiline="true" rows="5" maxlength="400" minlength="3" id="code" name="noteText" formControlName="noteText" [attr.disabled]="disableNoteText?'':null" style="min-height: 100px">
+                        </textarea>
+                            <mat-error *ngIf="decisionFormGroup.get('noteText').hasError('required')">
+                                Note is <strong>required</strong>
+                            </mat-error>
+                            <mat-error *ngIf="decisionFormGroup.get('noteText').hasError('minlength')">
+                                Note must be at least <strong>three characters</strong>
+                            </mat-error>
+                        </mat-form-field>
+                        <mat-form-field *ngIf="referToManageFeatureFlag" class="mat-form-field-right">
+                            <label class="mat-label other-label" >Claim Manager</label>
+                            <mat-select name="claimManagerSelect" id="claimManagerSelect" formControlName="claimManagerSelect" [disabled]="disableReason">
+                                <mat-option *ngFor="let claimManager of claimManagers" [value]="claimManager.id">
+                                    {{ claimManager.name}}
+                                </mat-option>
+                            </mat-select>
+                        </mat-form-field>
+                      </mat-card-content>
+                </mat-card>
+                <div style="padding-left:30px;">
+                    <button type="button" matStepperPrevious class="button submit-button ng-star-inserted">Back</button>
+                    <button type="button" class="button submit-button ng-star-inserted" [disabled]="saveDisabled" (click)="addClaimPayment()">Save</button>
+                </div>
+            </form>
+        </mat-step>
+    </mat-horizontal-stepper>
+</mat-card>

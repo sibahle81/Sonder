@@ -1,0 +1,100 @@
+<mat-card>
+    <mat-card-content>
+      <mat-card-title>
+        <h1>Email Audit</h1>
+      </mat-card-title>
+    
+      <div>
+        <mat-form-field class="mat-form-field">
+          <input matInput [matDatepicker]="startDatePicker" date="true" [value]="startDt.value"
+              time="false" [formControl]="startDt" readonly
+              (ngModelChange)="startDateChange($event)" [max]="startMaxDate">
+          <mat-datepicker-toggle matSuffix class="picker-toggle" [for]="startDatePicker">
+          </mat-datepicker-toggle>
+          <mat-datepicker #startDatePicker touchUi="true" ng-model-options="{ timezone: 'sast' }">
+          </mat-datepicker>
+        </mat-form-field>
+        <div class="mat-form-field buttonMargin">
+          <div class="form-buttons" (click)="getAuditData()">
+              <button class="button submit-button pad-left">View</button>
+          </div>
+        </div>
+      </div>
+  
+       
+      <div *ngIf="dataSource.loading$ | async" class="loadingDiv">
+        <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+        <span class="site-font grey">Loading Results...</span>
+      </div>
+
+      <div *ngIf="loadingEmails" class="loadingDiv">
+        <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+        <span class="site-font grey">Loading Results...</span>
+      </div>
+
+      <div *ngIf="sendingEmails" class="loadingDiv">
+        <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+        <span class="site-font grey">Sending Emails...</span>
+      </div>
+
+      <div *ngIf="downloadEmails" class="loadingDiv">
+        <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+        <span class="site-font grey">Downloading...</span>
+      </div>
+  
+      <div [hidden]="paginator.length === 0 || (dataSource.loading$ | async)" class="table-container">
+        <mat-table #table [dataSource]="dataSource" matSort>
+  
+          <ng-container matColumnDef="fromAddress">
+            <mat-header-cell *matHeaderCellDef mat-sort-header>From Address</mat-header-cell>
+            <mat-cell *matCellDef="let row"> {{row.fromAddress}} </mat-cell>
+          </ng-container>
+  
+          <ng-container matColumnDef="reciepients">
+            <mat-header-cell *matHeaderCellDef mat-sort-header>Recepient</mat-header-cell>
+            <mat-cell *matCellDef="let row"> {{row.reciepients}} </mat-cell>
+          </ng-container>
+  
+          <ng-container matColumnDef="subject">
+            <mat-header-cell *matHeaderCellDef mat-sort-header>Subject</mat-header-cell>
+            <mat-cell *matCellDef="let row"> {{row.subject}} </mat-cell>
+          </ng-container>
+  
+          <ng-container matColumnDef="isSuccess">
+            <mat-header-cell *matHeaderCellDef mat-sort-header>Success</mat-header-cell>
+            <mat-cell *matCellDef="let row"> {{row.isSuccess}} </mat-cell>
+          </ng-container>
+
+          <ng-container matColumnDef="processDescription">
+            <mat-header-cell *matHeaderCellDef mat-sort-header>Error</mat-header-cell>
+            <mat-cell *matCellDef="let row"> {{row.processDescription}} </mat-cell>
+          </ng-container>
+  
+          <ng-container matColumnDef="createdDate">
+            <mat-header-cell *matHeaderCellDef mat-sort-header>Created Date</mat-header-cell>
+            <mat-cell *matCellDef="let row"> {{row.createdDate  | date:'mediumDate'}} </mat-cell>
+          </ng-container>
+          
+
+          <ng-container matColumnDef="actions">
+            <mat-header-cell *matHeaderCellDef>Actions</mat-header-cell>
+            <mat-cell *matCellDef="let row" [matMenuTriggerFor]="menu" (click)="filterMenu(row)">
+              <span class="material-icons pointer right">more_vert</span>
+                <mat-menu #menu="matMenu">
+                    <button disabled="{{menu.disable}}" mat-menu-item *ngFor="let menu of menus" (click)="onMenuItemClick(row, menu.title)"> {{menu.title}} </button>
+                </mat-menu>
+            </mat-cell>
+          </ng-container>
+  
+          <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
+          <mat-row *matRowDef="let row; columns: displayedColumns;"></mat-row>
+        </mat-table> 
+  
+        <mat-paginator #paginator [pageIndex]="0" [pageSize]="5" [pageSizeOptions]="[5, 10, 25, 100]">
+        </mat-paginator>
+      </div>
+  
+    </mat-card-content>
+  </mat-card>
+  
+  

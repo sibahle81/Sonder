@@ -1,0 +1,65 @@
+<div class="page-header"></div>
+
+
+<label  style="padding-top: 15px;">
+  <form [formGroup]="form" class="mat-container details-form" novalidate>
+    <section>
+      <!--Rules-->
+      <div class="field-container">
+        <label class="mat-label other-label">Rules</label>
+        <multi-select name="Rule" id="RulesSelect" [errorMessage]="'At least one rule is required'"
+          [lookupName]="'RulesFoData'" [lookupUrl]="lookupUrl"
+          [lookupId]="form.get('id').value" [selectedIds]="form.get('ruleIds').value" [isReadOnly]="isDisabled"
+          [isRequired]="'true'">
+        </multi-select>
+      </div>
+    </section>+
+    <div formArrayName="ruleConfigurations">
+      <!--Configurable rules-->
+      <ng-container *ngFor="let ruleConfig of ruleConfigurations.controls; let i=index" [formGroupName]="i">
+        <section>
+          <mat-form-field>
+            <label class="mat-label other-label mandatory-field">{{ ruleConfig.controls.fieldName.value }}</label>
+            <div [ngSwitch]="ruleConfig.controls.fieldType.value">
+              <input *ngSwitchCase="'number'" [min]="ruleConfig.controls.min.value" [max]="ruleConfig.controls.max.value" minlength="1" [maxlength]="ruleConfig.controls.maxLength.value" matInput [name]="ruleConfig.controls.fieldName.value"
+              formControlName="fieldValue" [type]="ruleConfig.controls.fieldType.value"
+                NumberOnly required [readonly]="isDisabled === true ? 'readonly' : 'false'"/>
+                             
+                <input *ngSwitchCase="'text'" (change)="validateTerritory($event)"   matInput [name]="ruleConfig.controls.fieldName.value"
+                formControlName="fieldValue" [type]="ruleConfig.controls.fieldType.value"
+                    maxlength="1"   required [readonly]="isDisabled === true ? 'readonly' : 'false'" />   <label *ngSwitchCase="'text'">{{ territory }}</label>
+                <input *ngSwitchCase="'decimal'"  [min]="ruleConfig.controls.min.value" [max]="ruleConfig.controls.max.value" minlength="1" [maxlength]="ruleConfig.controls.maxLength.value" matInput [name]="ruleConfig.controls.fieldName.value"
+                formControlName="fieldValue" [type]="ruleConfig.controls.fieldType.value"
+                DecimalNumber required [readonly]="isDisabled === true ? 'readonly' : 'false'" />
+              
+              <textarea *ngSwitchCase="'list'" matInput [name]="ruleConfig.controls.fieldName.value" [rows]="5" [cols]="3" 
+                [style.min-height.px]="60" [style.min-width.%]="100"
+                formControlName="fieldValue"
+                required [readonly]="isDisabled === true ? 'readonly' : 'false'">{{ruleConfig.controls.fieldValue.value}}</textarea>
+
+              <input *ngSwitchDefault matInput [name]="ruleConfig.controls.fieldName.value"
+                formControlName="fieldValue" [type]="ruleConfig.controls.fieldType.value"
+                required [readonly]="isDisabled === true ? 'readonly' : 'false'"/>
+            </div>
+            <mat-error *ngIf="ruleConfig.controls.fieldValue.hasError('required')">
+              {{ruleConfig.controls.fieldName.value}} is <strong>required</strong>
+            </mat-error>
+          </mat-form-field>
+           
+                </section>
+      </ng-container>
+    </div>
+  </form>
+  <section>
+    <div *ngIf="isThreshold" class="field-container">
+      <label class="mat-label other-label">Limit Threshold: </label>
+      <mat-slider [(ngModel)]="selectedThreshold" class="slider" thumbLabel [step]="1" max="8" (change)="getThreshold($event)">
+      </mat-slider>
+    </div>
+  </section>
+</label>
+<style>
+.slider {
+  width: 95%;
+}
+</style>

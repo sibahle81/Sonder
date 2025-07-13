@@ -1,0 +1,74 @@
+<div>
+    <mat-card style="margin: 15px 30px 15px 30px">
+      <mat-card-content style="margin-left: 10px;">
+        <div>
+          <!--[hidden]="isLoading"-->
+          <div class="mat-container mat-elevation-z8">
+            <div class="mat-header">
+                <h1>Event List</h1><br />
+                <div class="list-document-search search-container-right">
+                    <input type="text" name="search" (keyup)="applyFilter($event.target.value)" placeholder="search events...">
+                </div>
+            </div>
+            <mat-table #table [dataSource]="dataSource" matSort matSortActive="Name" matSortDirection="asc"
+            matSortDisableClear>
+            <!-- Policy  -->
+ <ng-container matColumnDef="eventReferenceNumber">
+  <mat-header-cell *matHeaderCellDef mat-sort-header> Event Reference </mat-header-cell>
+  <mat-cell *matCellDef="let row"> {{row.eventReferenceNumber}}
+
+  </mat-cell>
+</ng-container>
+
+<!--Member Name -->
+<ng-container matColumnDef="eventType">
+  <mat-header-cell *matHeaderCellDef mat-sort-header> Event Type </mat-header-cell>
+  <mat-cell *matCellDef="let row"> {{row.eventType}} </mat-cell>
+</ng-container>
+
+<!--Member Surname -->
+<ng-container matColumnDef="eventStatus">
+  <mat-header-cell *matHeaderCellDef mat-sort-header>Event Status </mat-header-cell>
+  <mat-cell *matCellDef="let row"> {{row.eventStatus}} </mat-cell>
+</ng-container>
+
+<!--Role -->
+<ng-container matColumnDef="adviseMethod">
+  <mat-header-cell *matHeaderCellDef mat-sort-header>Advise Method </mat-header-cell>
+  <mat-cell *matCellDef="let row"> {{row.adviseMethod}} </mat-cell>
+</ng-container>
+
+<!--Status -->
+<ng-container matColumnDef="dateAdvised">
+  <mat-header-cell *matHeaderCellDef mat-sort-header> Date Advised </mat-header-cell>
+  <mat-cell *matCellDef="let row" matTooltip="{{row.statusReason}}"> {{row.dateAdvised | date:'yyyy/MM/dd'}} </mat-cell>
+</ng-container>
+
+<!--Employee -->
+<ng-container matColumnDef="numberOfPeopleInvolved">
+  <mat-header-cell *matHeaderCellDef mat-sort-header> No. Of People Involved </mat-header-cell>
+  <mat-cell *matCellDef="let row"> {{row.numberOfPeopleInvolved}} </mat-cell>
+</ng-container>
+
+<!-- Actions -->
+<ng-container matColumnDef="actions">
+  <mat-header-cell *matHeaderCellDef mat-sort-header>Actions</mat-header-cell>
+  <mat-cell *matCellDef="let row">
+      <span><a role="button" class="link-edit" (click)="onSelected(row)">Select</a></span>
+  </mat-cell>
+</ng-container>
+              <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
+              <mat-row *matRowDef="let row; columns: displayedColumns;"></mat-row>
+            </mat-table>
+            <mat-paginator #paginator
+                           [length]="dataSource.data.length"
+                           [pageIndex]="0"
+                           [pageSize]="10"
+                           [pageSizeOptions]="[5, 10, 25, 100]">
+            </mat-paginator>
+          </div>
+        </div>
+      </mat-card-content>
+    </mat-card>
+  </div>
+  

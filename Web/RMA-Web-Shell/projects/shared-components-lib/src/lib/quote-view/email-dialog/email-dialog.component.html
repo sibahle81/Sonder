@@ -1,0 +1,20 @@
+<div class="menu-bar">
+  Email Quote
+  <span (click)="cancel()" class="material-icons pointer right" matTooltip="close">
+    cancel
+  </span>
+  <span *ngIf="selectedLeadContactV2s && selectedLeadContactV2s.length > 0" (click)="save()" class="material-icons pointer right pulse" matTooltip="send email(s)">
+    send
+  </span>
+</div>
+
+<mat-card *ngIf="(isLoading$ | async)">
+  <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+  <label class="mat-label other-label"><i>loading...please wait</i></label>
+</mat-card>
+
+<div *ngIf="!(isLoading$ | async) && lead">
+  <mat-card>
+    <lead-contact-V2 [lead]="lead" [isSelectionMode]="true" [supportedPreferredCommunicationTypes]="supportedPreferredCommunicationTypes" (selectedContactsEmit)="contactSelected($event)"></lead-contact-V2>
+  </mat-card>
+</div>

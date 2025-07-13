@@ -1,0 +1,119 @@
+﻿<form [formGroup]="form" class="mat-container" novalidate>
+    <div class="mat-container">
+
+        <section>
+
+            <!--First name-->
+            <mat-form-field>
+                <label class="mat-label other-label mandatory-field">First name</label>
+                <input matInput maxlength="50" formControlName="firstName" name="firstName">
+                <mat-error *ngIf="form.get('firstName').hasError('required')">
+                    First name is <strong>required</strong>
+                </mat-error>
+            </mat-form-field>
+
+            <!--Last name-->
+            <mat-form-field class="mat-form-field-right">
+                <label class="mat-label other-label mandatory-field">Last name</label>
+                <input matInput maxlength="50" formControlName="lastName" name="lastName">
+                <mat-error *ngIf="form.get('lastName').hasError('required')">
+                    Last name is <strong>required</strong>
+                </mat-error>
+            </mat-form-field>
+
+        </section>
+
+        <section>
+
+            <!--Id number-->
+            <mat-form-field>
+                <label class="mat-label other-label">Id number</label>
+                <input matInput maxlength="13" formControlName="idNumber" name="idNumber" NumberOnly unique-validator [table]="'Client'" [field]="'IdNumber'" [currentValue]="currentIdentity" [serviceType]="6">
+                <mat-error *ngIf="form.get('idNumber').hasError('idNumber')">
+                    <strong>Invalid</strong> id number
+                </mat-error>
+                <mat-error *ngIf="form.get('idNumber').hasError('isTaken')">
+                    This Identity number <strong>already exists</strong>
+                </mat-error>
+                <div class="mat-error" *ngIf="isIdandPassportInvalid" style="font-size: 10.5px;">
+                    Either Id or passport number is <strong>required</strong>
+                </div>
+            </mat-form-field>
+
+            <!--Passport number-->
+            <!--<mat-form-field class="mat-form-field-right">
+        <label class="mat-label other-label">Passport number</label>
+        <input matInput maxlength="50" formControlName="passportNumber" name="passportNumber"
+               unique-validator [table]="'Client'" [field]="'PassportNumber'" [currentValue]="currentPassport" [serviceType]="6">
+        <mat-error *ngIf="form.get('passportNumber').hasError('isTaken')">
+            This passport number <strong>already exists</strong>
+        </mat-error>
+        <div class="mat-error" *ngIf="isIdandPassportInvalid" style="font-size: 10.5px;">
+            Either Id or passport number is <strong>required</strong>
+        </div>
+    </mat-form-field>-->
+            <!--Age-->
+            <mat-form-field class="mat-form-field-right">
+                <label class="mat-label other-label">Age</label>
+                <input matInput formControlName="age" name="age">
+            </mat-form-field>
+        </section>
+
+        <section>
+            <!--Date of Birth-->
+            <div class="field-container">
+                <div>
+                    <label class="mat-label other-label mandatory-field">Date of birth</label>
+                </div>
+                <mat-form-field>
+                    <input readonly matInput formControlName="dateOfBirth" [matDatepicker]="dateOfBirth" id="dateOfBirth" name="dateOfBirth" style="width: 99%; margin-left: 3px !important;">
+                    <mat-datepicker-toggle matSuffix [for]="dateOfBirth" [disabled]="form.disabled || (form.get('idNumber').value != null && form.get('idNumber').value != '')" matTooltip="Date of birth cannot be chosen when there is an id number" [matTooltipDisabled]="form.disabled || (form.get('idNumber').value == null || form.get('idNumber').value == '')">
+                    </mat-datepicker-toggle>
+                    <mat-datepicker touchUi="true" #dateOfBirth></mat-datepicker>
+                    <mat-error *ngIf="form.get('dateOfBirth').hasError('required')">
+                        Date of birth is <strong>required</strong>
+                    </mat-error>
+                </mat-form-field>
+            </div>
+            <mat-form-field class="mat-form-field-right">
+                <label>Communication Method</label>
+                <mat-select name="communicationType" id="communicationType" formControlName="communicationType" multiple>
+                    <mat-option *ngFor="let communicationTypeitem of communicationTypeList" [value]="communicationTypeitem.id">{{communicationTypeitem.name}}</mat-option>
+                </mat-select>
+            </mat-form-field>
+            <!--Designation-->
+            <!--<mat-form-field class="mat-form-field-right">
+                    <label class="mat-label other-label">Designation (optional)</label>
+                    <input matInput maxlength="50" formControlName="designation" name="designation">
+                    <mat-error *ngIf="form.get('designation').hasError('required')">
+                        Designation is <strong>required</strong>
+                    </mat-error>
+                </mat-form-field>-->
+        </section>
+
+        <section>
+
+
+
+            <!--Claim branch-->
+            <!--<mat-form-field class="mat-form-field-right">
+        <label class="mat-label other-label">Claim branch</label>
+        <mat-select name="claimBranch" id="claimBranch" formControlName="claimBranch" [(value)]="claimBranchId">
+            <mat-option *ngFor="let claimBranch of claimBranches" [value]="claimBranch.id">{{claimBranch.name}}</mat-option>
+        </mat-select>
+        <mat-error *ngIf="form.get('claimBranch').hasError('required')">
+            Claim branch is <strong>required</strong>
+        </mat-error>
+    </mat-form-field>-->
+
+            <!-- <mat-form-field class="mat-form-field-right">
+                <label>Communication Method</label>
+                <mat-select name="communicationType" id="communicationType" formControlName="communicationType" multiple>
+                    <mat-option *ngFor="let communicationTypeitem of communicationTypeList" [value]="communicationTypeitem.id">{{communicationTypeitem.name}}</mat-option>
+                </mat-select>
+            </mat-form-field> -->
+        </section>
+
+
+    </div>
+</form>

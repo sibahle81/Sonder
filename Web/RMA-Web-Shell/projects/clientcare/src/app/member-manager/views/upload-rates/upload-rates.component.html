@@ -1,0 +1,47 @@
+<div *ngIf="hasUploadRatesPermission">
+  <mat-card>
+    <div class="menu-bar">
+      <span class="material-icons">upload</span>&nbsp;<b>Upload Rates</b>
+    </div>
+    <form [formGroup]="form" class="mat-container" novalidate>
+      <mat-form-field class="mat-form-field">
+        <label class="mat-label other-label">Upload Type</label>
+        <mat-select name="uploadType" id="uploadType" formControlName="uploadType" [disabled]="(isLoading$ | async)"
+          (selectionChange)="uploadTypeChanged($event)">
+          <mat-option *ngFor="let uploadType of uploadTypes" [value]="uploadType">
+            {{uploadType}}
+          </mat-option>
+        </mat-select>
+      </mat-form-field>
+    </form>
+
+    <span class="material-icons">
+      info
+    </span><label>&nbsp;{{message}}</label>
+
+    <div [hidden]="(!this.selectedUploadType || (isLoading$ | async))" class="upload">
+      <upload-control #uploadControl [acceptedTypes]="'.xlsx'" [isSingleInput]="false" [allowDelete]="true"
+        [isReadOnly]="false"></upload-control>
+
+      <button (click)="save()" class="btn" [disabled]="!hasList"
+        [style.background-color]="getButtonColor(uploadControl.uploadFileList.length)">Upload
+        File</button>
+    </div>
+
+    <div *ngIf="(uploadControlComponent && (isLoading$ | async))">
+      <mat-card>
+        <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+        <label class="mat-label other-label"><i>loading...please wait</i></label>
+      </mat-card>
+    </div>
+
+    <div *ngIf="fileIdentifier">
+      <upload-error-list [fileIdentifier]="fileIdentifier"
+        (hasErrorsEmit)="hasValidationErrors($event)"></upload-error-list>
+    </div>
+  </mat-card>
+</div>
+
+<div *ngIf="!hasUploadRatesPermission">
+  <access-denied></access-denied>
+</div>

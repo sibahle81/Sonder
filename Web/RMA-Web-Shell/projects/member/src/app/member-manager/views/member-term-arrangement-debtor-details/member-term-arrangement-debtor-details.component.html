@@ -1,0 +1,33 @@
+<div *ngIf="!isContextReady() || (!(getSelectedMemberContext() > 0) && !hasPermission)">
+    <b>Term Arrangements</b>
+</div>
+
+<div *ngIf="isContextReady()">
+    <div *ngIf="!(getSelectedMemberContext() > 0) && hasPermission">
+        <debtor-search (debtorSelectedEmit)="setCompanyId($event)"></debtor-search>
+    </div>
+
+    <div *ngIf="getSelectedMemberContext() > 0">
+        <div *ngIf="hasPermission">
+            <mat-card>
+                <div class="menu-bar" *ngIf="linkedUserMember && linkedUserMember.memberName">
+                    <span class="material-icons">
+                        person_search
+                    </span>
+                    <b>{{linkedUserMember.memberName}}</b>
+
+                    <span matTooltip="reset serach" class="material-icons pointer right" (click)="reset()">
+                        youtube_searched_for
+                    </span>
+                </div>
+                <member-view [hideExpandOption]="true" (rolePlayerContextEmit)="setRolePlayer($event)" [rolePlayerId]="getSelectedMemberContext()"></member-view>
+                <span *ngIf="rolePlayer">
+                    <terms-arrangement-debtor-details [rolePlayer]="rolePlayer"></terms-arrangement-debtor-details>
+                </span>
+            </mat-card>
+        </div>
+        <div *ngIf="!hasPermission">
+            <access-denied></access-denied>
+        </div>
+    </div>
+</div>

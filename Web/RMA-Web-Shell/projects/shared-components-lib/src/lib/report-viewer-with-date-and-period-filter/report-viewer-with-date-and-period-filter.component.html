@@ -1,0 +1,648 @@
+<span *ngIf="!hideTitle">
+  <h1>{{reportTitle}}</h1>
+</span>
+
+<br />
+<div *ngIf="isLoading$ | async">
+  <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+  <label class="mat-label other-label"><i>loading...please wait</i></label>
+</div>
+
+<div *ngIf="!(isLoading$ | async) && messages.length > 0">
+  <div *ngFor="let message of messages"><span style="font-size: x-small;">{{message}}</span></div>
+</div>
+
+<div *ngIf="!(isLoading$ | async) && messages.length <= 0">
+  <form [formGroup]="form" class="mat-container details-form" novalidate>
+    <div [hidden]="hideAllFilters">
+      <mat-card>
+        <section>
+          <span [hidden]="!showControlNameFilter">
+            <mat-form-field class="mat-form-field">
+              <label class="mat-label other-label">Control Name</label>
+              <mat-select name="controlName" id="controlName" formControlName="controlName"
+                (selectionChange)="controlNameChanged($event.value)">
+                <mat-option *ngFor="let controlName of controlNames" [value]="controlName.origin">
+                  {{controlName.origin}}
+                </mat-option>
+              </mat-select>
+            </mat-form-field>
+          </span>
+        </section>
+
+        <section>
+          <span [hidden]="!showInvoiceNumberFilter">
+            <mat-form-field class="mat-form-field">
+              <label class="mat-label other-label">Invoice Number</label>
+              <input (blur)="invoiceNumberChanged($event)" matInput formControlName="invoiceNumber" name="invoiceNumber"
+                id="invoiceNumber">
+            </mat-form-field>
+          </span>
+
+          <span [hidden]="!showInvoiceAmountFilter">
+            <mat-form-field class="mat-form-field-right">
+              <label class="mat-label other-label">Invoice Amount</label>
+              <input (blur)="invoiceAmountChanged($event)" matInput formControlName="invoiceAmount" name="invoiceAmount"
+                id="invoiceAmount">
+            </mat-form-field>
+          </span>
+        </section>
+
+        <section>
+          <span [hidden]="!showMemberNumberFilter">
+            <mat-form-field class="mat-form-field">
+              <label class="mat-label other-label">Member Number</label>
+              <input (blur)="memberNumberChanged($event)" matInput formControlName="memberNumber" name="memberNumber"
+                id="memberNumber">
+            </mat-form-field>
+          </span>
+          <span [hidden]="!showPolicyNumberFilter">
+            <mat-form-field [ngClass]="matFormFieldRight ? 'mat-form-field-right' : 'mat-form-field'">
+              <label class="mat-label other-label">Policy Number</label>
+              <input (blur)="policyNumberChanged($event)" matInput formControlName="policyNumber" name="policyNumber"
+                id="policyNumber">
+            </mat-form-field>
+          </span>
+        </section>
+
+        <section>
+          <span [hidden]="!showUnderwriterYearFilter">
+            <mat-form-field class="mat-form-field">
+              <label class="mat-label other-label">Underwriting Year</label>
+              <mat-select formControlName="underwriterYear" (selectionChange)="underwriterYearChange($event)">
+                <mat-option *ngFor="let year of getYears()" [value]="year">{{year}}
+                </mat-option>
+              </mat-select>
+            </mat-form-field>
+          </span>
+        </section>
+
+        <section>
+          <span [hidden]="!showPaymentTypeFilterwithAll">
+            <mat-form-field class="mat-form-field">
+              <label class="mat-label other-label mandatory-field">Payment Type</label>
+              <mat-select name="paymentTypes" id="paymentTypes" formControlName="paymentTypes"
+                (selectionChange)="paymentTypeChanged($event.value)">
+                <mat-option value="-1">
+                  All
+                </mat-option>
+                <mat-option *ngFor="let paymentType of paymentTypes" [value]="paymentType.value">
+                  {{paymentType.name}}
+                </mat-option>
+              </mat-select>
+            </mat-form-field>
+          </span>
+        </section>
+
+        <section>
+          <span [hidden]="!showPaymentTypeFilter">
+            <mat-form-field class="mat-form-field">
+              <label class="mat-label other-label mandatory-field">Payment Type</label>
+              <mat-select name="paymentTypes" id="paymentTypes" formControlName="paymentTypes"
+                (selectionChange)="paymentTypeChanged($event.value)">
+                <mat-option *ngFor="let paymentType of paymentTypes" [value]="paymentType.value">
+                  {{paymentType.name}}
+                </mat-option>
+              </mat-select>
+            </mat-form-field>
+          </span>
+        </section>
+
+        <section>
+          <span [hidden]="!showProductFilterwithAll" *ngIf="products">
+            <mat-form-field class="mat-form-field">
+              <label class="mat-label other-label mandatory-field">Product</label>
+              <mat-select name="productName" id="productName" formControlName="productName"
+                (selectionChange)="productChangedAll($event)">
+                <mat-option value="-1">
+                  All
+                </mat-option>
+                <mat-option *ngFor="let product of products" [value]="product">
+                  {{product.name}}
+                </mat-option>
+              </mat-select>
+            </mat-form-field>
+          </span>
+        </section>
+        <section>
+          <span [hidden]="!showProductFilter" *ngIf="products">
+            <mat-form-field class="mat-form-field">
+              <label class="mat-label other-label mandatory-field">Product</label>
+              <mat-select name="productName" id="productName" formControlName="productName"
+                (selectionChange)="productChanged($event)">
+                <mat-option *ngFor="let product of products" [value]="product">
+                  {{product.name}}
+                </mat-option>
+              </mat-select>
+            </mat-form-field>
+          </span>
+        </section>
+
+        <section>
+          <span [hidden]="!showProductOptionFilter" *ngIf="productOptions">
+            <mat-form-field class="mat-form-field">
+              <label class="mat-label other-label mandatory-field">Product Option</label>
+              <mat-select name="productOptionName" id="productOptionName" formControlName="productOptionName"
+                (selectionChange)="productOptionChanged($event)">
+                <mat-option *ngFor="let productOption of productOptions" [value]="productOption">
+                  {{productOption.name}}
+                </mat-option>
+              </mat-select>
+            </mat-form-field>
+          </span>
+        </section>
+
+        <section>
+          <span [hidden]="!showProductOptionIdFilter" *ngIf="productOptions">
+            <mat-form-field class="mat-form-field">
+              <label class="mat-label other-label mandatory-field">Product Option</label>
+              <mat-select name="productOptionName" id="productOptionName" formControlName="productOptionName"
+                (selectionChange)="productOptionIdChanged($event)">
+                <mat-option *ngFor="let productOption of productOptions" [value]="productOption">
+                  {{productOption.name}}
+                </mat-option>
+              </mat-select>
+            </mat-form-field>
+          </span>
+        </section>
+
+        <section>
+          <span [hidden]="!showProductIdFilterwithAll" *ngIf="products">
+            <mat-form-field class="mat-form-field">
+              <label class="mat-label other-label mandatory-field">Product</label>
+              <mat-select name="productName" id="productName" formControlName="productName"
+                (selectionChange)="productIdChangedAll($event)">
+                <mat-option value="-1">
+                  All
+                </mat-option>
+                <mat-option *ngFor="let product of products" [value]="product">
+                  {{product.name}}
+                </mat-option>
+              </mat-select>
+            </mat-form-field>
+          </span>
+        </section>
+
+        <section>
+          <span [hidden]="!showBankAccountFilter" *ngIf="bankAccounts">
+            <mat-form-field class="mat-form-field">
+              <label class="mat-label other-label mandatory-field">Bank Account</label>
+              <mat-select name="bankAccount" id="bankAccount" formControlName="bankAccount"
+                (selectionChange)="bankAccountChanged($event)">
+                <mat-option value="-1">
+                  All
+                </mat-option>
+                <mat-option *ngFor="let bankAccount of bankAccounts" [value]="bankAccount">
+                  {{bankAccount.accountNumber}} {{bankAccount.accountName}}
+                </mat-option>
+              </mat-select>
+            </mat-form-field>
+          </span>
+        </section>
+
+        <section>
+          <span [hidden]="!showProductClassFilter">
+            <mat-form-field class="mat-form-field">
+              <label class="mat-label other-label">Product Class</label>
+              <mat-select name="productClasses" id="productClasses" formControlName="productClasses"
+                (selectionChange)="productClassChanged($event.value)">
+                <mat-option *ngFor="let productClass of productClasses" [value]="productClass">
+                  {{productClass}}
+                </mat-option>
+              </mat-select>
+            </mat-form-field>
+          </span>
+        </section>
+        <!--period multi select-->
+        <section>
+          <span [hidden]="!showPeriodFilterwithMultiSelect" *ngIf="filteredPeriods">
+            <mat-form-field class="mat-form-field">
+              <label class="mat-label other-label mandatory-field">Period</label>
+              <mat-select name="periodIdMulti" id="periodIdMulti" formControlName="periodIdMulti"
+                (selectionChange)="periodChangedMulti($event)" multiple>
+                <mat-option value="-1">
+                  All
+                </mat-option>
+                <mat-option *ngFor="let period of filteredPeriods" [value]="period.id">
+                  {{period.endDate | date:'MMMM yyyy' }}
+                </mat-option>
+              </mat-select>
+            </mat-form-field>
+          </span>
+        </section>
+
+        <section>
+          <span [hidden]="!showDateRangeFilter">
+            <span style="font-size: xx-small;" *ngIf="usePeriodIdInsteadOfDateRange"><i> (Use these dates to filter the
+                periods to within the selected start and end date)</i></span><br />
+            <mat-form-field class="mat-form-field">
+              <label class="mat-label other-label">From Date</label>
+              <input (dateChange)="setStartDateSelected()" [max]="maxDate" matInput formControlName="startDate"
+                [matDatepicker]="startDate" name="startDate" id="startDate">
+              <mat-datepicker-toggle matSuffix [for]="startDate">
+              </mat-datepicker-toggle>
+              <mat-datepicker touchUi="true" #startDate></mat-datepicker>
+            </mat-form-field>
+          </span>
+
+          <span [hidden]="!showDateRangeFilter && !showEndDateFilter">
+            <mat-form-field class="mat-form-field-right" [ngStyle]="{'margin-left': showEndDateFilter ? '0' : '25px'}">
+              <label class="mat-label other-label">To Date</label>
+              <input (dateChange)="setEndDateSelected()" [min]="minDate" matInput formControlName="endDate"
+                [matDatepicker]="endDate" name="endDate" id="endDate">
+              <mat-datepicker-toggle matSuffix [for]="endDate">
+              </mat-datepicker-toggle>
+              <mat-datepicker touchUi="true" #endDate></mat-datepicker>
+            </mat-form-field>
+          </span>
+        </section>
+        <section>
+          <span [hidden]="!showPeriodFilter">
+            <mat-form-field class="mat-form-field">
+              <label class="mat-label other-label">Year</label>
+              <mat-select formControlName="year" (selectionChange)="yearChange($event)">
+                <mat-option *ngFor="let year of filteredYears" [value]="year">{{year}}
+                </mat-option>
+              </mat-select>
+              <br />
+              <span style="font-size: xx-small;"
+                *ngIf="years.length > filteredYears.length && startDateSelected && endDateSelected"><i>(years filtered
+                  by
+                  selected dates)</i></span>
+              <span style="font-size: xx-small; margin-top: -15px;"
+                *ngIf="filteredYears.length <= 0 && startDateSelected && endDateSelected"><i> (no periods have been
+                  configured
+                  between selected dates)</i></span>
+            </mat-form-field>
+
+            <mat-form-field class="mat-form-field-right">
+              <label class="mat-label other-label">Period <span style="font-size: xx-small;"
+                  *ngIf="useCommissionPeriods"><i>(showing commission periods)</i></span></label>
+              <mat-select *ngIf="!(useCommissionPeriods)" formControlName="period"
+                (selectionChange)="periodChange($event)">
+                <mat-option *ngFor="let period of filteredPeriods" [value]="period">
+                  {{period.endDate | date:'MMMM yyyy' }}
+                </mat-option>
+              </mat-select>
+
+              <mat-select *ngIf="useCommissionPeriods" formControlName="period"
+                (selectionChange)="periodChange($event)">
+                <mat-option *ngFor="let period of filteredPeriods" [value]="period">
+                  {{period.endDate | date:'MMMM yyyy' }}
+                </mat-option>
+              </mat-select>
+              <br />
+              <span style="font-size: xx-small;"
+                *ngIf="periods.length > filteredPeriods.length && startDateSelected && endDateSelected"><i>(periods
+                  filtered by
+                  selected dates)</i></span>
+              <span style="font-size: xx-small; margin-top: -15px;" *ngIf="yearSelected"><i> (periods filtered by
+                  selected
+                  year)</i></span>
+              <span style="font-size: xx-small; margin-top: -15px;"
+                *ngIf="filteredPeriods.length <= 0 && startDateSelected && endDateSelected"><i> (no periods have been
+                  configured
+                  between selected dates)</i></span>
+            </mat-form-field>
+
+          </span>
+          <span [hidden]="!showPeriodEndFilter">
+            <mat-form-field class="mat-form-field">
+              <label class="mat-label other-label">Period End</label>
+              <mat-select formControlName="periodEnd" (selectionChange)="periodChangeEnd($event)">
+                <mat-option *ngFor="let periodEnd of filteredPeriods" [value]="periodEnd">
+                  {{periodEnd.endDate | date:'MMMM yyyy' }}
+                </mat-option>
+              </mat-select>
+            </mat-form-field>
+          </span>
+        </section>
+        <section>
+          <span [hidden]="!showIndustryClassFilter">
+            <mat-form-field class="mat-form-field">
+              <label class="mat-label other-label">Industry Class</label>
+              <mat-select name="industryClassId" id="industryClassId" formControlName="industryClassId"
+                (selectionChange)="industryClassChanged($event)">
+                <mat-option *ngFor="let indClass of industryClasses" [value]="indClass.id">
+                  {{indClass.name}}
+                </mat-option>
+              </mat-select>
+            </mat-form-field>
+          </span>
+        </section>
+        <!--industry multiselect-->
+        <section>
+          <span [hidden]="!showIndustryClassMultiFilter">
+            <mat-form-field class="mat-form-field">
+              <label class="mat-label other-label">Industry Class</label>
+              <mat-select name="industryClassIdMulti" id="industryClassIdMulti" formControlName="industryClassIdMulti"
+                (selectionChange)="industryClassMultiChanged($event)" multiple>
+                <mat-option *ngFor="let indClass of industryClasses" [value]="indClass.id">
+                  {{indClass.name}}
+                </mat-option>
+              </mat-select>
+            </mat-form-field>
+          </span>
+        </section>
+        <section>
+          <span [hidden]="!showProductCategoriesFilter" *ngIf="productCategories">
+            <mat-form-field class="mat-form-field">
+              <label class="mat-label other-label mandatory-field">Product Category</label>
+              <mat-select name="productCategory" id="productCategory" formControlName="productCategory"
+                (selectionChange)="productCategoryChange($event)">
+                <mat-option value="-1">
+                  All
+                </mat-option>
+                <mat-option *ngFor="let productCat of productCategories" [value]="productCat.id">
+                  {{productCat.name}}
+                </mat-option>
+              </mat-select>
+            </mat-form-field>
+          </span>
+        </section>
+        <!--products multi select-->
+        <section>
+          <span [hidden]="!showProductFilterwithMultiSelect" *ngIf="products">
+            <mat-form-field class="mat-form-field">
+              <label class="mat-label other-label mandatory-field">Product</label>
+              <mat-select name="productIdMulti" id="productIdMulti" formControlName="productIdMulti"
+                (selectionChange)="productChangedMulti($event)" multiple>
+                <mat-option value="-1">
+                  All
+                </mat-option>
+                <mat-option *ngFor="let product of products" [value]="product.id">
+                  {{product.name}}
+                </mat-option>
+              </mat-select>
+            </mat-form-field>
+          </span>
+        </section>
+        
+        <section>
+          <span [hidden]="!showAbilityFilter">
+            <mat-form-field class="mat-form-field">
+              <label class="mat-label other-label">Transaction Type</label>
+              <mat-select name="abilityTypes" id="abilityTypes" formControlName="abilityTypes"
+                (selectionChange)="abilityTypeChanged($event)">
+                <mat-option *ngFor="let abilityType of abilityTypes" [value]="abilityType.value">
+                  {{abilityType.name}}
+                </mat-option>
+              </mat-select>
+            </mat-form-field>
+          </span>
+        </section>
+        <section>
+          <span [hidden]="!showTransactionTypeFilter">
+            <mat-form-field class="mat-form-field">
+              <label class="mat-label other-label">Transaction Type</label>
+              <mat-select name="transactionTypes" id="transactionTypes" formControlName="transactionTypes"
+                (selectionChange)="transactionTypeChanged($event)">
+                <mat-option *ngFor="let transactionType of transactionTypes" [value]="transactionType.name">
+                  {{transactionType.name}}
+                </mat-option>
+              </mat-select>
+            </mat-form-field>
+          </span>
+        </section>
+        <!-- clienttypes -->
+        <section>
+          <span [hidden]="!showClientTypeFilter">
+            <mat-form-field class="mat-form-field">
+              <label class="mat-label other-label">Client Type</label>
+              <mat-select name="clientTypes" id="clientTypes" formControlName="clientTypes"
+                (selectionChange)="clientTypeChanged($event)">
+                <mat-option *ngFor="let clientType of clientTypes" [value]="clientType.value">
+                  {{clientType.name}}
+                </mat-option>
+              </mat-select>
+            </mat-form-field>
+          </span>
+        </section>
+        <!-- invoices sent -->
+        <section>
+          <span [hidden]="!invoiceSentFilter">
+            <mat-form-field class="mat-form-field">
+              <label class="mat-label other-label">Invoices Sent</label>
+              <mat-select name="invoiceSentTypes" id="invoiceSentTypes" formControlName="invoiceSentTypes"
+                (selectionChange)="invoiceSentChanged($event)">
+                <mat-option *ngFor="let sentType of invoiceSentTypes" [value]="sentType.value">
+                  {{sentType.name}}
+                </mat-option>
+              </mat-select>
+            </mat-form-field>
+          </span>
+        </section>
+        <!-- balancetypes -->
+        <section>
+          <span [hidden]="!showBalanceTypeFilter">
+            <mat-form-field class="mat-form-field">
+              <label class="mat-label other-label">Balance Type</label>
+              <mat-select name="balanceTypes" id="balanceTypes" formControlName="balanceTypes"
+                (selectionChange)="balanceTypeChanged($event)">
+                <mat-option *ngFor="let balanceType of balanceTypes" [value]="balanceType.value">
+                  {{balanceType.name}}
+                </mat-option>
+              </mat-select>
+            </mat-form-field>
+          </span>
+        </section>
+        <section>
+          <span [hidden]="!showClientParameter">
+            <mat-form-field class="mat-form-field">
+              <label class="mat-label other-label">Client Type</label>
+              <mat-select name="clientTypeParam" id="clientTypeParam" formControlName="clientTypeParam"
+                (selectionChange)="clientTypeParamChanged($event)">
+                <mat-option *ngFor="let cType of clientTypeParam" [value]="cType">
+                  {{cType}}
+                </mat-option>
+              </mat-select>
+            </mat-form-field>
+          </span>
+        </section>
+        <!-- debtorstatus -->
+        <section>
+          <span [hidden]="!showDebtorStatusFilter">
+            <mat-form-field class="mat-form-field">
+              <label class="mat-label other-label">Debtor Status</label>
+              <mat-select name="debtorStatuses" id="debtorStatuses" formControlName="debtorStatuses"
+                (selectionChange)="debtorStatusChanged($event)">
+                <mat-option *ngFor="let debtorStatus of debtorStatuses" [value]="debtorStatus.value">
+                  {{debtorStatus.name}}
+                </mat-option>
+              </mat-select>
+            </mat-form-field>
+          </span>
+        </section>
+        <!-- controlNumbers -->
+        <section>
+          <span [hidden]="!showControlNumberFilter">
+            <mat-form-field class="mat-form-field">
+              <label class="mat-label other-label">Control Number</label>
+              <mat-select name="controlNumbers" id="controlNumbers" formControlName="controlNumbers"
+                (selectionChange)="controlNumberChanged($event)">
+                <mat-option *ngFor="let controlNumber of controlNumbers" [value]="controlNumber.value">
+                  {{controlNumber.name}}
+                </mat-option>
+              </mat-select>
+            </mat-form-field>
+          </span>
+        </section>
+        <!-- interest provisioned status -->
+        <section>
+          <span [hidden]="!showInterestProvisionedStatusFilter">
+            <mat-form-field class="mat-form-field">
+              <label class="mat-label other-label mandatory-field">Status</label>
+              <mat-select name="showInterestProvisionedStatus" id="showInterestProvisionedStatus"
+                formControlName="showInterestProvisionedStatus"
+                (selectionChange)="interestProvisionedStatusChanged($event)">
+                <mat-option value="-1">
+                  All
+                </mat-option>
+                <mat-option *ngFor="let status of interestProvisionedStatuses" [value]="status.id">
+                  {{status.name}}
+                </mat-option>
+              </mat-select>
+            </mat-form-field>
+          </span>
+        </section>
+        <!-- reasontypes -->
+        <section>
+          <span [hidden]="!showReasonTypeFilter">
+            <mat-form-field class="mat-form-field">
+              <label class="mat-label other-label mandatory-field">Reason Type</label>
+              <mat-select name="reasonTypes" id="reasonTypes" formControlName="reasonTypes"
+                (selectionChange)="reasonTypeChanged($event.value)">
+                <mat-option *ngFor="let reasonType of reasonTypes" [value]="reasonType.value">
+                  {{reasonType.name}}
+                </mat-option>
+              </mat-select>
+            </mat-form-field>
+          </span>
+        </section>
+        <section>
+          <span [hidden]="!showChildAllocationFilter">
+            <mat-form-field class="mat-form-field">
+              <label class="mat-label other-label">Allocation Status</label>
+              <mat-select name="childAllocationStatuses" id="childAllocationStatuses" formControlName="childAllocationStatuses"
+                (selectionChange)="childAllocationStatusChanged($event)">
+                <mat-option *ngFor="let childAllocationStatus of childAllocationStatuses" [value]="childAllocationStatus.value">
+                  {{childAllocationStatus.name}}
+                </mat-option>
+              </mat-select>
+            </mat-form-field>
+          </span>
+        </section>
+        <!-- --end-- -->
+        <!--Company multi select-->
+        <section>
+          <span [hidden]="!showCompanyFilterwithMultiSelect" *ngIf="companies">
+            <mat-form-field class="mat-form-field">
+              <label class="mat-label other-label mandatory-field">Company</label>
+              <mat-select name="companyIdMulti" id="companyIdMulti" formControlName="companyIdMulti"
+                (selectionChange)="companyChangedMulti($event)" multiple>
+                <mat-option *ngFor="let company of companies" [value]="company.id">
+                  {{company.name}}
+                </mat-option>
+              </mat-select>
+            </mat-form-field>
+          </span>
+        </section>
+
+        <!--  Company and Branch Filters-->
+        <section>
+          <span [hidden]="!showCompanyNoFilter">
+            <mat-form-field class="mat-form-field">
+              <label class="mat-label other-label">Company</label>
+              <mat-select formControlName="company" (selectionChange)="companyChanged($event)">
+                  <mat-option *ngFor="for let company of companies" [value]="company.id">{{company.name}}</mat-option>
+              </mat-select>
+              </mat-form-field>
+          </span>
+        </section>
+
+        <section>
+          <span [hidden]="!showBranchNoFilter">
+            <mat-form-field class="mat-form-field">
+              <label class="mat-label other-label">Branch</label>
+              <mat-select formControlName="branch" (selectionChange)="branchChanged($event)">
+                  <mat-option *ngFor="for let branch of branches" [value]="branch.id">{{branch.name}}</mat-option>
+              </mat-select>
+              </mat-form-field>
+          </span>
+        </section>
+        <!-- --end-- -->
+
+        <br />
+        <div *ngIf="offerFriendlyVersion">
+          <table style="width: 30%; background-color: rgb(226, 225, 225); border-radius: 10px 10px 10px 10px;">
+            <tr>
+              <td>
+                <mat-radio-group>
+                  <mat-radio-button style="margin-bottom: 10px;" value="standard"
+                    (change)="toggleVersion($event.value)">
+                    <span class="material-icons">poll</span> data version
+                  </mat-radio-button><br />
+                  <mat-radio-button style="margin-bottom: 10px;" value="friendly"
+                    (change)="toggleVersion($event.value)">
+                    <span class="material-icons">insert_emoticon</span> friendly version
+                  </mat-radio-button>
+                </mat-radio-group>
+              </td>
+            </tr>
+          </table>
+        </div>
+        <div *ngIf="parametersSelected" class="form-group-button mat-form-button">
+          <button class="button float-button" matTooltip="start over" (click)="resetForm()"
+            [disabled]="(isLoading$ | async) || (isDownloading$ | async)">Reset Filters</button>
+        </div>
+        <br />
+      </mat-card>
+    </div>
+  </form>
+  <br />
+  <div *ngIf="!(isLoading$ | async) && parametersSelected">
+    <mat-card>
+      <div *ngIf="isDownloading$ | async">
+        <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+        <label class="mat-label other-label"><i>exporting...please wait</i></label>
+      </div>
+      <section [hidden]="(isDownloading$ | async)">
+        <table style="width: 100%">
+          <tr>
+            <td style="width:80%;">
+              <mat-radio-group [ngModel]="selectedExportType">
+                <mat-radio-button style="margin-bottom: 10px;" value="excel" (change)="toggleExport($event.value)">
+                  <img style="vertical-align:middle;" src="/assets/images/excel.png" alt="excel"> excel
+                </mat-radio-button><br />
+                <mat-radio-button style="margin-bottom: 10px;" value="csv" (change)="toggleExport($event.value)">
+                  <img style="vertical-align:middle;" src="/assets/images/csv.png" alt="csv"> csv
+                </mat-radio-button>
+              </mat-radio-group>
+            </td>
+            <td>
+              <button class="button" style="vertical-align: top;" matTooltip="Export" (click)="export()"
+                [disabled]="(isLoading$ | async) || (isDownloading$ | async)">Export</button>
+            </td>
+          </tr>
+        </table>
+      </section>
+    </mat-card>
+    <br />
+    <div [hidden]="exportOnly" [attr.disabled]="(isDownloading$ | async)">
+      <label *ngIf="showDateRangeFilter || showPeriodFilter" class="mat-label other-label"><strong>{{reportTitle}}:
+        </strong>{{startDateParameter}}<strong> to
+        </strong>{{endDateParameter}}</label>
+      <label *ngIf="showInvoiceNumberFilter" class="mat-label other-label"><strong>{{reportTitle}}:
+        </strong>{{invoiceNumberParameter}}</label>
+      <ssrs-reportviewer [reportserver]="reportServer" [reporturl]="currentUrl" [showparameters]="showParameters"
+        [format]="displayFormat" [parameters]="parameters" [language]="language" [width]="width" [height]="height"
+        [toolbar]="toolbar" [useCustomParameters]="true" [reportName]="reportTitle">
+      </ssrs-reportviewer>
+      <ssrs-reportviewer [hidden]="true" (downloadComplete)="downloadComplete()" [reportserver]="reportServer"
+        [reporturl]="currentUrl" [showparameters]="showParameters" [format]="format" [parameters]="parameters"
+        [language]="language" [width]="width" [height]="height" [toolbar]="toolbar" [useCustomParameters]="true"
+        [reportName]="reportTitle">
+      </ssrs-reportviewer>
+    </div>
+  </div>
+</div>

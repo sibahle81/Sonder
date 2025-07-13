@@ -1,0 +1,29 @@
+<div *ngIf="loadingFormInProgress">
+  <mat-progress-bar mode="indeterminate"
+    [ngClass]="{ 'loading-main-double-menu-progress': doubleMenu, 'loading-main-single-menu-progress': !doubleMenu }">
+  </mat-progress-bar>
+  <p class="site-font grey">Loading form...</p>
+</div>
+<!-- report contain -->
+<div class="alignRight">
+  <div class="heading">{{medicalReportType}} Medical Report</div>
+  <span><label [hidden]="!showReport" [ngClass]="{
+    'reportStatusAcceptedLabel':reportStatus === 'Report Accepted',
+    'reportStatusRejectedLabel':reportStatus === 'Report Rejected',
+    'reportStatusPendingLabel':reportStatus === 'Report Pending'
+  }">Report Status : {{reportStatus}}</label><br>
+    <label [hidden]="!showReport" class="reportStatus"> {{reportDetail}}</label></span>
+  &nbsp;&nbsp;
+  <button type="button" id="back" class="button" (click)="back()" *ngIf="!loadingFormInProgress">Back</button>
+</div>
+<div [hidden]="!showReport" class="auto">
+  <ssrs-reportviewer [reportserver]="reportServerAudit" [reporturl]="reportUrlAudit"
+    [showparameters]="showParametersAudit" [format]="formatAudit" [extension]="extensionAudit"
+    [parameters]="parametersAudit" [language]="languageAudit" [width]="widthAudit" [height]="heightAudit"
+    [toolbar]="toolbarAudit">
+  </ssrs-reportviewer>
+  <!-- report contain -->
+  <div *ngIf="medicalFormError">
+    Sorry there was a problem retrieving this form, please contact helpdesk for further assistance.
+  </div>
+</div>

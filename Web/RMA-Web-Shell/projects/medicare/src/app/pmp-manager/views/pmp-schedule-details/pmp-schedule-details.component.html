@@ -1,0 +1,250 @@
+  <form [formGroup]="form" class="mat-container details-form" *ngIf="this.form">
+   <mat-card>
+    <mat-card-content>
+        <section>
+        <div class="field-container">
+            <mat-label class="other-label mandatory-field">Prosthesis Required?
+            </mat-label>
+            <mat-radio-group aria-label="Prosthesis Required?"
+                formControlName="isProsthesisRequired" id="isProsthesisRequired">&nbsp;
+                <mat-radio-button value="true" [checked]="isProsthesis">Prosthesis ON</mat-radio-button>&nbsp;
+                <mat-radio-button value="false" [checked]="!isProsthesis">Prosthesis OFF</mat-radio-button>
+            </mat-radio-group>
+        </div>
+        </section>
+        <br/><br/>
+        <section>
+        <div class="field-container">
+            <mat-label class="other-label">Schedule Date
+            </mat-label>
+            <mat-form-field class="mat-form-field">
+                <input readonly matInput formControlName="scheduleDate" [matDatepicker]="scheduleDate"
+                    id="scheduleDate" name="scheduleDate" date="true" time="false">
+                <mat-datepicker-toggle matSuffix [for]="scheduleDate"
+                    [disabled]="false"></mat-datepicker-toggle>
+                <mat-datepicker startView="month" [startAt]="startDate" touchUi="true"
+                    #scheduleDate></mat-datepicker>
+            </mat-form-field>
+        </div>
+        <div class="field-container-right">
+            <mat-label class="other-label">Service
+            </mat-label>
+            <mat-form-field class="mat-form-field">
+                <input readonly matInput formControlName="service" id="service" name="service">
+            </mat-form-field>
+        </div>
+        </section>
+        <br/><br/>
+        <section>
+        <div class="field-container">
+            <mat-label class="other-label mandatory-field">Attended Clinic?
+            </mat-label>
+            <mat-radio-group aria-label="Attended Clinic?"
+                formControlName="isAttendedClinic" id="isAttendedClinic">&nbsp;
+                <mat-radio-button value="true" [checked]="isAttended">Yes</mat-radio-button>&nbsp;
+                <mat-radio-button value="false" [checked]="!isAttended">No</mat-radio-button>
+            </mat-radio-group>
+        </div>
+        <div class="field-container-right">
+            <mat-label class="other-label mandatory-field">Exclude from PMP Schedule?
+            </mat-label>
+            <mat-radio-group aria-label="Exclude from PMP Schedule?"
+                formControlName="isExcluded" id="isExcluded">&nbsp;
+                <mat-radio-button value="true" [checked]="isExcludePMPSchedule">Yes</mat-radio-button>&nbsp;
+                <mat-radio-button value="false" [checked]="!isExcludePMPSchedule">No</mat-radio-button>
+            </mat-radio-group>
+        </div>
+        </section>
+        <br/><br/><br/><br/><br/>
+        <section>
+        <div class="field-container">
+            <mat-label class="other-label">DRG
+            </mat-label>
+            <mat-form-field class="mat-form-field">
+                <input readonly matInput formControlName="drgCode" id="drgCode" name="drgCode">
+            </mat-form-field>
+        </div>
+        <div class="field-container-right">
+            <mat-label class="other-label">ICD10 Driver
+            </mat-label>
+            <mat-form-field class="mat-form-field">
+                <input readonly matInput formControlName="icd10Driver" id="icd10Driver" name="icd10Driver">
+            </mat-form-field>
+        </div>
+        </section>
+
+    </mat-card-content>
+   </mat-card>
+    <br>
+
+   <mat-expansion-panel>
+    <mat-expansion-panel-header>
+      <mat-panel-title>
+        PMP Location Details
+      </mat-panel-title>
+    </mat-expansion-panel-header>
+   <div>
+     <section>
+        <div class="field-container">
+            <mat-label class="other-label">PMP Location
+            </mat-label>
+            <mat-form-field class="mat-form-field">
+                <input readonly matInput formControlName="pmpLocation" id="pmpLocation" name="pmpLocation">
+            </mat-form-field>
+        </div>
+        <div class="field-container-right">
+            <mat-label class="other-label">PMP Region
+            </mat-label>
+            <mat-form-field class="mat-form-field">
+                <input readonly matInput formControlName="pmpRegion" id="pmpRegion" name="pmpRegion">
+            </mat-form-field>
+        </div>
+     </section>
+     
+     <section>
+        <div class="field-container">
+            <mat-label class="other-label">PMP SPA
+            </mat-label>
+            <mat-form-field class="mat-form-field">
+                <input readonly matInput formControlName="pmpSPA" id="pmpSPA" name="pmpSPA">
+            </mat-form-field>
+        </div>
+        <div class="field-container-right">
+            <mat-label class="other-label">PMP MCA
+            </mat-label>
+            <mat-form-field class="mat-form-field">
+                <input readonly matInput formControlName="pmpMCA" id="pmpMCA" name="pmpMCA">
+            </mat-form-field>
+        </div>
+     </section>
+    </div>
+   </mat-expansion-panel>
+   <br>
+
+   <mat-expansion-panel>
+    <mat-expansion-panel-header>
+      <mat-panel-title>
+        Teba Location Details
+      </mat-panel-title>
+    </mat-expansion-panel-header>
+   <div>
+    <section>
+        <div class="field-container">
+            <mat-label class="other-label">Teba Branch
+            </mat-label>
+            <mat-form-field class="mat-form-field">
+                <input readonly matInput formControlName="tebaBranch" id="tebaBranch" name="tebaBranch">
+            </mat-form-field>
+        </div>
+        <div class="field-container-right">
+            <mat-label class="other-label">Branch Name
+            </mat-label>
+            <mat-form-field class="mat-form-field">
+                <input readonly matInput formControlName="tebaBranchName" id="tebaBranchName" name="tebaBranchName">
+            </mat-form-field>
+        </div>
+     </section>
+     
+     <section>
+        <div class="field-container">
+            <mat-label class="other-label">Address
+            </mat-label>
+            <mat-form-field class="mat-form-field">
+                <input readonly matInput formControlName="tebaAddress" id="tebaAddress" name="tebaAddress">
+            </mat-form-field>
+        </div>
+        <div class="field-container-right">
+            <mat-label class="other-label">City
+            </mat-label>
+            <mat-form-field class="mat-form-field">
+                <input readonly matInput formControlName="tebaCity" id="tebaCity" name="tebaCity">
+            </mat-form-field>
+        </div>
+     </section>
+     
+     <section>
+        <div class="field-container">
+            <mat-label class="other-label">Province
+            </mat-label>
+            <mat-form-field class="mat-form-field">
+                <input readonly matInput formControlName="tebaProvince" id="tebaProvince" name="tebaProvince">
+            </mat-form-field>
+        </div>
+        <div class="field-container-right">
+            <mat-label class="other-label">Country
+            </mat-label>
+            <mat-form-field class="mat-form-field">
+                <input readonly matInput formControlName="tebaCountry" id="tebaCountry" name="tebaCountry">
+            </mat-form-field>
+        </div>
+     </section>
+     
+     <section>
+        <div class="field-container">
+            <mat-label class="other-label">Postal Code
+            </mat-label>
+            <mat-form-field class="mat-form-field">
+                <input readonly matInput formControlName="tebaPostalCode" id="tebaPostalCode" name="tebaPostalCode">
+            </mat-form-field>
+        </div>
+        <div class="field-container-right">
+            <mat-label class="other-label">PMP Region
+            </mat-label>
+            <mat-form-field class="mat-form-field">
+                <input readonly matInput formControlName="tebaPMPRegion" id="tebaPMPRegion" name="tebaPMPRegion">
+            </mat-form-field>
+        </div>
+     </section>
+   </div>
+</mat-expansion-panel>
+   <br>
+
+   <mat-expansion-panel>
+    <mat-expansion-panel-header>
+      <mat-panel-title>
+        Official for Teba Locations
+      </mat-panel-title>
+    </mat-expansion-panel-header>
+   <div>
+        <mat-table #table [dataSource]="dataSource" class="tableWidth">            
+        <ng-container matColumnDef="officialName">
+            <mat-header-cell class="mat-header-cell" *matHeaderCellDef> Official Name </mat-header-cell>
+            <mat-cell *matCellDef="let teba" matTooltip="{{teba.officialName}}">
+            <span class="truncate-text"> {{ teba.officialName }} </span>
+            </mat-cell>
+        </ng-container>
+
+        <ng-container matColumnDef="description">
+            <mat-header-cell class="mat-header-cell" *matHeaderCellDef> Work Description </mat-header-cell>
+            <mat-cell *matCellDef="let teba" matTooltip="{{teba.description}}">
+            <span class="truncate-text"> {{ teba.description }} </span>
+            </mat-cell>
+        </ng-container>
+
+        <ng-container matColumnDef="workNumber">
+            <mat-header-cell class="mat-header-cell" *matHeaderCellDef> Work Number </mat-header-cell>
+            <mat-cell *matCellDef="let teba" matTooltip="{{teba.workNumber}}">
+            <span class="truncate-text"> {{ teba.workNumber}} </span>
+            </mat-cell>
+        </ng-container>
+
+        <ng-container matColumnDef="faxNumber">
+            <mat-header-cell class="mat-header-cell" *matHeaderCellDef> Fax Number </mat-header-cell>
+            <mat-cell *matCellDef="let teba" matTooltip="{{teba.faxNumber}}">
+                <span class="truncate-text"> {{ teba.faxNumber}} </span>
+            </mat-cell>
+            </ng-container>
+            
+        <ng-container matColumnDef="email">
+            <mat-header-cell class="mat-header-cell" *matHeaderCellDef> Email </mat-header-cell>
+            <mat-cell *matCellDef="let teba" matTooltip="{{teba.email}}">
+                <span class="truncate-text"> {{ teba.email}} </span>
+            </mat-cell>
+            </ng-container>
+
+        <mat-header-row class="mat-header-cell" *matHeaderRowDef="getDisplayedColumns();"></mat-header-row>
+        <mat-row *matRowDef="let row; columns: getDisplayedColumns();"></mat-row>
+        </mat-table>
+   </div>
+   </mat-expansion-panel>
+  </form>

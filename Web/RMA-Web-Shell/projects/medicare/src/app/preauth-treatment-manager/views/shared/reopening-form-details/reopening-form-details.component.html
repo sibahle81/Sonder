@@ -1,0 +1,43 @@
+
+<div class="mat-header">
+    <h1>Reopening Form Details</h1>
+  </div>
+  <div  *ngFor="let reopenItem of reopenDetails$ | async">
+        <mat-card>
+          <mat-card-content>
+            <div class="grid">
+              <div>
+                <span class="title">Date Of Admission</span>
+                <span class="value">{{ reopenItem?.admissionDate   | date: "d MMM y" }} </span>
+              </div>
+              <div>
+                <span class="title">Date Of Service/Procedure</span>
+                <span class="value">{{ reopenItem?.procedureDate   | date: "d MMM y" }} </span>
+              </div>
+            </div>
+            <div class="grid">
+              <div>
+                <span class="title">Claim Re-opening Motivation</span>
+                <span class="value">{{ reopenItem?.motivation }} </span>
+              </div>
+              <div>
+                <span class="title">Current Complaints</span>
+                <span class="value"> {{ reopenItem?.injuryDetails }} </span>
+              </div>
+            </div>
+            <div class="grid">
+              <div>
+                <span class="title">Casual relation between current complaint and original injury</span>
+                <span class="value">{{ reopenItem?.relationWithOldInjury }} </span>
+              </div>
+              <div>
+                <span class="title">Latest Investigations</span>
+                <span class="value">{{ reopenItem?.comment }}</span>
+              </div>
+            </div>
+          </mat-card-content>
+        </mat-card>
+      </div>
+
+
+

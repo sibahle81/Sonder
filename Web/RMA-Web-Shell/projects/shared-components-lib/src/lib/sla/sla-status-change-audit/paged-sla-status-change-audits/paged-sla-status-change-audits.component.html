@@ -1,0 +1,88 @@
+<div *ngIf="(dataSource.loading$ | async)" class="loadingDiv">
+    <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+    <label class="mat-label other-label"><i>loading please wait...</i></label>
+</div>
+
+<div [hidden]="(dataSource.loading$ | async)">
+    <div *ngIf="!isDialog" class="menu-bar">
+        <span class="material-icons">
+            rule_folder
+        </span>
+        SLA Status Change Audits
+    </div>
+
+    <span class="info">
+        SLA calculations exclude weekends and public holidays and accumulate only during business hours (8:00 to 16h00)
+    </span>
+
+    <div [hidden]="(dataSource.loading$ | async) 
+            || (dataSource && dataSource.data && dataSource.data.data && dataSource.data.data?.length <= 0) 
+            || (paginator?.length === 0 && !(dataSource.loading$ | async))">
+
+        <div *ngIf="isSlaRunning() && !isSlaPaused()" class="blue"><span class="material-icons">
+                play_arrow
+            </span><label class="mat-label other-label">SLA is active</label></div>
+
+        <div *ngIf="isSlaPaused()" class="blue"><span class="material-icons">
+                pause
+            </span><label class="mat-label other-label">SLA is paused (outside of working hours)</label></div>
+
+        <div *ngIf="!isSlaRunning() && !isSlaPaused()" class="blue"><span class="material-icons">
+                stop
+            </span><label class="mat-label other-label">SLA has stopped because all tasks are
+                complete</label></div><br />
+
+        <mat-table #table [dataSource]="dataSource" matSort id="tblData" (matSortChange)="getData()">
+
+            <ng-container matColumnDef="status">
+                <mat-header-cell *matHeaderCellDef> Status </mat-header-cell>
+                <mat-cell *matCellDef="let row"> {{row.status ? formatText(row.status) : 'N/A'}}</mat-cell>
+            </ng-container>
+
+            <ng-container matColumnDef="reason">
+                <mat-header-cell *matHeaderCellDef> Reason </mat-header-cell>
+                <mat-cell *matCellDef="let row"> {{row.reason ? formatText(row.reason) : 'N/A'}}</mat-cell>
+            </ng-container>
+
+            <ng-container matColumnDef="effectiveFrom">
+                <mat-header-cell *matHeaderCellDef mat-sort-header> Effective From </mat-header-cell>
+                <mat-cell *matCellDef="let row"> {{row.effectiveFrom ? (row.effectiveFrom | date: "yyyy-MM-dd HH:mm:ss")
+                    : 'N/A'}}</mat-cell>
+            </ng-container>
+
+            <ng-container matColumnDef="effictiveTo">
+                <mat-header-cell *matHeaderCellDef mat-sort-header> Effective To </mat-header-cell>
+                <mat-cell *matCellDef="let row"> {{row.effictiveTo ? (row.effictiveTo | date: "yyyy-MM-dd HH:mm:ss") :
+                    'N/A'}}</mat-cell>
+            </ng-container>
+
+            <ng-container matColumnDef="modifiedBy">
+                <mat-header-cell *matHeaderCellDef> Modified By </mat-header-cell>
+                <mat-cell *matCellDef="let row">{{row.modifiedBy}}</mat-cell>
+            </ng-container>
+
+            <ng-container matColumnDef="modifiedByConverted">
+                <mat-header-cell *matHeaderCellDef> *Modified By </mat-header-cell>
+                <mat-cell *matCellDef="let row">
+                    <user-display-name [userName]="row.modifiedBy"></user-display-name>
+                </mat-cell>
+            </ng-container>
+
+            <ng-container matColumnDef="duration">
+                <mat-header-cell *matHeaderCellDef> Duration </mat-header-cell>
+                <mat-cell *matCellDef="let row">{{calculateSLA(row)}} {{this.calculatedSla$ | async}}</mat-cell>
+            </ng-container>
+
+            <mat-header-row *matHeaderRowDef="getDisplayedColumns()"></mat-header-row>
+            <mat-row *matRowDef="let row; columns: getDisplayedColumns();"></mat-row>
+        </mat-table>
+
+        <mat-paginator #paginator [pageIndex]="0" [pageSize]="5" [pageSizeOptions]="[5, 10, 25, 100]"
+            [length]="this.dataSource.rowCount$ | async" (page)="getData()">
+        </mat-paginator>
+    </div>
+
+    <mat-card *ngIf="paginator?.length === 0 && !(dataSource.loading$ | async)">
+        <label class="mat-label other-label"><i>no sla status change audits found...</i></label>
+    </mat-card>
+</div>

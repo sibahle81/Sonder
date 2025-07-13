@@ -1,0 +1,21 @@
+<h2 mat-dialog-title>Document Refresh Reason</h2>
+
+<mat-dialog-content>
+  <form [formGroup]="form" (ngSubmit)="onSubmit()">
+    <mat-form-field>
+      <mat-select formControlName="reason" required>
+        <mat-option *ngFor="let reason of reasons" [value]="reason.id">
+          {{ reason.name }}
+        </mat-option>
+      </mat-select>
+      <mat-error *ngIf="form.get('reason')?.hasError('required')">
+        Please select a reason
+      </mat-error>
+    </mat-form-field>
+  </form>
+</mat-dialog-content>
+
+<mat-dialog-actions align="end">
+  <button mat-button (click)="onCancel()">Cancel</button>
+  <button mat-raised-button color="primary" (click)="onSubmit()" [disabled]="!form.valid">OK</button>
+</mat-dialog-actions>

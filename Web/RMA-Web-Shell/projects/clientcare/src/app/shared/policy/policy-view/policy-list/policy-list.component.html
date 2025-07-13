@@ -1,0 +1,71 @@
+<mat-card *ngIf="isLoading$ | async">
+  <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+  <label class="mat-label other-label"><i>loading policies...please wait</i></label>
+</mat-card>
+
+<div *ngIf="!(isLoading$ | async)">
+  <div class="menu-bar"><span class="material-icons">folder_copy</span>&nbsp;<b>Policies</b><i *ngIf="filteredPolicyIds"
+      class="info">&nbsp;(* filtered for context)</i></div>
+
+  <div *ngIf="policies && policies.length > 0">
+    <table class="altRowTable">
+      <tr>
+        <th *ngIf="!isReadOnly">Selected</th>
+        <th *ngIf="!disable_coid_vaps_e2e_clientcare">Compliance</th>
+        <th>Product</th>
+        <th>Product Option</th>
+        <th>Policy Number</th>
+        <th *ngIf="!isReadOnly && !isWizard"> Statements </th>
+        <th *ngIf="!isReadOnly && !isWizard"> Remittance </th>
+      </tr>
+      <tr *ngFor="let policy of policies"
+        [ngClass]="{ 'highlight': policy == selectedPolicy && !isReadOnly, 'excluded': policy.policyStatus == cancelled }"
+        matTooltip="{{!isReadOnly ? 'click to select' : ''}}" (click)="selectedPolicyChanged(policy)">
+        <td *ngIf="!isReadOnly" class="center">
+          <span *ngIf="selectedPolicy == policy" class="material-icons greenFont">radio_button_checked</span>
+          <span *ngIf="selectedPolicy != policy" class="material-icons greyFont"
+            matTooltip="select">radio_button_unchecked</span>
+        </td>
+        <td class="center" *ngIf="!disable_coid_vaps_e2e_clientcare"><member-compliance [policyId]="policy.policyId"></member-compliance></td>
+        <td class="left"><b>{{policy.productOption.product.name}}</b> ({{policy.productOption.product.code}})</td>
+        <td class="left"><b>{{policy.productOption.name}}</b> ({{policy.productOption.code}})</td>
+        <td class="left">{{policy.policyNumber}}</td>
+        <td *ngIf="!isReadOnly && !isWizard" class="center">
+          <span *ngIf="policy.productCategoryType != funeral" (click)="openProformaStatementViewDialog(policy)" matTooltip="view / download statement for policy ({{policy.policyNumber}})"
+            class="material-icons icn pointer icn-button">
+            request_quote
+          </span>
+          <span (click)="openTransactionalStatementViewDialog(policy)"
+            matTooltip="view / download transactional statement for policy ({{policy.policyNumber}})" class="material-icons icn pointer icn-button">
+            request_page
+          </span>
+          <span *ngIf="policy.productCategoryType == funeral && policy.parentPolicyId" (click)="navigateToParent(policy)" matTooltip="navigate to parent/group policy"
+          class="material-icons icn pointer icn-button">
+          escalator_warning
+        </span>
+        </td>
+        <td *ngIf="!isReadOnly && !isWizard" class="center">
+          <span (click)="openRemittanceViewDialog(policy)" matTooltip="view / download remittance for policy ({{policy.policyNumber}})"
+          class="material-icons icn pointer icn-button">
+          account_balance_wallet
+          </span>
+        </td>
+      </tr>
+    </table>
+  </div>
+
+  <div *ngIf="!policies || policies.length <= 0">
+    <mat-card>
+      <label class="mat-label other-label"><i>no policies found...
+        <span *ngIf="hasRunningWizards">but don't worry, <b>active policy workflows</b> were found and should be incepted soon</span>
+        <span *ngIf="!hasRunningWizards">this member has no policies and no active policy workflows were detected</span></i></label>
+    </mat-card>
+
+    <div *ngIf="currentUser?.isInternalUser && !isWizard">
+      <br />
+      <lib-running-wizards [moduleName]="'clientcare'" [managerName]="'policy-manager'" [linkedItemId]="rolePlayerId"
+        [wizardTypeCSVs]="'rma-policy,rml-policy'" (hasWizardsEmit)="setHasRunningWizards($event)">
+      </lib-running-wizards>
+    </div>
+  </div>
+</div>

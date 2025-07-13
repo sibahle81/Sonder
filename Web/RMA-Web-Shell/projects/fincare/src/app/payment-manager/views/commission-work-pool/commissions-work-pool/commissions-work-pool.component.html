@@ -1,0 +1,226 @@
+<form [formGroup]="form" class="mat-container" novalidate>
+  <div *ngIf="(dataSource.loading$ | async) || (isLoading$ | async)" class="loadingDiv">
+      <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+      <span class="site-font">loading {{heading}}...please wait</span>
+  </div>
+
+  <div [hidden]="(dataSource.loading$ | async) || (isLoading$ | async)">
+      <div [hidden]="(dataSource.loading$ | async)">
+            <section>
+              <div class="menu-bar">
+                <span class="material-icons">
+                  engineering
+                </span>&nbsp;Search Commissions
+                <span *ngIf="!hideVisibility" class="material-icons pointer right" matTooltip="refresh" (click)="ClearData()">
+                  restart_alt
+                </span>&nbsp;&nbsp;
+                <span *ngIf="!hideVisibility" class="material-icons pointer right" (click)="applyData()"
+                  matTooltip="apply filters">
+                  save
+                </span>
+                &nbsp;&nbsp;
+                <span *ngIf="hideVisibility" (click)="showDetail()"
+                  [ngClass]="{'material-icons pointer right': hideVisibility}" matTooltip="view details">
+                  visibility
+                </span>
+                &nbsp;&nbsp;
+                <span *ngIf="!hideVisibility" (click)="showDetail()"
+                  [ngClass]="{'material-icons pointer right': !hideVisibility}" matTooltip="hide details">
+                  visibility_off
+                </span>
+              </div>
+
+              <div *ngIf="!hideVisibility">
+                <div>
+                  <mat-form-field class="mat-form-field inputDate">
+                    <label class="other-label">From Date</label>
+                    <input readonly matInput [min]="minDate" [max]="maxDate" date="true" time="false"
+                      formControlName="startDate" [matDatepicker]="startDate" id="startDate" />
+                    <mat-datepicker-toggle class="date-icon" matSuffix [for]="startDate"></mat-datepicker-toggle>
+                    <mat-datepicker touchUi="true" #startDate></mat-datepicker>
+                  </mat-form-field>
+                  &nbsp;
+                  <mat-form-field class="mat-form-field inputDate">
+                    <label class="other-label">End Date</label>
+                    <input readonly matInput [max]="maxDate" date="true" time="false" formControlName="endDate"
+                      [matDatepicker]="endDate" id="endDate" />
+                    <mat-datepicker-toggle class="date-icon" matSuffix [for]="endDate">
+                    </mat-datepicker-toggle>
+                    <mat-datepicker touchUi="true" #endDate></mat-datepicker>
+                    <mat-error *ngIf="form.get('endDate').hasError('min-date')" class="validations">
+                      End date cannot be before <strong>From date</strong>
+                    </mat-error>
+                  </mat-form-field>
+                </div>
+                &nbsp;
+                <mat-form-field class="mat-form-field inputDate">
+                  <label class="other-label">Commission Status</label>
+                  <mat-select name="commissionStatus" id="commissionStatus" formControlName="commissionStatus"
+                  (selectionChange)="commissionStatusChange($event)">
+                    <mat-option [value]="0">All</mat-option>
+                    <mat-option *ngFor="let statusType of commissionStatuses" [value]="statusType.id">{{statusType.name}}
+                    </mat-option>
+                  </mat-select>
+                </mat-form-field>
+                &nbsp;
+                <mat-form-field [floatLabel]="'never'">
+                  <input matInput maxlength="50" name="searchTerm" id="searchTerm" formControlName="searchTerm" minLength="3"
+                    class="inputColor elementBox" matTooltip="Search by recipient name" matTooltipShowDelay="1000">
+
+                  <mat-placeholder class="placeholder">Search by Recipient name</mat-placeholder>
+                </mat-form-field>
+              </div>
+            </section>
+        </div>
+
+      <div [hidden]="(dataSource.loading$ | async)
+              || (dataSource && dataSource.data && dataSource.data.data && dataSource.data.data.length <= 0)
+              || (paginator && paginator.length === 0 && !(dataSource.loading$ | async))">
+
+          <mat-table #table [dataSource]="dataSource" matSort id="tblData" (matSortChange)="getData()">
+              <ng-container matColumnDef="select">
+                  <mat-header-cell *matHeaderCellDef>
+                      <mat-checkbox (change)="selectAll()"
+                      [checked]="isSelectAllSelected"
+                      matTooltip="select/deselect all"></mat-checkbox>
+                  </mat-header-cell>
+                  <mat-cell *matCellDef="let row">
+                      <mat-checkbox id="chk_{{row.headerId}}" (change)="AddCheckedItems(row, false)"
+                          [disabled]="disableReAllocate(row) || disableAllocate(row)"  [checked]="isSelected(row)">
+                      </mat-checkbox>
+                  </mat-cell>
+              </ng-container>
+
+              <ng-container matColumnDef="recepientName">
+              <mat-header-cell *matHeaderCellDef mat-sort-header>Name</mat-header-cell>
+              <mat-cell *matCellDef="let row">{{row.recepientName}}</mat-cell>
+              <mat-footer-cell *matFooterCellDef></mat-footer-cell>
+          </ng-container>
+          <ng-container matColumnDef="assignedTo">
+            <mat-header-cell *matHeaderCellDef> Assigned
+                To</mat-header-cell>
+            <mat-cell *matCellDef="let row">
+                <div>
+                    <user-display-name *ngIf="row.assignedTo" [userId]="row.assignedTo"></user-display-name>
+
+                    <ng-container *ngIf="!row.assignedTo">
+                        <span class="material-icons noHover" matTooltip="Unassigned">
+                            assignment_ind
+                        </span>
+                    </ng-container>
+                </div>
+            </mat-cell>
+        </ng-container>
+          <ng-container matColumnDef="isFitAndProper">
+              <mat-header-cell *matHeaderCellDef>Fit &amp; Proper</mat-header-cell>
+              <mat-cell *matCellDef="let row" style="justify-content:center;display:flex !important;">
+                <img *ngIf="!row.isFitAndProper && !row.fitAndProperCheckDate" src="/assets/images/pause-icon.png" width="16" height="16" />
+                <img *ngIf="row.isFitAndProper" src="/assets/images/checked-icon.png" width="16" height="16" />
+                <img *ngIf="!row.isFitAndProper  && row.fitAndProperCheckDate"
+                      src="/assets/images/not_checked-icon.png" width="16" height="16" /></mat-cell>
+              <mat-footer-cell *matFooterCellDef></mat-footer-cell>
+          </ng-container>
+          <ng-container matColumnDef="fitAndProperCheckDate">
+              <mat-header-cell *matHeaderCellDef>Verification Date</mat-header-cell>
+              <mat-cell *matCellDef="let row">{{row.fitAndProperCheckDate | date:'yyyy-MM-dd'}}</mat-cell>
+              <mat-footer-cell *matFooterCellDef></mat-footer-cell>
+          </ng-container>
+          <ng-container matColumnDef="totalHeaderAmount">
+              <mat-header-cell *matHeaderCellDef>Amount</mat-header-cell>
+              <mat-cell *matCellDef="let row"><a role="button" (click)="getCommissionDetailByHeader(row)" class="link-edit">{{row.totalHeaderAmount}}</a></mat-cell>
+              <mat-footer-cell *matFooterCellDef>{{calculateTotalAmount() |number:'1.2-2'}}</mat-footer-cell>
+          </ng-container>
+          <ng-container matColumnDef="pay">
+              <mat-header-cell *matHeaderCellDef>Release
+                  <mat-checkbox (change)="onReleaseSelectAll($event)" [checked]="isReleaseAllSelected" style="color: #ffffff;" *ngIf="showReleaseAll" [disabled]="isReleaseAllDisabled"></mat-checkbox>
+              </mat-header-cell>
+              <mat-cell *matCellDef="let row; let i = index" style="justify-content:center;display:flex !important;">
+                  <mat-checkbox [checked]="isReleaseSelectAllSelected(row)" (change)="approvePaymentChecked($event,row)"
+                    [disabled]="!row.isFitAndProper || row.headerStatusId == submitted || row.headerStatusId == paid">
+                  </mat-checkbox>
+              </mat-cell>
+              <mat-footer-cell *matFooterCellDef></mat-footer-cell>
+          </ng-container>
+          <ng-container matColumnDef="withHold">
+              <mat-header-cell *matHeaderCellDef>Withhold</mat-header-cell>
+              <mat-cell *matCellDef="let row; let i = index;" style="justify-content:center;display:flex !important;">
+                  <mat-checkbox [checked]="selectedWithHeldPaymentIds.indexOf(row.headerId) > -1" (change)="withHoldPaymentChecked($event,row)"
+                    [disabled]="row.headerStatusId == submitted || row.headerStatusId == withheld">
+                  </mat-checkbox>
+              </mat-cell>
+              <mat-footer-cell *matFooterCellDef></mat-footer-cell>
+          </ng-container>
+          <ng-container matColumnDef="comment">
+              <mat-header-cell *matHeaderCellDef>Reason</mat-header-cell>
+              <mat-cell *matCellDef="let row; let i = index;">
+                  <mat-form-field class="mat-form-field" floatLabel="never" *ngIf="row?.withholdingReasonId > 0">
+                      <textarea matInput rows="4" cols="10" wrap="physical" style="height: 40px; min-width: 250px;" disabled>{{row?.withholdingReasonId > 0 ? getWithholdingReason(row?.withholdingReasonId) : ''}}</textarea>
+                  </mat-form-field>
+                  <mat-form-field *ngIf="(showReasons && selectedApprovedPaymentIds.indexOf(row.headerId) === -1) || selectedWithHeldPaymentIds.indexOf(row.headerId) > -1">
+                      <mat-select (selectionChange)="onWithHoldingReasonSelect(row, $event)" [(value)]="row.withholdingReasonId">
+                          <mat-option *ngFor="let withHoldingReason of withHoldingReasons" [value]="withHoldingReason.id">
+                              {{withHoldingReason.name}}
+                          </mat-option>
+                      </mat-select>
+                  </mat-form-field>
+              </mat-cell>
+              <mat-footer-cell *matFooterCellDef></mat-footer-cell>
+          </ng-container>
+          <ng-container matColumnDef="headerStatus">
+            <mat-header-cell *matHeaderCellDef>Status</mat-header-cell>
+            <mat-cell *matCellDef="let row">{{getHeaderStatus(row?.headerStatusId)}}</mat-cell>
+            <mat-footer-cell *matFooterCellDef></mat-footer-cell>
+          </ng-container>
+          <ng-container matColumnDef="actions">
+            <mat-header-cell *matHeaderCellDef>
+                <span class="material-icons noHover">
+                    more_vert
+                </span>
+            </mat-header-cell>
+            <mat-cell *matCellDef="let row" [matMenuTriggerFor]="menu"
+                (click)="filterMenu(row)">
+                <span class="material-icons pointer right">
+                    more_vert
+                </span>
+                <mat-menu #menu="matMenu">
+                    <button mat-menu-item *ngFor="let menu of menus" disabled={{menu.disable}}
+                        (click)="onMenuSelect(row, menu)">{{menu.title}}</button>
+                </mat-menu>
+            </mat-cell>
+        </ng-container>
+          <mat-header-row *matHeaderRowDef="getDisplayedColumns()"></mat-header-row>
+          <mat-row *matRowDef="let row; columns: getDisplayedColumns();"></mat-row>
+      </mat-table>
+
+          <mat-paginator #paginator [pageIndex]="pageIndex" [pageSize]="pageSize" [pageSizeOptions]="[5, 10, 25, 100]"
+              [length]="this.dataSource.rowCount$ | async" (page)="getData()">
+          </mat-paginator>
+
+          <message-float-shared [floatMessage]="floatMessage"></message-float-shared>
+
+          <div *ngIf="(isSubmitting$ | async)" class="loadingDiv">
+              <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+              <span class="site-font">submitting payments...please wait</span>
+          </div>
+
+          <div class="form-group-button mat-form-button action-buttons">
+              <button type="button" *ngIf="userHasPermission('Work Pool Allocate User') && canAllocate"
+                  (click)="sendForAllocation(true, true)" class="button float-button">Allocate</button>
+              <button type="button" *ngIf="userHasPermission('Work Pool Re-Allocate User') && canReAllocate"
+                  (click)="sendForAllocation(true)" class="button float-button">Re-Allocate</button>
+              <button type="button" *ngIf="showSubmit"
+                  [disabled]="(isSubmitting$ | async)" (click)="releaseCommissions()" class="button float-button">Submit</button>
+          </div>
+          <br />
+      </div>
+
+      <div *ngIf="paginator.length === 0 && !(dataSource.loading$ | async)">
+          No data found...
+      </div>
+      <br />
+
+      <allocate-commissions-pool-item *ngIf="canAllocate$ | async" [selectedPaymentsToAllocate]="selectedCommissionsToAllocateApi"
+          [loggedInUerId]="userLoggedIn.id" [workPool]="selectedWorkPool"
+          [filteredUsersDropdown]="!userHasPermission('Work Pool Re-Allocate User') ? users : workPoolUsers"></allocate-commissions-pool-item>
+  </div>
+  </form>

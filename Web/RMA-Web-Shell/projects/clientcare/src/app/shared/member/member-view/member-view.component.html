@@ -1,0 +1,221 @@
+<mat-card class="margin-bottom" *ngIf="isLoading$ | async">
+  <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+  <label class="mat-label other-label"><i>loading member...please wait</i></label>
+</mat-card>
+
+<div class="margin-bottom" *ngIf="!(isLoading$ | async)">
+  <div *ngIf="!hideMenuBar" class="menu-bar">
+    <span class="material-icons" matTooltip="Account" *ngIf="!rolePlayer.company">account_circle</span>
+    <span class="material-icons" matTooltip="Mining"
+      *ngIf="rolePlayer.company && rolePlayer.company.industryClass && rolePlayer.company.industryClass == mining">engineering</span>
+    <span class="material-icons" matTooltip="Metals"
+      *ngIf="rolePlayer.company && rolePlayer.company.industryClass && rolePlayer.company.industryClass == metals">construction</span>&nbsp;<b>Member</b>&nbsp;<span
+      *ngIf="rolePlayer.finPayee">({{rolePlayer.finPayee.finPayeNumber}})&nbsp;</span>{{rolePlayer.displayName}}
+    <span *ngIf="!expanded && !hideExpandOption && userHasPermission(viewPermission)" (click)="showDetail()"
+      class="material-icons pointer right" matTooltip="view details">
+      expand_more
+    </span>
+    <span *ngIf="expanded && !hideExpandOption && userHasPermission(viewPermission)" (click)="showDetail()"
+      class="material-icons pointer right" matTooltip="hide details">
+      expand_less
+    </span>
+
+    <member-compliance class="right"
+      *ngIf="rolePlayer && rolePlayer.memberStatus != _new && rolePlayer.memberStatus != activeWithoutPolicies && !isWizard && !disable_coid_vaps_e2e_clientcare"
+      [rolePlayerId]="rolePlayer.rolePlayerId" (complianceResultEmit)="setComplianceResult($event)"></member-compliance>
+  </div>
+
+  <div *ngIf="rolePlayer">
+    <mat-card *ngIf="!expanded">
+      <div class="flex-parent-element">
+        <div class="flex-child-element">
+          <table class="altRowTable">
+            <tr *ngIf="rolePlayer.displayName">
+              <td><b>Name: </b></td>
+              <td>{{rolePlayer.displayName}}</td>
+            </tr>
+            <tr *ngIf="rolePlayer.memberStatus">
+              <td><b>Status: </b></td>
+              <td>{{getMemberStatus(rolePlayer.memberStatus)}}</td>
+            </tr>
+            <tr>
+              <td><b>Client Type: </b></td>
+              <td>{{getClientType(rolePlayer.clientType)}}</td>
+            </tr>
+            <tr *ngIf="rolePlayer.createdDate">
+              <td><b>Created Date: </b></td>
+              <td>{{rolePlayer.createdDate | date: "yyyy-MM-dd"}}</td>
+            </tr>
+          </table>
+        </div>
+        <div class="flex-child-element">
+          <table class="altRowTable">
+            <tr *ngIf="rolePlayer.company && rolePlayer.company.idNumber">
+              <td><b>Company Registration: </b></td>
+              <td>{{rolePlayer.company.idNumber}}</td>
+            </tr>
+            <tr *ngIf="rolePlayer.company && rolePlayer.company.referenceNumber">
+              <td><b>Compensation Fund Registration: </b></td>
+              <td>{{rolePlayer.company.referenceNumber}}</td>
+            </tr>
+            <tr *ngIf="rolePlayer.company && rolePlayer.company.compensationFundReferenceNumber">
+              <td><b>Compensation Fund Reference: </b></td>
+              <td>{{rolePlayer.company.compensationFundReferenceNumber}}</td>
+            </tr>
+          </table>
+        </div>
+        <div class="flex-child-element">
+          <table class="altRowTable">
+            <tr *ngIf="rolePlayer.company && rolePlayer.company.companyLevel">
+              <td><b>Company Level: </b></td>
+              <td>{{getCompanyLevel(rolePlayer.company.companyLevel)}}</td>
+            </tr>
+            <tr *ngIf="rolePlayer.company && rolePlayer.company.linkedCompanyId" matTooltip="go to holding company"
+              (click)="navigateToHoldingCompany(rolePlayer.company.linkedCompanyId)">
+              <td><b>Holding Company: </b></td>
+              <td><role-player-display-name
+                  [rolePlayerId]="rolePlayer.company.linkedCompanyId" (rolePlayerEmit)="setHoldingCompany($event)"></role-player-display-name></td>
+            </tr>
+            <tr *ngIf="rolePlayer.accountExecutiveId">
+              <td><b>Account Executive: </b></td>
+              <td><user-display-name [userId]="rolePlayer.accountExecutiveId"></user-display-name></td>
+            </tr>
+            <tr *ngIf="rolePlayer.finPayee">
+              <td><b>Member Number: </b></td>
+              <td>{{rolePlayer.finPayee.finPayeNumber}}</td>
+            </tr>
+            <tr *ngIf="rolePlayer.finPayee && rolePlayer.finPayee.debtorStatus">
+              <td><b>Debtor Status: </b></td>
+              <td>{{getDebtorStatus(rolePlayer.finPayee.debtorStatus)}}</td>
+            </tr>
+          </table>
+        </div>
+        <div class="flex-child-element">
+          <table class="altRowTable">
+            <tr *ngIf="rolePlayer.company && rolePlayer.company.industryClass">
+              <td><b>Industry Class: </b></td>
+              <td>{{getIndustryClass(rolePlayer.company.industryClass)}}</td>
+            </tr>
+            <tr *ngIf="rolePlayer.company && rolePlayer.company.industryId">
+              <td><b>Industry: </b></td>
+              <td>{{getIndustry(rolePlayer.company.industryId)}}</td>
+            </tr>
+            <tr *ngIf="rolePlayer.company && rolePlayer.company.natureOfBusiness">
+              <td><b>Nature of Business: </b></td>
+              <td>{{rolePlayer.company.natureOfBusiness}}</td>
+            </tr>
+          </table>
+        </div>
+      </div>
+    </mat-card>
+
+    <div *ngIf="expanded && userHasPermission(viewPermission)">
+      <mat-tab-group animationDuration="500ms" [(selectedIndex)]="parentTabIndex">
+        <mat-tab label="Account"
+          *ngIf="!showMinimumDetails && rolePlayer.memberStatus != activeWithoutPolicies && (rolePlayer.hasActiveCoidPolicies || rolePlayer.hasActiveVapsPolicies)">
+          <mat-tab-group animationDuration="500ms" [(selectedIndex)]="childTabIndex">
+            <mat-tab label="Renewals">
+              <member-declarations [rolePlayerId]="rolePlayerId" [isReadOnly]="isReadOnly"></member-declarations>
+            </mat-tab>
+
+            <mat-tab label="Collections">
+              <role-player-policy-transaction-search
+                [rolePlayerId]="rolePlayerId"></role-player-policy-transaction-search>
+            </mat-tab>
+
+            <mat-tab *ngIf="remittanceReport && remittanceParameters" label="Payments">
+              <remittance-reports [report]="remittanceReport" [parameters]="remittanceParameters"></remittance-reports>
+            </mat-tab>
+
+            <mat-tab label="Online Submissions" *ngIf="rolePlayer.company && rolePlayer.company.industryClass && rolePlayer.company.industryClass == mining">
+              <member-online-submissions [rolePlayerId]="rolePlayerId" [isReadOnly]="isReadOnly"></member-online-submissions>
+            </mat-tab>
+          </mat-tab-group>
+        </mat-tab>
+
+        <mat-tab label="Quotes"
+          *ngIf="!showMinimumDetails && !isWizard && (rolePlayer.hasActiveCoidPolicies || rolePlayer.hasActiveVapsPolicies)">
+          <mat-tab-group animationDuration="500ms" [(selectedIndex)]="childTabIndex">
+            <mat-tab *ngIf="userHasPermission(viewQuotesPermission)" label="Quotes">
+              <quote-search-V2 [rolePlayerId]="rolePlayer.rolePlayerId" (quoteSelectedEmit)="openQuoteDialog($event)"
+                [hideLeadColumn]="true"></quote-search-V2>
+            </mat-tab>
+            <mat-tab label="Product Offering">
+              <product-selector-V2 [rolePlayerId]="rolePlayer.rolePlayerId"></product-selector-V2>
+            </mat-tab>
+          </mat-tab-group>
+        </mat-tab>
+
+        <mat-tab label="Information">
+          <mat-tab-group animationDuration="500ms" [(selectedIndex)]="childTabIndex">
+            <mat-tab label="Details">
+              <member-details [member]="rolePlayer" (refreshEmit)="refresh($event)" [isReadOnly]="isReadOnly"></member-details>
+              <mat-card>
+                <member-account-executive [member]="rolePlayer" [isReadOnly]="isReadOnly"></member-account-executive>
+              </mat-card>
+              <mat-card>
+                <member-representative [member]="rolePlayer" [isReadOnly]="isReadOnly"></member-representative>
+              </mat-card>
+            </mat-tab>
+
+            <mat-tab *ngIf="rolePlayer.company" label="Company">
+              <member-company [member]="rolePlayer" (refreshEmit)="refresh($event)" [isReadOnly]="isReadOnly"></member-company>
+            </mat-tab>
+
+            <mat-tab label="Contacts">
+              <member-contacts [member]="rolePlayer" [isWizard]="isWizard" [isReadOnly]="isReadOnly"></member-contacts>
+            </mat-tab>
+
+            <mat-tab label="Addresses">
+              <role-player-address-list [rolePlayer]="rolePlayer" [isReadOnly]="isReadOnly" [isWizard]="isWizard"></role-player-address-list>
+            </mat-tab>
+
+            <mat-tab label="Bank Accounts">
+              <role-player-banking-list [rolePlayer]="rolePlayer" [isWizard]="isWizard" [isReadOnly]="isReadOnly"
+                [verifyAccount]="false" [showSelectColumn]="false"></role-player-banking-list>
+            </mat-tab>
+
+          </mat-tab-group>
+        </mat-tab>
+
+        <mat-tab *ngIf="currentUser?.isInternalUser" label="Notes">
+          <roleplayer-note [rolePlayerId]="rolePlayerId"></roleplayer-note>
+        </mat-tab>
+
+        <mat-tab label="Documents">
+          <document [systemName]="documentSystemName" [keyName]="'MemberId'" [keyValue]="rolePlayer.rolePlayerId"
+            [expiryDate]="currentCoverPeriodEndDate">
+          </document>
+        </mat-tab>
+
+        <mat-tab *ngIf="!isWizard && currentUser?.isInternalUser && !disable_coid_vaps_e2e_clientcare" label="Referrals">
+          <referral-view [targetModuleType]="targetModuleType" [referralItemType]="referralItemType" [itemId]="rolePlayer.rolePlayerId" [referralItemTypeReference]="referralItemTypeReference"></referral-view>
+        </mat-tab>
+
+        <mat-tab *ngIf="currentUser?.isInternalUser && userHasPermission(viewAuditPermission)"
+          label="Communication">
+          <email-audit-search [itemType]="'RolePlayer'" [itemId]="rolePlayer.rolePlayerId" [rolePlayerContactOptions]="rolePlayerContactOptions"></email-audit-search>
+        </mat-tab>
+
+        <mat-tab *ngIf="!isWizard && !showMinimumDetails && !disable_coid_vaps_e2e_clientcare" label="Self Service Access">
+          <member-register-user *ngIf="userHasPermission(manageLinkedUsersPermission)"
+            [companyId]="rolePlayerId"></member-register-user>
+          <access-denied *ngIf="!userHasPermission(manageLinkedUsersPermission)"></access-denied>
+        </mat-tab>
+
+        <mat-tab *ngIf="rolePlayer.company.companyLevel == holdingCompanyLevel && currentUser?.isInternalUser" label="Subsidiaries">
+          <company-search [title]="'Subsidiaries'" [rolePlayerId]="rolePlayerId" [companyLevel]="subsidiaryLevel" (companySelectedEmit)="setSelectedSubsidiary($event)"></company-search>
+        </mat-tab>
+
+        <mat-tab *ngIf="rolePlayer && rolePlayer.rolePlayerId > 0 && userHasPermission(viewSlaPermission) && !isWizard && !disable_coid_vaps_e2e_clientcare" label="SLA">
+          <paged-sla-status-change-audits [slaItemType]="slaItemType"
+            [currentQuery]="rolePlayer.rolePlayerId"></paged-sla-status-change-audits>
+        </mat-tab>
+      </mat-tab-group>
+    </div>
+  </div>
+
+  <div *ngIf="!rolePlayer">
+    <label class="mat-label other-label"><i>No member found...</i></label>
+  </div>
+</div>

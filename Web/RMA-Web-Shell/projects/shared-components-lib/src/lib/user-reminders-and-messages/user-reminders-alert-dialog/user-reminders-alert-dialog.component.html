@@ -1,0 +1,28 @@
+<div class="menu-bar">
+  <span class="material-icons shake">
+    notifications_active
+  </span>
+  My Reminders & Alerts
+  <span (click)="cancel()" class="material-icons pointer right" matTooltip="close">
+    cancel
+  </span>
+</div>
+
+<mat-card *ngIf="!showView">
+  <paged-user-reminders [userId]="userId" [getAlerts]="true"
+    (selectedUserReminderEmit)="viewUserReminder($event)"></paged-user-reminders>
+</mat-card>
+
+<mat-card *ngIf="showView">
+  <div>
+    {{selectedUserReminder.text}}
+  </div>
+
+  <div *ngIf="selectedUserReminder.linkUrl && selectedUserReminder.linkUrl != ''">
+    <br />
+    <a href="{{selectedUserReminder.linkUrl}}"><span class="material-icons">
+        saved_search
+      </span>Click <b>HERE</b> to navigate to the
+      {{getUserReminderItemType(selectedUserReminder.userReminderItemType)}}</a>
+  </div>
+</mat-card>

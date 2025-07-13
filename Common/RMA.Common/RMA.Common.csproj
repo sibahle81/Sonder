@@ -1,0 +1,194 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">x64</Platform>
+    <ProjectGuid>{C30FB382-556D-41E4-B987-DEA4F962059A}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>RMA.Common</RootNamespace>
+    <AssemblyName>RMA.Common</AssemblyName>
+    <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <Deterministic>true</Deterministic>
+    <NuGetPackageImportStamp>
+    </NuGetPackageImportStamp>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x64'">
+    <DebugSymbols>true</DebugSymbols>
+    <OutputPath>bin\x64\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <DebugType>full</DebugType>
+    <PlatformTarget>x64</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>..\..\Solution Items\RMA.ruleset</CodeAnalysisRuleSet>
+    <LangVersion>latest</LangVersion>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x64'">
+    <OutputPath>bin\x64\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <Optimize>true</Optimize>
+    <DebugType>pdbonly</DebugType>
+    <PlatformTarget>x64</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>..\..\Solution Items\RMA.ruleset</CodeAnalysisRuleSet>
+    <LangVersion>latest</LangVersion>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|AnyCPU'">
+    <DebugSymbols>true</DebugSymbols>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <DebugType>full</DebugType>
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <LangVersion>latest</LangVersion>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>..\..\Solution Items\RMA.ruleset</CodeAnalysisRuleSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|AnyCPU'">
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <Optimize>true</Optimize>
+    <DebugType>pdbonly</DebugType>
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <LangVersion>latest</LangVersion>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>..\..\Solution Items\RMA.ruleset</CodeAnalysisRuleSet>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="System" />
+    <Reference Include="System.ComponentModel.DataAnnotations" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Net.Http" />
+    <Reference Include="System.Runtime.Serialization" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Constants\DocumentTypes.cs" />
+    <Compile Include="Constants\EmailTokens.cs" />
+    <Compile Include="Constants\AppPrefix.cs" />
+    <Compile Include="Constants\AppNames.cs" />
+    <Compile Include="Constants\RuleEmails.cs" />
+    <Compile Include="Entities\AuditDetails.cs" />
+    <Compile Include="Entities\AuditLogEntry.cs" />
+    <Compile Include="Entities\CapitalizedValueModel.cs" />
+    <Compile Include="Entities\DatabaseQuery\DataSourceQuery.cs" />
+    <Compile Include="Entities\ExceptionInfo.cs" />
+    <Compile Include="Entities\LastViewedEntry.cs" />
+    <Compile Include="Entities\Lookup.cs" />
+    <Compile Include="Entities\LookupValue.cs" />
+    <Compile Include="Entities\MailAttachment.cs" />
+    <Compile Include="Entities\MailRequest.cs" />
+    <Compile Include="Entities\Item.cs" />
+    <Compile Include="Entities\Note.cs" />
+    <Compile Include="Entities\Request.cs" />
+    <Compile Include="Entities\RuleItem.cs" />
+    <Compile Include="Entities\SendCommunicationResult.cs" />
+    <Compile Include="Entities\SendMailRequest.cs" />
+    <Compile Include="Entities\SendSmsRequestResult.cs" />
+    <Compile Include="Entities\SendSmsRequest.cs" />
+    <Compile Include="Entities\ServiceBusMessageBase.cs" />
+    <Compile Include="Entities\MessageType.cs" />
+    <Compile Include="Entities\TemplateSmsRequest.cs" />
+    <Compile Include="Entities\UserInfo.cs" />
+    <Compile Include="Entities\ValidityCheck.cs" />
+    <Compile Include="Enums\LogLevel.cs" />
+    <Compile Include="Enums\CommonEnum.cs" />
+    <Compile Include="Enums\ServiceBusQueue.cs" />
+    <Compile Include="Enums\RoleEnum.cs" />
+    <Compile Include="Enums\TenantEnum.cs" />
+    <Compile Include="Exceptions\MultiTenantException.cs" />
+    <Compile Include="Exceptions\BusinessException.cs" />
+    <Compile Include="Exceptions\PermissionException.cs" />
+    <Compile Include="Exceptions\TechnicalException.cs" />
+    <Compile Include="Extensions\BinaryReaderExtensions.cs" />
+    <Compile Include="Extensions\AutoMapperExtensions.cs" />
+    <Compile Include="Extensions\DateTimeHelper.cs" />
+    <Compile Include="Extensions\DbValueExtensions.cs" />
+    <Compile Include="Extensions\EnumExtensions.cs" />
+    <Compile Include="Extensions\DebugLogExtension.cs" />
+    <Compile Include="Extensions\ExceptionExtensions.cs" />
+    <Compile Include="Extensions\NullableIntExtension.cs" />
+    <Compile Include="Extensions\FileExtensions.cs" />
+    <Compile Include="Extensions\IEnumerableExtensions.cs" />
+    <Compile Include="Extensions\ListExtensions.cs" />
+    <Compile Include="Extensions\NumberExtensions.cs" />
+    <Compile Include="Extensions\ObjectExtensions.cs" />
+    <Compile Include="Extensions\RemotingExtensions.cs" />
+    <Compile Include="Extensions\SnakeCasePropertyNamesContractResolver.cs" />
+    <Compile Include="Extensions\StringExtensions.cs" />
+    <Compile Include="Extensions\TaskExtensions.cs" />
+    <Compile Include="Extensions\TypeExtensions.cs" />
+    <Compile Include="Extensions\UriExtensions.cs" />
+    <Compile Include="Extensions\XmlExtensions.cs" />
+    <Compile Include="Globalization\CultureConfiguration.cs" />
+    <Compile Include="Interfaces\IAuditWriter.cs" />
+    <Compile Include="Interfaces\IEmailSenderService.cs" />
+    <Compile Include="Interfaces\IHttpClientService.cs" />
+    <Compile Include="Interfaces\IMessageTypeTaskHandler.cs" />
+    <Compile Include="Interfaces\ISerializerService.cs" />
+    <Compile Include="Interfaces\ISmsSenderService.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Security\RmaIdentity.cs" />
+    <Compile Include="Utilities\CommonUtil.cs" />
+    <Compile Include="Entities\HttpClientSettings.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <AdditionalFiles Include="..\..\Solution Items\RMA.DependencyValidation\ServicePlatform.layerdiagram">
+      <Link>ServicePlatform.layerdiagram</Link>
+      <Visible>False</Visible>
+    </AdditionalFiles>
+  </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="AutoMapper">
+      <Version>8.0.0</Version>
+    </PackageReference>
+    <PackageReference Include="CommonServiceLocator">
+      <Version>2.0.7</Version>
+    </PackageReference>
+    <PackageReference Include="Microsoft.CodeAnalysis.FxCopAnalyzers">
+      <Version>3.3.2</Version>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+      <PrivateAssets>all</PrivateAssets>
+    </PackageReference>
+    <PackageReference Include="Microsoft.CodeAnalysis.VersionCheckAnalyzer">
+      <Version>3.3.2</Version>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+      <PrivateAssets>all</PrivateAssets>
+    </PackageReference>
+    <PackageReference Include="Microsoft.CodeQuality.Analyzers">
+      <Version>3.3.2</Version>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+      <PrivateAssets>all</PrivateAssets>
+    </PackageReference>
+    <PackageReference Include="Microsoft.DependencyValidation.Analyzers">
+      <Version>0.11.0</Version>
+    </PackageReference>
+    <PackageReference Include="Microsoft.NetFramework.Analyzers">
+      <Version>3.3.2</Version>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+      <PrivateAssets>all</PrivateAssets>
+    </PackageReference>
+    <PackageReference Include="Microsoft.VisualStudio.Threading.Analyzers">
+      <Version>16.3.52</Version>
+    </PackageReference>
+    <PackageReference Include="Newtonsoft.Json">
+      <Version>13.0.3</Version>
+    </PackageReference>
+    <PackageReference Include="Roslynator.Analyzers">
+      <Version>2.1.0</Version>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+      <PrivateAssets>all</PrivateAssets>
+    </PackageReference>
+    <PackageReference Include="Serilog">
+      <Version>2.8.0</Version>
+    </PackageReference>
+    <PackageReference Include="ServiceFabric.Remoting.CustomHeaders">
+      <Version>3.0.12</Version>
+    </PackageReference>
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+</Project>

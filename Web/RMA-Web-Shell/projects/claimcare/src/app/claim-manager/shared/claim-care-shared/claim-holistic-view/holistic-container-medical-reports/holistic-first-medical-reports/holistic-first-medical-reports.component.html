@@ -1,0 +1,90 @@
+<div class="menu-bar">
+    <span class="material-icons">
+        filter_1
+    </span>&nbsp;<label>First Medical Report Upload</label>
+
+    <medical-upload-icon *ngIf="!(isLoading$ | async)" [selectedPersonEvent]="personEvent" [event]="event"
+        [isWizard]="isWizard" [medicalReportType]="firstMedicalReportEnum" (refresh)="settingData()">
+    </medical-upload-icon>
+</div>
+
+<mat-card *ngIf="(isLoading$ | async)">
+    <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+    <label class="mat-label other-label"><i>{{loadingMessage$ | async}}</i></label>
+</mat-card>
+
+<mat-card *ngIf="!(isLoading$ | async) && medicalReportDetails?.length <= 0">
+    <label class="mat-label other-label"><i>no first medical reports have been added...</i></label>
+</mat-card>
+
+<mat-card *ngIf="medicalReportDetails?.length > 0 && !(isLoading$ | async)">
+    <mat-table #table [dataSource]="dataSource" matSort id="tblData">
+        <ng-container matColumnDef="healthCareProvider">
+            <mat-header-cell *matHeaderCellDef> Healthcare Provider Name </mat-header-cell>
+            <mat-cell *matCellDef="let row">{{row && row.medicalReportForm ?
+                row.medicalReportForm.healthcareProviderName : 'N/A'}}</mat-cell>
+        </ng-container>
+
+        <ng-container matColumnDef="practiceNumber">
+            <mat-header-cell *matHeaderCellDef> Healthcare Provider Practice Number </mat-header-cell>
+            <mat-cell *matCellDef="let row">{{row && row.medicalReportForm ?
+                row.medicalReportForm.healthcareProviderPracticeNumber : 'N/A'}}</mat-cell>
+        </ng-container>
+
+        <ng-container matColumnDef="iCD10Code">
+            <mat-header-cell *matHeaderCellDef> ICD10Code </mat-header-cell>
+            <mat-cell *matCellDef="let row">{{row && row.medicalReportForm ? row.medicalReportForm.icd10Codes :
+                'N/A'}}</mat-cell>
+        </ng-container>
+
+        <ng-container matColumnDef="documentStatus">
+            <mat-header-cell *matHeaderCellDef> Document Status </mat-header-cell>
+            <mat-cell *matCellDef="let row" matTooltip="document statuses" class="pointer"
+                (click)="filterDocumentStatusMenu(row)">
+                <mat-icon [matMenuTriggerFor]="menu2"
+                    *ngIf="!(isWizard) && !isStraightThrough">list</mat-icon>&nbsp;
+                <label [ngClass]="setStatusClass(row)" >
+                    {{setDocumentStatus(row)}}
+                </label>
+                <mat-menu #menu2="matMenu">
+                    <span *ngFor="let menu of documentStatusMenus">
+                        <button mat-menu-item (click)="onDocumentStatusMenuItemClick(menu, row)" [disabled]="menu.disable">
+                            <span>{{menu.title}}</span>
+                        </button>
+                    </span>
+                </mat-menu>
+            </mat-cell>
+        </ng-container>
+
+        <ng-container matColumnDef="actions">
+            <mat-header-cell *matHeaderCellDef> Actions </mat-header-cell>
+            <mat-cell *matCellDef="let row">
+                <a role="button" class="link-edit" (click)="onFirstMedicalMenuItemClick(row, 'view')">
+                    <span matTooltip="view first medical report" class="material-icons pointer">
+                        visibility
+                    </span>
+                </a>
+
+                <a role="button" class="link-edit" *ngIf="!documentsAccepted && currentUser?.isInternalUser"
+                    (click)="onFirstMedicalMenuItemClick(row, 'edit')">
+                    <span matTooltip="edit" class="material-icons pointer">
+                        settings
+                    </span>
+                </a>
+
+                <a role="button" class="link-edit pointer" *ngIf="!documentsAccepted && !isWizard && currentUser?.isInternalUser"
+                    (click)="openConfirmationDialog(row)">
+                    <span matTooltip="remove" class="material-icons pointer">
+                        delete
+                    </span>
+                </a>
+            </mat-cell>
+        </ng-container>
+
+        <mat-header-row *matHeaderRowDef="getDisplayedColumns()"></mat-header-row>
+        <mat-row *matRowDef="let row; columns: getDisplayedColumns();"></mat-row>
+    </mat-table>
+    <mat-paginator #paginator [length]="dataSource.data ? dataSource.data.length : 0" [pageIndex]="0" [pageSize]="5"
+        [pageSizeOptions]="[5, 10, 25, 100]">
+    </mat-paginator>
+</mat-card>

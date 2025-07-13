@@ -1,0 +1,106 @@
+<!--<div  class="wizard-main-content" >-->
+<div class="wizard-main-content mat-elevation-z8">
+  <mat-card class="wizard-mat-card wizard-mat-table">
+    <mat-card-header>
+      <mat-card-title>
+        <h4>Policy Benefits</h4>
+      </mat-card-title>
+      <div *ngIf="isLoading">
+        <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+      </div>
+    </mat-card-header>
+    <mat-card-content>
+      <form [formGroup]="form" class="mat-container details-form">
+        <section>
+          <mat-form-field>
+            <label class="mat-label other-label">View Details by Effective Date:</label>
+            <mat-select formControlName="selectedDetailDate" (selectionChange)="onDetailsDateChanged($event.value)">
+              <mat-option *ngFor="let detailDate of benefitDetailDates" [value]="detailDate">
+                {{ detailDate | date: 'yyyy-MM-dd'}}
+              </mat-option>
+            </mat-select>
+          </mat-form-field>
+        </section>
+        </form>
+        <create-policy-standard-benefit (policyChanged)="groupRiskPolicyChange($event)" (benefitChanged)="onBenefitChange($event)" (startDateChanged)="onStartDateChanged($event)"></create-policy-standard-benefit>
+        <create-policy-critilcalIllness-benefit [hidden]="!isCriticalIllnessBenefit"></create-policy-critilcalIllness-benefit>
+        <create-policy-funeral-benefit [hidden]="!isFuneralBenefit"></create-policy-funeral-benefit>
+        <policy-spousedeath-benefit-component [hidden]="!isSpouseDeathBenefit"></policy-spousedeath-benefit-component>
+        <create-policy-death-benefit [hidden]="!isDeathBenefit"></create-policy-death-benefit>
+        <create-policy-disabilitylumpsum-benefit [hidden]="!isDisabilityLumpsumBenefit"></create-policy-disabilitylumpsum-benefit>
+        <create-policy-total-temporary-disability-benefit [hidden]="!isTotalTemporalDisabilityBenefit"></create-policy-total-temporary-disability-benefit>
+        <create-policy-disability-income-benefit [hidden]="!isDisabilityIncome"></create-policy-disability-income-benefit>
+
+    </mat-card-content>
+    <mat-card-footer>
+      <div class="form-group-button mat-form-button form-buttons submit-button mat-elevation-z8" *ngIf="!isDisabled" style="margin-bottom: 10px;float: right;">
+        <button class="button submit-button" (click)="onSaveBenefit()">Save Benefit</button>
+      </div>
+    </mat-card-footer>
+  </mat-card>
+  <mat-card class="wizard-mat-card wizard-mat-table" >
+    <mat-card-header>
+      <h4>Created Benefits</h4>
+    </mat-card-header>
+    <mat-card-content class="wizard-mat-card-content">
+      <div>
+        <div class="mat-container">
+
+          <div>
+
+            <mat-table #table [dataSource]="dataSource" matSort>
+
+              <ng-container matColumnDef="benefitName">
+                <mat-header-cell *matHeaderCellDef mat-sort-header> Benefit Name </mat-header-cell>
+                <mat-cell *matCellDef="let row"> {{ row.benefitName }} </mat-cell>
+              </ng-container>
+
+              <ng-container matColumnDef="policyNumber">
+                <mat-header-cell *matHeaderCellDef mat-sort-header> Policy Number </mat-header-cell>
+                <mat-cell *matCellDef="let row"> {{getBenefitPolicyNumber(row.policyId) }} </mat-cell>
+              </ng-container>
+
+              <ng-container matColumnDef="startDate">
+                <mat-header-cell *matHeaderCellDef mat-sort-header> Benefit Start Date </mat-header-cell>
+                <mat-cell *matCellDef="let row"> {{row.startDate  | date: 'yyyy-MM-dd'}} </mat-cell>
+              </ng-container>
+
+              <ng-container matColumnDef="endDate">
+                <mat-header-cell *matHeaderCellDef mat-sort-header> Benefit End Date </mat-header-cell>
+                <mat-cell *matCellDef="let row">  {{row.endDate ? (row.endDate | date: 'yyyy-MM-dd') : ''}} </mat-cell>
+              </ng-container>
+
+              <ng-container matColumnDef="benefitCode">
+                <mat-header-cell *matHeaderCellDef mat-sort-header> Benefit ID </mat-header-cell>
+                <mat-cell *matCellDef="let row"> {{row.benefitCode}} </mat-cell>
+              </ng-container>
+
+              <ng-container matColumnDef="actions">
+                <mat-header-cell *matHeaderCellDef>Actions</mat-header-cell>
+                <mat-cell *matCellDef="let row; let i = index;">
+
+                  <span> <img src="/assets/images/edit.png" class="action-icon" /> <a role="button" class="link-edit action-link" (click)="onEdit(row, i)">{{isDisabled ? 'View' : 'Edit'}}</a></span>
+                  <div *ngIf="!isDisabled && !isEditWorkflow">
+                    <span> <img src="/assets/images/delete.png" class="action-icon action-icon-right" /> <a role="button" class="link-edit action-link" (click)="onRemove(row, i)">Remove</a></span>
+                  </div>
+                </mat-cell>
+              </ng-container>
+
+              <mat-header-row *matHeaderRowDef="displayedColumns;"></mat-header-row>
+              <mat-row *matRowDef="let row; columns: displayedColumns;"></mat-row>
+            </mat-table>
+
+            <mat-paginator #paginator [length]="dataSource.data.length" [pageIndex]="0" [pageSize]="5"
+                           [pageSizeOptions]="[5, 10,100]">
+            </mat-paginator>
+          </div>
+
+          <div [hidden]="dataSource.data.length > 0 ">
+            <span class="grey site-font">No policy benefits have been added.</span>
+          </div>
+        </div>
+      </div>
+
+    </mat-card-content>
+  </mat-card>
+</div>

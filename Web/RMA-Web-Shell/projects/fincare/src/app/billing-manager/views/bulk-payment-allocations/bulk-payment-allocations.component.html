@@ -1,0 +1,36 @@
+<div>
+  <br>
+  <h1>Payment Bulk Allocations</h1>
+  <br>
+</div>
+<div>
+  <div>
+    <upload-control #uploadControl [acceptedTypes]="'.csv'" [isSingleInput]="false" [allowDelete]="true"
+                    [isReadOnly]="false">
+    </upload-control>
+  </div>
+  <div class="left-padding" *ngIf="uploadControlComponent.uploadFileList.length > 0">
+    <div>Uploading large files may take several minutes. Please be patient.</div>
+    <br>
+    <div>Large files with more than 250 line items will be uploaded but queued for background processing</div>
+  </div>
+  <div *ngIf="(doneUploading$ | async) && isBigFile">
+    Big File contents uploaded and queued for processing.
+  </div>
+  <div *ngIf="(doneUploading$ | async) && !isBigFile">
+    File contents uploaded and allocated.
+  </div>
+  <br />
+  <div [hidden]="!hasErrors" class="error-message">
+    <ng-container *ngFor="let msg of errors">
+      {{msg}}<br />
+    </ng-container>
+  </div>
+  <br />
+  <div class="form-buttons" (click)="save()">
+    <button class="button float-button submit-button" [disabled]="uploadControlComponent.isUploading || uploadControlComponent.uploadFileList.length=== 0">
+      Upload
+      File
+    </button>
+  </div>
+</div>

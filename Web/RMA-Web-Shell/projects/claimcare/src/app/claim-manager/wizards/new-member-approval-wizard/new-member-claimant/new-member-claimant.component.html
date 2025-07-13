@@ -1,0 +1,64 @@
+<div *ngIf="isLoading">
+    <div *ngIf="currentAction != ''" class="menu-container">
+        <div style="margin-right: 15px;">
+            <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+        </div>
+        <label class="mat-label other-label"><i>Loading notifier details...</i></label>
+    </div>
+</div>
+
+
+<div *ngIf="!isLoading">
+  <form [formGroup]="claimantForm" class="mat-container" novalidate>
+    <section>
+      <mat-form-field class="mat-form-field-right">
+          <label>Notifier First Name</label>
+          <input matInput maxlength="50" formControlName="claimantFirstName" name="claimantFirstName">
+      </mat-form-field>
+
+      <mat-form-field class="mat-form-field-right">
+      <label>Notifier Last Name</label>
+      <input matInput maxlength="50" formControlName="claimantLastName" name="claimantLastName">
+
+      </mat-form-field>
+  </section>
+  <section>
+      <mat-form-field class="mat-form-field-right">
+          <label>Notifier Id Number</label>
+          <input matInput maxlength="13" formControlName="claimantIdNumber" name="claimantIdNumber">
+      </mat-form-field>
+
+      <mat-form-field class="mat-form-field-right">
+      <label class="mat-label other-label">Date of Birth</label>
+      <input readonly matInput date="true" time="false"
+          formControlName="claimantDateOfBirth" [matDatepicker]="claimantDateOfBirth" id="claimantDateOfBirth" />
+      <mat-datepicker-toggle matSuffix style="position: absolute;right: 0;top: 13px;"
+          [for]="claimantDateOfBirth"></mat-datepicker-toggle>
+      <mat-datepicker touchUi="true" #claimantDateOfBirth></mat-datepicker>
+  </mat-form-field>
+  </section>
+  <section>
+      <mat-form-field class="mat-form-field-right">
+          <label>Cellphone Number</label>
+          <input matInput maxlength="50" formControlName="claimantCellnumber" name="claimantCellnumber">
+      </mat-form-field>
+
+      <mat-form-field class="mat-form-field-right">
+      <label>Claimiant Email Address</label>
+      <input matInput maxlength="50" formControlName="claimantEmailAddress" name="claimantEmailAddress">
+      </mat-form-field>
+  </section>
+  <section>
+      <mat-form-field class="mat-form-field-right">
+          <label class="mat-label other-label">Preffered Method Of Contact</label>
+          <mat-select name="filter" id="filter" formControlName="communicationType" #communicationSelect
+                        >
+                        <mat-option [value]="1">Email</mat-option>
+                        <mat-option [value]="2">Phone</mat-option>
+                        <mat-option [value]="3">SMS</mat-option>
+                        <mat-option [value]="4">Post</mat-option>
+                    </mat-select>
+      </mat-form-field>
+  </section>
+  </form>
+</div>

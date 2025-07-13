@@ -1,0 +1,81 @@
+<mat-tab-group>
+  <mat-tab label="Details">
+      <mat-card style="margin: 15px 30px 15px 30px">
+          <mat-card-header>
+              <mat-card-title class="wizard-font card-title grey">
+                  <h1 class="wizard-font" style="padding: 0;">Migrated Claim Details</h1>
+              </mat-card-title>
+          </mat-card-header>
+          <mat-card-content style="margin-left: 10px;">
+              <div>
+                  <form [formGroup]="form" (ngSubmit)="save()" class="mat-container" novalidate>
+                      <div style="margin-top: 20px;">
+                          <section>
+                              <!--Type of death-->
+                              <mat-form-field>
+                                  <label class="mat-label other-label">Type of death</label>
+                                  <mat-select name="filter" id="filter" formControlName="typeOfDeath">
+                                      <mat-option [value]="1">Natural</mat-option>
+                                      <mat-option [value]="2">Unnatural</mat-option>
+                                      <mat-option [value]="3">Stillborn</mat-option>
+                                      <mat-option [value]="4">Suicide</mat-option>                                      
+                                      <mat-option [value]="6">Under Investigation</mat-option>
+                                  </mat-select>
+                              </mat-form-field>
+
+                              <!-- Policy Number -->
+                              <mat-form-field class="mat-form-field-right">
+                                  <label class="mat-label other-label">Policy Number</label>
+                                  <input matInput maxlength="50" name="policyNumber" id="policyNumber"
+                                      formControlName="policyNumber">
+                              </mat-form-field>
+                          </section>
+                          <section>
+                              <!-- Date of Death -->
+                              <mat-form-field>
+                                  <label class="mat-label other-label">Date of Death</label>
+                                  <input readonly matInput formControlName="dateOfDeath" [matDatepicker]="dateOfDeath"
+                                      id="dateOfDeath" />
+                                  <mat-datepicker-toggle matSuffix style="position: absolute;right: 0;top: 13px;"
+                                      [for]="dateOfDeath"></mat-datepicker-toggle>
+                                  <mat-datepicker touchUi="true" #dateOfDeath></mat-datepicker>
+                              </mat-form-field>
+
+                              <!--Deceased-->
+                              <mat-form-field class="mat-form-field-right">
+                                  <label class="mat-label other-label">Deceased</label>
+                                  <mat-select name="deceased" id="deceased" formControlName="deceased">
+                                      <mat-option *ngFor="let insuredLife of insuredLives" [value]="insuredLife.id">
+                                          {{insuredLife.name}} {{insuredLife.surname}}
+                                      </mat-option>
+                                  </mat-select>
+                              </mat-form-field>
+                          </section>
+                          <section>
+                              <mat-form-field class="mat-label other-label">
+                                  <label>First Name</label>
+                                  <input matInput maxlength="50" formControlName="firstName" name="firstName">
+                              </mat-form-field>
+                              <mat-form-field class="mat-form-field-right">
+                                  <label>Last Name</label>
+                                  <input matInput maxlength="50" formControlName="lastName" name="lastName" disabled=true>
+                              </mat-form-field>
+                          </section>
+                      </div>
+                      <div class="form-group-button mat-form-button">
+                          <div (click)="back()"
+                              class="form-group-button mat-form-button" style="margin-top: -15px;">
+                              <button type="button" class="button float-button">Back</button>
+                          </div>
+                      </div>
+                  </form>
+              </div>
+          </mat-card-content>
+      </mat-card>
+  </mat-tab>
+
+  <!--Notes-->
+  <mat-tab label="Notes">
+      <notes></notes>
+  </mat-tab>
+</mat-tab-group>

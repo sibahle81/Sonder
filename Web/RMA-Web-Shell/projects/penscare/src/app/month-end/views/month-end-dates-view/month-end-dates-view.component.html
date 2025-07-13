@@ -1,0 +1,100 @@
+<mat-card class="margin-bottom" *ngIf="(isLoading$ | async)">
+  <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+  <label class="mat-label other-label"><i>loading month end details...please wait</i></label>
+</mat-card>
+
+<mat-card class="margin-bottom" *ngIf="!(isLoading$ | async)">
+  <div class="menu-bar">
+    <span class="material-icons">
+      calendar_today
+    </span>
+    Month End Run Details&nbsp;<span *ngIf="getRunStatus">&lpar;{{getRunMonth(monthEndDate.month)}}&dash;{{monthEndDate.year}}&rpar;</span>
+
+    <span class="material-icons pointer right" *ngIf="!(isLoading$ | async)" matTooltip="refresh" (click)="getMonthEndRunDate()">
+      refresh
+    </span>
+    <span class="material-icons pointer right" matTooltip="release payments" *ngIf="canReleasePayments && !(isLoading$ | async)" (click)="queueMonthEndRelease()">
+      logout
+    </span>
+    <span class="material-icons pointer right" matTooltip="start month end" *ngIf="!monthEndQueued && !(isLoading$ | async)" (click)="queueMonthEndProcessing()">
+      play_arrow
+    </span>
+  </div>
+  <div class="flex-parent-element">
+    <div class="flex-child-element">
+      <table class="altRowTable">
+        <tr>
+          <td><b>Year: </b></td>
+          <td>{{monthEndDate.year}}</td>
+        </tr>
+        <tr>
+          <td><b>Month: </b></td>
+          <td>{{getRunMonth(monthEndDate.month)}}</td>
+        </tr>
+        <tr>
+          <td><b>Status: </b></td>
+          <td>{{getRunStatus(monthEndDate.monthEndRunStatus)}}</td>
+        </tr>
+      </table>
+    </div>
+    <div class="flex-child-element">
+      <table class="altRowTable">
+        <tr>
+          <td><b>Authorization Close Of Month: </b></td>
+          <td>{{monthEndDate.authorizationCloseOfDate | date: "yyyy-MM-dd"}}</td>
+        </tr>
+        <tr>
+          <td><b>Month End Close Of Month: </b></td>
+          <td>{{monthEndDate.monthEndCloseOfDate | date: "yyyy-MM-dd"}}</td>
+        </tr>
+        <tr>
+          <td><b>Payment Date: </b></td>
+          <td>{{monthEndDate.paymentDate | date: "yyyy-MM-dd"}}</td>
+        </tr>
+      </table>
+    </div>
+    <div class="flex-child-element">
+      <table class="altRowTable">
+        <tr>
+          <td><b>Month End Balance Date: </b></td>
+          <td>{{monthEndDate.monthEndBalanceAndReleaseDate | date: "yyyy-MM-dd"}}</td>
+        </tr>
+        <tr>
+          <td><b>PACS Create Date: </b></td>
+          <td>{{monthEndDate.pacsCreateDate | date: "yyyy-MM-dd"}}</td>
+        </tr>
+        <tr>
+          <td><b>PACS Strike Date: </b></td>
+          <td>{{monthEndDate.pacsStrikeDate | date: "yyyy-MM-dd"}}</td>
+        </tr>
+      </table>
+    </div>
+    <div class="flex-child-element">
+      <table class="altRowTable">
+        <tr>
+          <td><b>Month End Total: </b></td>
+          <td>{{monthEndDate.runTotal | currency: 'R'}}</td>
+        </tr>
+        <tr>
+          <td><b>Released Amount: </b></td>
+          <td>{{monthEndDate.releaseTotal | currency: 'R'}}</td>
+        </tr>
+        <tr>
+      </table>
+    </div>
+  </div>
+</mat-card>
+<div *ngIf="!(isLoading$ | async)">
+  <mat-tab-group animationDuration="500ms" [(selectedIndex)]="tabIndex">
+    <mat-tab label="Month End Ledgers">
+      <mat-card class="margin-bottom" *ngIf="isProcessingLedgers">
+        <label class="mat-label other-label"><i>Processing Month End Ledgers...</i></label>
+      </mat-card>
+      <monthly-pension-ledger-v2 [monthEndRunDateId]="monthEndRunDateId" *ngIf="!isProcessingLedgers"></monthly-pension-ledger-v2>
+    </mat-tab>
+    <mat-tab label="Release">
+
+    </mat-tab>
+  </mat-tab-group>
+</div>
+

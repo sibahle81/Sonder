@@ -1,0 +1,54 @@
+<div class="menu-bar">
+  <span class="material-icons">mail</span>
+  {{title}}
+  <span (click)="cancel()" class="material-icons pointer right" matTooltip="close">
+    close
+  </span>
+  <span (click)="resend()" class="material-icons pointer right pulse" matTooltip="resend">
+    send
+  </span>
+</div>
+<mat-tab-group animationDuration="500ms">
+  <mat-tab label="To">
+    <mat-card>
+      <span *ngIf="data?.reciepients?.length > 0">
+        <ul>
+          <li *ngFor="let reciepient of data.reciepients">
+            <a href="mailto:{{reciepient}}">{{reciepient}}</a>
+          </li>
+        </ul>
+      </span>
+      <span *ngIf="!(data?.reciepients?.length > 0)">
+        <i>no recipients (To)</i>
+      </span>
+    </mat-card>
+  </mat-tab>
+  <mat-tab label="CC">
+    <mat-card>
+      <span *ngIf="data?.reciepientsCc?.length > 0">
+        <ul>
+          <li *ngFor="let reciepient of data.reciepientsCc">
+            <a href="mailto:{{reciepient}}">{{reciepient}}</a>
+          </li>
+        </ul>
+      </span>
+      <span *ngIf="!(data?.reciepientsCc?.length > 0)">
+        <i>no recipients (CC)</i>
+      </span>
+    </mat-card>
+  </mat-tab>
+  <mat-tab label="BCC">
+    <mat-card>
+      <span *ngIf="data?.reciepientsBcc?.length > 0">
+        <ul>
+          <li *ngFor="let reciepient of data.reciepientsBcc">
+            <a href="mailto:{{reciepient}}">{{reciepient}}</a>
+          </li>
+        </ul>
+      </span>
+      <span *ngIf="!(data?.reciepientsBcc?.length > 0)">
+        <i>no recipients (BCC)</i>
+      </span>
+    </mat-card>
+  </mat-tab>
+</mat-tab-group>

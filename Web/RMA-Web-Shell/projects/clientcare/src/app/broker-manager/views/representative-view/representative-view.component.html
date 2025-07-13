@@ -1,0 +1,46 @@
+<div *ngIf="isLoading">
+  <div style="margin-right: 15px;">
+    <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+  </div>
+  <span style="color: grey">Loading...</span>
+</div>
+
+<div [hidden]="isLoading" class="menu-container">
+  <mat-tab-group>
+    <mat-tab label="Representative Details">
+      <representative-details></representative-details>
+    </mat-tab>
+    <mat-tab label="Banking Details">
+      <representative-banking-details></representative-banking-details>
+    </mat-tab>
+    <mat-tab label="Address Details">
+      <representative-address></representative-address>
+    </mat-tab>
+    <mat-tab label="Brokerage Details">
+      <app-representative-brokerage-link></app-representative-brokerage-link>
+    </mat-tab>
+    <mat-tab label="Authorised Representatives">
+      <representative-authorised-representative></representative-authorised-representative>
+    </mat-tab>
+    <mat-tab label="Representative Checks">
+      <representative-checks></representative-checks>
+    </mat-tab>
+    <mat-tab label="Documents">
+      <representative-documents name="brokerage"></representative-documents>
+    </mat-tab>
+    <mat-tab label="Notes">
+      <representative-notes name="representative"></representative-notes>
+    </mat-tab>
+    <mat-tab label="Audit Log">
+      <audit-log name="representative"></audit-log>
+    </mat-tab>
+  </mat-tab-group>
+  <div class="form-group-button mat-form-button">
+    <div (click)="edit()" *ngIf="canEdit" class="form-buttons submit-button">
+      <button type="button" class="button float-button">Edit</button>
+  </div>
+    <div (click)="back()" class="form-buttons submit-button">
+      <button type="button" class="button float-button">Back</button>
+    </div>
+  </div>
+</div>

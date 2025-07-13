@@ -1,0 +1,146 @@
+﻿<div class="page-header"></div>
+<div *ngIf="!canAdd">
+	<h1>Contact Details</h1>
+	<div style="padding-bottom: 15px; color: orange; font-family: 'Oswald', sans-serif;">You do not have sufficient permissions to add a new contact.</div>
+	<div (click)="back()" class="form-buttons submit-button">
+		<button type="button" class="button float-button">Back</button>
+	</div>
+</div>
+<div [hidden]="!canAdd" style="padding-top: 15px;">
+	<mat-tab-group>
+		<mat-tab label="Contact Details">
+			<mat-card style="margin: 15px 30px 15px 30px">
+				<mat-card-header>
+					<mat-card-title class="wizard-font card-title grey">
+						<h1 class="wizard-font" style="padding: 0;">Contact Details</h1>
+					</mat-card-title>
+				</mat-card-header>
+				<mat-card-content style="margin-left: 10px; margin-top:-35px">
+					<form [formGroup]="form" class="mat-container details-form" novalidate>
+						<section>
+							<div class="field-container">
+								<mat-form-field class="mat-form-field">
+									<label class="mat-label other-label">Full name</label>
+									<input matInput maxlength="50" formControlName="name" name="name">
+									<mat-error *ngIf="form.get('name').hasError('required')">
+										Name is <strong>required</strong>
+									</mat-error>
+								</mat-form-field>
+							</div>
+							<div class="field-container mat-right-field">
+								<mat-form-field class="mat-form-field">
+									<label class="mat-label other-label">Title</label>
+									<mat-select name="title" id="title" #title formControlName="title"
+										[(value)]="personTitleId">
+										<mat-option *ngFor="let title of titles" [value]="title.id">{{title.name}}
+										</mat-option>
+									</mat-select>
+									<mat-error *ngIf="title.errorState && form.get('title').hasError('required')">
+										Title is <strong>required</strong>
+									</mat-error>
+								</mat-form-field>
+							</div>
+						</section>
+						<section>
+							<mat-form-field class="mat-form-field">
+								<label class="mat-label other-label">Telephone number</label>
+								<input matInput maxlength="10" id="telephoneNumber" name="telephoneNumber"
+									formControlName="telephoneNumber" NumberOnly="true" />
+								<mat-error *ngIf="form.get('telephoneNumber').hasError('required')">
+									Telephone number is <strong>required</strong>
+								</mat-error>
+								<mat-error *ngIf="form.get('telephoneNumber').hasError('minlength')">
+									Telephone number must be<strong>10 digits</strong>
+								</mat-error>
+							</mat-form-field>
+							<mat-form-field class="mat-form-field mat-right-field">
+								<label class="mat-label other-label">Mobile number</label>
+								<input matInput maxlength="10" id="mobileNumber" name="mobileNumber"
+									formControlName="mobileNumber" NumberOnly="true" />
+								<mat-error *ngIf="form.get('mobileNumber').hasError('required')">
+									Mobile number is <strong>required</strong>
+								</mat-error>
+								<mat-error *ngIf="form.get('mobileNumber').hasError('minlength')">
+									Mobile number must be <strong>10 digits</strong>
+								</mat-error>
+							</mat-form-field>
+						</section>
+						<section>
+							<div class="field-container">
+								<multi-select [label]="'Service types'" [lookupName]="'ServiceType'"
+									[selectedIds]="form.get('serviceTypes').value" id="serviceTypes" name="serviceTypes"
+									[isReadOnly]="form.disabled"
+									(onChange)="onMultiSelectChanged(); getNumberOfSelectedServiceTypes();">
+								</multi-select>
+								<mat-error
+									style="font-size: 75%; margin-top: -26.5px; display: block; text-align: left; font-family: 'Oswald', sans-serif;"
+									*ngIf="numberOfSelectedServiceTypes < 1">
+									Service types is <strong>required</strong>
+								</mat-error>
+							</div>
+						</section>
+						<section>
+							<div class="field-container">
+								<mat-form-field class="mat-form-field">
+									<label class="mat-label other-label">Email</label>
+									<input matInput formControlName="email" name="email">
+									<mat-error *ngIf="form.get('email').hasError('email')">
+										A <strong>valid</strong> email address required
+									</mat-error>
+								</mat-form-field>
+							</div>
+							<div *ngIf="hasContactType" class="field-container mat-right-field">
+								<mat-form-field class="mat-form-field">
+									<label class="mat-label other-label">Contact type</label>
+									<mat-select name="contactType" id="contactType" #contactType
+										formControlName="contactType" [(value)]="contactTypeId">
+										<mat-option *ngFor="let contactType of contactTypes" [value]="contactType.id"> {{contactType.name}}</mat-option>
+									</mat-select>
+									<mat-error
+										*ngIf="contactType.errorState && form.get('contactType').hasError('required')">
+										Contact type is <strong>required</strong>
+									</mat-error>
+								</mat-form-field>
+							</div>
+						</section>
+            <section>
+                <div class="field-container">
+                    <mat-form-field class="mat-form-field">
+                        <input [hidden]="true" matInput formControlName="unsubscribe" />
+                        <mat-checkbox formControlName="unsubscribe">
+                            <label class="mat-label other-label">Unsubscribe from marketing campaigns?</label>
+                        </mat-checkbox>
+                    </mat-form-field>
+                </div>
+            </section>
+
+            <multiple-contact-list></multiple-contact-list>
+
+						<last-modified-by type="Contact Details"></last-modified-by>
+						<div *ngIf="showButtons" class="form-group-button mat-form-button">
+							<div *ngIf="showSaveButton" (click)="save()" class="form-buttons"
+								matTooltip="No changes have been made" [matTooltipDisabled]="!form.pristine">
+								<button [disabled]="form.pristine"
+									class="button float-button submit-button">Save</button>
+							</div>
+							<div *ngIf="showEditButton" (click)="edit()" class="form-buttons submit-button">
+								<button type="button" class="button float-button">Edit</button>
+							</div>
+							<div (click)="back()" class="form-buttons submit-button">
+								<button type="button" class="button float-button">Back</button>
+							</div>
+						</div>
+
+					</form>
+				</mat-card-content>
+
+			</mat-card>
+		</mat-tab>
+		<mat-tab label="Notes">
+			<notes name="contact"></notes>
+		</mat-tab>
+		<mat-tab label="Audit Log">
+			<audit-log name="contact"></audit-log>
+		</mat-tab>
+	</mat-tab-group>
+</div>

@@ -1,0 +1,186 @@
+<form [formGroup]="form" class="mat-container" novalidate>
+    <mat-tab-group (selectedIndexChange)="onSelectionChange($event)" formArrayName="beneficiaries">
+        <mat-tab *ngFor="let beneficiary of beneficiaries.controls; let i = index" [label]="beneficiary.controls.fullName.value" [formGroupName]="i">
+            <br />
+            <button *ngIf="!form.disabled" (click)="removeBeneficiary(i)">remove</button>
+            <br />
+            <br />
+            <div class="mat-container">
+                <section>
+                    <!--<p>
+                        <mat-radio-group formControlName="isInsuredLife" (change)="onIsInsuredLifeChange(beneficiary.get('isInsuredLife'),i)">
+                            <mat-radio-button [value]="'true'" [checked]="beneficiary.get('isInsuredLife').value" >Insured Life</mat-radio-button>
+                            <mat-radio-button [value]="'false'" [checked]="!beneficiary.get('isInsuredLife').value">Beneficiary</mat-radio-button>
+                        </mat-radio-group>
+                    </p>-->
+                    <p>
+                        <mat-slide-toggle formControlName="isInsuredLife" name="isInsuredLife" id="isInsuredLife">
+                            Insured Life
+                        </mat-slide-toggle>
+                        <mat-slide-toggle formControlName="isBeneficiary" name="isBeneficiary" id="isBeneficiary">
+                            Beneficiary
+                        </mat-slide-toggle>
+                    </p>
+                </section>
+                <section>
+                    <!--Insured Lives type-->
+                    <mat-form-field>
+                        <label class="mat-label other-label mandatory-field">Relationship</label>
+                        <mat-select name="beneficiaryType" id="beneficiaryType" formControlName="beneficiaryType" [(value)]="beneficiaryTypeId" required>
+                            <mat-option *ngFor="let beneficiaryType of beneficiaryTypes" [value]="beneficiaryType.id">{{beneficiaryType.name}}</mat-option>
+                        </mat-select>
+                        <mat-error *ngIf="beneficiary.get('beneficiaryType').hasError('required')">
+                            Relationship is <strong>required</strong>
+                        </mat-error>
+                    </mat-form-field>
+                    <mat-form-field class="mat-form-field-right">
+                        <label class="mat-label other-label">Mobile number</label>
+                        <input matInput maxlength="10" id="mobileNumber" name="mobileNumber" formControlName="mobileNumber" NumberOnly="true" />
+                        <mat-error *ngIf="beneficiary.get('mobileNumber').hasError('minlength')">
+                            Mobile number must be <strong>10 digits</strong>
+                        </mat-error>
+                        <mat-error *ngIf="beneficiary.get('mobileNumber').hasError('required')">
+                            Mobile number is <strong>required</strong>
+                        </mat-error>
+                    </mat-form-field>
+                </section>
+
+                <section>
+                    <!--First name-->
+                    <mat-form-field>
+                        <label class="mat-label other-label">First name</label>
+                        <input matInput maxlength="50" formControlName="name" name="name">
+                        <mat-error *ngIf="beneficiary.get('name').hasError('required')">
+                            First name is <strong>required</strong>
+                        </mat-error>
+                    </mat-form-field>
+                    <!--Last name-->
+                    <mat-form-field class="mat-form-field-right">
+                        <label class="mat-label other-label">Last name</label>
+                        <input matInput maxlength="50" formControlName="surname" name="surname">
+                        <mat-error *ngIf="beneficiary.get('surname').hasError('required')">
+                            Last name is <strong>required</strong>
+                        </mat-error>
+                    </mat-form-field>
+                </section>
+
+                <section>
+                    <!--Id number-->
+                    <mat-form-field>
+                        <label class="mat-label other-label">Id number</label>
+                        <input matInput maxlength="13" formControlName="idNumber" name="idNumber" NumberOnly
+                               unique-validator [table]="'Beneficiary'" [field]="'IdNumber'" (change)="onIdCheck(beneficiary.get('idNumber'),i)" [currentValue]="currentIdentity" [serviceType]="7">
+                        <mat-error *ngIf="beneficiary.get('idNumber').hasError('idNumber')">
+                            <strong>Invalid</strong> id number
+                        </mat-error>
+                        <mat-error *ngIf="beneficiary.get('idNumber').hasError('isTaken')">
+                            This Identity number <strong>already exists</strong>
+                        </mat-error>
+                    </mat-form-field>
+
+                    <!--Email-->
+                    <mat-form-field class="mat-form-field-right">
+                        <label class="mat-label other-label">Email</label>
+                        <input matInput maxlength="50" formControlName="email" name="email" type="email">
+                        <mat-error *ngIf="beneficiary.get('email').hasError('email')">
+                            Email address is not <strong>valid</strong>
+                        </mat-error>
+                        <mat-error *ngIf="beneficiary.get('email').hasError('required')">
+                            Email address is not <strong>valid</strong>
+                        </mat-error>
+                    </mat-form-field>
+                </section>
+
+                <section>
+                    <!--Date of Birth-->
+                    <div class="field-container">
+                        <div>
+                            <label class="mat-label other-label" style="margin-left: 3px;">Date of birth</label>
+                        </div>
+                        <div>
+                            <mat-form-field>
+                                <input readonly matInput formControlName="dateOfBirth" [matDatepicker]="dateOfBirth" id="dateOfBirth" name="dateOfBirth" style="width: 99%; margin-left: 3px !important;">
+                                <mat-datepicker-toggle matSuffix [for]="dateOfBirth"
+                                                       [disabled]="form.disabled || (beneficiary.get('idNumber').value != null && beneficiary.get('idNumber').value != '')"
+                                                       matTooltip="Date of birth cannot be chosen when there is an id number"
+                                                       [matTooltipDisabled]="form.disabled || (beneficiary.get('idNumber').value == null || beneficiary.get('idNumber').value == '')">
+                                </mat-datepicker-toggle>
+                                <mat-datepicker touchUi="true" #dateOfBirth></mat-datepicker>
+                                <mat-error *ngIf="beneficiary.get('dateOfBirth').hasError('required')">
+                                    Date of birth is <strong>required</strong>
+                                </mat-error>
+                            </mat-form-field>
+                        </div>
+                    </div>
+
+                    <!--Telephone number-->
+                    <mat-form-field class="mat-form-field-right">
+                        <label class="mat-label other-label">Telephone number (optional)</label>
+                        <input matInput maxlength="10" id="telephoneNumber" name="telephoneNumber" formControlName="telephoneNumber" NumberOnly="true" />
+                        <mat-error *ngIf="beneficiary.get('telephoneNumber').hasError('required')">
+                            Telephone number is <strong>required</strong>
+                        </mat-error>
+                        <mat-error *ngIf="beneficiary.get('telephoneNumber').hasError('minlength')">
+                            Telephone number must be <strong>10 digits</strong>
+                        </mat-error>
+                    </mat-form-field>
+
+                </section>
+
+                <section>
+                    <!--Mobile number-->
+                    <!--<mat-form-field>
+                        <label class="mat-label other-label">Mobile number</label>
+                        <input matInput maxlength="10" id="mobileNumber" name="mobileNumber" formControlName="mobileNumber" NumberOnly="true" />
+                        <mat-error *ngIf="beneficiary.get('mobileNumber').hasError('minlength')">
+                            Mobile number must be <strong>10 digits</strong>
+                        </mat-error>
+                        <mat-error *ngIf="beneficiary.get('mobileNumber').hasError('required')">
+                            Mobile number is <strong>required</strong>
+                        </mat-error>
+                    </mat-form-field>-->
+                    <!--Allocation Percentage-->
+                    <!--<mat-form-field class="mat-form-field-right">
+                        <label class="mat-label other-label">Allocation Percentage</label>
+                        <input matInput maxlength="10" id="allocationPercentage" name="allocationPercentage" formControlName="allocationPercentage" DecimalOnly />
+                        <mat-error *ngIf="beneficiary.get('allocationPercentage').hasError('min')">
+                            Allocation must be more that<strong>0</strong>
+                        </mat-error>
+                        <mat-error *ngIf="beneficiary.get('allocationPercentage').hasError('required')">
+                            Allocation percentage <strong>required</strong>
+                        </mat-error>
+                    </mat-form-field>-->
+
+                </section>
+                <section>
+                    <mat-form-field>
+                        <label class="mat-label other-label mandatory-field">Product Cover Option</label>
+                        <mat-select name="insuredLifeProductOptionCover" id="insuredLifeProductOptionCover" formControlName="insuredLifeProductOptionCover" [(value)]="beneficiary.get('insuredLifeProductOptionCover').value" required>
+                            <mat-option *ngFor="let coverOption of productOptionCovers" [value]="coverOption.id">{{coverOption.name}}</mat-option>
+                        </mat-select>
+                        <mat-error *ngIf="beneficiary.get('insuredLifeProductOptionCover').hasError('required')">
+                            Cover Option <strong>required</strong>
+                        </mat-error>
+                    </mat-form-field>
+                </section>
+                <!--<input style="display:none" matInput id="insuredLifeProductOptionCover" name="insuredLifeProductOptionCover" formControlName="insuredLifeProductOptionCover" />-->
+                
+                <section>
+                    <mat-checkbox formControlName="hasDisability">Is the Child Disabled?</mat-checkbox>
+                    <mat-checkbox formControlName="isStudying">Is the Child Studying?</mat-checkbox>
+                </section>
+            </div>
+        </mat-tab>
+        <mat-tab *ngIf="!form.disabled">
+            <ng-template mat-tab-label>
+                <mat-icon style="margin-top: 50px">add</mat-icon>
+                Add New
+            </ng-template>
+            <p>
+                No additional Insured Lives added yet. Please click below to add a new Insured Life.
+            </p>
+            <button mat-raised-button (click)="addBeneficiary(1);">Add New Insured Life</button>
+            <br />
+        </mat-tab>
+    </mat-tab-group>
+</form>

@@ -1,0 +1,39 @@
+<mat-card *ngIf="!model || (isLoading$ | async)">
+  <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+  <label class="mat-label other-label"><i>loading...please wait</i></label>
+</mat-card>
+
+<div *ngIf="model && !(isLoading$ | async)">
+
+  <member-view [rolePlayerId]="model.companyRolePlayerId" [isReadOnly]="true"></member-view>
+  
+  <person-event-view [personEventId]="model.personEventId"></person-event-view>
+
+  <mat-tab-group animationDuration="500ms" [(selectedIndex)]="defaultTab">
+    <mat-tab label="Claim">
+      <holistic-claim-details [personEvent]="model" [isReadOnly]="true"></holistic-claim-details>
+    </mat-tab>
+    <mat-tab *ngIf="model.rolePlayer" label="Employee">
+      <person [rolePlayer]="model.rolePlayer" [title]="'Employee'" [isReadOnly]="true" [showDocuments]="false"></person>
+    </mat-tab>
+    <mat-tab label="Employment">
+      <holistic-employment-details [personEvent]="model" [isReadOnly]="true"></holistic-employment-details>
+    </mat-tab>
+    <mat-tab *ngIf="model.event" label="{{eventTypeLabel}}">
+      <holistic-injury-details [personEvent]="model" [isReadOnly]="true" [isWizard]="true"
+        [eventType]="model.event.eventType"></holistic-injury-details>
+    </mat-tab>
+    <mat-tab>
+      <ng-template mat-tab-label>
+        <span
+          [ngClass]="{'captured': complianceReviewNoteCaptured , 'outstanding': !complianceReviewNoteCaptured}">Notes</span>
+      </ng-template>
+      <common-notes [moduleType]="moduleType" [noteItemType]="noteItemType" [itemId]="model.personEventId" (noteCapturedEmit)="noteCaptured($event)"></common-notes>
+    </mat-tab>
+    <mat-tab label="Documents">
+      <mat-card>
+        No requirement received for compliance documents...awaiting requirements
+      </mat-card>
+    </mat-tab>
+  </mat-tab-group>
+</div>

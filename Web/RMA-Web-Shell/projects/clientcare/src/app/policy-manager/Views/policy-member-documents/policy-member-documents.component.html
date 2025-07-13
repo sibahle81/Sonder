@@ -1,0 +1,39 @@
+<div>
+  <mat-card style="margin: 15px 30px">
+    <mat-card-header>
+      <mat-card-title class="wizard-font card-title grey">
+        <h1 style="color:#389cae">{{reportTitle}}</h1>
+      </mat-card-title>
+    </mat-card-header>
+    <mat-card-content>
+      <div class="form">
+        <form>
+          <section style="margin-left: 7px!important">
+            <mat-form-field class="mat-form-field-right">
+              <label class="mat-label other-label">Select Document To View</label>
+              <mat-select name="reportTypes" id="reportTypes" (selectionChange)="reportTypeChanged($event)"
+                [(ngModel)]="selectedReportType">
+                <mat-option *ngFor="let reportType of reportTypes" [value]="reportType">
+                  {{ reportType.name}}
+                </mat-option>
+              </mat-select>
+            </mat-form-field>
+          </section>
+        </form>
+      </div>
+
+      <div [hidden]="!showReport">
+        <mat-card-content class="wizard-mat-card-content">
+          <section>
+            <div [hidden]="!showReport" style="width: 100vh; height: auto;">
+              <ssrs-reportviewer [reportserver]="reportServerAudit" [reporturl]="reportUrlAudit"
+                [showparameters]="showParametersAudit" [parameters]="parametersAudit" [language]="languageAudit"
+                [width]="widthAudit" [height]="heightAudit" [toolbar]="toolbarAudit">
+              </ssrs-reportviewer>
+            </div>
+          </section>
+        </mat-card-content>
+      </div>
+    </mat-card-content>
+  </mat-card>
+</div>

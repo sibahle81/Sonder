@@ -1,0 +1,38 @@
+<br />
+<div style="width: 100%;">
+  <div *ngIf="isLoading$ | async">
+    <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+    <label class="mat-label other-label"><i>loading...please wait</i></label>
+    <br/>
+    <br/>
+  </div>
+  <div *ngIf="!(isLoading$ | async)">
+    <table mat-table *ngIf="dataSource && dataSource.data" [dataSource]="dataSource">
+      <ng-container matColumnDef="selected">
+        <th mat-header-cell *matHeaderCellDef>Action</th>
+        <td mat-cell *matCellDef="let benefit">
+          <mat-checkbox [checked]="benefit.selected" (change)="addBenefit($event, benefit)"
+            [disabled]='!isWizard || isDisabled'></mat-checkbox>
+        </td>
+      </ng-container>
+      <ng-container matColumnDef="code">
+        <th mat-header-cell *matHeaderCellDef>Benefit</th>
+        <td mat-cell *matCellDef="let benefit"> {{benefit.code}} </td>
+      </ng-container>
+      <ng-container matColumnDef="name">
+        <th mat-header-cell *matHeaderCellDef>Benefit Name</th>
+        <td mat-cell *matCellDef="let benefit"> {{benefit.name}} </td>
+      </ng-container>
+      <ng-container matColumnDef="benefitBaseRateLatest">
+        <th mat-header-cell *matHeaderCellDef class="money-column">Premium</th>
+        <td mat-cell *matCellDef="let benefit" class="money-column"> R {{benefit.benefitBaseRateLatest | number:'1.10-10'}} </td>
+      </ng-container>
+      <ng-container matColumnDef="benefitRateLatest">
+        <th mat-header-cell *matHeaderCellDef class="money-column">Amount</th>
+        <td mat-cell *matCellDef="let benefit" class="money-column"> R {{benefit.benefitRateLatest | number:'1.2-2'}} </td>
+      </ng-container>
+      <tr mat-header-row *matHeaderRowDef="displayedColumns; sticky: true"></tr>
+      <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+    </table>
+  </div>
+</div>

@@ -1,0 +1,97 @@
+<mat-card style="margin-left: 10px;">
+  <mat-card-header>
+    <mat-card-title class="wizard-font card-title grey">
+      <h1 style="padding: 0; padding-top: 10px;">Documents</h1>
+    </mat-card-title>
+  </mat-card-header>
+
+  <mat-card-content style="margin-left: 10px;">
+    <span [style.visibility]="isUploading ? 'visible' : 'hidden'">
+      <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+      <span class="grey site-font"><i>uploading file...please wait</i></span>
+    </span>
+
+    <div style="margin-top: 0px;">
+      <upload-control #bankInterestDocument></upload-control>
+    </div>
+
+    <br/>
+    <hr style="margin-bottom: 4px;"/>
+    <div class="mat-form-button" style="text-align: right; padding-bottom: 0px;">
+      <button [disabled]="isUploading" (click)='UploadDocuments()' class="button">Upload</button>
+    </div>
+  </mat-card-content>
+</mat-card>
+
+<mat-card style="margin-left: 10px; margin-top: 10px;">
+  <mat-card-header>
+    <mat-card-title>
+      <h1 style="padding: 0; padding-top: 10px;"> Unclaimed Benefit Interest</h1>
+    </mat-card-title>
+  </mat-card-header>
+  <mat-card-content>
+    <div>
+      <mat-form-field>
+        <input matInput type="text" (keyup)="doFilter($event.target.value)" placeholder="Filter">
+      </mat-form-field>
+    </div>
+
+    <table mat-table [dataSource]="dataSource" matSort>
+      <ng-container matColumnDef="startDate">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header> StartDate </th>
+        <td mat-cell *matCellDef="let element"> {{element.startDate | date}} </td>
+      </ng-container>
+
+      <ng-container matColumnDef="endDate">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header> EndDate </th>
+        <td mat-cell *matCellDef="let element"> {{element.endDate | date}} </td>
+      </ng-container>
+
+      <ng-container matColumnDef="naca">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header> NACA </th>
+        <td mat-cell *matCellDef="let element"> {{element.naca}} </td>
+      </ng-container>
+
+      <ng-container matColumnDef="investmentPeriod">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header> Investment Period </th>
+        <td mat-cell *matCellDef="let element"> {{element.investmentPeriod}} </td>
+      </ng-container>
+
+      <ng-container matColumnDef="incrementalRate">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header> Incremental Rate</th>
+        <td mat-cell *matCellDef="let element"> {{element.incrementalRate}} </td>
+      </ng-container>
+
+      <ng-container matColumnDef="cumulativeRate">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header> Cumulative Rate </th>
+        <td mat-cell *matCellDef="let element"> {{element.cumulativeRate}} </td>
+      </ng-container>
+
+      <ng-container matColumnDef="details">
+        <th mat-header-cell *matHeaderCellDef> Details </th>
+        <td mat-cell *matCellDef="let element">
+          <button mat-icon-button color="primary" (click)="redirectToDetails(element.unclaimedBenefitInterestId)">
+            <mat-icon class="mat-18">reorder</mat-icon>
+          </button>
+        </td>
+      </ng-container>
+
+      <ng-container matColumnDef="delete">
+        <th mat-header-cell *matHeaderCellDef> Delete </th>
+        <td mat-cell *matCellDef="let element">
+          <button mat-icon-button color="warn" (click)="redirectToDelete(element.unclaimedBenefitInterestId)">
+            <mat-icon class="mat-18">delete</mat-icon>
+          </button>
+        </td>
+      </ng-container>
+
+      <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+      <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+    </table>
+
+    <mat-paginator #paginator 
+                  [pageSize]="5"
+                  [pageSizeOptions]="[5, 10, 25, 50]">
+</mat-paginator>
+  </mat-card-content>
+</mat-card>

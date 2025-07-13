@@ -1,0 +1,39 @@
+import { Component, OnInit} from '@angular/core';
+import { User } from 'projects/shared-models-lib/src/lib/security/user';
+import { AuthService } from 'projects/shared-services-lib/src/lib/services/security/auth/auth.service';
+import { userUtility } from 'projects/shared-utilities-lib/src/lib/user-utility/user-utility';
+import { PaymentPoolViewTypeEnum} from 'projects/fincare/src/app/shared/enum/payment-pool-view-type-enum';
+
+@Component({
+  selector: 'app-payment-list',
+  templateUrl: './payment-list.component.html',
+  styleUrls: ['./payment-list.component.css']
+})
+export class PaymentListComponent implements OnInit {
+
+  currentUserObject: User;
+  loggedInUserRole: string;
+  hasSubmitPaymentPermission: boolean;
+  hasPermissionSubmitAllPayments: boolean;
+  currentUserEmail:string;
+  triggerReset:boolean;
+  paymentPoolView: PaymentPoolViewTypeEnum;
+
+  constructor(private authService: AuthService) 
+  {}
+
+
+  ngOnInit(): void {
+
+    this.paymentPoolView = PaymentPoolViewTypeEnum.PaymentList;
+    
+    this.currentUserObject = this.authService.getCurrentUser();
+    this.loggedInUserRole = this.currentUserObject.roleName;
+    
+    this.hasSubmitPaymentPermission = userUtility.hasPermission('Submit Payment');
+    this.hasPermissionSubmitAllPayments = userUtility.hasPermission('Submit All Payments');
+    this.currentUserEmail = this.currentUserObject.email;
+    this.triggerReset = false;
+
+  }
+}

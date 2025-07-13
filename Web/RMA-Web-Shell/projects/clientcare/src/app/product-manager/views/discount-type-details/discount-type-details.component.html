@@ -1,0 +1,138 @@
+﻿<div class="page-header"></div>
+<div *ngIf="!canAdd">
+    <h1>Discount  Details</h1>
+    <div style="padding-bottom: 15px; color: orange; font-family: 'Oswald', sans-serif;">You do not have sufficient permissions to add a new discout type.</div>
+    <div (click)="back()" class="form-buttons submit-button">
+        <button type="button" class="button float-button">Back</button>
+    </div>
+</div>
+
+<div [hidden]="!canAdd" style="padding-top: 15px;">
+    <mat-tab-group>
+        <mat-tab label="Discount Type Details">
+
+            <mat-card style="margin: 15px 30px 15px 30px">
+                <mat-card-header>
+                    <mat-card-title class="wizard-font card-title grey">
+                        <h1 class="wizard-font" style="padding: 0;">Discount Type Details</h1>
+                    </mat-card-title>
+                </mat-card-header>
+
+                <mat-card-content style="margin-left: 10px;">
+
+                    <form [formGroup]="form" (ngSubmit)="save()" class="mat-container details-form" novalidate>
+
+                        <!--Discoutn Type  Code-->
+                        <section>
+                            <mat-form-field>
+                                <label class="mat-label other-label mandatory-field">Code</label>
+                                <input matInput minlength="3" maxlength="10" formControlName="code" id="code" name="code"
+                                       unique-validator [table]="'discounttype'" [field]="'Code'" [currentValue]="currentCode" [serviceType]="2">
+                                <mat-error *ngIf="form.get('code').hasError('required')">
+                                    Discount code is <strong>required</strong>
+                                </mat-error>
+                                <mat-error *ngIf="form.get('code').hasError('minlength')">
+                                    Discount code must be at least <strong>three characters</strong>
+                                </mat-error>
+                                <mat-error *ngIf="form.get('code').hasError('isTaken')">
+                                    This discount code <strong>already exists</strong>
+                                </mat-error>
+                            </mat-form-field>
+                        </section>
+
+                        <section>
+                            <!--Discount Type Name-->
+                            <mat-form-field>
+                                <label class="mat-label other-label mandatory-field">Name</label>
+                                <input matInput minlength="3" maxlength="50" formControlName="name" id="name" name="name"
+                                       unique-validator [table]="'discounttype'" [field]="'name'" [currentValue]="currentName" [serviceType]="2">
+                                <mat-error *ngIf="form.get('name').hasError('required')">
+                                    Discount  name is <strong>required</strong>
+                                </mat-error>
+                                <mat-error *ngIf="form.get('name').hasError('minlength')">
+                                    Discount name must be at least <strong>three characters</strong>
+                                </mat-error>
+                                <mat-error *ngIf="form.get('name').hasError('isTaken')">
+                                    This discount name <strong>already exists</strong>
+                                </mat-error>
+                            </mat-form-field>
+                        </section>
+
+                        <section>
+                            <!--Disctount Type Effective Date-->
+                            <div class="field-container">
+                                <div>
+                                    <label class="mat-label other-label mandatory-field">Effective Date</label>
+                                </div>
+
+                                <mat-form-field>
+                                    <input matInput formControlName="effectiveDate" [matDatepicker]="effectiveDate" id="effectiveDate" name="effectiveDate">
+                                    <mat-datepicker-toggle matSuffix [for]="effectiveDate" [disabled]="form.disabled"></mat-datepicker-toggle>
+                                    <mat-datepicker touchUi="true" #effectiveDate></mat-datepicker>
+                                    <mat-error *ngIf="form.get('effectiveDate').hasError('required')">
+                                        Effective date <strong>required</strong>
+                                    </mat-error>
+                                </mat-form-field>
+                            </div>
+                        </section>
+
+                        <section>
+                            <!--Discount Perentage-->
+                            <mat-form-field>
+                                <label class="mat-label other-label mandatory-field">Discount Percentage</label>
+                                <input matInput formControlName="discountPercentage" id="discountPercentage" name="discountPercentage" DecimalNumber />
+                                <mat-error *ngIf="form.get('discountPercentage').hasError('required')">
+                                    Discount percentage is <strong>required</strong>
+                                </mat-error>
+                                <mat-error *ngIf="form.get('discountPercentage').hasError('max')">
+                                    Discount percentage cannot be more than <strong>100%</strong>
+                                </mat-error>
+                                <mat-error *ngIf="form.get('discountPercentage').hasError('min')">
+                                    Discount percentage cannot be <strong>zero</strong>
+                                </mat-error>
+                            </mat-form-field>
+                        </section>
+
+                        <!--Description-->
+                        <section>
+                            <mat-form-field>
+                                <label class="mat-label other-label mandatory-field">Description</label>
+                                <textarea matTextareaAutosize matAutosizeMinRows="5" matAutosizeMaxRows="3"
+                                          maxlength="255" matInput id="description" name="description" formControlName="description"></textarea>
+                                <mat-error *ngIf="form.get('description').hasError('required')">
+                                    Discount description is <strong>required</strong>
+                                </mat-error>
+                            </mat-form-field>
+                        </section>
+
+                        <last-modified-by type="Discount Type"></last-modified-by>
+
+                        <div class="form-group-button" *ngIf="!isWizard">
+                            <div *ngIf="!form.disabled" class="form-buttons" matTooltip="No changes have been made" [matTooltipDisabled]="!pristine" (click)="save()">
+                                <button [disabled]="form.pristine" class="button float-button submit-button">Save</button>
+                            </div>
+
+                            <div (click)="edit()" *ngIf="form.disabled && canEdit" class="form-buttons submit-button">
+                                <button type="button" class="button float-button">Edit</button>
+                            </div>
+
+                            <div (click)="back()" class="form-buttons submit-button">
+                                <button type="button" class="button float-button">Back</button>
+                            </div>
+                        </div>
+
+                    </form>
+                </mat-card-content>
+
+            </mat-card>
+        </mat-tab>
+
+        <mat-tab label="Notes">
+            <notes name="DiscountType"></notes>
+        </mat-tab>
+
+        <mat-tab label="Audit Log">
+            <audit-log name="DiscountType"></audit-log>
+        </mat-tab>
+    </mat-tab-group>
+</div>

@@ -1,0 +1,141 @@
+﻿<form [formGroup]="form" class="mat-container details-form" novalidate>
+    <mat-accordion multi="false">
+        <mat-expansion-panel [expanded]="true" (closed)="ClearIndividualData()">
+            <mat-expansion-panel-header>
+                <mat-panel-title>
+                    <span>
+                        <mat-icon class="icon">person</mat-icon>&nbsp;&nbsp;&nbsp;&nbsp;Individual SLA Claims
+                    </span>
+
+                </mat-panel-title>
+                <mat-panel-description>
+                </mat-panel-description>
+            </mat-expansion-panel-header>
+            <div [hidden]="!hasIndividualData" class="setFormHeight">
+                <table class="altRowTable" style="width:50%;">
+                    <tr>
+                        <td><b>Total Policies:</b> {{this.summaryTotalPolicies}}</td>
+                    </tr>
+                    <tr>
+                        <td><b>Total Claims:</b> {{this.summaryTotalClaims}}</td>
+                    </tr>
+                </table>
+            </div>
+            <div class="resetBtn">
+                <button mat-mini-fab color="primary" (click)="ClearIndividualData()">
+                    <mat-icon matTooltip="Reset">autorenew</mat-icon>
+                </button>
+            </div>
+            <div [hidden]="hasIndividualData">
+                <label class="mat-label other-label">
+                    <h3 class="font"><span class="material-icons lightRed">archive</span> &nbsp; {{noDataHeading}}
+                    </h3>
+                </label>
+                <span [style.visibility]="isLoading ? 'visible' : 'hidden'">
+                    <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+                    <span class="grey site-font"><i>Loading Data...please wait</i></span>
+                </span>
+            </div>
+            <br />
+            <div [hidden]="!hasIndividualData">
+                <div [hidden]="!individualLessADay">
+                    <label class="mat-label other-label">
+                        <h3 class="font"><span class="material-icons lightGreen">exposure_neg_1</span> &nbsp;
+                            {{lessThanDayHeading}}
+                        </h3>
+                    </label>
+                </div>
+                <div [hidden]="individualLessADay">
+                    <canvas baseChart [data]="individualData" [labels]="individualChartLabels" [colors]="chartColors"
+                        [plugins]="pieChartPlugins" [options]="pieChartOptions" [legend]="pieChartLegend"
+                        [chartType]="chartType" (chartHover)="chartHovered($event)"
+                        (chartClick)="chartClicked($event, false)">
+                    </canvas>
+                </div>
+            </div>
+            <section>
+                <div [hidden]="individualLessADay">
+                    <!--Period-->
+                    <mat-form-field>
+                        <label class="mat-label other-label">Period</label>
+                        <mat-select name="individualPeriodFilter" id="individualPeriodFilter"
+                            formControlName="individualPeriodFilter" (selectionChange)="onPeriodFilter($event, false)">
+                            <mat-option [value]="1">Daily</mat-option>
+                            <mat-option [value]="2">Weekly</mat-option>
+                            <mat-option [value]="3">Monthly</mat-option>
+                            <mat-option [value]="4">YTD</mat-option>
+                        </mat-select>
+                    </mat-form-field>
+                </div>
+            </section>
+        </mat-expansion-panel>
+        <br />
+        <mat-expansion-panel (closed)="ClearGroupData()">
+            <mat-expansion-panel-header>
+                <mat-panel-title>
+                    <mat-icon class="icon">group</mat-icon>&nbsp;&nbsp;&nbsp;&nbsp; Group SLA Claims
+                </mat-panel-title>
+                <mat-panel-description>
+                </mat-panel-description>
+            </mat-expansion-panel-header>
+            <div [hidden]="!hasGroupData">
+                <table class="altRowTable" style="width:50%;">
+                    <tr>
+                        <td><b>Total Policies:</b> {{this.summaryGroupTotalPolicies}}</td>
+                    </tr>
+                    <tr>
+                        <td><b>Total Claims:</b> {{this.summaryGroupTotalClaims}}</td>
+                    </tr>
+                </table>
+            </div>
+            <div class="resetBtn">
+                <button mat-mini-fab color="primary" (click)="ClearGroupData()">
+                    <mat-icon matTooltip="Reset">autorenew</mat-icon>
+                </button>
+            </div>
+            <div [hidden]="hasGroupData">
+                <label class="mat-label other-label">
+                    <h3 class="font"><span class="material-icons lightRed">archive</span> &nbsp; {{noDataHeading}}
+                    </h3>
+                </label>
+                <span [style.visibility]="isLoading ? 'visible' : 'hidden'">
+                    <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+                    <span class="grey site-font"><i>Loading Data...please wait</i></span>
+                </span>
+            </div>
+            <br />
+            <div [hidden]="!hasGroupData">
+                <div [hidden]="!groupLessADay">
+                    <label class="mat-label other-label">
+                        <h3 class="font"><span class="material-icons lightGreen">exposure_zero</span> &nbsp;
+                            {{lessThanDayHeading}}
+                        </h3>
+                    </label>
+                </div>
+                <div [hidden]="groupLessADay">
+                    <canvas baseChart [data]="groupData" [labels]="groupChartLabels" [plugins]="pieChartPlugins"
+                        [options]="pieChartOptions" [legend]="pieChartLegend" [colors]="chartColors"
+                        [chartType]="chartType" (chartHover)="chartHovered($event)"
+                        (chartClick)="chartClicked($event, true)">
+                    </canvas>
+                </div>
+            </div>
+            <section>
+                <div [hidden]="groupLessADay">
+                    <!--Period-->
+                    <mat-form-field>
+                        <label class="mat-label other-label">Period</label>
+                        <mat-select name="groupPeriodFilter" id="groupPeriodFilter" formControlName="groupPeriodFilter"
+                            (selectionChange)="onPeriodFilter($event, true)">
+                            <mat-option [value]="1">Daily</mat-option>
+                            <mat-option [value]="2">Weekly</mat-option>
+                            <mat-option [value]="3">Monthly</mat-option>
+                            <mat-option [value]="4">YTD</mat-option>
+                        </mat-select>
+                    </mat-form-field>
+                </div>
+            </section>
+        </mat-expansion-panel>
+    </mat-accordion>
+    <claim-table-turnaround></claim-table-turnaround>
+</form>

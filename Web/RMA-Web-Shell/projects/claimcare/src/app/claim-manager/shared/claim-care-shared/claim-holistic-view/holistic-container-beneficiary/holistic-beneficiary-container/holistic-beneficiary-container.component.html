@@ -1,0 +1,42 @@
+<div *ngIf="beneficiary">
+    <div class="menu-bar">
+        Beneficiary Details
+        <span (click)="view()" class="material-icons pointer right" matTooltip="Close">
+            close
+        </span>
+    </div>
+
+    <mat-tab-group animationDuration="500ms" [(selectedIndex)]="selectedTabIndex">
+        <mat-tab label="Beneficiary Details">
+            <holistic-person-details *ngIf="selectedPersonEvent.rolePlayer && data.mode"
+                [personEvent]="selectedPersonEvent" [isReadOnly]="isReadOnly" [isWizard]="isWizard" [mode]="mode" [title]="data.title"
+                (emitNewBeneficiary)="setBeneficiary($event.rolePlayer, $event.bypassReset)"
+                [filterContactInformationDropdown]="filterContactInformationDropdown"
+                [filterContactsOnDesignationTypeDropdown]="filterContactsOnDesignationTypeDropdown"></holistic-person-details>
+        </mat-tab>
+
+        <mat-tab label="Relation Details" *ngIf="showRelation" [disabled]='isBeneficiaryNotCaptured'>
+            <holistic-beneficiary-relation *ngIf="!(isLoading$ | async)" [beneficiary]="beneficiary"
+                [toRolePlayerId]="toRolePlayerId" [isReadOnly]="isReadOnly"
+                [isStp]="selectedPersonEvent.isStraightThroughProcess" [isWizard]="isWizard"
+                (emitRelation)="isRelationship($event)"></holistic-beneficiary-relation>
+
+            <mat-card *ngIf="(isLoading$ | async)">
+                <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+                <label class="mat-label other-label"><i>loading...please wait</i></label>
+            </mat-card>
+        </mat-tab>
+
+        <mat-tab label="Banking Details" *ngIf="showRelation"
+            [disabled]='isBeneficiaryNotCaptured && !showBankingDetails'>
+            <role-player-banking-list *ngIf="!(isLoading$ | async)" [rolePlayer]="beneficiary"
+                [isWizard]="isWizard" [showBankDetailsPurpose]="false" [isReadOnly]="isReadOnly"
+                [verifyAccount]="true"></role-player-banking-list>
+
+            <mat-card *ngIf="(isLoading$ | async)">
+                <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+                <label class="mat-label other-label"><i>loading...please wait</i></label>
+            </mat-card>
+        </mat-tab>
+    </mat-tab-group>
+</div>

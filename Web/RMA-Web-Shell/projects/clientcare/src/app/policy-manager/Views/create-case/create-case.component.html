@@ -1,0 +1,505 @@
+<div *ngIf="!hasCreateCasePermission">
+  <h1>Create New Case</h1>
+  <div style="padding: 15px 0; color: orange; font-family: 'Oswald', sans-serif;">
+    You do not have sufficient permissions to add a new case.
+  </div>
+  <div (click)="back()" class="form-buttons submit-button">
+    <button type="button" class="button float-button">Back</button>
+  </div>
+</div>
+
+<div *ngIf="isLoading | async">
+  <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+  <label class="mat-label other-label"><i>submitting...please wait</i></label>
+</div>
+
+<div *ngIf="!(isLoading | async)">
+  <div *ngIf="hasCreateCasePermission">
+    <mat-tab-group [selectedIndex]="selectedIndex" (selectedIndexChange)="tabSelectionChanged($event)">
+      <mat-tab label="Details">
+        <form [formGroup]="form" class="mat-container details-form" novalidate>
+          <section>
+            <mat-form-field class="mat-form-field-left">
+              <label class="mat-label other-label">Case Code</label>
+              <input matInput id="code" name="code" formControlName="code">
+            </mat-form-field>
+            <mat-form-field class="mat-form-field-right">
+              <label class="mat-label other-label">Type</label>
+              <input matInput [hidden]="true" formControlName="caseType" />
+              <mat-select name="caseType" id="caseType" formControlName="caseType"
+                (selectionChange)="caseTypeChanged($event)">
+                <mat-option *ngIf="hasIndividualPermission" [value]="1">Individual New Business</mat-option>
+                <mat-option *ngIf="hasGroupPermission" [value]="2">Group New Business</mat-option>
+                <mat-option *ngIf="hasMaintainPolicyPermission" [value]="3">Maintain Policy Changes</mat-option>
+                <mat-option *ngIf="hasChangePolicyStatusPermission" [value]="14">Change Policy Status</mat-option>
+                <mat-option *ngIf="hasReinstatePolicyPermission" [value]="4">Reinstate Policy</mat-option>
+                <mat-option *ngIf="hasCancelPermission" [value]="5">Cancel Policy</mat-option>
+                <mat-option *ngIf="hasLapsePermission" [value]="12">Lapse Policy</mat-option>
+                <mat-option *ngIf="hasMovePoliciesPermission" [value]="7">Move Brokerage Policy</mat-option>
+                <mat-option *ngIf="hasMovePolicySchemePermission" [value]="15">Move Policy Scheme</mat-option>
+                <mat-option *ngIf="hasUpgradeDowngradePolicyPermission" [value]="16">Upgrade or Downgrade Policy</mat-option>
+                <mat-option *ngIf="hasMaintainMemberRelationsPermission" [value]="8">Maintain Members List</mat-option>
+                <mat-option *ngIf="hasContinuePolicyPermission" [value]="9">Continue Policy</mat-option>
+                <mat-option *ngIf="hasGroupPolicyMemberPermission" [value]="11">Group Policy Member</mat-option>
+              </mat-select>
+              <div *ngIf="documentSetLoading">
+                <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+                <label class="mat-label other-label"><i>loading document sets...please wait</i></label>
+              </div>
+            </mat-form-field>
+          </section>
+          <section>
+            <div *ngIf="selectedCaseTypeId === 1 || selectedCaseTypeId === 11">
+              <mat-form-field class="mat-form-field-left">
+                <label class="mat-label other-label mandatory-field">Identification Type</label>
+                <mat-select (selectionChange)="idTypeChanged($event)" name="idType" id="idType"
+                  formControlName="idType">
+                  <mat-option *ngFor="let type of idTypes" [value]="type.id">
+                    {{type.name}}
+                  </mat-option>
+                </mat-select>
+                <mat-error *ngIf="form.get('idType').hasError('required')">
+                  Identification type is required
+                </mat-error>
+              </mat-form-field>
+              <mat-form-field class="mat-form-field-right" *ngIf="idType === 1">
+                <label class="mat-label other-label">Identity Number <i>(Main Member)</i></label>
+                <input matInput minlength="13" maxlength="13" name="idNumber" id="idNumber" formControlName="idNumber"
+                  NumberOnly="true">
+                <mat-error
+                  *ngIf="form.get('idNumber').hasError('minlength') || form.get('idNumber').hasError('idNumber') || form.get('idNumber').hasError('required')">
+                  A valid South African identity number is <strong>required</strong>
+                </mat-error>
+              </mat-form-field>
+              <mat-form-field class="mat-form-field-right" *ngIf="idType == 2">
+                <label class="mat-label other-label">Passport <i>(Main Member)</i></label>
+                <input matInput minlength="3" maxlength="30" name="idNumber" id="idNumber" formControlName="idNumber">
+                <mat-error *ngIf="form.get('idNumber').hasError('required')">
+                  Passport number is <strong>required</strong>
+                </mat-error>
+                <mat-error *ngIf="form.get('idNumber').hasError('minlength')">
+                  Passport number must be at least <strong>three characters</strong>
+                </mat-error>
+              </mat-form-field>
+            </div>
+          </section>
+          <section>
+            <div *ngIf="(isOldCaseNumberRequired && hasClientRefPermission) || selectedCaseTypeId===11">
+              <mat-form-field class="mat-form-field-left">
+                <label class="mat-label other-label">Old Account Number</label>
+                <input matInput maxlength="50" name="clientreference" id="clientreference"
+                  formControlName="clientreference" (blur)="clientReferenceExists($event)">
+                <div *ngIf="searchingClientReferenceDuplicates">
+                  <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+                  <label class="mat-label other-label"><i>checking duplicates...please wait</i></label>
+                </div>
+                <mat-error *ngIf="form.controls['clientreference'].hasError('exists')">
+                  Policy Number <strong>already exists</strong>
+                </mat-error>
+              </mat-form-field>
+            </div>
+          </section>
+          <div *ngIf="selectedCaseTypeId===3 
+                   || selectedCaseTypeId===4 
+                   || selectedCaseTypeId===5 
+                   || selectedCaseTypeId===8  
+                   || selectedCaseTypeId===9 
+                   || selectedCaseTypeId===11 
+                   || selectedCaseTypeId===12 
+                   || selectedCaseTypeId===14 
+                   || selectedCaseTypeId===15
+                   || selectedCaseTypeId===16">
+            <div *ngIf="selectedCaseTypeId===8">
+              <section>
+                <mat-form-field class="mat-form-field-left">
+                  <label class="mat-label other-label mandatory-field">Identification Type</label>
+                  <mat-select (selectionChange)="idTypeChanged($event)" formControlName="idType">
+                    <mat-option *ngFor="let type of idTypes" [value]="type.id">
+                      {{type.name}}
+                    </mat-option>
+                  </mat-select>
+                  <mat-error *ngIf="form.get('idType').hasError('required') || form.get('idType').hasError('min')">
+                    Identification type is required
+                  </mat-error>
+                </mat-form-field>
+                <mat-form-field class="mat-form-field-right" *ngIf="idType == 1">
+                  <label class="mat-label other-label">Identity Number <i>(Insured Life)</i></label>
+                  <input matInput minlength="13" maxlength="13" formControlName="idNumber" NumberOnly="true"
+                    (keyup)="findMainMemberByIdNumber($event)">
+                  <mat-icon class="search-icon" (click)="findMainMemberByIdNumber($event)" matSuffix>search</mat-icon>
+                  <mat-error
+                    *ngIf="form.get('idNumber').hasError('minlength') || form.get('idNumber').hasError('idNumber') || form.get('idNumber').hasError('required')">
+                    A valid South African identity number is <strong>required</strong>
+                  </mat-error>
+                  <mat-error *ngIf="form.get('idNumber').hasError('exists')">
+                    An existing Identity Number is <strong>required</strong>
+                  </mat-error>
+                </mat-form-field>
+                <mat-form-field class="mat-form-field-right" *ngIf="idType === 2">
+                  <label class="mat-label other-label">Passport <i>(Insured Life)</i></label>
+                  <input matInput minlength="3" maxlength="30" formControlName="idNumber"
+                    (keyup)="findMainMemberByIdNumber($event)">
+                  <mat-icon class="search-icon" (click)="findMainMemberByIdNumber($event)" matSuffix>search</mat-icon>
+                  <mat-error *ngIf="form.get('idNumber').hasError('required')">
+                    Passport number is <strong>required</strong>
+                  </mat-error>
+                  <mat-error *ngIf="form.get('idNumber').hasError('minlength')">
+                    Passport number must be at least <strong>three characters</strong>
+                  </mat-error>
+                  <mat-error *ngIf="form.get('idNumber').hasError('exists')">
+                    An existing Passport Number is <strong>required</strong>
+                  </mat-error>
+                </mat-form-field>
+              </section>
+              <section>
+                <div *ngIf="mainMemberDeceased" style="color: red;">
+                  Main member is deceased and case type cannot be created
+                </div>
+                <mat-form-field class="mat-form-field">
+                  <label class="mat-label other-label">Insured Life</label>
+                  <input matInput formControlName="insuredLife" [readonly]="inputReadonly"
+                    style="background-color:rgb(190, 198, 243)" />
+                  <div *ngIf="searchingInsuredLife">
+                    <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+                    <label class="mat-label other-label"><i>loading...please wait</i></label>
+                  </div>
+                  <mat-error *ngIf="form.get('insuredLife').hasError('required')">
+                    An insured life is <strong>required</strong>
+                  </mat-error>
+                </mat-form-field>
+              </section>
+            </div>
+
+            <div *ngIf="selectedCaseTypeId===3 
+                     || selectedCaseTypeId===4 
+                     || selectedCaseTypeId===5 
+                     || selectedCaseTypeId===9 
+                     || selectedCaseTypeId===11 
+                     || selectedCaseTypeId===12 
+                     || selectedCaseTypeId===14 
+                     || selectedCaseTypeId===15
+                     || selectedCaseTypeId===16">
+              <section>
+              <mat-form-field class="mat-form-field-left">
+                <label class="mat-label other-label">Search Policy</label>
+                <input matInput formControlName="filterPolicy" id="filterPolicy" formControlName="filterPolicy"
+                  minlength="3" required (keyup)="findPolicies($event)">
+                <mat-icon class="search-icon" (click)="findPolicies($event)" matSuffix>search</mat-icon>
+                <div *ngIf="searchingPolicies">
+                  <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+                </div>
+                <mat-error *ngIf="form.get('filterPolicy').hasError('minlength') || form.get('filterPolicy').hasError('required')">
+                  Search string must be at least <strong>three characters</strong>
+                </mat-error>
+                <mat-error class="small-text" *ngIf="form.get('policyNumber').hasError('required')">
+                  Policy number is required. Please select a policy.
+                </mat-error>                
+              </mat-form-field>
+            </section>
+            </div>
+            <div *ngIf="policySelected && (selectedCaseTypeId===3 
+                                        || selectedCaseTypeId===4 
+                                        || selectedCaseTypeId===5 
+                                        || selectedCaseTypeId===9 
+                                        || selectedCaseTypeId===11 
+                                        || selectedCaseTypeId===12 
+                                        || selectedCaseTypeId===14 
+                                        || selectedCaseTypeId===15
+                                        || selectedCaseTypeId===16)">
+              <mat-form-field class="mat-form-field">
+                <label class="mat-label other-label">Policy</label>
+                <input matInput formControlName="policyNumber" readonly>
+                <div *ngIf="searchingPolicies">
+                  <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+                  <label class="mat-label other-label"><i>loading policies...please wait</i></label>
+                </div>
+                <div *ngIf="form.get('policyNumber').hasError('required')">
+                  <mat-error>Policy number is required</mat-error>
+                </div>
+              </mat-form-field>
+                <mat-error class="errortext" *ngIf="form.get('policyNumber').hasError('case')">
+              
+                  <mat-card class="example-card"> 
+                  <mat-card-subtitle>Cannot create case</mat-card-subtitle>
+                 <mat-card-content>                      
+                      Policy number already linked to a case
+                      <p>Case:<b>{{createCaseWarning}}</b></p>
+                    </mat-card-content>
+                  </mat-card>
+                  
+                </mat-error>
+              
+            </div>
+          </div>
+          <section>
+            <div *ngIf="hasSelectedSearchedPolicy && actionBlockedReason.length > 0" style="color: red;">
+              Action cannot be performed: {{actionBlockedReason}}
+            </div>
+            <div *ngIf="hasSearchedPolicies && policies.length === 0" class="rep-not-found">
+              No policies matching search criteria found
+            </div>
+            <div *ngIf="hasSearchedPolicies && policies.length > 0 && !policySelected">
+              <div *ngIf="hasSearchedPolicies && policies.length > 0  && policiesWithInvalidActions > 0"
+                style="color: red;">
+                Note only policies that are {{validStatus}} can be {{validAction}}
+              </div>
+              <mat-table #table [dataSource]="policies" matSort>
+                <ng-container matColumnDef="policyNumber">
+                  <mat-header-cell *matHeaderCellDef mat-sort-header> Policy No. </mat-header-cell>
+                  <mat-cell *matCellDef="let row"> {{row.policyNumber}} </mat-cell>
+                </ng-container>
+                <ng-container matColumnDef="displayName">
+                  <mat-header-cell *matHeaderCellDef mat-sort-header> Client Name </mat-header-cell>
+                  <mat-cell *matCellDef="let row"> {{row.policyOwner.displayName}} </mat-cell>
+                </ng-container>
+                <ng-container matColumnDef="policyStatus">
+                  <mat-header-cell *matHeaderCellDef mat-sort-header> Status </mat-header-cell>
+                  <mat-cell *matCellDef="let row"> {{getPolicyStatusDescription(row.policyStatus)}} </mat-cell>
+                </ng-container>
+                <ng-container matColumnDef="actions">
+                  <mat-header-cell *matHeaderCellDef mat-sort-header>Actions</mat-header-cell>
+                  <mat-cell *matCellDef="let row">
+                    <span>
+                      <a role="button" (click)="selectPolicy(row)" *ngIf="checkIfActionCanOccurOnPolicy(row.policyStatus)">
+                        Select
+                      </a>
+                    </span>
+                  </mat-cell>
+                </ng-container>
+                <mat-header-row *matHeaderRowDef="displayedPolicyColumns"></mat-header-row>
+                <mat-row *matRowDef="let row; columns: displayedPolicyColumns;"></mat-row>
+              </mat-table>
+            </div>
+          </section>
+          <section>
+            <div *ngIf="selectedCaseTypeId === 7">
+              <mat-checkbox [(ngModel)]="isReclaimPolicies" formControlName="reclaimPolicies"
+                (change)="reclaimPolicySelectionChanged($event)"> Reclaim Policies</mat-checkbox>
+            </div>
+          </section>
+          <section>
+            <div *ngIf="isReclaimPolicies">
+              <mat-form-field class="mat-form-field">
+                <label class="mat-label other-label">Policy Movement Reference Number</label>
+                <input matInput [disabled]="searchingPolicyMovements" formControlName="policyMovementReference"
+                  minlength="8">
+                <mat-icon class="search-icon" (click)="searchPolicyMovements()" matSuffix>search</mat-icon>
+                <mat-error *ngIf="form.get('policyMovementReference').hasError('required')">
+                  Policy movement reference number is <strong>required</strong>
+                </mat-error>
+                <mat-error *ngIf="form.get('policyMovementReference').hasError('policyMovementReferenceNotFound')">
+                  Policy movement could not be found
+                </mat-error>
+                <div *ngIf="searchingPolicyMovements">
+                  <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+                  <label class="mat-label other-label"><i>searching...please wait</i></label>
+                </div>
+              </mat-form-field>
+              <div *ngIf="policyMovementFound">
+                <div *ngIf="cannotReclaimPolicies" style="color:red" class="rep-not-found">
+                  Policies cannot be reclaimed as the effective date is in the future
+                </div>
+                <section>
+                  <mat-form-field class="mat-form-field">
+                    <label class="mat-label other-label">To Representative</label>
+                    <input matInput readonly formControlName="policyMovementCurrentRep">
+                  </mat-form-field>
+                  <mat-form-field class="mat-form-field-right">
+                    <label class="mat-label other-label">To Brokerage</label>
+                    <input matInput readonly formControlName="policyMovementCurrentBrokerage">
+                  </mat-form-field>
+                </section>
+                <section>
+                  <mat-form-field class="mat-form-field">
+                    <label class="mat-label other-label">Number of Policies</label>
+                    <input matInput readonly formControlName="policyMovementPoliciesCount">
+                  </mat-form-field>
+                  <mat-form-field class="mat-form-field-right">
+                    <label class="mat-label other-label">Effective Date</label>
+                    <input matInput readonly formControlName="policyMovementDate">
+                  </mat-form-field>
+                </section>
+                <section>
+                  <mat-form-field class="mat-form-field">
+                    <label class="mat-label other-label">From Representative</label>
+                    <input matInput readonly formControlName="policyMovementPreviousRep">
+                  </mat-form-field>
+                  <mat-form-field class="mat-form-field-right">
+                    <label class="mat-label other-label">From Brokerage</label>
+                    <input matInput readonly formControlName="policyMovementPreviousBrokerage">
+                  </mat-form-field>
+                </section>
+              </div>
+            </div>
+          </section>
+          <section>
+            <div *ngIf="canSearchRepresentative">
+              <mat-form-field class="mat-form-field">
+                <label class="mat-label other-label">Search Representative</label>
+                <input matInput [disabled]="searchingReps" id="filter" formControlName="filter" formControlName="filter"
+                  (keyup)="findRepresentative($event)">
+                <mat-icon class="search-icon" (click)="findRepresentative($event)" matSuffix>search</mat-icon>
+                <mat-error *ngIf="form.get('filter').hasError('minlength')">
+                  search string must be at least <strong>three characters</strong>
+                </mat-error>
+                <mat-error *ngIf="form.get('representative').hasError('required')">
+                  representative is<strong> required</strong>
+                </mat-error>
+              </mat-form-field>
+              <mat-form-field class="mat-form-field-right">
+                <label class="mat-label other-label">Representative</label>
+                <input matInput formControlName="representative" readonly>
+                <div *ngIf="searchingReps">
+                  <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+                  <label class="mat-label other-label"><i>searching representatives...please wait</i></label>
+                </div>
+              </mat-form-field>
+            </div>
+          </section>
+          <section>
+            <div *ngIf="noRepsFound" class="rep-not-found">
+              No representatives matching search criteria found
+            </div>
+            <div *ngIf="showRepresentatives && !searchingReps && !noRepsFound">
+              <mat-table #table [dataSource]="representatives" matSort>
+                <ng-container matColumnDef="code">
+                  <mat-header-cell *matHeaderCellDef mat-sort-header> Code </mat-header-cell>
+                  <mat-cell *matCellDef="let row"> {{row.code}} </mat-cell>
+                </ng-container>
+                <ng-container matColumnDef="name">
+                  <mat-header-cell *matHeaderCellDef mat-sort-header> Name </mat-header-cell>
+                  <mat-cell *matCellDef="let row"> {{row.name}} </mat-cell>
+                </ng-container>
+                <ng-container matColumnDef="idNumber">
+                  <mat-header-cell *matHeaderCellDef mat-sort-header> Identification Number </mat-header-cell>
+                  <mat-cell *matCellDef="let row"> {{row.idNumber}} </mat-cell>
+                </ng-container>
+                <ng-container matColumnDef="actions">
+                  <mat-header-cell *matHeaderCellDef mat-sort-header>Actions</mat-header-cell>
+                  <mat-cell *matCellDef="let row">
+                    <span><a role="button" (click)="selectRepresentative(row)">Select</a></span>
+                  </mat-cell>
+                </ng-container>
+                <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
+                <mat-row *matRowDef="let row; columns: displayedColumns;"></mat-row>
+              </mat-table>
+            </div>
+          </section>
+          <section>
+            <div *ngIf="representative && representative.id > 0 && !setRepresentativeValidation">
+              <mat-form-field class="mat-form-field">
+                <label class="mat-label other-label">Linked Brokerage</label>
+                <div *ngIf="isBrokerageLoading | async">
+                  <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+                  <label class="mat-label other-label"><i>loading linked brokerage...please wait</i></label>
+                </div>
+                <div [hidden]="isBrokerageLoading | async">
+                  <div style="margin-top:10px" *ngIf="brokerages.length === 0 && !(isBrokerageLoading | async)">
+                    <span><i>No active linked brokerages found for representative</i></span>
+                  </div>
+                  <div [hidden]="brokerages.length === 0">
+                    <mat-select formControlName="brokerage" name="brokerage" id="brokerage"
+                      (selectionChange)="brokerageChanged($event)">
+                      <mat-option *ngFor="let brokerage of brokerages" [value]="brokerage.id">{{brokerage.fspNumber}}:
+                        {{brokerage.name}}
+                      </mat-option>
+                    </mat-select>
+                  </div>
+                </div>
+              </mat-form-field>
+              <mat-form-field
+                *ngIf="juristicRepresentativeId && selectedBrokerId > 0 && brokerages.length !== 0 && !setRepresentativeValidation"
+                class="mat-form-field-right">
+                <label class="mat-label other-label">Juristic Representative</label>
+                <input matInput formControlName="juristiceRepresentative" name="juristiceRepresentative"
+                  id="juristiceRepresentative">
+                <div *ngIf="form.get('juristiceRepresentative').hasError('juristicRepRequired')" class="errorMessage">
+                  Could not find juristic representative
+                </div>
+              </mat-form-field>
+            </div>
+          </section>
+          <section>
+            <div *ngIf="selectedBrokerId > 0 && !setRepresentativeValidation && this.selectedCaseTypeId !== 7">
+
+              <mat-form-field class="mat-form-field">
+                <label class="mat-label other-label">Active Products</label>
+                <div *ngIf="isProductsLoading | async">
+                  <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+                  <label class="mat-label other-label"><i>loading active products...please wait</i></label>
+                </div>
+                <div [hidden]="isProductsLoading | async">
+                  <div *ngIf="activeProducts.length === 0 && !(isProductsLoading | async)" style="margin-top:10px">
+                    <span><i>No active products found for representative</i></span>
+                  </div>
+                  <div [hidden]="activeProducts.length === 0">
+                    <mat-select formControlName="product" name="product" id="product"
+                      (selectionChange)="productChanged($event)">
+                      <mat-option *ngFor="let product of activeProducts" [value]="product.id">{{product.name}}
+                      </mat-option>
+                    </mat-select>
+                  </div>
+                </div>
+              </mat-form-field>
+            </div>
+          </section>
+        </form>
+        <div class="form-group-button-lookup mat-form-button" style="margin-top: 15px;">
+          <div class="form-buttons" (click)="selectTab(selectedIndex + 1)" style="margin-left: 10px">
+            <button class="button float-button" [disabled]="selectedCaseTypeId <= 0 || !form.valid">Next</button>
+          </div>
+        </div>
+      </mat-tab>
+
+      <mat-tab label="Documents" [disabled]="selectedCaseTypeId <= 0">
+        <create-case-documents (changeDocuments)="checkDocuments()" [showAdditionalDocuments]="false">
+        </create-case-documents>        
+        <div style="margin-left:16px">
+          <label *ngIf="brokerages.length === 0 && selectedRepresentativeId > 0" class="mat-label other-label"
+            style="color: red;">
+            There are no linked brokerages for the selected representative<br />
+          </label>
+          <label
+            *ngIf="activeProducts.length === 0 && selectedRepresentativeId > 0 && selectedCaseTypeId !== 7 && !(isProductsLoading | async)"
+            class="mat-label other-label" style="color: red;">
+            There are no active products for the selected representative<br />
+          </label>
+          <div
+            *ngIf="selectedCaseTypeId === 1 || selectedCaseTypeId === 2 || (selectedCaseTypeId === 7 && !isReclaimPolicies)">
+            <label *ngIf="form.get('representative').hasError('required')" class="red site-font"
+              style="font-size: smaller;">
+              Please select a representative<br />
+            </label>
+            <label *ngIf="form.get('brokerage').errors" class="red site-font" style="font-size: smaller;">
+              Please select an active linked brokerage<br />
+            </label>
+            <label *ngIf="form.get('product').errors" class="red site-font" style="font-size: smaller;">
+              Please select an active product<br />
+            </label>
+            <label *ngIf="individualFicaIdRequired" class="mat-label other-label" style="color: red;">
+              Please upload FICA Declaration or ID Copy<br />
+            </label>
+          </div>
+          <label *ngIf="(!allDocumentsSupplied) && documentsRequired" class="red site-font" style="font-size: smaller;">
+            All required documents have not been uploaded<br />
+          </label>
+        </div>
+        <div style="margin-left:16px">
+          <label *ngIf="!documentsRequired" class="mat-label other-label">
+            Documents not required<br />
+          </label>
+        </div>
+        <div class="form-group-button-lookup mat-form-button" style="margin-top: 15px;" *ngIf="!isWizard">
+          <div class="form-buttons" (click)="selectTab(selectedIndex - 1)" style="margin-left: 10px">
+            <button class="button float-button submit-button">Back</button>
+          </div>
+          <div class="form-buttons" (click)="navigateToWorkflow()" style="margin-left: 10px" *ngIf="!isWizard">
+            <button
+            [disabled]="!form.valid || (!allDocumentsSupplied && documentsRequired) || individualFicaIdRequired || (isReclaimPolicies && cannotReclaimPolicies || (isLoading | async)) || (isLoadingPolicy | async)"
+            class="button float-button submit-button">Submit</button>
+          </div>
+        </div>
+      </mat-tab>
+    </mat-tab-group>
+  </div>
+</div>

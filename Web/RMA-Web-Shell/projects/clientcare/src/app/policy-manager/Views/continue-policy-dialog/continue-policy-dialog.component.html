@@ -1,0 +1,23 @@
+<h2 mat-dialog-title>Continue Effective Date</h2>
+<div mat-dialog-content>
+  <form [formGroup]="effectiveDateform" class="mat-container details-form" novalidate>  
+    <section>
+      <div class="field-container">
+        <div><label class="mat-label other-label mandatory-field">Effective Date</label></div>
+        <mat-form-field class="mat-form-field">
+          <input matInput formControlName="effectiveDate" [matDatepicker]="effectiveDate" required
+            name="effectiveDate" readonly [matDatepickerFilter]="isFirstDay">
+          <mat-datepicker-toggle matSuffix [for]="effectiveDate"></mat-datepicker-toggle>
+          <mat-datepicker touchUi="true" #effectiveDate  ></mat-datepicker>
+          <mat-error *ngIf="effectiveDateform.get('effectiveDate').hasError('required')">
+            Effective date is required
+          </mat-error>
+        </mat-form-field>
+      </div>      
+    </section>  
+  </form> 
+</div>
+<div mat-dialog-actions>
+  <button mat-button (click)="closeDialog()">Close</button>
+  <button *ngIf="canAddEdit" mat-button cdkFocusInitial (click)="saveEffectiveDate()">Save</button>
+</div>

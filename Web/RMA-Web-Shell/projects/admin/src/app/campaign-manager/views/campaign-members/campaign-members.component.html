@@ -1,0 +1,62 @@
+﻿<mat-card class="child-card">
+  <mat-card-content>
+    <div [hidden]="!isLoading">
+      <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+    </div>
+    <div class="mat-container mat-elevation-z8">
+      <div [hidden]="dataSource.data.length === 0 || isLoading || showSection != 'members'">
+        <div class="mat-header">
+          <div class="search-container search-container-right">
+            <input type="text" name="search" placeholder="search {{titlePlural | lowercase}}..." #filter>
+          </div>
+        </div>
+        <div [hidden]="dataSource.filteredData.length === 0">
+          <mat-table #table [dataSource]="dataSource" matSort>
+            <!--All standard columns-->
+            <ng-container *ngFor="let column of columns" [matColumnDef]="column.columnDefinition">
+              <mat-header-cell mat-sort-header *matHeaderCellDef class="mat-header-cell">{{ column.header }}
+              </mat-header-cell>
+              <mat-cell *matCellDef="let row" class="mat-cell" [ngSwitch]="getColumnType(column.columnDefinition)">
+                <a *ngSwitchCase="1" class="link-edit" href="mailto:{{ column.cell(row) }}">{{ column.cell(row) }}</a>
+                <a *ngSwitchCase="2" class="link-edit" href="tel:{{ column.cell(row) }}">{{ column.cell(row) }}</a>
+                <span *ngSwitchDefault>{{ column.cell(row) }}</span>
+              </mat-cell>
+            </ng-container>
+            <!-- Actions -->
+            <ng-container *ngIf="!hideActionsLink" matColumnDef="actions">
+              <mat-header-cell *matHeaderCellDef>Actions</mat-header-cell>
+              <mat-cell *matCellDef="let row">
+                <span><a role="button" class="link-edit" (click)="addNotes(row)">Notes</a></span>
+              </mat-cell>
+            </ng-container>
+            <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
+            <mat-row *matRowDef="let row; columns: displayedColumns;"></mat-row>
+          </mat-table>
+          <mat-paginator #paginator [length]="dataSource.data.length" [pageIndex]="0" [pageSize]="5"
+            [pageSizeOptions]="[5, 10, 25, 100]">
+          </mat-paginator>
+        </div>
+      </div>
+      <div [hidden]="dataSource.filteredData.length > 0 || dataSource.data.length === 0 || showSection != 'members'"
+        class="no-search-results-add-button">
+        <div class="site-font grey">
+          <p class="grey">
+            Your search - <strong>{{filter.value}}</strong> - did not match any {{titlePlural | lowercase}}.
+          </p>
+          <span>Suggestions: </span>
+          <ul>
+            <li>Make sure that all words are spelled correctly.</li>
+            <li>Try different keywords.</li>
+            <li>Try more general keywords.</li>
+            <li>Try fewer keywords.</li>
+          </ul>
+        </div>
+      </div>
+      <div [hidden]="showSection != 'members'" class="mat-header form-group-button">
+        <div class="new-button new-button-left" (click)="back()">
+          <button class="button">Back</button>
+        </div>
+      </div>
+    </div>
+  </mat-card-content>
+</mat-card>

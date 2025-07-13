@@ -1,0 +1,33 @@
+<member-view *ngIf="model" [rolePlayerId]="model.memberSiteId" [expanded]="false" [hideExpandOption]="true"
+    (rolePlayerContextEmit)="setEmployer($event)"></member-view>
+
+<div *ngIf="employer">
+    <mat-tab-group animationDuration="500ms" [(selectedIndex)]="selectedTab">
+        <mat-tab label="Details">
+            <member-details [member]="employer" [isReadOnly]="true"></member-details>
+            <mat-card>
+                <member-account-executive [member]="employer" [isReadOnly]="true"></member-account-executive>
+            </mat-card>
+            <mat-card>
+                <member-representative [member]="employer" [isReadOnly]="true"></member-representative>
+            </mat-card>
+        </mat-tab>
+
+        <mat-tab *ngIf="employer.company" label="Company">
+            <member-company [member]="employer" [isReadOnly]="true"></member-company>
+        </mat-tab>
+
+        <mat-tab label="Contacts">
+            <member-contacts [member]="employer" [filteredDesignationTypes]="filteredDesignationTypes"
+                [filteredInformationTypes]="filteredInformationTypes" [isWizard]="false" [isReadOnly]="false"
+                (emitContacts)="setContacts($event)"></member-contacts>
+        </mat-tab>
+
+        <mat-tab label="Addresses">
+            <role-player-address-list [rolePlayer]="employer" [isReadOnly]="true"
+                [isWizard]="isWizard"></role-player-address-list>
+        </mat-tab>
+    </mat-tab-group>
+</div>
+<br/>
+<claim-disease-details *ngIf="model && employer" [event]="model" [isWizard]="true" (isValidEmit)="setIsValid($event)"></claim-disease-details>

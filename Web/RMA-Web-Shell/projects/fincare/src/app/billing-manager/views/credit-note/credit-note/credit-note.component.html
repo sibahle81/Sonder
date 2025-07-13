@@ -1,0 +1,160 @@
+<mat-card-header>
+  <mat-card-title class="wizard-font card-title grey">
+    <h1>Credit Note</h1>
+  </mat-card-title>
+</mat-card-header>
+
+<div>
+  <form [formGroup]="form" class="mat-container details-form" novalidate>
+    <div *ngIf="model && roleplayer">
+    <mat-card>
+        <label class="mat-label other-label">Account Holder: <b>{{roleplayer.displayName}}</b></label><br />
+        <label class="mat-label other-label">Account Number: <b>{{model.finPayeNumber}}</b></label><br />
+        <label class="mat-label other-label">Telephone: <b>{{roleplayer.tellNumber}}</b></label><br />
+        <label class="mat-label other-label">Mobile: <b>{{roleplayer.cellNumber}}</b></label><br />
+        <label class="mat-label other-label">Email: <b>{{roleplayer.emailAddress}}</b></label><br />
+        <label *ngIf="!model.isAuthorised" class="mat-label other-label notAuthorized">Account is <b>not</b>
+          authorised</label>
+        <label *ngIf="model.isAuthorised" class="mat-label other-label authorized">Account was authorised by
+          <b>{{model.authorisedBy}}</b></label>
+    </mat-card>
+    <br /> </div>
+    <mat-card>
+      <mat-card-header>
+        <mat-card-title class="wizard-font card-title grey">
+          <h1 style="padding: 0;">Invoices</h1>
+        </mat-card-title>
+      </mat-card-header>
+      <div *ngIf="invoicePaymentAllocations && invoicePaymentAllocations.length == 0 && !(isLoading$ | async)">
+        There are no unpaid invoices
+      </div>
+      <div  [hidden]="(!datasource.data && datasource.data.length === 0 && (isLoading$ | async))  || showOwnAmount">
+        <mat-table #table [dataSource]="datasource"  multiTemplateDataRows matSort>
+              <!-- Expand Column -->
+              <ng-container matColumnDef="expand">
+                <mat-header-cell *matHeaderCellDef> EXPAND </mat-header-cell>
+                <mat-cell *matCellDef="let row" (click)="expandCollapse(row)">
+                  <span *ngIf="!row.isExpanded"><span class="material-icons expand-icon">add_circle</span></span>
+                  <span *ngIf="row.isExpanded"><span class="material-icons expand-icon">remove_circle</span></span>
+                </mat-cell>
+              </ng-container>
+          <ng-container matColumnDef="invoiceNumber">
+            <mat-header-cell *matHeaderCellDef mat-sort-header>Invoice Number</mat-header-cell>
+            <mat-cell *matCellDef="let row"> {{row.invoiceNumber}} </mat-cell>
+          </ng-container>
+          <ng-container matColumnDef="totalInvoiceAmount">
+            <mat-header-cell *matHeaderCellDef mat-sort-header>Invoice Amount</mat-header-cell>
+            <mat-cell *matCellDef="let row" class="right-aligned-amounts"> {{row.totalInvoiceAmount | currency: 'R'}}
+            </mat-cell>
+          </ng-container>
+          <ng-container matColumnDef="amountOutstanding">
+            <mat-header-cell *matHeaderCellDef mat-sort-header>Outstanding Amount</mat-header-cell>
+            <mat-cell *matCellDef="let row" class="right-aligned-amounts"> {{row.amountOutstanding | currency: 'R'}} </mat-cell>
+          </ng-container>
+          <ng-container matColumnDef="status">
+            <mat-header-cell *matHeaderCellDef mat-sort-header>Status</mat-header-cell>
+            <mat-cell *matCellDef="let row"> {{ getStatusName(row)}} </mat-cell>
+          </ng-container>
+          <ng-container matColumnDef="invoiceDate">
+            <mat-header-cell *matHeaderCellDef mat-sort-header>Invoice Date</mat-header-cell>
+            <mat-cell *matCellDef="let row"> {{ row.invoiceDate | date: 'yyyy/MM/dd'}} </mat-cell>
+          </ng-container>
+          <ng-container matColumnDef="amountAllocated">
+            <mat-header-cell *matHeaderCellDef>Allocated Amount</mat-header-cell>
+            <mat-cell *matCellDef="let row" class="right-aligned-amounts">
+              <ng-container *ngIf="(getStatusName(row) === 'Unpaid'); else Paid">0</ng-container>
+              <ng-template #Paid>
+                <ng-container *ngIf="(getStatusName(row) === 'Paid'); else Partially" class="green">{{row.amountAllocated | currency:'R'}}</ng-container>
+              </ng-template>
+              <ng-template #Partially>
+                <ng-container class="amber" >{{row.amountAllocated | currency:'R'}}</ng-container>
+              </ng-template>
+            </mat-cell>
+          </ng-container>
+          <ng-container matColumnDef="actions" class="mat-column-created">
+            <mat-header-cell *matHeaderCellDef mat-sort-header></mat-header-cell>
+            <mat-cell *matCellDef="let row">
+              <div *ngIf="!isReadonly">
+                <a role="button" class="link-edit" *ngIf="!(selectedInvoiceIds.includes(row.invoiceId))"
+                  (click)="invoiceSelected(row.invoiceId, 0)">full amount</a> |
+                <a role="button" class="link-edit" *ngIf="!(selectedInvoiceIds.includes(row.invoiceId))"
+                  (click)="toggleOwnAmount(row.invoiceId, row.amountOutstanding)">own
+                  amount</a>
+                <a role="button" class="link-edit" *ngIf="selectedInvoiceIds.includes(row.invoiceId)"
+                  (click)="invoiceRemoved(row.invoiceId, row.amountAllocated)">remove</a>
+              </div>
+            </mat-cell>
+          </ng-container>
+
+          <div [hidden]=" true">
+            <ng-container matColumnDef="expandedDetail">
+              <mat-cell class="expand" *matCellDef="let row">
+                <div>
+                  <table>
+                    <tr class="ChildData">
+                      <td><b class="mat-cell-label">Payee:</b>
+                        {{row.displayName}}</td>
+                    </tr>
+                    <tr class="ChildData">
+                      <td><b class="mat-cell-label">Collection Date:</b>
+                        {{row.collectionDate | date: 'yyyy/MM/dd'}}</td>
+                    </tr>
+                  </table>
+                </div>
+              </mat-cell>
+            </ng-container>
+          </div>
+
+          <mat-header-row *matHeaderRowDef="displayedColumns;"></mat-header-row>
+          <mat-row *matRowDef="let row; columns: displayedColumns;" [class.expanded]="row.isExpanded"></mat-row>
+          <mat-row *matRowDef="let row; columns: ['expandedDetail'];"
+            [@detailExpand]="row.isExpanded == true ? 'expanded' : 'collapsed'">
+          </mat-row>
+        </mat-table>
+        <mat-paginator  #paginator [length]="datasource.data ? datasource.data.length : 0" [pageIndex]="0" [pageSize]="5"
+        [pageSizeOptions]="[5, 10, 25, 100]">
+        </mat-paginator>
+      </div>
+      <br />
+      <div [hidden]="!showOwnAmount">
+        <section>
+          <mat-form-field class="mat-form-field">
+            <label class="mat-label other-label mandatory-field">Amount</label>
+            <input matInput formControlName="partialAmount" name="partialAmount" id="partialAmount" DecimalNumber />
+            <div class="redsmallfont" *ngIf="showMessage">Invalid amount: Amount must be between 1
+              and {{maxAmountAllowed | currency:'R'}}</div>
+          </mat-form-field>
+        </section>
+        <button type="button" (click)="addPartialAmount()" class="button float-button">Continue</button>
+      </div>
+    </mat-card>
+    <br />
+    <div *ngIf="invoicePaymentAllocations">
+    <mat-card>
+      <section>
+        <mat-form-field class="mat-form-field">
+          <label class="mat-label other-label mandatory-field">Amount</label>
+          <input matInput formControlName="amount" name="amount" id="amount" DecimalNumber />
+        </mat-form-field>
+      </section>
+
+      <mat-form-field>
+        <label class="mat-label other-label mandatory-field">Reason</label>
+        <textarea matTextareaAutosize matAutosizeMinRows="5" matAutosizeMaxRows="3" maxlength="255" matInput
+          minlength="3" id="reason" name="reason" formControlName="reason"></textarea>
+        <mat-error *ngIf="form.get('reason').hasError('required')">
+          Reason is <strong>required</strong>
+        </mat-error>
+        <mat-error *ngIf="form.get('reason').hasError('minlength')">
+          Reason must be at least <strong>three characters</strong>
+        </mat-error>
+      </mat-form-field>
+    </mat-card>
+  </div>
+  </form>
+</div>
+<div [hidden]="!(isLoading$ | async)">
+  <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+  <label class="mat-label other-label"><i>loading...please wait</i></label>
+</div>
+<br />

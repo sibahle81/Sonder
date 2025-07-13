@@ -1,0 +1,110 @@
+<div>
+  <div>
+    <nav class="innertop-nav">
+      <button mat-button [routerLink]="['/medicare/medical-invoice-remittance']">Remittance</button>
+      <button mat-button [routerLink]="['/medicare/medical-invoice-under-payment-and-non-payment']">Under Payment & Non Payment Invoices</button>
+    </nav>
+  </div>
+</div>
+
+<div class="mat-header">
+    <h1>Search For Under Payment and Non Payment Invoices</h1>
+</div>
+
+<div>
+    <form [formGroup]="form" style="display: flex" novalidate>
+        <section>       
+          
+          <!--startDate-->
+          <div class="field-container-right">
+            <div><label class="mat-label other-label mandatory-field">Start Date</label></div>
+            <mat-form-field>
+              <input matInput formControlName="startDate" [matDatepicker]="startDate" id="startDate"
+                name="startDate">
+                <mat-error *ngIf="form.get('startDate').hasError('required')">
+                  Start Date is <strong>required</strong>
+                </mat-error>
+              <mat-datepicker-toggle matSuffix [for]="startDate" [disabled]="false"></mat-datepicker-toggle>
+              <mat-datepicker touchUi="true" #startDate></mat-datepicker>
+            </mat-form-field>
+          </div>
+
+          <!--endDate-->
+          <div class="field-container-right">
+            <div><label class="mat-label other-label mandatory-field">End Date</label></div>
+            <mat-form-field>
+              <input matInput formControlName="endDate" [matDatepicker]="endDate" id="endDate"
+                name="endDate">
+                <mat-error *ngIf="form.get('endDate').hasError('required')">
+                  End Date is <strong>required</strong>
+                </mat-error>
+              <mat-datepicker-toggle matSuffix [for]="endDate" [disabled]="false"></mat-datepicker-toggle>
+              <mat-datepicker touchUi="true" #endDate></mat-datepicker>
+            </mat-form-field>
+          </div>
+          
+          <!--practiceNumber-->
+          <div class="field-container-right">
+            <mat-form-field class="mat-form-field">
+                <label class="mat-label other-label">Practice Number</label>
+                <input matInput id="practiceNumber" name="practiceNumber" formControlName="practiceNumber" />
+            </mat-form-field>
+          </div>
+    </section>
+    </form>
+
+    <div class="form-buttons submit-button button-left">
+      <button type="button" class="button float-button" (click)="onMedicalInvoiceSearch()">Search</button>
+      <button type="button" class="button float-button" (click)="onResetForm()">Clear Search</button>
+    </div>
+
+    <div class="clear">&nbsp;</div>
+    <br>
+    <br>
+
+    <mat-card class="matcard">
+        <mat-card-content class="matcard content">
+          <div *ngIf="dataSource.loading$ | async">
+            <mat-progress-bar mode="indeterminate"
+              [ngClass]="{ 'loading-main-double-menu-progress': doubleMenu, 'loading-main-single-menu-progress': !doubleMenu }">
+            </mat-progress-bar>
+            <p class="site-font grey">Loading...</p>
+          </div>
+          <div [hidden]="paginator.length == 0">
+            <mat-table #table [dataSource]="dataSource" matSort matSortDisableClear>
+            <!-- Checkbox Column -->
+              <ng-container matColumnDef="select">
+                <mat-header-cell *matHeaderCellDef>select</mat-header-cell>
+                <mat-cell *matCellDef="let row">
+                    <mat-checkbox (change)="selectHandler(row)" >
+                    </mat-checkbox>
+                </mat-cell>
+                <mat-footer-cell *matFooterCellDef> </mat-footer-cell>
+              </ng-container>
+
+              <ng-container matColumnDef="practiceNumber">
+                <mat-header-cell *matHeaderCellDef mat-sort-header>Practice Number</mat-header-cell>
+                <mat-cell *matCellDef="let preAuthorisation" matTooltip="{{preAuthorisation.practiceNumber}}">
+                  <span class="truncate-text"> {{ preAuthorisation.practiceNumber}} </span>
+                </mat-cell>
+              </ng-container>
+      
+              <ng-container matColumnDef="name">
+                <mat-header-cell *matHeaderCellDef mat-sort-header> Name </mat-header-cell>
+                <mat-cell *matCellDef="let preAuthorisation" matTooltip="{{preAuthorisation.name}}">
+                  <span class="truncate-text"> {{ preAuthorisation.name}} </span>
+                </mat-cell>
+              </ng-container>
+                  
+              <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
+              <mat-row *matRowDef="let row; columns: displayedColumns;"></mat-row>
+            </mat-table>
+            <mat-paginator #paginator [length]="dataSource.rowCount$" [pageIndex]="0" [pageSize]="5"
+              [pageSizeOptions]="[5, 10, 25, 100]">
+            </mat-paginator>
+          </div>
+        </mat-card-content>
+      </mat-card>
+
+
+</div>

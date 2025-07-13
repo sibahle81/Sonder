@@ -1,0 +1,28 @@
+<div>
+  <h1>Upload Premium Payments</h1>
+</div>
+<div>
+  <upload-control #uploadControl [acceptedTypes]="'.csv'" [isSingleInput]="false" [allowDelete]="true"
+    [isReadOnly]="false">
+  </upload-control>
+</div>
+<div class="left-padding" *ngIf="uploadControlComponent.uploadFileList.length > 0">
+  <div>Uploading large files may take several minutes. Please be patient.</div>
+</div>
+<br />
+<div [hidden]="!hasErrors" class="error-message">
+  <ng-container *ngFor="let msg of errors">
+    {{msg}}<br />
+  </ng-container>
+</div>
+<br />
+<div class="form-buttons" (click)="save()">
+  <button class="button float-button submit-button" [disabled]="uploadControlComponent.isUploading">Upload File</button>
+</div>
+<div [hidden]="true">
+  <ssrs-reportviewer [reportserver]="reportServerAudit" [reporturl]="reportUrlAudit"
+    [showparameters]="showParametersAudit" [parameters]="parametersAudit" [language]="languageAudit"
+    [width]="widthAudit" [height]="heightAudit" [toolbar]="toolbarAudit" [format]="format"
+    (downloadComplete)="completeDownload($event)">
+  </ssrs-reportviewer>
+</div>

@@ -1,0 +1,48 @@
+﻿<div *ngIf="!items && !anyItems  && !isError" class="loading-bar">
+    <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+    <label class="grey site-font">Loading {{label}}...</label>
+</div>
+
+ 
+
+    <div *ngIf="items && !isError">
+        <label class="form-label other-label">{{label}}</label>
+        <mat-form-field>
+            <mat-select [attr.name]="name" [id]="id" [formControl]="selectControl" 
+                        [(value)]="selectedItems" (selectionChange)="onChanged()" multiple>
+                <mat-select-trigger>
+                    {{selectControl.value ? selectControl.value.length > 0 ? selectControl.value[0].name : 'N/A' :'N/A'}}
+                    <span *ngIf="selectControl.value?.length > 1" class="additional-selection">
+                        (+{{selectControl.value.length - 1}} {{selectControl.value?.length > 2 ?'others' : 'other'}})
+                    </span>
+                </mat-select-trigger>
+                <mat-option *ngFor="let item of items" [value]="item" [disabled]="isReadOnly === true ? 'disabled' : 'false'">{{item.name}}</mat-option>
+            </mat-select>
+            <mat-error *ngIf="selectControl.hasError('required')">
+                {{errorMessage}} is <strong>required</strong>
+            </mat-error>
+        </mat-form-field>
+    </div>
+
+    <div *ngIf="anyItems && !isError">
+        <label class="form-label other-label">{{label}}</label>
+        <mat-form-field>
+            <mat-select [attr.name]="name" [id]="id" [formControl]="selectControl" 
+                        [(value)]="selectedAnyItems" (selectionChange)="onChanged()" multiple>
+                <mat-select-trigger>
+                    {{selectControl.value ? selectControl.value.length > 0 ? selectControl.value[0].name : 'N/A' :'N/A'}}
+                    <span *ngIf="selectControl.value?.length > 1" class="additional-selection">
+                        (+{{selectControl.value.length - 1}} {{selectControl.value?.length > 2 ?'others' : 'other'}})
+                    </span>
+                </mat-select-trigger>
+                <mat-option *ngFor="let anyItem of anyItems" [value]="anyItem" [disabled]="isReadOnly === true ? 'disabled' : 'false'">{{anyItem.name}}</mat-option>
+            </mat-select>
+            <mat-error *ngIf="selectControl.hasError('required')">
+                {{errorMessage}} is <strong>required</strong>
+            </mat-error>
+        </mat-form-field>
+    </div>
+
+<div *ngIf="isError">
+    Error loading {{label}}
+</div>

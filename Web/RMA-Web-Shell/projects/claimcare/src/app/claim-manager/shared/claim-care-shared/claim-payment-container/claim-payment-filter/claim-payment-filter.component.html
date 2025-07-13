@@ -1,0 +1,36 @@
+<form [formGroup]="form" novalidate>
+    <mat-card>
+        <div class="menu-bar">
+            <span class="material-icons">
+                payment
+            </span>&nbsp;Payments
+        </div>
+        <br />
+        <div>
+            <mat-form-field class="mat-form-field controlSize">
+                <label class="mat-label other-label">Payment Status</label>
+                <mat-select id="invoiceFilter" name="invoiceFilter" matInput formControlName="invoiceFilter"
+                    (selectionChange)="invoiceStatusChange($event.value)">
+                    <mat-option [value]="'Unknown'">All</mat-option>
+                    <mat-option *ngFor="let invoiceStatus of invoiceStatuses" [value]="invoiceStatus">
+                        {{(formatText(invoiceStatus)).toUpperCase()}}
+                    </mat-option>
+                </mat-select>
+            </mat-form-field>
+
+            <mat-form-field class="mat-form-field-right controlSize">
+                <label class="mat-label other-label">Invoice Type</label>
+                <mat-select id="invoiceType" name="invoiceType" matInput formControlName="invoiceType"
+                    (selectionChange)="invoiceTypeChange($event.value)">
+                    <mat-option [value]="'Unknown'">All</mat-option>
+                    <mat-option *ngFor="let invoiceType of invoiceTypes" [value]="invoiceType">
+                        {{(formatText(invoiceType)).toUpperCase()}}
+                    </mat-option>
+                </mat-select>
+            </mat-form-field>
+            <br />
+        </div>
+    </mat-card>
+    <claim-paged-payment [personEvent]="personEvent" [invoiceType]="invoiceType" [invoiceStatus]="invoiceStatus"
+        (refreshLoading)="refreshLoading($event)"></claim-paged-payment>
+</form>

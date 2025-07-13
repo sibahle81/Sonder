@@ -1,0 +1,32 @@
+﻿<section>
+    <mat-form-field>
+        <label class="mat-label other-label">Target category</label>
+        <mat-select [(ngModel)]="targetCategoryId" (selectionChange)="setupTargetCategory($event)" [disabled]="disableCategory">
+            <mat-option *ngFor="let category of targetCategories" [value]="category.id">
+                {{ category.name | audiencetype }}</mat-option>
+        </mat-select>
+    </mat-form-field>
+    <mat-form-field class="mat-form-field-right">
+        <div *ngIf="showClientCategories">
+            <label class="mat-label other-label">{{ targetCategoryLabel | audiencetype }}</label>
+            <mat-progress-bar *ngIf="isLoading" mode="indeterminate"></mat-progress-bar>
+            <mat-select #categorySelect multiple [(ngModel)]="selectedCategories" [disabled]="listControl.disabled">
+                <mat-select-trigger>
+                    {{ getSelectedCaption() }}
+                </mat-select-trigger>
+                <mat-option disabled="disabled">
+                    <a (click)="selectAll(categorySelect)">Select all</a>
+                    <span> | </span>
+                    <a (click)="deselectAll(categorySelect)">Deselect all</a>
+                </mat-option>
+                <mat-option *ngFor="let category of categoryList" [value]="category.id">
+                    {{ category.name }}
+                </mat-option>
+            </mat-select>
+        </div>
+        <div [hidden]="!selectClient">
+          <label class="mat-label other-label">Client</label>
+          <input matInput [formControl]="listControl" />
+        </div>
+    </mat-form-field>
+</section>

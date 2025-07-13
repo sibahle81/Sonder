@@ -1,0 +1,44 @@
+<mat-card *ngIf="isLoading$ | async">
+    <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+    <label class="mat-label other-label"><i>loading person details...please wait</i></label>
+</mat-card>
+
+<mat-card *ngIf="isSaving$ | async">
+    <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+    <label class="mat-label other-label"><i>saving person details...please wait</i></label>
+</mat-card>
+
+<div [hidden]="(isLoading$ | async) || (isSaving$ | async)">
+    <form [formGroup]="form" class="mat-container" novalidate>
+        <mat-card>
+            <div class="menu-bar" *ngIf="!(isLoading$ | async)">
+                Relationship
+                <span *ngIf="form.valid && !form.pristine && !isReadOnly" (click)="save()"
+                    class="material-icons pointer right" matTooltip="save">
+                    save
+                </span>
+                <span *ngIf="!isStp && !isReadOnly && beneficiary.fromRolePlayers && beneficiary.fromRolePlayers.length > 0" (click)="edit()" class="material-icons pointer right"
+                    matTooltip="edit">
+                    settings
+                </span>
+            </div>
+            <section>
+                <mat-form-field class="mat-form-field">
+                    <label class="mat-label other-label mandatory-field">Beneficiary Type</label>
+                    <mat-select [disabled]="isReadOnly" name="relationType" id="relationType" formControlName="relationType">
+                        <mat-option *ngFor="let type of relationTypes" [value]="type"> {{getRelationType(type)}}
+                        </mat-option>
+                    </mat-select>
+                    <mat-error
+                        *ngIf="form.get('relationType').hasError('required') && form.get('relationType').touched">
+                        Beneficiary type is required
+                    </mat-error>
+                    <mat-hint class="error" *ngIf="isSpouseError">
+                        Only one spouse can be captured if marriage type is Civil marriage/Civil union
+                    </mat-hint>
+                </mat-form-field>
+            </section>
+
+        </mat-card>
+    </form>
+</div>

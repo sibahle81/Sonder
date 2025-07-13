@@ -1,0 +1,76 @@
+<div class="menu-bar">
+  <span class="material-icons">calculate</span>
+  {{title}}
+  <span (click)="cancel()" class="material-icons pointer right" matTooltip="close">
+    close
+  </span>
+</div>
+<div *ngIf="(isLoading$ | async)">
+  <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+  <label class="mat-label other-label"><i>loading ..please wait</i></label>
+</div>
+<div [hidden]="(isLoading$ | async)">
+  <mat-table #table [dataSource]="dataSource?.data" matSort id="tblData" (matSortChange)="loadMonthlyLedgers()">
+    <ng-container matColumnDef="claimReferenceNumber">
+      <mat-header-cell *matHeaderCellDef mat-sort-header> Claim Reference </mat-header-cell>
+      <mat-cell *matCellDef="let row">
+        {{row.claimReferenceNumber}}
+      </mat-cell>
+    </ng-container>
+    <ng-container matColumnDef="beneficiaryName">
+      <mat-header-cell *matHeaderCellDef mat-sort-header> Beneficiary </mat-header-cell>
+      <mat-cell *matCellDef="let row">
+        {{row.beneficiaryName}}
+      </mat-cell>
+    </ng-container>
+    <ng-container matColumnDef="pensionAmount">
+      <mat-header-cell *matHeaderCellDef mat-sort-header> Pension Amount </mat-header-cell>
+      <mat-cell *matCellDef="let row">
+        {{row.pensionAmount | currency: 'R'}}
+      </mat-cell>
+    </ng-container>
+    <ng-container matColumnDef="paye">
+      <mat-header-cell *matHeaderCellDef mat-sort-header> PAYE </mat-header-cell>
+      <mat-cell *matCellDef="let row">
+        {{row.paye | currency: 'R'}}
+      </mat-cell>
+    </ng-container>
+    <ng-container matColumnDef="additionalTax">
+      <mat-header-cell *matHeaderCellDef mat-sort-header> Additional Tax </mat-header-cell>
+      <mat-cell *matCellDef="let row">
+        {{row.additionalTax | currency: 'R'}}
+      </mat-cell>
+    </ng-container>
+    <ng-container matColumnDef="paymentAmount">
+      <mat-header-cell *matHeaderCellDef mat-sort-header> Nett Amount </mat-header-cell>
+      <mat-cell *matCellDef="let row">
+        {{ row.pensionAmount - (row.paye + row.additionalTax) | currency: 'R'}}
+      </mat-cell>
+    </ng-container>
+    <ng-container matColumnDef="pensionIncreaseId">
+      <mat-header-cell *matHeaderCellDef mat-sort-header> Increase Type </mat-header-cell>
+      <mat-cell *matCellDef="let row">
+        {{ row.pensionIncreaseType}}
+      </mat-cell>
+    </ng-container>
+    <ng-container matColumnDef="pensionLedgerPaymentStatusId">
+      <mat-header-cell *matHeaderCellDef mat-sort-header> Payment Status </mat-header-cell>
+      <mat-cell *matCellDef="let row">
+        {{ row.pensionLedgerPaymentStatus}}
+      </mat-cell>
+    </ng-container>
+    <ng-container matColumnDef="actions">
+      <mat-header-cell *matHeaderCellDef>Actions</mat-header-cell>
+      <mat-cell *matCellDef="let row">
+        <span class="material-icons pointer right" (click)="openMonthlyLedgerDetailsDialog(row)" matToolTip="view ledgers">visibility</span>
+      </mat-cell>
+    </ng-container>
+
+
+    <mat-header-row *matHeaderRowDef="getDisplayedColumns()"></mat-header-row>
+    <mat-row *matRowDef="let row; columns: getDisplayedColumns();"></mat-row>
+  </mat-table>
+  <mat-paginator #paginator [pageIndex]="0" [pageSize]="6" [pageSizeOptions]="[6, 12, 24, 50]"
+                 [length]="dataSource?.rowCount ?? 0" (page)="loadMonthlyLedgers()">
+  </mat-paginator>
+</div>

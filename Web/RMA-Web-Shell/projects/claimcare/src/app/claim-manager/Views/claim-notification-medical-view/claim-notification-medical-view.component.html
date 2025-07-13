@@ -1,0 +1,33 @@
+<mat-card>
+  <div *ngIf="!(isLoading$ | async) && event">
+    <mat-card-title>
+      <h1>Person Event {{showAccidentDetails ? 'Accident Details' : 'Disease Details'}} <span class="material-icons close" matTooltip="Back to Search" (click)="back()">close</span></h1>
+    </mat-card-title>
+    <mat-card-content>
+      <div *ngIf="showAccidentDetails">
+        <div *ngIf="event">
+          <claim-incident-details [event]="event" [isWizard]="false" [isReadOnly]="true">
+          </claim-incident-details>
+          <claim-employee-details [event]="event" [isWizard]="false"  [isReadOnly]="true"></claim-employee-details>
+          <claim-insurance-details [event]="event" [isWizard]="false"  [isReadOnly]="true"></claim-insurance-details>
+          <claim-notification-documents [event]="event" [isWizard]="false"  [isReadOnly]="true"></claim-notification-documents>
+          <br />
+          <claim-medical-report-details [event]="event" [isWizard]="false"  [isReadOnly]="true"></claim-medical-report-details>
+        </div>
+      </div>
+      <div *ngIf="!showAccidentDetails">
+        <div *ngIf="event">
+          <claim-disease-details [event]="event" [isWizard]="false" [isReadOnly]="true"></claim-disease-details>
+          <claim-employee-details [event]="event" [isWizard]="false"  [isReadOnly]="true"></claim-employee-details>
+          <claim-notification-documents [event]="event" [isWizard]="false"  [isReadOnly]="true"></claim-notification-documents>
+          <br />
+          <claim-medical-report-details [event]="event" [isWizard]="false"  [isReadOnly]="true"></claim-medical-report-details>
+        </div>
+      </div>
+    </mat-card-content>
+  </div>
+  <div *ngIf="(isLoading$ | async)">
+    <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+    <label class="mat-label other-label"><i>Getting Person Event details...please wait</i></label>
+  </div>
+</mat-card>

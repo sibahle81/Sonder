@@ -1,0 +1,57 @@
+<mat-card class="pad" *ngIf="(isLoading$ | async)">
+    <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+    <label class="mat-label other-label"><i>loading...please wait</i></label>
+</mat-card>
+
+<div [hidden]="(isLoading$ | async)" class="pageWidth">
+    <mat-card>
+        <div class="menu-bar">
+            <span class="material-icons">
+                rule
+            </span>&nbsp;Manage Users
+            <span (click)="cancel()" class="material-icons pointer right" matTooltip="Close">
+                close
+            </span>
+            <span *ngIf="userSelectedId && date1 && date2" (click)="addManageUser()" class="material-icons pointer right pulseGreen"
+                matTooltip="save">
+                save
+            </span>
+        </div>
+        <form [formGroup]="form" novalidate>
+            <section>
+                <mat-form-field class="filterControl">
+                    <label class="mat-label other-label">Select User</label>
+                    <mat-select id="filter" name="filter" matInput formControlName="filter"
+                        (selectionChange)="userSelected($event)">
+                        <mat-option *ngFor="let user of users" [value]="user.id">
+                            {{user.displayName}}
+                        </mat-option>
+                    </mat-select>
+                </mat-form-field>
+            </section>
+
+            <section>
+                <mat-form-field class="mat-form-field controlSize">
+                    <label class="mat-label other-label">Start Time Off</label>
+                    <input matInput [matDatepicker]="picker1" (dateChange)="Date1Change($event)" name="dtPicker1"
+                        id="dtPicker1" formControlName="dtPicker1" [min]="minDate">
+                    <mat-datepicker-toggle matSuffix [for]="picker1"></mat-datepicker-toggle>
+                    <mat-datepicker #picker1></mat-datepicker>
+                </mat-form-field>
+
+                <mat-form-field class="mat-form-field-right controlSize">
+                    <label class="mat-label other-label">End Time Off</label>
+                    <input matInput [matDatepicker]="picker2" (dateChange)="Date2Change($event)" name="dtPicker2"
+                        id="dtPicker2" formControlName="dtPicker2" [min]="minDate">
+                    <mat-datepicker-toggle matSuffix [for]="picker2"></mat-datepicker-toggle>
+                    <mat-datepicker #picker2></mat-datepicker>
+                </mat-form-field>
+            </section>
+
+        </form>
+        <message-float-shared [floatMessage]="floatMessage"></message-float-shared>
+    </mat-card>
+    <br />
+    <user-paged-payments [user]="selectedUser" (emitClaimCount)="addUsers($event)"></user-paged-payments>
+
+</div>

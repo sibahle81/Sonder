@@ -1,0 +1,68 @@
+﻿<div *ngIf="wizardContext" class="container-padding">
+    <div *ngIf="!isSubmitting">
+        <mat-card>
+            <mat-card-header>
+                <mat-card-title class="wizard-font card-title grey">
+                    <h1>Are you sure you want to save and close this wizard?</h1>
+                </mat-card-title>
+            </mat-card-header>
+            <mat-card-content>
+
+                <div class="left-margin" style="margin-bottom: 10px;">
+                    <div class="wizard-font card-title grey">Reference: {{wizardContext.wizard.name}}</div>
+                    <div class="valid">In Progress - Step {{wizardContext.wizard.currentStep}} of {{wizardContext.stepComponents.length}}</div>
+                </div>
+
+                <span *ngIf="currentUser?.isInternalUser" class="small-padding wizard-font grey" style="font-size: 16px;">
+                    Do you want to keep this wizard locked to you?
+                </span>
+                
+                <div *ngIf="currentUser?.isInternalUser">
+                    <mat-radio-group class="wizard-radio-group" [(ngModel)]="keepLocked">
+
+                        <mat-radio-button class="wizard-radio-button" [value]="false">
+                            No, unlock this wizard
+                        </mat-radio-button>
+                        <mat-radio-button class="wizard-radio-button" [value]="true" style="margin-left:10px;">
+                            Yes, keep this wizard locked to me (No one else can work on this wizard while its locked to you)
+                        </mat-radio-button>
+                    </mat-radio-group>
+                </div>
+
+            </mat-card-content>
+            <mat-card-actions>
+                <button class="button submit-button" (click)="yesSave()">Save</button>
+                <button class="button submit-button" (click)="dontSave()">Back</button>
+            </mat-card-actions>
+        </mat-card>
+    </div>
+
+    <!--Save Progress-->
+    <div style="margin: 0 20px" *ngIf="isSubmitting && !isSaved">
+        <h1 style="padding-left: 0;" class="wizard-font">Saving wizard</h1>
+        <p class="wizard-font grey">This shouldn't take long...</p>
+        <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+    </div>
+
+    <!--Cancelled-->
+    <div *ngIf="isSaved">
+        <mat-card>
+            <mat-card-header>
+                <mat-card-title class="wizard-font card-title grey">
+                    <h1>This wizard has been saved</h1>
+                </mat-card-title>
+            </mat-card-header>
+            <mat-card-content>
+                <div class="left-margin">
+                    
+                    <div class="wizard-font card-title grey">Reference: {{wizardContext.wizard.name}}</div>
+                    <div class="wizard-font valid">In Progress - Step {{this.currentStep}} of {{totalSteps}}</div>
+                    <div class="wizard-font grey" *ngIf="createdBy">Created by: {{createdBy}} on {{wizardContext.wizard.createdDate | date:'fullDate'}}</div>
+                </div>
+            </mat-card-content>
+            <mat-card-actions>
+                <button class="button submit-button" (click)="back()">Go back</button>
+            </mat-card-actions>
+        </mat-card>
+    </div>
+</div>

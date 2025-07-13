@@ -1,0 +1,16 @@
+export enum TaskScheduleFrequencyEnum {
+		OneMinutes = 1,
+		TwoMinutes = 2,
+		FiveMinutes = 3,
+		QuarterHourly = 4,
+		HalfHourly = 5,
+		Hourly = 6,
+		Daily = 7,
+		Weekly = 8,
+		Monthly = 9,
+		Quarterly = 10,
+		BiYearly = 11,
+		Yearly = 12,
+		OnceOff = 13,
+		PaymentSubmissionSchedule = 14,
+}

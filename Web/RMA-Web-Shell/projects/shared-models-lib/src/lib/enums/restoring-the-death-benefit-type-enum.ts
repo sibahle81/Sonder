@@ -1,0 +1,5 @@
+export enum RestoringTheDeathBenefitTypeEnum {
+	NotApplicable =1,
+	TheDeathBenefitWllBeRestoredTo100PercentageIfTheInsuredSurvives15Days =2,
+	TheDeathBenefitWllBeRestoredTo100PercentageIfTheInsuredSurvives30Days =3,
+}

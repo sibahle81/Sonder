@@ -1,0 +1,70 @@
+<form [formGroup]="form" name="form" class="mat-container details-form" novalidate>
+  <mat-card class="matcard">
+    <mat-card-content class="matcard content">
+        <div class="page-header">
+            <h1>CPT Search</h1>
+        </div>
+        <br/>
+
+          <mat-form-field class="mat-form-field">
+            <label class="mat-label other-label">CPT Code</label>
+            <input matInput id="treatmentCode" name="treatmentCode" formControlName="treatmentCode" />
+          </mat-form-field>
+          <br/>
+          <mat-form-field class="mat-form-field">
+              <label class="mat-label other-label">Description</label>
+              <input matInput id="treatmentCodeDescription" name="treatmentCodeDescription" formControlName="treatmentCodeDescription" />
+          </mat-form-field>
+          <div (click)="search()" class="import-icon" #filter>
+            <button type="button" title="Search by code, or description" class="button submit-button import-button">
+              <i class="material-icons">search</i></button>
+          </div>
+
+
+        <div *ngIf="dataSource.loading$ | async">
+            <mat-progress-bar mode="indeterminate"
+                [ngClass]="{ 'loading-main-double-menu-progress': doubleMenu, 'loading-main-single-menu-progress': !doubleMenu }">
+            </mat-progress-bar>
+            <p class="site-font grey">Searching...</p>
+        </div>
+
+        <div [hidden]="paginator.length == 0">
+            <mat-table #table [dataSource]="dataSource" matSort matSortActive="TreatmentCodeId" matSortDirection="desc" matSortDisableClear>
+              <ng-container matColumnDef="Code">
+                <mat-header-cell *matHeaderCellDef mat-sort-header> CPT Code </mat-header-cell>
+                <mat-cell *matCellDef="let TreatmentCodes" matTooltip="{{TreatmentCodes.Code}}">
+                  <span class="truncate-text"> {{ TreatmentCodes.code}} </span>
+                </mat-cell>
+              </ng-container>
+              <ng-container matColumnDef="Description">
+                <mat-header-cell *matHeaderCellDef mat-sort-header> CPT Description </mat-header-cell>
+                <mat-cell *matCellDef="let TreatmentCodes" matTooltip="{{TreatmentCodes.Description}}">
+                  <span class="truncate-text"> {{ TreatmentCodes.description}} </span>
+                </mat-cell>
+              </ng-container>
+
+                <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
+                <mat-row *matRowDef="let row; columns: displayedColumns;"></mat-row>
+            </mat-table>
+
+            <mat-paginator #paginator [length]="dataSource.rowCount$" [pageIndex]="0" [pageSize]="5"
+                [pageSizeOptions]="[5, 10, 25, 100]">
+            </mat-paginator>
+        </div>
+
+        <div [hidden]="paginator.length > 0 || !currentQuery || currentQuery == ''"
+            class="no-search-results-add-button">
+            <div class="site-font grey">
+                <p class="grey">Your search - <strong>{{currentQuery}}</strong> - did not match any search criteria.</p>
+                <span>Suggestions: </span>
+                <ul>
+                    <li>Make sure that all words are spelled correctly.</li>
+                    <li>Try different keywords.</li>
+                    <li>Try more general keywords.</li>
+                    <li>Try fewer keywords.</li>
+                </ul>
+            </div>
+        </div>
+    </mat-card-content>
+  </mat-card>
+</form>

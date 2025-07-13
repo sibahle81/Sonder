@@ -1,0 +1,24 @@
+﻿<div>
+    <div>
+        <nav class="innertop-nav">
+            <button mat-button [routerLink]="['/clientcare/broker-manager']" class='Activebutton'>Home</button>
+            <button mat-button [matMenuTriggerFor]="menu1" class='Activebutton'>Organisations</button>
+            <mat-menu #menu1="matMenu" [overlapTrigger]="false">
+                <button mat-menu-item [routerLink]="['brokerage-list']">Find Brokerage</button>
+                <button mat-menu-item (click)="navigateTo()">Import Brokerages</button>
+                <button mat-menu-item (click)="navigateToBrokerageReps()">Import Brokerage Representatives</button>
+                <button mat-menu-item [routerLink]="['binderpartner-list']">Find Binder Partner</button>
+                <button mat-menu-item (click)="navigateToBinderPartnerImport()">Import Binder Partners</button>
+                <button mat-menu-item (click)="navigateToBinderPartnerReps()">Import Binder Partner Representatives</button>          
+            </mat-menu>
+            <button mat-button [matMenuTriggerFor]="menu2" style="width:130px !important" class='Activebutton'>Representatives</button>
+            <mat-menu #menu2="matMenu" [overlapTrigger]="false">
+                <button mat-menu-item [routerLink]="['broker-list']">Find Representative</button>
+                <button mat-menu-item (click)="navigateToLinkAgent()">Link / Delink Representative</button>
+            </mat-menu>
+        </nav>
+    </div>
+    <div [hidden]="loadingMessage != null || error != null" class="container-padding">
+        <router-outlet></router-outlet>
+    </div>
+</div>

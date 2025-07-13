@@ -1,0 +1,39 @@
+<mat-card class="top-selector-container">
+    <div class="summary-container-claim" *ngIf="claim">
+        <br />
+        <h1 class="wizard-font">Claim Details</h1>
+        <br />
+        <div *ngIf="claim">
+            <section>
+                <label class="mat-label other-label"><b>Claim Number: &nbsp;</b>
+                    <span class="label">{{this.claim.personEventId}}</span></label>
+            </section>
+            <br />
+            <section>
+                <label class="mat-label other-label"><b>Policy No: &nbsp;</b>
+                    <span class="label"> {{this.policyNumber}} </span></label>
+            </section>
+            <br />
+            <section>
+                <label class="mat-label other-label"><b>Claim Status: &nbsp;</b>
+                    <span class="label"> {{this.claimStatus}} </span></label>
+            </section>
+            <br />
+            <section>
+                <label class="mat-label other-label"><b>Assigned To: &nbsp;</b>
+                    <span class="label"> {{this.assessor}} </span></label>
+            </section>
+            <br />
+            <section>
+                <label class="mat-label other-label"><b>Captured Date: &nbsp;</b>
+                    <span class="label"> {{this.claim.createdDate | date:'yyyy/MM/dd'}} </span></label>
+            </section>
+        </div>
+    </div>
+
+    <span style="margin-left: 25px"></span>
+
+    <div class="summary-container">
+        <claim-notes [hideButtons]="true"></claim-notes>
+    </div>
+</mat-card>

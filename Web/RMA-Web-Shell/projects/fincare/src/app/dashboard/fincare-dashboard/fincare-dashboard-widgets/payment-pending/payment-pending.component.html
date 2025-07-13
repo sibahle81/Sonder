@@ -1,0 +1,74 @@
+<form [formGroup]="form" class="mat-container" novalidate>
+    <mat-accordion multi="false">
+        <mat-expansion-panel (closed)="ClearpiechartData()">
+            <mat-expansion-panel-header>
+                <mat-panel-title>
+                    <span>
+                        <mat-icon class="icon">person</mat-icon>&nbsp;&nbsp;&nbsp;&nbsp;{{heading}} Payments
+                    </span>
+                </mat-panel-title>
+                <mat-panel-description>
+                </mat-panel-description>
+            </mat-expansion-panel-header>
+            <div [hidden]="!hasData">
+                <table class="altRowTable" style="width:50%;">
+                    <tr>
+                        <td><b>Payment Filter:</b> &nbsp;{{this.filterHeading}}</td>
+                    </tr>
+                    <tr>
+                        <td><b>Total Payments:</b> {{this.totalPaymentsHeading}}</td>
+                    </tr>
+                    <tr>
+                        <td><b>Total {{heading}} Amount:</b> {{this.totalAmountHeading | currency:'R '}}
+                        </td>
+                    </tr>
+                </table>
+                <div class="resetBtn">
+                    <button  mat-mini-fab color="primary" (click)="ClearpiechartData()"><mat-icon matTooltip="Reset">autorenew</mat-icon> </button>
+                </div>
+            </div>
+            <div [hidden]="hasData">
+                <label class="mat-label other-label">
+                    <h3 class="font"><span class="material-icons lightRed">archive</span> &nbsp; {{noDataHeading}}
+                    </h3>
+                </label>
+                <span [style.visibility]="isLoading ? 'visible' : 'hidden'">
+                    <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+                    <span class="grey site-font"><i>Loading Data...please wait</i></span>
+                </span>
+            </div>
+            <br />
+            <div [hidden]="!hasData">
+                <canvas baseChart [data]="piechartData"  [labels]="chartLabels" [colors]="chartColors"
+                    [chartType]="chartType" (chartHover)="chartHovered($event)" [plugins]="pieChartPlugins"
+                    [options]="pieChartOptions" [legend]="pieChartLegend"></canvas>
+                <!-- (chartClick)="chartClicked($event, false)" -->
+            </div>
+            <section>
+                <div [hidden]="!allPayments">
+                    <!--Start Date-->
+                    <mat-form-field class="dateCss">
+                        <label class="form-label other-label">Start Date</label>
+                        <input readonly matInput [min]="minDate" formControlName="startDate" [matDatepicker]="startDate"
+                            id="startDate" name="startDate" (dateChange)='addStartDate($event)'>
+                        <mat-datepicker-toggle matSuffix [for]="startDate"
+                            style="position: absolute;top: 14px;right: 0;">
+                        </mat-datepicker-toggle>
+                        <mat-datepicker touchUi="true" #startDate></mat-datepicker>
+                    </mat-form-field>
+                    <!--End Date-->
+                    <mat-form-field class="mat-form-field-right" class="dateCss">
+                        <label class="form-label other-label">End Date</label>
+                        <input readonly matInput [min]="minDate" formControlName="endDate" [matDatepicker]="endDate"
+                            [disabled]="!isToDateSelected" id="endDate" name="endDate"
+                            (dateChange)='addEndDate($event)'>
+                        <mat-datepicker-toggle matSuffix [for]="endDate" style="position: absolute;top: 14px;right: 0;">
+                        </mat-datepicker-toggle>
+                        <mat-datepicker touchUi="true" #endDate></mat-datepicker>
+                    </mat-form-field>
+                </div>
+            </section>
+        </mat-expansion-panel>
+        <payment-table-refund></payment-table-refund>
+    </mat-accordion>
+</form>

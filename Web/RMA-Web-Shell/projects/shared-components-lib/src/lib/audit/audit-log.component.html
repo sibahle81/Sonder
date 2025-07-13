@@ -1,0 +1,124 @@
+﻿<mat-card class="container-margin">
+    <mat-card-header>
+        <mat-card-subtitle>
+            <span *ngIf="isHostAdd" class="grey site-font">
+                <i>The audit log is available after the {{name}} has been added.</i>
+            </span>
+        </mat-card-subtitle>
+    </mat-card-header>
+    <mat-card-content style="margin-left: 10px;">
+        <div [hidden]="isHostAdd">
+            <mat-progress-bar *ngIf="isLoading || individualLoading" mode="indeterminate"></mat-progress-bar>
+
+            <div [hidden]="isLoading || auditResult">
+                <div class="mat-container mat-elevation-z8">
+
+                    <div [hidden]="dataSource.data.length === 0">
+
+                        <div class="mat-header">
+                            <div class="search-container search-container-right">
+                                <input type="text" name="search" (keyup)="applyFilter($event.target.value)"
+                                    placeholder="search {{titlePlural | lowercase}}..." #filter>
+                            </div>
+                        </div>
+
+                        <mat-table #table [dataSource]="dataSource" matSort>
+
+                            <!--All standard columns-->
+                            <ng-container *ngFor="let column of columns" [matColumnDef]="column.columnDefinition">
+                                <mat-header-cell *matHeaderCellDef mat-sort-header
+                                    class="mat-header-cell ng-tns-c10-2 cdk-column-Name mat-column-Name">
+                                    {{ column.header }}</mat-header-cell>
+                                <mat-cell *matCellDef="let row" class="mat-cell cdk-column-Name mat-column-Name">
+                                    {{ column.cell(row) }}</mat-cell>
+                            </ng-container>
+
+                            <!-- Actions -->
+                            <ng-container matColumnDef="actions">
+                                <mat-header-cell *matHeaderCellDef mat-sort-header>Actions</mat-header-cell>
+                                <mat-cell *matCellDef="let row"> <a role="button" class="link-edit"
+                                        (click)="onSelect(row)">{{actionsLinkText}}</a>
+                                </mat-cell>
+                            </ng-container>
+
+                            <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
+                            <mat-row *matRowDef="let row; columns: displayedColumns;"></mat-row>
+                        </mat-table>
+
+                        <mat-paginator #paginator [length]="dataSource.data.length" [pageIndex]="0" [pageSize]="5"
+                            [pageSizeOptions]="[5, 10, 25, 100]">
+                        </mat-paginator>
+                    </div>
+
+                    <div [hidden]="dataSource.data.length > 0" style="margin-left: 20px;">
+                        <span class="grey site-font">No audit logs have been added.</span>
+                    </div>
+
+                    <div [hidden]="dataSource.filteredData.length > 0 || dataSource.data.length === 0"
+                        class="no-search-results-add-button">
+                        <div class="site-font grey">
+                            <p class="grey">
+                                Your search - <strong>{{filter.value}}</strong> - did not match any {{titlePlural |
+                                lowercase}}.
+                            </p>
+                            <span>Suggestions: </span>
+                            <ul>
+                                <li>Make sure that all words are spelled correctly.</li>
+                                <li>Try different keywords.</li>
+                                <li>Try more general keywords.</li>
+                                <li>Try fewer keywords.</li>
+                            </ul>
+                        </div>
+                        <div class="new-button" (click)="filter.value='';clearFilter()">
+                            <button class="button float-button">Clear search</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div *ngIf="auditResult">
+                <table class="altRowTable">
+                    <tr *ngFor="let detail of auditResult.propertyDetails">
+                        <td style="width: 20%;">
+                            <span class="site-font"><b>{{detail.propertyName}}</b></span>
+                        </td>
+                        <td style="width: 35%;">
+                            <span [ngClass]="{ 'valid': detail.hasChanged }"
+                                class="grey site-font">{{detail.newValue}}</span>
+                        </td>
+                        <td style="width: 35%;">
+                            <div *ngIf="detail.hasChanged">
+                                <span style="text-decoration: line-through;"
+                                    class="invalid propertyValueOld">{{detail.oldValue}}</span>
+                            </div>
+                        </td>
+                    </tr>
+                </table>
+
+                <div *ngFor="let lookupDetail of auditResult.lookupDetails">
+                    <span class="site-font">{{lookupDetail.itemType}}</span>
+                    <table>
+                        <tr *ngFor="let detail of lookupDetail.lookupAuditResultDetails">
+                            <td class="site-font">
+                                <span *ngIf="detail.status === 'Added'" style="color: green">&#x25CF; {{detail.value}} -
+                                    {{detail.status}}</span>
+                                <span *ngIf="detail.status === 'Removed'" style="color: red">&#x25CF; {{detail.value}} -
+                                    {{detail.status}}</span>
+                                <span *ngIf="detail.status === 'Unchanged'" class="grey site-font">&#x25CF;
+                                    {{detail.value}} - {{detail.status}}</span>
+                            </td>
+                        </tr>
+                    </table>
+                </div>
+                <hr />
+                <div class="site-font grey">
+                    <div>The record was {{auditResult.action}} by: {{displayName}} on: {{auditResult.date |
+                        date:'yyyy/MM/dd HH:mm:ss'}}</div>
+                </div>
+                <div style="margin-top: 15px;" (click)="back()">
+                    <button class="button">Back</button>
+                </div>
+            </div>
+        </div>
+    </mat-card-content>
+</mat-card>

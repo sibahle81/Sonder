@@ -1,0 +1,99 @@
+<mat-card>
+  <mat-card-content>
+    <div>
+      <form [formGroup]="form" class="mat-container" novalidate>
+        <!--Query-->
+        <div class="page-header">
+          <h1>Find a Corrective Entry</h1>
+        </div>
+        <mat-form-field floatLabel="never">
+            <input #searchField matInput maxlength="50" formControlName="query" name="query" width="300" minLength="3">
+            <mat-placeholder class="placeholder">Search by Entry Type, Pension Case Number, Recipient, Beneficiary, Entry Amount, Updated By, Entry Date, Entry Status</mat-placeholder>
+            <mat-icon class="search-icon" (click)="search()" matSuffix>search</mat-icon>
+            <mat-error *ngIf="form.get('query').hasError('minlength')">
+                Please enter a search term longer than <strong>3 characters</strong>
+            </mat-error>
+        </mat-form-field>
+      </form>
+
+      <div *ngIf="dataSource.isLoading">
+          <mat-progress-bar mode="indeterminate" [ngClass]="{ 'loading-main-double-menu-progress': doubleMenu, 'loading-main-single-menu-progress': !doubleMenu }"></mat-progress-bar>
+          <p class="site-font grey">Searching...</p>
+      </div>
+      <div *ngIf="creatingWizard">
+        <mat-progress-bar mode="indeterminate" [ngClass]="{ 'loading-main-double-menu-progress': doubleMenu, 'loading-main-single-menu-progress': !doubleMenu }"></mat-progress-bar>
+        <p class="site-font grey">Creating Wizard...</p>
+      </div>
+
+      <div [hidden]="creatingWizard || dataSource.isLoading || (dataSource.data && dataSource.data.data && dataSource.data.data.length === 0)">
+          <mat-table #table [dataSource]="dataSource" matSort>
+              <ng-container matColumnDef="pensionCaseNumber">
+                <mat-header-cell *matHeaderCellDef mat-sort-header> Pension No.</mat-header-cell>
+                <mat-cell *matCellDef="let row"> {{row.pensionCaseNumber}} </mat-cell>
+              </ng-container>
+              <ng-container matColumnDef="entryType">
+                  <mat-header-cell *matHeaderCellDef mat-sort-header> Entry Type </mat-header-cell>
+                  <mat-cell *matCellDef="let row"> {{entryType[row.entryType]}} </mat-cell>
+              </ng-container>
+              <ng-container matColumnDef="scheduleType">
+                <mat-header-cell *matHeaderCellDef mat-sort-header> Schedule </mat-header-cell>
+                <mat-cell *matCellDef="let row"> {{scheduleType[row.scheduleType]}} </mat-cell>
+              </ng-container>
+              <ng-container matColumnDef="recipient">
+                <mat-header-cell *matHeaderCellDef mat-sort-header> Recipient </mat-header-cell>
+                <mat-cell *matCellDef="let row"> {{row.recipientFirstName}} {{row.recipientSurname}}</mat-cell>
+              </ng-container>
+              <ng-container matColumnDef="beneficiary">
+                <mat-header-cell *matHeaderCellDef mat-sort-header> Beneficiary </mat-header-cell>
+                <mat-cell *matCellDef="let row"> {{row.beneficiaryFirstName}} {{row.beneficiarySurname}} </mat-cell>
+              </ng-container>
+              <ng-container matColumnDef="amount">
+                <mat-header-cell *matHeaderCellDef mat-sort-header> Entry Amount </mat-header-cell>
+                <mat-cell *matCellDef="let row"> {{row.amount | currency:'R '}} </mat-cell>
+              </ng-container>
+              <ng-container matColumnDef="entryDate">
+                <mat-header-cell *matHeaderCellDef mat-sort-header> Entry Date </mat-header-cell>
+                <mat-cell *matCellDef="let row"> {{row.entryDate | date:'yyyy/MM/dd'}} </mat-cell>
+              </ng-container>
+              <ng-container matColumnDef="entryStatus">
+                <mat-header-cell *matHeaderCellDef mat-sort-header> Entry Status </mat-header-cell>
+                <mat-cell *matCellDef="let row"> {{entryStatus[row.entryStatus]}} </mat-cell>
+              </ng-container>
+
+              <!-- Actions Column -->
+              <ng-container matColumnDef="actions">
+                <mat-header-cell *matHeaderCellDef> Actions </mat-header-cell>
+                <mat-cell *matCellDef="let row" [matMenuTriggerFor]="menu" (click)="filterMenu(row)">
+                  <span class="material-icons pointer">more_vert</span>
+                  <mat-menu #menu="matMenu">
+                    <ng-container *ngFor="let menu of menus">
+                      <button *ngIf="!menu.disable" mat-menu-item
+                        (click)="onMenuItemClick(row, menu)">{{menu.title}}</button>
+                    </ng-container>
+                  </mat-menu>
+                </mat-cell>
+              </ng-container>
+
+              <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
+              <mat-row *matRowDef="let row; columns: displayedColumns;"></mat-row>
+          </mat-table>
+
+          <mat-paginator #paginator [length]="dataSource.rowCount$" [pageIndex]="0" [pageSize]="5"
+            [pageSizeOptions]="[5, 10, 25, 100]"></mat-paginator>
+      </div>
+
+      <div [hidden]="creatingWizard || dataSource.isLoading || (dataSource.data && dataSource.data.data && dataSource.data.data.length > 0)" class="no-search-results-add-button">
+          <div class="site-font grey">
+              <p class="grey">Your search - <strong>{{currentQuery}}</strong> - did not match any policies.</p>
+              <span>Suggestions: </span>
+              <ul>
+                  <li>Make sure that all words are spelled correctly.</li>
+                  <li>Try different keywords.</li>
+                  <li>Try more general keywords.</li>
+                  <li>Try fewer keywords.</li>
+              </ul>
+          </div>
+      </div>
+    </div>
+  </mat-card-content>
+</mat-card>

@@ -1,0 +1,14 @@
+<span *ngIf="isLoading$ | async" class="material-icons rotating" matTooltip="loading user">
+    loop
+</span>
+
+<div *ngIf="!(isLoading$ | async)">
+    <div *ngIf="user">
+        <b>{{user.displayName}}</b> (<a href="mailto:{{user.email}}">{{user.email}}</a>)
+        <span class="role-display" *ngIf="displayUserRole && user.roleName"><br/><i>{{user.roleName}}</i></span>
+    </div>
+
+    <div *ngIf="message">
+        <b>{{message}}</b>
+    </div>
+</div>

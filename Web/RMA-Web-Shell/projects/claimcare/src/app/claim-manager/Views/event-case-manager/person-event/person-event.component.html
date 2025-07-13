@@ -1,0 +1,40 @@
+<div>
+    <div *ngIf="showHide == 0">
+        <div style="margin: 0px 0px 0px 15px;">
+            <mat-form-field class="mat-form-field-right">
+                <label class="mat-label other-label">Event Resulted In</label>
+                <mat-select name="resultType" id="resultType" (selectionChange)="resultTypeChanged($event)">
+                    <mat-option [value]="1">Death</mat-option>
+                    <mat-option [value]="2">Injury</mat-option>
+                    <mat-option [value]="3">Hearing Impairment</mat-option>
+                    <mat-option [value]="4">Sickness</mat-option>
+                </mat-select>
+            </mat-form-field>
+        </div>
+        <div *ngIf="eventResult !== 0">
+            <claim-search-policy (resultEmit)="resultsChangeHandler($event)"></claim-search-policy>
+        </div>
+    </div>
+
+    <div *ngIf="showHide == 1">
+        <div *ngIf="eventResult == 1">
+            <person-event-death #personEventDeathCom></person-event-death>
+        </div>
+
+        <div *ngIf="eventResult == 2">
+            <person-event-accident (personEventAccidentEmit)="personEventAccidentChangeHandler($event)"
+                [isGetPersonEventAccidentDetail]="isGetDetail"></person-event-accident>
+        </div>
+
+        <div *ngIf="eventResult == 4">showHideChangeHandler
+
+        </div>
+
+        <div *ngIf="eventResult == 3">
+
+        </div>
+        <div *ngIf="showAdd > 0">
+            <add-person-events (showHideEmit)="showHideChangeHandler($event)"></add-person-events>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,50 @@
+
+
+<mat-card style="margin: 15px 30px 15px 30px">
+  <mat-card-content style="margin-left: 10px;">
+    <mat-card-header>
+      <h1 class="wizard-font">Unclaimed Benefits Calculator</h1>
+    </mat-card-header>
+    <form [formGroup]="form" class="mat-container">
+       <mat-form-field> 
+         <label class="mat-label other-label">Unclaimed Benefit Amount</label>
+         <input matInput maxlength="50" formControlName="unclaimedBenefitAmount" name="unclaimedBenefitAmount" 
+         id="unclaimedBenefitAmount" NumberOnly="true" readonly ng-model="unclaimedBenefitAmount | number: 2" />
+      </mat-form-field>
+      <mat-form-field >
+        <label class="mat-label other-label">Start Date</label>
+        <input readonly matInput [max]="minDate" formControlName="startDate" 
+        [matDatepicker]="startDate" name="startDate" id="startDate" />
+        <mat-datepicker-toggle matSuffix style="position: absolute;right: 0;top: 13px;"
+        [for]="startDate"></mat-datepicker-toggle>
+        <mat-datepicker touchUi="true" #startDate></mat-datepicker>
+     </mat-form-field> 
+      <mat-form-field>
+        <label class="mat-label other-label">End Date</label>
+        <input readonly matInput [min]="minDate" formControlName="endDate" 
+        [matDatepicker]="endDate" name="endDate" id="endDate" />
+        <mat-datepicker-toggle matSuffix style="position: absolute;right: 0;top: 13px;"
+        [for]="endDate"></mat-datepicker-toggle>
+    <mat-datepicker touchUi="true" #endDate></mat-datepicker>
+
+      </mat-form-field>
+      <mat-form-field>
+        <label class="mat-label other-label">Investigation Fee Amount</label>
+        <input matInput maxlength="50" formControlName="investigationAmount" name="investigationAmount" 
+        id="investigationAmount" NumberOnly="true" />
+      </mat-form-field>
+      <mat-form-field>
+        <label class="mat-label other-label">Investigation Fee Payment Date</label>
+        <input readonly matInput  formControlName="investigationFeeDate" 
+        [matDatepicker]="investigationFeeDate" name="investigationFeeDate" id="investigationFeeDate" /> 
+        <mat-datepicker-toggle matSuffix style="position: absolute;right: 0;top: 13px;"
+        [for]="investigationFeeDate"></mat-datepicker-toggle>
+        <mat-datepicker touchUi="true" #investigationFeeDate></mat-datepicker>
+        
+      </mat-form-field>
+
+      <!-- <button type="button" (click)="addNew()" class="button float-button">Submit</button> -->
+
+    </form>
+  </mat-card-content>
+</mat-card>

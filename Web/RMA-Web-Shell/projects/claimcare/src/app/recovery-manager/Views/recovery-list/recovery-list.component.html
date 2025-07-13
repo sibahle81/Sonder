@@ -1,0 +1,120 @@
+<div class="mainContainerDiv">
+  <mat-card-header>
+    <mat-card-title class="wizard-font card-title grey">
+      <h1 style="padding: 0;">Recoveries</h1>
+    </mat-card-title>
+    <mat-card-subtitle>
+      <span class="grey site-font">Current Reoveries for {{currentUser.name}}</span>
+    </mat-card-subtitle>
+  </mat-card-header>
+
+  <div [hidden]="hasPermission">
+    <div style="padding: 15px 0; color: orange; font-family: 'Oswald', sans-serif;">
+      You do not have required role to view Recoveries.
+    </div>
+    <div (click)="back()" class="form-buttons submit-button">
+      <button type="button" class="button float-button">Back</button>
+    </div>
+  </div>
+
+  <div [hidden]="!hasPermission">
+    <mat-card>
+      <mat-card-content>
+        <form [formGroup]="workPoolFormGroup" class="mat-container" style="display:contents;" novalidate>
+          <mat-form-field style="width: 20%;" class="mat-form-field">
+            <label class="mat-label other-label">Work-Pool</label>
+            <mat-select id="workPoolFilter" name="workPoolFilter" matInput [(ngModel)]="selectedFilterTypeId"
+              formControlName="workPoolFilter" (selectionChange)="selectedWorkPoolChanged($event)">
+              <mat-option *ngFor="let workPool of workPoolsForUser" [value]="workPool.id">
+                {{workPool.name}}
+              </mat-option>
+            </mat-select>
+          </mat-form-field>
+        </form>
+
+        <div [hidden]="dataSource.filteredData.length !== 0">
+          <label class="mat-label other-label font"><i>No Recoveries Available</i></label>
+        </div>
+        <div [hidden]="dataSource.filteredData.length === 0 || isLoading">
+          <mat-table #table [dataSource]="dataSource" matSort>
+
+            <!-- Name -->
+            <ng-container matColumnDef="claimNumber">
+              <mat-header-cell *matHeaderCellDef mat-sort-header> Claim No </mat-header-cell>
+              <mat-cell *matCellDef="let row"> {{row.claimNumber}} </mat-cell>
+            </ng-container>
+
+            <!-- Name -->
+            <ng-container matColumnDef="name">
+              <mat-header-cell *matHeaderCellDef mat-sort-header> Name </mat-header-cell>
+              <mat-cell *matCellDef="let row"> {{row.name}} </mat-cell>
+            </ng-container>
+
+            <!-- Id/Passport Number -->
+            <ng-container matColumnDef="identificationNumber">
+              <mat-header-cell *matHeaderCellDef mat-sort-header> Id/Passport No </mat-header-cell>
+              <mat-cell *matCellDef="let row"> {{row.idNumber}} </mat-cell>
+            </ng-container>
+
+            <!--Claim Status -->
+            <ng-container matColumnDef="claimStatusDisplayDescription">
+              <mat-header-cell *matHeaderCellDef mat-sort-header> Claim Status </mat-header-cell>
+              <mat-cell *matCellDef="let row">
+                {{row.claimStatusDisplayName}} </mat-cell>
+            </ng-container>
+
+            <!-- Created By -->
+            <ng-container matColumnDef="createdBy">
+              <mat-header-cell *matHeaderCellDef mat-sort-header> Created By </mat-header-cell>
+              <mat-cell *matCellDef="let row"> {{row.createdBy}} </mat-cell>
+            </ng-container>
+
+            <!-- Created Date -->
+            <ng-container matColumnDef="createdDate">
+              <mat-header-cell *matHeaderCellDef mat-sort-header> Created Date </mat-header-cell>
+              <mat-cell *matCellDef="let row"> {{row.createdDate | date: 'yyyy/MM/dd'}} </mat-cell>
+            </ng-container>
+
+            <!-- Recovery Amount -->
+            <ng-container matColumnDef="amount">
+              <mat-header-cell *matHeaderCellDef mat-sort-header> Recovery Amount </mat-header-cell>
+              <mat-cell *matCellDef="let row"> {{row.recoveryAmount | currency:'R '}} </mat-cell>
+            </ng-container>
+
+            <!-- Recovered Amount -->
+            <ng-container matColumnDef="recoveredAmount">
+              <mat-header-cell *matHeaderCellDef mat-sort-header>Recovered Amount </mat-header-cell>
+              <mat-cell *matCellDef="let row"> {{row.recoveredAmount | currency:'R '}} </mat-cell>
+            </ng-container>
+
+            <!-- Actions -->
+            <ng-container matColumnDef="actions">
+              <mat-header-cell *matHeaderCellDef mat-sort-header>Actions</mat-header-cell>
+              <mat-cell *matCellDef="let row" [matMenuTriggerFor]="menu" (click)="filterMenu(row)">
+                <span class="material-icons pointer right">more_vert</span>
+                <mat-menu #menu="matMenu">
+                  <button mat-menu-item *ngFor="let menu of menus" (click)="onMenuSelect(row, menu.title)"
+                    disabled={{menu.disable}}>{{menu.title}}</button>
+                </mat-menu>
+              </mat-cell>
+            </ng-container>
+            <!-- <ng-container matColumnDef="actions">
+            <mat-header-cell *matHeaderCellDef mat-sort-header> Actions </mat-header-cell>
+            <mat-cell *matCellDef="let row">
+              <a role="button" class="link-edit" (click)="onSelect(row,'view')">View</a>
+              <a role="button" class="link-edit" (click)="onSelect(row,'refer')">Refer</a>
+            </mat-cell>
+          </ng-container> -->
+
+            <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
+            <mat-row *matRowDef="let row; columns: displayedColumns;"></mat-row>
+          </mat-table>
+
+          <mat-paginator #paginator [length]="dataSource.data.length" [pageIndex]="0" [pageSize]="5"
+            [pageSizeOptions]="[5, 10, 25, 100]">
+          </mat-paginator>
+        </div>
+      </mat-card-content>
+    </mat-card>
+  </div>
+</div>

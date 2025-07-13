@@ -1,0 +1,66 @@
+<mat-card>
+<div class="menu-bar">
+    <span class="material-icons">
+    assignment
+    </span>
+    Occupational Impact Details
+    <span *ngIf="form && form.valid" (click)="save()" class="material-icons pointer right pulseGreen" matTooltip="save">
+        save
+    </span>
+</div>
+<br />
+
+<form [formGroup]="form" class="mat-container details-form" *ngIf="this.form">
+    <section>
+        <mat-form-field class="mat-form-field" color="accent">
+            <label class="mat-label other-label">Have colleagues performing a similar job complained of similar symptoms?</label>&nbsp;
+            <input [hidden]="true" matInput formControlName="radioOthersAffected"/>
+            <mat-radio-group formControlName="radioOthersAffected" id="radioOthersAffected">
+                <mat-radio-button value="Yes">Yes</mat-radio-button>&nbsp;
+                <mat-radio-button value="No">No</mat-radio-button>
+            </mat-radio-group>
+        </mat-form-field>
+    </section>
+
+    <section>                
+        <mat-form-field class="mat-form-field">
+            <label class="mat-label other-label mandatory-field">Explain how this condition was managed before the specific diagnosis, in terms of the Person
+                <br /><br /> a) Medically &nbsp;&nbsp; b) Functionally</label>
+            <textarea matInput cdkTextareaAutosize cdkAutosizeMinRows="3" cdkAutosizeMaxRows="5" id="ctlPriorCareManagement"
+                formControlName="ctlPriorCareManagement" class="mat-input-element" maxlength="1000"></textarea>
+        </mat-form-field>
+    </section>
+
+    <section>                
+        <mat-form-field class="mat-form-field">
+            <label class="mat-label other-label mandatory-field">Explain how this condition was managed before the specific diagnosis, in terms of the Job
+                <br /><br /> a) Task application and &nbsp;&nbsp; b) Equipment adaptation</label>
+            <textarea matInput cdkTextareaAutosize cdkAutosizeMinRows="3" cdkAutosizeMaxRows="5" id="ctlPriorWorkManagement"
+                formControlName="ctlPriorWorkManagement" class="mat-input-element" maxlength="1000"></textarea>
+        </mat-form-field>
+    </section>
+
+    <section>
+        <mat-form-field class="mat-form-field" color="accent">
+            <label class="mat-label other-label">Is the patient currently fit for work?</label>&nbsp;
+            <input [hidden]="true" matInput formControlName="radioWorkOption"/>
+            <mat-radio-group formControlName="radioWorkOption" id="radioWorkOption">
+                <mat-radio-button *ngFor="let workOption of (workOptions$ | async)" [value]="workOption.name">
+                    {{workOption.name}} &nbsp;&nbsp;
+                </mat-radio-button>
+            </mat-radio-group>
+        </mat-form-field>
+    </section>
+
+    <section>
+        <mat-form-field class="mat-form-field" color="accent">
+            <label class="mat-label other-label">Is alternate / adapted work?</label>&nbsp;
+            <input [hidden]="true" matInput formControlName="radioIsAdaptedWorkArrangementTemporary"/>
+            <mat-radio-group formControlName="radioIsAdaptedWorkArrangementTemporary" id="radioIsAdaptedWorkArrangementTemporary">
+                <mat-radio-button value="Temporary">Temporary</mat-radio-button>&nbsp;
+                <mat-radio-button value="Permanent">Permanent</mat-radio-button>
+                </mat-radio-group>
+        </mat-form-field>
+    </section>
+</form>
+</mat-card>

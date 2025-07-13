@@ -1,0 +1,24 @@
+﻿@using AspNet.Security.OpenIdConnect.Primitives
+@using System.Security.Claims
+
+@model Tuple<OpenIdConnectRequest, ClaimsPrincipal>
+
+<div class="jumbotron">
+    <h1>Log out</h1>
+    <p class="lead text-left">Are you sure you want to sign out?</p>
+
+    @if (Model.Item2 != null && Model.Item2.Identity != null)
+    {
+        <p class="lead text-left">Connected user: @Model.Item2.Identity.Name</p>
+    }
+
+    <form method="post">
+        @Html.AntiForgeryToken()
+
+        @foreach (var parameter in Model.Item1.GetParameters())
+        {
+            <input type="hidden" name="@parameter.Key" value="@parameter.Value" />
+        }
+        <input formaction="@Url.Action("SignOut")" class="btn btn-lg btn-success" name="Authorize" type="submit" value="Yeeeeah, sure" />
+    </form>
+</div>

@@ -1,0 +1,54 @@
+<div>
+    <app-medicare-search-menus></app-medicare-search-menus>
+</div>
+<div *ngIf="isLoading">
+    <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+</div>
+
+<lib-search-pension-case *ngIf="holisticClaimId < 0" [title]="'Search Pension Case'" (pensionCaseSelectedEmit)="pensionCaseSelected($event)"
+    (triggerResearch)="onResearch($event)"></lib-search-pension-case>
+
+<div *ngIf="selectedEvent && personEventId > 0 && showViewResults && holisticClaimId < 0">
+    <holistic-person-event-list *ngIf="selectedEvent && personEventId" [event]="selectedEvent"
+        [personEventId]="personEventId" (emitPersonEvent)="setPersonEvent($event)" [selectedTab]="2"
+        [icd10List]="icd10ListClaims" [rolePlayerId]="healthCareProviderId"></holistic-person-event-list>
+</div>
+
+<div *ngIf="selectedEvent && personEventId > 0 && showViewResults">
+    <mat-tab-group animationDuration="500ms">
+        <mat-tab label="PMP Details">
+            <mat-tab-group animationDuration="500ms">
+                <mat-tab label="PMP Schedule">
+                    <div class="form-group-button mat-form-button">
+                        <button class="button float-button" (click)="capturePMPSchedule()">Capture
+                            PMP Schedule</button>
+                    </div>
+                </mat-tab>
+                <mat-tab label="Inter-Region Transfer">
+
+                    <app-pensioner-inter-region-transfer-form-list [passedPmpRegionTransferData]="pmpRegionTransferData"
+                        [passedPensionCase]="selectedPensionCase"></app-pensioner-inter-region-transfer-form-list>
+
+                    <div class="form-group-button mat-form-button">
+                        <button class="button float-button" (click)="captureInterRegionTransferForm()">Capture
+                            Inter-Region Transfer</button>
+                    </div>
+
+                </mat-tab>
+                <mat-tab label="Interview Form">
+                    <div class="form-group-button mat-form-button">
+
+                        <app-pensioner-interview-form-list
+                            [passedPensionerInterviewFormData]="pensionerInterviewFormData"
+                            [passedPensionCase]="selectedPensionCase"></app-pensioner-interview-form-list>
+
+                        <div class="form-group-button mat-form-button">
+                            <button class="button float-button" (click)="captureInterviewForm()">Capture Interview
+                                Form</button>
+                        </div>
+                    </div>
+                </mat-tab>
+            </mat-tab-group>
+        </mat-tab>
+    </mat-tab-group>
+</div>

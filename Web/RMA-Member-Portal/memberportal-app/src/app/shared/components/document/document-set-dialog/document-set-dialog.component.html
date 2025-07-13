@@ -1,0 +1,22 @@
+<form [formGroup]="form" class="mat-container details-form" novalidate>
+  <section>
+    <mat-form-field class="mat-form-field">
+
+      <label>Document Sets</label>
+      <mat-select name="documentSets" id="documentSets" formControlName="documentSets" multiple>
+          <mat-option *ngFor="let documentSet of allDocumentSets" [value]="documentSet">{{getDocumentSet(documentSet)}}</mat-option>
+      </mat-select>
+
+      <mat-error *ngIf="form.get('documentSets').hasError('required')">
+        At lease one document set is <strong>required</strong>
+      </mat-error>
+    </mat-form-field>
+  </section>
+</form>
+
+<span *ngIf="(form.valid && !form.pristine)" class="mat-label other-label pointer" style="margin-left: 10px;"
+  (click)="save()"><span class="material-icons" style="color: green;">check_circle</span></span>
+<span *ngIf="!(form.valid && !form.pristine)" class="mat-label other-label pointer" style="margin-left: 10px;"><span
+    class="material-icons" style="color: lightpink;">check_circle</span></span>
+<span class="mat-label other-label pointer" (click)="close()"><span class="material-icons">cancel</span></span>
+

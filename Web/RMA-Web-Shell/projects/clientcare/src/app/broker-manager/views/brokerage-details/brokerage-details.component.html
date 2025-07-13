@@ -1,0 +1,214 @@
+<div class="page-header"></div>
+<div *ngIf="!canAdd">
+    <div class="wizard-permissions-error">You do not have sufficient permissions to add a new brokerage.</div>
+    <div (click)="back()" class="form-buttons submit-button">
+        <button type="button" class="button float-button">Back</button>
+    </div>
+</div>
+<div class="wizard-main-content">
+    <div class="menu-bar">
+        <span class="material-icons pointer right" matTooltip="audit"
+            (click)="openAuditDialog()">
+            fingerprint
+        </span>
+    </div>
+    <mat-card class="wizard-mat-card-content">
+        <h4>{{brokerageTitle}} Details</h4>
+        <mat-card-content class="mat-card-content">
+            <div *ngIf="loadingBrokerage">
+                <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+            </div>
+            <div [hidden]="loadingBrokerage">
+                <form [formGroup]="form" class="mat-container details-form" novalidate>
+                    <section>
+                        <mat-form-field class="mat-form-field">
+                            <label class="mat-label other-label mandatory-field">FSP Number</label>
+                            <input matInput maxlength="7" id="fspNumber" name="fspNumber" formControlName="fspNumber" onkeydown="javascript: return event.keyCode === 8 ||event.keyCode === 46 ? true : !isNaN(Number(event.key))" onKeyPress="if(this.value.length==7) return false;"
+                            /><br />
+                            <mat-error *ngIf="form.get('fspNumber').hasError('required') || form.get('fspNumber').hasError('min')">
+                                FSP Number<strong> is required</strong>
+                            </mat-error>
+                            <div [hidden]="isNewOnboardingProcess || validateFspNumberLength" (click)="importFSPData()" *ngIf="!dataImported" class="form-buttons import-icon">
+                                <button type="button" title="Search FSP Details" class="button float-button submit-button import-button"><i
+                                        class="material-icons">trending_flat</i></button>
+                            </div>
+                            <div [hidden]="!isNewOnboardingProcess || validateFspNumberLength" (click)="searchFSPData()" *ngIf="!dataImported" class="form-buttons import-icon">
+                                <button type="button" title="Search FSP Details" class="button float-button submit-button import-button"><i
+                                        class="material-icons">search</i></button>
+                            </div>
+                        </mat-form-field>
+                        <mat-form-field class="mat-form-field-right">
+                            <label class="mat-label other-label ">Name</label>
+                            <input matInput maxlength="50" id="name" name="name" formControlName="name" />
+                        </mat-form-field>
+                    </section>
+                    <section>
+                        <div [hidden]="hideFSPImport">
+                            <div>
+                                <mat-form-field class="mat-form-field">
+                                    <label class="mat-label other-label mandatory-field">Representative Identification Number</label>
+                                    <input matInput id="idNumber" name="idNumber" formControlName="idNumber" type="text" onKeyPress="if(this.value.length==15) return false;" />
+                                    <div (click)="addIdNumber()" class="form-buttons import-icon">
+                                        <button type="button" title="Add Representative Id Number" class="button float-button submit-button import-button"><i
+                                            class="material-icons">group_add</i></button>
+                                    </div>
+                                    <mat-card>
+                                        <mat-card-header>
+                                            <mat-card-title> Representative</mat-card-title>
+                                            <mat-card-subtitle>Identification Number ({{representativeIdNumbers.length}})
+                                            </mat-card-subtitle>
+                                        </mat-card-header>
+                                        <mat-card-content class="card-container">
+                                            <mat-expansion-panel>
+                                                <mat-expansion-panel-header class="panel-header">
+                                                </mat-expansion-panel-header>
+                                                <div>
+                                                    <ul>
+                                                        <li *ngFor="let idNumber of representativeIdNumbers" (click)="removeIdNumber(idNumber)">
+                                                            {{ idNumber }}</li>
+                                                    </ul>
+                                                </div>
+                                            </mat-expansion-panel><br>
+                                            <div [hidden]="hasRepresentativeIdNumbers" (click)="submitFSPDataImportRequest()" class="import-data">
+                                                <button title="Submit FSP Import Request" type="button" class="button import-button import-data"><i
+                                                    class="material-icons">trending_flat</i></button>
+                                            </div>
+                                        </mat-card-content>
+                                    </mat-card>
+                                </mat-form-field>
+                            </div>
+                        </div>
+                    </section>
+
+                    <div  [hidden]="!dataImported">
+                        <section>
+                            <mat-form-field class="mat-form-field">
+                                <label class="mat-label other-label ">Code</label>
+                                <input matInput maxlength="50" id="code" name="code" formControlName="code" /><br />
+                            </mat-form-field>
+                            <mat-form-field class="mat-form-field-right">
+                                <label class="mat-label other-label ">Trade Name</label>
+                                <input matInput maxlength="50" id="tradeName" name="tradeName" formControlName="tradeName" />
+                            </mat-form-field>
+                        </section>
+                        <section>
+                            <mat-form-field class="mat-form-field">
+                                <label class="mat-label other-label ">Legal Capacity</label>
+                                <input matInput maxlength="50" id="legalCapacity" name="legalCapacity" formControlName="legalCapacity" /><br />
+                            </mat-form-field>
+                            <mat-form-field class="mat-form-field-right">
+                                <label class="mat-label other-label ">Registration Number</label>
+                                <input matInput maxlength="50" id="registrationNumber" name="registrationNumber" formControlName="registrationNumber" />
+                            </mat-form-field>
+                        </section>
+                        <section>
+                            <mat-form-field class="mat-form-field">
+                                <label class="mat-label other-label ">Medical Accreditation No.</label>
+                                <input matInput maxlength="50" id="medicalAccreditationNo" name="medicalAccreditationNo" formControlName="medicalAccreditationNo" /><br />
+                            </mat-form-field>
+                            <mat-form-field class="mat-form-field-right">
+                                <label class="mat-label other-label ">Company Type</label>
+                                <input matInput maxlength="50" id="companyType" name="companyType" formControlName="companyType" />
+                            </mat-form-field>
+                        </section>
+                        <section>
+                            <mat-form-field class="mat-form-field">
+                                <label class="mat-label other-label ">FSP Status</label>
+                                <input matInput maxlength="50" id="status" name="status" formControlName="status" /><br />
+                            </mat-form-field>
+                            <mat-form-field class="mat-form-field-right">
+                                <label class="mat-label other-label ">FSP Website</label>
+                                <input matInput maxlength="50" id="fspWebsite" name="fspWebsite" formControlName="fspWebsite" />
+                            </mat-form-field>
+                        </section>
+                        <section>
+                            <mat-form-field class="mat-form-field">
+                                <label class="mat-label other-label ">Contact Number</label>
+                                <input matInput maxlength="50" id="telNo" name="telNo" formControlName="telNo" onkeydown="javascript: return event.keyCode === 8 ||event.keyCode === 46 ? true : !isNaN(Number(event.key))" onKeyPress="if(this.value.length==10) return false;" /><br
+                                />
+                            </mat-form-field>
+                            <mat-form-field class="mat-form-field-right">
+                                <label class="mat-label other-label ">Fax Number</label>
+                                <input matInput maxlength="50" id="faxNo" name="faxNo" formControlName="faxNo" onkeydown="javascript: return event.keyCode === 8 ||event.keyCode === 46 ? true : !isNaN(Number(event.key))" onKeyPress="if(this.value.length==10) return false;" />
+                            </mat-form-field>
+                        </section>
+                        <section>
+                            <mat-form-field class="mat-form-field">
+                                <label class="mat-label other-label ">Brokerage Status</label>
+                                <input matInput id="statusText" name="statusText" formControlName="statusText" />
+                            </mat-form-field>
+                            <mat-form-field class="mat-form-field-right">
+                                <label class="mat-label other-label ">Financial Year End</label>
+                                <input matInput maxlength="50" id="finYearEnd" name="finYearEnd" formControlName="finYearEnd" /><br />
+                            </mat-form-field>
+
+                        </section>
+                        <section>
+                            <mat-form-field>
+                                <label class="mat-label other-label">VAT Registration No</label>
+                                <input matInput maxlength="50" id="vatRegistrationNumber" name="vatRegistrationNumber" formControlName="vatRegistrationNumber" />
+                            </mat-form-field>
+                        </section>
+                        <section>
+                            <mat-form-field>
+                                <label class="mat-label other-label mandatory-field">Fica Verified</label>
+                                <mat-select matInput id="ficaVerified" name="ficaVerified" formControlName="ficaVerified" [(ngModel)]="selectedFicaVerifiedOption" [(value)]="selectedFicaVerifiedOption">
+                                    <mat-option value="false">No</mat-option>
+                                    <mat-option value="true">Yes</mat-option>
+                                </mat-select>
+                                <mat-error *ngIf="form.get('ficaVerified').hasError('required')">
+                                    Fica Verified is <strong>required</strong>
+                                </mat-error>
+                            </mat-form-field>
+                            <mat-form-field class="mat-form-field-right">
+                                <label class="mat-label other-label mandatory-field">Fica Risk Rating</label>
+                                <input matInput maxlength="50" id="ficaRiskRating" name="ficaRiskRating" formControlName="ficaRiskRating" />
+                                <mat-error *ngIf="form.get('ficaRiskRating').hasError('required')">
+                                    Fica Risk Rating is <strong>required</strong>
+                                </mat-error>
+                            </mat-form-field>
+                        </section>
+                        <section>
+                            <mat-form-field class="mat-form-field">
+                                <label class="mat-label other-label mandatory-field">RMA Contract Start Date</label>
+                                <input matInput id="startDate" name="startDate" formControlName="startDate" [matDatepicker]="startDate" (dateChange)="validateDate($event)" required />
+                                <mat-datepicker-toggle matSuffix [for]="startDate"></mat-datepicker-toggle>
+                                <mat-datepicker #startDate></mat-datepicker>
+                                <mat-error *ngIf="form.get('startDate').hasError('required')">
+                                    RMA Contract Start Date is <strong>required</strong>
+                                </mat-error>
+                                <mat-error *ngIf="form.get('startDate').hasError('min')">
+                                    RMA Contract Start Date cannot be <strong>after</strong> the end date
+                                </mat-error>
+                            </mat-form-field>
+                            <mat-form-field class="mat-form-field-right">
+                                <label class="mat-label other-label">RMA Contract End Date</label>
+                                <input matInput id="endDate" name="endDate" formControlName="endDate" [matDatepicker]="endDate" (dateChange)="validateDate($event)" />
+                                <mat-datepicker-toggle matSuffix [for]="endDate"></mat-datepicker-toggle>
+                                <mat-datepicker #endDate></mat-datepicker>
+                                <mat-error *ngIf="form.get('endDate').hasError('min')">
+                                    RMA Contract End Date cannot be <strong>before</strong> the start date
+                                </mat-error>
+                            </mat-form-field>
+                        </section>
+                      <section>
+                        <mat-form-field class="mat-form-field">
+                          <label class="mat-label other-label">Brokerage Type</label>
+                          <mat-select [(value)]="selectedBrokerageTypeId" name="brokerageType" id="brokerageType"
+                                      formControlName="brokerageType">
+                            <mat-option *ngFor="let brokerageType of brokerageTypes" [value]="brokerageType.id">
+                              {{formatLookup(brokerageType.name)}}
+                            </mat-option>
+                          </mat-select>
+                          <mat-error *ngIf="form.get('brokerageType').hasError('required')">
+                            brokerageType is <strong>required</strong>
+                          </mat-error>
+                        </mat-form-field>
+                      </section>
+
+                    </div>
+                </form>
+            </div>
+        </mat-card-content>
+    </mat-card>
+</div>

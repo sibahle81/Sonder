@@ -1,0 +1,42 @@
+<mat-card *ngIf="(isLoading$ | async)">
+  <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+  <label class="mat-label other-label"><i>{{loadingMessage$ | async}}</i></label>
+</mat-card>
+
+<div *ngIf="!(isLoading$ | async)">
+  <mat-card>
+    <div class="menu-bar">
+      <span class="material-icons">engineering</span>&nbsp;PD Award Calculation
+      <span (click)="cancel()" class="material-icons pointer right" matTooltip="Close">
+        close
+      </span>
+      <span (click)="submit()" class="material-icons pointer right pulseGreen" matTooltip="Submit">
+        save
+      </span>
+    </div>
+    <div class="mainDiv">
+      <table class="altRowTable" style="width: 100%">
+        <tr>
+          <td><b>Award %</b></td>
+          <td>{{ nettAssessedPdPercentage }}</td>
+        </tr>
+        <tr>
+          <td><b>Award Amount</b></td>
+          <td>{{ calculatedPdAward | currency : "ZAR " }}</td>
+        </tr>
+        <tr>
+          <td><b>Default Payee (Can be changed)</b></td>
+          <td>{{ payee }}</td>
+        </tr>
+        <tr>
+          <td><b>Calculation</b></td>
+          <td>{{ calculationDetails }}</td>
+        </tr>
+      </table>
+      <div>
+        <claim-disability-linked-report [personEvent]="selectedPersonEvent"
+          [hideSelectColumn]="true"></claim-disability-linked-report>
+      </div>
+    </div>
+  </mat-card>
+</div>

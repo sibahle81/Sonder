@@ -1,0 +1,52 @@
+import { Note } from 'projects/shared-components-lib/src/lib/notes/note';
+import { RuleItem } from 'projects/shared-models-lib/src/lib/common/ruleItem';
+import { Product } from './product';
+import { CoverTypeEnum } from 'projects/shared-models-lib/src/lib/enums/cover-type.enum';
+import { PaymentFrequencyEnum } from 'projects/shared-models-lib/src/lib/enums/payment-frequency.enum';
+import { Benefit } from './benefit';
+import { ProductOptionPaymentFrequency } from './product-option-payment-frequency';
+import { ProductOptionDependency } from './product-option-dependency';
+import { ProductOptionAllowanceType } from './product-option-allowance-type';
+import { ProductOptionBillingIntegration } from './product-option-billing-Integration';
+import { GroupCoverAmountOptionEnum } from './group-cover-amount-option.enum';
+
+export class ProductOption {
+
+  id: number;
+  isDeleted: boolean;
+  createdBy: string;
+  createdDate: Date;
+  modifiedBy: string;
+  modifiedDate: Date;
+  productId: number;
+  name: string;
+  code: string;
+  description: string;
+  startDate: Date;
+  endDate: Date;
+  product: Product;
+  maxAdminFeePercentage: number;
+  maxCommissionFeePercentage: number;
+  maxBinderFeePercentage: number;
+  productTypeId: number;
+  coverOptionTypeId: number;
+  groupCoverAmountOption: GroupCoverAmountOptionEnum;
+  isTaxabled: boolean;
+  commissionScale: string;
+  productOptionNotes: Note[];
+  productOptionPaymentFrequencies: ProductOptionPaymentFrequency[];
+  benefitsIds: number[];
+  ruleItems: RuleItem[];
+  coverTypeIds: CoverTypeEnum[];
+  coverType: CoverTypeEnum;
+  paymentFrequencyIds: PaymentFrequencyEnum[];
+  benefits: Benefit[];
+  statusText: string;
+  selected: boolean;
+  benefitRateLatest: number;
+  productClassId: number;
+  productOptionDependencies: ProductOptionDependency[];
+  baseRate: number;
+  productOptionAllowanceTypes: ProductOptionAllowanceType[] = [];
+  productOptionBillingIntegrations: ProductOptionBillingIntegration[] = [];
+}

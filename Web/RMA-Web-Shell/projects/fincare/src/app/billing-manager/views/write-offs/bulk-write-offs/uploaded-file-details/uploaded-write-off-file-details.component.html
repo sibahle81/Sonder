@@ -1,0 +1,96 @@
+<div>
+    <h3>Allocation File Exceptions</h3>
+    <br>
+  </div>
+  <div *ngIf="datasource.isLoading">
+    <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+    <label class="mat-label other-label"><i>loading...please wait</i></label>
+  </div>
+  <br>
+  <br>
+  <div [hidden]="datasource.isLoading || datasource.data.length === 0">
+    <app-search-input (searchcriteria)="searchData($event)" [placeHolder]="placeHolder"></app-search-input>
+    <mat-table #table [dataSource]="datasource" matSort>
+      <ng-container matColumnDef="interestReversalReference">
+        <mat-header-cell *matHeaderCellDef mat-sort-header>Interest Reversal Ref</mat-header-cell>
+        <mat-cell *matCellDef="let row">
+          <span
+            *ngIf="row.interestReversalReference.length > 0; else noInterestReversalReference">{{row.interestReversalReference}}</span>
+          <ng-template #noInterestReversalReference>N/A</ng-template>
+        </mat-cell>
+      </ng-container>
+      <ng-container matColumnDef="interestAmount">
+        <mat-header-cell *matHeaderCellDef mat-sort-header>Interest Amount</mat-header-cell>
+        <mat-cell *matCellDef="let row">
+          <span
+            *ngIf="row.interestAmount.length > 0; else noInterestAmount">{{row.interestReversalReference}}</span>
+          <ng-template #noInterestAmount>N/A</ng-template>
+        </mat-cell>
+      </ng-container>
+
+      <ng-container matColumnDef="premiumReference">
+        <mat-header-cell *matHeaderCellDef mat-sort-header>Premium Ref</mat-header-cell>
+        <mat-cell *matCellDef="let row">
+          <span
+            *ngIf="row.premiumReference.length > 0; else noPremiumReference">{{row.premiumReference}}</span>
+          <ng-template #noPremiumReference>N/A</ng-template>
+        </mat-cell>
+      </ng-container>      
+      <ng-container matColumnDef="premiumAmount">
+        <mat-header-cell *matHeaderCellDef mat-sort-header>Premium Amount</mat-header-cell>
+        <mat-cell *matCellDef="let row">
+          <span *ngIf="row.premiumAmount.length > 0; else noPremiumAmount"> {{row.premiumAmount}}</span>
+          <ng-template #noPremiumAmount>N/A</ng-template>
+        </mat-cell>
+      </ng-container>
+      <ng-container matColumnDef="debtorNumber">
+        <mat-header-cell *matHeaderCellDef mat-sort-header>DebtorNumber</mat-header-cell>
+        <mat-cell *matCellDef="let row">
+          <span *ngIf="row.debtorNumber.length > 0; else noDebtorNumber"> {{row.debtorNumber}}</span>
+          <ng-template #noSurname>N/A</ng-template>
+        </mat-cell>
+      </ng-container>
+      <ng-container matColumnDef="Status">
+        <mat-header-cell *matHeaderCellDef mat-sort-header>Status</mat-header-cell>
+        <mat-cell *matCellDef="let row">
+          {{row.status}}
+        </mat-cell>
+      </ng-container>
+      <ng-container matColumnDef="debtorsClerk">
+        <mat-header-cell *matHeaderCellDef mat-sort-header>Debtors Clerk</mat-header-cell>
+        <mat-cell *matCellDef="let row">
+          <span *ngIf="row.debtorsClerk.length > 0; else noDebtorsClerk"> {{row.debtorsClerk}}</span>
+          <ng-template #noDebtorsClerk>N/A</ng-template>
+        </mat-cell>
+      </ng-container>
+      <ng-container matColumnDef="Reason">
+        <mat-header-cell *matHeaderCellDef mat-sort-header>Reason</mat-header-cell>
+        <mat-cell *matCellDef="let row">
+          <span *ngIf="row.reason.length > 0; else noReason"> {{row.reason}}</span>
+          <ng-template #noReason>N/A</ng-template>
+        </mat-cell>
+      </ng-container>
+  
+      <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
+      <mat-row *matRowDef="let row; columns: displayedColumns;"></mat-row>
+    </mat-table>
+    <mat-paginator #paginator [length]="datasource.data ? datasource.data.length : 0" [pageIndex]="0" [pageSize]="5"
+      [pageSizeOptions]="[5, 10, 20, 50]">
+    </mat-paginator>
+    <div>
+      <button type="button" class="button float-button submit-button" (click)="back()">Back</button>
+    </div>
+    <div>
+      <button type="button" class="button float-button submit-button" (click)="downloadReport()">Download</button>
+    </div>
+  </div>
+  <div *ngIf="noData">
+    No data found...
+  </div>
+  <div [hidden]="true">
+    <ssrs-reportviewer [reportserver]="reportServerAudit" [reporturl]="reportUrlAudit"
+      [showparameters]="showParametersAudit" [parameters]="parametersAudit" [language]="languageAudit"
+      [width]="widthAudit" [height]="heightAudit" [toolbar]="toolbarAudit" [format]="format"
+      (downloadComplete)="completeDownload($event)">
+    </ssrs-reportviewer>
+  </div>

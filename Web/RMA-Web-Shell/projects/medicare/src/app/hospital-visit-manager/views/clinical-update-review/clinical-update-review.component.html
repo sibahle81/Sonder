@@ -1,0 +1,35 @@
+<mat-card>
+  <mat-card-content>
+      <form [formGroup]="form" *ngIf="this.form">
+        <br>
+        <label>Please select a review request type:</label>
+        <br><br>
+        <mat-radio-group class="mat-radio-group" formControlName="requestType">
+          <mat-radio-button class="mat-radio-button" value="RequestInfo">Request Info</mat-radio-button>
+          <mat-radio-button class="mat-radio-button" value="Authorise">Authorise</mat-radio-button>
+          <mat-radio-button class="mat-radio-button" value="Reject">Reject</mat-radio-button>
+          <mat-radio-button class="mat-radio-button" value="SendForReview">Send for further review</mat-radio-button>
+        </mat-radio-group>       
+        <br><br>
+        <mat-form-field class="mat-form-field-right" *ngIf='showReason'>
+          <label class="mat-label other-label mandatory-field">Reject Reason</label>
+          <mat-select formControlName="rejectReason">
+              <mat-option *ngFor="let PreAuthRejectReason of preAuthRejectReasonList$ | async" [value]="PreAuthRejectReason.preAuthRejectReasonId">
+                  {{PreAuthRejectReason.description}}
+              </mat-option>
+          </mat-select>
+        </mat-form-field>
+        <br><br>
+            <mat-form-field class="mat-form-field-right">
+              <label class="mat-label other-label mandatory-field">Review Comments(Min 10 characters)</label>
+              <textarea matInput cdkTextareaAutosize cdkAutosizeMinRows="3" cdkAutosizeMaxRows="5"
+                        formControlName="reviewComments" class="mat-input-element" minlength="10"
+                        maxlength="1000"></textarea>
+              <mat-error *ngIf="form.get('reviewComments').hasError('minlength')">
+                Comments must be at least <strong>10 characters</strong>
+              </mat-error>
+            </mat-form-field>
+        <br><br><br><br>
+    </form>
+  </mat-card-content>
+</mat-card>

@@ -1,0 +1,160 @@
+﻿<mat-card style="margin: 15px 30px 15px 30px">
+    <mat-card-header>
+        <mat-card-title class="wizard-font card-title grey">
+            <h1 style="padding: 0;">Review Campaign</h1>
+        </mat-card-title>
+    </mat-card-header>
+    <mat-card-content style="margin-left: 10px;">
+        <mat-progress-bar *ngIf="isLoading" mode="indeterminate"></mat-progress-bar>
+        <div [hidden]="showSection != 'list'">
+            <div [hidden]="isLoading" class="mat-container mat-elevation-z8">
+                <div *ngIf="!hasCampaign" style="margin-left:20px;">
+                    <p class="grey"><i>{{titlePlural}} can be added after the campaign has been added.</i></p>
+                </div>
+            </div>
+            <div [hidden]="isLoading" class="mat-container mat-elevation-z8">
+                <div *ngIf="hasCampaign && !hasApprovalRecords">
+                    <p>{{campaign.name}}</p>
+                    <p class="grey"><i>The campaign has not been approved yet.</i></p>
+                </div>
+            </div>
+            <div [hidden]="hideApprovals" style="margin-bottom:20px;">
+                <mat-table #table [dataSource]="dataSource" matSort>
+                    <ng-container *ngFor="let column of columns" [matColumnDef]="column.columnDefinition">
+                        <mat-header-cell *matHeaderCellDef class="mat-header-cell">{{ column.header }}</mat-header-cell>
+                        <mat-cell *matCellDef="let row" class="mat-cell">{{ column.cell(row) }}</mat-cell>
+                    </ng-container>
+                    <ng-container matColumnDef="actions">
+                        <mat-header-cell *matHeaderCellDef mat-sort-header>Actions</mat-header-cell>
+                        <mat-cell *matCellDef="let row">
+                            <a *ngIf="!canEdit" role="button" class="link-edit" (click)="onSelect(row)">View</a>
+                            <a *ngIf="canEdit" role="button" class="link-edit" (click)="onSelect(row)">View / Edit</a>
+                        </mat-cell>
+                    </ng-container>
+                    <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
+                    <mat-row *matRowDef="let row; columns: displayedColumns;"></mat-row>
+                </mat-table>
+                <div [hidden]="true">
+                    <mat-paginator #paginator
+                                   [length]="dataSource.data.length"
+                                   [pageIndex]="0"
+                                   [pageSize]="5"
+                                   [pageSizeOptions]="[5, 10, 25, 100]">
+                    </mat-paginator>
+                </div>
+            </div>
+            <div *ngIf="!hasApprovalRecords">
+
+            </div>
+            <div [hidden]="!hasCampaign || isLoading" class="mat-header form-group-button">
+                <!--Search box-->
+                <div [hidden]="true" class="search-container search-container-right">
+                    <input type="text" name="search" placeholder="search {{titlePlural | lowercase}}..." #filter>
+                </div>
+                <!--Action buttons-->
+                <div *ngIf="canSendMessage" (click)="sendTemplateTest()" class="submit-button new-button-left">
+                    <button type="button" class="button">Send test message</button>
+                </div>
+                <div *ngIf="canSendForApproval" (click)="sendReviewRequest()" class="submit-button new-button-left">
+                    <button type="button" class="button">Send review request</button>
+                </div>
+                <div *ngIf="canApprove" (click)="setApproval(1)" class="submit-button new-button-left">
+                    <button type="button" class="button">Approve</button>
+                </div>
+                <!--<div *ngIf="canApprove" (click)="setApproval(2)" class="submit-button new-button-left">
+                    <button type="button" class="button">Dispute</button>
+                </div>-->
+                <div *ngIf="canApprove" (click)="setApproval(3)" class="submit-button new-button-left">
+                    <button type="button" class="button">Reject</button>
+                </div>
+            </div>
+        </div>
+        <div *ngIf="showSection === 'testEmail'">
+            <div [hidden]="!hasCampaign" class="mat-header">
+                <mat-form-field>
+                    <label class="mat-label other-label mandatory-field">Email address</label>
+                    <input matInput class='contact-detail' [formControl]="email" required>
+                    <mat-error *ngIf="email.invalid">Please enter a valid email address</mat-error>
+                </mat-form-field>
+            </div>
+            <div [hidden]="!hasCampaign" class="mat-header form-group-button">
+                <div *ngIf="canSendMessage" (click)="sendTestEmail()" class="submit-button new-button-left">
+                    <button type="button" class="button">Send message</button>
+                </div>
+                <div (click)="showApprovalList()" class="submit-button new-button-left">
+                    <button type="button" class="button">Cancel</button>
+                </div>
+            </div>
+        </div>
+        <div *ngIf="showSection === 'testSms'">
+            <div [hidden]="!hasCampaign" class="mat-header">
+                <mat-form-field>
+                    <label class="mat-label other-label mandatory-field">Mobile number</label>
+                    <input matInput class='contact-detail' [formControl]="mobile" required>
+                    <mat-error *ngIf="mobile.invalid">Please enter a valid mobile number</mat-error>
+                </mat-form-field>
+            </div>
+            <div [hidden]="!hasCampaign" class="mat-header form-group-button">
+                <div *ngIf="canSendMessage" (click)="sendTestSms()" class="submit-button new-button-left">
+                    <button type="button" class="button">Send message</button>
+                </div>
+                <div (click)="showApprovalList()" class="submit-button new-button-left">
+                    <button type="button" class="button">Cancel</button>
+                </div>
+            </div>
+        </div>
+        <div *ngIf="showSection === 'review'">
+            <mat-form-field>
+                <label class="mat-label other-label">Approver</label>
+                <mat-select [formControl]="approver">
+                    <mat-option *ngFor="let user of approvers" [value]="user.id">{{user.displayName || user.name}} ({{user.email}})</mat-option>
+                </mat-select>
+            </mat-form-field>
+            <div class="mat-header form-group-button">
+                <div (click)="saveReviewRequest()" class="submit-button new-button-left">
+                    <button type="button" class="button">Send</button>
+                </div>
+                <div (click)="showApprovalList()" class="submit-button new-button-left">
+                    <button type="button" class="button">Cancel</button>
+                </div>
+            </div>
+        </div>
+        <div *ngIf="showSection === 'approve' || showSection === 'reject'">
+
+            <div>
+                <textarea [formControl]="reason" class="reason-box"></textarea>
+            </div>
+            <div class="mat-header form-group-button">
+                <div *ngIf="showSection === 'approve'" (click)="approveCampaign()" class="submit-button new-button-left">
+                    <button type="button" class="button">Approve</button>
+                </div>
+                <div *ngIf="showSection === 'reject'" (click)="rejectCampaign()" class="submit-button new-button-left">
+                    <button type="button" class="button">Reject</button>
+                </div>
+                <div (click)="showApprovalList()" class="submit-button new-button-left">
+                    <button type="button" class="button">Cancel</button>
+                </div>
+            </div>
+
+        </div>
+        <!--<div *ngIf="showSection === 'dispute' || showSection === 'reject'">
+            <div style="width:600px" >
+                <mat-progress-bar *ngIf="loadingNote" mode="indeterminate"></mat-progress-bar>
+                <textarea style="width:600px" *ngIf="!loadingNote"
+                                  class="note-text-control"
+                                  [formControl]="reason">
+                        </textarea>
+                <mat-error *ngIf="reason.hasError('required')">Please enter a reason.</mat-error>
+            </div>
+            <div class="mat-header form-group-button">
+                <div (click)="showApprovalList()" class="submit-button new-button-left">
+                    <button type="button" class="button">Reject</button>
+                </div>
+                <div (click)="showApprovalList()" class="submit-button new-button-left">
+                    <button type="button" class="button">Cancel</button>
+                </div>
+            </div>
+        </div>-->
+
+    </mat-card-content>
+</mat-card>

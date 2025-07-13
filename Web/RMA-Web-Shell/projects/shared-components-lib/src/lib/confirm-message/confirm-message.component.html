@@ -1,0 +1,15 @@
+﻿<div class="mat-container">
+    <div class="header-row" [ngClass]="{'text-center-align': titleAlign=='center', 'text-right-align': titleAlign=='right' }" fxLayoutAlign="space-between center">
+        <div class="header-title ">
+            <label class="form-label"><b>{{title}}</b></label>
+        </div>
+    </div><hr />
+    <div class="content-holder" [ngClass]="{'text-center-align': messageAlign=='center', 'text-right-align': messageAlign=='right' }" fxLayoutAlign="start start">
+        <label class="form-label multi-line">{{message}}</label>
+    </div>
+    <br />
+    <div class="form-group-button mat-form-button matformgroupbutton"  fxLayoutAlign="end end">
+        <button type="button" class="button float-button" (click)="dialogRef.close(true)">{{buttonOkText}}</button>
+        <button type="button" *ngIf="showCancelButton"  class="button float-button" (click)="dialogRef.close()">{{buttonCancelText}}</button>
+    </div>
+</div>

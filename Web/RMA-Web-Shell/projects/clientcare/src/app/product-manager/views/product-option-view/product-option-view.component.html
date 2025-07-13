@@ -1,0 +1,54 @@
+
+
+<div *ngIf="isLoading" class="menu-container">
+    <div style="margin-right: 15px;">
+        <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+    </div>
+    <span style="color: grey">Loading...</span>
+</div>
+
+<div [hidden]="isLoading" style="padding-top: 15px;">
+    <mat-tab-group>
+        <mat-tab label="Details">
+            <product-option-details></product-option-details>
+        </mat-tab>
+
+        <mat-tab label="Configuration">
+            <product-option-rates [isReadOnly]="true" [isWizard]="false" [productOption]="productOption"></product-option-rates>
+            <product-option-billing-integration [isReadOnly]="true" [isWizard]="false" [productOption]="productOption"></product-option-billing-integration>
+            <product-option-dependency [isReadOnly]="true" [isWizard]="false" [productOption]="productOption"></product-option-dependency>
+            <product-option-allowance-type [isReadOnly]="true" [isWizard]="false" [productOption]="productOption"></product-option-allowance-type>
+        </mat-tab>
+
+        <mat-tab label="Rules">
+            <product-option-rules name="rules"></product-option-rules>
+        </mat-tab>
+
+        <mat-tab label="Benefits">
+            <product-option-benefits name="benefits"></product-option-benefits>
+        </mat-tab>
+
+        <mat-tab label="Notes">
+            <product-option-notes name="productOption"></product-option-notes>
+        </mat-tab>
+
+        <mat-tab label="Documents">
+            <product-option-documents></product-option-documents>
+        </mat-tab>
+
+        <mat-tab label="Audit Log">
+            <audit-log name="productOption"></audit-log>
+        </mat-tab>
+
+    </mat-tab-group>
+
+    <!--Buttons-->
+    <div class="form-group-button mat-form-button">
+        <div (click)="edit()" *ngIf="canEdit" class="form-buttons submit-button">
+            <button type="button" class="button float-button">Edit</button>
+        </div>
+        <div (click)="back()" class="form-buttons submit-button">
+            <button type="button" class="button float-button">Back</button>
+        </div>
+    </div>
+</div>

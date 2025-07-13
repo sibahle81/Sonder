@@ -1,0 +1,254 @@
+<mat-card class="pad" *ngIf="(isLoading$ | async)">
+    <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+    <label class="mat-label other-label"><i>loading final medical report...please wait</i></label>
+</mat-card>
+<div *ngIf="!(isLoading$ | async)">
+
+    <mat-card>
+        <div class="menu-bar">
+            <span class="material-icons">
+                edit_document
+            </span>&nbsp;Final Medical Report
+            <span class="material-icons menu-button" matTooltip="Close" (click)='cancel()'>
+                close
+            </span>
+            <span class="material-icons menu-button pulse" matTooltip="Save" (click)='save()'
+                *ngIf="!isReadOnly && (form.valid && !form.pristine) && selectedICDCodes.length > 0 && documentsEmitted && documentsEmitted.length > 0">
+                save
+            </span>
+        </div>
+
+              <health-care-provider-search-V2 *ngIf="!selectedHealthCareProvider"
+        (healthCareProviderSelectedEmit)="setHealthCareProvider($event)"></health-care-provider-search-V2>
+
+        <form [formGroup]="form" class="mat-container details-form" novalidate>
+            <div *ngIf="selectedHealthCareProvider">
+                <section>
+                    <mat-form-field class="mat-form-field">
+                        <label class="mat-label other-label mandatory-field">Received Date</label>
+                        <input matInput formControlName="reportDate" [matDatepicker]="reportDate" id="reportDate"
+                            name="reportDate">
+                        <mat-datepicker-toggle matSuffix [for]="reportDate" [disabled]="false"></mat-datepicker-toggle>
+                        <mat-datepicker startView="month" [startAt]="startDate" touchUi="true"
+                            #reportDate></mat-datepicker>
+                    </mat-form-field>
+                </section>
+
+
+                <section>
+                    <mat-form-field class="mat-form-field">
+                        <label class="mat-label other-label mandatory-field">Healthcare Provider Practice
+                            Number
+                        </label><span *ngIf="!isReadOnly" (click)="resetHCPSearch()"
+                            class="material-icons pointer right" matTooltip="search health care provider">
+                            restart_alt
+                        </span>
+                        <input matInput id="healthcareProviderPracticeNumber" name="healthcareProviderPracticeNumber"
+                            formControlName="healthcareProviderPracticeNumber" />
+                    </mat-form-field>
+
+                    <mat-form-field class="mat-form-field-right">
+                        <label class="mat-label other-label mandatory-field">Healthcare Provider Name</label>
+                        <input matInput id="healthcareProviderName" name="healthcareProviderName"
+                            formControlName="healthcareProviderName" />
+                    </mat-form-field>
+                </section>
+
+                <section>
+                    <mat-form-field class="mat-form-field">
+                        <label class="mat-label other-label">Medical Report Category</label>
+                        <mat-select name="medicalReportCategory" id="medicalReportCategory"
+                            formControlName="medicalReportCategory">
+                            <mat-option *ngFor="let medicalReportCategory of medicalReportCategories"
+                                [value]="medicalReportCategory.id">
+                                {{medicalReportCategory.name}}
+                            </mat-option>
+                        </mat-select>
+                        <mat-error
+                            *ngIf="form.get('medicalReportCategory').hasError('required')  && form.get('medicalReportCategory').touched">
+                            Medical Report Category is <strong>required</strong>
+                        </mat-error>
+                    </mat-form-field>
+
+                    <mat-form-field class="mat-form-field-right">
+                        <label class="mat-label other-label mandatory-field">Date Of Consultation</label>
+                        <input readonly matInput formControlName="dateOfConsultation"
+                            [matDatepicker]="dateOfConsultation" id="dateOfConsultation" name="dateOfConsultation"
+                            [min]="minDate" [max]="startDate" date="true" time="false">
+                        <mat-datepicker-toggle matSuffix [for]="dateOfConsultation"
+                            [disabled]="false"></mat-datepicker-toggle>
+                        <mat-datepicker startView="month" [startAt]="startDate" touchUi="true"
+                            #dateOfConsultation></mat-datepicker>
+                        <mat-error
+                            *ngIf="form.get('dateOfConsultation').hasError('required')  && form.get('dateOfConsultation').touched">
+                            Date Of Consultation is <strong>required</strong>
+                        </mat-error>
+                        <mat-error *ngIf="form.get('dateOfConsultation').hasError('inValidDate')">
+                            Date of Consultation must not be before date of accident
+                        </mat-error>
+                    </mat-form-field>
+                </section>
+
+                <section>
+                    <mat-form-field class="mat-form-field">
+                        <label class="mat-label other-label">Body Side</label>
+                        <mat-select name="bodySide" id="bodySide" formControlName="bodySide">
+                            <mat-option *ngFor="let bodySide of bodySides" [value]="bodySide.id">
+                                {{bodySide.name}}
+                            </mat-option>
+                        </mat-select>
+                        <mat-error *ngIf="form.get('bodySide').hasError('required')  && form.get('bodySide').touched">
+                            Body side is <strong>required</strong>
+                        </mat-error>
+                    </mat-form-field>
+
+                    <mat-form-field class="mat-form-field-right">
+                        <label class="mat-label other-label">Severity</label>
+                        <mat-select name="severity" id="severity" formControlName="severity">
+                            <mat-option *ngFor="let severity of severities" [value]="severity.id">
+                                {{severity.name}}
+                            </mat-option>
+                        </mat-select>
+                        <mat-error *ngIf="form.get('severity').hasError('required')  && form.get('severity').touched">
+                            Contact Designation Type is <strong>required</strong>
+                        </mat-error>
+                    </mat-form-field>
+                </section>
+        
+
+            <mat-card class="mat-color">
+                <section>
+                    <mat-form-field class="mat-form-field">
+                        <label class="other-label mandatory-field">Mechanism of injury</label>
+                        <textarea matInput cdkTextareaAutosize cdkAutosizeMinRows="3" cdkAutosizeMaxRows="5"
+                            id="ctlMechanismOfInjury" formControlName="ctlMechanismOfInjury" class="mat-input-element"
+                            maxlength="1000"></textarea>
+                    </mat-form-field>
+
+                    <mat-form-field class="mat-form-field-right">
+                        <label class="other-label mandatory-field">Clinical description of original injury/injuries or
+                            disease:</label>
+                        <textarea matInput cdkTextareaAutosize cdkAutosizeMinRows="3" cdkAutosizeMaxRows="5"
+                            id="ctlInjuryOrDiseaseDetails" formControlName="ctlInjuryOrDiseaseDetails"
+                            maxlength="1000"></textarea>
+                    </mat-form-field>
+                </section>
+                <br>
+
+                <section>
+                    <div class="field-container">
+                        <label class="other-label mandatory-field">Is the present disablement solely attributable to the
+                            accident?</label>
+                    </div>
+
+                    <div class="field-container-right">
+                        <mat-radio-group aria-label="Is the present disablement solely attributable to the accident?"
+                            formControlName="radioIsEventSoleContributorToDisablement"
+                            id="radioIsEventSoleContributorToDisablement">
+                            <mat-radio-button value="Yes">Yes</mat-radio-button>&nbsp;
+                            <mat-radio-button value="No">No</mat-radio-button>
+                        </mat-radio-group>
+                    </div>
+
+                    <br />
+                    <br />
+
+                    <div *ngIf="form.value.radioIsEventSoleContributorToDisablement == 'No'">
+                        <mat-form-field class="mat-form-field">
+                            <label class="other-label mandatory-field">Provide details of additional contributory
+                                causes</label>
+                            <textarea matInput cdkTextareaAutosize cdkAutosizeMinRows="3" cdkAutosizeMaxRows="5"
+                                formControlName="ctlContributingCauses" maxlength="1000"
+                                id="ctlContributingCauses"></textarea>
+                        </mat-form-field>
+                    </div>
+                </section>
+
+                <br>
+
+                <section>
+                    <div class="field-container">
+                        <label class="other-label mandatory-field">Has the clinical condition stabilised and is not
+                            likely
+                            to improve?
+                        </label>
+                    </div>
+
+                    <div class="field-container-right">
+                        <mat-radio-group
+                            aria-label="Has the clinical condition stabilised and is not likely to improve?"
+                            formControlName="radioIsConditionStabilised" id="radioIsConditionStabilised">
+                            <mat-radio-button value="Yes">Yes</mat-radio-button>&nbsp;
+                            <mat-error
+                                *ngIf="form.get('radioIsConditionStabilised').hasError('required')  && form.get('radioIsConditionStabilised').touched">
+                                Has the clinical condition stabilised is <strong>required</strong>
+                            </mat-error>
+                        </mat-radio-group>
+                    </div>
+
+                    <br />
+                    <br />
+
+                    <div *ngIf="form.value.radioIsConditionStabilised == 'Yes'">
+                        <br />
+                        <mat-form-field>
+                            <label class="other-label mandatory-field">Date Stabilized:</label>
+                            <input readonly matInput [matDatepicker]="pickerDateStabilised" formControlName="ctlDateStabilised"
+                                id="ctlDateStabilised" [max]="maxDate">
+                            <mat-datepicker-toggle matSuffix [for]="pickerDateStabilised"></mat-datepicker-toggle>
+                            <mat-datepicker #pickerDateStabilised [startAt]="startDate"></mat-datepicker>
+                            <mat-error
+                                *ngIf="form.get('ctlDateStabilised').hasError('required')  && form.get('ctlDateStabilised').touched">
+                                Date stabilised is <strong>required</strong>
+                            </mat-error>
+                            <mat-error *ngIf="form.get('ctlDateStabilised').hasError('inValidDate')">
+                                Date stabilised must not be before date of accident
+                            </mat-error>
+                        </mat-form-field>
+                    </div>
+                </section>
+                <br>
+
+                <section>
+                    <mat-form-field class="mat-form-field">
+                        <label class="other-label mandatory-field">Impairment findings:</label>
+                        <textarea matInput cdkTextareaAutosize cdkAutosizeMinRows="3" cdkAutosizeMaxRows="5"
+                            formControlName="ctlImpairmentFindings" maxlength="1000" id="ctlImpairmentFindings">
+                        </textarea>
+                    </mat-form-field>
+                    <p>If there are impairment findings, please detail any permanent anatomical defect and/or impairment
+                        of functions on the relevant assessment chart, <br> to be found at:
+                        <a href="https://randmutual.co.za/Downloads#48932-general-medical-reports"
+                            target="_blank">https://randmutual.co.za/Downloads#48932-general-medical-reports
+                        </a>.<br>
+                        Upload the completed assessment chart via the CompCare channel
+                    </p>
+
+                    <mat-form-field class="mat-form-field-rigth">
+                        <label class="other-label mandatory-field">Date on which the patient is due to return to
+                            work:</label>
+                        <input matInput [matDatepicker]="picker" formControlName="ctlDateReturnToWork"
+                            id="ctlDateReturnToWork" readonly>
+                        <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+                        <mat-datepicker #picker></mat-datepicker>
+                        <mat-error *ngIf="form.get('ctlDateReturnToWork').hasError('inValidDate')">
+                            Return to work date must not be before date of accident
+                        </mat-error>
+                    </mat-form-field>
+                </section>
+            </mat-card>
+
+            <br />
+            <estimate-icd-code-list [personEvent]="personEvent" [event]="event" [selectedICDCodes]="selectedICDCodes"
+                [medicalReportForm]="personEvent.finalMedicalReport" [isWizard]="isWizard"
+                [isReadOnly]="isReadOnly" (formStatusChanged)="onIcdCodeListFormStatusChanged($event)"></estimate-icd-code-list>
+
+            <document-uploader *ngIf="claimMedicalDocuments" [documentSet]="claimMedicalDocuments"
+                [documentTypeFilter]="finalMedicalReportEnum" [systemName]="documentSystemName"
+                [forceRequiredDocumentTypeFilter]="finalMedicalReportEnum"
+                [keyName]="'PersonEventId'" [keyValue]="personEvent && personEvent.personEventId"
+                (emitAllDocuments)="allDocumentsEmitted($event)"></document-uploader>
+  </div>
+        </form>
+    </mat-card>
+</div>

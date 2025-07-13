@@ -1,0 +1,93 @@
+<mat-tab-group [(selectedIndex)]="selectedTabIndex">
+  <mat-tab label="Line Items">
+    <div *ngIf="datasource.isLoading">
+      <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+      <label class="mat-label other-label"><i>loading...please wait</i></label>
+    </div>
+    <div *ngIf="isDownloading">
+      <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+      <label class="mat-label other-label"><i>downloading report...please wait</i></label>
+    </div>
+    <br>
+    <br>
+    <div *ngIf="(isSubmitting$ | async)">
+      <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+      <label class="mat-label other-label"><i>submitting records...please wait</i></label>
+    </div>
+    <div [hidden]="datasource.isLoading || datasource.data.length === 0">
+      <app-search-input (searchcriteria)="searchData($event)" [placeHolder]="placeHolder"></app-search-input>
+      <mat-table #table [dataSource]="datasource" matSort>
+        <ng-container matColumnDef="userReference">
+          <mat-header-cell *matHeaderCellDef mat-sort-header>UserReference</mat-header-cell>
+          <mat-cell *matCellDef="let row">
+            <input type="text" matInput [(ngModel)]="row.userReference" (change)="valueInput(row)" readonly />
+          </mat-cell>
+        </ng-container>
+        <ng-container matColumnDef="userReference2">
+          <mat-header-cell *matHeaderCellDef mat-sort-header>userReference2</mat-header-cell>
+          <mat-cell *matCellDef="let row">
+            <input type="text" matInput [(ngModel)]="row.userReference2" (change)="valueInput(row)" readonly />
+          </mat-cell>
+        </ng-container>
+        <ng-container matColumnDef="allocateTo">
+          <mat-header-cell *matHeaderCellDef mat-sort-header>AllocateTo</mat-header-cell>
+          <mat-cell *matCellDef="let row">
+            <input type="text" matInput [(ngModel)]="row.allocateTo" (change)="valueInput(row)" readonly />
+          </mat-cell>
+        </ng-container>
+        <ng-container matColumnDef="amount">
+          <mat-header-cell *matHeaderCellDef mat-sort-header>Amount</mat-header-cell>
+          <mat-cell *matCellDef="let row">
+            <input type="text" matInput [(ngModel)]="row.amount" (change)="valueInput(row)" readonly />
+          </mat-cell>
+        </ng-container>
+        <ng-container matColumnDef="status">
+          <mat-header-cell *matHeaderCellDef mat-sort-header>Proccessed Status</mat-header-cell>
+          <mat-cell *matCellDef="let row"> {{row.lineProcessingStatus}} </mat-cell>
+        </ng-container>
+        <ng-container matColumnDef="error">
+          <mat-header-cell *matHeaderCellDef mat-sort-header>Error</mat-header-cell>
+          <mat-cell *matCellDef="let row"> {{row.error}} </mat-cell>
+        </ng-container>
+        <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
+        <mat-row *matRowDef="let row; columns: displayedColumns;"></mat-row>
+      </mat-table>
+      <mat-paginator #paginator [length]="datasource.data ? datasource.data.length : 0" [pageIndex]="0" [pageSize]="5"
+        [pageSizeOptions]="[5, 10, 20, 50]">
+      </mat-paginator>
+      <div  class="form-buttons" class="div_submit">
+        <button class="button float-button submit-button" (click)="submitEdit()"
+          [disabled]="isSubmitting$ | async">Submit
+          Edited</button>
+        <button type="button" class="button float-button submit-button" (click)="back()">Back</button>
+      </div>
+      <div  class="form-buttons" class="div_submit">
+        <button class="button float-button submit-button" (click)="submitDelete()"
+          [disabled]="isSubmitting$ | async">Submit
+          Deleted</button>
+        <button type="button" class="button float-button submit-button" (click)="back()">Back</button>
+
+      </div>
+      <div *ngIf="(!showSubmitDelete  && !showSubmitEdit)">
+        <button type="button" class="button float-button submit-button" (click)="back()">Back</button>
+      </div>
+
+      <div *ngIf="(datasource  && datasource.data.length > 0)">
+        <button type="button" class="button float-button submit-button"
+          (click)="downloadExceptionReport()">Exception Report</button>
+      </div>
+
+
+    </div>
+    <div *ngIf="noData">
+      No data found...
+    </div>
+    <div *ngIf="canDownload"  [hidden]="true">
+      <ssrs-reportviewer [reportserver]="reportServerAudit" [reporturl]="reportUrlAudit"
+        [showparameters]="showParametersAudit" [parameters]="parametersAudit" [language]="languageAudit"
+        [width]="widthAudit" [height]="heightAudit" [toolbar]="toolbarAudit" [format]="format"
+        (downloadComplete)="completeDownload($event)">
+      </ssrs-reportviewer>
+    </div>
+  </mat-tab>
+</mat-tab-group>

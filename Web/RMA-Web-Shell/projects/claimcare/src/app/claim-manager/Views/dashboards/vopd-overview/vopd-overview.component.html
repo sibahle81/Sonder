@@ -1,0 +1,140 @@
+﻿<form [formGroup]="form" class="mat-container details-form" novalidate>
+  <mat-accordion multi="false">
+    <mat-expansion-panel [expanded]="false" (closed)="ClearData()">
+      <mat-expansion-panel-header>
+        <mat-panel-title>
+          <span class="material-icons heading">checklist_rtl</span>&nbsp;&nbsp;<label class="labelHeading">VOPD</label>
+        </mat-panel-title>
+        <mat-panel-description>
+        </mat-panel-description>
+      </mat-expansion-panel-header>
+      <div [hidden]="!hasData">
+        <table class="altRowTable" style="width:50%;">
+          <tr>
+            <td><b>Total Submitted:</b> {{this.totalVopd}}</td>
+          </tr>
+        </table>
+      </div>
+      <div class="resetBtn">
+        <button mat-mini-fab color="primary" (click)="ClearData()">
+          <mat-icon matTooltip="Reset">autorenew</mat-icon>
+        </button>
+      </div>
+      <div [hidden]="hasData">
+        <label class="mat-label other-label">
+          <h3 class="font"><span class="material-icons lightRed">archive</span> &nbsp; {{noDataHeading}}
+          </h3>
+        </label>
+        <span [style.visibility]="isLoading ? 'visible' : 'hidden'">
+          <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+          <span class="grey site-font"><i>Loading Data...please wait</i></span>
+        </span>
+      </div>
+      <br />
+
+      <div [hidden]="!hasData">
+        <canvas baseChart [data]="data" [labels]="chartLabels" [colors]="chartColors" [plugins]="pieChartPlugins"
+          [options]="pieChartOptions" [legend]="pieChartLegend" [chartType]="chartType"
+          (chartHover)="chartHovered($event)" (chartClick)="chartClicked($event)">
+        </canvas>
+      </div>
+      <br />
+      <br />
+      <section>
+        <div>
+          <mat-form-field class="mat-form-field inputDate">
+            <label class="mat-label other-label">From Date</label>
+            <input readonly matInput [min]="minDate" [max]="maxDate" date="true" time="false"
+              formControlName="startDate" [matDatepicker]="startDate" id="startDate" />
+            <mat-datepicker-toggle class="date-icon" matSuffix [for]="startDate"></mat-datepicker-toggle>
+            <mat-datepicker touchUi="true" #startDate></mat-datepicker>
+          </mat-form-field>
+          &nbsp;
+          &nbsp;
+          <mat-form-field class="mat-form-field inputDate">
+            <label class="mat-label other-label">End Date</label>
+            <input readonly matInput [max]="maxDate" date="true" time="false" formControlName="endDate"
+              [matDatepicker]="endDate" id="endDate" />
+            <mat-datepicker-toggle class="date-icon" matSuffix [for]="endDate">
+            </mat-datepicker-toggle>
+            <mat-datepicker touchUi="true" #endDate></mat-datepicker>
+          </mat-form-field>
+        </div>
+        <div>
+          <!--Notification Type-->
+          <mat-form-field class="mat-form-field inputDate">
+            <label class="mat-label other-label">Notification Type</label>
+            <mat-select name="notificationType" id="notificationType" formControlName="notificationType"
+              (selectionChange)="insuranceTypeChanged($event)">
+              <mat-option [value]="0">All</mat-option>
+              <mat-option [value]="1">Accident</mat-option>
+              <mat-option [value]="3">Disease</mat-option>
+            </mat-select>
+          </mat-form-field>
+          &nbsp;
+          &nbsp;
+          <!--Claim Type-->
+          <mat-form-field class="mat-form-field inputDate">
+            <label class="mat-label other-label">Claim Type</label>
+            <input matInput #claimTypeElement aria-label="claimType" [matAutocomplete]="claimTypesAuto" id="claimType"
+              name="claimType" formControlName="claimType">
+            <mat-icon class="icon">keyboard_arrow_down</mat-icon>
+            <mat-autocomplete #claimTypesAuto="matAutocomplete" id="claimType"
+              (optionSelected)="claimTypeChange($event)">
+              <mat-option [value]="'All'">All</mat-option>
+              <mat-option *ngFor="let type of filteredClaimTypes" [value]="type.name">
+                {{type.name}}
+              </mat-option>
+            </mat-autocomplete>
+            <div *ngIf="(isClaimTypeLoading$ | async)" class="loadingDiv">
+              <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+              <span class="site-font grey">Loading claim types...please wait</span>
+            </div>
+          </mat-form-field>
+        </div>
+
+
+        <div>
+          <!--Insurance Type-->
+          <mat-form-field class="mat-form-field inputDate">
+            <label class="mat-label other-label">Insurance Type</label>
+            <input matInput #insuranceTypeElement aria-label="insuranceType" [matAutocomplete]="insuranceTypesAuto"
+              id="insuranceType" name="insuranceType" formControlName="insuranceType">
+            <mat-icon class="icon">keyboard_arrow_down</mat-icon>
+            <mat-autocomplete #insuranceTypesAuto="matAutocomplete" id="insuranceType">
+              <mat-option [value]="'All'">All</mat-option>
+              <mat-option *ngFor="let type of filteredInsuranceTypes" [value]="type.code">
+                {{type.code}}
+              </mat-option>
+            </mat-autocomplete>
+          </mat-form-field>
+          &nbsp;
+          &nbsp;
+          <!--Benefits-->
+          <mat-form-field class="mat-form-field inputDate">
+            <label class="mat-label other-label">Possible Benefits Due</label>
+            <input matInput #benefitDueElement aria-label="benefitsDue" [matAutocomplete]="benefitsAuto"
+              id="benefitsDue" name="benefitsDue" formControlName="benefitsDue">
+            <mat-icon class="icon">keyboard_arrow_down</mat-icon>
+            <mat-autocomplete #benefitsAuto="matAutocomplete" id="benefitsDue">
+              <mat-option [value]="'All'">All</mat-option>
+              <mat-option *ngFor="let benefit of filteredBenefits" [value]="benefit.name">
+                {{benefit.name}}
+              </mat-option>
+            </mat-autocomplete>
+          </mat-form-field>
+        </div>
+        <div class="form-group-buttons">
+          <button (click)="ClearData()" class="button submit-button">Reset</button>
+          <button (click)="applyData()" class="button submit-button">Apply</button>
+        </div>
+        <br />
+        <br />
+        <span [style.visibility]="dataLoading ? 'visible' : 'hidden'">
+          <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+          <span class="grey site-font"><i>Loading Data...please wait</i></span>
+        </span>
+      </section>
+    </mat-expansion-panel>
+  </mat-accordion>
+</form>

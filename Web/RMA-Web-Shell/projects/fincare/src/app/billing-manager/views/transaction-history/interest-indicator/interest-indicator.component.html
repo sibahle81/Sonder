@@ -1,0 +1,52 @@
+<div *ngIf="!isWizard && (isLoading$ | async)">
+    <mat-progress-bar  mode="indeterminate"></mat-progress-bar>
+</div>
+<div class="menu-bar">
+    <span class="material-icons">
+        trending_up
+    </span>
+    Interest indicator
+    <span *ngIf="userHasPermission(editPermission) && !isWizard && interestIndicator && interestIndicator.Id != 0 && industryClass == metalsIndustryClass" (click)="edit()" class="material-icons pointer right"
+        matTooltip="edit">      
+        edit
+    </span>
+    <span *ngIf="chargeInterest" class="interestIndicatorOn">ON</span>
+    <span *ngIf="!chargeInterest" class="interestIndicatorOff">OFF</span>
+</div>
+<form [formGroup]="form">
+    <mat-card>
+            <mat-checkbox id="chargeInterest" name="chargeInterest" formControlName="chargeInterest"
+            class="checkbox">Charge Interest</mat-checkbox>      
+    </mat-card>
+    <section>
+        <mat-card>
+            <mat-form-field class="mat-form-field">
+                <label class="mat-label other-label">Start Date</label>
+                <input matInput [matDatepicker]="interestStartDate" date="true" time="false"
+                    formControlName="interestStartDate" readonly [max]="getEndDate()">
+                <mat-datepicker-toggle matSuffix [for]="interestStartDate"></mat-datepicker-toggle>
+                <mat-datepicker #interestStartDate touchUi="true">
+                </mat-datepicker>
+                <mat-error *ngIf="form.get('interestStartDate').hasError('required')">
+                    Start Date <strong>required</strong>
+                </mat-error>
+            </mat-form-field>
+            <mat-form-field class="mat-form-field-right">
+                <label class="mat-label other-label">End Date</label>
+                <input matInput [matDatepicker]="interestEndDate" date="true" time="false"
+                    formControlName="interestEndDate" [min]="getStartDate()" readonly>
+                <mat-datepicker-toggle matSuffix [for]="interestEndDate"></mat-datepicker-toggle>
+                <mat-datepicker #interestEndDate touchUi="true"></mat-datepicker>
+                <mat-error *ngIf="form.get('interestEndDate').hasError('required')">
+                    End Date <strong>required</strong>
+                </mat-error>
+            </mat-form-field>
+        </mat-card>
+    </section>
+    <div *ngIf="!isReadOnly " (click)="save()" class="form-buttons submit-button">
+        <button type="button" class="button float-button">Submit</button>
+    </div>
+    <div *ngIf="!isReadOnly" (click)="cancel()" class="form-buttons submit-button">
+        <button type="button" class="button float-button">Cancel</button>
+    </div>
+</form>

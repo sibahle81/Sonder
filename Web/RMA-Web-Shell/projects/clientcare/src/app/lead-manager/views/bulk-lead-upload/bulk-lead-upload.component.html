@@ -1,0 +1,10 @@
+<mat-card *ngIf="(isLoading$ | async)">
+    <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+    <label class="mat-label other-label"><i>{{loadingMessage$ | async}}</i></label>
+</mat-card>
+
+<span *ngIf="!(isLoading$ | async)">
+    <xlsx-parser [title]="title" [expectedColumnHeadings]="expectedColumnHeadings"
+        (fileDataEmit)="receiveFileData($event)" [invalidRowsForExport]="invalidRowsForExport"
+        (processConfirmedEmit)="submit($event)"></xlsx-parser>
+</span>

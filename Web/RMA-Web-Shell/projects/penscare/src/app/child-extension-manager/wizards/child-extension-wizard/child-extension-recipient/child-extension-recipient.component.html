@@ -1,0 +1,15 @@
+<app-personal-details *ngIf="!fetchingBeneficiaryDetails && form"
+  [componentData]="{
+    form: form,
+    formHeader: formHeader,
+    showActionButtons: false,
+    model: model,
+    pensCareContext: pensCareContext,
+    personType: personType,
+    lookups: lookups
+  }">
+</app-personal-details>
+<div [hidden]="!fetchingBeneficiaryDetails" class="loading-message-container">
+  <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+  <span class="site-font grey" style="margin-top: 5px;margin-left:15px;"><i>Fetching recipient details...</i></span>
+</div>

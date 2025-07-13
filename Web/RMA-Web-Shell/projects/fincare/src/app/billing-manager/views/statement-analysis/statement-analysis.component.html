@@ -1,0 +1,91 @@
+<div>
+  <mat-card style="margin: 15px 30px 15px 30px">
+      <mat-card-content style="margin-left: 10px;">
+          <div>
+              <!--[hidden]="isLoading"-->
+              <div class="mat-container mat-elevation-z8">
+                  <div class="mat-header">
+                      <h1>Bank Statement Analysis</h1><br />
+
+                  </div>
+                  <div class="search-container search-container-right">
+                      <input type="text" name="search" (keyup)="applyFilter($event.target.value)" placeholder="search here...">
+                  </div>
+                  <mat-table #table [dataSource]="dataSource" matSort>
+                    <ng-container matColumnDef="controlNumber">
+                      <mat-header-cell *matHeaderCellDef mat-sort-header> CONTROL NUMBER </mat-header-cell>
+                      <mat-cell *matCellDef="let row"> {{row.controlNumber}} </mat-cell>
+                  </ng-container>
+                  <ng-container matColumnDef="controlName">
+                      <mat-header-cell *matHeaderCellDef mat-sort-header> CONTROL NAME</mat-header-cell>
+                      <mat-cell *matCellDef="let row"> {{row.controlName}} </mat-cell>
+                  </ng-container>
+                  <ng-container matColumnDef="year">
+                      <mat-header-cell *matHeaderCellDef mat-sort-header> YEAR </mat-header-cell>
+                      <mat-cell *matCellDef="let row"> {{row.year}} </mat-cell>
+                  </ng-container>
+                  <ng-container matColumnDef="period">
+                      <mat-header-cell *matHeaderCellDef mat-sort-header> PERIOD </mat-header-cell>
+                      <mat-cell *matCellDef="let row"> {{row.period}} </mat-cell>
+                  </ng-container>
+                    <ng-container matColumnDef="bankAccountNumber">
+                      <mat-header-cell *matHeaderCellDef mat-sort-header> BANK ACCOUNT </mat-header-cell>
+                      <mat-cell *matCellDef="let row"> {{row.bankAccountNumber}} </mat-cell>
+                  </ng-container>
+                  <ng-container matColumnDef="statementNumber">
+                    <mat-header-cell *matHeaderCellDef mat-sort-header> STATEMENT NUMBER </mat-header-cell>
+                    <mat-cell *matCellDef="let row"> {{row.statementNumber}} </mat-cell>
+                </ng-container>
+                <ng-container matColumnDef="statementLineNumber">
+                  <mat-header-cell *matHeaderCellDef mat-sort-header>STATEMENT LINE NUMBER </mat-header-cell>
+                  <mat-cell *matCellDef="let row"> {{row.statementLineNumber}} </mat-cell>
+              </ng-container>
+                    
+                      <ng-container matColumnDef="transactionDate">
+                          <mat-header-cell *matHeaderCellDef mat-sort-header> DATE</mat-header-cell>
+                          <mat-cell *matCellDef="let row"> {{row.transactionDate | date:'yyyy/MM/dd'}} </mat-cell>
+                      </ng-container>
+                      <ng-container matColumnDef="userReference">
+                        <mat-header-cell *matHeaderCellDef mat-sort-header> DESCRIPTION </mat-header-cell>
+                        <mat-cell *matCellDef="let row"> {{row.userReference}} </mat-cell>
+                    </ng-container>
+                      <ng-container matColumnDef="amount">
+                        <mat-header-cell *matHeaderCellDef mat-sort-header> AMOUNT </mat-header-cell>
+                        <mat-cell *matCellDef="let row"> {{row.amount | currency:'ZAR':'' | replace:',':' ' }} </mat-cell>
+                    </ng-container>
+                    <ng-container matColumnDef="bankCode">
+                        <mat-header-cell *matHeaderCellDef mat-sort-header> BANK CODE </mat-header-cell>
+                        <mat-cell *matCellDef="let row"> {{row.bankCode}} </mat-cell>
+                    </ng-container>
+                    <ng-container matColumnDef="allocated">
+                      <mat-header-cell *matHeaderCellDef mat-sort-header> ALLOCATED </mat-header-cell>
+                      <mat-cell *matCellDef="let row"> {{row.allocated}} </mat-cell>
+                  </ng-container>
+                      <ng-container matColumnDef="debtorName">
+                        <mat-header-cell *matHeaderCellDef mat-sort-header> DEBTOR </mat-header-cell>
+                        <mat-cell *matCellDef="let row"> {{row.debtorName}} </mat-cell>
+                    </ng-container>
+                      <ng-container matColumnDef="rmaReference">
+                          <mat-header-cell *matHeaderCellDef mat-sort-header> RMA REFERENCE </mat-header-cell>
+                          <mat-cell *matCellDef="let row"> {{row.rmaReference}} </mat-cell>
+                      </ng-container>
+                      <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
+                      <mat-row *matRowDef="let row; columns: displayedColumns;"></mat-row>
+                  </mat-table>
+                  <mat-paginator #paginator
+                                 [length]="dataSource.filteredData.length"
+                                 [pageIndex]="0"
+                                 [pageSize]="10"
+                                 [pageSizeOptions]="[5, 10, 25, 100]">
+                  </mat-paginator>
+              </div>
+          </div>
+      </mat-card-content>
+  </mat-card>
+</div>
+<div>
+  <table class="form-group row" style="    margin-left: 29px;">
+      <button [disabled]="canExport==0" (click)="exporttoCSV()" class="button float-button">Export</button>
+      <button type="button" (click)="clear()" class="button float-button">Back</button>
+  </table>
+</div>

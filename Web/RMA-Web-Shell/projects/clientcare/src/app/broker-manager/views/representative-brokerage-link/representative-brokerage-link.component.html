@@ -1,0 +1,78 @@
+<div *ngIf="!canEdit">
+    <h1>Link Agent to Brokerage</h1>
+    <div style="padding-bottom: 15px; color: orange; font-family: 'Oswald', sans-serif;">
+        You do not have sufficient permissions to link / delink agents.
+    </div>
+</div>
+<div [hidden]="!canEdit" style="padding-top: 15px;">
+    <form [formGroup]="form" class="mat-container details-form" novalidate>
+        <section>
+            <mat-form-field>
+                <label class="mat-label other-label mandatory-field">Agent</label>
+                <input matInput formControlName="name" />
+            </mat-form-field>
+            <mat-form-field class="mat-form-field-right">
+                <label><label class="mat-label other-label mandatory-field">Date of Appointment</label></label>
+                <input matInput [matDatepicker]="appointmentDate" formControlName="dateOfAppointment" />
+                <mat-datepicker #appointmentDate></mat-datepicker>
+            </mat-form-field>
+        </section>
+    </form>
+    <div *ngIf="loadingReps">
+        <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+        <div>&nbsp;</div>
+    </div>
+    <div [hidden]="loadingReps">
+        <table mat-table *ngIf="dataSource && dataSource.data && !loadingReps" [dataSource]="dataSource" style="width: 100%; padding-bottom:20px">
+            <ng-container matColumnDef="fspNumber">
+                <th mat-header-cell *matHeaderCellDef>FSP Number</th>
+                <td mat-cell *matCellDef="let broker">{{broker.brokerage.fspNumber}}</td>
+            </ng-container>
+            <ng-container matColumnDef="code">
+                <th mat-header-cell *matHeaderCellDef>Code</th>
+                <td mat-cell *matCellDef="let broker">{{broker.brokerage.code}}</td>
+            </ng-container>
+            <ng-container matColumnDef="name">
+                <th mat-header-cell *matHeaderCellDef>Brokerage Name</th>
+                <td mat-cell *matCellDef="let broker">{{broker.brokerage.name}}</td>
+            </ng-container>
+            <ng-container matColumnDef="juristicRepId">
+
+                <th mat-header-cell *matHeaderCellDef [hidden]="isJuristicRep">Juristic Representative</th>
+                <td mat-cell *matCellDef="let broker" [hidden]="isJuristicRep" style="padding-top: 14px;">
+                    <mat-select [(value)]="broker.juristicRepId" [disabled]="isDisabled">
+                        <mat-option *ngFor="let rep of getRepresentatives(broker.brokerageId)" [value]="rep.id" (onSelectionChange)="updateJuristicRep($event, broker)">
+                            {{ rep.name }}
+                        </mat-option>
+                    </mat-select>
+                </td>
+
+            </ng-container>
+            <ng-container matColumnDef="startDate">
+                <th mat-header-cell *matHeaderCellDef>Start Date</th>
+                <td mat-cell *matCellDef="let broker">
+                    <input matInput class="link-date" [matDatepicker]="startDate" [value]="broker.startDate" [disabled]="!canLink" (dateInput)="updateStartDate($event, broker)" (dateChange)="updateStartDate($event, broker)" id="startDate" name="startDate" />
+                    <mat-datepicker-toggle class="link-data-icon" matSuffix [for]="startDate" [disabled]="!canLink">
+                    </mat-datepicker-toggle>
+                    <mat-datepicker #startDate></mat-datepicker>
+                </td>
+            </ng-container>
+            <ng-container matColumnDef="endDate">
+                <th mat-header-cell *matHeaderCellDef>End Date</th>
+                <td mat-cell *matCellDef="let broker">
+                    <input matInput class="link-date" [matDatepicker]="endDate" [value]="broker.endDate" [disabled]="!canLink" (dateInput)="updateEndDate($event, broker)" (dateChange)="updateEndDate($event, broker)" id="endDate" name="endDate" />
+                    <mat-datepicker-toggle class="link-data-icon" matSuffix [for]="endDate" [disabled]="!canLink">
+                    </mat-datepicker-toggle>
+                    <mat-datepicker #endDate></mat-datepicker>
+                </td>
+            </ng-container>
+            <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+            <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+        </table>
+    </div>
+    <div class="link-error" *ngIf="errors.length > 0">
+        <ng-container *ngFor="let error of errors">
+            <mat-error>{{error}}</mat-error>
+        </ng-container>
+    </div>
+</div>

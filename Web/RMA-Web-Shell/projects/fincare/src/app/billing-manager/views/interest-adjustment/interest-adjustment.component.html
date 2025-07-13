@@ -1,0 +1,94 @@
+<h3>Interest Adjustment</h3>
+<div>
+    <mat-accordion>
+      <mat-expansion-panel [expanded]="panelOpenState">
+        <mat-expansion-panel-header>
+          <mat-panel-title>
+            <h4>Search</h4>
+          </mat-panel-title>
+        </mat-expansion-panel-header>
+        <app-seach-debtor (itemSelected)="onAccountSelected($event)"></app-seach-debtor>
+      </mat-expansion-panel>
+    </mat-accordion>
+    <br />  
+    <br />
+    <div *ngIf="isLoading && !isRefreshing">
+      <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+      <label class="mat-label other-label"><i>Loading Transactions for debtor...please wait</i></label>
+    </div>
+    <div *ngIf="isSubmitting">
+      <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+      <label class="mat-label other-label"><i>Creating workflow...please wait</i></label>
+    </div>
+    <div class="searchMessage" *ngIf="searchFailedMessage.length > 0">{{searchFailedMessage}}</div>
+    <div class="div_scroll" *ngIf="!isLoading && datasource.data.length > 0">  
+      <mat-card>
+        <mat-table #table [dataSource]="datasource" matSort> 
+          <ng-container matColumnDef="description">
+            <mat-header-cell *matHeaderCellDef mat-sort-header>Description</mat-header-cell>
+            <mat-cell *matCellDef="let row"> {{row.description}} </mat-cell>
+          </ng-container>
+          <ng-container matColumnDef="documentNumber">
+            <mat-header-cell *matHeaderCellDef mat-sort-header>Document No.</mat-header-cell>
+            <mat-cell *matCellDef="let row"> {{row.documentNumber}} </mat-cell>
+          </ng-container>
+          <ng-container matColumnDef="transactionDate">
+            <mat-header-cell *matHeaderCellDef mat-sort-header>Document Date</mat-header-cell>
+            <mat-cell *matCellDef="let row"> {{row.transactionDate | date:'yyyy/MM/dd'}} </mat-cell>
+          </ng-container>
+          <ng-container matColumnDef="amount">
+            <mat-header-cell *matHeaderCellDef mat-sort-header>Amount</mat-header-cell>
+            <mat-cell *matCellDef="let row" class="right-aligned-amounts"> {{row.amount | currency:'':''}} </mat-cell>
+          </ng-container>
+          <ng-container matColumnDef="balance">
+            <mat-header-cell *matHeaderCellDef mat-sort-header>Balance</mat-header-cell>
+            <mat-cell *matCellDef="let row" class="right-aligned-amounts"> {{row.balance | currency:'':''}} </mat-cell>
+          </ng-container>  
+          <ng-container matColumnDef="period">
+            <mat-header-cell *matHeaderCellDef mat-sort-header matTooltip="Period on which transaction is posted to the GL">Period</mat-header-cell>
+            <mat-cell *matCellDef="let row"> {{row.period}} </mat-cell>
+          </ng-container>
+          <ng-container matColumnDef="actionDown">
+            <mat-header-cell *matHeaderCellDef>Adjust</mat-header-cell>
+            <mat-cell *matCellDef="let row">
+                <a (click)="openDialog(row, 2)" role="button" class="link-edit">
+                  <span matTooltip="adjust down" class="material-icons icn pointer material-symbols-outlined arrow-colour-green">
+                    arrow_circle_down
+                  </span>
+                </a>                
+              </mat-cell>
+          </ng-container>
+          <ng-container matColumnDef="actionUp">
+            <mat-header-cell *matHeaderCellDef></mat-header-cell>
+            <mat-cell *matCellDef="let row">
+                <a (click)="openDialog(row, 1)" role="button" class="link-edit">
+                  <span matTooltip="adjust up" class="material-icons icn pointer material-symbols-outlined arrow-colour-orange">
+                    arrow_circle_up
+                  </span>
+                </a>                
+              </mat-cell>
+          </ng-container>
+          <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
+          <mat-row *matRowDef="let row; columns: displayedColumns;"></mat-row>
+        </mat-table>
+        <mat-paginator #paginator [pageSize]="10" [pageSizeOptions]="[5, 10, 25, 100]">
+        </mat-paginator>
+        <div *ngIf="showSubmit" class="form-buttons" class="div_submit">
+          <button class="button float-button submit-button" (click)="openDialog()">Add Adjustment</button>
+          <button type="button" class="button float-button submit-button" (click)="back()">Back</button>
+        </div>
+        <div *ngIf="!showSubmit"  class="div_submit">
+          <button type="button" class="button float-button submit-button" (click)="back()">Back</button>
+        </div>
+        <br/><br/>
+      </mat-card>
+    </div>
+  </div>
+  <ng-template #notAuthorized>
+    <div>
+      <div class="wizard-permissions-error">You do not have sufficient permissions to do Interest Adjustments.</div>
+      <div (click)="navigateBack()" class="form-buttons submit-button">
+        <button type="button" class="button float-button">Back</button>
+      </div>
+    </div>
+  </ng-template>

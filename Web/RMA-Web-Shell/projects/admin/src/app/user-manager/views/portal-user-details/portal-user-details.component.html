@@ -1,0 +1,120 @@
+﻿<div class="page-header"></div>
+
+<div style="padding-top: 15px;">
+    <form [formGroup]="form" class="mat-container" novalidate>
+        <div class="mat-container">
+            <section>
+                <!--Reference Number-->
+                <mat-form-field>
+                    <label class="mat-label other-label">CF Reference Number</label>
+                    <input matInput maxlength="30" formControlName="referenceNumber" name="referenceNumber"
+                           [errorStateMatcher]="matcher" required />
+                    <mat-error *ngIf="form.get('referenceNumber').hasError('required')">
+                        Reference Number is <strong>required</strong>
+                    </mat-error>
+                </mat-form-field>
+                <!--Company Name-->
+                <mat-form-field>
+                    <label class="mat-label other-label">
+                        Company Name
+                    </label>
+                    <input matInput maxlength="50" formControlName="name" name="name" required>
+                    <mat-error *ngIf="form.get('name').hasError('required')">
+                        Company Name is <strong>required</strong>
+                    </mat-error>
+                </mat-form-field>
+                <!--CIPC number-->
+                <mat-form-field>
+                    <label class="mat-label other-label">CIPC Number</label>
+                    <input matInput maxlength="30" formControlName="registrationNumber" name="registrationNumber" required>
+                    <mat-error *ngIf="form.get('registrationNumber').hasError('required')">
+                        CIPC Number is <strong>required</strong>
+                    </mat-error>
+                </mat-form-field>
+            </section>
+            <section>
+                <!--Contact Type-->
+                <mat-form-field>
+                    <label class="mat-label other-label">Contact Type</label>
+                    <mat-select name="contactType" id="contactType" formControlName="contactType" [(value)]="contactType">
+                        <mat-option *ngFor="let contactType of contactTypes" [value]="contactType.id">
+                            {{contactType.name}}
+                        </mat-option>
+                    </mat-select>
+                    <mat-error *ngIf="form.get('contactType').hasError('required')">
+                        Contact Type is <strong>required</strong>
+                    </mat-error>
+                </mat-form-field>
+                <!--Person Title-->
+                <mat-form-field>
+                    <label class="mat-label other-label">Contact Person Title</label>
+                    <mat-select name="personTitle" id="personTitle" formControlName="personTitle" [(value)]="titleId">
+                        <mat-option *ngFor="let personTitle of personTitles" [value]="personTitle.id">
+                            {{personTitle.name}}
+                        </mat-option>
+                    </mat-select>
+                    <mat-error *ngIf="form.get('personTitle').hasError('required')">
+                        Title is <strong>required</strong>
+                    </mat-error>
+                </mat-form-field>
+            </section>
+            <section>
+                <!--Contact Name-->
+                <mat-form-field>
+                    <label class="mat-label other-label">Contact Name</label>
+                    <input matInput formControlName="contactName" name="contactName" required>
+                    <mat-error *ngIf="form.get('contactName').hasError('required')">
+                        Contact Name is <strong>required</strong>
+                    </mat-error>
+                </mat-form-field>
+                <!--Email-->
+                <mat-form-field>
+                    <label class="mat-label other-label">Email Address</label>
+                    <input matInput maxlength="50" formControlName="email" name="email" type="email" required>
+                    <mat-error *ngIf="form.get('email').hasError('required')">
+                        Email address is required
+                    </mat-error>
+                </mat-form-field>
+            </section>
+            <section>
+                <!--Telephone number-->
+                <mat-form-field>
+                    <label class="mat-label other-label">Telephone Number</label>
+                    <input matInput maxlength="10" id="telephoneNumber" name="telephoneNumber" formControlName="telephoneNumber" NumberOnly="true" required />
+                    <mat-error *ngIf="form.get('telephoneNumber').hasError('required')">
+                        Telephone number is <strong>required</strong>
+                    </mat-error>
+                    <mat-error *ngIf="form.get('telephoneNumber').hasError('minlength')">
+                        Telephone number must be at least <strong>10 digits</strong>
+                    </mat-error>
+                </mat-form-field>
+                <!--Mobile number-->
+                <mat-form-field>
+                    <label class="mat-label other-label">Cell Number</label>
+                    <input matInput maxlength="10" id="mobileNumber" name="mobileNumber" formControlName="mobileNumber" NumberOnly="true" required />
+                    <mat-error *ngIf="form.get('mobileNumber').hasError('required')">
+                        Mobile number is <strong>required</strong>
+                    </mat-error>
+                    <mat-error *ngIf="form.get('mobileNumber').hasError('minlength')">
+                        Mobile number must be at least <strong>10 digits</strong>
+                    </mat-error>
+                </mat-form-field>
+            </section>
+            <!-- File (s) upload -->
+            <section *ngIf="uploadFileList">
+                <label class="mat-label other-label">Uploaded files</label>
+                <div class="form_text" *ngFor="let uploadFile of uploadFileList"><span class="disabled">{{uploadFile.size}}</span> | <span class="form_text"><a *ngIf="uploadFile" target="_blank" href="{{uploadFile.url}}">{{uploadFile.name}}</a></span></div>
+            </section>
+            <!-- Password -->
+            <section>
+                <mat-form-field>
+                    <label class="mat-label other-label">Password</label>
+                    <input type="password" matInput maxlength="30" formControlName="password" name="password" required>
+                    <mat-error *ngIf="form.get('password').hasError('required')">
+                        Password is required
+                    </mat-error>
+                </mat-form-field>
+            </section>
+        </div>
+    </form>
+</div>

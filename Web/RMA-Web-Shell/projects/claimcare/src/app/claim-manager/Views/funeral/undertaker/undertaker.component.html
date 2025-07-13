@@ -1,0 +1,124 @@
+<div class="page-header"></div>
+<div *ngIf="!canAdd">
+    <h1>Undertaker</h1>
+    <div style="padding-bottom: 15px; color: orange; font-family: 'Oswald', sans-serif;">You do not have sufficient
+        permissions to add an undertaker.</div>
+    <div (click)="back()" class="form-buttons submit-button">
+        <button type="button" class="button float-button">Back</button>
+    </div>
+</div>
+
+<div [hidden]="!canAdd" style="padding-top: 15px;">
+    <mat-card style="margin: 15px 30px 15px 30px">
+
+        <mat-card-content style="margin-left: 10px;">
+            <form [formGroup]="form" class="mat-container" novalidate>
+                <div style="margin-top: 20px;">
+                    <div class="menu-bar">
+                        <!-- Row 0 -->
+                        <section>
+                            <span *ngIf="canEditForm && !showSetting" (click)="cancel()" class="material-icons pointer right" matTooltip="cancel">
+                                close
+                              </span>
+                          
+                              <span *ngIf="form.valid && !form.pristine && canEditForm && !showSetting" (click)="save()"
+                                class="material-icons pointer right pulse greenFont" matTooltip="save">
+                                save
+                              </span>
+                                                  
+                              <span *ngIf="!(isSaving$ | async) && canEditForm && showSetting"
+                                (click)="edit()" class="material-icons pointer right" matTooltip="edit">
+                                settings
+                              </span>
+    
+                        </section>
+                     </div>                 
+                     <br />
+                    <section>
+                        <!--Registration Number-->
+                        <mat-form-field>
+                            <label class="mat-label other-label">Registration Number</label>
+                            <input matInput maxlength="50" formControlName="registrationNumber" 
+                                name="registrationNumber" (blur)="search()">
+                                <span [style.visibility]="isLoading ? 'visible' : 'hidden'">
+                                    <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+                                    <span class="grey site-font"><i>Searching for Undertaker...please wait</i></span>
+                                </span>
+                        </mat-form-field>
+                    </section>
+                    <section>
+                        <!--First name-->
+                        <mat-form-field>
+                            <label class="mat-label other-label">First Name</label>
+                            <input matInput maxlength="50" formControlName="firstName" name="firstName">
+                        </mat-form-field>
+                        <!--lastName name-->
+                        <mat-form-field class="mat-form-field-right">
+                            <label class="mat-label other-label">Last Name</label>
+                            <input matInput maxlength="50" formControlName="lastName" name="lastName">
+                        </mat-form-field>
+                    </section>
+                    <section>
+                        <!--Identity number-->
+                        <mat-form-field>
+                            <label class="mat-label other-label">Identity Number</label>
+                            <input matInput minlength="13" maxlength="13" formControlName="idNumber" name="idNumber"
+                                (blur)="setDOB()">
+                            <mat-error *ngIf="form.get('idNumber').hasError('minlength')">
+                                Identity Number must be <strong>thirteen digits</strong>
+                            </mat-error>
+                        </mat-form-field>
+                        <!--Passport number-->
+                        <mat-form-field class="mat-form-field-right">
+                            <label class="mat-label other-label">Passport Number (if foreigner)</label>
+                            <input matInput maxlength="50" formControlName="passportNumber" name="passportNumber">
+                        </mat-form-field>
+
+                    </section>
+                    <section>
+                        <!--Date of birth-->
+                        <mat-form-field>
+                            <label class="form-label other-label">Date of Birth</label>
+                            <input readonly matInput [max]="maxDate" formControlName="dateOfBirth" [matDatepicker]="dateOfBirth"
+                                id="dateOfBirth" name="dateOfBirth">
+                            <mat-datepicker-toggle style="position: absolute;top: 14px;right: 0;" matSuffix
+                                [for]="dateOfBirth"></mat-datepicker-toggle>
+                            <mat-datepicker touchUi="true" #dateOfBirth></mat-datepicker>
+                            <mat-error *ngIf="form.get('dateOfBirth').hasError('min')">
+                                Date of birth cannot be after <strong>date of burial</strong>
+                            </mat-error>
+                        </mat-form-field>
+                        <!--Contact number-->
+                        <mat-form-field class="mat-form-field-right">
+                            <label class="mat-label other-label">Contact Number</label>
+                            <input matInput minlength="3" maxlength="10" formControlName="contactNumber"
+                                name="contactNumber" NumberOnly="true">
+                            <mat-error *ngIf="form.get('contactNumber').hasError('minlength')">
+                                Contact number must be at least <strong>three digits</strong>
+                            </mat-error>
+                            <mat-error *ngIf="form.get('contactNumber').hasError('maxlength')">
+                                Contact number must be no more then <strong>ten digits</strong>
+                            </mat-error>
+                        </mat-form-field>
+                    </section>
+                    <section>
+                        <!--Place of burial-->
+                        <mat-form-field>
+                            <label class="mat-label other-label">Place of Burial</label>
+                            <input matInput maxlength="50" formControlName="placeOfBurial" name="placeOfBurial">
+                        </mat-form-field>
+                        <!--Date of burial-->
+                        <mat-form-field class="mat-form-field-right">
+                            <label class="form-label other-label">Date of Burial</label>
+                            <input readonly matInput formControlName="dateOfBurial" [matDatepicker]="dateOfBurial"
+                                id="dateOfBurial" name="dateOfBurial">
+                            <mat-datepicker-toggle style="position: absolute;top: 14px;right: 0;" matSuffix
+                                [for]="dateOfBurial"></mat-datepicker-toggle>
+                            <mat-datepicker touchUi="true" #dateOfBurial></mat-datepicker>
+                        </mat-form-field>
+                    </section>
+                </div>
+            </form>
+        </mat-card-content>
+    </mat-card>
+</div>

@@ -1,0 +1,250 @@
+<mat-card *ngIf="isLoading$ | async">
+  <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+  <label class="mat-label other-label"><i>{{isLoadingMessage$ | async}}</i></label>
+</mat-card>
+
+<div [hidden]="isLoading$ | async">
+  <div [hidden]="!viewInjuryDetails">
+    <div class="menu-bar">
+      <span class="material-icons">
+        qr_code_2
+      </span>&nbsp;ICD10 Codes
+      <span *ngIf="!(isLoading$ | async)" class="material-icons pointer right" matTooltip="cancel" (click)="cancel()">
+        cancel
+      </span>
+      <span *ngIf="form.valid && !form.pristine && !(isLoading$ | async)" class="material-icons pointer right"
+        matTooltip="save" (click)="save()">
+        save
+      </span>
+    </div>
+
+    <form *ngIf="!(isLoading$ | async)" [formGroup]="form" class="mat-container details-form" novalidate>
+      <section>
+        <mat-form-field class="mat-form-field">
+          <label class="mat-label other-label mandatory-field">Primary Injury Diagnostic Group</label>
+          <mat-select aria-label="diagnostics" id="diagnostics" name="diagnostics" formControlName="diagnostics"
+            (selectionChange)="diagnosticsChanged($event.value, true)">
+            <mat-option *ngFor="let type of diagnosticGroups" [value]="type?.icd10DiagnosticGroupId">
+              {{type?.code}}: {{type?.description}}
+            </mat-option>
+          </mat-select>
+          <mat-error *ngIf="form.get('diagnostics').hasError('required')">
+            Primary Injury Diagnostic Group is <strong>required</strong>
+          </mat-error>
+        </mat-form-field>
+
+        <mat-form-field class="mat-form-field-right">
+          <label class="mat-label other-label mandatory-field">ICD10 Code Category</label>
+          <mat-select aria-label="codeCategory" id="codeCategory" name="codeCategory" formControlName="codeCategory"
+            (selectionChange)="icdCategoriesChanged($event.value)">
+            <mat-option *ngFor="let type of icdCategories" [value]="type?.icd10CategoryId">
+              {{type?.icd10CategoryCode}}: {{type?.icd10CategoryDescription}}
+            </mat-option>
+          </mat-select>
+          <mat-error *ngIf="form.get('codeCategory').hasError('required')">
+            ICD10 Code Category is <strong>required</strong>
+          </mat-error>
+        </mat-form-field>
+      </section>
+
+      <section>
+        <mat-form-field class="mat-form-field">
+          <label class="mat-label other-label mandatory-field">ICD10 Code Sub-Category</label>
+          <mat-select aria-label="subCategory" id="subCategory" name="subCategory" formControlName="subCategory"
+            (selectionChange)="icdSubCategoriesChanged($event.value)">
+            <mat-option *ngFor="let type of icdSubCategories" [value]="type?.icd10SubCategoryId">
+              {{type?.icd10SubCategoryCode}}: {{type?.icd10SubCategoryDescription}}
+            </mat-option>
+          </mat-select>
+          <mat-error *ngIf="form.get('subCategory').hasError('required')">
+            ICD10 Code Sub-Category is <strong>required</strong>
+          </mat-error>
+        </mat-form-field>
+
+        <mat-form-field class="mat-form-field-right">
+          <label class="mat-label other-label mandatory-field">ICD10 Code</label>
+          <mat-select (selectionChange)="icd10CodeSelected($event.value)" aria-label="icdCode" id="icdCode"
+            name="icdCode" formControlName="icdCode">
+            <mat-option *ngFor="let type of icdCodes" [value]="type.icd10CodeId">
+              {{type.icd10Code}}: {{type.icd10CodeDescription}}
+            </mat-option>
+          </mat-select>
+          <mat-error *ngIf="form.get('icdCode').hasError('required')">
+            ICD10 Code is <strong>required</strong>
+          </mat-error>
+        </mat-form-field>
+      </section>
+      
+      <section>
+        <mat-form-field class="mat-form-field">
+          <label class="mat-label other-label">Severity</label>
+          <mat-select (selectionChange)="severitySelected($event.value)" aria-label="severity" id="severity"
+            name="severity" formControlName="severity">
+            <mat-option *ngFor="let type of severities" [value]="type.id">
+              {{type.name}}
+            </mat-option>
+          </mat-select>
+          <mat-error *ngIf="form.get('severity').hasError('required')">
+            Severity is <strong>required</strong>
+          </mat-error>
+        </mat-form-field>
+
+        <mat-form-field class="mat-form-field-right">
+          <label class="mat-label other-label mandatory-field">Body Side</label>
+          <mat-select aria-label="bodySide" id="bodySide" name="bodySide" formControlName="bodySide">
+            <mat-option *ngFor="let type of bodySides" [value]="type.id">
+              {{type.name}}
+            </mat-option>
+          </mat-select>
+          <mat-error *ngIf="form.get('bodySide').hasError('required')">
+            Body Side is <strong>required</strong>
+          </mat-error>
+        </mat-form-field>
+      </section>
+
+      <section>
+        <mat-form-field class="mat-form-field">
+          <label class="mat-label other-label mandatory-field">MMI Days</label>
+          <input NumberOnly matInput formControlName="mmiDays" name="mmiDays" id="mmiDays" />
+          <mat-error *ngIf="form.get('mmiDays').hasError('required')">
+            mmi days is <strong>required</strong>
+          </mat-error>
+        </mat-form-field>
+
+        <mat-form-field class="mat-form-field-right">
+          <label class="mat-label other-label mandatory-field">Injury Status</label>
+          <mat-select aria-label="injuryStatus" id="injuryStatus" name="injuryStatus" formControlName="injuryStatus">
+            <mat-option *ngFor="let injuryStatus of injuryStatuses" [value]="injuryStatus">
+              {{ formatLookup(injuryStatus) }}
+            </mat-option>
+          </mat-select>
+          <mat-error *ngIf="form.get('injuryStatus').hasError('required')">
+            Injury Status is <strong>required</strong>
+          </mat-error>
+        </mat-form-field>
+      </section>
+    </form>
+  </div>
+
+  <div *ngIf="hasData && !viewInjuryDetails">
+    <div class="menu-bar">
+      <span class="material-icons">
+        qr_code_2
+      </span>&nbsp;ICD10 Codes
+      <span *ngIf="!isReadOnly && estimateBasisICDCodes?.length > 0" class="material-icons pointer right" matTooltip="refresh" (click)="refresh()">
+        restart_alt
+      </span>
+
+      <span *ngIf="!isReadOnly && checkUserPermissions('add') && checkClaimStatus()" class="material-icons pointer addIcon right" matTooltip="add injury details"
+        (click)="add()">
+        add_circle
+      </span>
+
+      <span *ngIf="!isReadOnly && checkUserPermissions('rank') && checkClaimStatus()" class="material-icons pointer right" matTooltip="re-rank injury"
+        (click)="reRank()">
+        leaderboard
+      </span>
+
+      <span *ngIf="!isReadOnly && checkUserPermissions('calculate') && checkClaimStatus()" class="material-icons pointer right" matTooltip="re-calculate PD"
+        (click)="recalculateClaimEstimates()">
+        calculate
+      </span>
+
+      <span *ngIf="!isReadOnly && currentUser?.isInternalUser && estimateBasisICDCodes?.length > 0" class="material-icons pointer right" matTooltip="estimate basis"
+        (click)="openEstimateBasis()">
+        table_view
+      </span>
+    </div>
+
+    <div *ngIf="selectedPersonEvent?.physicalDamages">
+      <mat-table #table [dataSource]="dataSource" id="tblData">
+        <ng-container matColumnDef="icd10CodeDescription">
+          <mat-header-cell *matHeaderCellDef> ICD10 Code Description </mat-header-cell>
+          <mat-cell *matCellDef="let row">
+            <icd10-code-description [icd10CodeId]="row.icd10CodeId"
+              (icd10CodeEmit)="setIcd10Code($event)"></icd10-code-description>
+          </mat-cell>
+        </ng-container>
+
+        <ng-container matColumnDef="injurySeverityTypeDesc">
+          <mat-header-cell *matHeaderCellDef> Severity </mat-header-cell>
+          <mat-cell *matCellDef="let row">
+            {{ getSeverity(row.injurySeverityType) }}
+          </mat-cell>
+        </ng-container>
+
+        <ng-container matColumnDef="bodySideAffectedTypeDesc">
+          <mat-header-cell *matHeaderCellDef> Body Side </mat-header-cell>
+          <mat-cell *matCellDef="let row">
+            {{ getBodySide(row.bodySideAffectedType) ? getBodySide(row.bodySideAffectedType) : 'N/A' }}
+          </mat-cell>
+        </ng-container>
+
+        <ng-container matColumnDef="createdDate">
+          <mat-header-cell *matHeaderCellDef> Created Date </mat-header-cell>
+          <mat-cell *matCellDef="let row">
+            {{ row.createdDate | date:'yyyy-MM-dd' }}
+          </mat-cell>
+        </ng-container>
+
+        <ng-container matColumnDef="createdBy">
+          <mat-header-cell *matHeaderCellDef> Created By </mat-header-cell>
+          <mat-cell *matCellDef="let row">
+              <user-display-name [userName]="row.createdBy"></user-display-name>
+          </mat-cell>
+      </ng-container>
+
+        <ng-container matColumnDef="mmiDays">
+          <mat-header-cell *matHeaderCellDef> MMI Days </mat-header-cell>
+          <mat-cell *matCellDef="let row">
+            {{row.mmiDays ? row.mmiDays : 0 }} day(s)
+          </mat-cell>
+        </ng-container>
+
+        <ng-container matColumnDef="injuryRank">
+          <mat-header-cell *matHeaderCellDef> Rank </mat-header-cell>
+          <mat-cell *matCellDef="let row">
+            {{row.injuryRank ? row.injuryRank : 'N/A' }}
+          </mat-cell>
+        </ng-container>
+
+        <ng-container matColumnDef="mmiExpiryDate">
+          <mat-header-cell *matHeaderCellDef> Expiry Date </mat-header-cell>
+          <mat-cell *matCellDef="let row">
+            {{ calculateMmiExpiryDate(row) }}
+          </mat-cell>
+        </ng-container>
+
+        <ng-container matColumnDef="injuryStatus">
+          <mat-header-cell *matHeaderCellDef> Status </mat-header-cell>
+          <mat-cell *matCellDef="let row">
+            {{ getInjuryStatus(row.injuryStatus) }}
+          </mat-cell>
+        </ng-container>
+
+        <ng-container matColumnDef="actions">
+          <mat-header-cell *matHeaderCellDef> Actions </mat-header-cell>
+          <mat-cell *matCellDef="let row">
+            <a (click)="edit(row)" role="button" class="link-edit">
+              <span matTooltip="edit" class="material-icons icn pointer">
+                settings
+              </span>
+            </a>
+            <a (click)="delete(row)" role="button" class="link-delete">
+              <span matTooltip="delete" class="material-icons icn pointer">
+                delete
+              </span>
+            </a>
+          </mat-cell>
+        </ng-container>
+
+        <mat-header-row *matHeaderRowDef="getDisplayedColumns()"></mat-header-row>
+        <mat-row *matRowDef="let row; columns: getDisplayedColumns();"></mat-row>
+      </mat-table>
+
+      <mat-paginator #paginator [pageIndex]="0" [pageSize]="5" [pageSizeOptions]="[5, 10, 25, 100]"
+        [length]="dataSource.data ? dataSource.data.length : 0">
+      </mat-paginator>
+    </div>
+  </div>
+</div>

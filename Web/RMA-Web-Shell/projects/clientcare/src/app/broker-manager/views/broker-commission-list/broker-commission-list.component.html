@@ -1,0 +1,75 @@
+﻿<div>
+    <mat-card style="margin: 15px 30px 15px 30px">
+        <mat-card-header>
+            <mat-card-title class="wizard-font card-title grey">
+                <h1 style="padding: 0;">Commission</h1>
+            </mat-card-title>
+        </mat-card-header>
+        <mat-card-content style="margin-left: 10px;">
+            <form [formGroup]="searchFormGroup" class="mat-container" novalidate>
+                <div class="row">
+                    <div class="column" style="width: 35%;">
+                        <!--Query-->
+                        <mat-form-field style="width: 100%;">
+                            <input matInput maxlength="50" formControlName="query" name="query" width="300" minLength="3" matTooltip="Search by agent!" matTooltipShowDelay="1000">
+                            <mat-error *ngIf="searchFormGroup.get('query').hasError('required')">
+                                Please enter a search term.
+                            </mat-error>
+                            <mat-error *ngIf="searchFormGroup.get('query').hasError('minlength')">
+                                Please enter a search term longer than <strong>3 characters</strong>
+                            </mat-error>
+                        </mat-form-field>
+                    </div>
+                    <div class="column">
+                        <button class="button submit-button" style="margin-top: 3px;margin-left: 21px;" (click)="search()" matTooltip="Search by agent!" matTooltipShowDelay="1000">Search</button>
+                    </div>
+                    <div class="column">
+                        <button class="button submit-button" style="margin-top: 3px;" (click)="clearSearch()">Clear Search</button>
+                    </div>
+                    <div class="column">
+                        <button class="button submit-button" style="margin-top: 3px;" (click)="runCommission()" [disabled]="isLoading">Run Commission</button>
+                    </div>
+                    <div class="column">
+                        <button class="button submit-button" style="margin-top: 3px;" (click)="exportCommissionPayments()" [disabled]="disableExport">Export</button>
+                    </div>
+                </div>
+            </form>
+            <div *ngIf="isLoading">
+                <mat-progress-bar mode="indeterminate" [ngClass]="{ 'loading-main-double-menu-progress': doubleMenu, 'loading-main-single-menu-progress': !doubleMenu }"></mat-progress-bar>
+                <p class="site-font grey">{{loadingMessage}}</p>
+            </div>
+            <div *ngIf="showNoResultsMessage" class="no-results">
+                <p>
+                    The commission run for the current period has not yet been run.
+                    <br/> Or no commission is due for the current period.
+                </p>
+                <p>
+                    Please "Run Commission" to create the commission records for the current period.
+                </p>
+            </div>
+        </mat-card-content>
+    </mat-card>
+    <mat-card style="margin: 15px 30px 15px 30px" *ngIf="!showNoResultsMessage">
+        <mat-card-content>
+            <!--Broker List-->
+            <div class="broker-list">
+                <div *ngFor="let commission of brokerCommissions" class="broker-mat-card">
+                    <div id="outer">
+                        <img class="broker-image" src="/assets/images/brokerCommission.png" />
+
+                        <button mat-button [disabled]="commission.disableExclude" [ngClass]="{ 'exclude-button-exclude': commission.exclude === true, 'exclude-button-include': commission.exclude === false }" (click)="excludeBroker(commission)" [color]="commission.exclude ? 'accent' : null">{{commission.excludeButtonText}}</button>
+
+                        <div id="inner">
+                            {{commission.brokerage.name}}
+
+                            <p>R {{commission.commission | number: '1.2-2'}}</p>
+                        </div>
+                        <button mat-button class="broker-detail-button" [disabled]="disableBroker(commission)" (click)="showBrokerStatement(commission)">Details</button>
+                    </div>
+                </div>
+            </div>
+        </mat-card-content>
+    </mat-card>
+    <!--Broker Statement-->
+    <broker-statement [hidden]="!displayBrokerStatement"></broker-statement>
+</div>

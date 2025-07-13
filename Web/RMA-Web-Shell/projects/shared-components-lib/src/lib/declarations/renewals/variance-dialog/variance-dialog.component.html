@@ -1,0 +1,37 @@
+<div class="menu-bar">
+  <span class="material-icons">flag_circle</span>
+  Supporting Information
+  <span (click)="close()" class="material-icons pointer right" matTooltip="close">
+    close
+  </span>
+  <span *ngIf="form.valid && !form.pristine" (click)="submit()" class="material-icons pointer right pulse"
+    matTooltip="confirm">
+    check_circle
+  </span>
+</div>
+
+<div *ngIf="data && data.rolePlayerPolicyDeclaration">
+  An earnings per employee variance of <b>{{data.rolePlayerPolicyDeclaration.variancePercentage}}%</b> was calculated
+  and is greater then the allowable threshold
+  please supply a reason for this variance
+  <br />
+
+  <mat-card>
+    <form [formGroup]="form" class="mat-container details-form" novalidate>
+      <section>
+        <mat-form-field class="mat-form-field">
+          <label class="mat-label other-label">Reason</label>
+          <input matInput formControlName="varianceReason" name="varianceReason" id="varianceReason" />
+          <mat-error *ngIf="form.get('varianceReason').hasError('required')">
+            reason is <strong>required</strong>
+          </mat-error>
+        </mat-form-field>
+      </section>
+    </form>
+  </mat-card>
+
+  <document-uploader [isReadOnly]="this.data.isReadOnly" [documentSet]="documentSet" [systemName]="documentSystemName" [keyName]="'DeclarationVariance'"
+    [keyValue]="data.rolePlayerPolicyDeclaration.rolePlayerId+'|'+data.rolePlayerPolicyDeclaration.policyId+'|'+data.rolePlayerPolicyDeclaration.declarationYear"
+    (requiredDocumentsUploadedEmit)="isRequiredDocumentsUploaded($event)">
+  </document-uploader>
+</div>

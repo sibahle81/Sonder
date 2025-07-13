@@ -1,0 +1,140 @@
+<mat-card *ngIf="isLoading$ | async">
+    <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+    <label class="mat-label other-label"><i>loading...please wait</i></label>
+</mat-card>
+
+<div class="menu-bar" *ngIf="!(isLoading$ | async)">
+    <span class="material-icons">public</span>&nbsp;Address Details
+    <span (click)="cancel()" class="material-icons pointer right" matTooltip="close">
+        close
+    </span>
+    <span *ngIf="form.valid && !form.pristine" (click)="checkKYC()" class="material-icons pointer right pulse greenFont"
+        matTooltip="save">
+        save
+    </span>
+</div>
+
+<div *ngIf="!(isLoading$ | async) && !showCitySearch">
+    <mat-card>
+        <form [formGroup]="form" class="mat-container details-form" novalidate>
+            <section>
+                <mat-form-field class="mat-form-field">
+                    <label class="mat-label other-label mandatory-field">Type</label>
+                    <mat-select name="addressType" id="addressType" formControlName="addressType"
+                        (selectionChange)="addressTypeChange($event)">
+                        <mat-option *ngFor="let addressType of addressTypes" [value]="addressType">{{addressType}}
+                        </mat-option>
+                    </mat-select>
+                    <mat-error *ngIf="form.get('addressType').hasError('required')">
+                        type is <strong>required</strong>
+                    </mat-error>
+                </mat-form-field>
+
+                <mat-form-field class="mat-form-field-right">
+                    <label class="mat-label other-label mandatory-field">Effective From</label>
+                    <input matInput formControlName="effectiveDate" [matDatepicker]="effectiveDate" format="yyyy-MM-dd">
+                    <mat-datepicker-toggle matSuffix [for]="effectiveDate"></mat-datepicker-toggle>
+                    <mat-datepicker touchUi="true" #effectiveDate></mat-datepicker>
+                    <mat-error *ngIf="form.get('effectiveDate').hasError('required')">
+                        effective date is required
+                    </mat-error>
+                </mat-form-field>
+            </section>
+            <section>
+                <!--Line1-->
+                <mat-form-field class="mat-form-field">
+                    <label class="mat-label other-label mandatory-field"> Line 1</label>
+                    <input #line1 maxlength="50" matInput id="line1" name="line1" formControlName="line1">
+                    <mat-hint align="end">{{line1.value?.length || 0}}/50</mat-hint>
+                    <mat-error *ngIf="form.get('line1').hasError('required')">
+                        address line 1 is <strong>required</strong>
+                    </mat-error>
+                </mat-form-field>
+                <!--Line2-->
+                <mat-form-field class="mat-form-field-right">
+                    <label class="mat-label other-label"> Line 2</label>
+                    <input #line2 maxlength="50" matInput id="line2" name="line2" formControlName="line2">
+                    <mat-hint align="end">{{line2.value?.length || 0}}/50</mat-hint>
+                </mat-form-field>
+            </section>
+
+            <section>
+                <span *ngIf="selectedCountry && selectedCountry > 0">
+                    <mat-form-field *ngIf="!stateProvinces || stateProvinces.length <= 0" class="mat-form-field">
+                        <label class="mat-label other-label mandatory-field">State/Province</label>
+                        <input *ngIf="!(isLoadingStateProvince$ | async)" matInput formControlName="province"
+                            name="province" id="province" />
+                        <mat-error *ngIf="form.get('province').hasError('required')">
+                            state/province is <strong>required</strong>
+                        </mat-error>
+                        <span *ngIf="(isLoadingStateProvince$ | async)"><i>loading state/province...please
+                                wait</i></span>
+                    </mat-form-field>
+                    <mat-form-field class="mat-form-field" *ngIf="stateProvinces && stateProvinces.length > 0">
+                        <label class="mat-label other-label mandatory-field">State/Province</label>
+                        <mat-select *ngIf="!(isLoadingStateProvince$ | async)" name="province" id="province"
+                            formControlName="province">
+                            <mat-option *ngFor="let stateProvince of stateProvinces"
+                                [value]="stateProvince.name">{{stateProvince.name}}</mat-option>
+                        </mat-select>
+                        <mat-error *ngIf="form.get('province').hasError('required')">
+                            state/province is <strong>required</strong>
+                        </mat-error>
+                        <span *ngIf="(isLoadingStateProvince$ | async)"><i>loading state/province...please
+                                wait</i></span>
+                    </mat-form-field>
+                </span>
+
+                <!--City-->
+                <mat-form-field class="mat-form-field-right short">
+                    <label class="mat-label other-label mandatory-field">City</label>
+                    <input #searchField matInput id="city" name="city" formControlName="city">
+                    <mat-icon *ngIf="!data.isReadOnly" matTooltip="search" (click)="toggleCitySearch()"
+                        class="icn icn-button" matSuffix [for]="searchField">search</mat-icon>
+                    <mat-error *ngIf="form.get('city').hasError('required')">
+                        city is <strong>required</strong>
+                    </mat-error>
+                </mat-form-field>
+            </section>
+
+            <section>
+                <!--PostalCode-->
+                <mat-form-field>
+                    <label class="mat-label other-label mandatory-field">Postal Code</label>
+                    <input matInput id="postalCode" name="postalCode" NumberOnly minlength="4" maxlength="15"
+                        formControlName="postalCode">
+                    <mat-error *ngIf="form.get('postalCode').hasError('required')">
+                        postal code is <strong>required</strong>
+                    </mat-error>
+                </mat-form-field>
+
+                <mat-form-field class="mat-form-field-right">
+                    <label class="mat-label other-label mandatory-field">Country</label>
+                    <mat-select (selectionChange)="countrySelected($event.value)" name="country" id="country"
+                        formControlName="country">
+                        <mat-option *ngFor="let country of countries" [value]="country.id">{{country.name}}</mat-option>
+                    </mat-select>
+                    <mat-error *ngIf="form.get('country').hasError('required')">
+                        country is <strong>required</strong>
+                    </mat-error>
+                </mat-form-field>
+            </section>
+            <section>
+                <mat-checkbox name="isPrimary" id="isPrimary" formControlName="isPrimary"
+                    [(ngModel)]="address.isPrimary" [disabled]="data.isReadOnly"
+                    (change)="openConfirmationDialog($event.checked)">
+                    <label class="mat-label other-label">Set as primary address?</label>
+                </mat-checkbox>
+            </section>
+        </form>
+        <mat-checkbox class="shift-right"
+            *ngIf="!data.isReadOnly && (!address.rolePlayerAddressId || address.rolePlayerAddressId <= 0) && selectedAddressType != postal"
+            [(ngModel)]="postalSame">
+            Set postal address same as physical address?
+        </mat-checkbox>
+    </mat-card>
+</div>
+
+<div *ngIf="showCitySearch">
+    <city-search (citySelectedEmit)="setCity($event)"></city-search>
+</div>

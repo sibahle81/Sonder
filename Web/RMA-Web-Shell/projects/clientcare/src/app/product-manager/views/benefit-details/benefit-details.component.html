@@ -1,0 +1,339 @@
+<div *ngIf="isLoading$ | async">
+  <mat-card>
+    <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+    <label class="mat-label other-label"><i>loading...please wait</i></label>
+  </mat-card>
+  <br /><br />
+</div>
+
+<div [hidden]="(isLoading$ | async)">
+
+  <div *ngIf="!canAdd">
+    <h1>Benefit Details</h1>
+    <div style="padding-bottom: 15px; color: orange; font-family: 'Oswald', sans-serif;">You do not have sufficient
+      permissions to add a new benefit.</div>
+    <div (click)="back()" class="form-buttons submit-button">
+      <button type="button" class="button float-button">Back</button>
+    </div>
+  </div>
+
+  <div [hidden]="!canAdd" style="padding-top: 15px;">
+    <mat-card style="margin: 15px 30px 15px 30px">
+      <mat-card-content style="margin-left: 10px;">
+        <form [formGroup]="form" class="mat-container details-form" novalidate>
+          <!--Benefit Code-->
+          <section>
+            <div class="field-container">
+              <mat-form-field>
+                <label class="mat-label other-label mandatory-field">Benefit Code</label>
+                <input matInput minlength="3" maxlength="10" formControlName="code" id="code" name="code"
+                  unique-validator [table]="'Benefit'" [field]="'Code'" [serviceType]="2">
+                <mat-error *ngIf="form.get('code').hasError('required')">
+                  Benefit code is <strong>required</strong>
+                </mat-error>
+                <mat-error *ngIf="form.get('code').hasError('minlength')">
+                  Benefit code must be at least <strong>three characters</strong>
+                </mat-error>
+                <mat-error *ngIf="form.get('code').hasError('isTaken')">
+                  This benefit code <strong>already exists</strong>
+                </mat-error>
+              </mat-form-field>
+            </div>
+            <mat-form-field class="mat-form-field-right">
+              <label class="mat-label other-label mandatory-field">Product</label>
+              <mat-select formControlName="product">
+                <mat-option *ngFor="let product of products" [value]="product.id">{{product.name}}
+                </mat-option>
+              </mat-select>
+              <mat-error *ngIf="form.get('product').hasError('required')">
+                Product is <strong>required</strong>
+              </mat-error>
+            </mat-form-field>
+
+          </section>
+
+          <section>
+            <mat-form-field class="mat-form-field">
+              <label class="mat-label other-label mandatory-field">Max Compensation Amount</label>
+              <input matInput formControlName="maxCompensationAmount" id="maxCompensationAmount" min="0"
+                name="maxCompensationAmount" DecimalNumber>
+              <mat-error
+                *ngIf="form.get('maxCompensationAmount').hasError('required') || form.get('maxCompensationAmount').hasError('min')">
+                Max compensation amount is <strong>required</strong>
+              </mat-error>
+            </mat-form-field>
+
+            <mat-form-field class="mat-form-field-right">
+              <label class="mat-label other-label mandatory-field">Min Compensation Amount</label>
+              <input matInput formControlName="minCompensationAmount" id="minCompensationAmount" min="0"
+                name="minCompensationAmount" DecimalNumber>
+              <mat-error
+                *ngIf="form.get('minCompensationAmount').hasError('required') || form.get('minCompensationAmount').hasError('min')">
+                Min compensation amount is <strong>required</strong>
+              </mat-error>
+            </mat-form-field>
+          </section>
+
+          <section>
+            <!--Benefit Type-->
+            <mat-form-field class="mat-form-field">
+              <label class="mat-label other-label mandatory-field">Benefit Type</label>
+              <mat-select name="benefitType" id="benefitType" formControlName="benefitType" (selectionChange)="benefitTypeChanged($event)">
+                <mat-option *ngFor="let benefitType of benefitTypes" [value]="benefitType.id">
+                  {{benefitType.name}}
+                </mat-option>
+              </mat-select>
+              <mat-error
+                *ngIf="form.get('benefitType').hasError('required') || form.get('benefitType').hasError('min')">
+                Benefit type is <strong>required</strong>
+              </mat-error>
+            </mat-form-field>
+
+            <!--Benefit Name-->
+            <mat-form-field class="mat-form-field-right">
+              <label class="mat-label other-label mandatory-field">Benefit Name</label>
+              <input matInput minlength="3" maxlength="50" formControlName="name" id="name" name="name" unique-validator
+                [table]="'benefit'" [field]="'name'" [serviceType]="2">
+              <mat-error *ngIf="form.get('name').hasError('required')">
+                Benefit name is <strong>required</strong>
+              </mat-error>
+              <mat-error *ngIf="form.get('name').hasError('minlength')">
+                Benefit name must be at least <strong>three characters</strong>
+              </mat-error>
+              <mat-error *ngIf="form.get('name').hasError('isTaken')">
+                This benefit name <strong>already exists</strong>
+              </mat-error>
+            </mat-form-field>
+
+          </section>
+          <section>
+            <!--Benefit Start Date-->
+            <div class="field-container">
+              <mat-form-field>
+                <div><label class="mat-label other-label mandatory-field">Benefit Start Date</label></div>
+                <input matInput formControlName="startDate" [matDatepicker]="startDate" id="startDate" name="startDate"
+                  (dateChange)="validateDates()">
+                <mat-datepicker-toggle matSuffix [for]="startDate" [disabled]="form.disabled">
+                </mat-datepicker-toggle>
+                <mat-datepicker touchUi="true" #startDate></mat-datepicker>
+                <mat-error *ngIf="form.get('startDate').hasError('required')">
+                  Benefit start date is <strong>required</strong>
+                </mat-error>
+                <mat-error *ngIf="form.get('startDate').hasError('min-today')">
+                  Please select a start date in the <strong>future</strong>
+                </mat-error>
+                <mat-error *ngIf="form.get('startDate').hasError('min')">
+                  Benefit start date cannot come <strong>after the end date</strong>
+                </mat-error>
+              </mat-form-field>
+            </div>
+            <!--Benefit End Date-->
+            <div class="field-container-right">
+              <mat-form-field>
+                <div><label class="mat-label other-label">Benefit End Date</label></div>
+                <input matInput formControlName="endDate" [matDatepicker]="endDate" id="endDate" name="endDate"
+                  [min]="minDate" (dateChange)="validateDates()">
+                <mat-datepicker touchUi="true" #endDate></mat-datepicker>
+                <mat-datepicker-toggle matSuffix [for]="endDate" [disabled]="form.disabled">
+                </mat-datepicker-toggle>
+                <mat-error *ngIf="form.get('endDate').hasError('min')">
+                  Benefit end date cannot be <strong>before the start date</strong>
+                </mat-error>
+              </mat-form-field>
+            </div>
+          </section>
+          <section>
+            <!--Earnings Type-->
+            <div class="field-container">
+              <label class="mat-label other-label mandatory-field">Earnings Type</label>
+              <multi-select [lookupName]="'EarningsType'" [selectedIds]="form.get('earningTypes').value"
+                id="earningType" name="earningType" [isReadOnly]="form.disabled" (onChange)="onMultiSelectChanged()">
+              </multi-select>
+            </div>
+            <div class="field-container-right">
+              <!--Benefit Status-->
+              <mat-form-field class="mat-form-field">
+                <label class="mat-label other-label">Benefit Status</label>
+                <mat-select name="benefitStatus" id="Status" formControlName="benefitStatus">
+                  <mat-option *ngFor="let productStatus of productStatuses" [value]="productStatus.id">
+                    {{productStatus.name}}</mat-option>
+                </mat-select>
+              </mat-form-field>
+            </div>
+          </section>
+          <section>
+            <div class="field-container">
+              <!--Excess Amount-->
+              <mat-form-field class="mat-form-field">
+                <label class="mat-label other-label">Excess Amount</label>
+                <input matInput formControlName="excessAmount" id="excessAmount" min="0" name="excessAmount"
+                  DecimalNumber>
+              </mat-form-field>
+            </div>
+            <div class="field-container-right">
+              <!--Cover Member Type-->
+              <mat-form-field class="mat-form-field" *ngIf="!hideAddPremium">
+                <label class="mat-label other-label mandatory-field">Cover Member Type</label>
+                <mat-select name="coverMemberType" id="coverMemberType" formControlName="coverMemberType">
+                  <mat-option *ngFor="let coverMemberType of coverMemberTypes" [value]="coverMemberType.id">
+                    {{coverMemberType.name}}
+                  </mat-option>
+                </mat-select>
+                <mat-error
+                  *ngIf="form.get('coverMemberType').hasError('required') || form.get('coverMemberType').hasError('min')">
+                  Cover member type is <strong>required</strong>
+                </mat-error>
+              </mat-form-field>
+            </div>
+          </section>
+          <section>
+            <div class="field-container" *ngIf="showDisabilityTerms">
+              <mat-form-field class="mat-form-field">
+                <label class="mat-label other-label mandatory-field">Benefit Terms</label>
+                <mat-select name="disabilityBenefitTerm" id="disabilityBenefitTerm" formControlName="disabilityBenefitTerm">
+                  <mat-option *ngFor="let value of disabilityBenefitTerms" [value]="value.id">
+                    {{value.name}}
+                  </mat-option>
+                </mat-select>
+                <mat-error
+                  *ngIf="form.get('disabilityBenefitTerm').hasError('required') || form.get('disabilityBenefitTerm').hasError('min')">
+                  Benefit Terms is <strong>required</strong>
+                </mat-error>
+              </mat-form-field>
+            </div>
+          </section>
+          <section>
+            <!--Earnings Type-->
+            <div class="field-container" *ngIf="showStatutoryClassFields">
+              <multi-select [label]="'Benefit earnings types'" [lookupName]="'EarningsType'"
+                [selectedIds]="form.get('earningTypes').value" id="Earnings" name="EarningsType"
+                [isReadOnly]="form.disabled" (onChange)="onMultiSelectChanged()">
+              </multi-select>
+            </div>
+            <!--Beneficiary Type-->
+            <div class="field-container mat-right-field" *ngIf="showStatutoryClassFields">
+              <multi-select id="BeneficiaryType" name="BeneficiaryType" [label]="'Benefit beneficiary types'"
+                [lookupName]="'BeneficiaryType'" [selectedIds]="form.get('beneficiaryTypes').value"
+                [isReadOnly]="form.disabled" (onChange)="onMultiSelectChanged()">
+              </multi-select>
+            </div>
+          </section>
+          <section>
+            <!--Medical Report Type-->
+            <div class="field-container" *ngIf="showStatutoryClassFields">
+              <multi-select [label]="'Benefit medical report types'" [lookupName]="'MedicalReportType'"
+                [selectedIds]="form.get('medicalReportTypes').value" id="MedReport" name="MedicalReportType"
+                [isReadOnly]="form.disabled" (onChange)="onMultiSelectChanged()">
+              </multi-select>
+            </div>
+          </section>
+          <!--Show/Hide Add Premium based on Product Class-->
+          <div *ngIf="!hideAddPremium">
+            <div>
+              <div (click)="toggleRateForm()" *ngIf="!isDisabled" class="form-buttons submit-button">
+                <button type="button" class="button float-button">Add Premium</button>
+              </div>
+              <div class="form-group-button mat-form-button" (click)="addRate()" *ngIf="isWizard && showRateForm"
+                class="form-buttons submit-button">
+                <button type="button" class="button float-button">Save Premium</button>
+              </div>
+            </div>
+            <br />
+            <br />
+            <br />
+            <h1 class="wizard-font benefit-rate-table" *ngIf="form.disabled">Benefit Premium</h1>
+            <br />
+          </div>
+          <!--Show/Hide Add Premium based on Product Class-->
+          <div *ngIf="!hideAddPremium">
+            <br />
+            <div *ngIf="showRateForm">
+              <section>
+                <!--Amount-->
+                <div class="field-container">
+                  <div>
+                    <label class="mat-label other-label mandatory-field" matTooltip="Monetary value i.e airtime">Benefit
+                      Amount</label>
+                  </div>
+                  <mat-form-field>
+                    <input matInput formControlName="benefitAmount" id="benefitAmount" min="0" name="benefitAmount"
+                      DecimalNumber>
+                    <mat-error *ngIf="form.get('benefitAmount').hasError('required')">
+                      Benefit amount is <strong>required</strong>
+                    </mat-error>
+                  </mat-form-field>
+                </div>
+              </section>
+              <section>
+                <!--Base Rate-->
+                <div class="field-container-right">
+                  <div>
+                    <label class="mat-label other-label mandatory-field">Premium</label>
+                  </div>
+                  <mat-form-field>
+                    <input matInput formControlName="baseRate" id="baseRate" min="0" name="baseRate" TenDigitDecimal>
+                  </mat-form-field>
+                </div>
+                <!--Rate - Effective Date-->
+                <div class="field-container field-extreme-right">
+                  <div>
+                    <label class="mat-label other-label right-field-label mandatory-field">Effective Date For
+                      Premium</label>
+                  </div>
+                  <div>
+                    <mat-form-field>
+                      <input matInput formControlName="effectiveDate" [matDatepicker]="effectiveDate" id="effectiveDate"
+                        name="effectiveDate" [min]="minDate" (dateChange)="validateRateEffectiveDate()">
+                      <mat-datepicker touchUi="true" #effectiveDate></mat-datepicker>
+                      <mat-datepicker-toggle matSuffix [for]="effectiveDate" [disabled]="isDisabled">
+                      </mat-datepicker-toggle>
+                      <mat-error *ngIf="form.get('effectiveDate').hasError('required')">
+                        Effective date for premium is <strong>required</strong>
+                      </mat-error>
+                      <mat-error *ngIf="form.get('effectiveDate').hasError('min')">
+                        Effective date cannot be <strong>less than the start date</strong>
+                      </mat-error>
+                      <mat-error *ngIf="form.get('effectiveDate').hasError('min-today')">
+                        Please select an effective date in the <strong>future</strong>
+                      </mat-error>
+                      <mat-error *ngIf="form.get('effectiveDate').hasError('equal-to-start-date')">
+                        <strong>The effective date for the first premium must be equal to the benefit start
+                          date</strong>
+                      </mat-error>
+                      <mat-error *ngIf="form.get('effectiveDate').hasError('single-current-rate')">
+                        <strong>There must only be a single premium for any effective date</strong>
+                      </mat-error>
+                    </mat-form-field>
+                  </div>
+                </div>
+              </section>
+            </div>
+            <div *ngIf="addRateError != ''" class="addRateError">{{addRateError}}</div>
+            <div style="overflow-x: auto;">
+              <table *ngIf="benefitRates.length > 0">
+                <tr>
+                  <th class="cell-header">Amount</th>
+                  <th class="cell-header">Premium</th>
+                  <th class="cell-header">Effective Date</th>
+                  <th class="cell-header">Action</th>
+                  <th class="cell-header">Status</th>
+                </tr>
+                <tr *ngFor="let d of benefitRates" [attr.id]="d.id">
+                  <td style="text-align: center">{{ d.benefitAmount }}</td>
+                  <td style="text-align: center">{{ d.baseRate }}</td>
+                  <td style="text-align: center">{{ d.effectiveDate | date: 'yyyy/MM/dd'}}</td>
+                  <td><a id="remove" (click)="deleteRow(d)" *ngIf="!isDisabled">Remove</a></td>
+                  <td style="text-align: center">{{ d.benefitRateStatusText }}</td>
+                </tr>
+              </table>
+            </div>
+          </div>
+          <div *ngIf="!hideAddPremium">
+            <br />
+            <div class="premiumError" *ngIf="benefitRates.length === 0">There Is No Premium For This Benefit</div>
+          </div>
+        </form>
+      </mat-card-content>
+    </mat-card>
+  </div>
+</div>

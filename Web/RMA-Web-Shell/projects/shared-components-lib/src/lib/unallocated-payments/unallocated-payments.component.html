@@ -1,0 +1,159 @@
+<div>
+  <mat-card>
+    <div class="mat-header">
+      <h1>Unallocated Payments</h1>
+    </div>
+    <mat-card-content>
+      <form [formGroup]="form">
+        <section>
+        <div class="field-container">
+          <mat-form-field >
+            <label class="mat-label other-label mandatory-field">Date Filter</label>
+            <mat-select name="dateFilters" id="dateFilters" formControlName="dateFilter" 
+              (selectionChange)="onDateFilterChange()">
+              <mat-option *ngFor="let df of dateFilters" [value]="df.value">
+                {{df.name}}
+              </mat-option>
+            </mat-select>
+          </mat-form-field>
+        </div>
+        <div class="field-container-right">
+          <mat-form-field >
+            <label class="mat-label other-label mandatory-field">Bank Account</label>
+            <mat-select  id="bankAccount" name="bankAccount"  formControlName="bankAccount"
+              (selectionChange)="selectedBankAccountChanged($event)">
+              <mat-option selected [value]="0">All</mat-option>
+              <mat-option *ngFor="let rmaBankAccount of rmaBankAccounts" [value]="rmaBankAccount.rmaBankAccountId">
+                {{rmaBankAccount.product}} {{rmaBankAccount.accountNumber}}
+              </mat-option>
+            </mat-select>          
+          </mat-form-field> 
+          </div>
+      </section>
+        <section class="clear-both">
+        <div class="field-container">
+          <mat-form-field>
+            <label class="mat-label other-label mandatory-field">From</label>           
+            <input matInput [matDatepicker]="startDatePicker" date="true" time="false" formControlName="startDate" readonly
+              [max]="startMaxDate" [disabled]="disableDateFilters" (ngModelChange)="startDateChange()">
+            <mat-datepicker-toggle matSuffix class="picker-toggle" [for]="startDatePicker"></mat-datepicker-toggle>
+            <mat-datepicker #startDatePicker touchUi="true" ng-model-options="{ timezone: 'useUtc' }">
+            </mat-datepicker>
+          </mat-form-field>
+        </div>
+        <div class="field-container-right">
+          <mat-form-field>
+            <label class="mat-label other-label mandatory-field">To</label>
+            <input matInput [matDatepicker]="endDatePicker" date="true" time="false" formControlName="endDate" readonly
+              [max]="endMaxDate" [min]="endMinDate" [disabled]="disableDateFilters" (ngModelChange)="endDateChange()">
+            <mat-datepicker-toggle matSuffix class="picker-toggle" [for]="endDatePicker"></mat-datepicker-toggle>
+            <mat-datepicker #endDatePicker touchUi="true" ng-model-options="{ timezone: 'sast' }"></mat-datepicker>
+          </mat-form-field>
+        </div>
+      </section> 
+        <section >
+          <button type="button" (click)="applyFilter()" class="button apply-filter">Apply</button>
+        </section>
+        <br />
+        <div [hidden]="!payments.data">
+          <mat-form-field [floatLabel]="'never'">
+            <input [disabled]="isSearching" class="field-container-search" matInput maxlength="50" name="filter"
+              id="filter" #filter width="300" minLength="3" matTooltip="{{placeHolder}}" matTooltipShowDelay="1000">
+            <mat-placeholder class="placeholder">{{placeHolder}}</mat-placeholder>
+            <mat-icon class="search-icon" (click)="search()" matSuffix>search</mat-icon>
+            <mat-icon class="clear-icon" (click)="reset()" matSuffix>autorenew</mat-icon>
+          </mat-form-field>
+        </div>
+      </form>
+    </mat-card-content>
+    <div [hidden]="!(isLoading)">
+      <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+      <span class="site-font grey" style="margin-top: 15px;"><i>Unallocated Payments...</i></span>
+    </div>
+    <div [hidden]="!(isDownloading)">
+      <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+      <span class="site-font grey" style="margin-top: 15px;"><i>Downloading...</i></span>
+    </div>
+    <mat-table #table [dataSource]="payments.data" multiTemplateDataRows matSort
+      (matSortChange)="handleSortEvent($event)">
+      <!-- Expand Column -->
+      <ng-container matColumnDef="expand">
+        <mat-header-cell *matHeaderCellDef> Expand </mat-header-cell>
+        <mat-cell *matCellDef="let row" (click)="expandCollapse(row)">
+          <span *ngIf="!row.isExpanded"><span class="material-icons expand-icon">add_circle</span></span>
+          <span *ngIf="row.isExpanded"><span class="material-icons expand-icon">remove_circle</span></span>
+        </mat-cell>
+      </ng-container>
+      <ng-container matColumnDef="bankAccountNumber">
+        <mat-header-cell *matHeaderCellDef mat-sort-header>Bank Account Number</mat-header-cell>
+        <mat-cell *matCellDef="let row"> {{row.bankAccountNumber}} </mat-cell>
+      </ng-container>
+      <ng-container matColumnDef="statementReference">
+        <mat-header-cell *matHeaderCellDef mat-sort-header>Statement Reference</mat-header-cell>
+        <mat-cell *matCellDef="let row"> {{row.statementReference}} </mat-cell>
+      </ng-container>
+      <ng-container matColumnDef="userReference">
+        <mat-header-cell *matHeaderCellDef mat-sort-header>User Reference</mat-header-cell>
+        <mat-cell *matCellDef="let row"> {{row.userReference}} </mat-cell>
+      </ng-container>
+      <ng-container matColumnDef="userReference2">
+        <mat-header-cell *matHeaderCellDef mat-sort-header>User Reference2</mat-header-cell>
+        <mat-cell *matCellDef="let row"> {{row.userReference2}} </mat-cell>
+      </ng-container>
+      <ng-container matColumnDef="transactionDate">
+        <mat-header-cell *matHeaderCellDef mat-sort-header>Transaction Date</mat-header-cell>
+        <mat-cell *matCellDef="let row"> {{row.transactionDate | date:'yyyy/MM/dd'}} </mat-cell>
+      </ng-container>
+      <ng-container matColumnDef="amount">
+        <mat-header-cell *matHeaderCellDef mat-sort-header>Amount</mat-header-cell>
+        <mat-cell *matCellDef="let row" class="right-aligned-amounts"> R{{row.amount | number:amountFormat}} </mat-cell>
+      </ng-container>
+      <ng-container matColumnDef="action">
+        <mat-header-cell *matHeaderCellDef mat-sort-header>Action</mat-header-cell>
+        <mat-cell *matCellDef="let row"><a
+            href="fincare/billing-manager/manual-allocation-allocate-payment/INV/{{row.unallocatedPaymentId}}">Allocate</a>
+        </mat-cell>
+      </ng-container>
+      <div [hidden]=" true">
+        <ng-container matColumnDef="expandedDetail">
+          <mat-cell class="expand" *matCellDef="let row">
+            <div>
+              <table>
+                <tr class="ChildData">
+                  <td><b class="mat-cell-label">Hyphen Date Processed:</b> {{row.hyphenDateProcessed |
+                    date:'yyyy/MM/dd'}}</td>
+                </tr>
+                <tr class="ChildData">
+                  <td><b class="mat-cell-label">Hyphen Date Received:</b> {{row.hyphenDateReceived | date:'yyyy/MM/dd'}}
+                  </td>
+                </tr>
+                <tr class="ChildData">
+                  <td><b class="mat-cell-label">Status:</b> {{row.status}}</td>
+                </tr>
+                <tr class="ChildData">
+                  <td><b class="mat-cell-label">Bank Statement EntryId:</b> {{row.bankStatementEntryId}}</td>
+                </tr>
+              </table>
+            </div>
+          </mat-cell>
+        </ng-container>
+      </div>
+
+      <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
+      <mat-row *matRowDef="let row; columns: displayedColumns;" [class.expanded]="row.isExpanded"></mat-row>
+      <mat-row *matRowDef="let row; columns: ['expandedDetail'];"
+        [@detailExpand]="row.isExpanded == true ? 'expanded' : 'collapsed'">
+      </mat-row>
+    </mat-table>
+    <mat-paginator #paginator [length]="payments.rowCount" [pageIndex]="payments.page-1" [pageSize]="payments.pageSize"
+      [pageSizeOptions]="pageSizeOptions" (page)="handlePageEvent($event)">
+    </mat-paginator>
+  </mat-card>
+</div>
+<div>
+  <table class="form-group row" style="margin-left: 0px;">
+    <button type="button" *ngIf="[showExportButton]" [disabled]="payments.rowCount < 1" (click)="exportToCSV()"
+      class="button float-button">Export</button>
+    <button type="button" (click)="clear()" class="button float-button">Back</button>
+  </table>
+</div>

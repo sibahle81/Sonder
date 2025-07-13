@@ -1,0 +1,27 @@
+<div *ngIf="reportURL == ''">
+  No Report URL Input Detected
+</div>
+<div *ngIf="reportURL != ''">
+  <mat-card class="card">
+    <mat-card-content>
+      <div *ngIf="isLoading$ | async">
+        <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+        <label class="mat-label other-label"><i>loading...please wait</i></label>
+      </div>
+
+      <div *ngIf="!(isLoading$ | async)" (click)="onLoadLookups()" class="pointer"><span class="material-icons">refresh</span>Refresh Policy Schedule Details</div>
+
+      <div [hidden]="!showReport">
+        <mat-card-content class="wizard-mat-card-content">
+          <section>
+            <div [hidden]="!showReport" class="report">
+              <ssrs-reportviewer [reportserver]="reportServerAudit" [reporturl]="reportUrlAudit"
+                [parameters]="parametersAudit">
+              </ssrs-reportviewer>
+            </div>
+          </section>
+        </mat-card-content>
+      </div>
+    </mat-card-content>
+  </mat-card>
+</div>

@@ -1,0 +1,334 @@
+
+<div *ngIf="chronicApplicationType == 'ChronicMedicalForm'">
+
+<div  *ngFor="let chronicMed of chronicMedDetails$ | async">
+
+  <mat-expansion-panel>
+    <mat-expansion-panel-header>
+    <mat-panel-title>
+      Medical History
+    </mat-panel-title>
+    </mat-expansion-panel-header>
+    <mat-card>
+      <mat-card-content>
+        <div>
+          <div style="width:100%" class="mat-form-field-right" *ngIf="medicalHistorySource.length > 0; else norecords">
+            <br/>
+            <mat-table #table [dataSource]="medicalHistorySource" matSort>
+              
+              <ng-container matColumnDef="icd10Code">
+                <mat-header-cell *matHeaderCellDef mat-sort-header>Chronic Condition/Disease </mat-header-cell>
+                <mat-cell *matCellDef="let row"> {{row.disease}} </mat-cell>
+              </ng-container>
+    
+              <ng-container matColumnDef="diagnosedDate">
+                <mat-header-cell *matHeaderCellDef mat-sort-header> Diagnosed Date </mat-header-cell>
+                <mat-cell *matCellDef="let row"> {{row.dateDiagnosed | date: 'yyyy-MM-dd' }}</mat-cell>
+              </ng-container>
+    
+              <ng-container matColumnDef="treatment">
+                <mat-header-cell *matHeaderCellDef mat-sort-header> Treatment </mat-header-cell>
+                <mat-cell *matCellDef="let row"> {{row.treatment}} </mat-cell>
+              </ng-container>
+                          
+              <mat-header-row *matHeaderRowDef="medicalHistoryColumns; sticky: true"></mat-header-row>
+              <mat-row *matRowDef="let row; columns: medicalHistoryColumns;"></mat-row>
+            </mat-table>
+          </div>
+          
+          <ng-template #norecords>
+            <div class="mat-form-field-right">No records found...</div>
+          </ng-template>      
+        </div>
+      </mat-card-content>
+    </mat-card>
+  </mat-expansion-panel>
+
+<mat-expansion-panel>
+<mat-expansion-panel-header>
+<mat-panel-title>
+  Clinical Details
+</mat-panel-title>
+</mat-expansion-panel-header>
+<mat-card>
+<mat-card-content>
+<div class="grid">
+  <div>
+    <span class="title">Height(cm)</span>
+    <span class="value">{{ chronicMed?.height }} </span>
+  </div>
+  <div>
+    <span class="title">Weight(Kg)</span>
+    <span class="value">{{ chronicMed?.weight }}</span>
+  </div>
+</div>
+<div class="grid">
+  <div>
+    <span class="title">Blood Pressure (mm/Hg)</span>
+    <span class="value">{{ chronicMed?.bloodPressure }} </span>
+  </div>
+  <div>
+    <span class="title">Urine</span>
+    <span class="value">{{ chronicMed?.urine }}</span>
+  </div>
+</div>
+<div class="grid">
+  <div>
+    <span class="title">Allergies</span>
+    <span class="value">{{ chronicMed?.allergies }} </span>
+  </div>
+  <div>
+    <span class="title">Motivation</span>
+    <span class="value">{{ chronicMed?.description }}</span>
+  </div>
+</div>
+<div class="grid">
+  <div>
+    <span class="title">Refering Doctor</span>
+    <span class="value">{{ healthCareProvider?.name }} </span>
+  </div>
+</div>
+</mat-card-content>
+</mat-card>
+</mat-expansion-panel>
+
+
+<mat-expansion-panel>
+  <mat-expansion-panel-header>
+  <mat-panel-title>
+    Delivery Method
+  </mat-panel-title>
+  </mat-expansion-panel-header>
+  <mat-card>
+    <mat-card-content>
+      <div class="grid">
+        
+        <div>
+          <span class="title">Delivery Method</span>
+          <span class="value">
+            <div *ngIf="chronicMed?.deliveryMethod == 1">Collection</div>
+            <div *ngIf="chronicMed?.deliveryMethod == 2">Courier</div>
+          </span>
+        </div>
+        
+        <div>
+            <span  class="title">Address</span>
+            <span class="value">
+              <div *ngIf="chronicMed?.deliveryAddress">{{chronicMed?.deliveryAddress}}</div>
+            </span>          
+        </div> 
+      </div>
+  </mat-card-content>
+</mat-card>
+</mat-expansion-panel>
+
+<mat-expansion-panel>
+  <mat-expansion-panel-header>
+  <mat-panel-title>
+    Chronic Medication prescribed for Current Condition
+  </mat-panel-title>
+  </mat-expansion-panel-header>
+  <mat-card>
+    <mat-card-content>
+
+      <div>
+        <div style="width:100%" class="mat-form-field-right" *ngIf="medicationSource.length > 0; else norecords">
+        <br/>
+        
+        <mat-table #table [dataSource]="medicationSource" matSort>
+
+              <ng-container matColumnDef="condition">
+                <div  *ngIf="isNewChronicApplication">
+                  <mat-header-cell *matHeaderCellDef mat-sort-header> Condition </mat-header-cell>
+                  <mat-cell *matCellDef="let row"> {{row.condition}} </mat-cell>
+                </div>
+                <div *ngIf="!isNewChronicApplication">
+                  <mat-header-cell *matHeaderCellDef mat-sort-header> Injury Related Problem </mat-header-cell>
+                  <mat-cell *matCellDef="let row"> {{row.description}} </mat-cell>
+                </div>
+              </ng-container>
+  
+              <ng-container matColumnDef="icd10Code">
+                <mat-header-cell *matHeaderCellDef mat-sort-header> ICD10 Code </mat-header-cell>
+                <mat-cell *matCellDef="let row"> {{row.icd10Code}} </mat-cell>
+              </ng-container>
+  
+              <ng-container matColumnDef="medicationPrescribed">
+                <mat-header-cell *matHeaderCellDef mat-sort-header> Medication Prescribed </mat-header-cell>
+                <mat-cell *matCellDef="let row"> {{row.medicinePrescribed}} </mat-cell>
+              </ng-container>
+  
+              <ng-container matColumnDef="dosage">
+                <mat-header-cell *matHeaderCellDef mat-sort-header> Dosage </mat-header-cell>
+                <mat-cell *matCellDef="let row"> {{row.dosage}} </mat-cell>
+              </ng-container>
+  
+              <ng-container matColumnDef="numberOfRepeats">
+                <mat-header-cell *matHeaderCellDef mat-sort-header> Number Of Repeats </mat-header-cell>
+                <mat-cell *matCellDef="let row"> {{row.numberOfRepeats}} </mat-cell>
+              </ng-container>
+                          
+              <mat-header-row *matHeaderRowDef="medicationColumns; sticky: true"></mat-header-row>
+              <mat-row *matRowDef="let row; columns: medicationColumns;"></mat-row>
+  
+          </mat-table>
+        </div>
+          
+          <ng-template #norecords>
+            <div class="mat-form-field-right">No records found...</div>
+          </ng-template>      
+      </div>
+
+
+    </mat-card-content>
+  </mat-card>
+</mat-expansion-panel>
+
+
+</div>
+</div>
+
+<div *ngIf="chronicApplicationType == 'ChronicRenewalMedicalForm'">
+<div  *ngFor="let chronicMedRenewal of chronicMedRenewalDetails$ | async">
+  <mat-expansion-panel>
+    <mat-expansion-panel-header>
+    <mat-panel-title>
+      Clinical Details
+    </mat-panel-title>
+    </mat-expansion-panel-header>
+    <mat-card>
+    <mat-card-content>
+    <div class="grid">
+      <div>
+        <span class="title">Authorised Chronic Auth Number</span>
+        <span class="value">{{ preAuthNumber }} </span>
+      </div>
+      <div>
+        <span class="title">Types of Pain</span>
+        <span class="value">
+          <div *ngIf="chronicMedRenewal?.isNeurogenicPain">Neurogenic</div>
+          <div *ngIf="chronicMedRenewal?.isMechanicalPain">Mechanical</div>
+          <div *ngIf="chronicMedRenewal?.isDegenerativePain">Degenerative</div>
+          <div *ngIf="chronicMedRenewal?.isMuslcespasmPain">Musclespasm</div>
+          <div *ngIf="chronicMedRenewal?.isFibromialgiaPain">Fibromyalgia</div>
+        </span>
+      </div>
+    </div>
+    <div class="grid">
+      <div>
+        <span class="title">Alternative and adjuvants used for pain</span>
+        <span class="value">
+          <div *ngIf="chronicMedRenewal?.isLifeStyleChanges">LifeStyleChanges</div>
+          <div *ngIf="chronicMedRenewal?.isPhysiotherapy">Physiotherpy</div>
+          <div *ngIf="chronicMedRenewal?.isNerveBlock">NerveBlock</div>
+          <div *ngIf="chronicMedRenewal?.isArthroplasty">Anthroplasty</div>
+          <div *ngIf="chronicMedRenewal?.isPsychotherapy">Psychotherapy</div>
+          <div *ngIf="chronicMedRenewal?.isAccupuncture">Acupunture</div>
+        </span>
+      </div>
+      <div>
+        <span class="title">Objective Evaluation of Pain</span>
+        <span class="value">
+          <div *ngIf="chronicMedRenewal?.painEvaluation == 0">Mild</div>
+          <div *ngIf="chronicMedRenewal?.painEvaluation == 1">Moderate</div>
+          <div *ngIf="chronicMedRenewal?.painEvaluation == 2">Severe</div>
+          <div *ngIf="chronicMedRenewal?.painEvaluation == 3">Restrictive</div>
+        </span>
+      </div>
+    </div>
+    <div class="grid">
+      <div>
+        <span class="title">Motivation</span>
+        <span class="value">{{ chronicMedRenewal?.description }}</span>
+      </div>
+    </div>
+    <div class="grid">
+      <div>
+        <span class="title">Refering Doctor</span>
+        <span class="value">{{ healthCareProvider?.name }} </span>
+      </div>
+    </div>
+    </mat-card-content>
+    </mat-card>
+  </mat-expansion-panel>
+
+  <mat-expansion-panel>
+    <mat-expansion-panel-header>
+    <mat-panel-title>
+      Delivery Method
+    </mat-panel-title>
+    </mat-expansion-panel-header>
+    <mat-card>
+      <mat-card-content>
+        <div class="grid">
+          
+          <div>
+            <span class="title">Delivery Method</span>
+            <span class="value">
+              <div *ngIf="chronicMedRenewal?.deliveryMethod == 1">Collection</div>
+              <div *ngIf="chronicMedRenewal?.deliveryMethod == 2">Courier</div>
+            </span>
+          </div>
+  
+          <div>
+            <span  class="title">Address</span>            
+              <div class="value" *ngIf="chronicMedRenewal?.deliveryAddress">{{chronicMedRenewal?.deliveryAddress}}</div>
+                     
+          </div>    
+        </div>
+    </mat-card-content>
+  </mat-card>
+  </mat-expansion-panel>
+
+  <mat-expansion-panel>
+    <mat-expansion-panel-header>
+    <mat-panel-title>
+      Chronic Medication prescribed for Current Condition
+    </mat-panel-title>
+    </mat-expansion-panel-header>
+    <mat-card>
+      <mat-card-content>
+        <div>
+          <div style="width:100%" class="mat-form-field-right" *ngIf="medicalCurrentConditionSource.length > 0; else norecords">
+            <br/>
+            <mat-table #table [dataSource]="medicalCurrentConditionSource" matSort>
+              
+              <ng-container matColumnDef="injuryRelatedProblem">
+                <mat-header-cell *matHeaderCellDef mat-sort-header> Injury Related Problem </mat-header-cell>
+                <mat-cell *matCellDef="let row"> {{row.description}} </mat-cell>
+              </ng-container>
+    
+              <ng-container matColumnDef="iCD10Code">
+                <mat-header-cell *matHeaderCellDef mat-sort-header> ICD10 Code </mat-header-cell>
+                <mat-cell *matCellDef="let row"> {{row.icd10Code}} </mat-cell>
+              </ng-container>
+    
+              <ng-container matColumnDef="medicationPrescribed">
+                <mat-header-cell *matHeaderCellDef mat-sort-header> Medication Prescribed </mat-header-cell>
+                <mat-cell *matCellDef="let row"> {{row.medicinePrescribed}} </mat-cell>
+              </ng-container>
+
+              <ng-container matColumnDef="dosage">
+                <mat-header-cell *matHeaderCellDef mat-sort-header> Dosage </mat-header-cell>
+                <mat-cell *matCellDef="let row"> {{row.dosage}} </mat-cell>
+              </ng-container>
+
+              <ng-container matColumnDef="numberOfRepeats">
+                <mat-header-cell *matHeaderCellDef mat-sort-header> Number Of Repeats </mat-header-cell>
+                <mat-cell *matCellDef="let row"> {{row.numberOfRepeats}} </mat-cell>
+              </ng-container>
+                          
+              <mat-header-row *matHeaderRowDef="medicalCurrentConditionColumns; sticky: true"></mat-header-row>
+              <mat-row *matRowDef="let row; columns: medicalCurrentConditionColumns;"></mat-row>
+            </mat-table>
+          </div>
+          
+          <ng-template #norecords>
+            <div class="mat-form-field-right">No records found...</div>
+          </ng-template>      
+        </div>
+      </mat-card-content>
+    </mat-card>
+  </mat-expansion-panel>
+</div>
+</div>

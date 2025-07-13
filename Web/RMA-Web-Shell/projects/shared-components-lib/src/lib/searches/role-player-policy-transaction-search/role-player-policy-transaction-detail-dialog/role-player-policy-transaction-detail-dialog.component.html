@@ -1,0 +1,58 @@
+<div class="menu-bar">
+  <span class="material-icons">account_balance</span>
+  <span *ngIf="rolePlayerPolicyTransaction">{{getTransactionType(rolePlayerPolicyTransaction.transactionType)}}</span>
+  Details ({{rolePlayerPolicyTransaction.documentNumber}})
+  <span (click)="cancel()" class="material-icons pointer right" matTooltip="close">
+    close
+  </span>
+</div>
+
+<mat-card class="margins"
+  *ngIf="rolePlayerPolicyTransaction && rolePlayerPolicyTransaction.rolePlayerPolicyTransactionDetails && rolePlayerPolicyTransaction.rolePlayerPolicyTransactionDetails.length > 0">
+  <div class="scrollTable">
+    <table class="altRowTable">
+      <tr>
+        <th>Category Insured</th>
+        <th>Number of Employees</th>
+        <th>Number of Employees Receiving LIA</th>
+        <th>Total Earnings</th>
+        <th>Rate (%)</th>
+        <th>Effective From (incl.)</th>
+        <th>Effective To (excl.)</th>
+        <th>Prorata Days</th>
+        <th>Amount/Adjustment</th>
+      </tr>
+      <tr
+        *ngFor="let rolePlayerPolicyTransactionDetail of rolePlayerPolicyTransaction.rolePlayerPolicyTransactionDetails">
+        <td>{{getCategoryInsuredName(rolePlayerPolicyTransactionDetail.categoryInsured)}}</td>
+        <td>{{rolePlayerPolicyTransactionDetail.numberOfEmployees}}</td>
+        <td>{{rolePlayerPolicyTransactionDetail.liveInAllowance ? rolePlayerPolicyTransactionDetail.liveInAllowance : 'N/A'}}</td>
+        <td>{{rolePlayerPolicyTransactionDetail.totalEarnings ? formatMoney(rolePlayerPolicyTransactionDetail.totalEarnings.toFixed(2)) : '0.00'}}</td>
+        <td>{{rolePlayerPolicyTransactionDetail.rate}}</td>
+        <td>{{rolePlayerPolicyTransactionDetail.effectiveFrom | date: "yyyy-MM-dd"}}</td>
+        <td>{{rolePlayerPolicyTransactionDetail.effectiveTo | date: "yyyy-MM-dd"}}</td>
+        <td>{{calculateDays(rolePlayerPolicyTransactionDetail.effectiveFrom, rolePlayerPolicyTransactionDetail.effectiveTo)}}</td>
+        <td>{{rolePlayerPolicyTransactionDetail.premium ?
+          formatMoney(rolePlayerPolicyTransactionDetail.premium.toFixed(2)) : '0.00'}}
+        </td>
+      </tr>
+      <tr>
+        <th><b>Total</b></th>
+        <th></th>
+        <th></th>
+        <th></th>
+        <th></th>
+        <th></th>
+        <th></th>
+        <th></th>
+        <th>{{rolePlayerPolicyTransaction.totalAmount ?
+          formatMoney(rolePlayerPolicyTransaction.totalAmount.toFixed(2)) : '0.00'}}</th>
+      </tr>
+    </table>
+  </div>
+</mat-card>
+
+<mat-card
+  *ngIf="!rolePlayerPolicyTransaction || rolePlayerPolicyTransaction.rolePlayerPolicyTransactionDetails && rolePlayerPolicyTransaction.rolePlayerPolicyTransactionDetails.length <= 0">
+  <i>No transaction details found...</i>
+</mat-card>

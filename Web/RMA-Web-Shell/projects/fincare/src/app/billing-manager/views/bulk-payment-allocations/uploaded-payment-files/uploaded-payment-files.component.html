@@ -1,0 +1,56 @@
+<div *ngIf="datasource.isLoading">
+  <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+  <label class="mat-label other-label"><i>loading...please wait</i></label>
+</div>
+<br>
+<br>
+
+<div  [hidden]="datasource.isLoading || datasource.data.length === 0" >
+  <app-search-input (searchcriteria)="searchData($event)" [placeHolder]="placeHolder"></app-search-input>
+        <mat-table #table [dataSource]="datasource" matSort>
+          <ng-container matColumnDef="fileName">
+            <mat-header-cell *matHeaderCellDef mat-sort-header>Filename</mat-header-cell>
+            <mat-cell *matCellDef="let row"> {{row.fileName}}</mat-cell>
+          </ng-container>
+          <ng-container matColumnDef="totalLines">
+            <mat-header-cell *matHeaderCellDef mat-sort-header>Total Lines</mat-header-cell>
+            <mat-cell *matCellDef="let row"> {{row.totalRecords}} </mat-cell>
+          </ng-container>
+          <ng-container matColumnDef="totalAmount">
+            <mat-header-cell *matHeaderCellDef mat-sort-header>Total Amount</mat-header-cell>
+            <mat-cell *matCellDef="let row"> {{row.totalAmount}} </mat-cell>
+          </ng-container>
+          <ng-container matColumnDef="createdBy">
+            <mat-header-cell *matHeaderCellDef mat-sort-header>CreatedBy</mat-header-cell>
+            <mat-cell *matCellDef="let row"> {{row.createdBy}} </mat-cell>
+          </ng-container>
+          <ng-container matColumnDef="createdDate">
+            <mat-header-cell *matHeaderCellDef mat-sort-header>CreatedDate</mat-header-cell>
+            <mat-cell *matCellDef="let row"> {{row.createdDate | date:'yyyy/MM/dd'}} </mat-cell>
+          </ng-container>
+          <ng-container matColumnDef="status">
+            <mat-header-cell *matHeaderCellDef mat-sort-header>Processed Status</mat-header-cell>
+            <mat-cell *matCellDef="let row"> {{row.fileProcessingStatus}}
+            </mat-cell>
+          </ng-container>
+
+          <ng-container matColumnDef="actions">
+            <mat-header-cell *matHeaderCellDef></mat-header-cell>
+            <mat-cell  *matCellDef="let row" class="edit_item">
+              <a role="button" class="link-edit" (click)="viewFileDetils(row.bulkAllocationFileId)">view</a>
+            </mat-cell>
+          </ng-container>
+          <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
+          <mat-row *matRowDef="let row; columns: displayedColumns;"></mat-row>
+        </mat-table>
+        <mat-paginator #paginator [length]="datasource.data ? datasource.data.length : 0" [pageIndex]="0" [pageSize]="5"
+        [pageSizeOptions]="[5, 10, 20, 50]">
+      </mat-paginator>
+      <div>
+        <button type="button" class="button float-button submit-button" (click)="back()">Back</button>
+      </div>
+    </div>
+    <div *ngIf="noData">
+      No data found...
+    </div>
+

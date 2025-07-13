@@ -1,0 +1,163 @@
+<mat-card>
+  <mat-card-header>
+    <mat-card-title class="wizard-font card-title grey">
+      <h3>Monthend Reports</h3>
+    </mat-card-title>
+  </mat-card-header>
+
+<form *ngIf="form" [formGroup]="form" class="mat-container details-form" novalidate>
+  <div class="form">
+    <section>
+      <div class="field-container">
+        <mat-form-field>
+          <label class="mat-label other-label mandatory-field">Report Type</label>
+          <mat-select
+            formControlName="reportType"
+            name="reportType"
+            id="reportType">
+            <mat-option *ngFor="let type of reportTypes" [value]="type.value">
+              {{type.name}}
+            </mat-option>
+          </mat-select>
+          <mat-error *ngIf="form.get('reportType').hasError('required')">
+            Please select Report Type
+          </mat-error>
+        </mat-form-field>
+      </div>
+
+      <div class="field-container">
+        <mat-form-field>
+          <label class="mat-label other-label mandatory-field">Start Date</label>
+          <input matInput formControlName="startDate" id="startDate" name="startDate" date="true" readonly [matDatepicker]="startDate" [max]="max" (dateChange)="setConditionalValidation()">
+          <mat-datepicker-toggle matSuffix class="mat-toggle-datepicker datePick" [for]="startDate">
+          </mat-datepicker-toggle>
+          <mat-datepicker touchUi="true" #startDate ></mat-datepicker>
+          <mat-error *ngIf="form.get('startDate').hasError('required')">
+            Please select Start Date
+          </mat-error>
+          <mat-error *ngIf="form.get('startDate').hasError('inValidMaxDate')">
+            Start date cannot be in the Future 
+          </mat-error>
+        </mat-form-field>
+      </div>
+
+      <div class="field-container">
+        <mat-form-field>
+          <label class="mat-label other-label mandatory-field">End Date</label>
+          <input matInput formControlName="endDate" id="endDate" name="endDate" date="true" readonly [matDatepicker]="endDate" [min]="min" [max]="max">
+          <mat-datepicker-toggle matSuffix class="mat-toggle-datepicker datePick" [for]="endDate">
+          </mat-datepicker-toggle>
+          <mat-datepicker touchUi="true" #endDate></mat-datepicker>
+          <mat-error *ngIf="form.get('endDate').hasError('required')">
+            Please select End Date
+          </mat-error>
+          <mat-error *ngIf="form.get('endDate').hasError('inValidMaxDate')">
+            End date cannot be in the Future 
+          </mat-error>
+          <mat-error *ngIf="form.get('endDate').hasError('inValidMinDate')">
+            End date cannot be in before Start Date 
+          </mat-error>
+        </mat-form-field>
+      </div>
+
+      <div class="field-container" *ngIf="['PaymentScheduleReport', 'AcbCoidReport', 'MalawiReport'].includes(form.controls['reportType'].value)">
+        <mat-form-field>
+          <label class="mat-label other-label mandatory-field">Class</label>
+          <mat-select
+            formControlName="class"
+            name="class"
+            id="class">
+            <mat-option *ngFor="let class of paymentScheduleClass" [value]="class">
+              {{class}}
+            </mat-option>
+          </mat-select>
+          <mat-error *ngIf="form.get('class').hasError('required')">
+            Please select Report Class
+          </mat-error>
+        </mat-form-field>
+      </div>
+
+      <div class="field-container" *ngIf="['PaymentScheduleReport', 'AcbCoidReport'].includes(form.controls['reportType'].value)">
+        <mat-form-field>
+          <label class="mat-label other-label mandatory-field">Product</label>
+          <mat-select
+            formControlName="product"
+            name="product"
+            id="product">
+            <mat-option *ngFor="let product of paymentScheduleProducts" [value]="product">
+              {{product}}
+            </mat-option>
+          </mat-select>
+          <mat-error *ngIf="form.get('product').hasError('required')">
+            Please select Report Product
+          </mat-error>
+        </mat-form-field>
+      </div>
+    </section>
+    <section>
+      <div class="field-container-left view-report-button">
+        <div class="mat-form-field">
+          <div class="form-buttons"  (click)="viewReport()">
+            <button class="button submit-button">View Report</button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section *ngIf="form.controls['reportType'].value === 'AcbCoidReport'">
+      <h4>ACB Report</h4>
+    </section>
+
+    <section *ngIf="form.controls['reportType'].value === 'ChildToAdultLedgerReport'">
+      <h4>18 Year Old Report</h4>
+    </section>
+
+    <section *ngIf="form.controls['reportType'].value === 'BankDraftsReport'">
+      <h4>Bank Draft Report</h4>
+    </section>
+
+    <section *ngIf="form.controls['reportType'].value === 'PaymentScheduleReport'">
+      <h4>Payment Schedule Report</h4>
+    </section>
+
+    <section *ngIf="form.controls['reportType'].value === 'PayeReport'">
+      <h4>PAYE Report</h4>
+    </section>
+
+    <section *ngIf="form.controls['reportType'].value === 'PaymentRejectReport'">
+      <h4>Payment Reject Report</h4>
+    </section>
+
+    <section *ngIf="form.controls['reportType'].value === 'MalawiReport'">
+      <h4>Malawi Report</h4>
+    </section>
+
+    <div class="form">
+      <section>
+        <table>
+          <tr>
+            <td style="background-color: whitesmoke !important;">
+              <input type="image" alt="export" (click)="exportReport()" src="/assets/images/downloads-icon.png"
+                width="40" height="40" />
+            </td>
+            <td style="background-color: whitesmoke !important;">
+              <mat-radio-group aria-labelledby="reportformat-radio-group-label" class="reportformat-radio-group"
+                (change)="reportFormatChange($event)">
+                <mat-radio-button class="reportformat-radio-button" *ngFor="let reportFormat of reportFormats"
+                  [value]="reportFormat">
+                  {{reportFormat}} &nbsp;&nbsp;
+                </mat-radio-button>
+              </mat-radio-group>
+            </td>
+          </tr>
+        </table>
+      </section>
+    </div>
+
+    <ssrs-reportviewer *ngIf="showReport" [reportserver]="reportServerAudit" [reporturl]="reportUrlAudit"
+      [showparameters]="showParametersAudit" [format]="selectedReportFormat" [extension]="extensionAudit"
+      [parameters]="parametersAudit" [language]="languageAudit" [width]="widthAudit" [height]="heightAudit"
+      [toolbar]="toolbarAudit">
+    </ssrs-reportviewer>
+  </div>
+</form>

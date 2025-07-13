@@ -1,0 +1,69 @@
+<mat-card *ngIf="(isLoading$ | async)">
+    <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+    <label class="mat-label other-label"><i>{{loadingMessage$ | async}}</i></label>
+</mat-card>
+
+<mat-card *ngIf="!(isLoading$ | async) && rolePlayerId">
+    <div *ngIf="filteredPolicies.length > 0">
+        <form [formGroup]="form" class="mat-container details-form" novalidate>
+            <section>
+                <mat-form-field class="mat-form-field">
+                    <label class="mat-label other-label">Policies</label>
+                    <mat-select name="policies" id="policies" formControlName="policies" multiple
+                        (selectionChange)="selectedPolicyChanged($event)" [(value)]="selectedPolicies">
+                        <mat-option *ngFor="let policy of filteredPolicies" [value]="policy">
+                            {{policy.policyNumber}} ({{policy.productOption.code}})
+                        </mat-option>
+                    </mat-select>
+                    <mat-error *ngIf="form.get('policies').hasError('required')">
+                        at least one policy is <strong>required</strong>
+                    </mat-error>
+                </mat-form-field>
+            </section>
+        </form>
+    </div>
+
+    <div *ngIf="filteredPolicies.length <= 0 && (eventDate && categoryInsured)">
+        <label class="mat-label other-label">
+            <mat-card>
+                <span class="material-icons info">info</span>
+                <span>&nbsp;<b>{{getCategoryInsuredName(categoryInsured)}}</b> employee was not covered by any policies
+                    at the event
+                    date:
+                    <b>{{eventDate | date: "yyyy-MM-dd"}}</b></span>
+            </mat-card>
+        </label>
+    </div>
+
+    <div *ngIf="filteredPolicies.length <= 0 && (!eventDate || !categoryInsured)">
+        <label class="mat-label other-label">
+            No policies found
+        </label>
+    </div>
+</mat-card>
+
+<mat-card *ngIf="selectedSubjectsOfInsurance && selectedSubjectsOfInsurance.length > 0">
+    <div class="menu-bar">
+        <span class="material-icons">
+            beach_access
+        </span>
+        Subject of Insurance (SOI) at event date: <b>{{eventDate | date: "yyyy-MM-dd"}}</b>
+        <i class="blueFont" *ngIf="isAwaitingRenewal"> *pending renewal</i>
+    </div>
+    <table class="altRowTable">
+        <tr>
+            <th>Product Option</th>
+            <th>Category Insured</th>
+            <th>Effective From (incl)</th>
+            <th>Effective To (excl)</th>
+        </tr>
+        <tr *ngFor="let soi of selectedSubjectsOfInsurance">
+            <td class="left">
+                {{getProductOption(soi)}}
+            </td>
+            <td class="left">{{getCategoryInsuredName(soi.categoryInsured)}}</td>
+            <td class="center">{{soi.effectiveFrom | date: "yyyy-MM-dd"}}</td>
+            <td class="center">{{soi.effectiveTo| date: "yyyy-MM-dd"}}</td>
+        </tr>
+    </table>
+</mat-card>

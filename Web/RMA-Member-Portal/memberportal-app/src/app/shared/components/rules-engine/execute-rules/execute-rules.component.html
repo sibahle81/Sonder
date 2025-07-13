@@ -1,0 +1,18 @@
+﻿<div *ngIf="isError"></div>
+<div *ngIf="ruleRequestResult && ruleRequestResult.ruleResults">
+    <div *ngIf="ruleRequestResult.ruleResults.length > 0 && !isError">
+        <mat-list>
+            <mat-list-item *ngFor="let ruleResult of ruleRequestResult.ruleResults">
+                <mat-icon style="color: rgba(0, 0, 0, .54) !important;" mat-list-icon>folder</mat-icon>
+
+                <h4 [ngClass]="{ 'valid': ruleResult.passed, 'invalid': !ruleResult.passed}" mat-line>{{ruleResult.ruleName}}</h4>
+
+                <p class="valid" *ngIf="ruleResult.passed" mat-line>Rule Passed</p>
+                <p class="invalid" *ngIf="!ruleResult.passed && ruleResult.messageList.length > 0" mat-line>Rule Failed - {{ruleResult.messageList[0]}}</p>
+            </mat-list-item>
+        </mat-list>
+    </div>
+    <div *ngIf="ruleRequestResult.ruleResults.length === 0 && !isError">
+        <p class="left-padding"><i>There were no rules found to execute.</i></p>
+    </div>
+</div>

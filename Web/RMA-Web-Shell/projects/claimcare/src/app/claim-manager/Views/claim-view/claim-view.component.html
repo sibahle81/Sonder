@@ -1,0 +1,48 @@
+<div *ngIf="isLoading">
+  <div style="margin-right: 15px;">
+    <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+  </div>
+  <span style="color: grey">Loading...</span>
+</div>
+
+<div [hidden]="isLoading" class="menu-container">
+  <mat-tab-group>
+    <!-- <mat-tab label="Claim Details">
+    </mat-tab> -->
+    <mat-tab label="Claim Details">
+    <claim-details></claim-details>
+    </mat-tab>
+
+    <mat-tab label="Deceased">
+      <additional-registry-details></additional-registry-details>
+    </mat-tab>
+
+    <mat-tab label="Notifier">
+      <claimant-component></claimant-component>
+    </mat-tab>
+
+    <mat-tab label="Informant">
+      <informant-component></informant-component>
+    </mat-tab>
+
+    <mat-tab label="Medical Service Provider">
+      <medical-practitioner></medical-practitioner>
+    </mat-tab>
+
+    <mat-tab label="Forensic Pathologist">
+      <forensic-pathologist></forensic-pathologist>
+    </mat-tab>
+
+    <mat-tab label="Funeral Parlor">
+      <funeral-parlor></funeral-parlor>
+    </mat-tab>
+
+    <mat-tab label="Undertaker">
+      <undertaker></undertaker>
+    </mat-tab>
+
+    <mat-tab label="Body Collector">
+      <body-collection></body-collection>
+    </mat-tab>
+  </mat-tab-group>
+</div>

@@ -1,0 +1,174 @@
+<mat-card class="matcard mg-b-25">
+    <mat-card-content class="matcard content">
+
+        
+    <div class="menu-bar mg-b-15">
+        <span>
+            <span class="material-icons">
+                search
+            </span>
+            Travel Authorisation
+            <span *ngIf="!(dataSource.loading$ | async)" (click)="reset()" class="material-icons pointer right"
+                matTooltip="reset">
+                restart_alt
+            </span>
+            <span *ngIf="userHasPermission(permissions?.createTravelAuth) && !(dataSource.loading$ | async)" (click)="addNewTravelAuth()"
+                class="material-icons pointer right" matTooltip="add new travel auth">
+                add_circle
+            </span>
+        </span>
+    </div>
+
+        <mat-card>
+          <mat-card-content>
+            <div [formGroup]="form" class="header override-flex-direction">
+
+                <section class="section-width">
+                    <mat-form-field class="mat-form-field">
+                      <mat-select id="authorisedParty" name="authorisedParty" matInput formControlName="authorisedPartyControl"
+                        (selectionChange)="filterByAuthorisedParty($event.value)">
+                        <mat-option *ngFor="let authorisedParty of authorisedParties" [value]="authorisedParty">
+                          {{formatLookup(authorisedParty)}}
+                        </mat-option>
+                      </mat-select>
+                    </mat-form-field>
+
+                </section>
+    
+            </div>
+          </mat-card-content>
+        </mat-card>
+    
+        <br />
+        <div *ngIf="(dataSource.loading$ | async)">
+          <mat-progress-bar mode="indeterminate"
+            [ngClass]="{ 'loading-main-double-menu-progress': doubleMenu, 'loading-main-single-menu-progress': !doubleMenu }">
+          </mat-progress-bar>
+          <p class="site-font grey">Please wait...</p>
+        </div>
+
+        <div [hidden]="(dataSource.loading$ | async)">
+            <div [hidden]="!(dataSource && dataSource.data && dataSource.data.data && dataSource.data.data.length > 0)">
+                <mat-table #table [dataSource]="dataSource" matSort  id="tblData" (matSortChange)="getData(0, true)">
+            
+                    <ng-container matColumnDef="TravelAuthorisationId">
+                        <mat-header-cell *matHeaderCellDef mat-sort-header> PreAuth Number </mat-header-cell>
+                        <mat-cell *matCellDef="let row" matTooltip="{{row?.travelAuthorisationId}}">
+                            <span class="truncate-text" *ngIf="row.isDeleted === false; else isDeletedPreauth">
+                                {{ row?.travelAuthNumber}} 
+                            </span>
+                            <ng-template #isDeletedPreauth>
+                                <span style="color:red" class="truncate-text"> {{ row?.travelAuthNumber}} </span>  
+                            </ng-template>
+                        </mat-cell>
+                    </ng-container>
+            
+                    <ng-container matColumnDef="TravelAuthorisedPartyId">
+                        <mat-header-cell *matHeaderCellDef mat-sort-header> Authorised Party </mat-header-cell>
+                        <mat-cell *matCellDef="let row"
+                            matTooltip="{{row?.travelAuthorisedPartyId}}">
+                            <span class="truncate-text" *ngIf="row.isDeleted === false; else isDeletedPreauth"> 
+                                {{getAuthorisedParty(row?.travelAuthorisedParty)}} 
+                            </span>
+                            <ng-template #isDeletedPreauth>
+                                <span style="color:red" class="truncate-text"> {{getAuthorisedParty(row?.travelAuthorisedParty)}} </span>  
+                            </ng-template>
+                        </mat-cell>
+                    </ng-container>
+            
+                    <ng-container matColumnDef="DateAuthorisedFrom">
+                        <mat-header-cell *matHeaderCellDef mat-sort-header> Authorised From </mat-header-cell>
+                        <mat-cell *matCellDef="let row" matTooltip="{{row?.dateAuthorisedFrom}}">
+                            <span class="truncate-text" *ngIf="row.isDeleted === false; else isDeletedPreauth"> 
+                                {{ row?.dateAuthorisedFrom | date:'yyyy-MM-dd' }}
+                            </span>
+                            <ng-template #isDeletedPreauth>
+                                <span style="color:red" class="truncate-text"> {{row?.dateAuthorisedFrom | date:'yyyy-MM-dd'}} </span>  
+                            </ng-template>
+                        </mat-cell>
+                    </ng-container>
+            
+                    <ng-container matColumnDef="DateAuthorisedTo">
+                        <mat-header-cell *matHeaderCellDef mat-sort-header> Authorised To </mat-header-cell>
+                        <mat-cell *matCellDef="let row" matTooltip="{{row?.dateAuthorisedTo}}">
+                            <span class="truncate-text" *ngIf="row.isDeleted === false; else isDeletedPreauth"> 
+                                {{ row?.dateAuthorisedTo | date:'yyyy-MM-dd' }}
+                            </span>
+                            <ng-template #isDeletedPreauth>
+                                <span style="color:red" class="truncate-text"> {{ row?.dateAuthorisedTo | date:'yyyy-MM-dd' }} </span>  
+                            </ng-template>
+                        </mat-cell>
+                    </ng-container>
+            
+                    <ng-container matColumnDef="AuthorisedKm">
+                        <mat-header-cell *matHeaderCellDef mat-sort-header> Authorised KM's </mat-header-cell>
+                        <mat-cell *matCellDef="let row" matTooltip="{{row?.authorisedKm}}">
+                            <span class="truncate-text" *ngIf="row.isDeleted === false; else isDeletedPreauth"> 
+                                {{ row?.authorisedKm}} 
+                            </span>
+                            <ng-template #isDeletedPreauth>
+                                <span style="color:red" class="truncate-text"> {{ row?.authorisedKm }} </span>  
+                            </ng-template>
+                        </mat-cell>
+                    </ng-container>
+            
+                    <ng-container matColumnDef="AuthorisedRate">
+                        <mat-header-cell *matHeaderCellDef mat-sort-header> Auth Rates </mat-header-cell>
+                        <mat-cell *matCellDef="let row" matTooltip="{{row?.authorisedRate}}">
+                            <span class="truncate-text" *ngIf="row.isDeleted === false; else isDeletedPreauth">
+                                {{ row?.authorisedRate}} 
+                            </span>
+                            <ng-template #isDeletedPreauth>
+                                <span style="color:red" class="truncate-text"> {{  row?.authorisedRate }} </span>  
+                            </ng-template>
+                        </mat-cell>
+                    </ng-container>
+            
+                    <ng-container matColumnDef="AuthorisedAmount">
+                        <mat-header-cell *matHeaderCellDef mat-sort-header> Auth Amount </mat-header-cell>
+                        <mat-cell *matCellDef="let row" matTooltip="{{row?.authorisedAmountInclusive}}">
+                            <span class="truncate-text" *ngIf="row.isDeleted === false; else isDeletedPreauth"> 
+                                {{ row?.authorisedAmountInclusive }} 
+                            </span>
+                            <ng-template #isDeletedPreauth>
+                                <span style="color:red" class="truncate-text"> {{  row?.authorisedAmountInclusive }} </span>  
+                            </ng-template>
+                        </mat-cell>
+                    </ng-container>
+
+                    <ng-container matColumnDef="actions">
+                      <mat-header-cell *matHeaderCellDef>
+                        Actions
+                      </mat-header-cell>
+                      <mat-cell *matCellDef="let row" [matMenuTriggerFor]="menu" (click)="filterMenu(row)">
+                        <span class="material-icons pointer right">
+                          more_vert
+                        </span>
+                        <mat-menu #menu="matMenu">
+                          <button mat-menu-item *ngFor="let menu of menus" disabled={{menu.disable}}
+                            (click)="onMenuSelect(row, menu?.title)">{{menu.title}}</button>
+                        </mat-menu>
+                      </mat-cell>
+                      <mat-footer-cell *matFooterCellDef></mat-footer-cell>
+                    </ng-container>
+            
+                    <mat-header-row *matHeaderRowDef="getDisplayedColumns()"></mat-header-row>
+                    <mat-row *matRowDef="let row; columns: getDisplayedColumns();"></mat-row>
+                </mat-table>
+            
+                <mat-paginator #paginator [length]="pageLength" [pageIndex]="0" [pageSize]="5" [pageSizeOptions]="[5, 10, 25, 100]"
+                    [length]="this.dataSource.rowCount$ | async" (page)="getData(0, true)">
+                </mat-paginator>
+            </div>
+
+            <mat-card
+                *ngIf="!(dataSource.data && dataSource.data.data && dataSource.data.data.length > 0 || (dataSource.loading$ | async))">
+                <label class="mat-label other-label"><i>no travel authorisations found...</i></label>
+            </mat-card>
+            <div *ngIf="(isSaving$ | async)">
+                <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+                <label class="mat-label other-label"><i>Saving details...please wait</i></label>
+            </div>
+        </div>
+    </mat-card-content>
+</mat-card>

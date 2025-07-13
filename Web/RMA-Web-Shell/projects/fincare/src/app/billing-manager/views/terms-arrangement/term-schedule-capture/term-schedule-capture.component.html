@@ -1,0 +1,32 @@
+<form [formGroup]="form" class="mat-container details-form" novalidate>
+  <p class="labelParagraph">Flexible Payment Schedule</p>
+  <section>
+    <p class="smallRedFont">{{message}}</p>
+  </section>
+<section>
+    <mat-form-field class="mat-form-field">
+      <label class="mat-label other-label">Month/Payment</label>
+      <mat-select [(value)]="selectedMonth" name="paymentMonth" id="paymentMonth"
+        formControlName="paymentMonth" >
+        <mat-option *ngFor="let monthNotCaptured of monthsNotCaptured" [value]="monthNotCaptured">
+          {{monthNotCaptured}}
+        </mat-option>
+      </mat-select>
+    </mat-form-field>
+  </section> 
+  <section>
+    <mat-form-field class="mat-form-field">
+      <label class="mat-label other-label">Amount</label>
+      <input matInput formControlName="amount" type="number" min="0" name="amount"
+        id="amount" />
+      <mat-error *ngIf="form.get('amount').hasError('required')">
+        Amount is <strong>required</strong>
+      </mat-error>
+    </mat-form-field>
+  </section>
+</form>
+  <section> 
+    <br />
+    <button  *ngIf="this.form.get('amount').value > 0 && selectedMonth !=='0'" class="button submit-button" (click)="addPaymentSchedule()">Add</button>   <button (click)="close()" class="button float-button submit-button">Close</button>
+    <br />
+  </section>

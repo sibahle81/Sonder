@@ -1,0 +1,57 @@
+<div>
+    <form [formGroup]="form" novalidate>
+      <p class="labelParagraph">Vopd Manual Override</p>
+      <p *ngIf="noEditPermission" class="noPermission">You do not have permissions to edit VOPD</p>
+      <div *ngIf="isSubmitting$ | async">
+        <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+        <label class="mat-label other-label"><i>Submitting Vopd...please wait</i></label>
+    </div>
+        <div>
+            <section > 
+                <mat-form-field class="mat-form-field">
+                    <label class="mat-label other-label">Member Name</label>
+                    <input matInput formControlName="memberName" name="memberName" id="memberName" />              
+                  </mat-form-field>            
+                </section>
+                <section>
+                  <mat-form-field class="mat-form-field">
+                    <label class="mat-label other-label">ID Number</label>
+                    <input matInput formControlName="idNumber" name="idNumber" id="idNumber" />               
+                  </mat-form-field>  
+                </section>
+            <section>
+              <div >
+                <h3><label>Is Alive</label></h3>
+                <mat-radio-group formControlName="deceasedStatus" class="div_main">
+                  <mat-radio-button class="radio-group" [value]="true"
+                    (change)="onDeceasedStatusSelected($event.value)">Yes
+                  </mat-radio-button>
+                  <mat-radio-button class="radio-group" [value]="false"
+                    (change)="onDeceasedStatusSelected($event.value)">No
+                  </mat-radio-button>
+                </mat-radio-group>
+              </div>      
+          </section>
+        </div>
+        <section *ngIf="!isAlive && isAliveOptionSelected"> 
+          <mat-form-field>
+            <label class="mat-label other-label">Date Of Death</label>
+            <input readonly matInput formControlName="dateOfDeath" [matDatepicker]="dateOfDeath" id="dateOfDeath" name="dateOfDeath" [max]="maxDate" />
+            <mat-datepicker-toggle matSuffix [for]="dateOfDeath" [disabled]="isAlive"></mat-datepicker-toggle>
+            <mat-datepicker touchUi="true" #dateOfDeath></mat-datepicker>
+          </mat-form-field>   
+        </section> 
+        <br/> 
+        <br/> 
+        <section>
+          <document-uploader [documentSet]="vopdManualVerificationDocSet" [systemName]="documentSystemName" [keyName]="'IdNumber'"
+          [keyValue]="idNumber" [isReadOnly]="!canEditVopd" [acceptedDocumentFormats]="'.pdf'"
+          (requiredDocumentsUploadedEmit)="isRequiredDocumentsUploaded($event)"></document-uploader>
+        </section>
+      </form>
+      <section> 
+        <br />    
+          <button  *ngIf="showSubmit && canEditVopd" class="button submit-button" (click)="submit()">Submit</button>&nbsp;&nbsp;<button (click)="close()" class="button submit-button">Close</button>
+          <br />
+      </section>
+    

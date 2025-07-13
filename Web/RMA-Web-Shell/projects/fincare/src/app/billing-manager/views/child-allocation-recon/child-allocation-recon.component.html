@@ -1,0 +1,66 @@
+<form [formGroup]="form" novalidate>
+    <mat-card>
+        <section>
+            <mat-form-field class="mat-form-field">
+                <label class="mat-label other-label mandatory-field">Group Policy Number</label>
+                <input matInput formControlName="policyNumber" name="policyNumber" id="policyNumber"
+                />               
+              </mat-form-field>
+        </section>
+        <div class="field-container">
+            <mat-form-field>
+              <label class="mat-label other-label">Start Date</label>
+              <input matInput [matDatepicker]="startDate" date="true" time="false" formControlName="startDate"
+                readonly >
+              <mat-datepicker-toggle matSuffix [for]="startDate"></mat-datepicker-toggle>
+              <mat-datepicker #startDate touchUi="true">
+              </mat-datepicker>
+            </mat-form-field>
+          </div>
+          <div class="field-container-right">
+            <mat-form-field>
+              <label class="mat-label other-label">End Date</label>
+              <input matInput [matDatepicker]="endDate" date="true" time="false" formControlName="endDate"
+                 readonly >
+              <mat-datepicker-toggle matSuffix [for]="endDate"></mat-datepicker-toggle>
+              <mat-datepicker #endDate touchUi="true"></mat-datepicker>
+            </mat-form-field>
+          </div>
+          <button type="button" class="button submit-button" (click)="getPremiumListings()">Search</button>
+    </mat-card> 
+  </form>
+  <br />
+  <div *ngIf="isLoadingPremiumListing$ | async">
+    <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+    <label class="mat-label other-label"><i>Loading PremiumListing Files...please wait</i></label>
+  </div>
+ 
+  <div class="error-message" *ngIf="searchFailedMessage.length > 0">{{searchFailedMessage}}</div>
+  <div class="div_scroll" [hidden]="datasource.data.length === 0">
+    <mat-card>
+      <mat-table #table [dataSource]="datasource" matSort>
+        <ng-container matColumnDef="fileName">
+          <mat-header-cell *matHeaderCellDef mat-sort-header> FileName </mat-header-cell>
+          <mat-cell *matCellDef="let row"> {{row.fileName}}
+          </mat-cell>
+        </ng-container>       
+        <ng-container matColumnDef="createdDate">
+          <mat-header-cell *matHeaderCellDef mat-sort-header>Created Date</mat-header-cell>
+          <mat-cell *matCellDef="let row"> {{row.createdDate | date:'yyyy/MM/dd hh:mm'}} </mat-cell>
+        </ng-container>       
+        <ng-container matColumnDef="actions">
+          <mat-header-cell *matHeaderCellDef>Reports</mat-header-cell> 
+          <mat-cell *matCellDef="let row"><a (click)="viewReport(row.premiumListingFileId)">View</a></mat-cell>      
+        </ng-container>
+        <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
+        <mat-row *matRowDef="let row; columns: displayedColumns;"></mat-row>
+      </mat-table>
+      <mat-paginator #paginator [pageSize]="10" [pageSizeOptions]="[5, 10, 25, 100]">
+      </mat-paginator>     
+      <br />
+    </mat-card>
+  </div>  
+  <div class="margin-alignment">
+    <button type="button" class="button float-button submit-button" (click)="back()">Back</button>
+  </div>
+

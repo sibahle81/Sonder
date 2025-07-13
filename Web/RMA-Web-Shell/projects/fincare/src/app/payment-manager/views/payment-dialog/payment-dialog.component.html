@@ -1,0 +1,14 @@
+<div mat-dialog-content>
+  <p>{{data.payment.dialogQuestion}}</p>
+<div *ngIf="data.payment.dialogView === 'edit'">
+  <!--Email-->
+  <mat-form-field class="mat-field-width">
+    <label class="mat-label other-label">What's the new email address?</label>
+    <input matInput maxlength="50" name="email" id="email" [(ngModel)]="data.payment.emailAddress" placeholder="">
+  </mat-form-field>
+</div>
+<div mat-dialog-actions style="margin-bottom:1px;">
+  <button mat-button (click)="onNoClick()">No Thanks</button>
+  <button mat-button [mat-dialog-close]="data" cdkFocusInitial>Yes</button>
+</div>
+</div>

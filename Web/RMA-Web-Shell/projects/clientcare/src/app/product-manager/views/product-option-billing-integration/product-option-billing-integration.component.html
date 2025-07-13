@@ -1,0 +1,99 @@
+
+<mat-card *ngIf="isLoading$ | async">
+  <h1>Billing Features</h1>
+  <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+  <label class="mat-label other-label"><i>loading...please wait</i></label>
+</mat-card>
+
+<div *ngIf="!(isLoading$ | async)">
+  <div *ngIf="isReadOnly || (!isReadOnly && isWizard)">
+      <mat-card *ngIf="(!productOption || !productOption.productOptionBillingIntegrations || productOption.productOptionBillingIntegrations.length <= 0) && hideForm">
+        <h1>Billing Features</h1>
+        <label class="mat-label other-label"><i>No billing features have been configured...</i></label>
+          <label *ngIf="hideForm && (!isReadOnly && isWizard)" class="mat-label other-label grey-lable-button"><i>Add new...</i><span
+            class="mat-label other-label pointer" (click)="showForm()"><span
+              class="material-icons">add_circle</span></span></label>
+      </mat-card>
+
+      <div *ngIf="!hideForm">
+          <mat-card>
+            <h1>Configure Billing Features</h1>
+            <form [formGroup]="form" class="mat-container details-form" novalidate>
+              <section>
+                  <mat-form-field class="mat-form-field">
+                      <label class="mat-label other-label">Industry Class</label>
+                      <mat-select  name="industryClass" id="industryClass" formControlName="industryClass">
+                        <mat-option *ngFor="let industryClass of filteredIndustryClasses" [value]="industryClass">
+                          {{formatLookup(industryClass)}}
+                        </mat-option>
+                      </mat-select>
+                      <label *ngIf="filteredIndustryClasses.length <= 0" class="sub-label">All industry classes already have a configuration</label>
+                      <mat-error *ngIf="form.get('industryClass').hasError('required')">
+                        Industry Class is <strong>required</strong>
+                      </mat-error>
+                    </mat-form-field>
+              </section>
+
+              <mat-card>
+              <section>
+                <mat-form-field class="mat-form-field">
+                  <input matInput [hidden]="true" formControlName="allowTermsArrangement" />
+                  <mat-checkbox formControlName="allowTermsArrangement">
+                    <label class="mat-label other-label">Allow Terms Arrangement?</label>
+                  </mat-checkbox>
+                </mat-form-field>
+
+                <mat-form-field class="mat-form-field">
+                  <input matInput [hidden]="true" formControlName="accumulatesInterest" />
+                  <mat-checkbox formControlName="accumulatesInterest">
+                    <label class="mat-label other-label">Accumulates Interest?</label>
+                  </mat-checkbox>
+                </mat-form-field>
+              </section>
+            </mat-card>
+
+              <div class="tile_div">
+                <span *ngIf="form.valid && !form.pristine" class="mat-label other-label pointer"
+                (click)="add()"><span class="material-icons" style="color: green;">check_circle</span></span>
+                <span *ngIf="!form.valid || form.pristine" class="mat-label other-label pointer"><span
+                class="material-icons" style="color: lightpink;">check_circle</span></span>
+                <span class="mat-label other-label pointer" (click)="cancel()"><span class="material-icons">cancel</span></span>
+                <div class="clear"></div>
+            </div>
+          </form>
+          </mat-card>
+      </div>
+  </div>
+
+  <div *ngIf="(isReadOnly) || (!isReadOnly && isWizard)">
+    <mat-card *ngIf="productOption && productOption.productOptionBillingIntegrations && productOption.productOptionBillingIntegrations.length > 0 && hideForm">
+      <h1>Billing Features</h1>
+      <label *ngIf="(!isReadOnly && isWizard)" class="mat-label other-label grey-lable-button"><i>Add new...</i>
+        <span class="mat-label other-label pointer" (click)="showForm()">
+          <span *ngIf="hideForm" class="material-icons">add_circle</span>
+          <span *ngIf="!hideForm" class="material-icons">remove_circle</span>
+        </span>
+      </label><br />
+
+        <div class="scrollTable">
+          <table class="altRowTable" style="width:100%;">
+            <tr>
+            <th>Industry Class</th>
+            <th>Allows Terms Arrangement</th>
+            <th>Accumulates Interest</th>
+            <th *ngIf="(!isReadOnly && isWizard)">Action</th>
+            </tr>
+            <tr *ngFor="let productOptionBillingIntegration of productOption.productOptionBillingIntegrations">
+            <td>{{getIndustryClass(productOptionBillingIntegration.industryClass)}}</td>
+            <td>{{productOptionBillingIntegration.allowTermsArrangement}}</td>
+            <td>{{productOptionBillingIntegration.accumulatesInterest}}</td>
+            <td *ngIf="!isReadOnly || (!isReadOnly && isWizard)"><a role="button" class="link-edit" (click)="delete(productOptionBillingIntegration)"><span class="material-icons icn">
+              delete
+            </span></a></td>
+            </tr>
+        </table>
+        </div>
+    </mat-card>
+</div>
+</div>
+  

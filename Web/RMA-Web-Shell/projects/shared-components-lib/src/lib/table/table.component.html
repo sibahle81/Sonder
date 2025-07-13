@@ -1,0 +1,38 @@
+<mat-table #table [dataSource]="dataSource" matSort *ngIf="pageMetaData">
+    <ng-container *ngFor="let colName of pageMetaData.displayColumns" matColumnDef="{{colName}}">
+      <div *ngIf="pageMetaData.columnsDef[colName]['sortable']; else nonSortable">
+        <mat-header-cell *matHeaderCellDef mat-sort-header>
+          {{pageMetaData.columnsDef[colName]['displayName'] || colName}}
+        </mat-header-cell>
+      </div>
+      <ng-template #nonSortable>
+        <mat-header-cell *matHeaderCellDef>
+          {{pageMetaData.columnsDef[colName]['displayName'] || colName}}
+        </mat-header-cell>
+      </ng-template>
+
+      <mat-cell *matCellDef="let row">
+        <div [ngSwitch]="pageMetaData.columnsDef[colName]['type']">
+          <div *ngSwitchCase="'currency'">{{row[colName] | currency: 'R' }}</div>
+          <div *ngSwitchCase="'float'">{{row[colName] | number : '1.2-2' }}</div>
+          <div *ngSwitchCase="'percent'">{{row[colName] / 100 |percent }}</div>
+          <div *ngSwitchCase="'date'">{{row[colName] | date: 'yyyy/MM/dd'}}</div>
+          <div *ngSwitchCase="'action'">
+            <div [matMenuTriggerFor]="menu">
+              <span class="material-icons pointer">more_vert</span>
+              <mat-menu #menu="matMenu">
+                <ng-container *ngFor="let menu of pageMetaData.columnsDef[colName]['menus']">
+                  <button *ngIf="!menu.disable" mat-menu-item (click)="onMenuItemClick(row, menu)">{{menu.title}}</button>
+                </ng-container>
+              </mat-menu>
+            </div>
+
+          </div>
+          <div *ngSwitchDefault>{{row[colName]}}</div>
+        </div>
+      </mat-cell>
+    </ng-container>
+
+    <mat-header-row *matHeaderRowDef="pageMetaData.displayColumns"></mat-header-row>
+    <mat-row *matRowDef="let row; columns: pageMetaData.displayColumns;"></mat-row>
+  </mat-table>

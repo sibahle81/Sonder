@@ -1,0 +1,159 @@
+<mat-card *ngIf="isLoading$ | async">
+  <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+  <label class="mat-label other-label"><i>loading policy details...please wait</i></label>
+</mat-card>
+
+<div *ngIf="!(isLoading$ | async) && policy">
+  <div class="menu-bar">
+    <span class="material-icons">
+      folder
+    </span>
+    Details
+    <span *ngIf="userHasPermission(auditPermission)" (click)="openAuditDialog(policy)"
+      class="material-icons pointer right" matTooltip="view audit details">
+      fingerprint
+    </span>
+  </div>
+
+  <div class="flex-parent-element">
+    <div class="flex-child-element">
+      <table class="altRowTable">
+        <tr *ngIf="policy.policyNumber">
+          <td><b>Policy Number: </b></td>
+          <td>{{policy.policyNumber}}</td>
+        </tr>
+        <tr *ngIf="policy.productOption && policy.productOption.name">
+          <td><b>Product Option: </b></td>
+          <td>{{policy.productOption.name}}</td>
+        </tr>
+        <tr *ngIf="policy.policyStatus">
+          <td><b>Policy Status: </b></td>
+          <td>{{getPolicyStatus(policy.policyStatus)}}</td>
+        </tr>
+        <tr *ngIf="policy.policyInceptionDate">
+          <td><b>Inception Date: </b></td>
+          <td>{{policy.policyInceptionDate | date: 'yyyy-MM-dd' }}</td>
+        </tr>
+        <tr *ngIf="policy.expiryDate">
+          <td><b>Expiry Date: </b></td>
+          <td>{{policy.expiryDate | date: 'yyyy-MM-dd' }}</td>
+        </tr>
+        <tr *ngIf="isFuneral">
+          <td><b>Europe Assist?: </b></td>
+          <td>{{policy.isEuropAssist ? 'Yes' : 'No'}}</td>
+        </tr>
+        <tr *ngIf="policy.clientReference">
+          <td><b>Client Reference: </b></td>
+          <td>{{policy.clientReference}}</td>
+        </tr>
+        <tr *ngIf="policy.insurerId">
+          <td><b>Insurer: </b></td>
+          <td>{{getInsurer(policy.insurerId)}}</td>
+        </tr>
+        <tr *ngIf="policy.brokerageId">
+          <td><b>Brokerage: </b></td>
+          <td><brokerage-view-v2 [brokerageId]="policy.brokerageId"></brokerage-view-v2></td>
+        </tr>
+        <tr *ngIf="policy.representativeId">
+          <td><b>Representative: </b></td>
+          <td><representative-view-v2 [representativeId]="policy.representativeId"></representative-view-v2></td>
+        </tr>
+      </table>
+    </div>
+
+    <div class="flex-child-element">
+      <table class="altRowTable">
+        <tr *ngIf="policy.paymentFrequencyId">
+          <td><b>Payment Frequency: </b></td>
+          <td>{{getPaymentFrequency(policy.paymentFrequencyId)}}</td>
+        </tr>
+        <tr *ngIf="policy.paymentMethodId">
+          <td><b>Payment Method: </b></td>
+          <td>{{getPaymentMethod(policy.paymentMethodId)}}</td>
+        </tr>
+        <tr *ngIf="isFuneral && policy.regularInstallmentDayOfMonth">
+          <td><b>Regular Installment Day: </b></td>
+          <td>{{policy.regularInstallmentDayOfMonth}}</td>
+        </tr>
+        <tr *ngIf="isFuneral && policy.decemberInstallmentDayOfMonth">
+          <td><b>December Installment Day: </b></td>
+          <td>{{policy.decemberInstallmentDayOfMonth}}</td>
+        </tr>
+        <tr *ngIf="isFuneral && policy.installmentPremium ">
+          <td><b>Installment Premium: </b></td>
+          <td>{{policy.installmentPremium | number: '1.2-2' }}</td>
+        </tr>
+        <tr *ngIf="policy.annualPremium">
+          <td><b>Annual Premium: </b></td>
+          <td>{{policy.annualPremium | number: '1.2-2' }}</td>
+        </tr>
+        <tr *ngIf="isFuneral && policy.firstInstallmentDate">
+          <td><b>First Installment Date: </b></td>
+          <td>{{policy.firstInstallmentDate | date: 'yyyy-MM-dd' }}</td>
+        </tr>
+        <tr *ngIf="isFuneral && policy.lastInstallmentDate">
+          <td><b>Last Installment Date: </b></td>
+          <td>{{policy.lastInstallmentDate | date: 'yyyy-MM-dd' }}</td>
+        </tr>
+      </table>
+    </div>
+
+    <div class="flex-child-element">
+      <table class="altRowTable">
+        <tr *ngIf="policy.cancellationInitiatedDate">
+          <td><b>Cancellation Initiation Date: </b></td>
+          <td>{{policy.cancellationInitiatedDate | date: 'yyyy-MM-dd' }}</td>
+        </tr>
+        <tr *ngIf="policy.cancellationInitiatedBy">
+          <td><b>Cancellation Initiation By: </b></td>
+          <td>{{policy.cancellationInitiatedBy}}</td>
+        </tr>
+        <tr *ngIf="policy.cancellationDate">
+          <td><b>Cancellation Date: </b></td>
+          <td>{{policy.cancellationDate | date: 'yyyy-MM-dd' }}</td>
+        </tr>
+        <tr *ngIf="policy.policyCancelReasonId">
+          <td><b>Cancellation Reason: </b></td>
+          <td>{{getCancelReason(policy.policyCancelReasonId)}}</td>
+        </tr>
+        <tr *ngIf="policy.lastLapsedDate">
+          <td><b>Last Lapsed Date: </b></td>
+          <td>{{policy.lastLapsedDate | date: 'yyyy-MM-dd' }}</td>
+        </tr>
+        <tr *ngIf="policy.lastReinstateDate">
+          <td><b>Last Reinstate Date: </b></td>
+          <td>{{policy.lastReinstateDate | date: 'yyyy-MM-dd' }}</td>
+        </tr>
+        <tr *ngIf="policy.reinstateReason">
+          <td><b>Reinstate Reason: </b></td>
+          <td>{{getReinstateReason(policy.reinstateReason)}}</td>
+        </tr>
+        <tr *ngIf="policy.policyPauseDate">
+          <td><b>Paused Date: </b></td>
+          <td>{{policy.policyPauseDate | date: 'yyyy-MM-dd' }}</td>
+        </tr>
+      </table>
+    </div>
+
+    <div class="flex-child-element">
+      <table class="altRowTable">
+        <tr *ngIf="policy.commissionPercentage">
+          <td><b>Commission Fee (%): </b></td>
+          <td>{{policy.commissionPercentage * 100}}%</td>
+        </tr>
+        <tr *ngIf="policy.adminPercentage">
+          <td><b>Intermediary Service Fee (%): </b></td>
+          <td>{{policy.adminPercentage * 100}}%</td>
+        </tr>
+        <tr *ngIf="policy.binderFeePercentage">
+          <td><b>Binder Fee (%): </b></td>
+          <td>{{policy.binderFeePercentage * 100}}%</td>
+        </tr>
+        <tr *ngIf="policy.premiumAdjustmentPercentage">
+          <td><b>Premium Adjustment (%): </b></td>
+          <td>{{policy.premiumAdjustmentPercentage * 100}}%</td>
+        </tr>
+      </table>
+    </div>
+  </div>
+</div>

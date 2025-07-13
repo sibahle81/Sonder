@@ -1,0 +1,39 @@
+<form [formGroup]="form" *ngIf="this.form">
+    <div class="mat-header">
+      <h1>Capture Treating Doctor Authorisation</h1>
+    </div>
+    <p>
+      <br />
+      <healthcareprovider-search [showTelephoneNumber]="false"></healthcareprovider-search>
+      <br />
+      <preauth-diagnosis></preauth-diagnosis>
+      <br />
+      <mat-form-field class="date-field mat-form-field-right" color="accent">
+        <label class="mat-label other-label mandatory-field">Date authorised from</label>
+        <input matInput [matDatepicker]="picker2" formControlName="dateAuthorisedFrom">
+        <mat-datepicker-toggle style=" position: absolute !important;right: 0 !important;top: 18px  !important;" matSuffix
+          [for]="picker2"></mat-datepicker-toggle>
+        <mat-datepicker #picker2></mat-datepicker>
+      </mat-form-field>
+      <mat-form-field class="date-field mat-form-field-right" color="accent">
+        <label class="mat-label other-label mandatory-field">Date authorised to</label>
+        <input matInput [matDatepicker]="picker3" formControlName="dateAuthorisedTo">
+        <mat-datepicker-toggle style=" position: absolute !important;right: 0 !important;top: 18px  !important;" matSuffix
+          [for]="picker3"></mat-datepicker-toggle>
+        <mat-datepicker #picker3></mat-datepicker>
+      </mat-form-field>
+      <br />
+      <mat-form-field class="mat-form-field-right">
+        <label class="mat-label other-label mandatory-field">Motivation</label>
+        <textarea matInput cdkTextareaAutosize cdkAutosizeMinRows="3" cdkAutosizeMaxRows="5"
+          formControlName="requestComments" class="mat-input-element" minlength="10"
+          maxlength="1000"></textarea>
+      </mat-form-field>
+      <br />
+      <preauth-breakdown preAuthBreakdownType="treatingDoctor"></preauth-breakdown>
+      <br />
+      <button type="button" title="Set Treating Doctor Details" class="button float-button submit-button import-button"
+        (click)="setTreatingDoctorDetails()">Set Treating Doctor Details</button>
+      <br /><br /><br />
+    </p>
+  </form>

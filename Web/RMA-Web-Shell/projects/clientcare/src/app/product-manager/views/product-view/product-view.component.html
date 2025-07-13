@@ -1,0 +1,41 @@
+<div *ngIf="isLoading" class="menu-container">
+    <div style="margin-right: 15px;">
+        <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+    </div>
+    <span style="color: grey">Loading...</span>
+</div>
+
+<div [hidden]="isLoading" style="padding-top: 15px;">
+    <mat-tab-group>
+        <mat-tab label="Product Details">
+            <product-details></product-details>
+        </mat-tab>
+
+        <mat-tab label="Product Rules">
+            <product-rules name="rules"></product-rules>
+        </mat-tab>
+
+        <mat-tab label="Notes">
+            <product-notes name="product"></product-notes>
+        </mat-tab>
+
+        <mat-tab label="Documents">
+            <product-documents></product-documents>
+        </mat-tab>
+
+        <mat-tab label="Audit Log">
+            <audit-log name="product"></audit-log>
+        </mat-tab>
+
+    </mat-tab-group>
+
+    <!--Buttons-->
+    <div class="form-group-button mat-form-button">
+        <div (click)="edit()" *ngIf="canEdit" class="form-buttons submit-button">
+            <button type="button" class="button float-button">Edit</button>
+        </div>
+        <div (click)="back()" class="form-buttons submit-button">
+            <button type="button" class="button float-button">Back</button>
+        </div>
+    </div>
+</div>

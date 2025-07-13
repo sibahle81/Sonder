@@ -1,0 +1,49 @@
+<mat-card *ngIf="(dataSource.loading$ | async)">
+    <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+    <label class="mat-label other-label"><i>{{loadingMessage$ | async}}</i></label>
+</mat-card>
+
+<div [hidden]="(dataSource.loading$ | async)">
+    <mat-card>
+        <div [hidden]="!(dataSource.data && dataSource.data.data && dataSource.data.data.length > 0)">
+            <mat-table #table [dataSource]="dataSource" matSort id="tblData" (matSortChange)="getData()">
+
+                <ng-container matColumnDef="user">
+                    <mat-header-cell *matHeaderCellDef mat-sort-header> User </mat-header-cell>
+                    <mat-cell *matCellDef="let row">
+                        {{row.userId}}
+                    </mat-cell>
+                </ng-container>
+
+                <ng-container matColumnDef="userConverted">
+                    <mat-header-cell *matHeaderCellDef> *User </mat-header-cell>
+                    <mat-cell *matCellDef="let row">
+                        <user-display-name [userId]="row.userId"></user-display-name>
+                    </mat-cell>
+                </ng-container>
+
+                <ng-container matColumnDef="action">
+                    <mat-header-cell *matHeaderCellDef mat-sort-header> Action </mat-header-cell>
+                    <mat-cell *matCellDef="let row">{{row.action}}</mat-cell>
+                </ng-container>
+
+                <ng-container matColumnDef="date">
+                    <mat-header-cell *matHeaderCellDef mat-sort-header> Date </mat-header-cell>
+                    <mat-cell *matCellDef="let row">{{row.actionDate | date : "yyyy-MM-dd H:mm:ss"}}</mat-cell>
+                </ng-container>
+
+                <mat-header-row *matHeaderRowDef="getDisplayedColumns()"></mat-header-row>
+                <mat-row *matRowDef="let row; columns: getDisplayedColumns();"></mat-row>
+            </mat-table>
+
+            <mat-paginator #paginator [pageIndex]="0" [pageSize]="5" [pageSizeOptions]="[5, 10, 25, 100]"
+                [length]="this.dataSource.rowCount$ | async" (page)="getData()">
+            </mat-paginator>
+        </div>
+
+        <div
+            *ngIf="!(dataSource.data && dataSource.data.data && dataSource.data.data.length > 0 || (dataSource.loading$ | async))">
+            <label class="mat-label other-label"><i>No activity found...</i></label>
+        </div>
+    </mat-card>
+</div>

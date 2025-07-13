@@ -1,0 +1,78 @@
+<div>
+  <h1>Upload My Value Plus Policies</h1>
+</div>
+<div>
+  <upload-control #uploadControl [acceptedTypes]="'.xlsx'" [isSingleInput]="true" [allowDelete]="true"
+    [isReadOnly]="false">
+  </upload-control>
+</div>
+<div class="pad-left pad-top" *ngIf="uploadControlComponent.uploadFileList.length > 0">
+  <br />
+  <div>Uploading large files may take several minutes. Please be patient.</div>
+  <div>The wizard task is created in the background, and should be available after a short time.</div>
+</div>
+<div class="pad-left" *ngIf="errorMessage.length > 0">
+  <br />
+  <div class="red">
+    <ng-container *ngFor="let msg of errorMessage">
+      {{msg}}<br />
+    </ng-container>
+  </div>
+</div>
+<div>
+  <form [formGroup]="form">
+    <section>
+      <div class="field-container">
+        <mat-radio-group class="vertical-group" formControlName="policyOption" (change)="policyOptionChange($event)">
+          <br />
+          <table>
+            <tr>
+              <td><mat-radio-button value="1">Create new policy</mat-radio-button></td>
+              <td>
+                <label [ngClass]="form.get('policyOption').value === '1' ? 'focus-notice' : 'notice'">
+                  Create a new policy, without updating any existing policies
+                </label>
+              </td>
+            </tr>
+            <tr>
+              <td><mat-radio-button value="2">Update default policy</mat-radio-button></td>
+              <td>
+                <label [ngClass]="form.get('policyOption').value === '2' ? 'focus-notice' : 'notice'">
+                  Update the first existing policy, or create a new policy if none exists
+                </label>
+              </td>
+            </tr>
+            <tr>
+              <td><mat-radio-button value="3">Update specified policy</mat-radio-button></td>
+              <td>
+                <input matInput class="policy-number" formControlName="policyNumber" name="policyNumber"
+                  id="policyNumber" />
+              </td>
+            </tr>
+            <tr *ngIf="form.get('policyNumber').invalid">
+              <td class="error-row">&nbsp;</td>
+              <td class="error-row">
+                <mat-error *ngIf="form.get('policyNumber').hasError('required')">
+                  Please enter an existing policy number
+                </mat-error>
+                <mat-error *ngIf="form.get('policyNumber').hasError('pattern')">
+                  Policy number format is incorrect
+                </mat-error>
+              </td>
+            </tr>
+            <tr>
+              <td colspan="2">&nbsp;</td>
+            </tr>
+            <tr>
+              <td>
+                <div class="form-buttons" (click)="save()">
+                  <button class="button float-button submit-button" [disabled]="disabled">Upload File</button>
+                </div>
+              </td>
+            </tr>
+          </table>
+        </mat-radio-group>
+      </div>
+    </section>
+  </form>
+</div>

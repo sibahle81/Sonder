@@ -1,0 +1,96 @@
+<form [formGroup]="form" novalidate>
+    <section class="datePickers">
+     <div>
+       <div><label class="mat-label other-label">Start Date</label></div>
+       <mat-form-field class="mat-form-field">
+         <input matInput [matDatepicker]="startDatePicker" date="true" time="false" formControlName="startDate"
+           [max]="startMaxDate" readonly (ngModelChange)="startDateChange()">
+         <mat-datepicker-toggle matSuffix class="picker-toggle" [for]="startDatePicker"></mat-datepicker-toggle>
+         <mat-datepicker #startDatePicker touchUi="true" ng-model-options="{ timezone: 'useUtc' }">
+         </mat-datepicker>
+       </mat-form-field>
+     </div>
+     <div>
+       <div class="endDate"><label class="mat-label other-label">End Date</label></div>
+       <mat-form-field class="mat-form-field endDate">
+         <input matInput [matDatepicker]="endDatePicker" date="true" time="false" formControlName="endDate"
+           [max]="endMaxDate" [min]="endMinDate" readonly (ngModelChange)="endDateChange()">
+         <mat-datepicker-toggle matSuffix class="picker-toggle" [for]="endDatePicker"></mat-datepicker-toggle>
+         <mat-datepicker #endDatePicker touchUi="true" ng-model-options="{ timezone: 'sast' }"></mat-datepicker>
+       </mat-form-field>
+     </div>
+     <div  class="endDate">
+       <mat-form-field class="mat-form-field">
+         <label class="mat-label other-label">Status</label>
+         <mat-select id="status" name="status" matInput formControlName="status"
+           (selectionChange)="selectedStatusChanged($event)">
+           <mat-option  value="0">
+             All
+           </mat-option>
+           <mat-option *ngFor="let status of statuses" [value]="status.id">
+             {{status.name}}
+           </mat-option>
+         </mat-select>
+       </mat-form-field>
+       <span *ngIf="isLoadingStatuses$ | async">
+         <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+         <label class="mat-label other-label"><i>loading Statuses...please wait</i></label>
+       </span>
+     </div>
+   </section>   
+   <section>
+     <div (click)="search()" class="form-buttons submit-button">
+       <button type="button" class="button float-button">Apply</button>
+     </div>
+   </section>
+   </form>
+   <br>
+   <div *ngIf="datasource.isLoading">
+     <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+     <label class="mat-label other-label"><i>loading...please wait</i></label>
+   </div>
+   <br>
+   <br>
+   <div  [hidden]="datasource.isLoading || datasource.data.length === 0" >
+           <mat-table #table [dataSource]="datasource" matSort>
+             <ng-container matColumnDef="fileName">
+               <mat-header-cell *matHeaderCellDef mat-sort-header>Filename</mat-header-cell>
+               <mat-cell *matCellDef="let row"> {{row.fileName}}</mat-cell>
+             </ng-container>
+             <ng-container matColumnDef="createdBy">
+               <mat-header-cell *matHeaderCellDef mat-sort-header>CreatedBy</mat-header-cell>
+               <mat-cell *matCellDef="let row"> {{row.createdBy}} </mat-cell>
+             </ng-container>
+             <ng-container matColumnDef="createdDate">
+               <mat-header-cell *matHeaderCellDef mat-sort-header>CreatedDate</mat-header-cell>
+               <mat-cell *matCellDef="let row"> {{row.createdDate | date:'yyyy/MM/dd'}} </mat-cell>
+             </ng-container>
+             <ng-container matColumnDef="status">
+               <mat-header-cell *matHeaderCellDef mat-sort-header>Processed Status</mat-header-cell>
+               <mat-cell *matCellDef="let row"> {{row.fileProcessingStatus}}
+               </mat-cell>
+             </ng-container>
+             <ng-container matColumnDef="actions">
+               <mat-header-cell *matHeaderCellDef>Exceptions</mat-header-cell>
+               <mat-cell  *matCellDef="let row" class="edit_item">
+                 <a role="button" class="link-edit" (click)="viewFileDetils(row.fileIdentifier)">view</a>
+                 <ng-template #noDetails>
+                   <span >&nbsp;</span>
+                 </ng-template>
+               </mat-cell>
+             </ng-container>
+             <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
+             <mat-row *matRowDef="let row; columns: displayedColumns;"></mat-row>
+           </mat-table>
+           <mat-paginator #paginator [length]="datasource.data ? datasource.data.length : 0" [pageIndex]="0" [pageSize]="5"
+           [pageSizeOptions]="[5, 10, 20, 50]">
+         </mat-paginator>
+         <div>
+           <button type="button" class="button float-button submit-button" (click)="back()">Back</button>
+         </div>
+       </div>
+       <div *ngIf="noData">
+         No data found...
+       </div>
+   
+   

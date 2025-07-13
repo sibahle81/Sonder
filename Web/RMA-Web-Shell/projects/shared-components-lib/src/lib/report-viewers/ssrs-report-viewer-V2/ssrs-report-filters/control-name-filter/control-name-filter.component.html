@@ -1,0 +1,18 @@
+<div>
+    <form [formGroup]="form" class="mat-container details-form" novalidate>
+        <section>
+            <span>
+                <mat-form-field class="mat-form-field">
+                    <label class="mat-label other-label">Control Name</label><br />
+                    <mat-select class="control" (selectionChange)="readForm()"
+                        formControlName="controlName" name="controlName" id="controlName">
+                        <mat-option [value]="'all'">All</mat-option>
+                        <mat-option *ngFor="let controlName of controlNames" [value]="controlName">
+                            {{formatLookup(controlName)}}
+                        </mat-option>
+                    </mat-select>
+                </mat-form-field>
+            </span>
+        </section>
+    </form>
+</div>

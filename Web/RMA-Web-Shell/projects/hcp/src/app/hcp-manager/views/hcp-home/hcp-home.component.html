@@ -1,0 +1,13 @@
+<mat-card *ngIf="!isContextReady() || (isLoading$ | async)">
+    <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+    <label class="mat-label other-label"><i>{{loadingMessage$ | async}}</i></label>
+</mat-card>
+
+<div *ngIf="isContextReady() && !(isLoading$ | async)">
+    <mat-tab-group animationDuration="500ms" [(selectedIndex)]="selectedTabIndex">
+        <mat-tab *ngIf="userHasPermission(HcpLogQueryPermission)" label="Query Invoice">
+            <hcp-query-invoice [rolePlayerId]="getSelectedHCPContext()" [hideMenuBar]="true" [expanded]="true"
+                [showMinimumDetails]="false"></hcp-query-invoice>
+        </mat-tab>
+    </mat-tab-group>
+</div>

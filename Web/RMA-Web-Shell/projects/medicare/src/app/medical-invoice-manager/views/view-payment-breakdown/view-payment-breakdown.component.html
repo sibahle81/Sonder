@@ -1,0 +1,201 @@
+<div class="margine-space">
+    <div class="mat-header">
+        <h1>View Payment Breakdown</h1>
+    </div>
+    <a mat-flat-button (click)="onNavigateBack()">
+        <mat-icon>arrow_back</mat-icon>
+        Back
+    </a>
+
+    <div *ngIf="isLoading$ | async">
+        <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+        loading please wait ...
+    </div>
+
+    <mat-card class="matCard">
+        <h1>Invoice Details</h1>
+        <br />
+        <div class="grid">
+            <div>
+                <span class="title">Claim Number</span>
+                <span class="value">{{ invoiceData.claimReferenceNumber }} </span>
+            </div>
+            <div>
+                <span class="title">Service Provider</span>
+                <span class="value">{{ invoiceData.healthCareProviderName }} </span>
+            </div>
+            <div>
+                <span class="title">Practice Number</span>
+                <span class="value">{{ invoiceData.practiceNumber }}</span>
+            </div>
+        </div>
+        <div class="grid">
+            <div>
+                <span class="title">Invoice Number</span>
+                <span class="value">{{invoiceData.invoiceNumber}}</span>
+            </div>
+            <div>
+                <span class="title">Invoice Date</span>
+                <span class="value">{{invoiceData.invoiceDate}}</span>
+            </div>
+            <div>
+                <span class="title">Total Invoiced</span>
+                <span class="value">{{invoiceData.invoiceAmount | currency:"R":"symbol":'1.2-2'}}</span>
+            </div>
+        </div>
+        <div class="grid">
+            <div>
+                <span class="title">Total Assessed</span>
+                <span class="value">{{invoiceData.authorisedAmount | currency:"R":"symbol":'1.2-2'}}</span>
+            </div>
+            <div>
+                <span class="title">Status</span>
+                <span class="value">{{ invoiceStatusEnum[invoiceData.invoiceStatus] }}</span>
+            </div>
+            <div>
+                <span class="title"></span>
+                <span class="value"> </span>
+            </div>
+        </div>
+    </mat-card>
+
+    <div *ngIf="allocationPaymentData$ | async as allocationPaymentData; else noAllocationOrPaymentDataYet">
+        <mat-card class="matCard" *ngIf="allocationPaymentData?.allocationId > 0 && isLoading(false); else noAllocationDataYet" >
+            <h1>Invoice Allocation Details</h1>
+            <br />
+            <div class="grid">
+                <div>
+                    <span class="title">ClaimReference</span>
+                    <span class="value">{{ allocationPaymentData?.payment?.claimReference }}</span>
+                </div>
+                <div>
+                    <span class="title">Payment Type</span>
+                    <span class="value">{{ PaymentTypeEnum[allocationPaymentData?.paymentType] }}</span>
+                </div>
+                <div>
+                    <span class="title">Payee</span>
+                    <span class="value">{{ allocationPaymentData?.payment?.payee }}</span>
+                </div>
+            </div>
+            <div class="grid">
+                <div>
+                    <span class="title">Client Type</span>
+                    <span class="value">{{ allocationPaymentData?.payment?.clientType }}</span>
+                </div>
+                <div>
+                    <!--logic for allocation will come later once discussions are finilized with the Fincare team-->
+                    <span class="title">%Alloc</span>
+                    <span class="value">100%</span>
+                </div>
+                <div>
+                    <span class="title">Assessed(Excl)</span>
+                    <span class="value">{{ allocationPaymentData?.assessedAmount | currency:"R":"symbol":'1.2-2'
+                        }}</span>
+                </div>
+            </div>
+
+            <div class="grid">
+                <div>
+                    <span class="title">Paid(Excl)</span>
+                    <span class="value">{{ allocationPaymentData?.payment?.amount | currency:"R":"symbol":'1.2-2'}}</span>
+                </div>
+                <div>
+                    <span class="title">Status</span>
+                    <span class="value">{{ PaymentAllocationStatusEnum[allocationPaymentData?.paymentAllocationStatus] }}</span>
+                </div>
+                <div>
+                    <span class="title"></span>
+                    <span class="value"> </span>
+                </div>
+            </div>
+        </mat-card>
+
+        <mat-card class="matCard" *ngIf="allocationPaymentData?.payment?.paymentId > 0 && isLoading(false); else noPaymentDataYet">
+            <h1>Payment Details</h1>
+            <br />
+            <span (click)="openRemittanceViewDialog(allocationPaymentData)" matTooltip="view remittance"
+                class="material-icons icn pointer icn-button" *ngIf="enableRemitanceView(allocationPaymentData?.payment?.paymentStatus)">
+                account_balance_wallet
+            </span>
+            <br />
+            <hr />
+            <div class="grid">
+                <div>
+                    <span class="title">Reference</span>
+                    <span class="value">{{ allocationPaymentData?.payment?.reference }}</span>
+                </div>
+                <div>
+                    <span class="title">Status</span>
+                    <span class="value">{{ PaymentStatusEnum[allocationPaymentData?.payment?.paymentStatus] }}</span>
+                </div>
+                <div>
+                    <span class="title">Recalled Date</span>
+                    <span class="value">{{ allocationPaymentData?.payment?.recalledDate }}</span>
+                </div>
+            </div>
+            <div class="grid">
+                <div>
+                    <span class="title">ClaimReference</span>
+                    <span class="value">{{ allocationPaymentData?.payment?.claimReference }}</span>
+                </div>
+                <div>
+                    <span class="title">Payee</span>
+                    <span class="value">{{ allocationPaymentData?.payment?.payee }}</span>
+                </div>
+                <div>
+                    <span class="title">Excl Amount</span>
+                    <span class="value">{{ allocationPaymentData?.payment?.amount | currency:"R":"symbol":'1.2-2'
+                        }}</span>
+                </div>
+            </div>
+            <div class="grid">
+                <div>
+                    <span class="title">AssessedVat</span>
+                    <span class="value">{{ allocationPaymentData?.assessedVat | currency:"R":"symbol":'1.2-2' }}</span>
+                </div>
+                <div>
+                    <span class="title"> Date Paid</span>
+                    <span class="value">{{ allocationPaymentData?.payment?.submissionDate }}</span>
+                </div>
+                <div>
+                    <span class="title"> #Period</span>
+                    <span class="value">{{ allocationPaymentData?.payment?.period }}</span>
+                </div>
+                <div>
+                    <span class="title"> ErrorCode</span>
+                    <span class="value">{{ allocationPaymentData?.payment?.errorCode }}</span>
+                </div>
+            </div>
+        </mat-card>
+    </div>
+    
+<div *ngIf="isLoading$ | async">
+    <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+    loading please wait ...
+</div>
+
+<ng-template #noAllocationOrPaymentDataYet>
+    <mat-card class="matCard">
+        <h5>Invoice has not been Allocated or Paid yet, data will be show once this has been done.</h5>
+    </mat-card>
+</ng-template>
+
+<ng-template #noAllocationDataYet>
+    <mat-card class="matCard">
+        <h5>Invoice has not been allocated yet, data will be show once this has been done.</h5>
+    </mat-card>
+</ng-template>
+
+<ng-template #noPaymentDataYet>
+    <mat-card class="matCard">
+        <h5>Invoice has not been Paid yet, data will be show once this has been done.</h5>
+    </mat-card>
+</ng-template>
+
+    <br />
+    <div class="clear">&nbsp;</div>
+    <div class="form-buttons submit-button">
+        <button type="button" class="button float-button" (click)="onNavigateBack()">Close</button>
+    </div>
+    <div class="clear">&nbsp;</div><br>
+</div>

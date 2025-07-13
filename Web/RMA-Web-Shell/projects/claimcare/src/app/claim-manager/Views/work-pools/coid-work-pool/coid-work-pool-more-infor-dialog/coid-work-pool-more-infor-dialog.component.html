@@ -1,0 +1,103 @@
+<div class="menu-bar">
+  <span class="material-icons">
+    info
+  </span>
+  More Information
+  <span class="material-icons pointer right" matTooltip="close" (click)="cancel()">
+    cancel
+  </span>
+</div>
+
+<mat-card *ngIf="(isLoading$ | async)">
+  <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+  <label class="mat-label other-label"><i>loading...please wait</i></label>
+</mat-card>
+
+<mat-card *ngIf="!(isLoading$ | async) && !personEvent">
+  <label class="mat-label other-label"><i>no information was available...</i></label>
+</mat-card>
+
+<mat-card *ngIf="!(isLoading$ | async) && personEvent">
+  <div class="scrollTable">
+    <table class="altRowTable">
+      <tr *ngIf="personEvent?.companyRolePlayerId" class="ChildData">
+        <td class="left"><b>Member Site:</b></td>
+        <td class="left"><role-player-display-name
+            [rolePlayerId]="personEvent.companyRolePlayerId"></role-player-display-name></td>
+      </tr>
+
+      <tr *ngIf="personEvent?.personEventReferenceNumber" class="ChildData">
+        <td class="left"><b>Person Event Number:</b></td>
+        <td class="left">{{personEvent.personEventReferenceNumber}}
+          <i>({{getPersonEventStatus(personEvent.personEventStatus)}})</i></td>
+      </tr>
+
+      <tr *ngIf="personEvent?.claims?.length > 0" class="ChildData">
+        <td class="left"><b>Claim Number(s):</b></td>
+        <td class="left-no-pad">
+          <ul>
+            <li *ngFor="let claim of personEvent.claims">
+              {{claim.claimReferenceNumber}} <i>({{getLiabilityStatus(claim.claimLiabilityStatus)}})</i>
+            </li>
+          </ul>
+        </td>
+      </tr>
+
+      <tr class="ChildData">
+        <td class="left"><b>Is Fatal:</b></td>
+        <td class="left">{{personEvent.isFatal ? 'Yes' : 'No'}}</td>
+      </tr>
+
+      <tr class="ChildData">
+        <td class="left"><b>Is STP:</b></td>
+        <td class="left">{{personEvent.isStraightThroughProcess ? 'Yes' : 'No'}}</td>
+      </tr>
+
+      <tr *ngIf="!personEvent.isStraightThroughProcess && personEvent?.personEventStpExitReasons?.length > 0"
+        class="ChildData">
+        <td class="left"><b>STP Exit Reasons:</b></td>
+        <td class="left-no-pad">
+          <ul>
+            <li *ngFor="let personEventStpExitReason of personEvent.personEventStpExitReasons">
+              {{personEventStpExitReason?.stpExitReason?.description ?
+              personEventStpExitReason.stpExitReason.description : "N/A"}}
+            </li>
+          </ul>
+        </td>
+      </tr>
+
+      <tr *ngIf="personEvent?.rolePlayer?.displayName" class="ChildData">
+        <td class="left"><b> Employee Name:</b></td>
+        <td class="left">{{personEvent.rolePlayer.displayName}}</td>
+      </tr>
+
+      <tr *ngIf="personEmployment?.employeeNumber" class="ChildData">
+        <td class="left"><b>Employee Number:</b></td>
+        <td class="left">{{personEmployment.employeeNumber}}</td>
+      </tr>
+
+      <tr *ngIf="personEvent?.rolePlayer?.person?.dateOfBirth" class="ChildData">
+        <td class="left"><b>Date of Birth:</b></td>
+        <td class="left">{{personEvent.rolePlayer.person.dateOfBirth | date:'yyyy-MM-dd'}}</td>
+      </tr>
+
+      <tr *ngIf="personEmployment?.employeeIndustryNumber" class="ChildData">
+        <td class="left"><b>Employee Industry Number:</b></td>
+        <td class="left">{{personEmployment.employeeIndustryNumber}}</td>
+      </tr>
+
+      <tr *ngIf="personEvent?.createdBy" class="ChildData">
+        <td class="left"><b>Created By:</b></td>
+        <td class="left">
+          <user-display-name [userName]="personEvent.createdBy"></user-display-name>
+        </td>
+      </tr>
+
+      <tr *ngIf="personEvent?.createdDate" class="ChildData">
+        <td class="left"><b>Created Date:</b></td>
+        <td class="left">{{personEvent.createdDate | date: "yyyy-MM-dd HH:mm:ss"}}</td>
+      </tr>
+
+    </table>
+  </div>
+</mat-card>

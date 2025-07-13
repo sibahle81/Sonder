@@ -1,0 +1,56 @@
+ <ng-container>
+       <div *ngIf="isLoading$ | async">
+        <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+        <label class="mat-label other-label"><i>Processing...Please wait</i></label>
+      </div>
+        <div [hidden]="paymentTrasanctions?.length == 0">
+            <table mat-table [dataSource]="paymentTrasanctions" class="mat-elevation-z8" >
+               <ng-container matColumnDef="select">
+                    <th mat-header-cell  *matHeaderCellDef></th>
+                    <td mat-cell *matCellDef="let element;let i = index">
+                        <mat-checkbox
+                             [formControl]="getControl(i,'isSelected')"
+                             [disable]="disblePaymentReversal(element)"
+                      ></mat-checkbox>
+                    </td>
+                  </ng-container>
+                <ng-container matColumnDef="createdDate">
+                  <th mat-header-cell *matHeaderCellDef> Created Date </th>
+                  <td mat-cell *matCellDef="let element"> {{element.createdDate| date:'yyyy-MM-dd HH:mm:ss'}} </td>
+                </ng-container>
+    
+                <ng-container matColumnDef="createdBy">
+                    <th mat-header-cell *matHeaderCellDef> Created By </th>
+                    <td mat-cell *matCellDef="let element"> {{element.createdBy}} </td>
+                  </ng-container>
+                
+              
+                <!-- Name Column -->
+                <ng-container matColumnDef="amount">
+                  <th mat-header-cell *matHeaderCellDef> Amount </th>
+                  <td mat-cell *matCellDef="let element"> {{element.amount | currency:'R'}} </td>
+                </ng-container>
+    
+                <ng-container matColumnDef="transactionType">
+                    <th mat-header-cell *matHeaderCellDef> Transaction Type </th>
+                    <td mat-cell *matCellDef="let element" [ngClass]="element.transactionTypeLinkId === 1 ? 'debit' : 'credit'"> {{element.transactionTypeLinkId === 1 ? 'Debit' : 'Credit'  }} </td>
+                  </ng-container>
+    
+                  <ng-container matColumnDef="reason">
+                    <th mat-header-cell *matHeaderCellDef> Transaction Reason </th>
+                    <td mat-cell *matCellDef="let element" > {{mapBillingAllocationType(element.billingAllocationType)}} </td>
+                  </ng-container>
+
+              
+                <!-- Weight Column -->
+           
+              
+                <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+                <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+              </table>
+              <div class="form-group-button mat-form-button action-buttons">
+                <button (click)="reversePayment()" class="button float-button">Reverse Payment(s)</button>
+              </div>
+        </div>
+       
+    </ng-container>

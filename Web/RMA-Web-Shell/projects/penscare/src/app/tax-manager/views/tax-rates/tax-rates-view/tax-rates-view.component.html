@@ -1,0 +1,43 @@
+
+<div class="menu-container">
+  <nav mat-tab-nav-bar>
+    <a mat-tab-link (click)="loadTaxRates()"> Tax rates </a>
+    <a mat-tab-link (click)="loadNotes()"> Notes </a>
+  </nav>
+  <div>
+    <app-tax-rates *ngIf="loadedTab === 'taxRates'"
+      (onSelectedYear)="onSelectedYear($event)"
+      [inputDataSource]="taxDataSource"
+      [inputSelectedTaxYear]="selectedTaxYear"
+      ></app-tax-rates>
+
+    <div *ngIf="loadedTab === 'notes'">
+      <app-penscare-notes *ngIf="taxResultsFound"
+        [dataSource]="notes"></app-penscare-notes>
+      <div [hidden]="taxResultsFound"
+        class="no-search-results-add-button">
+        <div class="site-font grey">
+          <p class="grey">No notes could be found tax year - <strong>{{selectedTaxYear}}</strong>.</p>
+        </div>
+      </div>
+    </div>
+
+    <div *ngIf="!loadedTab">
+      <mat-progress-bar mode="indeterminate" class="loading-main-single-menu-progress"></mat-progress-bar>
+      <p class="site-font grey">Searching...</p>
+    </div>
+  </div>
+
+  <mat-card-actions>
+    <div class="left-margin actions-container">
+      <div>
+        <button class="button submit-button" (click)="close()">Back to search</button>
+      </div>
+    </div>
+  </mat-card-actions>
+</div>
+
+
+
+
+

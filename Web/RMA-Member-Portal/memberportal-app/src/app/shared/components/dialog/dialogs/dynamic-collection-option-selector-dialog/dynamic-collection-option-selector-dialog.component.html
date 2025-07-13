@@ -1,0 +1,25 @@
+<div class="menu-bar">
+  <span class="material-icons">flaky</span>
+  {{title}}
+  <span (click)="cancel()" class="material-icons pointer right" matTooltip="close">
+    close
+  </span>
+  <span (click)="confirm()" class="material-icons pointer right pulseBlue" matTooltip="confirm">
+    check_circle
+  </span>
+</div>
+
+<mat-card *ngIf="options && options.length > 0">
+  <mat-select>
+    <label class="mat-label other-label mandatory-field">{{text}}</label>
+    <mat-option *ngFor="let option of options" [value]="option">
+      {{option.value}}
+    </mat-option>
+  </mat-select>
+</mat-card>
+
+<mat-card *ngIf="!options || options.length <= 0">
+  <mat-select>
+    <mat-option *ngFor="let option of options" [value]="product.id">{{product.name}}</mat-option>
+  </mat-select>
+</mat-card>

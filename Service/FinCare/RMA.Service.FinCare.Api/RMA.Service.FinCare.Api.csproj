@@ -1,0 +1,64 @@
+﻿<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <PropertyGroup>
+    <TargetFramework>net472</TargetFramework>
+    <IsServiceFabricServiceProject>True</IsServiceFabricServiceProject>
+    <ServerGarbageCollection>True</ServerGarbageCollection>
+    <RuntimeIdentifier>win7-x64</RuntimeIdentifier>
+    <Platforms>x64;AnyCPU</Platforms>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
+    <CodeAnalysisRuleSet>..\..\..\Solution Items\RMA.ruleset</CodeAnalysisRuleSet>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <CodeAnalysisRuleSet>..\..\..\Solution Items\RMA.ruleset</CodeAnalysisRuleSet>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+    <CodeAnalysisRuleSet>..\..\..\Solution Items\RMA.ruleset</CodeAnalysisRuleSet>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <CodeAnalysisRuleSet>..\..\..\Solution Items\RMA.ruleset</CodeAnalysisRuleSet>
+  </PropertyGroup>
+  
+  <ItemGroup>
+    <PackageReference Include="Autofac.Extensions.DependencyInjection" Version="4.4.0" />
+    <PackageReference Include="Microsoft.AspNetCore" Version="2.2.0" />
+    <PackageReference Include="Microsoft.AspNetCore.StaticFiles" Version="2.2.0" />
+    <PackageReference Include="Microsoft.CodeAnalysis.FxCopAnalyzers" Version="3.3.2">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+    <PackageReference Include="Microsoft.DependencyValidation.Analyzers" Version="0.11.0" />
+    <PackageReference Include="Microsoft.VisualStudio.Threading.Analyzers" Version="16.3.52" />
+    <PackageReference Include="Microsoft.VisualStudio.Web.BrowserLink" Version="2.2.0" />
+    <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="2.2.4" />
+    <PackageReference Include="Roslynator.Analyzers" Version="2.1.0">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\Common\RMA.Common.Service\RMA.Common.Service.csproj" />
+    <ProjectReference Include="..\..\..\Common\RMA.Common.Web\RMA.Common.Web.csproj" />
+    <ProjectReference Include="..\..\Admin\RMA.Service.Admin.MasterDataManager.Contracts\RMA.Service.Admin.MasterDataManager.Contracts.csproj" />
+    <ProjectReference Include="..\RMA.Service.FinCare.Contracts\RMA.Service.FinCare.Contracts.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <AdditionalFiles Include="..\..\..\Solution Items\RMA.DependencyValidation\ServicePlatform.layerdiagram">
+      <Link>ServicePlatform.layerdiagram</Link>
+      <Visible>False</Visible>
+    </AdditionalFiles>
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="..\..\..\Solution Items\RMA.DependencyValidation\ServicePlatform.layerdiagram.layout" Link="ServicePlatform.layerdiagram.layout" />
+    <None Include="..\..\..\Solution Items\RMA.DependencyValidation\ServicePlatform.layerdiagram.suppressions" Link="ServicePlatform.layerdiagram.suppressions" />
+  </ItemGroup>
+  
+</Project>

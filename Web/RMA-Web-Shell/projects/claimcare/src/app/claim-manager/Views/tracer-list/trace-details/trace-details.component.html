@@ -1,0 +1,33 @@
+<form [formGroup]="form" (ngSubmit)="onClick()" class="mat-container" class="form">
+  <mat-card-title class="wizard-font card-title grey">
+    <h1 style="padding: 0;">Trace Details</h1>
+  </mat-card-title>
+  <br />
+  <mat-form-field>
+    <label class="mat-label other-label">Date</label>
+    <input readonly matInput  date="true" time="false" (dateChange)="checkValidity()"
+      formControlName="date" [matDatepicker]="date" id="date" name="date" />
+    <mat-datepicker-toggle matSuffix style="position: absolute;right: 0;top: 13px;" [for]="date">
+    </mat-datepicker-toggle>
+    <mat-datepicker touchUi="true" #date></mat-datepicker>
+    <mat-error *ngIf="form.get('date').hasError('required')">
+      Date is <strong>required</strong>
+    </mat-error>
+  </mat-form-field>
+  <mat-form-field class="mat-form-field-right">
+    <label>Amount</label>
+    <input matInput maxlength="50" formControlName="amount" (change)="checkValidity()" name="amount" id="amount" type="text" DecimalNumber="true">
+    <mat-error *ngIf="form.get('amount').hasError('required')">
+      Amount is<strong>required</strong>
+    </mat-error>
+    <label *ngIf="message != ''" style="font-size: x-small; color: red">{{message}}</label>
+  </mat-form-field>
+  <div class="form-group-button mat-form-button">
+    <div class="form-buttons" (click)="onClick()">
+      <button class="button float-button submit-button" [disabled]="!formIsValid">Submit</button>
+    </div>
+    <div class="form-buttons submit-button">
+      <button type="button" (click)="close()" class="button float-button">Cancel</button>
+    </div>
+  </div>
+</form>

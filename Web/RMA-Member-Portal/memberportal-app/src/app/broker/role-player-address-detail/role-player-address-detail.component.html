@@ -1,0 +1,224 @@
+<mat-card class="container-margin">
+  <mat-card-content style="margin-left: 10px;">
+    <div [hidden]="activeSection !== 'showAddresses'">
+      <mat-card-content>
+        <div *ngIf="(isLoading$ | async)">
+          <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+        </div>
+        <div [hidden]="dataSource.data.length > 0">
+          <span class="grey site-font">No role player addresses have been added.</span>
+        </div>
+        <div [hidden]="dataSource.data.length === 0">
+          <mat-table #table [dataSource]="dataSource" matSort>
+            <!-- active -->
+            <ng-container matColumnDef="active">
+              <mat-header-cell *matHeaderCellDef mat-sort-header>Active</mat-header-cell>
+              <mat-cell *matCellDef="let row">
+                <mat-checkbox [checked]="row.active" disabled></mat-checkbox>
+              </mat-cell>
+            </ng-container>
+            <!-- addressType -->
+            <ng-container matColumnDef="addressType">
+              <mat-header-cell *matHeaderCellDef mat-sort-header> Type </mat-header-cell>
+              <mat-cell *matCellDef="let row">{{getType(row.addressType)}}</mat-cell>
+            </ng-container>
+            <!-- addressLine1 -->
+            <ng-container matColumnDef="addressLine1">
+              <mat-header-cell *matHeaderCellDef mat-sort-header> Line 1 </mat-header-cell>
+              <mat-cell *matCellDef="let row">{{row.addressLine1}}</mat-cell>
+            </ng-container>
+            <!-- addressLine2 -->
+            <ng-container matColumnDef="addressLine2">
+              <mat-header-cell *matHeaderCellDef mat-sort-header> Line 2 </mat-header-cell>
+              <mat-cell *matCellDef="let row">{{row.addressLine2}}</mat-cell>
+            </ng-container>
+            <ng-container matColumnDef="city">
+              <mat-header-cell *matHeaderCellDef mat-sort-header> City </mat-header-cell>
+              <mat-cell *matCellDef="let row"> {{row.city}} </mat-cell>
+            </ng-container>
+            <ng-container matColumnDef="province">
+              <mat-header-cell *matHeaderCellDef mat-sort-header> Province </mat-header-cell>
+              <mat-cell *matCellDef="let row"> {{row.province}} </mat-cell>
+            </ng-container>
+            <ng-container matColumnDef="postalCode">
+              <mat-header-cell *matHeaderCellDef mat-sort-header> Postal Code </mat-header-cell>
+              <mat-cell *matCellDef="let row"> {{row.postalCode}} </mat-cell>
+            </ng-container>
+            <ng-container matColumnDef="effectiveDate">
+              <mat-header-cell *matHeaderCellDef mat-sort-header>Effective Date</mat-header-cell>
+              <mat-cell *matCellDef="let row"> {{ row.effectiveDate | date:'yyyy/MM/dd'}} </mat-cell>
+            </ng-container>
+            <mat-header-row *matHeaderRowDef="getDisplayedColumns()"></mat-header-row>
+            <mat-row *matRowDef="let row; columns: getDisplayedColumns();"></mat-row>
+          </mat-table>
+          <mat-paginator #paginator [length]="dataSource.data ? dataSource.data.length : 0" [pageIndex]="0"
+            [pageSize]="5" [pageSizeOptions]="[5, 10]">
+          </mat-paginator>
+        </div>
+        <div class="btn" *ngIf="dataSource.data.length === 0">
+          <button (click)="showAddAddress()" class="button">Add</button>
+        </div>
+        <div class="btn" *ngIf="dataSource.data.length !== 0">
+          <button (click)="editAddresses()" class="button">Edit</button>
+        </div>
+      </mat-card-content>
+    </div>
+    <div *ngIf="(isLoading$ | async)">
+      <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+      <span *ngIf="(isLoading$ | async)" class="site-font grey" style="margin-top: 15px;"><i>{{statusMsg}}</i></span>
+    </div>
+    <div class="form-group row" [hidden]="activeSection !== 'addAddress'">
+      <div class="col-lg-3">
+        <form [formGroup]="streetAddressForm" novalidate>
+          <h1 class="wizard-font" style="padding: 0;">Physical Address</h1>
+          <br />
+          <span></span>
+          <br />
+          <!--Line1-->
+          <mat-form-field class="fromFieldInput">
+            <label class="mat-label other-label mandatory-field"> Line 1</label>
+            <input #line1 maxlength="50" matInput id="line1" name="line1" formControlName="line1">
+            <mat-hint align="end">{{line1.value?.length || 0}}/50</mat-hint>
+            <mat-error *ngIf="streetAddressForm.get('line1').hasError('required')">
+              Address Line 1 is <strong>required</strong>
+            </mat-error>
+          </mat-form-field>
+          <br />
+          <!--Line2-->
+          <mat-form-field class="fromFieldInput">
+            <label class="mat-label other-label"> Line 2</label>
+            <input #line2 maxlength="50" matInput id="line2" name="line2" formControlName="line2">
+            <mat-hint align="end">{{line2.value?.length || 0}}/50</mat-hint>
+          </mat-form-field>
+          <br />
+          <!--City-->
+          <mat-form-field class="fromFieldInput">
+            <label class="mat-label other-label mandatory-field">City</label>
+            <input matInput id="city" name="city" formControlName="city">
+            <mat-icon class="search-icon" (click)="addressDetails('p')" matSuffix>search</mat-icon>
+            <mat-error *ngIf="streetAddressForm.get('city').hasError('required')">
+              City is <strong>required</strong>
+            </mat-error>
+          </mat-form-field>
+          <br />
+          <!--Province-->
+          <mat-form-field class="fromFieldInput">
+            <label class="mat-label other-label">Province</label>
+            <input matInput id="province" name="province" formControlName="province">
+          </mat-form-field>
+          <br />
+          <!--PostalCode-->
+          <mat-form-field class="fromFieldInput">
+            <label class="mat-label other-label mandatory-field">Postal Code</label>
+            <input matInput id="postalCode" name="postalCode" minlength="4" maxlength="4" formControlName="postalCode"
+              NumberOnly>
+            <mat-error *ngIf="streetAddressForm.get('postalCode').hasError('required')">
+              Postal Code is <strong>required</strong>
+            </mat-error>
+            <mat-error *ngIf="streetAddressForm.get('postalCode').hasError('minlength')">
+              The postcode must be <strong>4 numbers</strong>
+            </mat-error>
+            <mat-error *ngIf="streetAddressForm.get('postalCode').hasError('maxlength')">
+              The postcode must be <strong>4 numbers</strong>
+            </mat-error>
+          </mat-form-field>
+          <br />
+          <!-- Effective Date -->
+          <mat-form-field class="fromFieldInput">
+            <label class="mat-label other-label mandatory-field">Effective Date</label>
+            <input matInput formControlName="effectiveDate" [matDatepicker]="effectiveDate" maxlength="10"
+              format="yyyy-MM-dd">
+            <mat-datepicker-toggle matSuffix class="date-icon" [for]="effectiveDate"></mat-datepicker-toggle>
+            <mat-datepicker touchUi="true" #effectiveDate></mat-datepicker>
+            <mat-error *ngIf="streetAddressForm.get('effectiveDate').hasError('required')">
+              Effective date is required
+            </mat-error>
+            <mat-error *ngIf="streetAddressForm.get('effectiveDate').hasError('minDateToday')">
+              Effective date cannot be in the past
+            </mat-error>
+          </mat-form-field>
+        </form>
+        <div class="form-group-button mat-form-button form-buttons submit-button" *ngIf="isWizard"
+          style="margin-bottom: 10px;">
+          <button class="button submit-button" (click)="addAddress()">Save</button>
+          <button class="button submit-button" (click)="showSection('showAddresses')">Cancel</button>
+        </div>
+      </div>
+      <div class="col-lg-3">
+        <h1 class="wizard-font">Postal Address</h1>
+        <mat-checkbox #c (click)="setPostalAddress(!c.checked)" [checked]="isChecked">
+          Same As Physical
+        </mat-checkbox>
+        <form [formGroup]="postalAddressForm" novalidate>
+          <br />
+          <!--Line1-->
+          <mat-form-field class="fromFieldInput">
+            <label class="mat-label other-label mandatory-field"> Line 1</label>
+            <input #line11 matInput id="postalLine1" name="postalLine1" formControlName="line1">
+            <mat-hint align="end">{{line11.value?.length || 0}}/50</mat-hint>
+            <mat-error *ngIf="postalAddressForm.get('line1').hasError('required')">
+              Address Line 1 is <strong>required</strong>
+            </mat-error>
+          </mat-form-field>
+          <br />
+          <!--Line2-->
+          <mat-form-field class="fromFieldInput">
+            <label class="mat-label other-label"> Line 2</label>
+            <input #line22 matInput id="postalLine2" name="postalLine2" formControlName="line2">
+            <mat-hint align="end">{{line22.value?.length || 0}}/50</mat-hint>
+          </mat-form-field>
+          <br />
+          <!--City-->
+          <mat-form-field class="fromFieldInput">
+            <label class="mat-label other-label mandatory-field">City</label>
+            <input matInput id="postalCity" name="postalCity" formControlName="city">
+            <mat-icon class="search-icon" (click)="addressDetails('postal')" matSuffix>search</mat-icon>
+            <mat-error *ngIf="postalAddressForm.get('city').hasError('required')">
+              City is <strong>required</strong>
+            </mat-error>
+          </mat-form-field>
+          <br />
+          <!--Province-->
+          <mat-form-field class="fromFieldInput">
+            <label class="mat-label other-label">Province</label>
+            <input matInput id="postalProvince" name="postalProvince" formControlName="province">
+          </mat-form-field>
+          <br />
+          <!--PostalCode-->
+          <mat-form-field class="fromFieldInput">
+            <label class="mat-label other-label mandatory-field">Postal Code</label>
+            <input matInput id="postalCode2" name="postalCode2" formControlName="postalCode" minlength="4" maxlength="4"
+              NumberOnly>
+            <mat-error *ngIf="postalAddressForm.get('postalCode').hasError('required')">
+              Postal Code is <strong>required</strong>
+            </mat-error>
+            <mat-error *ngIf="postalAddressForm.get('postalCode').hasError('maxlength')">
+              There is a limit of <strong>4 Numbers</strong> Postal Code
+            </mat-error>
+            <mat-error *ngIf="postalAddressForm.get('postalCode').hasError('minlength')">
+              The postcode must be <strong>4 Numbers</strong>
+            </mat-error>
+          </mat-form-field>
+          <br />
+          <!-- Effective Date -->
+          <mat-form-field class="fromFieldInput">
+            <label class="mat-label other-label mandatory-field">Effective Date</label>
+            <input matInput formControlName="effectiveDate" [matDatepicker]="postalEffectiveDate" maxlength="10"
+              format="yyyy-MM-dd">
+            <mat-datepicker-toggle class="date-icon" matSuffix [for]="postalEffectiveDate"></mat-datepicker-toggle>
+            <mat-datepicker touchUi="true" #postalEffectiveDate></mat-datepicker>
+            <mat-error *ngIf="postalAddressForm.get('effectiveDate').hasError('required')">
+              Effective date is required
+            </mat-error>
+            <mat-error *ngIf="postalAddressForm.get('effectiveDate').hasError('minDateToday')">
+              Effective date cannot be in the past
+            </mat-error>
+          </mat-form-field>
+        </form>
+      </div>
+
+    </div>
+    <br />
+  </mat-card-content>
+</mat-card>
+

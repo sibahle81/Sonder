@@ -1,0 +1,352 @@
+<mat-card *ngIf="!dataSource || (dataSource && dataSource.loading$ | async)">
+  <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+  <label class="mat-label other-label"><i>loading person events...please wait</i></label>
+</mat-card>
+
+<mat-card *ngIf="(isLoading$ | async)">
+  <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+  <label class="mat-label other-label"><i>{{loadingMessage$ | async}}</i></label>
+</mat-card>
+
+<div
+  [hidden]="(isLoading$ | async) || (dataSource.loading$ | async) || !(dataSource && dataSource.data && dataSource.data.data && dataSource.data.data.length > 0)">
+  <mat-card>
+    <div class="menu-bar">
+      <span class="material-icons">
+        groups
+      </span>&nbsp;Person Event(s)
+    </div>
+
+    <mat-table #table [dataSource]="dataSource" matSort id="tblData" (matSortChange)="getData()">
+
+      <ng-container matColumnDef="displayName">
+        <mat-header-cell *matHeaderCellDef mat-sort-header> Name </mat-header-cell>
+        <mat-cell *matCellDef="let row"><b>{{row.rolePlayer.displayName}}</b></mat-cell>
+      </ng-container>
+
+      <ng-container matColumnDef="idNumber">
+        <mat-header-cell *matHeaderCellDef> Identity / Passport </mat-header-cell>
+        <mat-cell *matCellDef="let row">{{row.rolePlayer.person.idNumber}}</mat-cell>
+      </ng-container>
+
+      <ng-container matColumnDef="personEventNumber">
+        <mat-header-cell *matHeaderCellDef mat-sort-header> PEV Reference Number </mat-header-cell>
+        <mat-cell *matCellDef="let row"><b>{{row.personEventReferenceNumber}}</b></mat-cell>
+      </ng-container>
+
+      <ng-container matColumnDef="personEventStatusId">
+        <mat-header-cell *matHeaderCellDef> PEV Status </mat-header-cell>
+        <mat-cell *matCellDef="let row">{{getPersonEventStatus(row.personEventStatus)}}</mat-cell>
+      </ng-container>
+
+      <ng-container matColumnDef="createdDate">
+        <mat-header-cell *matHeaderCellDef mat-sort-header> Created Date </mat-header-cell>
+        <mat-cell *matCellDef="let row">{{row.createdDate | date: "yyyy-MM-dd HH:mm:ss"}}</mat-cell>
+      </ng-container>
+
+      <ng-container matColumnDef="isStp">
+        <mat-header-cell *matHeaderCellDef> STP </mat-header-cell>
+        <mat-cell *matCellDef="let row">{{row.isStraightThroughProcess ? 'Yes' : 'No'}}</mat-cell>
+      </ng-container>
+
+      <ng-container matColumnDef="isStm">
+        <mat-header-cell *matHeaderCellDef> STM </mat-header-cell>
+        <mat-cell *matCellDef="let row">{{getSuspiciousTransactionStatus(row.suspiciousTransactionStatus)}}</mat-cell>
+      </ng-container>
+
+      <ng-container matColumnDef="isFatal">
+        <mat-header-cell *matHeaderCellDef> Fatal </mat-header-cell>
+        <mat-cell *matCellDef="let row">{{row.isFatal ? 'Yes' : 'No'}}</mat-cell>
+      </ng-container>
+
+      <ng-container matColumnDef="actions">
+        <mat-header-cell *matHeaderCellDef> Actions </mat-header-cell>
+        <mat-cell *matCellDef="let row">
+          <a (click)="showDetail(row)" *ngIf="row != selectedPersonEvent" role="button" class="link-edit">
+            <span matTooltip="view person event" class="material-icons icn pointer">
+              visibility
+            </span>
+          </a>
+
+          <holistic-vopd-icon *ngIf="currentUser?.isInternalUser" [rolePlayer]="row.rolePlayer"
+            [personEventId]="row.personEventId"></holistic-vopd-icon>
+
+          <span class="material-icons pointer right"
+            *ngIf="userHasPermission(viewAuditPermission) && currentUser?.isInternalUser"
+            (click)="openEmailAuditDialog(selectedPersonEvent)" matTooltip="view email audit">
+            email
+          </span>
+
+          <span class="material-icons pointer right"
+            *ngIf="userHasPermission(viewAuditPermission) && currentUser?.isInternalUser"
+            (click)="openSmsAuditDialog(selectedPersonEvent)" matTooltip="view sms audit">
+            phone_iphone
+          </span>
+
+          <span class="material-icons pointer right"
+            *ngIf="userHasPermission(viewAuditPermission) && currentUser?.isInternalUser" (click)="openAuditDialog(row)"
+            matTooltip="view audit">
+            fingerprint
+          </span>
+
+        </mat-cell>
+      </ng-container>
+
+      <mat-header-row *matHeaderRowDef="getDisplayedColumns()"></mat-header-row>
+      <mat-row *matRowDef="let row; columns: getDisplayedColumns();"
+        [ngClass]="{ 'highlight': row == selectedPersonEvent }"></mat-row>
+    </mat-table>
+
+    <mat-paginator #paginator [pageIndex]="0" [pageSize]="5" [pageSizeOptions]="[5, 10, 25, 100]"
+      [length]="dataSource && dataSource.rowCount$ | async" (page)="getData()">
+    </mat-paginator>
+  </mat-card>
+</div>
+
+<mat-card *ngIf="selectedPersonEvent && !(isLoading$ | async) && !(dataSource.loading$ | async)">
+
+  <div class="menu-bar">
+    <span class="material-icons">
+      person
+    </span>&nbsp;Person Event: ({{selectedPersonEvent.personEventReferenceNumber}})
+
+    <span *ngIf="isInternalUser()">
+      <span
+        *ngIf="(activeWizardsChecked$ | async) && !isInvestigationInProgress && !isComplianceReviewInProgress && !isClaimStatusClosed()"
+        class="material-icons pointer right" matTooltip='start investigation'
+        (click)="openConfirmationInvestigationDialog(selectedPersonEvent)">
+        gavel
+      </span>
+
+      <span
+        *ngIf="(userHasPermission(acknowledgeClaimPermission) || userHasPermission(cadPool)) && !selectedPersonEvent.isStraightThroughProcess && (selectedPersonEvent.personEventStatus != manuallyAcknowledged && selectedPersonEvent.personEventStatus != autoAcknowledged && selectedPersonEvent.personEventStatus != closed)"
+        class="material-icons pointer right pulse" matTooltip='acknowlege'
+        (click)="canAcknowledgePEV(selectedPersonEvent)">
+        call_split
+      </span>
+
+      <span
+        *ngIf="(userHasPermission(scaPermission)) && !selectedPersonEvent.isStraightThroughProcess && liabilityDecisionPending() && (selectedPersonEvent.personEventStatus == manuallyAcknowledged || selectedPersonEvent.personEventStatus == autoAcknowledged && selectedPersonEvent.personEventStatus != closed) && ((activeWizardsChecked$ | async) && !isInvestigationInProgress)"
+        class="material-icons pointer right pulse" matTooltip='unacknowlege'
+        (click)="canUnacknowledgePEV(selectedPersonEvent)">
+        call_merge
+      </span>
+
+      <span
+        *ngIf="!isComplianceReviewInProgress && selectedPersonEvent.claims?.length > 0 
+            && (userHasPermission(scaPermission) || userHasPermission(cmcPermission) || userHasPermission(ccaPermission) && isClaimEventTypeDisease()) && liabilityDecisionPending() && !isClaimStatusClosed() && ((activeWizardsChecked$ | async) && !isInvestigationInProgress)"
+        class="material-icons pointer right pulse" matTooltip="accept liability"
+        (click)="openAcceptLiabilityConfirmationDialog()">
+        thumb_up
+      </span>
+
+      <span
+        *ngIf="!isComplianceReviewInProgress && selectedPersonEvent.claims?.length > 0 
+            && (userHasPermission(scaPermission) || userHasPermission(cmcPermission) || userHasPermission(ccaPermission) && isClaimEventTypeDisease()) && liabilityDecisionPending() && !isClaimStatusClosed() && ((activeWizardsChecked$ | async) && !isInvestigationInProgress)"
+        class="material-icons pointer right pulse" matTooltip="reject liability"
+        (click)="openDeclineLiabilityConfirmationDialog()">
+        thumb_down
+      </span>
+
+      <span
+        *ngIf="!selectedPersonEvent.isFatal && selectedPersonEvent.claims?.length > 0 && userHasPermission(ccaPermission) && !liabilityDecisionPending() && verifyPdPercentagePending() && !isComplianceReviewInProgress && !isClaimStatusClosed() && ((activeWizardsChecked$ | async) && !isInvestigationInProgress)"
+        (click)="openVerifyPdPercentageConfirmationDialog()" class="material-icons pointer right"
+        matTooltip="verify pd percentage">
+        percent
+      </span>
+      <span *ngIf="selectedPersonEvent.claims?.length > 0 && userHasPermission(cmcPermission) && canSendToPensions()"
+        class="material-icons pointer right" matTooltip='send to pensions'
+        (click)="openSendToPensionDialog(selectedPersonEvent)">
+        output
+      </span>
+    </span>
+  </div>
+
+  <div class="margin-bottom" *ngIf="(isInvestigationInProgress || isComplianceReviewInProgress) && !isExternalPayrollUser()">
+    <label class="mat-label other-label">
+      <mat-card>
+        <span *ngIf="isInvestigationInProgress">
+          <span class="material-icons info">
+            info
+          </span>
+          active investigation in progress: liability decision, pd% verification, invoice capture and payment processing
+          will not be available until investigation is completed
+        </span>
+
+        <span *ngIf="isComplianceReviewInProgress">
+          <span class="material-icons info">
+            info
+          </span>
+          active compliance review in progress: liability decision to repudiate is under review
+        </span>
+      </mat-card>
+    </label>
+  </div>
+
+  <mat-tab-group animationDuration="500ms">
+    <mat-tab *ngIf="!isExternalPayrollUser()"
+      label="{{!selectedClaim ? 'Claims ('+ selectedPersonEvent.claims?.length +')' : 'Claim: ('+ selectedClaim.claimReferenceNumber +')'}}">
+      <mat-card *ngIf="!selectedClaim"
+        label="{{selectedPersonEvent.claims && selectedPersonEvent.claims.length > 0 ? 'Claims(' + selectedPersonEvent.claims.length + ')' : 'Claims(0)'}}">
+        <holistic-claim-details *ngIf="selectedPersonEvent.claims && selectedPersonEvent.claims.length > 0"
+          [personEvent]="selectedPersonEvent" (claimSelectedEmit)="setSelectedClaim($event)"
+          [triggerRefresh]="triggerRefresh"></holistic-claim-details>
+
+        <div *ngIf="!selectedPersonEvent.claims || selectedPersonEvent.claims.length <= 0">
+          <i>PEV has not been acknowledged...no claims have been created</i>
+        </div>
+      </mat-card>
+
+      <mat-card *ngIf="selectedClaim">
+        <div class="menu-bar">
+          <span class="material-icons">
+            monitor_heart
+          </span>&nbsp;Claim: ({{selectedClaim.claimReferenceNumber}})
+
+          <span class="material-icons pointer right pulse" matTooltip="back" (click)="resetClaim()">
+            arrow_back
+          </span>
+        </div>
+
+        <mat-tab-group *ngIf="selectedClaim" animationDuration="500ms" [(selectedIndex)]="selectedClaimTabIndex"
+        (selectedTabChange)="onTabChange()">
+          <mat-tab label="Estimates" *ngIf="currentUser?.isInternalUser">
+            <holistic-claim-estimates [event]="event" [personEvent]="selectedPersonEvent"
+              [claim]="selectedClaim"></holistic-claim-estimates>
+          </mat-tab>
+
+          <mat-tab *ngIf="isInternalUser()"
+            [disabled]="!((activeWizardsChecked$ | async) && !isInvestigationInProgress) || liabilityDecisionPending() || isClaimValueAddedProduct()"
+            label="Disability">
+            <claim-disability-container [personEvent]="selectedPersonEvent" [claim]="selectedClaim"
+              [triggerRefresh]="triggerRefresh"
+              (emitPensionerInterviewForm)="setPensionerInterview($event)"></claim-disability-container>
+          </mat-tab>
+
+          <mat-tab *ngIf="showPensionInterview()"
+            [disabled]="!((activeWizardsChecked$ | async) && !isInvestigationInProgress) || liabilityDecisionPending() || isClaimValueAddedProduct()"
+            label="Pension Interview">
+            <pensioner-interview-details [personEvent]="selectedPersonEvent"></pensioner-interview-details>
+          </mat-tab>
+
+          <mat-tab
+            [disabled]="!((activeWizardsChecked$ | async) && !isInvestigationInProgress) || liabilityDecisionPending() || isClaimValueAddedProduct()"
+            label="Invoices">
+            <claim-invoice-container [personEvent]="selectedPersonEvent"
+              [claim]="selectedClaim"></claim-invoice-container>
+          </mat-tab>
+
+          <mat-tab *ngIf="userHasPermission('ViewMedicalInvoice') && showMedicalInvoice"
+            [disabled]="!((activeWizardsChecked$ | async) && !isInvestigationInProgress) || liabilityDecisionPending() || isClaimValueAddedProduct()"
+            label="Medical Invoices">
+            <holistic-paged-medical-invoice [personEvent]="selectedPersonEvent"></holistic-paged-medical-invoice>
+          </mat-tab>
+
+          <mat-tab
+            [disabled]="!((activeWizardsChecked$ | async) && !isInvestigationInProgress) || liabilityDecisionPending() || isClaimValueAddedProduct()"
+            label="Authorisations">
+            <claim-authorisations-container [personEvent]="selectedPersonEvent"></claim-authorisations-container>
+          </mat-tab>
+
+          <mat-tab
+            [disabled]="!((activeWizardsChecked$ | async) && !isInvestigationInProgress) || liabilityDecisionPending()"
+            label="Payments">
+            <claim-payment-container [personEvent]="selectedPersonEvent"></claim-payment-container>
+          </mat-tab>
+        </mat-tab-group>
+      </mat-card>
+    </mat-tab>
+
+    <mat-tab label="Employee">
+      <holistic-person-details *ngIf="selectedPersonEvent && selectedPersonEvent.rolePlayer"
+        [personEvent]="selectedPersonEvent" [isReadOnly]="true" [mode]="mode"></holistic-person-details>
+    </mat-tab>
+
+    <mat-tab *ngIf="!isExternalPayrollUser()" label="{{eventTypeLabel}}">
+      <holistic-injury-details [personEvent]="selectedPersonEvent" [isReadOnly]="true" [eventType]="event.eventType"
+        [selectedTab]="selectedTab"></holistic-injury-details>
+    </mat-tab>
+
+    <mat-tab label="Employment">
+      <holistic-employment-details [personEvent]="selectedPersonEvent"
+        [isReadOnly]="true"></holistic-employment-details>
+    </mat-tab>
+
+    <mat-tab *ngIf="isExternalPayrollUser() || isInternalUser()" label="Earnings">
+      <app-list-earnings [personEvent]="selectedPersonEvent"
+        (refreshEmit)="refreshTabsEmit($event)"></app-list-earnings>
+    </mat-tab>
+
+    <mat-tab *ngIf="!isExternalPayrollUser()" label="Requirements">
+      <claim-requirements-v2 [personEvent]="selectedPersonEvent"></claim-requirements-v2>
+    </mat-tab>
+
+    <mat-tab *ngIf="!isExternalPayrollUser()" label="Medical Reports">
+      <holistic-medical-report-container [event]="event"
+        [personEvent]="selectedPersonEvent"></holistic-medical-report-container>
+    </mat-tab>
+
+    <mat-tab *ngIf="!isExternalPayrollUser()" label="Documents">
+      <document [systemName]="documentSystemName" [keyName]="'PersonEventId'"
+        [keyValue]="selectedPersonEvent.personEventId" [isReadOnly]="true">
+      </document>
+    </mat-tab>
+
+    <mat-tab *ngIf="!isExternalPayrollUser()" label="Beneficiaries">
+      <beneficiary-list [personEvent]="selectedPersonEvent" [isReadOnly]="true"></beneficiary-list>
+    </mat-tab>
+
+    <mat-tab *ngIf="isInternalUser()" label="Referrals">
+      <referral-view [targetModuleType]="targetModuleType" [referralItemType]="referralItemType"
+        [itemId]="selectedPersonEvent.personEventId"
+        [referralItemTypeReference]="referralItemTypeReference"></referral-view>
+    </mat-tab>
+
+    <mat-tab *ngIf="isInternalUser()" label="Letters & Templates">
+      <holistic-claim-template-reports [personEvent]="selectedPersonEvent"></holistic-claim-template-reports>
+    </mat-tab>
+
+    <mat-tab *ngIf="!isExternalPayrollUser()" label="Notes">
+      <common-notes [moduleType]="moduleType" [moduleTypesExternalUser]="moduleTypesExternalUser" [noteItemType]="noteItemType"
+        [itemId]="selectedPersonEvent.personEventId"></common-notes>
+    </mat-tab>
+
+    <mat-tab [disabled]="!isInternalUser()" label="Work Pool & Workflow Tracking">
+      <person-event-process-tracker [personEventId]="selectedPersonEvent.personEventId"
+        [triggerRefresh]="triggerRefresh" (activeWizardsEmit)="setActiveWizards($event)"></person-event-process-tracker>
+    </mat-tab>
+
+    <mat-tab label="SLA" *ngIf="isInternalUser()">
+      <mat-tab-group *ngIf="selectedPersonEvent && userHasPermission(viewSlaPermission)" animationDuration="500ms">
+        <mat-tab label="Acknowledgment">
+          <paged-sla-status-change-audits [slaItemType]="acknowlegmentSLA"
+            [currentQuery]="selectedPersonEvent.personEventId"></paged-sla-status-change-audits>
+        </mat-tab>
+        <mat-tab label="Liability Decision">
+          <mat-tab-group animationDuration="500ms">
+            <mat-tab label="COID"><paged-sla-status-change-audits [slaItemType]="coidLiabilitySLA"
+                [currentQuery]="selectedPersonEvent.personEventId"></paged-sla-status-change-audits></mat-tab>
+            <mat-tab label="Non-COID"><paged-sla-status-change-audits [slaItemType]="nonCoidLiabilitySLA"
+                [currentQuery]="selectedPersonEvent.personEventId"></paged-sla-status-change-audits></mat-tab>
+          </mat-tab-group>
+        </mat-tab>
+        <mat-tab label="Estimate Verification">
+          <paged-sla-status-change-audits [slaItemType]="estimatesSLA"
+            [currentQuery]="selectedPersonEvent.personEventId"></paged-sla-status-change-audits>
+        </mat-tab>
+        <mat-tab label="PD">
+          <mat-tab-group animationDuration="500ms">
+            <mat-tab label="Non-Zero PD">
+              <paged-sla-status-change-audits [slaItemType]="nonZeroPdSLA"
+                [currentQuery]="selectedPersonEvent.personEventId"></paged-sla-status-change-audits>
+            </mat-tab>
+            <mat-tab label="Zero PD">
+              <paged-sla-status-change-audits [slaItemType]="zeroPdSLA"
+                [currentQuery]="selectedPersonEvent.personEventId"></paged-sla-status-change-audits>
+            </mat-tab>
+          </mat-tab-group>
+        </mat-tab>
+      </mat-tab-group>
+    </mat-tab>
+  </mat-tab-group>
+</mat-card>

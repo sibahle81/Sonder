@@ -1,0 +1,39 @@
+<div class="page-header"></div>
+<div *ngIf="!canView">
+    <h1>Representative Address</h1>
+    <div style="padding-bottom: 15px; color: orange; font-family: 'Oswald', sans-serif;">
+        You do not have sufficient permissions view representatives.
+    </div>
+</div>
+<div [hidden]="!canEdit">
+    <mat-card class="container-margin">
+        <mat-card-content style="margin-left: 10px;">
+            <form [formGroup]="form" class="mat-container details-form" novalidate>
+                <section>
+                    <mat-form-field class="mat-form-field">
+                        <label class="mat-label other-label ">Physical Address 1</label>
+                        <input matInput formControlName="physicalAddress1" />
+                    </mat-form-field>
+                </section>
+                <section>
+                    <mat-form-field class="mat-form-field">
+                        <label class="mat-label other-label ">Physical Address 2</label>
+                        <input matInput formControlName="physicalAddress2" />
+                    </mat-form-field>
+                </section>
+                <section>
+                    <mat-form-field class="mat-form-field">
+                        <label class="mat-label other-label ">City</label>
+                        <input matInput formControlName="physicalAddressCity" />
+                    </mat-form-field>
+                </section>
+                <section>
+                    <mat-form-field class="mat-form-field">
+                        <label class="mat-label other-label ">Postal Code</label>
+                        <input matInput formControlName="physicalAddressCode" />
+                    </mat-form-field>
+                </section>
+            </form>
+        </mat-card-content>
+    </mat-card>
+</div>

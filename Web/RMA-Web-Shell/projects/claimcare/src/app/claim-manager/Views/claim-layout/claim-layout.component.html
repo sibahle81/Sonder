@@ -1,0 +1,27 @@
+<div>
+  <div *ngIf="isInternalUser">
+    <nav class="innertop-nav">
+      <button mat-button [routerLink]="['/claimcare/claim-manager']">Home</button>
+      <button mat-button [matMenuTriggerFor]="menu4">Claims</button>
+      <mat-menu #menu4="matMenu" [overlapTrigger]="false">
+        <button mat-menu-item [routerLink]="['add-funeral']">Register Funeral Claim</button>
+        <button *ngIf="showCoidMenuOptions" mat-menu-item [routerLink]="['search-claim-member/1']">Register Accident Claim</button>
+        <button *ngIf="showCoidMenuOptions" mat-menu-item [routerLink]="['search-claim-member/3']">Register Disease Claim</button>
+        <button mat-menu-item [routerLink]="['/claimcare/claim-manager/compcare-stp-messages']">CompCare STP Messages</button>
+        <button mat-menu-item [routerLink]="['claims-payment-recall']">Claims Payments Recall</button>
+        <button mat-menu-item [routerLink]="['add-funeral']">Register My Value Plus Claim</button>
+      </mat-menu> 
+      <button *ngIf="showCoidMenuOptions" mat-button [routerLink]="['/claimcare/claim-manager/employer-work-pool']">Work Pools</button>
+      <button mat-button [matMenuTriggerFor]="menu3">Search</button>
+      <mat-menu #menu3="matMenu" [overlapTrigger]="false">
+        <button mat-menu-item [routerLink]="['/claimcare/claim-manager/search']">Search Funeral Claim</button>
+        <button *ngIf="showCoidMenuOptions" mat-menu-item [routerLink]="['/claimcare/claim-manager/event-search']">Search Events</button>
+        <button mat-menu-item [routerLink]="['/claimcare/claim-manager/person-event-search']">Search Person Events</button>
+      </mat-menu>
+    </nav>
+  </div>
+  <div [hidden]="loadingMessage != null || error != null" class="container-padding">
+      <router-outlet></router-outlet>
+  </div>
+</div>
+

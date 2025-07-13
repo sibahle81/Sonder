@@ -1,0 +1,48 @@
+<div [hidden]="section !== 'add'">
+  <div class="note-section">
+    <textarea class="note-text" [formControl]="noteText" placeholder="Please enter a note"></textarea>
+    <mat-error *ngIf="noteText.touched && noteText.hasError('required')">
+      A note is required
+    </mat-error>
+    <mat-error *ngIf="noteText.touched && noteText.hasError('minlength')">
+      Note must be at least 10 characters long
+    </mat-error>
+  </div>
+  <div class="form-buttons">
+    <button class="button submit-button" (click)="showSection('list')">Back</button>
+    <button class="button submit-button" (click)="saveNote()">Save</button>
+  </div>
+</div>
+<div [hidden]="section !== 'list'">
+  <div *ngIf="!savingNote" class="add-button" (click)="showSection('add')">
+    <mat-icon>add_circle_outline</mat-icon>
+    <span class="add-text">Add note</span>
+  </div>
+  <div *ngIf="savingNote" class="progress-bar">
+    <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+    <span class="grey"><i>Saving note...</i></span>
+  </div>
+  <div>
+    <mat-table #table [(dataSource)]="notes">
+      <ng-container matColumnDef="user">
+        <mat-header-cell *matHeaderCellDef>User</mat-header-cell>
+        <mat-cell *matCellDef="let row">{{row.createdBy}}</mat-cell>
+      </ng-container>
+      <ng-container matColumnDef="date">
+        <mat-header-cell *matHeaderCellDef>Date</mat-header-cell>
+        <mat-cell *matCellDef="let row">{{row.createdDate | date:'yyyy-MM-dd HH:mm:ss'}}</mat-cell>
+      </ng-container>
+      <ng-container matColumnDef="note">
+        <mat-header-cell *matHeaderCellDef>Note</mat-header-cell>
+        <mat-cell *matCellDef="let row">{{row.text}}</mat-cell>
+      </ng-container>
+      <mat-header-row *matHeaderRowDef="displayColumns"></mat-header-row>
+      <mat-row *matRowDef="let row; columns: displayColumns;"></mat-row>
+    </mat-table>
+  </div>
+
+  <div class="form-buttons push-down">
+    <button class="button submit-button" (click)="closeDialog()">Back</button>
+  </div>
+
+</div>

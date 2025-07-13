@@ -1,0 +1,46 @@
+﻿<div class="notes-dialog-container">
+  <h1 mat-dialog-title>Notes</h1>
+  <div [hidden]="!(isLoading$ | async) && !loadingNotes">
+    <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+  </div>
+  <mat-dialog-content>
+    <div [hidden]="mode != 'view'">
+      <div [hidden]="(isLoading$ | async) || dataSource.data.length === 0">
+        <mat-table #table [dataSource]="dataSource" matSort>
+          <ng-container *ngFor="let column of columns" [matColumnDef]="column.columnDefinition">
+            <mat-header-cell mat-sort-header *matHeaderCellDef class="mat-header-cell">{{ column.header }}
+            </mat-header-cell>
+            <mat-cell *matCellDef="let row" class="mat-cell">{{ column.cell(row) }}</mat-cell>
+          </ng-container>
+          <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
+          <mat-row *matRowDef="let row; columns: displayedColumns;"></mat-row>
+        </mat-table>
+        <mat-paginator #paginator [length]="dataSource.data.length" [pageIndex]="0" [pageSize]="5"
+          [pageSizeOptions]="[5, 10, 25, 100]">
+        </mat-paginator>
+      </div>
+      <div [hidden]="(isLoading$ | async) || dataSource.data.length > 0">
+        <span class="grey site-font">No notes have been added to this item.</span>
+      </div>
+    </div>
+    <div [hidden]="mode != 'add' || loadingNotes">
+      <textarea [formControl]="noteMessage" class="text-box"></textarea>
+      <div [hidden]="!hasError">
+        <mat-error>
+          Note is required
+        </mat-error>
+      </div>
+    </div>
+  </mat-dialog-content>
+  <mat-dialog-actions>
+    <div [hidden]="mode === 'add'" (click)="addNote()" class="form-buttons submit-button">
+      <button type="button" class="button float-button">Add note</button>
+    </div>
+    <div [hidden]="mode === 'view'" (click)="saveNote()" class="form-buttons submit-button">
+      <button type="button" class="button float-button">Save note</button>
+    </div>
+    <div (click)="closeDialog()" class="form-buttons submit-button">
+      <button type="button" class="button float-button">Back</button>
+    </div>
+  </mat-dialog-actions>
+</div>

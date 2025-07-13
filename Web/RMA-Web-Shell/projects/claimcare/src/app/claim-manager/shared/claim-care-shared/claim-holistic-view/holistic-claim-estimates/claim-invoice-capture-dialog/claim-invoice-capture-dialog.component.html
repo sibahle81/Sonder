@@ -1,0 +1,80 @@
+<div class="menu-bar">
+  <span class="material-icons">
+    calculate
+  </span>
+  Capture Invoice <span *ngIf="claimEstimate">({{getEstimateType(claimEstimate.estimateType)}})</span>
+  <span (click)="close(false)" class="material-icons pointer right" matTooltip="close">
+    close
+  </span>
+  <span *ngIf="!(isLoading$ | async) && claimInvoices?.length > 0" (click)="save()" class="material-icons pointer right"
+    matTooltip="save">
+    save
+  </span>
+</div>
+
+<mat-card *ngIf="(isLoading$ | async)">
+  <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+  <label class="mat-label other-label"><i>loading...please wait</i></label>
+</mat-card>
+
+<mat-card *ngIf="!(isLoading$ | async)">
+  <label class="mat-label other-label">Claim Estimate Available Amount: <b>{{getOutstandingAmount()}}</b></label>
+  <span *ngIf="calculateOutstandingAmount() > 0">
+    <br />
+    <br />
+    <beneficiary-list (beneficiariesSelectedEmit)="setSelectedPayees($event)" [personEvent]="personEvent"
+      [isReadOnly]="isReadOnly" [allowSelection]="true" [title]="'Beneficiaries: Recipient (Payee)'"></beneficiary-list>
+  </span>
+</mat-card>
+
+<mat-card *ngIf="!(isLoading$ | async)">
+  <div *ngIf="claimInvoices?.length > 0">
+    <div class="menu-bar">
+      <span class="material-icons">
+        receipt_long
+      </span>
+      Invoice(s)
+    </div>
+
+    <div class="scrollTable">
+      <table class="altRowTable table">
+        <tr>
+          <th>Recipient (Payee)</th>
+          <th>Invoice Type</th>
+          <th>Split %</th>
+          <th>Amount</th>
+          <th>Bank Account Selected?</th>
+          <th>Action</th>
+        </tr>
+        <tr *ngFor="let claimInvoice of claimInvoices">
+          <td><b>{{claimInvoice.payee}}</b></td>
+          <td class="center">{{getInvoiceType(claimInvoice.claimInvoiceType)}}</td>
+          <td class="center">{{getSplit(claimInvoice)}}%</td>
+          <td class="center">{{formatAmount(claimInvoice.invoiceAmount)}}</td>
+          <td class="center"><b>{{claimInvoice.payeeRolePlayerBankAccountId ? 'Yes' : 'No'}}</b></td>
+          <td class="center">
+            <span *ngIf="!claimInvoice.payeeRolePlayerBankAccountId"
+              (click)="openBeneficiaryBankAccountDialog(claimInvoice)" class="material-icons pointer"
+              matTooltip="select bank account">
+              add_card
+            </span>
+            <span *ngIf="claimInvoice.payeeRolePlayerBankAccountId"
+              (click)="openBeneficiaryBankAccountDialog(claimInvoice)" class="material-icons pointer"
+              matTooltip="change bank account">
+              credit_score
+            </span>
+            <span *ngIf="claimInvoice.payeeRolePlayerBankAccountId" (click)="resetBeneficiaryBankAccount(claimInvoice)"
+              class="material-icons pointer" matTooltip="reset selected bank account">
+              undo
+            </span>
+          </td>
+        </tr>
+      </table>
+    </div>
+  </div>
+
+  <label *ngIf="calculateOutstandingAmount() <= 0" class="mat-label other-label"><i>estimated benefit award allocated in
+      full...no new invoices allowed</i></label>
+
+  <label *ngIf="calculateOutstandingAmount() > 0 && claimInvoices?.length <= 0" class="mat-label other-label"><i>please select at least one beneficiary to generate invoices</i></label>
+</mat-card>

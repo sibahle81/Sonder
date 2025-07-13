@@ -1,0 +1,108 @@
+<div>
+  <h1>Import Benefits</h1>
+</div>
+<div>
+  <upload-control #uploadControl [acceptedTypes]="'.xlsx'" [isSingleInput]="true" [allowDelete]="true"
+    [isReadOnly]="false">
+  </upload-control>
+</div>
+<form *ngIf="form" [formGroup]="form" class="mat-container details-form" novalidate>
+  <section>
+    <div class="field-container">
+      <mat-form-field>
+        <label class="mat-label other-label mandatory-field">Product</label>
+        <div [hidden]="isLoadingProducts">
+          <mat-select id="productId" name="productId" formControlName="productId">
+            <mat-option *ngFor="let product of products" [value]="product.id">
+              {{product.name}}
+            </mat-option>
+          </mat-select>
+        </div>
+        <mat-progress-bar *ngIf="isLoadingProducts" mode="indeterminate"></mat-progress-bar>
+        <mat-error *ngIf="form.get('productId').hasError('required') || form.get('productId').hasError('min')">
+          Product is required
+        </mat-error>
+      </mat-form-field>
+    </div>
+    <div class="field-container-right">
+      <mat-form-field>
+        <label class="mat-label other-label mandatory-field">Effective Date</label>
+        <input matInput formControlName="effectiveDate" id="effectiveDate" name="effectiveDate"
+          [matDatepicker]="effectiveDate">
+        <mat-datepicker-toggle matSuffix [for]="effectiveDate"></mat-datepicker-toggle>
+        <mat-datepicker touchUi="true" #effectiveDate></mat-datepicker>
+        <mat-error *ngIf="form.get('effectiveDate').hasError('required')">
+          Effective date is required
+        </mat-error>
+      </mat-form-field>
+    </div>
+  </section>
+  <section>
+    <mat-form-field class="mat-form-field">
+      <label class="mat-label other-label mandatory-field">Product Option Name</label>
+      <input matInput name="optionName" id="optionName" formControlName="optionName">
+      <mat-error *ngIf="form.get('optionName').hasError('required') || form.get('optionName').hasError('minlength')">
+        Product option name is required
+      </mat-error>
+    </mat-form-field>
+    <mat-form-field class="mat-form-field-right">
+      <label class="mat-label other-label mandatory-field">Option Cover Type</label>
+      <div [hidden]="isLoadingCoverTypes">
+        <mat-select id="coverTypeId" name="coverTypeId" formControlName="coverTypeId">
+          <mat-option *ngFor="let coverType of coverTypes" [value]="coverType.id">
+            {{coverType.name}}
+          </mat-option>
+        </mat-select>
+      </div>
+      <mat-progress-bar *ngIf="isLoadingCoverTypes" mode="indeterminate"></mat-progress-bar>
+      <mat-error *ngIf="form.get('coverTypeId').hasError('required') || form.get('coverTypeId').hasError('min')">
+        Cover type is required
+      </mat-error>
+    </mat-form-field>
+  </section>
+  <section>
+    <mat-form-field class="mat-form-field">
+      <label class="mat-label other-label mandatory-field">Benefit Name</label>
+      <input matInput name="benefitName" id="benefitName" formControlName="benefitName">
+      <mat-error *ngIf="form.get('benefitName').hasError('required') || form.get('benefitName').hasError('minlength')">
+        Benefit name is required
+      </mat-error>
+    </mat-form-field>
+  </section>
+  <section>
+    <mat-form-field class="mat-form-field">
+      <label class="mat-label other-label mandatory-field">Max Admin Fee Percentage</label>
+      <input matInput Percentage name="adminFee" id="adminFee" formControlName="adminFee" />
+      <mat-error *ngIf="form.get('adminFee').hasError('required')">
+        Admin fee percentage is required
+      </mat-error>
+    </mat-form-field>
+    <mat-form-field class="mat-form-field-right">
+      <label class="mat-label other-label mandatory-field">Max Commission Percentage</label>
+      <input matInput Percentage name="commission" id="commission" formControlName="commission" />
+      <mat-error *ngIf="form.get('commission').hasError('required')">
+        Commission percentage is required
+      </mat-error>
+    </mat-form-field>
+  </section>
+  <section>
+    <mat-form-field class="mat-form-field">
+      <label class="mat-label other-label mandatory-field">Max Binder Fee Percentage</label>
+      <input matInput Percentage name="binderFee" id="binderFee" formControlName="binderFee" />
+      <mat-error *ngIf="form.get('binderFee').hasError('required')">
+        Binder fee percentage is required
+      </mat-error>
+    </mat-form-field>
+    <mat-form-field class="mat-form-field-right">
+      <label class="mat-label other-label mandatory-field">Waiting Period (months)</label>
+      <input matInput name="waitingPeriod" id="waitingPeriod" formControlName="waitingPeriod" />
+      <mat-error *ngIf="form.get('waitingPeriod').hasError('required')">
+        Waiting period is required
+      </mat-error>
+    </mat-form-field>
+  </section>
+</form>
+<div class="form-buttons" (click)="save()">
+  <button class="button float-button submit-button"
+    [disabled]="disableForm || isLoadingProducts || uploadControlComponent.isUploading">Import Benefits</button>
+</div>

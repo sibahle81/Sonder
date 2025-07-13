@@ -1,0 +1,43 @@
+<!-- This view is for UnderAssessReasons displaye from InvoiceView &  InvoiceList-->
+<div *ngIf="checkIfFirstViewShow(); else switchBatchInvoiceView">
+    <mat-card>
+        <mat-form-field
+            *ngIf="invoiceUnderAssessReasons?.invoiceUnderAssessReasons.length > 0">
+            <div>
+                <div class="items-heading-center">
+                    <h1>Invoice UnderAssessReason:</h1>
+                    <mat-chip color="primary" selected>
+                        <h5> Invoice Status:{{this.invoiceStatusEnum[this.invoiceUnderAssessReasons?.invoiceStatus]}}</h5>
+                    </mat-chip>
+                </div><br>
+                <mat-chip-list class="chips-align">
+                    <mat-chip selected color="warn" *ngFor="let reasons of invoiceUnderAssessReasons?.invoiceUnderAssessReasons">
+                        {{ reasons.underAssessReason }} {{checkIfCommentExist(reasons)}}
+                    </mat-chip>
+                </mat-chip-list>
+            </div>
+        </mat-form-field>
+    </mat-card>
+</div>
+
+<!-- This view is for UnderAssessReasons displaye from switchBatchInvoiceView -->
+<ng-template #switchBatchInvoiceView>
+    <mat-card>
+        <mat-form-field
+            *ngIf="invoiceUnderAssessReasons?.medicalInvoiceUnderAssessReasons?.length > 0">
+            <div>
+                <div class="items-heading-center">
+                    <h1>Invoice UnderAssessReason:</h1>
+                    <mat-chip color="primary" selected>
+                        <h5> Invoice Status:{{this.invoiceUnderAssessReasons?.status}}</h5>
+                    </mat-chip>
+                </div><br>
+                <mat-chip-list class="chips-align">
+                    <mat-chip selected color="warn" *ngFor="let reasons of invoiceUnderAssessReasons?.medicalInvoiceUnderAssessReasons">
+                        {{ reasons.underAssessReason }}
+                    </mat-chip>
+                </mat-chip-list>
+            </div>
+        </mat-form-field>
+    </mat-card>
+</ng-template>

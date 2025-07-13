@@ -1,0 +1,147 @@
+<div >
+    <mat-card class="mainDiv">
+        <mat-card-content>
+            <div>
+                <form [formGroup]="claimantForm" (ngSubmit)="save()" class="mat-container" novalidate>
+                    <section>
+                        <div *ngIf="!readOnly">
+                            <!-- Claimant First Name -->
+                            <mat-form-field class="mat-form-field-right">
+                                <label>Name</label>
+                                <input matInput maxlength="50" formControlName="claimantFirstName"
+                                    name="claimantFirstName" id ="claimantFirstName" type="text">
+                                <mat-error *ngIf="claimantForm.get('claimantFirstName').hasError('required')">
+                                    First name is <strong>required</strong>
+                                </mat-error>
+                                <mat-error *ngIf="claimantForm.get('claimantFirstName').hasError('pattern')">
+                                    First name cannot be <strong>numeric</strong>
+                                </mat-error>
+                            </mat-form-field>
+                            <!-- Claimant Last Name -->
+                            <mat-form-field class="mat-form-field-right">
+                                <label>Surname</label>
+                                <input matInput maxlength="50" formControlName="claimantLastName" id="claimantLastName"
+                                    name="claimantLastName" type="text">
+                                <mat-error *ngIf="claimantForm.get('claimantLastName').hasError('required')">
+                                    Last name is <strong>required</strong>
+                                </mat-error>
+                                <mat-error *ngIf="claimantForm.get('claimantLastName').hasError('pattern')">
+                                    Last name cannot be <strong>numberic</strong>
+                                </mat-error>
+                            </mat-form-field>
+                        </div>
+                    </section>
+                    <section>
+                        <div *ngIf="!readOnly">
+                            <!-- Identity Number -->
+                            <mat-form-field class="mat-form-field-right">
+                                <label>ID/Passport Number</label>
+                                <input matInput maxlength="13" formControlName="claimantIdentityNumber" id="claimantIdentityNumber"
+                                    name="claimantIdentityNumber" (blur)="setDOB()">
+                                <mat-error *ngIf="claimantForm.get('claimantIdentityNumber').hasError('required')">
+                                    ID number is <strong>required</strong>
+                                </mat-error>
+                                <mat-error *ngIf="claimantForm.get('claimantIdentityNumber').hasError('pattern')">
+                                    ID number must be <strong>numeric</strong>
+                                </mat-error>
+                            </mat-form-field>
+
+                            <mat-form-field class="mat-form-field-right">
+                                <label>Date of Birth </label>
+                                <input readonly matInput [max]="maxDate" date="true" time="false"
+                                formControlName="claimantDOB"
+                                [matDatepicker]="claimantDOB" id="claimantDOB" name="claimantDOB"/>
+                            <mat-datepicker-toggle matSuffix style="position: absolute;right: 0;top: 13px;"
+                                [for]="claimantDOB"></mat-datepicker-toggle>
+                            <mat-datepicker touchUi="true" #claimantDOB></mat-datepicker>
+                                <mat-error *ngIf="claimantForm.get('claimantDOB').hasError('required')">
+                                    Date of birth is <strong>required</strong>
+                                </mat-error>
+                            </mat-form-field>
+                        </div>
+                    </section>
+                    <section>
+                        <div *ngIf="!readOnly">
+                            <mat-form-field class="mat-form-field-right">
+                                <label>Relation To The Deceased</label>
+                                <mat-select id="claimantRelation" name="claimantRelation" matInput
+                                    [(ngModel)]="selectedClaimantRelation" #relationSelect
+                                    [value]="selectedClaimantRelation"
+                                    (ngModelChange)="onSelectClaimantRelation(selectedClaimantRelation)"
+                                    formControlName="claimantRelation">
+                                    <mat-option *ngFor="let rolePlayerType of rolePlayerTypes" [value]="rolePlayerType">
+                                        {{rolePlayerType.name}}
+                                    </mat-option>
+                                </mat-select>
+
+                                <mat-error
+                                    *ngIf="relationSelect.errorState && claimantForm.get('claimantRelation').hasError('required')">
+                                    Relation is <strong>required</strong>
+                                </mat-error>
+                            </mat-form-field>
+                            <mat-form-field class="mat-form-field-right">
+                                <label class="mat-label other-label">Preffered Method Of Contact</label>
+                                <mat-select name="filter" id="filter" formControlName="communicationType"
+                                    #communicationSelect (selectionChange)="communicationTypeChanged($event)">
+                                    <mat-option [value]="1">Email</mat-option>
+                                    <mat-option [value]="2">Phone</mat-option>
+                                    <mat-option [value]="3">SMS</mat-option>
+                                    <mat-option [value]="4">Post</mat-option>
+                                </mat-select>
+                                <mat-error
+                                    *ngIf="communicationSelect.errorState && claimantForm.get('communicationType').hasError('required')">
+                                    Preferred method of communication is <strong>required</strong>
+                                </mat-error>
+                            </mat-form-field>
+
+                        </div>
+                    </section>
+                    <section>
+                        <div *ngIf="!readOnly">
+                            <mat-form-field class="mat-form-field-right">
+                                <label>Contact Number</label>
+                                <input matInput minlength="3" maxlength="10" formControlName="claimantMobileNumber"
+                                    name="claimantMobileNumber" id="claimantMobileNumber" NumberOnly>
+                                <mat-error *ngIf="claimantForm.get('claimantMobileNumber').hasError('required')">
+                                    Contact number is <strong>required</strong>
+                                </mat-error>
+                                <mat-error *ngIf="claimantForm.get('claimantMobileNumber').hasError('pattern')">
+                                    Contact number must be <strong>numeric</strong>
+                                </mat-error>
+                            </mat-form-field>
+                            <mat-form-field class="mat-form-field-right">
+                                <label class="mat-label other-label">Email</label>
+                                <input matInput maxlength="50" type="email" name="claimantEmail" id="claimantEmail"
+                                    formControlName="claimantEmail">
+                                <mat-error *ngIf="claimantForm.get('claimantEmail').hasError('required')">
+                                    Email is <strong>required</strong>
+                                </mat-error>
+                                <mat-error *ngIf="claimantForm.get('claimantEmail').hasError('email')">
+                                    Email must be a <strong>valid email address</strong>
+                                </mat-error>
+                            </mat-form-field>
+
+                        </div>
+                    </section>
+                    <section>
+                        <div class="emailCheckBox">
+                            <mat-checkbox id="emailBroker" name="emailBroker" formControlName="emailBroker"
+                                (change)="emailBroker($event)">
+                                <label class="mat-label other-label">Email Broker</label>
+                            </mat-checkbox>
+                        </div>
+                    </section>
+                </form>
+
+            </div>
+            <br />
+
+            <div *ngIf="strMeesage != ''" class="menu-container">
+                <div style="margin-right: 15px;">
+                    <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+                </div>
+                <label class="mat-label other-label"><i>{{strMeesage}}</i></label>
+            </div>
+        </mat-card-content>
+    </mat-card>
+</div>

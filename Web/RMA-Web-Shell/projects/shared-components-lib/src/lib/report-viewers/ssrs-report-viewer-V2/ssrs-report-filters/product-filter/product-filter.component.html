@@ -1,0 +1,25 @@
+<mat-card *ngIf="isLoading$ | async">
+    <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+    <label class="mat-label other-label"><i>loading products...please wait</i></label>
+</mat-card>
+
+<div *ngIf="!(isLoading$ | async)">
+    <form [formGroup]="form" class="mat-container details-form" novalidate>
+        <section>
+            <span>
+                <mat-form-field class="mat-form-field">
+                    <label class="mat-label other-label">Product</label><br />
+                    <mat-select class="control" (selectionChange)="readForm()"
+                        formControlName="product" name="product" id="product">
+                        <mat-option [value]="'all'">All</mat-option>
+                        <mat-option *ngFor="let product of products" [value]="product">
+                            {{product.name}} ({{product.code}})
+                        </mat-option>
+                    </mat-select>
+                </mat-form-field>
+            </span>
+        </section>
+    </form>
+</div>
+
+

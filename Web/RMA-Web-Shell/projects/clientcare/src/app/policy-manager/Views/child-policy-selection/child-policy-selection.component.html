@@ -1,0 +1,57 @@
+<div class="main-content">
+  <mat-card>
+    <mat-progress-bar *ngIf="isLoading || selectingAll" mode="indeterminate"></mat-progress-bar>
+
+    <div [hidden]="policiesLoading || selectingAll">
+
+      <div *ngIf="form" [hidden]="awaitingApproval">
+        <form [formGroup]="form" class="mat-container details-form" novalidate>
+          <section>
+            <div class="select-all field-container">
+              <mat-checkbox type="checkbox" #cbAll (change)="onSelectAll(cbAll.checked)" [disabled]="awaitingApproval">
+                Select All</mat-checkbox>
+            </div>
+            <div class="field-container-right">
+              <mat-form-field class="mat-form-field">
+                <input matInput class="search-box" name="search" id="search" formControlName="search" [disabled]="awaitingApproval">
+                <mat-icon class="search-icon" (click)="setPolicyFilter()" matSuffix [disabled]="awaitingApproval">search</mat-icon>
+              </mat-form-field>
+            </div>
+          </section>
+        </form>
+      </div>
+
+      <mat-table #table [dataSource]="datasource" matSort matSortActive="PolicyNumber" matSortDirection="asc"
+        matSortDisableClear>
+        <ng-container matColumnDef="isSelected">
+          <mat-header-cell *matHeaderCellDef mat-sort-header>&nbsp;</mat-header-cell>
+          <mat-cell *matCellDef="let row">
+            <mat-checkbox [checked]="isSelected(row.policyId)" (change)="selectPolicy($event, row.policyId)"
+              [disabled]="awaitingApproval">
+            </mat-checkbox>
+          </mat-cell>
+        </ng-container>
+        <ng-container matColumnDef="policyNumber">
+          <mat-header-cell *matHeaderCellDef mat-sort-header>Policy Number</mat-header-cell>
+          <mat-cell *matCellDef="let row">{{row.policyNumber}}</mat-cell>
+        </ng-container>
+        <ng-container matColumnDef="policyOwner">
+          <mat-header-cell *matHeaderCellDef>Policy Owner</mat-header-cell>
+          <mat-cell *matCellDef="let row">{{row.policyOwner.displayName}}</mat-cell>
+        </ng-container>
+        <ng-container matColumnDef="policyStatus">
+          <mat-header-cell *matHeaderCellDef>Policy Status</mat-header-cell>
+          <mat-cell *matCellDef="let row">{{getPolicyStatus(row.policyStatus)}}</mat-cell>
+        </ng-container>
+        <ng-container matColumnDef="policyInceptionDate">
+          <mat-header-cell *matHeaderCellDef mat-sort-header>Inception Date</mat-header-cell>
+          <mat-cell *matCellDef="let row">{{row.policyInceptionDate | date:'yyyy/MM/dd'}}</mat-cell>
+        </ng-container>
+        <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
+        <mat-row *matRowDef="let row; columns: displayedColumns;"></mat-row>
+      </mat-table>
+      <mat-paginator #paginator [length]="datasource.rowCount$" [pageSize]="5" [pageSizeOptions]="[5, 10, 25, 100]">
+      </mat-paginator>
+    </div>
+  </mat-card>
+</div>

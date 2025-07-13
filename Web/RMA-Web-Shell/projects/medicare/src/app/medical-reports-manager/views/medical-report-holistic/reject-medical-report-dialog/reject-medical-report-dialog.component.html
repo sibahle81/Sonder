@@ -1,0 +1,28 @@
+<div class="menu-bar">
+    <span class="material-icons">cancel</span>
+    {{heading}}
+    <span (click)="closeDialog()" class="material-icons pointer right" matTooltip="close">
+      close
+    </span>
+</div>
+<form [formGroup]="form" class="mat-container" novalidate>
+    <div>
+        <label class="mat-label other-label mandatory-field">Rejection Reason</label>
+        <mat-select formControlName="rejectionReasonId" id="rejectionReasonId" (selectionChange)="onRejectReasonSelect($event)" required="true">
+            <mat-option *ngFor="let rejectionReason of rejectionReasons" [value]="rejectionReason.id">
+                {{ rejectionReason.id + ' - ' + rejectionReason.name + ' - ' + rejectionReason.description}}
+            </mat-option>
+        </mat-select>
+    </div>
+    <div>
+        <label class="mat-label other-label mandatory-field">Description</label>
+        <textarea matInput cdkTextareaAutosize cdkAutosizeMinRows="3" cdkAutosizeMaxRows="5" id="description"
+        formControlName="description" class="mat-input-element" maxlength="1000"></textarea>
+    </div>
+</form>
+<section class="dialog-buttons">
+    <button class="button submit-button" (click)="onRejectMedicalReport()">Reject Report</button>
+    <button class="button submit-button" (click)="closeDialog()">Cancel</button>
+</section>
+
+

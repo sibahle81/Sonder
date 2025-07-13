@@ -1,0 +1,309 @@
+<section class="legal-collection-section">
+
+  <div [ngClass]=" isSpinner ? 'on-disabled' : 'on-enabled' ">
+
+    <div class="legal-collection-div">
+
+      <div class="legal-collection-inside">
+        <div>
+          <button mat-button class="recovery-btn"> {{userDetails?.customerName}} |
+            {{userDetails?.policyNumber}}</button>
+        </div>
+        <div class="notifi-icon">
+
+
+        </div>
+      </div>
+
+
+    </div>
+
+    <div class="legal-info-div">
+      <div class="legal-info-div-inside">
+
+        <div class="information">
+          <div class="inside-content-div">
+            <div class="heading-tab">
+              <span class="heading-text">Information</span>
+            </div>
+            <div *ngIf="!isInfoLoading && (information?.length >= 0)">
+              <ng-container *ngFor="let item of information">
+                <div class="value-div"><span class="item-key">{{item.key}} :</span>
+                  <span class="item-val"
+                    [ngStyle]="item.key == 'Date Assessed' || item.key == 'Date of Referal' || item.key == 'Comments' ? {'font-weight': 'bold'} : {}">{{item.value}}</span>
+                </div>
+              </ng-container>
+            </div>
+
+            <div *ngIf="(information?.length == 0) && !isInfoLoading">
+              <h4 class="no-data-text">No data available</h4>
+            </div>
+
+            <div [hidden]="!isInfoLoading" [ngClass]="isInfoLoading ? 'progress-bar-container' : '' ">
+              <mat-progress-bar *ngIf="isInfoLoading" mode="indeterminate"></mat-progress-bar>
+            </div>
+
+
+          </div>
+        </div>
+
+        <div class="action">
+          <div class="inside-content-div">
+            <div class="heading-tab header-with-search legal-collection-inside padding-bottom-15">
+              <div class="action-logs-text-tab">
+                <span class="heading-text border-none ">Action Logs</span></div>
+                <div class="action-tab-search-field">
+                  <div class="search-container-css">
+                <div class="search-container-data border-none">
+                 
+              <span matPrefix (click)="toggleSearchInput()" class="information-list border-none padding-bottom">
+                <mat-icon>filter_list</mat-icon>  
+              </span>
+                  <mat-form-field *ngIf="showSearchInput" class="dropdown search-filter search-popup">
+                    <button mat-icon-button matSuffix (click)="toggleSearchInput()">
+                      <mat-icon>close</mat-icon>
+                    </button>
+                    <div class="detailHeadInnerDiv">
+                      <div class="date-picker-upadte-status status-update-mff legal-add-payment-field question-div question-div-legal">
+                        <p>Date From</p>
+                        <mat-form-field appearance="outline" class="date-picker-field date-picker-container-css ">
+                          <input matInput [matDatepicker]="fromPicker" [formControl]="fromDateControl" readonly class="border-none">
+                          <mat-datepicker-toggle matSuffix [for]="fromPicker" class="date-picker-toggle-css"></mat-datepicker-toggle>
+                          <mat-datepicker #fromPicker [matDatepickerFilter]="fromDateFilter" (dateChange)="fromDateSelected($event);filterLogsByDateRange()"></mat-datepicker>
+                        </mat-form-field>
+                      </div>
+                      <div class="date-picker-upadte-status status-update-mff legal-add-payment-field question-div question-div-legal">
+                        <p>Date To</p>
+                        <mat-form-field appearance="outline" class="date-picker-field date-picker-container-css">
+                          <input matInput [matDatepicker]="toPicker" placeholder="To Date" [formControl]="toDateControl" class="border-none">
+                   <mat-datepicker-toggle matSuffix [for]="toPicker" class="date-picker-toggle-css"></mat-datepicker-toggle>
+                   <mat-datepicker #toPicker [matDatepickerFilter]="toDateFilter" (dateChange)="toDateSelected($event);filterLogsByDateRange()"></mat-datepicker>
+                                   
+                        </mat-form-field>
+                      </div>
+                    </div>
+                    <div class="detaildropdownInnerDiv">
+                 
+                <div class="search-container-data">
+                  <span matPrefix class="border-none">
+                      <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none">
+                          <path
+                              d="M19 11C19 12.5823 18.5308 14.129 17.6518 15.4446C16.7727 16.7602 15.5233 17.7856 14.0615 18.3911C12.5997 18.9966 10.9911 19.155 9.43928 18.8463C7.88743 18.5376 6.46197 17.7757 5.34315 16.6569C4.22433 15.5381 3.4624 14.1126 3.15372 12.5608C2.84504 11.0089 3.00347 9.40038 3.60897 7.93857C4.21447 6.47676 5.23985 5.22733 6.55544 4.34828C7.87103 3.46923 9.41775 3.00004 11 3.00004C12.0515 2.99674 13.0933 3.20141 14.0654 3.60228C15.0375 4.00315 15.9207 4.5923 16.6642 5.33582C17.4077 6.07935 17.9969 6.96257 18.3978 7.93467C18.7986 8.90677 19.0033 9.94854 19 11Z"
+                              stroke="#292929" stroke-linecap="round" stroke-linejoin="round" />
+                          <path d="M20.9993 21L16.6562 16.657" stroke="#292929" stroke-linecap="round"
+                              stroke-linejoin="round" />
+                      </svg>
+                  </span>
+                  <mat-select [formControl]="selectedOptionsControl"  multiple
+                  [panelClass]="'custom-dropdown'" class="mat-multi-select border-none mat-multi-select-scroll">
+                  <input matInput placeholder="Search here..." #input class="search-input" (input)="filterList($event.target.value)" (keydown)="handleSpaceKey($event)">
+                    <mat-checkbox (change)="selectAllOptions($event.checked)" class="mat-multi-select border-none select-all-checkbox primary">Select All</mat-checkbox>
+                    <hr class="margin-none">
+                    <ng-container *ngFor="let option of filteredOptions; let last = last">
+                      <mat-option [value]="option">
+                        {{ option }}
+                      </mat-option>
+                      <hr class="margin-none" *ngIf="!last">
+                    </ng-container>
+                 
+                    
+                </mat-select>
+            </div>
+              </div>
+              <div class="action-div action-btn-right">
+                <button class="select-action action-submit" mat-button (click)="resetFilters()">Reset</button>
+              <button class="select-action action-submit" mat-button (click)="filterLogsByDateRange()">Apply Filter</button>
+            </div>
+                  </mat-form-field>
+
+                </div>
+              </div>
+                <div class="download-icon-div">
+                  <mat-icon matTooltip="download" (click)="exportToPdf()">arrow_downward</mat-icon>
+                </div>
+              
+            </div>
+            </div>
+            <div *ngIf="!isActionLogsLoading && (userActionLogs?.length > 0)" class="action-log-height">
+              <div class="action-value-div"
+                *ngFor="let item of (filteredList.length > 0 ? filteredList : userActionLogs); let i=index">
+                <div class="flex-view">
+                  <span class="user-icon">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="34" height="34" viewBox="0 0 34 34" fill="none">
+                      <path
+                        d="M33 17C33 20.3012 32.0002 23.3689 30.287 25.9168C27.4142 30.1891 22.5354 33 17 33C11.4646 33 6.58582 30.1891 3.71305 25.9168C1.99977 23.3689 1 20.3012 1 17C1 8.16344 8.16344 1 17 1C25.8366 1 33 8.16344 33 17Z"
+                        stroke="#292929" />
+                      <path
+                        d="M20.5564 11.6649C20.5564 13.6286 18.9645 15.2205 17.0009 15.2205C15.0372 15.2205 13.4453 13.6286 13.4453 11.6649C13.4453 9.70125 15.0372 8.10938 17.0009 8.10938C18.9645 8.10938 20.5564 9.70125 20.5564 11.6649Z"
+                        stroke="#292929" />
+                      <path
+                        d="M17.0011 32.9988C12.1405 32.9988 7.78599 30.8313 4.85156 27.4101C5.72618 24.4734 8.44693 22.332 11.6678 22.332H22.3345C25.5554 22.332 28.2761 24.4734 29.1507 27.4101C26.2163 30.8313 21.8618 32.9988 17.0011 32.9988Z"
+                        stroke="#292929" />
+                    </svg>
+                  </span>
+                  <div class="action-item-name">
+                    <span class="heading-text">{{item.title}}</span>
+                    <span class="note-comment" [ngClass]="{'show-less': item?.showShortDesciption}">{{ item?.comment
+                      }}</span>
+
+                    <div class="add-by-user">
+
+                      <div>
+
+
+                      <span>{{item.addedByUser}} - {{item.modifiedDate | date: "yyyy-MM-dd"}} | {{item.modifiedDate |
+                        date: "hh:mm"}}</span>
+                        
+                       </div> 
+                    </div>
+                  </div>
+                </div>
+
+                
+
+
+                <button class="show-button" *ngIf="item.comment?.length > 250" type="button"
+                  (click)="alterDescriptionText(item)">
+                  {{ item.showShortDesciption ? 'SHOW ALL': 'SHOW LESS' }}
+                </button>
+
+              </div>
+            </div>
+
+            <div [hidden]="!isActionLogsLoading" [ngClass]="isActionLogsLoading ? 'progress-bar-container' : '' ">
+              <mat-progress-bar *ngIf="isActionLogsLoading" mode="indeterminate"></mat-progress-bar>
+            </div>
+
+            <div *ngIf="(userActionLogs?.length == 0) && !isActionLogsLoading">
+              <h4 class="no-data-text">No data available</h4>
+            </div>
+
+          </div>
+        </div>
+
+
+        <div class="option">
+          <div>
+
+            <div class="option-item" [ngClass]=" canEditNotes ? 'on-enabled-permission' : 'on-disabled-permission' "
+              (click)="openDialog('RecoveryNotes','45vw')">
+              <svg xmlns="http://www.w3.org/2000/svg" width="18" height="24" viewBox="0 0 18 24" fill="none">
+                <path
+                  d="M13.125 3H15C16.6547 3 18 4.34531 18 6V21C18 22.6547 16.6547 24 15 24H3C1.34531 24 0 22.6547 0 21V6C0 4.34531 1.34531 3 3 3H4.875H5.325C5.67188 1.28906 7.18594 0 9 0C10.8141 0 12.3281 1.28906 12.675 3H13.125ZM3 5.25C2.5875 5.25 2.25 5.5875 2.25 6V21C2.25 21.4125 2.5875 21.75 3 21.75H15C15.4125 21.75 15.75 21.4125 15.75 21V6C15.75 5.5875 15.4125 5.25 15 5.25H14.25V6.375C14.25 6.99844 13.7484 7.5 13.125 7.5H9H4.875C4.25156 7.5 3.75 6.99844 3.75 6.375V5.25H3ZM9 4.875C9.29837 4.875 9.58452 4.75647 9.7955 4.5455C10.0065 4.33452 10.125 4.04837 10.125 3.75C10.125 3.45163 10.0065 3.16548 9.7955 2.9545C9.58452 2.74353 9.29837 2.625 9 2.625C8.70163 2.625 8.41548 2.74353 8.2045 2.9545C7.99353 3.16548 7.875 3.45163 7.875 3.75C7.875 4.04837 7.99353 4.33452 8.2045 4.5455C8.41548 4.75647 8.70163 4.875 9 4.875Z"
+                  fill="#0E456A" fill-opacity="0.75" />
+              </svg>
+              <div> <span>Notes</span></div>
+            </div>
+
+
+            <div class="option-item" (click)="openDialog('PotentialRecovery','45vw')">
+              <svg *ngIf="!enableActionTabs" xmlns="http://www.w3.org/2000/svg" width="30" height="30"
+                viewBox="0 0 30 30" fill="none">
+                <rect width="30" height="30" fill="#E6F4FB" />
+                <path
+                  d="M6.6 9.8C6.6 8.52696 7.10571 7.30606 8.00589 6.40589C8.90606 5.50571 10.127 5 11.4 5C12.673 5 13.8939 5.50571 14.7941 6.40589C15.6943 7.30606 16.2 8.52696 16.2 9.8C16.2 11.073 15.6943 12.2939 14.7941 13.1941C13.8939 14.0943 12.673 14.6 11.4 14.6C10.127 14.6 8.90606 14.0943 8.00589 13.1941C7.10571 12.2939 6.6 11.073 6.6 9.8ZM3 23.0863C3 19.3925 5.9925 16.4 9.68625 16.4H13.1137C16.8075 16.4 19.8 19.3925 19.8 23.0863C19.8 23.7013 19.3012 24.2 18.6862 24.2H4.11375C3.49875 24.2 3 23.7013 3 23.0863ZM26.4375 11.6375L21.6375 16.4375C21.285 16.79 20.715 16.79 20.3662 16.4375L17.9662 14.0375C17.6137 13.685 17.6137 13.115 17.9662 12.7663C18.3187 12.4175 18.8887 12.4138 19.2375 12.7663L21 14.5288L25.1625 10.3625C25.515 10.01 26.085 10.01 26.4338 10.3625C26.7825 10.715 26.7862 11.285 26.4338 11.6337L26.4375 11.6375Z"
+                  fill="#707070" fill-opacity="0.3" />
+              </svg>
+
+              <svg *ngIf="enableActionTabs" xmlns="http://www.w3.org/2000/svg" width="30" height="30"
+                viewBox="0 0 30 30" fill="none">
+                <rect width="30" height="30" fill="#E6F4FB" />
+                <path
+                  d="M6.6 9.8C6.6 8.52696 7.10571 7.30606 8.00589 6.40589C8.90606 5.50571 10.127 5 11.4 5C12.673 5 13.8939 5.50571 14.7941 6.40589C15.6943 7.30606 16.2 8.52696 16.2 9.8C16.2 11.073 15.6943 12.2939 14.7941 13.1941C13.8939 14.0943 12.673 14.6 11.4 14.6C10.127 14.6 8.90606 14.0943 8.00589 13.1941C7.10571 12.2939 6.6 11.073 6.6 9.8ZM3 23.0863C3 19.3925 5.9925 16.4 9.68625 16.4H13.1137C16.8075 16.4 19.8 19.3925 19.8 23.0863C19.8 23.7013 19.3012 24.2 18.6862 24.2H4.11375C3.49875 24.2 3 23.7013 3 23.0863ZM26.4375 11.6375L21.6375 16.4375C21.285 16.79 20.715 16.79 20.3662 16.4375L17.9662 14.0375C17.6137 13.685 17.6137 13.115 17.9662 12.7663C18.3187 12.4175 18.8887 12.4138 19.2375 12.7663L21 14.5288L25.1625 10.3625C25.515 10.01 26.085 10.01 26.4338 10.3625C26.7825 10.715 26.7862 11.285 26.4338 11.6337L26.4375 11.6375Z"
+                  fill="#0E456A" fill-opacity="0.75" />
+              </svg>
+
+              <div><span>Potential <br /> Recovery</span></div>
+            </div>
+
+            <div class="option-item" (click)="openDialog('AttorneyInstructions','70vw')">
+
+              <svg *ngIf="!enableActionTabs" xmlns="http://www.w3.org/2000/svg" width="30" height="30"
+                viewBox="0 0 30 30" fill="none">
+                <rect width="30" height="30" fill="#E6F4FB" />
+                <path
+                  d="M7.8 5C6.47625 5 5.4 6.07625 5.4 7.4V15.8H3.72C3.3225 15.8 3 16.1225 3 16.52C3 18.11 4.29 19.4 5.88 19.4H15V15.8H7.8V7.4H19.8V8.6H22.2V7.4C22.2 6.07625 21.1238 5 19.8 5H7.8ZM22.2 9.8H18C17.0063 9.8 16.2 10.6063 16.2 11.6V22.4C16.2 23.3938 17.0063 24.2 18 24.2H25.2C26.1938 24.2 27 23.3938 27 22.4V14.6H23.4C22.7362 14.6 22.2 14.0638 22.2 13.4V9.8ZM23.4 9.8V13.4H27L23.4 9.8Z"
+                  fill="#707070" fill-opacity="0.3" />
+              </svg>
+
+              <svg *ngIf="enableActionTabs" xmlns="http://www.w3.org/2000/svg" width="30" height="30"
+                viewBox="0 0 30 30" fill="none">
+                <rect width="30" height="30" fill="#E6F4FB" />
+                <path
+                  d="M7.8 5C6.47625 5 5.4 6.07625 5.4 7.4V15.8H3.72C3.3225 15.8 3 16.1225 3 16.52C3 18.11 4.29 19.4 5.88 19.4H15V15.8H7.8V7.4H19.8V8.6H22.2V7.4C22.2 6.07625 21.1238 5 19.8 5H7.8ZM22.2 9.8H18C17.0063 9.8 16.2 10.6063 16.2 11.6V22.4C16.2 23.3938 17.0063 24.2 18 24.2H25.2C26.1938 24.2 27 23.3938 27 22.4V14.6H23.4C22.7362 14.6 22.2 14.0638 22.2 13.4V9.8ZM23.4 9.8V13.4H27L23.4 9.8Z"
+                  fill="#0E456A" fill-opacity="0.75" />
+              </svg>
+
+
+              <div> <span>Attorney <br /> Instructions</span></div>
+
+            </div>
+
+
+
+            <div class="option-item" (click)="openDialog('AttorneyInvoices','70vw')">
+              <svg *ngIf="!enableActionTabs" xmlns="http://www.w3.org/2000/svg" width="30" height="30"
+                viewBox="0 0 30 30" fill="none">
+                <rect width="30" height="30" fill="#E6F4FB" />
+                <path
+                  d="M6.65625 3.10234C7.05469 2.91953 7.52344 2.98515 7.85625 3.27109L9.75 4.89296L11.6438 3.27109C12.0656 2.91015 12.6891 2.91015 13.1063 3.27109L15 4.89296L16.8937 3.27109C17.3156 2.91015 17.9391 2.91015 18.3563 3.27109L20.25 4.89296L22.1437 3.27109C22.4766 2.98515 22.9453 2.91953 23.3438 3.10234C23.7422 3.28515 24 3.68359 24 4.12421V25.8742C24 26.3148 23.7422 26.7133 23.3438 26.8961C22.9453 27.0789 22.4766 27.0133 22.1437 26.7273L20.25 25.1055L18.3563 26.7273C17.9344 27.0883 17.3109 27.0883 16.8937 26.7273L15 25.1055L13.1063 26.7273C12.6844 27.0883 12.0609 27.0883 11.6438 26.7273L9.75 25.1055L7.85625 26.7273C7.52344 27.0133 7.05469 27.0789 6.65625 26.8961C6.25781 26.7133 6 26.3148 6 25.8742V4.12421C6 3.68359 6.25781 3.28515 6.65625 3.10234ZM10.5 9.74921C10.0875 9.74921 9.75 10.0867 9.75 10.4992C9.75 10.9117 10.0875 11.2492 10.5 11.2492H19.5C19.9125 11.2492 20.25 10.9117 20.25 10.4992C20.25 10.0867 19.9125 9.74921 19.5 9.74921H10.5ZM9.75 19.4992C9.75 19.9117 10.0875 20.2492 10.5 20.2492H19.5C19.9125 20.2492 20.25 19.9117 20.25 19.4992C20.25 19.0867 19.9125 18.7492 19.5 18.7492H10.5C10.0875 18.7492 9.75 19.0867 9.75 19.4992ZM10.5 14.2492C10.0875 14.2492 9.75 14.5867 9.75 14.9992C9.75 15.4117 10.0875 15.7492 10.5 15.7492H19.5C19.9125 15.7492 20.25 15.4117 20.25 14.9992C20.25 14.5867 19.9125 14.2492 19.5 14.2492H10.5Z"
+                  fill="#707070" fill-opacity="0.3" />
+              </svg>
+
+              <svg *ngIf="enableActionTabs" xmlns="http://www.w3.org/2000/svg" width="30" height="30"
+                viewBox="0 0 30 30" fill="none">
+                <rect width="30" height="30" fill="#E6F4FB" />
+                <path
+                  d="M6.65625 3.10234C7.05469 2.91953 7.52344 2.98515 7.85625 3.27109L9.75 4.89296L11.6438 3.27109C12.0656 2.91015 12.6891 2.91015 13.1063 3.27109L15 4.89296L16.8937 3.27109C17.3156 2.91015 17.9391 2.91015 18.3563 3.27109L20.25 4.89296L22.1437 3.27109C22.4766 2.98515 22.9453 2.91953 23.3438 3.10234C23.7422 3.28515 24 3.68359 24 4.12421V25.8742C24 26.3148 23.7422 26.7133 23.3438 26.8961C22.9453 27.0789 22.4766 27.0133 22.1437 26.7273L20.25 25.1055L18.3563 26.7273C17.9344 27.0883 17.3109 27.0883 16.8937 26.7273L15 25.1055L13.1063 26.7273C12.6844 27.0883 12.0609 27.0883 11.6438 26.7273L9.75 25.1055L7.85625 26.7273C7.52344 27.0133 7.05469 27.0789 6.65625 26.8961C6.25781 26.7133 6 26.3148 6 25.8742V4.12421C6 3.68359 6.25781 3.28515 6.65625 3.10234ZM10.5 9.74921C10.0875 9.74921 9.75 10.0867 9.75 10.4992C9.75 10.9117 10.0875 11.2492 10.5 11.2492H19.5C19.9125 11.2492 20.25 10.9117 20.25 10.4992C20.25 10.0867 19.9125 9.74921 19.5 9.74921H10.5ZM9.75 19.4992C9.75 19.9117 10.0875 20.2492 10.5 20.2492H19.5C19.9125 20.2492 20.25 19.9117 20.25 19.4992C20.25 19.0867 19.9125 18.7492 19.5 18.7492H10.5C10.0875 18.7492 9.75 19.0867 9.75 19.4992ZM10.5 14.2492C10.0875 14.2492 9.75 14.5867 9.75 14.9992C9.75 15.4117 10.0875 15.7492 10.5 15.7492H19.5C19.9125 15.7492 20.25 15.4117 20.25 14.9992C20.25 14.5867 19.9125 14.2492 19.5 14.2492H10.5Z"
+                  fill="#0E456A" fill-opacity="0.75" />
+              </svg>
+              <div> <span>Attorney <br /> Invoices</span></div>
+            </div>
+
+            <div class="option-item" (click)="openDialog('RecoveredPayment','70vw')">
+              <svg *ngIf="!enableActionTabs" xmlns="http://www.w3.org/2000/svg" width="30" height="30"
+                viewBox="0 0 30 30" fill="none">
+                <rect width="30" height="30" fill="#E6F4FB" />
+                <path
+                  d="M9 3C7.34531 3 6 4.34531 6 6V24C6 25.6547 7.34531 27 9 27H21C22.6547 27 24 25.6547 24 24V10.5H18C17.1703 10.5 16.5 9.82969 16.5 9V3H9ZM18 3V9H24L18 3ZM9.75 6H12.75C13.1625 6 13.5 6.3375 13.5 6.75C13.5 7.1625 13.1625 7.5 12.75 7.5H9.75C9.3375 7.5 9 7.1625 9 6.75C9 6.3375 9.3375 6 9.75 6ZM9.75 9H12.75C13.1625 9 13.5 9.3375 13.5 9.75C13.5 10.1625 13.1625 10.5 12.75 10.5H9.75C9.3375 10.5 9 10.1625 9 9.75C9 9.3375 9.3375 9 9.75 9ZM10.5 13.5H19.5C20.3297 13.5 21 14.1703 21 15V18C21 18.8297 20.3297 19.5 19.5 19.5H10.5C9.67031 19.5 9 18.8297 9 18V15C9 14.1703 9.67031 13.5 10.5 13.5ZM10.5 15V18H19.5V15H10.5ZM17.25 22.5H20.25C20.6625 22.5 21 22.8375 21 23.25C21 23.6625 20.6625 24 20.25 24H17.25C16.8375 24 16.5 23.6625 16.5 23.25C16.5 22.8375 16.8375 22.5 17.25 22.5Z"
+                  fill="#707070" fill-opacity="0.3" />
+              </svg>
+              <svg *ngIf="enableActionTabs" xmlns="http://www.w3.org/2000/svg" width="30" height="30"
+                viewBox="0 0 30 30" fill="none">
+                <rect width="30" height="30" fill="#E6F4FB" />
+                <path
+                  d="M9 3C7.34531 3 6 4.34531 6 6V24C6 25.6547 7.34531 27 9 27H21C22.6547 27 24 25.6547 24 24V10.5H18C17.1703 10.5 16.5 9.82969 16.5 9V3H9ZM18 3V9H24L18 3ZM9.75 6H12.75C13.1625 6 13.5 6.3375 13.5 6.75C13.5 7.1625 13.1625 7.5 12.75 7.5H9.75C9.3375 7.5 9 7.1625 9 6.75C9 6.3375 9.3375 6 9.75 6ZM9.75 9H12.75C13.1625 9 13.5 9.3375 13.5 9.75C13.5 10.1625 13.1625 10.5 12.75 10.5H9.75C9.3375 10.5 9 10.1625 9 9.75C9 9.3375 9.3375 9 9.75 9ZM10.5 13.5H19.5C20.3297 13.5 21 14.1703 21 15V18C21 18.8297 20.3297 19.5 19.5 19.5H10.5C9.67031 19.5 9 18.8297 9 18V15C9 14.1703 9.67031 13.5 10.5 13.5ZM10.5 15V18H19.5V15H10.5ZM17.25 22.5H20.25C20.6625 22.5 21 22.8375 21 23.25C21 23.6625 20.6625 24 20.25 24H17.25C16.8375 24 16.5 23.6625 16.5 23.25C16.5 22.8375 16.8375 22.5 17.25 22.5Z"
+                  fill="#0E456A" fill-opacity="0.75" />
+              </svg>
+              <div> <span>Recovered <br /> Payments</span></div>
+            </div>
+
+            <div class="option-item" (click)="openDialog('UpdateStatus','45vw')">
+              <svg *ngIf="!enableActionTabs" xmlns="http://www.w3.org/2000/svg" width="24" height="22"
+                viewBox="0 0 24 22" fill="none">
+                <path
+                  d="M0 2.66667C0 1.19583 1.19583 0 2.66667 0H9.33333V5.33333C9.33333 6.07083 9.92917 6.66667 10.6667 6.66667H16V11.9042L12.3833 15.5208C11.9542 15.95 11.6542 16.4833 11.5083 17.0708L10.7292 20.1917C10.6333 20.575 10.6542 20.975 10.7833 21.3375H2.66667C1.19583 21.3375 0 20.1417 0 18.6708V2.66667ZM16 5.33333H10.6667V0L16 5.33333ZM22.9083 9.82083L23.5083 10.4208C24.1583 11.0708 24.1583 12.125 23.5083 12.7792L22.2833 14.0042L19.325 11.0458L20.55 9.82083C21.2 9.17083 22.2542 9.17083 22.9083 9.82083ZM12.9958 17.375L18.3792 11.9917L21.3375 14.95L15.9542 20.3292C15.7833 20.5 15.5708 20.6208 15.3333 20.6792L12.8292 21.3042C12.6 21.3625 12.3625 21.2958 12.1958 21.1292C12.0292 20.9625 11.9625 20.725 12.0208 20.4958L12.6458 17.9917C12.7042 17.7583 12.825 17.5417 12.9958 17.3708V17.375Z"
+                  fill="#707070" fill-opacity="0.3" />
+              </svg>
+
+              <svg *ngIf="enableActionTabs" xmlns="http://www.w3.org/2000/svg" width="24" height="22"
+                viewBox="0 0 24 22" fill="none">
+                <path
+                  d="M0 2.66667C0 1.19583 1.19583 0 2.66667 0H9.33333V5.33333C9.33333 6.07083 9.92917 6.66667 10.6667 6.66667H16V11.9042L12.3833 15.5208C11.9542 15.95 11.6542 16.4833 11.5083 17.0708L10.7292 20.1917C10.6333 20.575 10.6542 20.975 10.7833 21.3375H2.66667C1.19583 21.3375 0 20.1417 0 18.6708V2.66667ZM16 5.33333H10.6667V0L16 5.33333ZM22.9083 9.82083L23.5083 10.4208C24.1583 11.0708 24.1583 12.125 23.5083 12.7792L22.2833 14.0042L19.325 11.0458L20.55 9.82083C21.2 9.17083 22.2542 9.17083 22.9083 9.82083ZM12.9958 17.375L18.3792 11.9917L21.3375 14.95L15.9542 20.3292C15.7833 20.5 15.5708 20.6208 15.3333 20.6792L12.8292 21.3042C12.6 21.3625 12.3625 21.2958 12.1958 21.1292C12.0292 20.9625 11.9625 20.725 12.0208 20.4958L12.6458 17.9917C12.7042 17.7583 12.825 17.5417 12.9958 17.3708V17.375Z"
+                  fill="#0E456A" fill-opacity="0.75" />
+              </svg>
+              <div> <span>Update <br /> Status</span></div>
+            </div>
+
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+  </div>
+
+  <div [hidden]="!isSpinner" class="spinner-view">
+    <mat-spinner *ngIf="isSpinner"></mat-spinner>
+  </div>
+</section>

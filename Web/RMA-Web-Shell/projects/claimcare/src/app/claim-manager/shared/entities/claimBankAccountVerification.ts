@@ -1,0 +1,35 @@
+export class ClaimBankAccountVerification {
+  verificationId: number;
+  claimId: number | null;
+  claimReference: string;
+  userId: number | null;
+  userEmail: string;
+  requestedDate: Date;
+  responseDate: Date;
+  beneficiaryId: number;
+  bankAccountId: number;
+  accountAcceptsCredits: string;
+  accountAcceptsDebits: string;
+  accountExists: string;
+  accountIdMatch: string;
+  accountNumber: string;
+  accountOpen: string;
+  accountOpenGtThreeMonths: string;
+  accountType: string;
+  accountTypeValid: string;
+  branchCode: string;
+  emailValid: string;
+  idNumber: string;
+  initialMatch: string;
+  initials: string;
+  lastName: string;
+  lastNameMatch: string;
+  messageCode: string;
+  messageDescription: string;
+  operator: string;
+  phoneNumber: string;
+  phoneValid: string;
+  transactionReference: string;
+  userReference: string;
+  accountSuccessfullyVerified: boolean;
+}

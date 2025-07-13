@@ -1,0 +1,53 @@
+<div class="menu-bar">
+    <span class="material-icons">radar</span>&nbsp;Work Pool and Workflow Tracking
+    <span *ngIf="!(isLoading$ | async)" (click)="getPoolWorkFlow()" class="material-icons pointer right"
+        matTooltip="refresh">
+        restart_alt
+    </span>
+</div>
+
+<mat-card *ngIf="(isLoading$ | async)">
+    <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+    <label class="mat-label other-label"><i>{{loadingMessage$ | async}}</i></label>
+</mat-card>
+
+<mat-tab-group animationDuration="500ms" *ngIf="!(isLoading$ | async)">
+    <mat-tab  label="Work Pool Activity">
+        <div class="menu-bar">
+            <span class="material-icons">pool</span>&nbsp;Active Work Pool
+            <span *ngIf="poolWorkFlow" (click)="openAuditDialog()" matTooltip="work pool movement audit"
+                class="material-icons pointer right">
+                fingerprint
+            </span>
+        </div>
+
+        <mat-card *ngIf="poolWorkFlows">
+            <table class="altRowTable">
+                <tr>
+                    <th>Work Pool</th>
+                    <th>Assigned To</th>
+                    <th>Instruction</th>
+                    <th>Last Modified Date</th>
+                </tr>
+                <tr *ngFor="let workPool of poolWorkFlows">
+                    <td class="center">{{getWorkPoolName(workPool.workPool)}}</td>
+                    <td class="center"><user-display-name [userId]="workPool.assignedToUserId"></user-display-name></td>
+                    <td class="center">{{workPool.instruction && workPool.instruction != '' ? workPool.instruction : 'N/A'}}</td>
+                    <td class="center">{{workPool.modifiedDate | date: "yyyy-MM-dd HH:mm:ss"}}</td>
+                </tr>
+            </table>
+        </mat-card>
+
+        <mat-card *ngIf="!poolWorkFlow">
+            <label class="mat-label other-label"><i>This person event is not assigned to any work
+                    pools...</i></label>
+        </mat-card>
+    </mat-tab>
+
+    <mat-tab *ngIf="!isWizard && personEventId && personEventId > 0"
+        label="Workflow Activity ({{activeWizards && activeWizards.length ? activeWizards.length : '0' }})">
+        <lib-running-wizards [linkedItemId]="personEventId" [wizardTypeCSVs]="wizardTypeCSVs" [hideActionColumn]="true"
+            [managerName]="managerName" [moduleName]="moduleName" (activeWizardsEmit)="setActiveWorkflows($event)">
+        </lib-running-wizards>
+    </mat-tab>
+</mat-tab-group>

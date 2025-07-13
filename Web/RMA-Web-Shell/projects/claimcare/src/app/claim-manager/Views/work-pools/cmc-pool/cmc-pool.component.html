@@ -1,0 +1,142 @@
+<div [hidden]="!permissionClaimSearchSortFilter">
+<div [hidden]="!dataSource.data">
+  <mat-form-field [floatLabel]="'never'">
+    <input matInput maxlength="50" name="filter" id="filter" #filter width="300" minLength="3"
+      matTooltip="{{placeHolder}}" matTooltipShowDelay="1000">
+    <mat-placeholder class="placeholder">{{placeHolder}}</mat-placeholder>
+    <mat-icon class="search-icon" (click)="search()" matSuffix>search</mat-icon>
+    <mat-icon class="clear-icon" (click)="reset()" matSuffix>autorenew</mat-icon>
+  </mat-form-field>
+</div>
+</div>
+<div [hidden]="!(dataSource.loading$ | async)">
+  <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+  <span class="site-font grey" class="loadingCadPool"><i>Loading Cmc Pool data...</i></span>
+</div>
+<div class="main-div">
+  <div [hidden]="!dataSource.data">
+    <div class="table-container" [hidden]="dataSource.loading$ | async">
+      <div [hidden]="!dataSource.data">
+        <mat-table #table [dataSource]="dataSource" matSort id="tblData">
+          <!-- Check Box  -->
+          <ng-container matColumnDef="select">
+            <mat-header-cell *matHeaderCellDef> Select
+            </mat-header-cell>
+            <mat-cell *matCellDef="let row" (click)="$event.stopPropagation()">
+              <div>
+                <mat-checkbox id="chk_{{row.personEventId}}"  (change)="AddCheckedItems($event, row)">
+                </mat-checkbox>
+              </div>
+            </mat-cell>
+          </ng-container>
+          <!--Assigned To -->
+          <ng-container matColumnDef="assignedTo">
+            <mat-header-cell *matHeaderCellDef mat-sort-header [disabled]="!permissionClaimSearchSortFilter" (click)="sortData(dataSource.data)"> Assigned To</mat-header-cell>
+            <mat-cell *matCellDef="let row">
+              <div class="block-style">{{row.personEventAssignedTo}}</div>
+            </mat-cell>
+          </ng-container>
+          <!--Event Created By -->
+          <ng-container matColumnDef="personEventCreatedBy">
+            <mat-header-cell *matHeaderCellDef mat-sort-header [disabled]="!permissionClaimSearchSortFilter" (click)="sortData(dataSource.data)"> Created By </mat-header-cell>
+            <mat-cell *matCellDef="let row">
+              <div class="block-style">{{row.personEventCreatedBy}}</div>
+            </mat-cell>
+          </ng-container>
+          <!--Description -->
+          <ng-container matColumnDef="description">
+            <mat-header-cell *matHeaderCellDef mat-sort-header [disabled]="!permissionClaimSearchSortFilter" (click)="sortData(dataSource.data)"> Description </mat-header-cell>
+            <mat-cell *matCellDef="let row">
+              <div class="block-style">{{row.description}}</div>
+            </mat-cell>
+          </ng-container>
+           <!--Date Sent -->
+           <ng-container matColumnDef="dateSent">
+            <mat-header-cell *matHeaderCellDef mat-sort-header [disabled]="!permissionClaimSearchSortFilter" (click)="sortData(dataSource.data)"> Date Sent</mat-header-cell>
+            <mat-cell *matCellDef="let row"> {{row.dateCreated | date:"yyyy-MM-dd "}} </mat-cell>
+          </ng-container>
+          <!--Date Due -->
+          <ng-container matColumnDef="dateDue">
+            <mat-header-cell *matHeaderCellDef mat-sort-header [disabled]="!permissionClaimSearchSortFilter" (click)="sortData(dataSource.data)"> Due Date</mat-header-cell>
+            <mat-cell *matCellDef="let row"> {{row.dateCreated | date:"yyyy-MM-dd "}} </mat-cell>
+          </ng-container>
+          <!--Priority -->
+          <ng-container matColumnDef="priority">
+            <mat-header-cell *matHeaderCellDef mat-sort-header [disabled]="!permissionClaimSearchSortFilter" (click)="sortData(dataSource.data)"> Priority </mat-header-cell>
+            <mat-cell *matCellDef="let row">
+              <div class="block-style">{{row.priority}}</div>
+            </mat-cell>
+          </ng-container>
+           <!--Claim Number -->
+           <ng-container matColumnDef="personEventId">
+            <mat-header-cell *matHeaderCellDef mat-sort-header [disabled]="!permissionClaimSearchSortFilter" (click)="sortData(dataSource.data)"> Claim Number</mat-header-cell>
+            <mat-cell *matCellDef="let row">
+              <div class="block-style">{{row.claimNumber}}</div>
+            </mat-cell>
+          </ng-container>
+          <!--Event Number -->
+          <ng-container matColumnDef="eventNumber">
+            <mat-header-cell *matHeaderCellDef mat-sort-header [disabled]="!permissionClaimSearchSortFilter" (click)="sortData(dataSource.data)"> Event Number </mat-header-cell>
+            <mat-cell *matCellDef="let row">
+              <div class="block-style">{{row.eventNumber}}</div>
+            </mat-cell>
+          </ng-container>
+          <!--Employee Name -->
+          <ng-container matColumnDef="lifeAssured">
+            <mat-header-cell *matHeaderCellDef mat-sort-header [disabled]="!permissionClaimSearchSortFilter" (click)="sortData(dataSource.data)"> Employee Name </mat-header-cell>
+            <mat-cell *matCellDef="let row"> {{row.lifeAssured}} </mat-cell>
+          </ng-container>
+            <!--Identification Number -->
+            <ng-container matColumnDef="identificationNumber">
+              <mat-header-cell *matHeaderCellDef mat-sort-header (click)="sortData(dataSource.data)">Identification Number</mat-header-cell>
+              <mat-cell *matCellDef="let row">
+                <div  class="block-style">{{row.identificationNumber}}</div>
+              </mat-cell>
+            </ng-container>
+            <!--Last Modified -->
+            <ng-container matColumnDef="lastModifiedBy">
+              <mat-header-cell *matHeaderCellDef mat-sort-header [disabled]="!permissionClaimSearchSortFilter" (click)="sortData(dataSource.data)">Last Modified</mat-header-cell>
+              <mat-cell *matCellDef="let row">
+                <div  class="block-style">{{row.lastModifiedBy}}</div>
+              </mat-cell>
+            </ng-container>
+          <!--Application -->
+          <ng-container matColumnDef="sourceApplication">
+            <mat-header-cell *matHeaderCellDef mat-sort-header [disabled]="!permissionClaimSearchSortFilter" (click)="sortData(dataSource.data)">Application</mat-header-cell>
+            <mat-cell *matCellDef="let row">{{row.application}}</mat-cell>
+          </ng-container>
+          <!-- Actions -->
+          <ng-container matColumnDef="actions">
+            <mat-header-cell *matHeaderCellDef>Action</mat-header-cell>
+            <mat-cell *matCellDef="let row; let i = index" [matMenuTriggerFor]="menu" (click)="filterMenu(row)">
+              <span class="material-icons pointer right">more_vert</span>
+              <mat-menu #menu="matMenu">
+                <button mat-menu-item  *ngFor="let menu of menus" (click)="onMenuSelect(row, menu)"
+                  disabled={{menu.disable}}>{{menu.title}}</button>
+              </mat-menu>
+            </mat-cell>
+          </ng-container>
+          <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
+          <mat-row *matRowDef="let row; columns: displayedColumns;"></mat-row>
+        </mat-table>
+
+        <mat-paginator #paginator [pageIndex]="0" [pageSize]="5"  [pageSizeOptions]="[5, 10, 25, 100]" [length]="this.dataSource.rowCount$ | async">
+        </mat-paginator>
+
+        <div class="form-group-button mat-form-button action-buttons">
+          <button type="button" [disabled]="allocateButtonAccessToUser" (click)="openAllocateToUsersPopup()"
+              class="button float-button">Allocate</button>
+          <button type="button" [disabled]="reAllocateButtonAccessToUser" (click)="openReAllocateToUsersPopup()"
+              class="button float-button">Re-Allocate</button>
+          <button type="button" [disabled]="manageButtonAccessToUser" (click)="openManageUsersPopup()"
+              class="button float-button">Manage User</button>
+      </div>
+
+      </div>
+    </div>
+  </div>
+</div>
+
+<div [hidden]="dataSource.data && dataSource.data.data.length > 0  || ( dataSource.loading$ | async)">
+  <span class="grey site-font">No records found...</span>
+</div>

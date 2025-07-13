@@ -1,0 +1,397 @@
+<div>
+    <h1 class="Arabic"><span class="material-icons lightBlue icon">account_circle</span>&nbsp; User Details Registration
+        Form</h1>
+</div>
+<br />
+<ng-template #stepOne>
+    <div>
+        <form [formGroup]="userTypeForm">
+            <section>
+                <mat-error class="selectRadio" *ngIf="userTypeForm.get('userProfileTypeRadio').hasError('required')">
+                </mat-error>
+                <br />
+                <label class="ArabicSubTitle">Select User Type: &nbsp;&nbsp; </label>
+                <mat-radio-group (change)="userTypeChange($event)" formControlName="userProfileTypeRadio">
+                    <mat-radio-button value="1">Individual</mat-radio-button>&nbsp;
+                    <mat-radio-button value="2">Company</mat-radio-button>&nbsp;
+                    <mat-radio-button value="4">HealthCare Provider</mat-radio-button>
+                </mat-radio-group>
+            </section>
+            <div *ngIf="selectedUserType == 2">
+                <mat-form-field class="mat-form-field">
+                    <label class="ArabicSubTitle">Select Company Type: &nbsp;&nbsp; </label>
+                    <mat-radio-group formControlName="radioCompanyType" (change)="companyTypeChange($event)">
+                        <mat-radio-button value="new">New</mat-radio-button>&nbsp;
+                        <mat-radio-button value="existing">Existing</mat-radio-button>
+                    </mat-radio-group>
+                    <br />
+                    <br />
+                    <label class="mat-label other-label">Company Registration No.: </label>
+                    <input matInput formControlName="companyRegistrationNo">
+                </mat-form-field>
+            </div>
+            <div *ngIf="selectedUserType == 3">
+                <mat-form-field class="mat-form-field">
+                    <label class="mat-label other-label">FSP No.: </label>
+                    <input matInput formControlName="fspNo">
+                    <mat-error *ngIf="userTypeForm.get('fspNo').hasError('required')">
+                        FSP Number is Required
+                    </mat-error>
+                </mat-form-field>
+            </div>
+            <div *ngIf="selectedUserType == 4">
+                Dear User, to register on DigiCare a CompCare profile must exist.  Please use your current CompCare email address when you complete the form. <br/>
+                If you do not have an existing CompCare profile, please go to <a href = "https://compcare.randmutual.co.za/Registration.aspx" target="_blank">https://compcare.randmutual.co.za/Registration.aspx</a> to register and then return here to complete your User Registration.<br/>
+                <mat-form-field [floatLabel]="'never'">
+                  <input matInput maxlength="50" formControlName="practiceNumber" id="practiceNumber"
+                    width="50" minLength="3" matTooltip="Search by practice number" matTooltipShowDelay="1000">
+                  <mat-placeholder class="placeholder">Search by practice number</mat-placeholder>
+                  <mat-icon class="search-icon" (click)="searchForHealthCareProvider()" matSuffix>search</mat-icon>
+                  <button style="visibility: hidden;" class="button submit-button" (click)="searchForHealthCareProvider()"
+                    matTooltip="Search by practice number" matTooltipShowDelay="1000">Search</button>
+                  <div>
+                    <label class="mat-label other-label">{{practiceName}}</label>
+                  </div>
+                  <div *ngIf="isLoadingHCP$ | async">
+                      <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+                      <label class="mat-label other-label"><i>searching...please wait</i></label>
+                  </div>
+                </mat-form-field>
+            </div>
+            <br />
+        </form>
+    </div>
+</ng-template>
+
+<ng-template #stepTwo>
+    <div>
+        <form [formGroup]="userDetailsForm">
+            <section>
+                <mat-form-field class="mat-form-field">
+                    <label class="mat-label other-label mandatory-field">Identification Type</label>
+                    <mat-select formControlName="idType" [value]='saidValue' (selectionChange)="changeIdType($event)">
+                        <mat-option [value]='saidValue'>SA ID Document</mat-option>
+                        <mat-option [value]='passportValue'>PASSPORT Document</mat-option>
+                    </mat-select>
+                    <mat-error
+                        *ngIf="userDetailsForm.get('idType').hasError('required') || userDetailsForm.get('idType').hasError('min')">
+                        Identification type is required
+                    </mat-error>
+                    <!-- Loading component -->
+                    <div *ngIf="isLoading$ | async">
+                        <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+                        <label class="mat-label other-label"><i>loading...please wait</i></label>
+                    </div>
+                </mat-form-field>
+                <mat-form-field class="mat-form-field-right">
+                    <label class="mat-label other-label mandatory-field">Identification Number</label>
+                    <input matInput maxlength="13" formControlName="idNumber" (blur)="calculateDateOfBirth($event)" />
+                    <mat-error *ngIf="userDetailsForm.get('idNumber').hasError('required')">
+                        Identification number is required
+                    </mat-error>
+                    <mat-error *ngIf="userDetailsForm.get('idNumber').hasError('idNumber')">
+                        A valid identification number is required
+                    </mat-error>
+                    <mat-error *ngIf="userDetailsForm.get('idNumber').hasError('minlength')">
+                        Identification number must be at least 3 characters
+                    </mat-error>
+                </mat-form-field>
+            </section>
+
+            <section [hidden]="!isPassportIdType">
+                <mat-form-field class="mat-form-field">
+                    <label class="mat-label other-label mandatory-field">Passport Expiry Date</label>
+                    <input readonly matInput formControlName="passportExpiryDate" [matDatepicker]="passportExpiryDate"
+                        (ngModelChange)="validateExpiryDate($event)">
+                    <mat-datepicker-toggle matSuffix [for]="passportExpiryDate" [disabled]="userDetailsForm.disabled">
+                    </mat-datepicker-toggle>
+                    <mat-datepicker touchUi="true" #passportExpiryDate></mat-datepicker>
+                    <mat-error *ngIf="userDetailsForm.get('passportExpiryDate').hasError('required')">
+                        Expiry Date is required
+                    </mat-error>
+                    <mat-error
+                        *ngIf="userDetailsForm.get('passportExpiryDate').hasError('passportExpiryDateInThePast')">
+                        Expiry Date cannot be in the Past
+                    </mat-error>
+                </mat-form-field>
+            </section>
+
+            <section>
+                <mat-form-field class="mat-form-field">
+                    <label class="mat-label other-label mandatory-field">First Name</label>
+                    <input matInput AlphaOnly minlength="2" maxlength="50" formControlName="firstName" />
+                    <mat-error *ngIf="userDetailsForm.get('firstName').hasError('required')">
+                        First name is required
+                    </mat-error>
+                    <mat-error *ngIf="userDetailsForm.get('firstName').hasError('minlength')">
+                        Firstname must be at least <strong>two characters</strong>
+                    </mat-error>
+                </mat-form-field>
+                <mat-form-field class="mat-form-field-right">
+                    <label class="mat-label other-label mandatory-field">Surname</label>
+                    <input matInput AlphaOnly minlength="3" maxlength="50" formControlName="surname" />
+                    <mat-error *ngIf="userDetailsForm.get('surname').hasError('required')">
+                        Surname is required
+                    </mat-error>
+                    <mat-error *ngIf="userDetailsForm.get('surname').hasError('minlength')">
+                        Surname must be at least <strong>three characters</strong>
+                    </mat-error>
+                </mat-form-field>
+            </section>
+
+            <section>
+                <mat-form-field class="mat-form-field" *ngIf="!isHCPTypeSelected">
+                    <label class="mat-label other-label mandatory-field">Date of Birth</label>
+                    <input readonly matInput formControlName="dateOfBirth" [matDatepicker]="dateOfBirth"
+                        (click)="dateOfBirth.open();" (ngModelChange)="updateAge($event)">
+                    <mat-datepicker-toggle matSuffix [for]="dateOfBirth" [disabled]="userDetailsForm.disabled">
+                    </mat-datepicker-toggle>
+                    <mat-datepicker touchUi="true" #dateOfBirth></mat-datepicker>
+                    <mat-error *ngIf="userDetailsForm.get('dateOfBirth').hasError('required')">
+                        Date of birth is required
+                    </mat-error>
+                    <mat-error *ngIf="userDetailsForm.get('dateOfBirth').hasError('dateOfBirthInThefuture')">
+                        Date Of Birth cannot be in the future
+                    </mat-error>
+                </mat-form-field>
+                <mat-form-field [ngClass]="{'mat-form-field-right': !isHCPTypeSelected}">
+                    <label class="mat-label other-label">Telephone Number</label>
+                    <input matInput [prefix]="telPrefix" [placeholder]="telFormat" [mask]="telplaceholder"
+                        formControlName="tellNumber" />
+                    <mat-error *ngIf="userDetailsForm.get('tellNumber').hasError('required')">
+                        A telephone number is required
+                    </mat-error>
+                    <mat-error *ngIf="userDetailsForm.get('tellNumber').hasError('tellNumber')">
+                        A valid telephone number is required
+                    </mat-error>
+                </mat-form-field>
+            </section>
+
+            <section>
+                <mat-form-field class="mat-form-field">
+                    <label class="mat-label other-label">Mobile Number</label>
+                    <input matInput [prefix]="telPrefix" [placeholder]="telFormat" [mask]="telplaceholder"
+                        formControlName="cellNumber" />
+                    <mat-error *ngIf="userDetailsForm.get('cellNumber').hasError('required')">
+                        A mobile number is required
+                    </mat-error>
+                    <mat-error *ngIf="userDetailsForm.get('cellNumber').hasError('cellNumber')">
+                        A valid telephone number is required
+                    </mat-error>
+                </mat-form-field>
+                <mat-form-field class="mat-form-field-right">
+                    <label class="mat-label other-label">Email</label>
+                    <input matInput maxlength="255" formControlName="emailAddress" />
+                    <mat-error *ngIf="userDetailsForm.get('emailAddress').hasError('required')">
+                        An email address is required
+                    </mat-error>
+                    <mat-error *ngIf="userDetailsForm.get('emailAddress').hasError('email')">
+                        A valid email address is required
+                    </mat-error>
+                </mat-form-field>
+            </section>
+        </form>
+    </div>
+</ng-template>
+
+<ng-template #stepThree>
+    <div *ngIf="!isHCPTypeSelected">
+        <form [formGroup]="userAdrressDetailsForm" novalidate>
+            <section>
+                <mat-form-field class="mat-form-field">
+                    <label class="mat-label other-label mandatory-field">Address Type</label>
+                    <mat-select formControlName="addressType">
+                        <mat-option *ngFor="let type of addressTypes" [value]="type.id">
+                            {{type.name}}
+                        </mat-option>
+                    </mat-select>
+                    <mat-error *ngIf="userAdrressDetailsForm.get('addressType').hasError('required')">
+                        Address type is required
+                    </mat-error>
+                    <!-- Loading component -->
+                    <span *ngIf="isLoading$ | async">
+                        <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+                        <span class="grey site-font"><i>Loading Address Types...please wait</i></span>
+                    </span>
+                </mat-form-field>
+
+                <mat-form-field class="mat-form-field-right">
+                    <label class="mat-label other-label">Address Line 1</label>
+                    <input matInput formControlName="Addr1">
+                </mat-form-field>
+            </section>
+            <section>
+                <mat-form-field class="mat-form-field">
+                    <label class="mat-label other-label">Address Line 2 </label>
+                    <input matInput formControlName="Addr2">
+                </mat-form-field>
+
+                <mat-form-field class="mat-form-field-right">
+                    <label class="mat-label other-label">Address Line 3 </label>
+                    <input matInput formControlName="Addr3">
+                </mat-form-field>
+            </section>
+            <section>
+                <mat-form-field class="mat-form-field">
+                    <label class="mat-label other-label">Postal Code </label>
+                    <input matInput NumberOnly="true" maxlength="4" formControlName="postalCode">
+                </mat-form-field>
+
+                <mat-form-field class="mat-form-field-right">
+                    <label class="mat-label other-label mandatory-field">Country</label>
+                    <mat-select formControlName="country">
+                        <mat-option *ngFor="let country of countries" [value]="country.id">
+                            {{country.name}}
+                        </mat-option>
+                    </mat-select>
+                    <mat-error *ngIf="userAdrressDetailsForm.get('country').hasError('required')">
+                        Country is required
+                    </mat-error>
+
+                    <!-- Loading component -->
+                    <div *ngIf="isLoading$ | async">
+                        <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+                        <label class="mat-label other-label"><i>loading...please wait</i></label>
+                    </div>
+                </mat-form-field>
+            </section>
+            <section>
+                <mat-form-field class="mat-form-field">
+                    <label class="mat-label other-label mandatory-field">Province</label>
+                    <mat-select formControlName="province" (selectionChange)="getCityByProvinceId($event)">
+                        <mat-option *ngFor="let province of stateProvinces" [value]="province.id">
+                            {{province.name}}
+                        </mat-option>
+                    </mat-select>
+                    <mat-error *ngIf="userAdrressDetailsForm.get('province').hasError('required')">
+                        Province is required
+                    </mat-error>
+
+                    <!-- Loading component -->
+                    <div *ngIf="isLoading$ | async">
+                        <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+                        <label class="mat-label other-label"><i>loading...please wait</i></label>
+                    </div>
+                </mat-form-field>
+                <mat-form-field class="mat-form-field-right">
+                    <label class="mat-label other-label mandatory-field">City</label>
+                    <mat-select formControlName="city" [attr.disabled]="!isProvinceSelected"
+                        (selectionChange)="setOther($event)">
+                        <mat-option value={{cityOther}}>Other</mat-option>
+                        <mat-option *ngFor="let city of cities" [value]="city.id">
+                            {{city.name}}
+                        </mat-option>
+                    </mat-select>
+                    <mat-error *ngIf="userAdrressDetailsForm.get('city').hasError('required')">
+                        City is required
+                    </mat-error>
+
+                    <!-- Loading component -->
+                    <div *ngIf="isCityLoading$ | async">
+                        <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+                        <label class="mat-label other-label"><i>loading cities...please wait</i></label>
+                    </div>
+                </mat-form-field>
+            </section>
+            <section [hidden]="!isOtherSelected">
+                <mat-form-field class="mat-form-field">
+                    <label class="mat-label other-label mandatory-field">City Name</label>
+                    <input matInput minlength="3" formControlName="cityName">
+                    <mat-error *ngIf="userAdrressDetailsForm.get('cityName').hasError('required')">
+                        City Name is Required
+                    </mat-error>
+                </mat-form-field>
+            </section>
+        </form>
+    </div>
+</ng-template>
+
+<ng-template [ngIf]="smallScreen" [ngIfElse]="bigScreen">
+    <mat-vertical-stepper linear #stepper>
+        <mat-step [stepControl]="userTypeForm" [completed]="isCompleted" label="User Type Details">
+            <ng-container *ngTemplateOutlet="stepOne"></ng-container>
+            <div>
+                <button class="button submit-button" [disabled]="!alreadySubmitted" mat-button
+                    matStepperNext>Next</button>
+            </div>
+        </mat-step>
+        <mat-step [stepControl]="userDetailsForm" [completed]="isCompleted" label="User Details">
+            <ng-container *ngTemplateOutlet="stepTwo"></ng-container>
+            <div>
+                <button class="button submit-button" mat-button matStepperPrevious>Back</button>
+                &nbsp;
+                <button class="button submit-button" [disabled]="userDetailsForm.invalid" mat-button
+                    matStepperNext>Next</button>
+            </div>
+        </mat-step>
+        <mat-step [stepControl]="userAdrressDetailsForm" [completed]="isCompleted" label="Address Details">
+            <ng-container *ngTemplateOutlet="stepThree"></ng-container>
+        </mat-step>
+    </mat-vertical-stepper>
+</ng-template>
+
+<ng-template #bigScreen>
+    <mat-horizontal-stepper linear #stepper>
+        <mat-step [stepControl]="userTypeForm" [completed]="isCompleted" label="User Type Details">
+            <ng-container *ngTemplateOutlet="stepOne"></ng-container>
+            <div>
+                <button class="button submit-button" [disabled]="((userTypeForm.invalid && !isNumberInput) || !isValidHCP)" mat-button
+                    matStepperNext>Next</button>
+            </div>
+        </mat-step>
+        <mat-step [stepControl]="userDetailsForm" [completed]="isCompleted" label="User Details">
+            <ng-container *ngTemplateOutlet="stepTwo"></ng-container>
+            <div>
+                <button class="button submit-button" mat-button matStepperPrevious>Back</button>
+                &nbsp;
+                <button class="button submit-button" [hidden]="isHCPTypeSelected" [disabled]="userDetailsForm.invalid" mat-button
+                    matStepperNext>Next</button>
+                <button class="button submit-button" [hidden]="alreadySubmitted || !isHCPTypeSelected" [disabled]="userDetailsForm.invalid"
+                    (click)="Submit()">Submit</button>
+                <br />
+                <br />
+                <div *ngIf="(isLoadingPersonExist$ | async)">
+                    <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+                    <label class="mat-label other-label"><i>Verifying user...please
+                            wait</i></label>
+                </div>
+                <div *ngIf="(submitLoading$ | async) && isSubmitting">
+                    <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+                    <label class="mat-label other-label"><i>Registration being processed...please
+                            wait</i></label>
+                </div>
+            </div>
+        </mat-step>
+        <mat-step [stepControl]="userAdrressDetailsForm" [completed]="isCompleted" label="Address Details">
+            <ng-container *ngTemplateOutlet="stepThree"></ng-container>
+            <div class="form-buttons" *ngIf="!isHCPTypeSelected">
+                <button class="button submit-button" mat-button matStepperPrevious>Back</button>
+                &nbsp;
+                &nbsp;
+                <button class="button submit-button" [hidden]="alreadySubmitted" [disabled]="userAdrressDetailsForm.invalid"
+                    (click)="Submit()">Submit</button>
+                <br />
+                <br />
+                <div *ngIf="(isLoadingPersonExist$ | async)">
+                    <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+                    <label class="mat-label other-label"><i>Verifying user...please
+                            wait</i></label>
+                </div>
+                <div *ngIf="(submitLoading$ | async) && isSubmitting">
+                    <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+                    <label class="mat-label other-label"><i>Registration being processed...please
+                            wait</i></label>
+                </div>
+                <div *ngIf="(isLoadingBrokerageExist$ | async)">
+                    <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+                    <label class="mat-label other-label"><i>Checking if Broker Exists...please
+                            wait</i></label>
+                </div>
+            </div>
+        </mat-step>
+    </mat-horizontal-stepper>
+    <br>
+    <div [hidden]="!showDocuments" class="docs">
+        <app-user-registration-documents #userRegistrationDocuments></app-user-registration-documents>
+    </div>
+</ng-template>

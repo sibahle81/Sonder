@@ -1,0 +1,104 @@
+<mat-card *ngIf="isLoading$ | async">
+    <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+    <label class="mat-label other-label"><i>loading road accident details...please wait</i></label>
+</mat-card>
+
+<div [hidden]="(isLoading$ | async)">
+    <div class="menu-bar">
+        <span class="material-icons">
+            taxi_alert
+        </span>&nbsp;Road Accident Details
+        <span *ngIf="!selectedPersonEvent.isStraightThroughProcess || !isReadOnly" (click)="editForm()"
+            class="material-icons pointer right" matTooltip="edit">
+            settings
+        </span>
+    </div>
+    <mat-card>
+        <form [formGroup]="form" class="mat-container details-form" novalidate>
+            <section>
+                <mat-form-field class="mat-form-field">
+                    <label class="mat-label other-label">Employee Vehicle Make</label>
+                    <input matInput id="vehicleMake" name="vehicleMake" formControlName="vehicleMake" />
+                </mat-form-field>
+
+                <mat-form-field class="mat-form-field-right">
+                    <label class="mat-label other-label">Employee Vehicle Registration</label>
+                    <input matInput id="vehicleRegistration" name="vehicleRegistration"
+                        formControlName="vehicleRegistration" />
+                </mat-form-field>
+            </section>
+            <section>
+                <mat-form-field class="mat-form-field">
+                    <label class="mat-label other-label">Other Party Vehicle Make</label>
+                    <input matInput id="otherVehicleMake" name="otherVehicleMake" formControlName="otherVehicleMake" />
+                </mat-form-field>
+
+                <mat-form-field class="mat-form-field-right">
+                    <label class="mat-label other-label">Other Party Vehicle Registration</label>
+                    <input matInput id="otherVehicleRegistration" name="otherVehicleRegistration"
+                        formControlName="otherVehicleRegistration" />
+                </mat-form-field>
+            </section>
+            <section>
+                <mat-form-field class="mat-form-field">
+                    <label class="mat-label other-label">Police Reference Number</label>
+                    <input matInput id="policeReference" name="policeReference" formControlName="policeReference" />
+                </mat-form-field>
+
+                <mat-form-field class="mat-form-field-right">
+                    <label class="mat-label other-label">Police Station Name</label>
+                    <input matInput id="policeStationName" name="policeStationName"
+                        formControlName="policeStationName" />
+                </mat-form-field>
+            </section>
+            <section>
+                <mat-checkbox id="isBusiness" name="isBusiness" formControlName="isBusiness"
+                    class="example-margin left-control" (change)="travelTypeChange($event, 'isBusiness')">
+                    Is on business travel:
+                </mat-checkbox>
+
+                <mat-checkbox id="onCallout" name="onCallout" formControlName="onCallout"
+                    class="example-margin right-controls">
+                    Is on callout
+                </mat-checkbox>
+            </section>
+
+            <section>
+                <mat-checkbox id="isTraining" name="isTraining" formControlName="isTraining"
+                    class="example-margin left-control" (change)="travelTypeChange($event, 'isTraining')">
+                    Is training travel:
+                </mat-checkbox>
+
+                <mat-checkbox id="toWork" name="toWork" formControlName="toWork" class="example-margin right-controls"
+                    (change)="travelTypeChange($event, 'toWork')">
+                    Is travel to/from work:
+                </mat-checkbox>
+            </section>
+            <section>
+                <mat-checkbox id="onPrivateRoad" name="onPrivateRoad" formControlName="onPrivateRoad"
+                    class="example-margin left-control">
+                    Is on private road</mat-checkbox>
+
+                <mat-checkbox id="onPublicRoad" name="onPublicRoad" formControlName="onPublicRoad"
+                    class="example-margin right-controls">
+                    Is on public road:</mat-checkbox>
+            </section>
+            <section>
+                <mat-checkbox id="onStandBy" name="onStandBy" formControlName="onStandBy"
+                    class="example-margin left-control">
+                    Is on standby
+                </mat-checkbox>
+            </section>
+        </form>
+        <br />
+        <div *ngIf="!isReadOnly">
+            <span *ngIf="form.valid && !form.pristine" class="mat-label other-label pointer" (click)="save()"><span
+                    class="material-icons valid">check_circle</span></span>
+            <span *ngIf="!form.valid || form.pristine" class="mat-label other-label pointer"><span
+                    class="material-icons" class="material-icons inValid">check_circle</span></span>
+            <span class="mat-label other-label pointer" (click)="cancel()"><span
+                    class="material-icons">cancel</span></span>
+        </div>
+    </mat-card>
+    <br />
+</div>

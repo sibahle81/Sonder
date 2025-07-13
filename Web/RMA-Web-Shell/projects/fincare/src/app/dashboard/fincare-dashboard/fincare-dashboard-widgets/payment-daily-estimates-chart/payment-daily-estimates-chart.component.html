@@ -1,0 +1,24 @@
+<div class="EstimatesChart">
+  <mat-expansion-panel [expanded]="true">
+    <mat-expansion-panel-header>
+      <mat-panel-title>
+        Refund Amounts
+      </mat-panel-title>
+      <mat-panel-description>
+      </mat-panel-description>
+    </mat-expansion-panel-header>
+    <div [hidden]="hasData">
+      <label class="mat-label other-label">
+        <h3 class="wizard-font font">No Amounts Available</h3>
+      </label>
+      <span [style.visibility]="isLoading ? 'visible' : 'hidden'">
+        <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+        <span class="grey site-font"><i>Loading Data...please wait</i></span>
+      </span>
+    </div>
+    <div [hidden]="!hasData">
+      <canvas baseChart [data]="data" [labels]="chartLabels" [colors]="chartColors" [chartType]="chartType">
+      </canvas>
+    </div>
+  </mat-expansion-panel>
+</div>

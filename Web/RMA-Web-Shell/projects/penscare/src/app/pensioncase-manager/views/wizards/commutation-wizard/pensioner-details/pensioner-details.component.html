@@ -1,0 +1,81 @@
+<div *ngIf="form">
+  <form [formGroup]="form">
+    <section class="top-section">
+      <mat-form-field>
+        <label class="mat-label other-label">Claim Number</label>
+        <input matInput maxlength="50" formControlName="claimNumber" name="claimNumber" id="claimNumber" />
+        <mat-error *ngIf="form.get('claimNumber').hasError('required') && form.get('claimNumber').touched">
+          Claim Number is required
+        </mat-error>
+      </mat-form-field>
+      <mat-form-field class="mat-form-field-right">
+        <label class="mat-label other-labelform.get">PenCase Number</label>
+        <input matInput maxlength="10" formControlName="pensCaseNumber" id="pensCaseNumber" />
+        <mat-error *ngIf="form.get('pensCaseNumber').hasError('required') && form.get('pensCaseNumber').touched">
+          PenCase Number is required
+        </mat-error>
+      </mat-form-field>
+    </section>
+
+    <section class="top-section">
+      <mat-form-field>
+        <label class="mat-label other-label">Date of Accident</label>
+        <input matInput formControlName="accidentDate" id="accidentDate" date="true" [matDatepicker]="colNewEndDate"
+          readOnly>
+        <mat-datepicker-toggle matSuffix class="mat-toggle-datepicker datePick"
+          [for]="colNewEndDate"></mat-datepicker-toggle>
+        <mat-datepicker touchUi="true" #colNewEndDate></mat-datepicker>
+      </mat-form-field>
+
+      <mat-form-field class="mat-form-field-right">
+        <label class="mat-label other-label">Date of Stabilization</label>
+        <input matInput formControlName="stabilizationDate" name="stabilizationDate" id="stabilizationDate" date="true"
+          [matDatepicker]="colDateReceived" readOnly>
+        <mat-datepicker-toggle matSuffix class="mat-toggle-datepicker datePick"
+          [for]="colDateReceived"></mat-datepicker-toggle>
+        <mat-datepicker touchUi="true" #colDateReceived></mat-datepicker>
+      </mat-form-field>
+    </section>
+
+    <section>
+      <mat-form-field>
+        <label class="mat-label other-label">Capital Value</label>
+        <input matInput maxlength="50" formControlName="capitalValue" id="capitalValue" />
+      </mat-form-field>
+      <mat-form-field class="mat-form-field-right">
+        <label class="mat-label other-labelform.get">ID/Passport Number</label>
+        <input matInput maxlength="10" formControlName="idOrPassport" id="idOrPassport" />
+        <mat-error *ngIf="form.get('idOrPassport').hasError('required') && form.get('idOrPassport').touched">
+          Other Number is required
+        </mat-error>
+      </mat-form-field>
+    </section>
+    <section>
+      <mat-form-field>
+        <label class="mat-label other-label">Last Name</label>
+        <input matInput maxlength="50" formControlName="firstName" id="firstName" />
+        <mat-error *ngIf="form.get('firstName').hasError('required') && form.get('firstName').touched">
+          Other Number is required
+        </mat-error>
+      </mat-form-field>
+
+      <mat-form-field class="mat-form-field-right">
+        <label class="mat-label other-labelform.get">First Name</label>
+        <input matInput maxlength="10" formControlName="firstName" id="firstName" />
+        <mat-error *ngIf="form.get('firstName').hasError('required') && form.get('firstName').touched">
+          Other Number is required
+        </mat-error>
+      </mat-form-field>
+    </section>
+
+    <section>
+      <mat-form-field>
+        <label class="mat-label other-label">Member</label>
+        <input matInput maxlength="50" formControlName="member" id="member" />
+        <mat-error *ngIf="form.get('member').hasError('required') && form.get('member').touched">
+          Other Number is required
+        </mat-error>
+      </mat-form-field>
+    </section>
+  </form>
+</div>

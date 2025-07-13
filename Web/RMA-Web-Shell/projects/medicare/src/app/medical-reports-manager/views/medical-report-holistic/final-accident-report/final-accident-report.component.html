@@ -1,0 +1,76 @@
+<mat-card>
+<div class="menu-bar">
+    <span class="material-icons">
+    assignment
+    </span>
+    Final Medical Report
+    <span *ngIf="form && form.valid" (click)="save()" class="material-icons pointer right pulseGreen" matTooltip="save">
+        save
+    </span>
+</div>
+<br />
+<form [formGroup]="form" class="mat-container details-form"  *ngIf="this.form">
+    <section>                
+        <mat-form-field class="mat-form-field">
+            <label class="mat-label other-label mandatory-field">Mechanism of injury</label>
+            <textarea matInput cdkTextareaAutosize cdkAutosizeMinRows="3" cdkAutosizeMaxRows="5" id="ctlMechanismOfInjury"
+            formControlName="ctlMechanismOfInjury" class="mat-input-element" maxlength="1000"></textarea>
+        </mat-form-field>
+    </section>
+
+    <section>                
+        <mat-form-field class="mat-form-field">
+            <label class="mat-label other-label mandatory-field">Clinical description of original injury/injuries or disease</label>
+            <textarea matInput cdkTextareaAutosize cdkAutosizeMinRows="3" cdkAutosizeMaxRows="5" id="ctlInjuryOrDiseaseDetails"
+                formControlName="ctlInjuryOrDiseaseDetails" class="mat-input-element" maxlength="1000"></textarea>
+        </mat-form-field>
+    </section>
+
+    <section>
+        <mat-form-field class="mat-form-field" color="accent">
+            <label class="mat-label other-label">Is the present disablement solely attributable to the accident?</label>&nbsp;
+            <input [hidden]="true" matInput formControlName="radioIsEventSoleContributorToDisablement"/>
+            <mat-radio-group (change)="radioIsEventSoleContributorToDisablementChanged($event.value)" formControlName="radioIsEventSoleContributorToDisablement" id="radioIsEventSoleContributorToDisablement">
+                <mat-radio-button value='true'>Yes</mat-radio-button>&nbsp;
+                <mat-radio-button value='false'>No</mat-radio-button>
+            </mat-radio-group>
+        </mat-form-field>
+    </section>
+    <section *ngIf="form.value.radioIsEventSoleContributorToDisablement == 'false'">                
+        <mat-form-field class="mat-form-field">
+            <label class="mat-label other-label mandatory-field">Provide details of additional contributory causes</label>
+            <textarea matInput cdkTextareaAutosize cdkAutosizeMinRows="3" cdkAutosizeMaxRows="5"
+                formControlName="ctlContributingCauses" class="mat-input-element" maxlength="1000" id="ctlContributingCauses"></textarea>
+        </mat-form-field>
+    </section>
+
+    <section>                
+        <mat-form-field class="mat-form-field" color="accent">
+            <label class="mat-label other-label mandatory-field">Date Stabilised</label>
+            <input matInput [matDatepicker]="pickerDateStabilised" formControlName="ctlDateStabilised" id="ctlDateStabilised">
+            <mat-datepicker-toggle matSuffix [for]="pickerDateStabilised"></mat-datepicker-toggle>
+            <mat-datepicker #pickerDateStabilised></mat-datepicker>
+        </mat-form-field>
+    </section>
+
+    <section>                
+        <mat-form-field class="mat-form-field">
+            <label class="mat-label other-label mandatory-field">Impairment findings</label>
+            <textarea matInput cdkTextareaAutosize cdkAutosizeMinRows="3" cdkAutosizeMaxRows="5"
+            formControlName="ctlImpairmentFindings" class="mat-input-element" maxlength="1000" id="ctlImpairmentFindings"></textarea>
+        </mat-form-field>
+        <p>If there are impairment findings, please detail any permanent anatomical defect and/or impairment of functions on the relevant assessment chart, <br> to be found at: <a
+            href="https://randmutual.co.za/Downloads#48932-general-medical-reports" target="_blank">https://randmutual.co.za/Downloads#48932-general-medical-reports</a>.<br> Upload the completed assessment chart via the CompCare channel
+        </p>
+    </section>
+
+    <section>                
+        <mat-form-field class="mat-form-field" color="accent">
+            <label class="mat-label other-label">Date on which the patient is due to return to work</label>
+            <input matInput [matDatepicker]="picker" formControlName="ctlDateReturnToWork" id="ctlDateReturnToWork">
+            <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+            <mat-datepicker #picker></mat-datepicker>
+        </mat-form-field>
+    </section>
+</form>
+</mat-card>

@@ -1,0 +1,63 @@
+<div *ngIf="wizardContext" class="container-padding">
+    <h1 style="margin-bottom: 20px;margin-top: 50px">Wizard Approval</h1>
+  
+    <div>
+      <div class="left-margin">
+        <div class="wizard-font card-title grey">Type: {{wizardContext.wizard.wizardConfiguration.displayName}}</div>
+        <div class="wizard-font card-title grey">Description: {{wizardContext.wizard.wizardConfiguration.description}}
+        </div>
+  
+        <div class="wizard-font card-title grey">Reference: {{wizardContext.wizard.name}}</div>
+        <div class="wizard-font card-title grey">
+          <span>Status:&nbsp;</span>
+          <span class="valid">Approval requested by {{wizardContext.wizard.modifiedByDisplayName}}</span>
+        </div>
+        <div *ngIf="!wizardContext.wizard.canApprove" class="orange wizard-font">
+          {{wizardContext.wizard.cantApproveReason}}</div>
+        <hr />
+      </div>
+      <div *ngIf="!approvalType">
+        <div style="margin: 35px 0px 30px 20px;">
+          <button class="button submit-button" (click)="back()">Back</button>
+          <span *ngIf="wizardContext.wizard.canApprove">
+            <button class="button submit-button" (click)="confirm(1)">Approve</button>
+            <button *ngIf="!hideDispute" class="button submit-button" (click)="confirm(2)">Dispute</button>
+            <button class="button submit-button" (click)="confirm(3)">Reject</button>
+          </span>
+          <button class="button submit-button" (click)="close()">Close</button>
+        </div>
+      </div>
+    </div>
+  
+    <div *ngIf="approvalType">
+      <h1>Are you sure you want to {{approvalTypeText}} this wizard?</h1>
+  
+      <div [hidden]="approvalType === 1">
+        <form [formGroup]="form" class="mat-container details-form" novalidate>
+  
+          <!--Note text-->
+          <mat-form-field>
+            <label class="mat-label other-label">{{approvalTypeText}} Comment</label>
+            <textarea matTextareaAutosize matAutosizeMinRows="5" matAutosizeMaxRows="3" maxlength="255" matInput
+              minlength="15" id="code" name="text" formControlName="text"></textarea>
+            <mat-error *ngIf="form.get('text').hasError('required')">
+              {{approvalTypeText}} is <strong>required</strong>
+            </mat-error>
+            <mat-error *ngIf="form.get('text').hasError('minlength')">
+              {{approvalTypeText}} text must be at least <strong>15 characters</strong>
+            </mat-error>
+          </mat-form-field>
+        </form>
+      </div>
+  
+      <div style="margin: 35px 0px 30px 20px;">
+        <button *ngIf="!approvalType" class="button submit-button" (click)="back()">finish</button>
+        <button *ngIf="approvalType === 1" class="button submit-button" (click)="approve()">Yes, Approve</button>
+        <button *ngIf="approvalType === 2" class="button submit-button" (click)="dispute()">Yes, Dispute</button>
+        <button *ngIf="approvalType === 3" class="button submit-button" (click)="reject()">Yes, Reject</button>
+  
+        <button class="button submit-button" (click)="cancelConfirm()">Cancel</button>
+      </div>
+    </div>
+  </div>
+  

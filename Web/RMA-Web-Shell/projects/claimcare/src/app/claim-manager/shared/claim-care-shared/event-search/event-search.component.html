@@ -1,0 +1,181 @@
+<form [formGroup]="form" class="mat-container" novalidate>
+  <mat-card *ngIf="(dataSource.loading$ | async)">
+    <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+    <label class="mat-label other-label"><i>loading events...please wait</i></label>
+  </mat-card>
+
+  <div [hidden]="(dataSource.loading$ | async)">
+    <mat-card>
+      <section>
+        <div class="menu-bar">
+          <span class="material-icons">
+            search
+          </span>&nbsp;Search Event
+          <span *ngIf="!hideVisibility" class="material-icons pointer right" matTooltip="refresh" (click)="ClearData()">
+            restart_alt
+          </span>
+          &nbsp;&nbsp;
+          <span *ngIf="!hideVisibility" class="material-icons pointer right pulse" (click)="applyData()"
+            matTooltip="apply filters">
+            search
+          </span>
+          &nbsp;&nbsp;
+          <span *ngIf="hideVisibility" (click)="showDetail()"
+            [ngClass]="{'material-icons pointer right': hideVisibility}" matTooltip="view details">
+            filter_alt
+          </span>
+          &nbsp;&nbsp;
+          <span *ngIf="!hideVisibility" (click)="showDetail()"
+            [ngClass]="{'material-icons pointer right': !hideVisibility}" matTooltip="hide details">
+            filter_alt_off
+          </span>
+        </div>
+
+        <div *ngIf="!hideVisibility">
+          <div>
+            <mat-form-field class="mat-form-field inputDate">
+              <label class="mat-label other-label">Event Type</label>
+              <mat-select name="eventType" id="eventType" formControlName="eventType">
+                <mat-option [value]="0">All</mat-option>
+                <mat-option [value]="1">Accident</mat-option>
+                <mat-option [value]="3">Disease</mat-option>
+              </mat-select>
+            </mat-form-field>
+            &nbsp;
+            <mat-form-field class="mat-form-field inputDate">
+              <label class="mat-label other-label">From Date</label>
+              <input readonly matInput [min]="minDate" [max]="maxDate" date="true" time="false"
+                formControlName="startDate" [matDatepicker]="startDate" id="startDate" />
+              <mat-datepicker-toggle matSuffix [for]="startDate"></mat-datepicker-toggle>
+              <mat-datepicker touchUi="true" #startDate></mat-datepicker>
+            </mat-form-field>
+            &nbsp;
+            <mat-form-field class="mat-form-field inputDate">
+              <label class="mat-label other-label">End Date</label>
+              <input readonly matInput [max]="maxDate" date="true" time="false" formControlName="endDate"
+                [matDatepicker]="endDate" id="endDate" />
+              <mat-datepicker-toggle matSuffix [for]="endDate">
+              </mat-datepicker-toggle>
+              <mat-datepicker touchUi="true" #endDate></mat-datepicker>
+              <mat-error *ngIf="form.get('endDate').hasError('min-date')" class="validations">
+                End date cannot be before <strong>From date</strong>
+              </mat-error>
+            </mat-form-field>
+            <mat-checkbox id="selectAllDates" name="selectAllDates" formControlName="selectAllDates" class="levelCheck"
+              (change)="selectAllChange($event)">
+              <label class="mat-label other-label">View All Dates</label>
+            </mat-checkbox>
+          </div>
+        </div>
+      </section>
+    </mat-card>
+  </div>
+
+  <div [hidden]="(dataSource.loading$ | async)">
+    <mat-card>
+      <mat-form-field [floatLabel]="'never'">
+        <input matInput maxlength="50" name="searchTerm" id="searchTerm" formControlName="searchTerm" width="300"
+          minLength="3" class="elementBox" matTooltip="Search by Person Event Id" matTooltipShowDelay="1000">
+
+        <mat-placeholder class="placeholder">Search by event number, member name or date of incident (yyyy-mm-dd)
+        </mat-placeholder>
+
+        <mat-icon class="search-icon" (click)="configureSearch()" matTooltip="Search by personEventId" matSuffix>search
+        </mat-icon>
+      </mat-form-field>
+
+      <div [hidden]="dataSource && dataSource.data && dataSource.data.rowCount <= 0 || (dataSource.loading$ | async)"
+        class="searchDiv">
+        <div class="menu-bar">
+          <mat-radio-group aria-labelledby="reportformat-radio-group-label" class="reportformat-radio-group right"
+            (change)="reportFormatChange($event)">
+            <mat-radio-button checked="true" class="reportformat-radio-button" *ngFor="let reportFormat of reportFormats"
+              [value]="reportFormat">
+              {{reportFormat}} &nbsp;&nbsp;
+            </mat-radio-button>
+          </mat-radio-group>
+          &nbsp; &nbsp;
+          <span [ngClass]="isDownload ? 'material-icons pointer right blue' : 'material-icons pointer right'"
+            (click)="exportToCSV()" matTooltip="download to csv">
+            download_for_offline
+          </span>
+        </div>
+
+        <div [hidden]="!isDownloading" class="csvDownload">
+          <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+          <span class="site-font grey">downloading {{selectedReportFormat}} person events....</span>
+        </div>
+
+        <mat-table #table [dataSource]="dataSource" matSort  (matSortChange)="getData(true)">
+          <ng-container matColumnDef="eventNumber">
+            <mat-header-cell *matHeaderCellDef mat-sort-header>Event number</mat-header-cell>
+            <mat-cell *matCellDef="let row">{{row.eventNumber}}</mat-cell>
+          </ng-container>
+
+          <ng-container matColumnDef="memberNumber">
+            <mat-header-cell *matHeaderCellDef mat-sort-header>Member Number</mat-header-cell>
+            <mat-cell *matCellDef="let row">{{row.memberNumber ? row.memberNumber : ''}}
+            </mat-cell>
+          </ng-container>
+
+          <ng-container matColumnDef="memberName">
+            <mat-header-cell *matHeaderCellDef mat-sort-header>Member Name</mat-header-cell>
+            <mat-cell *matCellDef="let row">{{row.memberName ? row.memberName : ''}}</mat-cell>
+          </ng-container>
+
+          <ng-container matColumnDef="eventType">
+            <mat-header-cell *matHeaderCellDef mat-sort-header>Event Type</mat-header-cell>
+            <mat-cell *matCellDef="let row">{{getEventTypeStatus(row.eventType)}}</mat-cell>
+          </ng-container>
+
+          <ng-container matColumnDef="createdDate">
+            <mat-header-cell *matHeaderCellDef mat-sort-header>Created Date</mat-header-cell>
+            <mat-cell *matCellDef="let row">{{row.createdDate | date:'mediumDate'}}</mat-cell>
+          </ng-container>
+
+          <ng-container matColumnDef="dateOfIncident">
+            <mat-header-cell *matHeaderCellDef mat-sort-header>Incident Date</mat-header-cell>
+            <mat-cell *matCellDef="let row">{{row.dateOfIncident | date:'mediumDate'}}</mat-cell>
+          </ng-container>
+
+          <!-- Actions -->
+          <ng-container matColumnDef="actions">
+            <mat-header-cell *matHeaderCellDef>Action</mat-header-cell>
+            <mat-cell *matCellDef="let row" [matMenuTriggerFor]="menu" (click)="filterMenu(row)">
+              <span class="material-icons pointer right">more_vert</span>
+              <mat-menu #menu="matMenu">
+                <button mat-menu-item *ngFor="let menu of menus" (click)="onMenuSelect(row, menu)"
+                  disabled={{menu.disable}}>{{menu.title}}</button>
+              </mat-menu>
+            </mat-cell>
+          </ng-container>
+
+          <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
+          <mat-row *matRowDef="let row; columns: displayedColumns;"></mat-row>
+        </mat-table>
+        <mat-paginator #paginator [pageIndex]="0" [pageSize]="5" [pageSizeOptions]="[5, 10, 25, 100]"
+          [length]="this.dataSource.rowCount$ | async" (page)="getData(true)">
+        </mat-paginator>
+      </div>
+    </mat-card>
+  </div>
+
+  <div *ngIf="(dataSource && dataSource.data && dataSource.data.rowCount <= 0) && !(dataSource.loading$ | async)">
+    <mat-card>
+      No data found...
+    </mat-card>
+  </div>
+
+  <div [hidden]="paginator.length > 0 || !currentQuery || currentQuery == ''" class="no-search-results-add-button">
+    <div class="site-font grey">
+      <p class="grey">Your search - <strong>{{currentQuery}}</strong> - did not match any records.</p>
+      <span>Suggestions: </span>
+      <ul>
+        <li>Make sure that all words are spelled correctly.</li>
+        <li>Try different keywords.</li>
+        <li>Try more general keywords.</li>
+        <li>Try fewer keywords.</li>
+      </ul>
+    </div>
+  </div>
+</form>

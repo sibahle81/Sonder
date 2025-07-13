@@ -1,0 +1,48 @@
+<div class="page-header">
+
+</div>
+<!-- <loading *ngIf="isLoading"></loading> -->
+
+<!-- <div [hidden]="isLoading"></div> -->
+
+<div class="mat-container mat-elevation-z8">
+    <div class="mat-header">
+        <h1>Scheduled Tasks List</h1><br />
+        <div class="list-document-search search-container-right">
+            <input type="text" name="search" (keyup)="applyFilter($event.target.value)" placeholder="search tasks...">
+        </div>
+    </div>
+
+    <mat-table #table [dataSource]="dataSource" matSort>
+        <!-- Name Column -->
+        <ng-container matColumnDef="Category">
+            <mat-header-cell *matHeaderCellDef mat-sort-header> Category</mat-header-cell>
+            <mat-cell *matCellDef="let row"> {{row.scheduledTaskType.category}} </mat-cell>
+        </ng-container>
+        <!-- Name Column -->
+        <ng-container matColumnDef="Description">
+            <mat-header-cell *matHeaderCellDef mat-sort-header> Description </mat-header-cell>
+            <mat-cell *matCellDef="let row"> {{row.scheduledTaskType.description}} </mat-cell>
+        </ng-container>
+        <ng-container matColumnDef="IsEnabled">
+          <mat-header-cell *matHeaderCellDef mat-sort-header> IsEnabled </mat-header-cell>
+          <mat-cell *matCellDef="let row"> {{row.scheduledTaskType.isEnabled}} </mat-cell>
+      </ng-container>
+      <ng-container matColumnDef="numberOfRetries">
+        <mat-header-cell *matHeaderCellDef mat-sort-header> Number Of Retries </mat-header-cell>
+        <mat-cell *matCellDef="let row"> {{row.scheduledTaskType.numberOfRetriesRemaining}} </mat-cell>
+    </ng-container>
+        <ng-container matColumnDef="Actions">
+            <mat-header-cell *matHeaderCellDef mat-sort-header> Action </mat-header-cell>
+            <mat-cell *matCellDef="let row">
+                <a role="button" (click)="onSelect(row)" class="link-edit">Edit</a>
+                <!-- <a role="button" (click)="onDelete(row)" class="link-edit">Delete</a> -->
+            </mat-cell>
+        </ng-container>
+        <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
+        <mat-row *matRowDef="let row; columns: displayedColumns;"></mat-row>
+    </mat-table>
+
+    <mat-paginator #paginator [length]="dataSource.data.length" [pageIndex]="0" [pageSize]="10" [pageSizeOptions]="[5, 10, 25, 100]">
+    </mat-paginator>
+</div>

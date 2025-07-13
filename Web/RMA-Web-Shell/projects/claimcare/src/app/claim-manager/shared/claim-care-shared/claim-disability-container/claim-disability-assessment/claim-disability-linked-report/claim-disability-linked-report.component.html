@@ -1,0 +1,64 @@
+<mat-card class="pad" *ngIf="isLoading$ | async">
+  <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+  <label class="mat-label other-label"><i>loading medical reports...please wait</i></label>
+</mat-card>
+
+<div *ngIf="!(isLoading$ | async)">
+  <mat-card>
+    <div class="menu-bar" *ngIf="!(isLoading$ | async)">
+      <span class="material-icons"><span class="material-icons">
+              assignment_add</span></span>&nbsp;<label>Medical Report</label>
+    </div>
+  
+    <div *ngIf="!(isLoading$ | async) && medicalReportForm && medicalReportForm.length <= 0">
+      <label class="mat-label other-label"><i>No medical reports were found...</i></label>
+    </div>
+  
+    <div *ngIf="!(isLoading$ | async) && medicalReportForm && medicalReportForm.length > 0">
+      <mat-table #table [dataSource]="dataSource" matSort id="tblData">
+        <ng-container matColumnDef="select">
+          <mat-header-cell *matHeaderCellDef>
+            <span class="material-icons noHover">
+              security_update_good
+            </span>
+          </mat-header-cell>
+          <mat-cell *matCellDef="let row">
+            <mat-checkbox [checked]="autoSelectLinkedReport(row)" [disabled]="isReadOnly"
+              (change)="addCheckedItems($event, row)"></mat-checkbox>
+          </mat-cell>
+        </ng-container>
+
+        <ng-container matColumnDef="reportDate">
+            <mat-header-cell *matHeaderCellDef> Report Date </mat-header-cell>
+            <mat-cell *matCellDef="let row">{{ row.medicalReportForm.reportDate | date: "yyyy-MM-dd" }}</mat-cell>
+        </ng-container>
+
+        <ng-container matColumnDef="reportType">
+            <mat-header-cell *matHeaderCellDef> Report Type </mat-header-cell>
+            <mat-cell *matCellDef="let row">{{ getMedicalFormReportType(row.medicalReportForm.reportTypeId) }}</mat-cell>
+        </ng-container>
+
+        <ng-container matColumnDef="practitioner">
+            <mat-header-cell *matHeaderCellDef> Practitioner </mat-header-cell>
+            <mat-cell *matCellDef="let row">{{ row.medicalReportForm.healthcareProviderName }}</mat-cell>
+        </ng-container>
+
+        <ng-container matColumnDef="dateStabilised">
+          <mat-header-cell *matHeaderCellDef> Date Stabilised </mat-header-cell>
+          <mat-cell *matCellDef="let row">{{ row.dateStabilised | date: "yyyy-MM-dd" }}</mat-cell>
+        </ng-container>
+
+        <ng-container matColumnDef="estDaysOff">
+          <mat-header-cell *matHeaderCellDef> Est. Days off </mat-header-cell>
+          <mat-cell *matCellDef="let row">{{ row.medicalReportForm.estimatedDaysOff }}</mat-cell>
+        </ng-container>
+
+        <mat-header-row *matHeaderRowDef="getDisplayedColumns()"></mat-header-row>
+        <mat-row *matRowDef="let row; columns: getDisplayedColumns();"></mat-row>
+      </mat-table>
+      <mat-paginator #paginator [pageIndex]="0" [pageSize]="5" [pageSizeOptions]="[5, 10, 25, 100]"
+          [length]="this.dataSource.data ? dataSource.data.length : 0 | async">
+      </mat-paginator>
+    </div>
+  </mat-card>
+</div>

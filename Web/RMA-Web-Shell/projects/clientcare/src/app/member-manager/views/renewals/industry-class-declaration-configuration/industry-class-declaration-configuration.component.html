@@ -1,0 +1,219 @@
+<mat-card *ngIf="isLoading$ | async">
+  <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+  <label class="mat-label other-label"><i>loading...please wait</i></label>
+</mat-card>
+
+<div *ngIf="!(isLoading$ | async)">
+  <div *ngIf="isReadOnly || (!isReadOnly && isWizard)">
+    <mat-card
+      *ngIf="(!industryClassDeclarationConfigurations || industryClassDeclarationConfigurations.length <= 0) && hideForm">
+      <div class="menu-bar">
+        <span class="material-icons">
+          build
+        </span>
+        Industry Class Configuration
+        <span *ngIf="!isReadOnly && isWizard" (click)="showForm()"
+          class="material-icons pointer right">add_circle</span>
+        <span *ngIf="hasPermission && !hasWizardInProgress" (click)="startWizard()"
+          class="material-icons pointer right">settings</span>
+      </div>
+      <label class="mat-label other-label"><i>No configurations found...</i></label>
+    </mat-card>
+
+    <div *ngIf="!hideForm">
+      <mat-card>
+        <div class="menu-bar">
+          <span class="material-icons">
+            build
+          </span>
+          Industry Class Configuration
+          <span *ngIf="!hideForm">
+            <span class="material-icons pointer right" matTooltip="cancel" (click)="cancel()">cancel</span>
+            <span *ngIf="form.valid && !form.pristine" class="mat-label other-label" (click)="add()"
+              class="material-icons pointer right">save</span>
+          </span>
+          <span *ngIf="hideForm">
+            <span *ngIf="!isReadOnly && isWizard" class="mat-label other-label" (click)="showForm()"><span
+                class="material-icons pointer right">add_circle</span>
+            </span>
+          </span>
+        </div>
+        <form [formGroup]="form" class="mat-container details-form" novalidate>
+          <section>
+            <mat-form-field class="mat-form-field">
+              <label class="mat-label other-label">Industry Class</label>
+              <mat-select name="industryClass" id="industryClass" formControlName="industryClass">
+                <mat-option *ngFor="let industryClass of filteredIndustryClasses" [value]="industryClass">
+                  {{formatLookup(industryClass)}}
+                </mat-option>
+              </mat-select>
+              <label *ngIf="filteredIndustryClasses.length <= 0" class="sub-label">All industry classes already have a
+                configuration</label>
+              <mat-error *ngIf="form.get('industryClass').hasError('required')">
+                industry class is <strong>required</strong>
+              </mat-error>
+            </mat-form-field>
+
+            <mat-form-field class="mat-form-field-right">
+              <label class="mat-label other-label mandatory">Variance Threshold %</label>
+              <input matInput NumberOnly formControlName="varianceThreshold" name="varianceThreshold"
+                id="varianceThreshold" />
+              <mat-error *ngIf="form.get('varianceThreshold').hasError('required')">
+                variance threshold <strong>required</strong>
+              </mat-error>
+              <mat-error *ngIf="form.get('varianceThreshold').hasError('max')">
+                variance threshold must be <strong>less then 100%</strong>
+              </mat-error>
+            </mat-form-field>
+          </section>
+
+          <section>
+            <mat-form-field class="mat-form-field">
+              <label class="mat-label other-label">Renewal Period Start Month</label>
+              <mat-select (selectionChange)="getRenewalPeriodStartNumberOfDays($event)" name="renewalPeriodStartMonth"
+                id="renewalPeriodStartMonth" formControlName="renewalPeriodStartMonth">
+                <mat-option *ngFor="let month of monthsOfYear" [value]="month">
+                  {{month}}
+                </mat-option>
+              </mat-select>
+              <mat-error *ngIf="form.get('renewalPeriodStartMonth').hasError('required')">
+                renewal period start month is <strong>required</strong>
+              </mat-error>
+            </mat-form-field>
+
+            <mat-form-field class="mat-form-field-right">
+              <label class="mat-label other-label">Renewal Period Start Day of Month</label>
+              <mat-select name="renewalPeriodStartDayOfMonth" id="renewalPeriodStartDayOfMonth"
+                formControlName="renewalPeriodStartDayOfMonth">
+                <mat-option *ngFor="let day of renewalPeriodStartNumberOfDays" [value]="day">
+                  {{day}}
+                </mat-option>
+              </mat-select>
+              <mat-error *ngIf="form.get('renewalPeriodStartDayOfMonth').hasError('required')">
+                renewal period start day of month is <strong>required</strong>
+              </mat-error>
+            </mat-form-field>
+          </section>
+
+          <section>
+            <mat-form-field class="mat-form-field">
+              <label class="mat-label other-label">Online Submission Start Month</label>
+              <mat-select (selectionChange)="getOnlineSubmissionStartNumberOfDays($event)" name="onlineSubmissionStartMonth"
+                id="onlineSubmissionStartMonth" formControlName="onlineSubmissionStartMonth">
+                <mat-option *ngFor="let month of monthsOfYear" [value]="month">
+                  {{month}}
+                </mat-option>
+              </mat-select>
+            </mat-form-field>
+
+            <mat-form-field class="mat-form-field-right">
+              <label class="mat-label other-label">Online Submission Start Day of Month</label>
+              <mat-select name="onlineSubmissionStartDayOfMonth" id="onlineSubmissionStartDayOfMonth"
+                formControlName="onlineSubmissionStartDayOfMonth">
+                <mat-option *ngFor="let day of onlineSubmissionStartNumberOfDays" [value]="day">
+                  {{day}}
+                </mat-option>
+              </mat-select>
+            </mat-form-field>
+          </section>
+        </form>
+      </mat-card>
+    </div>
+  </div>
+
+  <div *ngIf="hideForm">
+    <div *ngIf="(isReadOnly) || (!isReadOnly && isWizard)">
+      <mat-card *ngIf="industryClassDeclarationConfigurations && industryClassDeclarationConfigurations.length > 0">
+        <div class="menu-bar">
+          <span class="material-icons">
+            build
+          </span>
+          Industry Class Configuration
+          <span *ngIf="!isReadOnly && isWizard" (click)="showForm()"><span
+              class="material-icons pointer right">add_circle</span></span>
+          <span *ngIf="hasPermission && !hasWizardInProgress && !isWizard" (click)="startWizard()"
+            class="material-icons pointer right">settings</span>
+        </div>
+
+        <div class="scrollTable">
+          <table class="altRowTable table">
+            <tr>
+              <th>Industry Class</th>
+              <th>Description</th>
+              <th>Variance Threshold %</th>
+              <th>Online Submission Open Date</th>
+              <th>Action</th>
+            </tr>
+            <tr *ngFor="let industryClassDeclarationConfiguration of industryClassDeclarationConfigurations">
+              <td>{{getIndustryClass(industryClassDeclarationConfiguration.industryClass)}}</td>
+              <td>{{getDates(industryClassDeclarationConfiguration)}}</td>
+              <td>{{industryClassDeclarationConfiguration.varianceThreshold}}%</td>
+              <td>{{getOnlineSubmissionDate(industryClassDeclarationConfiguration)}}</td>
+              <td>
+                <span><a (click)="edit(industryClassDeclarationConfiguration)">
+                    <span *ngIf="!isReadOnly" class="material-icons pointer" matTooltip="edit">settings</span>
+                    <span *ngIf="isReadOnly" class="material-icons pointer" matTooltip="view">visibility</span>
+                  </a></span>
+
+                <span (click)="openMaximumAverageEarningsDialog(industryClassDeclarationConfiguration)"
+                  *ngIf="industryClassDeclarationConfiguration.maxAverageEarnings && industryClassDeclarationConfiguration.maxAverageEarnings.length > 0"
+                  class="material-icons pointer" matTooltip="earnings limits per employee">paid</span>
+
+                <span (click)="openMaximumAverageEarningsDialog(industryClassDeclarationConfiguration)"
+                  *ngIf="!industryClassDeclarationConfiguration.maxAverageEarnings || industryClassDeclarationConfiguration.maxAverageEarnings.length <= 0"
+                  class="material-icons pointer redFont pulse" matTooltip="earnings limits per employee">paid</span>
+
+                <span (click)="openLiveInAllowanceDialog(industryClassDeclarationConfiguration)"
+                  *ngIf="industryClassDeclarationConfiguration.liveInAllowances && industryClassDeclarationConfiguration.liveInAllowances.length > 0"
+                  class="material-icons pointer" matTooltip="live in allowance per employee">night_shelter</span>
+
+                <span (click)="openLiveInAllowanceDialog(industryClassDeclarationConfiguration)"
+                  *ngIf="!industryClassDeclarationConfiguration.liveInAllowances || industryClassDeclarationConfiguration.liveInAllowances.length <= 0"
+                  class="material-icons pointer redFont pulse"
+                  matTooltip="live in allowance per employee">night_shelter</span>
+
+
+                <span (click)="openDeclarationPenaltyPercentageDialog(industryClassDeclarationConfiguration)"
+                  *ngIf="industryClassDeclarationConfiguration.declarationPenaltyPercentages && industryClassDeclarationConfiguration.declarationPenaltyPercentages.length > 0"
+                  class="material-icons pointer" matTooltip="penalties">history</span>
+
+                <span (click)="openDeclarationPenaltyPercentageDialog(industryClassDeclarationConfiguration)"
+                  *ngIf="!industryClassDeclarationConfiguration.declarationPenaltyPercentages || industryClassDeclarationConfiguration.declarationPenaltyPercentages.length <= 0"
+                  class="material-icons pointer redFont pulse" matTooltip="penalties">history</span>
+
+
+                <span (click)="openInflationPercentageConfigurationDialog(industryClassDeclarationConfiguration)"
+                  *ngIf="industryClassDeclarationConfiguration.inflationPercentages && industryClassDeclarationConfiguration.inflationPercentages.length > 0"
+                  class="material-icons pointer" matTooltip="inflation">show_chart</span>
+
+                <span (click)="openInflationPercentageConfigurationDialog(industryClassDeclarationConfiguration)"
+                  *ngIf="!industryClassDeclarationConfiguration.inflationPercentages || industryClassDeclarationConfiguration.inflationPercentages.length <= 0"
+                  class="material-icons pointer redFont pulse" matTooltip="inflation">show_chart</span>
+
+                <span (click)="openMinimumPremiumConfigurationDialog(industryClassDeclarationConfiguration)"
+                  *ngIf="industryClassDeclarationConfiguration.minimumAllowablePremiums && industryClassDeclarationConfiguration.minimumAllowablePremiums.length > 0"
+                  class="material-icons pointer" matTooltip="minimum premium">iso</span>
+
+                <span (click)="openMinimumPremiumConfigurationDialog(industryClassDeclarationConfiguration)"
+                  *ngIf="!industryClassDeclarationConfiguration.minimumAllowablePremiums || industryClassDeclarationConfiguration.minimumAllowablePremiums.length <= 0"
+                  class="material-icons pointer redFont pulse" matTooltip="minimum premium">iso</span>
+
+                <span (click)="delete(industryClassDeclarationConfiguration)"
+                  *ngIf="!industryClassDeclarationConfiguration.industryClassDeclarationConfigurationId || industryClassDeclarationConfiguration.industryClassDeclarationConfigurationId <= 0"
+                  class="material-icons pointer" matTooltip="delete">delete</span>
+              </td>
+            </tr>
+          </table>
+        </div>
+      </mat-card>
+
+      <div *ngIf="(isReadOnly && !isWizard)" class="form-group-button mat-form-button">
+        <mat-card>
+          <lib-running-wizards [moduleName]="'clientcare'" [managerName]="'member-manager'" [linkedItemId]="0"
+            [wizardTypeCSVs]="'industry-class-declaration-configuration'"
+            (hasWizardsEmit)="setHasRunningWizard($event)"></lib-running-wizards>
+        </mat-card>
+      </div>
+    </div>
+  </div>
+</div>

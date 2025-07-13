@@ -1,0 +1,162 @@
+<div class="items-heading heading-left">
+  <h1>{{(switchBatchType == switchBatchTypeEnum.MedEDI) ? "Medical Batch Invoices Details" :"Teba Batch Invoices Details"}} </h1>
+</div>
+<div (click)="back()" class="form-buttons submit-button">
+  <button type="button" class="button">Back</button>
+</div>
+<br>
+<br>
+<div *ngIf="loadingClaimsData$ | async">
+  <mat-progress-bar mode="indeterminate"
+    [ngClass]="{ 'loading-main-double-menu-progress': doubleMenu, 'loading-main-single-menu-progress': !doubleMenu }">
+  </mat-progress-bar>
+  <p class="site-font grey">Loading Claims Data...</p>
+</div>
+
+<div *ngIf="icd10ListClaims.length > 0 && selectedEvent && personEventId > 0">
+  <holistic-person-event-list *ngIf="selectedEvent && personEventId" [event]="selectedEvent"
+   [personEventId]="personEventId" (emitPersonEvent)="setPersonEvent($event)" [selectedTab]="2" [icd10List]="icd10ListClaims"></holistic-person-event-list> 
+ </div>
+
+<hr>
+<div class="red-text-important">Note: For mapping to above PersonEvent Click
+  <span class="material-icons" matTooltip="Map Invoice to Above Person Event">{{"person_add"}}</span>
+  icon or Click <span class="material-icons" matTooltip="Search Person Event">{{"person_search"}}</span>
+  icon in grid to change Person Event mapping.
+</div>
+
+<br>
+<div class="clear">&nbsp;</div>
+
+<div class="container-tables">
+
+  <mat-card>
+    <div class="items-heading-center">
+      <h1>{{(switchBatchType == switchBatchTypeEnum.MedEDI) ? "Electronic Medical Invoices Batch Details" :"Electronic Teba Invoices Batch Details"}} </h1>
+    </div>
+
+    <div *ngIf="loading$ | async">
+      <mat-progress-bar mode="indeterminate"
+        [ngClass]="{ 'loading-main-double-menu-progress': doubleMenu, 'loading-main-single-menu-progress': !doubleMenu }">
+      </mat-progress-bar>
+      <p class="site-font grey">Loading Batch Invoice Data...</p>
+    </div>
+
+    <div class="items-list-table">
+      <mat-table [dataSource]="dataSourceSwitchBatchInvoiceDetails" matSort class="mat-elevation-z8">
+
+        <ng-container matColumnDef="deleteInvoice">
+          <mat-header-cell *matHeaderCellDef> </mat-header-cell>
+          <mat-cell *matCellDef="let element"> <span 
+            *ngIf="element.switchInvoiceStatus |invoiceSwitchBatchConditionalIcons:element.invoiceId:this.switchInvoiceStatusConditionalIconEnum.DeleteInvoiceAction && canDelete"
+            class="material-icons"
+              (click)="canDelete && onDeleteInvoiceReasonModal(element)" matTooltip="Delete Invoice"
+              [class.disabled]="!canDelete">
+              <!-- DeleteInvoice -->
+              {{"delete"}}
+            </span> </mat-cell>
+        </ng-container>
+
+        <ng-container matColumnDef="viewSwitchInvoice">
+          <mat-header-cell *matHeaderCellDef> </mat-header-cell>
+          <mat-cell *matCellDef="let element"> <span class="material-icons" (click)="onViewSwitchInvoice(element)"
+              matTooltip="View Switch Invoice">
+              <!-- ViewSwitchInvoice -->
+              {{"preview"}}
+            </span> </mat-cell>
+        </ng-container> 
+
+        <ng-container matColumnDef="mapToPersonEvent">
+          <mat-header-cell *matHeaderCellDef> </mat-header-cell>
+          <mat-cell *matCellDef="let element"> <span 
+            *ngIf="element.switchInvoiceStatus |invoiceSwitchBatchConditionalIcons:element.invoiceId:this.switchInvoiceStatusConditionalIconEnum.MapToPersonEventAction"
+            class="material-icons" (click)="onMapToPersonEventSwitchInvoice(element)"
+              matTooltip="Search Person Event">
+              <!-- mapToPersonEvent -->
+              {{"person_search"}}
+            </span> </mat-cell>
+        </ng-container>
+
+        <ng-container matColumnDef="addBatchInvoice">
+          <mat-header-cell *matHeaderCellDef> </mat-header-cell>
+          <mat-cell *matCellDef="let element"> <span 
+            *ngIf="element.possibleEventId > 0 && element.switchInvoiceStatus |invoiceSwitchBatchConditionalIcons:element.invoiceId:this.switchInvoiceStatusConditionalIconEnum.AddBatchInvoiceAction" 
+            class="material-icons" (click)="onAddBatchInvoice(element)"
+              matTooltip="Map Invoice to Above Person Event">
+              <!-- AddBatchInvoice -->
+              {{"person_add"}}
+            </span> </mat-cell>
+        </ng-container>
+
+        <!-- status Column -->
+        <ng-container matColumnDef="status">
+          <mat-header-cell *matHeaderCellDef mat-sort-header> Invoice Status </mat-header-cell>
+          <mat-cell *matCellDef="let element"> {{getSwitchInvoiceStatus(element)}} </mat-cell>
+        </ng-container>
+        <!-- healthCareProviderName Column -->
+        <ng-container matColumnDef="healthCareProviderName">
+          <mat-header-cell *matHeaderCellDef mat-sort-header> HealthCare Provider Name </mat-header-cell>
+          <mat-cell *matCellDef="let element" matTooltip="{{element.healthCareProviderName}}"> {{element.healthCareProviderName}} </mat-cell>
+        </ng-container>
+        <!-- spInvoiceNumber Column -->
+        <ng-container matColumnDef="spInvoiceNumber">
+          <mat-header-cell *matHeaderCellDef mat-sort-header> Invoice# </mat-header-cell>
+          <mat-cell *matCellDef="let element" matTooltip="{{element.spInvoiceNumber}}"> {{element.spInvoiceNumber }}
+          </mat-cell>
+        </ng-container>
+        <!-- spAccountNumber Column -->
+        <ng-container matColumnDef="spAccountNumber">
+          <mat-header-cell *matHeaderCellDef mat-sort-header> Account# </mat-header-cell>
+          <mat-cell *matCellDef="let element" matTooltip="{{element.spAccountNumber}}"> {{element.spAccountNumber }} </mat-cell>
+        </ng-container>
+        <!-- serviceDate Column -->
+        <ng-container matColumnDef="serviceDate">
+          <mat-header-cell *matHeaderCellDef mat-sort-header> serviceDate </mat-header-cell>
+          <mat-cell *matCellDef="let element"> {{element.invoiceDate | date:'yyyy-MM-dd'}} </mat-cell>
+        </ng-container>
+        <!-- invoiceDate Column -->
+        <ng-container matColumnDef="invoiceDate">
+          <mat-header-cell *matHeaderCellDef mat-sort-header> Invoice Date </mat-header-cell>
+          <mat-cell *matCellDef="let element"> {{element.invoiceDate | date:'yyyy-MM-dd'}} </mat-cell>
+        </ng-container>
+        <!-- totalInvoiceAmountInclusive Column -->
+        <ng-container matColumnDef="invoiceTotalInc">
+          <mat-header-cell *matHeaderCellDef mat-sort-header> Invoice Amount (Incl) </mat-header-cell>
+          <mat-cell *matCellDef="let element"> {{element.totalInvoiceAmountInclusive | currency:"R":"symbol":'1.2-2'}}
+          </mat-cell>
+          <mat-footer-cell *matFooterCellDef> </mat-footer-cell>
+        </ng-container>
+        <!-- authTotalInc Column -->
+        <ng-container matColumnDef="authTotalInc">
+          <mat-header-cell *matHeaderCellDef mat-sort-header> Auth Total Inclusive </mat-header-cell>
+          <mat-cell *matCellDef="let element"> {{'value will be updated'}} </mat-cell>
+        </ng-container>
+
+        <ng-container matColumnDef="batchNo">
+          <mat-header-cell *matHeaderCellDef mat-sort-header> Batch Number </mat-header-cell>
+          <mat-cell *matCellDef="let element" matTooltip="{{element.switchBatchNumber}}"> {{element.switchBatchNumber}} </mat-cell>
+          <mat-footer-cell *matFooterCellDef> </mat-footer-cell>
+        </ng-container>
+        <!-- firstName Column -->
+        <ng-container matColumnDef="patientName">
+          <mat-header-cell *matHeaderCellDef mat-sort-header> PatientName </mat-header-cell>
+          <mat-cell *matCellDef="let element" matTooltip="{{element.firstName}}"> {{element.firstName}} </mat-cell>
+          <mat-footer-cell *matFooterCellDef> </mat-footer-cell>
+        </ng-container>
+        <!-- claimReferenceNumber Column -->
+        <ng-container matColumnDef="claimRef">
+          <mat-header-cell *matHeaderCellDef mat-sort-header> Claim Ref# </mat-header-cell>
+          <mat-cell *matCellDef="let element" matTooltip="{{element.claimReferenceNumberMatch}}"> {{element.claimReferenceNumberMatch}} </mat-cell>
+        </ng-container>
+
+        <mat-header-row *matHeaderRowDef="displayedColumnsSwitchBatchInvoiceDetails"></mat-header-row>
+        <mat-row *matRowDef="let row; columns: displayedColumnsSwitchBatchInvoiceDetails;" class="element-row"
+          (click)="highlightSeletectedRecord(row)"
+          [ngClass]="{'highlightSelectedRecordColor': selectedRowIndex == row.spInvoiceNumber}"
+          [style.background-color]="row | switchBatchInvoiceStatusColor">
+        </mat-row>
+      </mat-table>
+      <mat-paginator [pageSizeOptions]="[5, 10, 25, 100]"></mat-paginator>
+    </div>
+  </mat-card>
+</div>

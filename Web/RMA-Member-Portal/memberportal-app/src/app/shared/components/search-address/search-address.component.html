@@ -1,0 +1,69 @@
+<mat-card>
+    <mat-card-content>
+
+        <div class="page-header">
+            <h1 style="margin-bottom: 15px;">Find Addresses </h1>
+            <mat-icon class="close-icon" (click)="closeDialog()" matSuffix>close</mat-icon>
+        </div>
+        <mat-form-field [floatLabel]="'never'">
+            <input matInput maxlength="50" name="filter" #filter width="300" minLength="3"
+                matTooltip="Search by Postal Code or City" matTooltipShowDelay="1000">
+            <mat-placeholder class="placeholder">Search by Postal Code or City</mat-placeholder>
+            <mat-icon class="search-icon" (click)="search()" matSuffix>search</mat-icon>
+            <button style="visibility: hidden;" class="button submit-button" (click)="search()"
+                matTooltip="Search by Postal Code or City" matTooltipShowDelay="1000">Search</button>
+        </mat-form-field>
+
+
+        <div *ngIf="dataSource.loading$ | async">
+            <!-- <mat-progress-bar mode="indeterminate" [ngClass]="{ 'loading-main-double-menu-progress': doubleMenu, 'loading-main-single-menu-progress': !doubleMenu }">
+            </mat-progress-bar> -->
+            <p class="site-font grey">Searching...</p>
+        </div>
+
+        <div [hidden]="paginator.length == 0">
+            <mat-table #table [dataSource]="dataSource" matSort>
+
+                <ng-container matColumnDef="code">
+                    <mat-header-cell *matHeaderCellDef mat-sort-header> Code </mat-header-cell>
+                    <mat-cell (click)="onSelect(row)" *matCellDef="let row"> {{row.code}} </mat-cell>
+                </ng-container>
+                <ng-container matColumnDef="city">
+                    <mat-header-cell *matHeaderCellDef mat-sort-header> City </mat-header-cell>
+                    <mat-cell (click)="onSelect(row)" *matCellDef="let row"> {{row.city}} </mat-cell>
+                </ng-container>
+                <ng-container matColumnDef="suburb">
+                    <mat-header-cell *matHeaderCellDef mat-sort-header> Suburb </mat-header-cell>
+                    <mat-cell (click)="onSelect(row)" *matCellDef="let row"> {{row.suburb}} </mat-cell>
+                </ng-container>
+
+
+                <ng-container matColumnDef="province">
+                    <mat-header-cell *matHeaderCellDef mat-sort-header> Province </mat-header-cell>
+                    <mat-cell (click)="onSelect(row)" *matCellDef="let row"> {{row.province}} </mat-cell>
+                </ng-container>
+
+                <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
+                <mat-row *matRowDef="let row; columns: displayedColumns;"></mat-row>
+            </mat-table>
+
+            <mat-paginator #paginator [length]="dataSource.rowCount$" [pageSize]="5"
+                [pageSizeOptions]="[5, 10, 25, 100]">
+            </mat-paginator>
+        </div>
+
+        <div [hidden]="paginator.length > 0 || !currentQuery || currentQuery == ''"
+            class="no-search-results-add-button">
+            <div class="site-font grey">
+                <p class="grey">Your search - <strong>{{currentQuery}}</strong> - did not match any Addresses.</p>
+                <span>Suggestions: </span>
+                <ul>
+                    <li>Make sure that all words are spelled correctly.</li>
+                    <li>Try different keywords.</li>
+                    <li>Try more general keywords.</li>
+                    <li>Try fewer keywords.</li>
+                </ul>
+            </div>
+        </div>
+    </mat-card-content>
+</mat-card>

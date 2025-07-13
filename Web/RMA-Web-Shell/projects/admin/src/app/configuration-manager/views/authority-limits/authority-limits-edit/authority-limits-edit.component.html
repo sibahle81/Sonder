@@ -1,0 +1,50 @@
+<mat-card>
+  <div *ngIf="isLoading">
+    <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+    <label class="mat-label other-label"><i>saving referral limits...please wait</i></label>
+  </div>
+
+  <div class="mat-container">
+    <div class="header-row" fxLayoutAlign="space-between center">
+      <div class="header-title">
+        <label class="form-label"><b>Edit Authority Limit</b></label>
+      </div>
+    </div>
+    <hr />
+    <div class="content-holder">
+      <mat-card style="margin: 15px 30px 15px 30px">
+        <mat-card-content style="margin-left: 10px">
+          <form [formGroup]="form" class="mat-container details-form" novalidate>
+            <section>
+              <mat-form-field style="width: 100%">
+                <label class="mat-label other-label mandatory-field">Name</label>
+                <input matInput maxlength="50" style="width: 100%" formControlName="permissionName" />
+                <mat-error *ngIf="form.get('permissionName').hasError('required')">
+                  limit name is required
+                </mat-error>
+              </mat-form-field>
+            </section>
+
+            <section>
+              <mat-form-field>
+                <label class="mat-label other-label mandatory-field">Amount</label>
+                <input matInput formControlName="amountLimit" />
+                <mat-error *ngIf="form.get('amountLimit').hasError('required')">
+                  limit amount is required
+                </mat-error>
+              </mat-form-field>
+            </section>
+
+          </form>
+        </mat-card-content>
+      </mat-card>
+    </div>
+
+    <br />
+
+    <div class="form-group-button mat-form-button matformgroupbutton">
+      <button type="button" (click)="onSave()" class="button float-button">Save</button>
+      <button type="button" class="button float-button" (click)="onClose()">Cancel</button>
+    </div>
+  </div>
+</mat-card>

@@ -1,0 +1,13 @@
+<form [formGroup]="form" class="mat-container details-form" novalidate>
+    <section>
+        <mat-form-field class="mat-form-field">
+            <label class="mat-label other-label">Year</label><br />
+            <mat-select class="control" (selectionChange)="readForm()" formControlName="year" name="year" id="year">
+                <mat-option [value]="'all'">All</mat-option>
+                <mat-option *ngFor="let year of years" [value]="year">
+                    {{year}}
+                </mat-option>
+            </mat-select>
+        </mat-form-field>
+    </section>
+</form>

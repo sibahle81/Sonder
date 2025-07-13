@@ -1,0 +1,42 @@
+<div class="pad-bottom">
+  <form [formGroup]="form" class="mat-container details-form" novalidate>
+    <section>
+      <mat-form-field class="mat-form-field">
+        <label class="mat-label other-label">Policy Number</label>
+        <input matInput formControlName="policyNumber">
+      </mat-form-field>
+      <mat-form-field class="mat-form-field-right">
+        <label class="mat-label other-label">Policy Inception Date</label>
+        <input matInput formControlName="policyInceptionDate" [matDatepicker]="policyInceptionDate">
+        <mat-datepicker-toggle matSuffix [for]="policyInceptionDate"></mat-datepicker-toggle>
+        <mat-datepicker touchUi="true" #policyInceptionDate></mat-datepicker>
+      </mat-form-field>
+    </section>
+    <section>
+      <mat-form-field class="mat-form-field">
+        <label class="mat-label other-label">Policy Owner</label>
+        <input matInput formControlName="policyOwner">
+      </mat-form-field>
+      <mat-form-field class="mat-form-field-right">
+        <label class="mat-label other-label">Owner Identification Number</label>
+        <input matInput formControlName="policyOwnerIdNumber">
+      </mat-form-field>
+    </section>
+    <section>
+      <mat-form-field class="mat-form-field">
+        <label class="mat-label other-label mandatory-field">Policy Status</label>
+        <mat-select formControlName="policyStatusId">
+          <mat-option *ngFor="let status of policyStatus" [value]="status.id">
+            {{status.name}}
+          </mat-option>
+        </mat-select>
+      </mat-form-field>
+      <mat-form-field *ngIf="showPauseDate" class="mat-form-field-right">
+        <label class="mat-label other-label">Policy Pause Date</label>
+        <input matInput formControlName="policyPauseDate" [matDatepicker]="policyPauseDate" [min]="minPauseDate">
+        <mat-datepicker-toggle matSuffix [for]="policyPauseDate"></mat-datepicker-toggle>
+        <mat-datepicker touchUi="true" #policyPauseDate></mat-datepicker>
+      </mat-form-field>
+    </section>
+  </form>
+</div>

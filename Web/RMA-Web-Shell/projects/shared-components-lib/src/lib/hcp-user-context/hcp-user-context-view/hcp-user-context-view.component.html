@@ -1,0 +1,12 @@
+<span *ngIf="(isLoading$ | async)"><span class="material-icons grey">
+    hourglass_bottom
+</span>&nbsp;<i class="grey small">loading linked health care providers...</i></span>
+
+<span *ngIf="!(isLoading$ | async) && showIcon">
+<span *ngIf="userId" class="material-icons pointer" matTooltip="Select linked health care provider"
+    (click)="openHCPContextDialog()">manage</span>
+
+<span *ngIf="selectedHCPContext" class="mine small">
+    <span>(<b>{{selectedHCPContext.practiceNumber}}</b>) {{selectedHCPContext.name}}</span>
+</span>
+</span>

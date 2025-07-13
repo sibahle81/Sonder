@@ -1,0 +1,21 @@
+<div class="menu-bar">
+  <span class="material-icons">
+    attach_file
+  </span>
+  Attachment <span *ngIf="mailAttachment">({{mailAttachment.fileName}})</span>
+  <span (click)="cancel()" class="material-icons pointer right" matTooltip="close">
+    cancel
+  </span>
+
+  <span (click)="download()" class="material-icons pointer right pulse" matTooltip="download">
+    file_download
+  </span>
+
+  <span (click)="openInNewTab()" class="material-icons pointer right pulse" matTooltip="open in new tab">
+    tab
+  </span>
+</div>
+
+<div *ngIf="mailAttachment">
+  <mail-attachement-viewer [mailAttachment]="mailAttachment" (objectUrlEmit)="setObjectUrl($event)"></mail-attachement-viewer>
+</div>

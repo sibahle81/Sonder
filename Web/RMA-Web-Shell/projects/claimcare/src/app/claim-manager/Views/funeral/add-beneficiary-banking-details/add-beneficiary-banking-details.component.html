@@ -1,0 +1,111 @@
+<mat-card>
+    <mat-card-header>
+        <mat-card-title class="wizard-font card-title grey">
+            <h1 style="padding: 0;">Beneficiary Details</h1>
+        </mat-card-title>
+    </mat-card-header>
+
+    <mat-card-content style="margin-left: 10px;padding-bottom:20px;">
+
+        <div *ngIf="dataSource.isLoading">
+        </div>
+        <div *ngIf="isLoading">
+            <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+            <span *ngIf="isLoading" class="site-font grey" style="margin-top: 15px;"><i>Loading Beneficairy
+                    Details...</i></span>
+        </div>
+        <div [hidden]="dataSource.data.length === 0" class="beneficiaryTab">
+            <div class="mat-container mat-elevation-z8" [hidden]="isLoading">
+                <div [hidden]="dataSource.data.length === 0">
+                    <mat-table #table [dataSource]="dataSource" matSort id="tblData">
+                        <ng-container matColumnDef="firstname">
+                            <mat-header-cell *matHeaderCellDef mat-sort-header> First Name </mat-header-cell>
+                            <mat-cell *matCellDef="let row"> {{row.firstname}} </mat-cell>
+                        </ng-container>
+                        <ng-container matColumnDef="lastname">
+                            <mat-header-cell *matHeaderCellDef mat-sort-header> Surname </mat-header-cell>
+                            <mat-cell *matCellDef="let row"> {{row.lastname}} </mat-cell>
+                        </ng-container>
+                        <ng-container matColumnDef="idNumber">
+                            <mat-header-cell *matHeaderCellDef mat-sort-header> ID Number / Passport
+                            </mat-header-cell>
+                            <mat-cell *matCellDef="let row"> {{ row.idNumber ? row.idNumber : row.passportNumber}}
+                            </mat-cell>
+                        </ng-container>
+                        <ng-container matColumnDef="nameOfAccountHolder">
+                            <mat-header-cell *matHeaderCellDef mat-sort-header> Account Holder </mat-header-cell>
+                            <mat-cell *matCellDef="let row"> {{row.nameOfAccountHolder}} </mat-cell>
+                        </ng-container>
+                        <ng-container matColumnDef="accountNumber">
+                            <mat-header-cell *matHeaderCellDef mat-sort-header> Account Number </mat-header-cell>
+                            <mat-cell *matCellDef="let row"> {{row.accountNumber}} </mat-cell>
+                        </ng-container>
+                        <ng-container matColumnDef="accountType">
+                            <mat-header-cell *matHeaderCellDef mat-sort-header> Account Type </mat-header-cell>
+                            <mat-cell *matCellDef="let row"> {{row.accountType}} </mat-cell>
+                        </ng-container>
+                        <ng-container matColumnDef="bankName">
+                            <mat-header-cell *matHeaderCellDef mat-sort-header> Bank Name </mat-header-cell>
+                            <mat-cell *matCellDef="let row"> {{row.bankName}} </mat-cell>
+                        </ng-container>
+                        <ng-container matColumnDef="isApproved">
+                            <mat-header-cell *matHeaderCellDef mat-sort-header> Is Approved </mat-header-cell>
+                            <mat-cell *matCellDef="let row"> {{row.isApproved}} </mat-cell>
+                        </ng-container>
+                        <!-- Actions -->
+                        <ng-container matColumnDef="actions">
+                            <mat-header-cell *matHeaderCellDef mat-sort-header>Action</mat-header-cell>
+                            <mat-cell *matCellDef="let row" [matMenuTriggerFor]="menu" (click)="filterMenu(row)">
+                                <span class="material-icons pointer right">more_vert</span>
+                                <mat-menu #menu="matMenu">
+                                    <div [hidden]="!showAddBankingDetail">
+                                        <button mat-menu-item *ngFor="let menu of menus"
+                                            (click)="onMenuSelect(row.accountId, row.beneficiaryId, menu.title)"
+                                            disabled="{{menu.disable}}">{{menu.title}}</button>
+                                    </div>
+                                    <div [hidden]="showAddBankingDetail">
+                                        <div>
+                                            <button mat-menu-item
+                                                (click)="createBankingDetailsWizard(row.beneficiaryId)">Add
+                                                Banking</button>
+                                        </div>
+                                    </div>
+                                </mat-menu>
+                            </mat-cell>
+                        </ng-container>
+
+                        <mat-header-row *matHeaderRowDef="getDisplayedColumns();"></mat-header-row>
+                        <mat-row *matRowDef="let row; columns: getDisplayedColumns();"></mat-row>
+                    </mat-table>
+                    <mat-paginator #paginator [length]="dataSource.data.length" [pageIndex]="0" [pageSize]="5"
+                        [pageSizeOptions]="[5, 10, 25, 50]">
+                    </mat-paginator>
+                </div>
+            </div>
+        </div>
+
+        <div [hidden]="dataSource.data.length > 0 || isLoading" style="margin-left: 20px;">
+            <span class="grey site-font">No records found.</span>
+        </div>
+
+        <div class="form-group-button mat-form-button beneficiaryTab">
+            <div (click)="back()" class="form-buttons submit-button">
+                <button type="button" class="button float-button">Back</button>
+            </div>
+            <div (click)="addConfirmation(beneficiaryType)">
+                <button type="button" class="button float-button">Add Beneficiary</button>
+            </div>
+
+        </div>
+        <br />
+    </mat-card-content>
+    <div class="traceList">
+        <tracer-list [claimId]="claimId"></tracer-list>
+    </div>
+    <br />
+    <br />
+    <br />
+    <div class="taskList" *ngIf='hasTasks'>
+        <user-wizard-list [wizardConfigIds]='"27,41"'></user-wizard-list>
+    </div>
+</mat-card>

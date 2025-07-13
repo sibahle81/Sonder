@@ -1,0 +1,257 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">x64</Platform>
+    <ProjectGuid>{4AA3772E-D3D5-458C-BC16-99D93DF9185A}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>RMA.Common.Service</RootNamespace>
+    <AssemblyName>RMA.Common.Service</AssemblyName>
+    <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <Deterministic>true</Deterministic>
+    <NuGetPackageImportStamp>
+    </NuGetPackageImportStamp>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x64'">
+    <DebugSymbols>true</DebugSymbols>
+    <OutputPath>bin\x64\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <DebugType>full</DebugType>
+    <PlatformTarget>x64</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>..\..\Solution Items\RMA.ruleset</CodeAnalysisRuleSet>
+    <LangVersion>latest</LangVersion>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x64'">
+    <OutputPath>bin\x64\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <Optimize>true</Optimize>
+    <DebugType>pdbonly</DebugType>
+    <PlatformTarget>x64</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>..\..\Solution Items\RMA.ruleset</CodeAnalysisRuleSet>
+    <LangVersion>latest</LangVersion>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|AnyCPU'">
+    <DebugSymbols>true</DebugSymbols>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <DebugType>full</DebugType>
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <LangVersion>latest</LangVersion>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>..\..\Solution Items\RMA.ruleset</CodeAnalysisRuleSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|AnyCPU'">
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <Optimize>true</Optimize>
+    <DebugType>pdbonly</DebugType>
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <LangVersion>latest</LangVersion>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>..\..\Solution Items\RMA.ruleset</CodeAnalysisRuleSet>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.IO.Compression" />
+    <Reference Include="System.Net" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Audit\AuditWriter.cs" />
+    <Compile Include="CommonServiceServiceRegistry.cs" />
+    <Compile Include="Diagnostics\ApplicationInsightsConfiguration.cs" />
+    <Compile Include="Diagnostics\LoggingConfiguration.cs" />
+    <Compile Include="Diagnostics\Serilog\SerilogLoggerFactory.cs" />
+    <Compile Include="Diagnostics\Serilog\ServiceFabricEnricher.cs" />
+    <Compile Include="Diagnostics\ServiceEventSource.cs" />
+    <Compile Include="Extensions\ContainerBuilderExtensions.cs" />
+    <Compile Include="Extensions\HttpRequestExtensions.cs" />
+    <Compile Include="Extensions\ILoggerExtensions.cs" />
+    <Compile Include="Extensions\LogEventLevelExtensions.cs" />
+    <Compile Include="Middleware\RequestTrackingMiddleware.cs" />
+    <Compile Include="Middleware\RequestTrackingMiddlewareExtensions.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="ServiceBus\Consumers\ServiceBusCommunicationListener.cs" />
+    <Compile Include="ServiceBus\Consumers\ServiceBusQueueCommunicationListener.cs" />
+    <Compile Include="ServiceBus\Consumers\ServiceBusSubscriptionCommunicationListener.cs" />
+    <Compile Include="ServiceBus\Producers\ServiceBusQueueProducer.cs" />
+    <Compile Include="ServiceBus\Producers\ServiceBusTopicProducer.cs" />
+    <Compile Include="ServiceFabric\Constants\ApiRequestProperties.cs" />
+    <Compile Include="ServiceFabric\Constants\FabricEnvironmentVariable.cs" />
+    <Compile Include="ServiceFabric\Constants\HeaderIdentifiers.cs" />
+    <Compile Include="ServiceFabric\Constants\ServiceContextProperties.cs" />
+    <Compile Include="ServiceFabric\Constants\SharedProperties.cs" />
+    <Compile Include="ServiceFabric\IProxyFactoryProvider.cs" />
+    <Compile Include="ServiceFabric\Constants\DependencyProperties.cs" />
+    <Compile Include="ServiceFabric\Constants\MetricProperties.cs" />
+    <Compile Include="ServiceFabric\ProxyFactoryProvider.cs" />
+    <Compile Include="ServiceFabric\RemotingStatelessService.cs" />
+    <Compile Include="ServiceFabric\Constants\ServiceFabricEvent.cs" />
+    <Compile Include="ServiceFabric\ServiceBusQueueStatelessService.cs" />
+    <Compile Include="ServiceFabric\ServiceBusStatelessService.cs" />
+    <Compile Include="ServiceFabric\ServiceBusSubscriptionStatelessService.cs" />
+    <Compile Include="ServiceLocation\AutofacServiceLocator.cs" />
+    <Compile Include="ServiceLocation\ServiceFabricServiceRegistry.cs" />
+    <Compile Include="Services\EmailSenderFacade.cs" />
+    <Compile Include="Services\HttpClientFacade.cs" />
+    <Compile Include="Services\SerializerFacade.cs" />
+    <Compile Include="Services\SmsSenderFacade.cs" />
+    <Compile Include="Tasks\ActionTaskConsumer.cs" />
+    <Compile Include="Tasks\TaskConsumer.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <AdditionalFiles Include="..\..\Solution Items\RMA.DependencyValidation\ServicePlatform.layerdiagram">
+      <Link>ServicePlatform.layerdiagram</Link>
+      <Visible>False</Visible>
+    </AdditionalFiles>
+    <None Include="app.config" />
+  </ItemGroup>
+  <ItemGroup />
+  <ItemGroup>
+    <ProjectReference Include="..\..\Service\Admin\RMA.Service.Admin.MasterDataManager.Contracts\RMA.Service.Admin.MasterDataManager.Contracts.csproj">
+      <Project>{81ABD00C-262F-48DF-A933-63E3730F0245}</Project>
+      <Name>RMA.Service.Admin.MasterDataManager.Contracts</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\RMA.Common\RMA.Common.csproj">
+      <Project>{c30fb382-556d-41e4-b987-dea4f962059a}</Project>
+      <Name>RMA.Common</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="Autofac">
+      <Version>4.9.4</Version>
+    </PackageReference>
+    <PackageReference Include="Autofac.ServiceFabric">
+      <Version>2.2.0</Version>
+    </PackageReference>
+    <PackageReference Include="AutofacSerilogIntegration">
+      <Version>2.0.0</Version>
+    </PackageReference>
+    <PackageReference Include="Castle.Core">
+      <Version>4.4.0</Version>
+    </PackageReference>
+    <PackageReference Include="CommonServiceLocator">
+      <Version>2.0.7</Version>
+    </PackageReference>
+    <PackageReference Include="Microsoft.ApplicationInsights.DependencyCollector">
+      <Version>2.10.0</Version>
+    </PackageReference>
+    <PackageReference Include="Microsoft.ApplicationInsights.PerfCounterCollector">
+      <Version>2.10.0</Version>
+    </PackageReference>
+    <PackageReference Include="Microsoft.ApplicationInsights.ServiceFabric.Native">
+      <Version>2.3.1</Version>
+    </PackageReference>
+    <PackageReference Include="Microsoft.ApplicationInsights.WindowsServer">
+      <Version>2.10.0</Version>
+    </PackageReference>
+    <PackageReference Include="Microsoft.AspNetCore.Http.Abstractions">
+      <Version>2.2.0</Version>
+    </PackageReference>
+    <PackageReference Include="Microsoft.AspNetCore.Http.Features">
+      <Version>2.2.0</Version>
+    </PackageReference>
+    <PackageReference Include="Microsoft.CodeAnalysis.FxCopAnalyzers">
+      <Version>3.3.2</Version>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+      <PrivateAssets>all</PrivateAssets>
+    </PackageReference>
+    <PackageReference Include="Microsoft.CodeAnalysis.VersionCheckAnalyzer">
+      <Version>3.3.2</Version>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+      <PrivateAssets>all</PrivateAssets>
+    </PackageReference>
+    <PackageReference Include="Microsoft.CodeQuality.Analyzers">
+      <Version>3.3.2</Version>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+      <PrivateAssets>all</PrivateAssets>
+    </PackageReference>
+    <PackageReference Include="Microsoft.DependencyValidation.Analyzers">
+      <Version>0.11.0</Version>
+    </PackageReference>
+    <PackageReference Include="Microsoft.Extensions.Configuration.Binder">
+      <Version>2.2.4</Version>
+    </PackageReference>
+    <PackageReference Include="Microsoft.Extensions.Logging">
+      <Version>2.2.0</Version>
+    </PackageReference>
+    <PackageReference Include="Microsoft.NetFramework.Analyzers">
+      <Version>3.3.2</Version>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+      <PrivateAssets>all</PrivateAssets>
+    </PackageReference>
+    <PackageReference Include="Microsoft.ServiceFabric.Actors">
+      <Version>3.4.664</Version>
+    </PackageReference>
+    <PackageReference Include="Microsoft.VisualStudio.Threading.Analyzers">
+      <Version>16.3.52</Version>
+    </PackageReference>
+    <PackageReference Include="Newtonsoft.Json">
+      <Version>13.0.3</Version>
+    </PackageReference>
+    <PackageReference Include="Roslynator.Analyzers">
+      <Version>2.1.0</Version>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+      <PrivateAssets>all</PrivateAssets>
+    </PackageReference>
+    <PackageReference Include="Serilog.Enrichers.AssemblyName">
+      <Version>1.0.9</Version>
+    </PackageReference>
+    <PackageReference Include="Serilog.Enrichers.Environment">
+      <Version>2.1.3</Version>
+    </PackageReference>
+    <PackageReference Include="Serilog.Exceptions">
+      <Version>5.3.1</Version>
+    </PackageReference>
+    <PackageReference Include="Serilog.Extensions.Logging">
+      <Version>3.0.1</Version>
+    </PackageReference>
+    <PackageReference Include="Serilog.Sinks.ApplicationInsights">
+      <Version>3.0.4</Version>
+    </PackageReference>
+    <PackageReference Include="Serilog.Sinks.Debug">
+      <Version>1.0.1</Version>
+    </PackageReference>
+    <PackageReference Include="Serilog.Sinks.MSSqlServer">
+      <Version>5.1.2</Version>
+    </PackageReference>
+    <PackageReference Include="Serilog.Sinks.PeriodicBatching">
+      <Version>2.2.0</Version>
+    </PackageReference>
+    <PackageReference Include="ServiceFabric.Remoting.CustomHeaders">
+      <Version>3.0.12</Version>
+    </PackageReference>
+    <PackageReference Include="System.Buffers">
+      <Version>4.5.1</Version>
+    </PackageReference>
+    <PackageReference Include="System.Configuration.ConfigurationManager">
+      <Version>7.0.0</Version>
+    </PackageReference>
+    <PackageReference Include="System.Data.SqlClient">
+      <Version>4.8.5</Version>
+    </PackageReference>
+    <PackageReference Include="System.Diagnostics.DiagnosticSource">
+      <Version>7.0.2</Version>
+    </PackageReference>
+    <PackageReference Include="System.Memory">
+      <Version>4.5.5</Version>
+    </PackageReference>
+    <PackageReference Include="System.Numerics.Vectors">
+      <Version>4.5.0</Version>
+    </PackageReference>
+    <PackageReference Include="System.Security.Principal.Windows">
+      <Version>5.0.0</Version>
+    </PackageReference>
+    <PackageReference Include="WindowsAzure.ServiceBus">
+      <Version>6.2.2</Version>
+    </PackageReference>
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+</Project>

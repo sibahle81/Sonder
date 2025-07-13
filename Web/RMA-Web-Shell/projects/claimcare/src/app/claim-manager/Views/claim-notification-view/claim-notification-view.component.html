@@ -1,0 +1,846 @@
+
+<mat-card>
+  <div *ngIf="!(isLoading$ | async) && event">
+    <mat-card-title>
+      <h1>Person Event {{showAccidentDetails ? 'Accident Details' : 'Disease Details'}} <span
+          class="material-icons close" matTooltip="Back to Search" (click)="back()">close</span></h1>
+    </mat-card-title>
+    <mat-card-content>
+      <div>
+        <div *ngIf="event" class="dashboard">
+
+          <div class="leftDetails">
+            <div class="personDetails">
+              <br />
+              <mat-card class="matcard">
+                <mat-card-content>
+                  <h1>Person Details</h1>
+                  <br />
+
+                  <div *ngIf="!event.personEvents[0].rolePlayer &&  !(isLoading$ | async)">
+                    <i>No event details have been added</i>
+                  </div>
+
+                  <table *ngIf="event.personEvents[0].rolePlayer && !(isLoading$ | async)" class="altRowTable table">
+                    <tr>
+                      <td><b>Id Type: </b></td>
+                      <td>{{getIDType(event.personEvents[0].rolePlayer.person.idType)}}</td>
+                    </tr>
+
+                    <tr>
+                      <td><b>Id Number: </b></td>
+                      <td>{{event.personEvents[0].rolePlayer.person.idType == 1 ?
+                        event.personEvents[0].rolePlayer.person.idNumber :
+                        event.personEvents[0].rolePlayer.person.passportNumber}}</td>
+                    </tr>
+
+                    <tr>
+                      <td><b>Title: </b></td>
+                      <td>{{getTitle(event.personEvents[0].rolePlayer.person.title)}}</td>
+                    </tr>
+
+                    <tr>
+                      <td><b>First Name: </b></td>
+                      <td>{{event.personEvents[0].rolePlayer.person.firstName}}</td>
+                    </tr>
+
+                    <tr>
+                      <td><b>Last Name: </b></td>
+                      <td>{{event.personEvents[0].rolePlayer.person.surname}}</td>
+                    </tr>
+
+                    <tr>
+                      <td><b>Date of Birth: </b></td>
+                      <td>{{event.personEvents[0].rolePlayer.person.dateOfBirth | date:'yyyy-MM-dd' }}</td>
+                    </tr>
+
+                    <tr>
+                      <td><b>Gender: </b></td>
+                      <td>{{getGender(event.personEvents[0].rolePlayer.person.gender)}}</td>
+                    </tr>
+
+                    <tr>
+                      <td><b>Marital Status: </b></td>
+                      <td>{{getMaritalStatus(event.personEvents[0].rolePlayer.person.maritalStatus)}}</td>
+                    </tr>
+
+                    <tr>
+                      <td><b>Nationality: </b></td>
+                      <td>{{getNationality(event.personEvents[0].rolePlayer.person.nationality)}}</td>
+                    </tr>
+
+                    <tr *ngIf="countries.length != 0">
+                      <td><b>Country Origin : </b></td>
+                      <td>{{getCountry(event.personEvents[0].rolePlayer.person.countryOriginId)}}</td>
+                    </tr>
+
+                    <tr>
+                      <td><b>Preferred Method Of Communication : </b></td>
+                      <td>{{getCommunicationType(event.personEvents[0].rolePlayer.preferredCommunicationTypeId)}}</td>
+                    </tr>
+
+                    <tr>
+                      <td><b>Cell Number: </b></td>
+                      <td>{{event.personEvents[0].rolePlayer.cellNumber}}</td>
+                    </tr>
+
+                    <tr>
+                      <td><b>Email Address: </b></td>
+                      <td>{{event.personEvents[0].rolePlayer.emailAddress}}</td>
+                    </tr>
+
+                    <tr>
+                      <td><b>Tell Number: </b></td>
+                      <td>{{event.personEvents[0].rolePlayer.tellNumber}}</td>
+                    </tr>
+
+                  </table>
+                </mat-card-content>
+              </mat-card>
+
+            </div>
+
+            <div class="personEmploymentDetails">
+              <br />
+              <mat-card class="matcard">
+                <mat-card-content>
+                  <h1>Person Employment Details</h1>
+                  <br />
+
+                  <div *ngIf="(isPersonEmploymentDetailsLoading$ | async)">
+                    <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+                    <label class="mat-label other-label"><i>Getting Person Employment details...please wait</i></label>
+                  </div>
+
+                  <div *ngIf="!personEmployment &&  !(isPersonEmploymentDetailsLoading$ | async)">
+                    <i>No Person Employment details were found</i>
+                  </div>
+
+                  <table *ngIf="personEmployment && !(isPersonEmploymentDetailsLoading$ | async)" class="altRowTable table">
+                    <tr>
+                      <td><b>Is Skilled: </b></td>
+                      <td>{{personEmployment.isSkilled}}</td>
+                    </tr>
+
+                    <tr>
+                      <td><b>Is Trainee Learner Apprentice: </b></td>
+                      <td>{{personEmployment.isTraineeLearnerApprentice}}</td>
+                    </tr>
+
+                    <tr *ngIf="patersonGradings.length != 0">
+                      <td><b>Paterson Grading: </b></td>
+                      <td>{{getPatersonGrading(personEmployment.patersonGradingId)}}</td>
+                    </tr>
+
+                    <tr>
+                      <td><b>Employee Number: </b></td>
+                      <td>{{personEmployment.employeeNumber}}</td>
+                    </tr>
+
+                    <tr>
+                      <td><b>Employee Industry Number: </b></td>
+                      <td>{{personEmployment.employeeIndustryNumber}}</td>
+                    </tr>
+
+                    <tr>
+                      <td><b>RMA Employee Reference Number: </b></td>
+                      <td>{{personEmployment.rmaEmployeeRefNum}}</td>
+                    </tr>
+
+                    <tr>
+                      <td><b>Start Date: </b></td>
+                      <td>{{personEmployment.startDate | date:'yyyy-MM-dd'}}</td>
+                    </tr>
+
+                    <tr *ngIf="occupationYears != 0">
+                      <td><b>Years In Present Occupation:</b></td>
+                      <td>{{occupationYears}}</td>
+                    </tr>
+
+                    <tr *ngIf="monthsInOccupation != 0">
+                      <td><b>Years In Present Occupation:</b></td>
+                      <td>{{monthsInOccupation}} Months</td>
+                    </tr>
+
+                    <tr *ngIf="daysInOccupation != 0">
+                      <td><b>Years In Present Occupation: </b></td>
+                      <td>{{daysInOccupation}} Days</td>
+                    </tr>
+
+                    <tr>
+                      <td><b>Years In Industry: </b></td>
+                      <td>{{personEmployment.yearsInIndustry}}</td>
+                    </tr>
+
+                  </table>
+                </mat-card-content>
+              </mat-card>
+
+            </div>
+
+            <div class="personAddressDetails">
+              <br />
+              <mat-card class="matcard">
+                <mat-card-content>
+                  <h1>Person Address Details</h1>
+                  <br />
+
+                  <div *ngIf="personRoleplayerAddresses.length == 0 &&  !(isLoading$ | async)">
+                    <i>No Person Address details were found</i>
+                  </div>
+
+                  <table *ngIf="personRoleplayerAddresses.length != 0 && !(isLoading$ | async)" class="altRowTable table">
+                    <tr>
+                      <th>Address Type</th>
+                      <th>Line 1</th>
+                      <th>Line 2</th>
+                      <th>City</th>
+                      <th>Province</th>
+                      <th>Postal Code</th>
+                      <th>Effective Date</th>
+                    </tr>
+                    <tr *ngFor="let personRoleplayerAddress of personRoleplayerAddresses">
+                      <td>{{getType(personRoleplayerAddress.addressType)}}</td>
+                      <td>{{personRoleplayerAddress.addressLine1}}</td>
+                      <td>{{personRoleplayerAddress.addressLine2}}</td>
+                      <td>{{personRoleplayerAddress.city}}</td>
+                      <td>{{personRoleplayerAddress.province}}</td>
+                      <td>{{personRoleplayerAddress.postalCode}}</td>
+                      <td>{{personRoleplayerAddress.effectiveDate | date:'yyyy/MM/dd'}}</td>
+                    </tr>
+
+                  </table>
+                </mat-card-content>
+              </mat-card>
+
+            </div>
+
+            <div class="employerContactDetails">
+              <br />
+              <mat-card class="matcard">
+                <mat-card-content>
+                  <h1>Employer Contact Details</h1>
+                  <br />
+
+                  <div *ngIf="rolePlayerContacts.length == 0 &&  !(isLoadingContacts$ | async)">
+                    <i>No Employer Contact details were found</i>
+                  </div>
+
+                  <table *ngIf="rolePlayerContacts.length != 0 && !(isLoadingContacts$ | async)" class="altRowTable table">
+                    <tr>
+                      <th>Contact Person</th>
+                      <th>Cell Number</th>
+                      <th>Email Address</th>
+                      <th>Telephone Number</th>
+                      <th>Preferred Communication</th>
+                      <th>Contact Designation</th>
+                    </tr>
+                    <tr *ngFor="let rolePlayerContact of rolePlayerContacts">
+                      <td>{{rolePlayerContact.firstname + ' ' + rolePlayerContact.surname}}</td>
+                      <td>{{rolePlayerContact.contactNumber}}</td>
+                      <td>{{rolePlayerContact.emailAddress}}</td>
+                      <td>{{rolePlayerContact.telephoneNumber}}</td>
+                      <td>{{getCommunicationType(rolePlayerContact.communicationType)}}</td>
+                      <td>{{getContactDesignation(rolePlayerContact.contactDesignationType)}}</td>
+                    </tr>
+                  </table>
+                </mat-card-content>
+              </mat-card>
+
+            </div>
+
+          </div>
+
+          <div class="rightDetails">
+
+            <div *ngIf="!showAccidentDetails">
+              <div class="eventDetails">
+                <br />
+                <mat-card>
+                  <mat-card-content>
+                    <h1>Event Details</h1>
+                    <br />
+
+                    <div *ngIf="!event &&  !(isLoading$ | async)">
+                      <i>No event details have been added</i>
+                    </div>
+
+                    <table *ngIf="event && !(isLoading$ | async)" class="altRowTable table">
+                      <tr>
+                        <td><b>Event Number: </b></td>
+                        <td>{{event.eventReferenceNumber}}</td>
+                      </tr>
+
+                      <tr>
+                        <td><b>Event Description: </b></td>
+                        <td>{{event.description}}</td>
+                      </tr>
+
+                      <tr *ngIf="subsidiaries.length != 0">
+                        <td><b>Member Site: </b></td>
+                        <td>{{getMemberSite(event.memberSiteId)}}</td>
+                      </tr>
+
+                      <tr>
+                        <td><b>Medical Benefits Waiting Period: </b></td>
+                        <td>{{ getRolePlayerMedicalWaiting() }}</td>
+                      </tr>
+
+                    </table>
+                  </mat-card-content>
+                </mat-card>
+
+              </div>
+
+              <div class="injuryDetails">
+                <br />
+                <mat-card>
+                  <mat-card-content>
+                    <h1>Injury Details</h1>
+                    <br />
+                    <div *ngIf="event.personEvents.length == 0 &&  !(isLoading$ | async)">
+                      <i>No Injury details were found</i>
+                    </div>
+
+                    <table *ngIf="event.personEvents.length != 0 && !(isLoading$ | async)" class="altRowTable table">
+
+                      <tr *ngIf="parentInsuranceTypes.length != 0">
+                        <td><b>Insurance Type: </b></td>
+                        <td>{{getInsuranceType(event.personEvents[0].insuranceTypeId)}}</td>
+                      </tr>
+
+                      <tr *ngIf="causeOfDiseases.length != 0">
+                        <td><b>Cause Of Disease: </b></td>
+                        <td>{{getCauseOfDiease(event.personEvents[0].personEventDiseaseDetail.causeOfDiseaseId)}}</td>
+                      </tr>
+
+                      <tr *ngIf="typeOfDiseases.length != 0">
+                        <td><b>Type Of Disease: </b></td>
+                        <td>{{getTypeOfDisease(event.personEvents[0].personEventDiseaseDetail.typeOfDiseaseId)}}</td>
+                      </tr>
+
+                      <tr>
+                        <td><b>Brief Description: </b></td>
+                        <td>{{event.personEvents[0].personEventDiseaseDetail.natureOfDisease}}</td>
+                      </tr>
+
+                      <tr>
+                        <td><b>1st Date of Diagnosis/Audiogram: </b></td>
+                        <td>{{event.personEvents[0].personEventDiseaseDetail.dateDiagnosis | date:'yyyy-MM-dd'}}</td>
+                      </tr>
+
+
+                      <tr *ngIf="diagnosticGroups.length != 0">
+                        <td><b>Primary Injury Diagnostic Group</b></td>
+                        <td>{{getDiagnosticGroup(event.personEvents[0].physicalDamages[0].icd10DiagnosticGroupId)}}</td>
+                      </tr>
+
+                      <tr *ngIf="icdCategories.length != 0">
+                        <td><b>ICD10 Category</b></td>
+                        <td>{{getIcdCategory(event.personEvents[0].physicalDamages[0].icdCategoryId)}}</td>
+                      </tr>
+
+                      <tr *ngIf="icdSubCategories.length != 0">
+                        <td><b>ICD10 Sub-Category</b></td>
+                        <td>{{getICDSubCategory(event.personEvents[0].physicalDamages[0].icdSubCategoryId)}}</td>
+                      </tr>
+
+                      <tr *ngIf="icd10Codes.length != 0">
+                        <td><b>ICD10 Code</b></td>
+                        <td>{{getICD10Code(event.personEvents[0].physicalDamages[0].injuries[0].icd10CodeId)}}</td>
+                      </tr>
+
+                      <tr>
+                        <td><b>Severity</b></td>
+                        <td>{{getInjurySeverity(event.personEvents[0].physicalDamages[0].injuries[0].injurySeverityType)}}</td>
+                      </tr>
+
+
+                    </table>
+
+                  </mat-card-content>
+                </mat-card>
+
+              </div>
+
+              <div class="claimDetailsDisease">
+                <br />
+                <mat-card>
+                  <mat-card-content>
+                    <h1>Claim Details</h1>
+                    <br />
+                    <div *ngIf="event.personEvents[0].claims == 0 &&  !(isLoading$ | async)">
+                      <i>No Claim details were found</i>
+                    </div>
+
+
+                    <table *ngIf="event.personEvents[0].claims.length != 0 && !(isLoading$ | async)" class="altRowTable table">
+                      <tr>
+                        <th>Claim Ref Number</th>
+                        <th>Claim Status</th>
+                        <th>Claim Liability Status</th>
+                        <th>PD%</th>
+                      </tr>
+                      <tr *ngFor="let claim of event.personEvents[0].claims">
+                        <td>{{claim.claimReferenceNumber}}</td>
+                        <td>{{getClaimStatus(claim.claimStatusId)}}</td>
+                        <td>{{getLiabilityStatus(claim.claimLiabilityStatus)}}</td>
+                        <td>{{claim.disabilityPercentage}}</td>
+                      </tr>
+
+                    </table>
+                  </mat-card-content>
+                </mat-card>
+
+              </div>
+
+            </div>
+
+            <div *ngIf="showAccidentDetails">
+              <div class="eventDetails">
+                <br />
+                <mat-card>
+                  <mat-card-content>
+                    <h1>Event Details</h1>
+                    <br />
+
+                    <div *ngIf="(isLoading$ | async)">
+                      <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+                      <label class="mat-label other-label"><i>Getting Person Event details...please wait</i></label>
+                    </div>
+                    <div *ngIf="!event &&  !(isLoading$ | async)">
+                      <i>No event details have been added</i>
+                    </div>
+
+                    <table *ngIf="event && !(isLoading$ | async)" class="altRowTable table">
+                      <tr>
+                        <td><b>Event Number: </b></td>
+                        <td>{{event.eventReferenceNumber}}</td>
+                      </tr>
+
+                      <tr>
+                        <td><b>Event Description: </b></td>
+                        <td>{{event.description}}</td>
+                      </tr>
+
+                      <tr>
+                        <td><b>Event Date: </b></td>
+                        <td>{{event.eventDate | date:'yyyy-MM-dd'}}</td>
+                      </tr>
+
+                      <tr>
+                        <td><b>Event Time: </b></td>
+                        <td>{{event.eventDate | date:'hh:mm a'}}</td>
+                      </tr>
+
+                      <tr>
+                        <td><b>Location Category: </b></td>
+                        <td>{{getLocationCategory(event.locationCategory)}}</td>
+                      </tr>
+
+                      <tr *ngIf="subsidiaries.length != 0">
+                        <td><b>Member Site: </b></td>
+                        <td>{{getMemberSite(event.memberSiteId)}}</td>
+                      </tr>
+
+                      <tr>
+                        <td><b>Number Of Deceased Employees: </b></td>
+                        <td>{{event.numberOfDeceasedEmployees}}</td>
+                      </tr>
+
+                      <tr>
+                        <td><b>Number Of Injured Employees: </b></td>
+                        <td>{{event.numberOfInjuredEmployees}}</td>
+                      </tr>
+
+                      <tr>
+                        <td><b>Medical Benefits Waiting Period: </b></td>
+                        <td>{{ getRolePlayerMedicalWaiting() }}</td>
+                      </tr>
+
+                    </table>
+                  </mat-card-content>
+                </mat-card>
+
+              </div>
+
+              <div class="injuryDetails">
+                <br />
+                <mat-card>
+                  <mat-card-content>
+                    <h1>Injury Details</h1>
+                    <br />
+                    <div *ngIf="event.personEvents.length == 0 &&  !(isLoading$ | async)">
+                      <i>No Injury details were found</i>
+                    </div>
+
+                    <table *ngIf="event.personEvents.length != 0 && !(isLoading$ | async)" class="altRowTable table">
+
+                      <tr *ngIf="claimTypes.length != 0">
+                        <td><b>Claim Type: </b></td>
+                        <td>{{getClaimType(event.personEvents[0].claimType)}}</td>
+                      </tr>
+
+                      <tr *ngIf="parentInsuranceTypes.length != 0">
+                        <td><b>Insurance Type: </b></td>
+                        <td>{{getInsuranceType(event.personEvents[0].insuranceTypeId)}}</td>
+                      </tr>
+
+                      <tr>
+                        <td><b>Is Assault: </b></td>
+                        <td>{{event.personEvents[0].isAssault}}</td>
+                      </tr>
+
+                      <tr>
+                        <td><b>Is Dentures: </b></td>
+                        <td>{{event.personEvents[0].isDentures}}</td>
+                      </tr>
+
+                      <tr>
+                        <td><b>Is Spectacles: </b></td>
+                        <td>{{event.personEvents[0].isSpectacles}}</td>
+                      </tr>
+
+                      <tr>
+                        <td><b>Is Straight Through Process: </b></td>
+                        <td>{{event.personEvents[0].isStraightThroughProcess}}</td>
+                      </tr>
+
+                      <tr>
+                        <td><b>Suspicious Transaction Status: </b></td>
+                        <td>{{getSuspiciousTransactionStatus(event.personEvents[0].suspiciousTransactionStatus)}}</td>
+                      </tr>
+
+                      <tr>
+                        <td><b>Is Occur At Normal Workplace: </b></td>
+                        <td>{{event.personEvents[0].personEventAccidentDetail.isOccurAtNormalWorkplace}}</td>
+                      </tr>
+
+                      <tr>
+                        <td><b>Is Occur Performing Scope of Duty: </b></td>
+                        <td>{{event.personEvents[0].personEventAccidentDetail.isOccurPerformingScopeofDuty}}</td>
+                      </tr>
+
+                      <tr>
+                        <td><b>Is On Business Travel: </b></td>
+                        <td>{{event.personEvents[0].personEventAccidentDetail.isOnBusinessTravel}}</td>
+                      </tr>
+
+                      <tr>
+                        <td><b>Is On Callout: </b></td>
+                        <td>{{event.personEvents[0].personEventAccidentDetail.isOnCallout}}</td>
+                      </tr>
+
+                      <tr>
+                        <td><b>Is On Standby: </b></td>
+                        <td>{{event.personEvents[0].personEventAccidentDetail.isOnStandby}}</td>
+                      </tr>
+
+                      <tr>
+                        <td><b>Is Road Accident: </b></td>
+                        <td>{{event.personEvents[0].personEventAccidentDetail.isRoadAccident}}</td>
+                      </tr>
+
+                      <tr *ngIf="event.personEvents[0].personEventAccidentDetail.isRoadAccident">
+                        <td><b>Is Private Road: </b></td>
+                        <td>{{event.personEvents[0].personEventAccidentDetail.isPrivateRoad}}</td>
+                      </tr>
+
+                      <tr *ngIf="event.personEvents[0].personEventAccidentDetail.isRoadAccident">
+                        <td><b>Is Public Road: </b></td>
+                        <td>{{event.personEvents[0].personEventAccidentDetail.isPublicRoad}}</td>
+                      </tr>
+
+                      <tr *ngIf="event.personEvents[0].personEventAccidentDetail.isRoadAccident">
+                        <td><b>Is Training Travel: </b></td>
+                        <td>{{event.personEvents[0].personEventAccidentDetail.isTrainingTravel}}</td>
+                      </tr>
+
+                      <tr *ngIf="event.personEvents[0].personEventAccidentDetail.isRoadAccident">
+                        <td><b>Is Travel To From Work: </b></td>
+                        <td>{{event.personEvents[0].personEventAccidentDetail.isTravelToFromWork}}</td>
+                      </tr>
+
+                      <tr *ngIf="event.personEvents[0].personEventAccidentDetail.isRoadAccident">
+                        <td><b>Police Reference Number: </b></td>
+                        <td>{{event.personEvents[0].personEventAccidentDetail.policeReferenceNo}}</td>
+                      </tr>
+
+                      <tr *ngIf="event.personEvents[0].personEventAccidentDetail.isRoadAccident">
+                        <td><b>Police Station Name: </b></td>
+                        <td>{{event.personEvents[0].personEventAccidentDetail.policeStationName}}</td>
+                      </tr>
+
+                      <tr *ngIf="event.personEvents[0].personEventAccidentDetail.isRoadAccident">
+                        <td><b>Third Party Vehicle Reg Number: </b></td>
+                        <td>{{event.personEvents[0].personEventAccidentDetail.thirdPartyVahicleRegNo}}</td>
+                      </tr>
+
+                      <tr *ngIf="event.personEvents[0].personEventAccidentDetail.isRoadAccident">
+                        <td><b>Third Party Vehicle Make: </b></td>
+                        <td>{{event.personEvents[0].personEventAccidentDetail.thirdPartyVehicleMake}}</td>
+                      </tr>
+
+                      <tr *ngIf="event.personEvents[0].personEventAccidentDetail.isRoadAccident">
+                        <td><b>Vehicle Make: </b></td>
+                        <td>{{event.personEvents[0].personEventAccidentDetail.vehicleMake}}</td>
+                      </tr>
+
+                      <tr *ngIf="event.personEvents[0].personEventAccidentDetail.isRoadAccident">
+                        <td><b>Vehicle Reg No: </b></td>
+                        <td>{{event.personEvents[0].personEventAccidentDetail.vehicleRegNo}}</td>
+                      </tr>
+
+
+                      <tr *ngIf="benefits.length != 0">
+                        <td><b>Injury Type </b></td>
+                        <td>{{getClaimBucketClass(event.personEvents[0].personEventBucketClassId)}}</td>
+                      </tr>
+
+                      <tr *ngIf="diagnosticGroups.length != 0">
+                        <td><b>Primary Injury Diagnostic Group</b></td>
+                        <td>{{getDiagnosticGroup(event.personEvents[0].physicalDamages[0].icd10DiagnosticGroupId)}}</td>
+                      </tr>
+
+                      <tr>
+                        <td><b>Brief Description Of Injury</b></td>
+                        <td>{{event.personEvents[0].physicalDamages[0].description}}</td>
+                      </tr>
+
+                      <tr>
+                        <td><b>Stabilization Date </b></td>
+                        <td>{{ event.personEvents[0].dateOfStabilisation | date:'yyyy-MM-dd'}}</td>
+                      </tr>
+
+                    </table>
+                    <br />
+                    <table *ngIf="event.personEvents[0].physicalDamages[0].injuries.length != 0 && !(isLoading$ | async) && !(isICD10CodeLoading$ | async)" class="altRowTable table">
+                      <tr>
+                        <th>ICD10Code</th>
+                        <th>Injury Severity</th>
+                        <th>Body Side Affected</th>
+                      </tr>
+                      <tr *ngFor="let injury of event.personEvents[0].physicalDamages[0].injuries">
+                        <td>{{getICD10Code(injury.icd10CodeId)}}</td>
+                        <td>{{getInjurySeverity(injury.injurySeverityType)}}</td>
+                        <td>{{getBodySide(injury.bodySideAffectedType)}}</td>
+                      </tr>
+
+                    </table>
+                    <br />
+                    <div  *ngIf="event.personEvents[0].personEventDeathDetail && !(isLoading$ | async)">
+                      <h1>Death Details</h1>
+                      <table
+                      *ngIf="event.personEvents[0].personEventDeathDetail && !(isLoading$ | async)"
+                      class="altRowTable table">
+                      <tr>
+                        <td><b>Death Date: </b></td>
+                        <td>{{event.personEvents[0].personEventDeathDetail.deathDate | date: 'yyyy-MM-dd'}}</td>
+                      </tr>
+
+                      <tr>
+                        <td><b>Cause Of Death: </b></td>
+                        <td>{{event.personEvents[0].personEventDeathDetail.causeOfDeathDescription}}</td>
+                      </tr>
+
+                      <tr>
+                        <td><b>Death Certificate Number: </b></td>
+                        <td>{{event.personEvents[0].personEventDeathDetail.deathCertificateNo}}</td>
+                      </tr>
+
+                    </table>
+                    </div>
+
+                  </mat-card-content>
+                </mat-card>
+
+              </div>
+
+              <div class="claimDetails">
+                <br />
+                <mat-card>
+                  <mat-card-content>
+                    <h1>Claim Details</h1>
+                    <br />
+                    <div *ngIf="event.personEvents[0].claims == 0 &&  !(isLoading$ | async)">
+                      <i>No Claim details were found</i>
+                    </div>
+
+
+                    <table *ngIf="event.personEvents[0].claims.length != 0 && !(isLoading$ | async)" class="altRowTable table">
+                      <tr>
+                        <th>Claim Ref Number</th>
+                        <th>Claim Status</th>
+                        <th>Claim Liability Status</th>
+                        <th>PD%</th>
+                      </tr>
+                      <tr *ngFor="let claim of event.personEvents[0].claims">
+                        <td>{{claim.claimReferenceNumber}}</td>
+                        <td>{{getClaimStatus(claim.claimStatusId)}}</td>
+                        <td>{{getLiabilityStatus(claim.claimLiabilityStatus)}}</td>
+                        <td>{{claim.disabilityPercentage}}</td>
+                      </tr>
+
+                    </table>
+                  </mat-card-content>
+                </mat-card>
+
+              </div><br/>
+
+
+
+            </div>
+
+            <div class="employerContactDetails" *ngIf="isAddBeneficiary">
+              <br />
+              <mat-card class="matcard">
+                <mat-card-content>
+                  <h1>Employee Beneficiaries</h1>
+                  <br />
+
+                  <div *ngIf="(isBeneficiariesLoading$ | async)">
+                    <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+                    <label class="mat-label other-label"><i>Getting beneficiary details...please wait</i></label>
+                  </div>
+
+                  <div *ngIf="beneficiaries.length == 0 &&  !(isBeneficiariesLoading$ | async)">
+                    <i>No Beneficiaries were found</i>
+                  </div><br />
+                  <div *ngIf="isAddBeneficiary && !(isBeneficiariesLoading$ | async)" class="form-group-button mat-form-button">
+                    <button class="button submit-button"
+                      (click)="addBeneficiary()">Add Beneficiary</button>
+                  </div>
+
+                  <div *ngIf="beneficiaries.length != 0 && !(isBeneficiariesLoading$ | async)">
+                    <mat-table #table [dataSource]="beneficiariesDataSource" matSort multiTemplateDataRows class="altRowTable table">
+
+                      <ng-container matColumnDef="expand">
+                        <mat-header-cell *matHeaderCellDef> Expand </mat-header-cell>
+                        <mat-cell *matCellDef="let row" (click)="expandCollapse(row)">
+                          <span *ngIf="!row.isExpanded"><span class="material-icons expand-icon">add_circle</span></span>
+                          <span *ngIf="row.isExpanded"><span class="material-icons expand-icon">remove_circle</span></span>
+                        </mat-cell>
+                      </ng-container>
+
+                      <!-- Name Column -->
+                      <ng-container matColumnDef="beneficiaryName">
+                        <mat-header-cell *matHeaderCellDef> Beneficiary Name </mat-header-cell>
+                        <mat-cell *matCellDef="let row"> {{row.person.firstName}}
+                        </mat-cell>
+                      </ng-container>
+
+                      <!-- Surname Column -->
+                      <ng-container matColumnDef="beneficiaryLastName">
+                        <mat-header-cell *matHeaderCellDef> Beneficiary Surname </mat-header-cell>
+                        <mat-cell *matCellDef="let row"> {{row.person.surname}}
+                        </mat-cell>
+                      </ng-container>
+
+                      <!-- idPassportNumber Column -->
+                      <ng-container matColumnDef="idNumber">
+                        <mat-header-cell *matHeaderCellDef> ID/Passport Number </mat-header-cell>
+                        <mat-cell *matCellDef="let row"> {{row.person.idNumber ?? row.person.passportNumber}}
+                        </mat-cell>
+                      </ng-container>
+
+                      <!-- isVopdVerified Column -->
+                      <ng-container matColumnDef="isVopdVerified">
+                       <mat-header-cell *matHeaderCellDef> Is VOPD Verified </mat-header-cell>
+                       <mat-cell *matCellDef="let row"> {{row.person.vopdVerifiedDescription}}
+                       </mat-cell>
+                     </ng-container>
+
+                      <!-- vopdStatus Column -->
+                      <ng-container matColumnDef="vopdStatus">
+                        <mat-header-cell *matHeaderCellDef> VOPD Status </mat-header-cell>
+                        <mat-cell *matCellDef="let row"> {{row.clientVopdResponse ? getVOPDStatus(row.clientVopdResponse.vopdStatus) : ''}}
+                        </mat-cell>
+                      </ng-container>
+
+                      <!-- Actions Column -->
+                      <ng-container matColumnDef="actions">
+                        <mat-header-cell *matHeaderCellDef> Actions </mat-header-cell>
+                        <mat-cell *matCellDef="let row" [matMenuTriggerFor]="menu" (click)="filterBeneficiaryMenu(row)"
+                          class="material-icons pointer">
+                          <span class="material-icons pointer right">more_vert</span>
+                          <mat-menu #menu="matMenu">
+                            <button disabled="{{menu.disable}}" mat-menu-item *ngFor="let menu of menus"
+                              (click)="onBeneficiaryMenuItemClick(row, menu)">{{menu.title}}</button>
+                          </mat-menu>
+                        </mat-cell>
+                      </ng-container>
+
+                      <div [hidden]=" true">
+                        <ng-container matColumnDef="expandedDetail">
+                          <mat-cell class="expand" *matCellDef="let row">
+                            <div>
+                              <table>
+                                <tr class="ChildData" *ngIf="row.clientVopdResponse && row.clientVopdResponse.deceasedStatus != null">
+                                  <td><b class="mat-cell-label">VOPD Results:</b> {{row.clientVopdResponse ? row.clientVopdResponse.deceasedStatus : ''}}</td>
+                                </tr>
+                                <tr class="ChildData" *ngIf="row.clientVopdResponse && row.clientVopdResponse.reason != ''">
+                                  <td><b class="mat-cell-label">VOPD Results:</b> {{row.clientVopdResponse ? row.clientVopdResponse.reason : ''}}</td>
+                                </tr>
+                              </table>
+                            </div>
+                          </mat-cell>
+                        </ng-container>
+                      </div>
+                      <mat-header-row *matHeaderRowDef="displayedColumnsBeneficiary"></mat-header-row>
+                      <mat-row *matRowDef="let row; columns: displayedColumnsBeneficiary;" [class.expanded]="row.isExpanded"></mat-row>
+                      <mat-row *matRowDef="let row; columns: ['expandedDetail'];"
+                        [@detailExpand]="row.isExpanded == true ? 'expanded' : 'collapsed'">
+                      </mat-row>
+
+
+                    </mat-table><br/>
+                  </div>
+
+
+                </mat-card-content>
+              </mat-card>
+            </div>
+
+          </div>
+          <br />
+        </div>
+        <mat-divider [inset]="true"></mat-divider>
+        <br />
+        <nav class="nav-bar">
+          <button mat-button (click)="showNotes = !showNotes;">Notes</button>
+          <button mat-button (click)="showRequirements = !showRequirements;">Requirements</button>
+          <button mat-button (click)="viewMedicalInvoices()">Invoice</button>
+          <button mat-button >Disability</button>
+          <button mat-button (click)="showDocuments = !showDocuments;">Documents</button>
+          <button mat-button >Payments</button>
+          <button mat-button >Pensions</button>
+          <button mat-button >Details</button>
+          <button mat-button >Estimates</button>
+          <button mat-button (click)="showEarnings = !showEarnings;">Earnings</button>
+        </nav>
+        <br />
+        <mat-divider [inset]="true"></mat-divider>
+        <div *ngIf="showDocuments">
+          <claim-notification-documents [event]="event" [isWizard]="false" [isReadOnly]="true" (onRefreshParentRequired)="reloadAfterFinalMedicalReport($event)">
+          </claim-notification-documents>
+        </div>
+        <div *ngIf="showEarnings">
+          <app-list-earnings [event]="event"></app-list-earnings>
+        </div>
+        <br />
+        <div *ngIf="showNotes">
+
+        </div>
+        <div *ngIf="showRequirements && event?.personEvents?.length > 0">
+          <claim-requirements-v2 [personEvent]="event.personEvents[0]"></claim-requirements-v2>
+        </div>
+
+
+      </div>
+    </mat-card-content>
+  </div>
+  <div *ngIf="(isLoading$ | async)">
+    <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+    <label class="mat-label other-label"><i>Getting Person Event details...please wait</i></label>
+  </div>
+</mat-card>

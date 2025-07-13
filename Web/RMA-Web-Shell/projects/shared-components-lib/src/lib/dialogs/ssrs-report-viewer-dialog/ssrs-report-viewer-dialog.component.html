@@ -1,0 +1,23 @@
+<div class="menu-bar">
+  <span class="material-icons">
+    search
+  </span>
+  {{title}}
+  <span class="material-icons pointer right pulseBlue" (click)="close()" matTooltip="close">
+    cancel
+  </span>
+</div>
+
+<div *ngIf="reporturl && parameters && parameters.length > 0">
+  <mat-tab-group animationDuration="500ms">
+    <mat-tab label="Document">
+      <ssrs-report-viewer-V2 [reporturl]="reporturl" [parameters]="parameters"
+        (viewedCompletedEmit)="addAudit($event, 'viewed')"
+        (downloadCompletedEmit)="addAudit($event, 'downloaded')"></ssrs-report-viewer-V2>
+    </mat-tab>
+    <mat-tab *ngIf="userHasPermission(viewAuditPermission) && auditViewers" label="Activity">
+      <report-viewed-audit [reportUrl]="reporturl" [itemType]="itemType"
+        [itemId]="itemId" [refresh]="triggerRefresh"></report-viewed-audit>
+    </mat-tab>
+  </mat-tab-group>
+</div>

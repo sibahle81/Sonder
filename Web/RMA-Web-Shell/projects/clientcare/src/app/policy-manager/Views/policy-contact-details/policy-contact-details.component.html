@@ -1,0 +1,203 @@
+<div class="page-header"></div>
+<div *ngIf="!canAdd">
+  <div class="wizard-permissions-error">
+    You do not have sufficient permissions to add policy contact details.
+  </div>
+</div>
+<div class="wizard-main-content">
+  <mat-card class="wizard-mat-card">
+    <div>
+      <mat-card-content class="wizard-mat-card-content">
+        <form [formGroup]="form" class="mat-container details-form" novalidate>  
+          <mat-accordion>
+            <!--Scheme Details-->
+            <mat-expansion-panel>
+              <mat-expansion-panel-header>
+                <h4>Scheme Details</h4>
+              </mat-expansion-panel-header>
+              <mat-card>
+                      <div class="menu-bar">
+                        Scheme Contacts
+                      </div>
+                      <mat-card>
+                     <section>
+                              <mat-form-field class="mat-form-field">
+                                <label class="mat-label other-label"> Telephone Number</label>
+                                <input matInput type="tel" minlength="10" NumberOnly maxlength="10" id="tellNumber" name="tellNumber"
+                                  formControlName="tellNumber">
+                                <mat-error *ngIf="form.get('tellNumber').hasError('minlength')">
+                                  Telephone number must be at least <strong>10 digits</strong>
+                                </mat-error>
+                              </mat-form-field>
+                              <mat-form-field class="mat-form-field-right">
+                                <label class="mat-label other-label mandatory-field"> Mobile Number</label>
+                                <input matInput type="tel" minlength="10" NumberOnly maxlength="10" id="cellNumber" name="cellNumber"
+                                  formControlName="cellNumber">
+                                <mat-error *ngIf="form.get('cellNumber').hasError('required')">
+                                  Mobile number is <strong>required</strong>
+                                </mat-error>
+                                <mat-error *ngIf="form.get('cellNumber').hasError('minlength')">
+                                  Mobile number must be at least <strong>10 digits</strong>
+                                </mat-error>
+                              </mat-form-field>
+                            </section>  
+                       <section>
+                      <mat-form-field>
+                        <label class="mat-label other-label mandatory">Email address</label>
+                        <input matInput maxlength="50" id="emailAddress" name="emailAddress" formControlName="emailAddress" (change)="onEmailAddressChange($event,'scheme-email')"  />
+                        <mat-error *ngIf="form.get('emailAddress').hasError('required')">
+                        A <strong>valid</strong> email address required
+                        </mat-error>
+                        <mat-error *ngIf="form.get('emailAddress').hasError('required')">
+                        Email address<strong> is required</strong>
+                        </mat-error>
+                      </mat-form-field>
+                      <mat-form-field class="mat-form-field-right">
+                        <label class="mat-label other-label mandatory-field">Preferred Communication</label>
+                        <div>
+                        <mat-select formControlName="commPreference" id="commPreference" name="commPreference" (selectionChange)="commPreferenceChange($event)">
+                          <mat-option *ngFor="let preference of commPreferences" [value]="preference.id">{{preference.name}}
+                          </mat-option>
+                        </mat-select>
+                        <mat-error *ngIf="form.get('commPreference').hasError('min')">
+                          Communication preference is required
+                        </mat-error>
+                        </div>
+                      </mat-form-field>
+                      </section>
+                      </mat-card>
+                  </mat-card>
+            </mat-expansion-panel>  
+            <br />     
+             <mat-expansion-panel>
+            <!--Broker Details-->            
+              <mat-expansion-panel-header>
+                <h4>Broker Details</h4>
+              </mat-expansion-panel-header>	   
+                <mat-card>
+                  <div class="menu-bar">
+                       Broker Contacts
+                  </div>
+                  <mat-card>
+                  <section>
+                          <mat-form-field class="mat-form-field">
+                            <label class="mat-label other-label">Contact Name</label>
+                            <input matInput type="text"  id="brokerContactName" name="brokerContactName" readonly="false" [value]="brokerDetail?.contactName" >
+                          </mat-form-field>
+                     <mat-form-field class="mat-form-field-right">
+                            <label class="mat-label other-label"> Telephone Number</label>
+                            <input matInput type="tel" minlength="10" NumberOnly maxlength="10" id="brokerTelNumber" name="brokerTelNumber" readonly="false" [value]="brokerDetail?.telephoneNumber" >  
+                          </mat-form-field>
+                        </section>
+                        <section>
+                          <mat-form-field class="mat-form-field">
+                            <label class="mat-label other-label">Email Address</label>
+                            <input type="email" matInput maxlength="50" id="brokerEmailAddress" name="brokerEmailAddress" readonly="false" [value]="brokerDetail?.emailAddress" (change)="onEmailAddressChange($event,'broker-email')" />
+                          </mat-form-field>                           
+                        </section>     
+                  </mat-card>
+              </mat-card>
+            </mat-expansion-panel>
+            <br />  
+            <mat-expansion-panel>
+              <mat-expansion-panel-header>
+                <h4>Admin Details</h4>
+              </mat-expansion-panel-header>	
+              <mat-card>
+                  <div class="menu-bar">
+                    Admin Details Contacts
+                  </div>
+                  <mat-card>
+                    <section>
+                            <mat-form-field class="mat-form-field">
+                              <label class="mat-label other-label">Contact Type</label>
+                              <div>
+                                <mat-select formControlName="adminContactType" id="adminContactType" name="adminContactType" readonly="false">
+                                  <mat-option *ngFor="let adminContactType of contactTypes" [value]="adminContactType.id">
+                                    {{adminContactType.name}}
+                                  </mat-option>
+                                </mat-select>
+                                <mat-error *ngIf="form.get('adminContactType').hasError('min')">
+                                  Contact type is required
+                                </mat-error>
+                              </div>
+                              <input [hidden]="true" matInput formControlName="adminPolicyContactId" />
+                              <input [hidden]="true" matInput formControlName="policyDocumentCommunicationMatrixId" />
+                            </mat-form-field>
+                            <mat-form-field class="mat-form-field-right">
+                              <label class="mat-label other-label mandatory-field">Contact Name</label>
+                              <input matInput type="text"  id="adminContactName" name="adminContactName" formControlName="adminContactName">
+                              <mat-error *ngIf="form.get('adminContactName').hasError('min')">
+                                Contact name is <strong>required</strong>
+                              </mat-error>
+                            </mat-form-field>
+                          </section>                          
+                          <section>
+                            <mat-form-field class="mat-form-field">
+                              <label class="mat-label other-label">Email Address</label>
+                              <input type="email" matInput maxlength="50" id="adminEmailAddress" name="adminEmailAddress" formControlName="adminEmailAddress" (change)="onEmailAddressChange($event, 'admin-email')" />
+                              <mat-error *ngIf="form.get('adminEmailAddress').hasError('adminEmailAddress')">
+                                A <strong>valid</strong> email address required
+                              </mat-error>
+                              <mat-error *ngIf="form.get('adminEmailAddress').hasError('required')">
+                                Email address<strong> is required</strong>
+                              </mat-error>
+                            </mat-form-field>
+                            <mat-form-field class="mat-form-field-right">
+                              <label class="mat-label other-label"> Telephone Number</label>
+                              <input matInput type="tel" minlength="10" NumberOnly maxlength="10" id="adminTelNumber" name="adminTelNumber"
+                                formControlName="adminTelNumber">
+                              <mat-error *ngIf="form.get('adminTelNumber').hasError('minlength')">
+                                Telephone number must be at least <strong>10 digits</strong>
+                              </mat-error>
+                            </mat-form-field>
+                          </section>
+                          <section>
+                            <mat-form-field class="mat-form-field">
+                              <label class="mat-label other-label">Mobile Number</label>
+                              <input matInput type="tel" minlength="10" NumberOnly maxlength="10" id="adminMobileNumber" name="adminMobileNumber" formControlName="adminMobileNumber" />
+                              <mat-error *ngIf="form.get('adminMobileNumber').hasError('required')">
+                                Mobile number is <strong>required</strong>
+                              </mat-error>
+                              <mat-error *ngIf="form.get('adminMobileNumber').hasError('minlength')">
+                                Mobile number must be at least <strong>10 digits</strong>
+                              </mat-error>
+                            </mat-form-field>
+                            <mat-form-field class="mat-form-field-right">
+                              <label class="mat-label other-label"> Alternative Number</label>
+                              <input matInput type="tel" minlength="10" NumberOnly maxlength="10" id="adminAlternativeContactNumber" name="adminAlternativeContactNumber"
+                                formControlName="adminAlternativeContactNumber">
+                              <mat-error *ngIf="form.get('adminAlternativeContactNumber').hasError('minlength')">
+                                Alternative number must be at least <strong>10 digits</strong>
+                              </mat-error>
+                            </mat-form-field>
+                          </section>  
+                    </mat-card>
+              </mat-card>
+            </mat-expansion-panel>                    
+          </mat-accordion>  
+          <br />
+          <section>
+            <mat-checkbox formControlName="sendPolicyDocsToBroker">Send Policy Docs to Broker</mat-checkbox>
+          </section>
+          <section>
+            <mat-checkbox formControlName="sendPolicyDocsToAdmin">Send Policy Docs to Admin</mat-checkbox>
+          </section>
+          <section>
+            <mat-checkbox formControlName="sendPolicyDocsToMember">Send Policy Docs to Member</mat-checkbox>
+          </section>       
+          <section>
+            <mat-checkbox formControlName="sendPolicyDocsToScheme">Send Policy Docs to Scheme</mat-checkbox>
+          </section>
+          <section>
+            <mat-checkbox formControlName="sendPaymentScheduleToBroker">Send Payment Schedule to Broker</mat-checkbox>
+          </section>
+        </form>
+      </mat-card-content>
+    </div>
+  </mat-card>
+</div>
+<div *ngIf="addressMissing">
+  <p class="address-error">Business address and postal address are required</p>
+</div>
+<policy-address-details></policy-address-details>

@@ -1,0 +1,88 @@
+<div class="row">
+	<div class="col-md-12">
+	  <div class="card" id="#icd10-card">
+		<div class="card-header card-header-icon card-header-info">
+		  <h4 class="card-title">ICD10-Code search</h4>
+		</div>
+		<form [formGroup]="form">
+				<div class="card-body">
+				
+				<div class="container-fluid">
+
+				<!-- --- first row for filter-- -->
+					<div class="row">
+				<div class="col-md-12">
+					<div>
+					<!-- ICD10-code filter drop-down -->
+					<mat-form-field id="icd10-form-field">
+						<input matInput placeholder="search" aria-label="state" [matAutocomplete]="auto" [formControl]="filterRecordsCtrl" formControlName="searchtab" (input)="onValueChange($event.target.value)" (keyup.enter)="onClickEnterKey()" required>
+						<mat-autocomplete #auto="matAutocomplete" (optionSelected)="onICD10CodeChanged($event.option.viewValue)">
+						<mat-option *ngIf="isLoading" class="loader">Loading...</mat-option>
+						<ng-container *ngIf="!isLoading">
+							<mat-option *ngFor="let x of filteredRecords" [value]="x.displayValue">
+							<!-- filtered search results list -->
+							<div class="form-group has-default">
+								<div class="input-group">
+								<div class="input-group-prepend">
+									<span class="input-group-text text-info">
+									<i class="material-icons">location_searching</i>
+									</span>
+									<b>{{x.displayValue  }}</b>
+								</div>
+								</div>
+								<mat-divider></mat-divider>
+							</div>
+							<!-- ---------------------------- -->
+							<mat-divider></mat-divider>
+							</mat-option>
+						</ng-container>	
+						</mat-autocomplete>
+					</mat-form-field>
+					<!-- -------- body side -------- -->
+					<div class='div-drop-down'>
+						<mat-form-field style="width: 100%;">
+							<mat-select id="bodySideInput" placeholder='[ body side ]' (selectionChange)="onBodySideChanged($event)" formControlName="bodysidetab" required>
+							<mat-option *ngFor="let b of bodySides" [value]="b">
+								{{ b.displayValue }}</mat-option>
+							</mat-select>
+							<mat-error><strong *ngIf="form.get('bodysidetab').hasError('required')  && form.get('bodysidetab').touched"> Body side is required</strong></mat-error>
+						</mat-form-field>
+					</div>
+					<!-- ------ injury type -------- -->
+					<div class='div-drop-down injury'>
+						<mat-form-field>
+							<mat-select id="injuryTypeInput" placeholder='[ injury type ]'  (selectionChange)="onInjuryTypeChanged($event)" formControlName="injurytypetab" required>
+								<mat-option value="Primary">Primary</mat-option>
+								<mat-option value="Secondary">Secondary</mat-option>
+							</mat-select>
+							<mat-error><strong *ngIf="form.get('injurytypetab').hasError('required')  && form.get('injurytypetab').touched"> Injury type is required</strong></mat-error>
+						</mat-form-field>
+					</div>
+					</div>
+				</div>
+					</div>
+				<!-- -- second row for added -- -->
+					<div class="row">
+					<div >
+						<ul >
+							<li *ngFor="let x of addedICD10Records">
+								<div><span class="listitem-hover">{{ x.displayValue }}</span></div>
+								<div><span class="listitem-hover">{{ getBodySideDescription(x.bodySideId) }}</span></div>
+								<div><span class="listitem-hover">{{ getInjuryTypeDescription(x.injuryTypeId) }}</span></div>
+								<div><i class="material-icons" (click)="onClickRemoveICD10Code(x)">clear</i></div>
+							</li>
+						</ul>
+					</div>
+					</div>
+				<!-- --------- buttons -------- -->
+					</div>
+					<div class="card-footer" style="display:block;">
+						<button style="float: right;" mat-button (click)="onClickCancel()" class="mat-raised-button mat-button-base btn btn-fill btn-info">Cancel</button>
+						<button id="btn-OK"  style="float: right;" type="submit" [disabled]="!isFormValid" mat-button [mat-dialog-close]="data"(click)="onClickOK()" cdkFocusInitial class="mat-raised-button mat-button-base btn btn-fill btn-info">Ok</button>
+					</div>
+		<!-- -------------------------- -->
+    		
+	</div>
+</form>
+  </div>
+</div>

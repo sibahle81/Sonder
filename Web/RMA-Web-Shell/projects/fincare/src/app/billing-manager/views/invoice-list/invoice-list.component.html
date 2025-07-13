@@ -1,0 +1,139 @@
+<mat-card>
+  <mat-card-content>
+    <div *ngIf="!showInvoices && !debtorSelected">
+      <statement-account-search (resultEmit)="accountSearchChangeHandler($event)" [title]="'Search Debtor Account'">
+      </statement-account-search>
+    </div>
+    <form [formGroup]="form" class="mat-container details-form" novalidate>
+
+      <div [hidden]="!debtorSelected">
+        <div *ngIf="searchAccountResults && searchAccountResults.displayName">Debtor:
+          {{searchAccountResults.displayName}}</div>
+        <br>
+        <mat-form-field class="mat-form-field">
+          <label class="mat-label other-label">Invoice Status</label>
+          <mat-select name="statusType" id="statusType" formControlName="statusType"
+            (selectionChange)="statusTypeChanged($event)">
+            <mat-option value="-1">
+              All
+            </mat-option>
+            <mat-option *ngFor="let status of statuses" [value]="status.id">
+              {{status.name}}
+            </mat-option>
+          </mat-select>
+        </mat-form-field>
+        <br /><br />
+        <section>
+          <mat-form-field class="search-filter">
+            <input matInput maxlength="50" #filter width="300" minLength="3" formControlName="filter"
+              matTooltip="{{placeHolder}}" matTooltipShowDelay="1000" [disabled]="dataSource.isLoading" class="search">
+            <mat-placeholder class="placeholder">{{placeHolder}}</mat-placeholder>
+            <mat-icon class="search-icon" (click)="search()" matSuffix>search</mat-icon>
+            <mat-icon class="clear-icon" (click)="reset()" matSuffix>autorenew</mat-icon>
+          </mat-form-field>
+        </section>
+
+        <section>
+          <div (click)="applyFilters()" class="form-buttons submit-button">
+            <button type="button" [disabled]="dataSource.isLoading" class="button float-button">Apply Filters</button>
+          </div>
+          <div (click)="reset()" class="form-buttons submit-button">
+            <button type="button" [disabled]="dataSource.isLoading" class="button float-button">Reset</button>
+          </div>
+          <div (click)="back()" class="form-buttons submit-button">
+            <button type="button" [disabled]="dataSource.isLoading" class="button float-button">Back</button>
+          </div>
+        </section>
+      </div>
+      <br>
+    </form>
+
+    <div *ngIf="dataSource.isLoading">
+      <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+      <label class="mat-label other-label"><i>invoices loading...please wait</i></label>
+    </div>
+
+
+    <div [hidden]="((this.dataSource.rowCount$  |async)  === 0 || dataSource.isLoading) && !showInvoices"
+      class="table-container">
+      <mat-table #table [dataSource]="dataSource" matSort>
+        <!-- Policy  -->
+        <ng-container matColumnDef="policyNumber">
+          <mat-header-cell *matHeaderCellDef mat-sort-header> Policy Number </mat-header-cell>
+          <mat-cell *matCellDef="let row"> {{searchAccountResults.policyNumber}}
+
+          </mat-cell>
+        </ng-container>
+
+        <ng-container matColumnDef="totalInvoiceAmount">
+          <mat-header-cell *matHeaderCellDef mat-sort-header>Invoice Amount </mat-header-cell>
+          <mat-cell *matCellDef="let row"> {{row.totalInvoiceAmount | currency:'R'}} </mat-cell>
+        </ng-container>
+
+        <!--Status -->
+        <ng-container matColumnDef="invoiceStatus">
+          <mat-header-cell *matHeaderCellDef mat-sort-header> Invoice Status </mat-header-cell>
+          <mat-cell *matCellDef="let row"> {{this.getInvoiceStatusDesc(row.invoiceStatus)}} </mat-cell>
+        </ng-container>
+
+        <!--Employee -->
+        <ng-container matColumnDef="invoiceNumber">
+          <mat-header-cell *matHeaderCellDef mat-sort-header> Invoice Number </mat-header-cell>
+          <mat-cell *matCellDef="let row"> {{row.invoiceNumber}} </mat-cell>
+        </ng-container>
+
+        <ng-container matColumnDef="selected">
+          <mat-header-cell *matHeaderCellDef> </mat-header-cell>
+          <mat-cell *matCellDef="let row">
+            <mat-checkbox [(ngModel)]="row.selected"></mat-checkbox>
+          </mat-cell>
+        </ng-container>
+
+        <!-- Actions -->
+        <ng-container matColumnDef="actions">
+          <mat-header-cell *matHeaderCellDef mat-sort-header></mat-header-cell>
+          <mat-cell *matCellDef="let row" [matMenuTriggerFor]="menu" (click)="filterMenu()">
+            <span class="material-icons pointer right">more_vert</span>
+            <mat-menu #menu="matMenu">
+              <button mat-menu-item *ngFor="let menu of menus" (click)="onMenuItemClick(row, menu)"
+                disabled={{menu.disable}}>{{menu.title}}</button>
+            </mat-menu>
+          </mat-cell>
+          <mat-footer-cell *matFooterCellDef></mat-footer-cell>
+        </ng-container>
+
+        <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
+        <mat-row *matRowDef="let row; columns: displayedColumns;"></mat-row>
+      </mat-table>
+
+      <mat-paginator #paginator [length]="paginator.length" [pageIndex]="0" [pageSize]="5"
+        [pageSizeOptions]="[5, 10, 25, 100]">
+      </mat-paginator>
+    </div>
+
+    <div *ngIf="(this.dataSource.rowCount$  |async) === 0 && showInvoices && !dataSource.isLoading"
+      class="no-search-results-add-button">
+      <div class="site-font grey">
+        <p class="grey">No invoices found for selected debtor,<br>that match search criteria.</p>
+      </div>
+    </div>
+    <br>
+
+    <div *ngIf="invoicesSelected"   class="clear-both">
+      <button [disabled]="isDownloading$ | async"  class="button submit-button"
+        (click)="downloadSelectedInvoices()">Download</button>
+    </div>
+    <div *ngIf="isDownloading$|async"  class="clear-both">
+      <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+      <label class="mat-label other-label"><i>downloading invoices...please wait</i></label>
+    </div>
+
+    <div [hidden]="true" class="clear-both">
+      <ssrs-reportviewer [reportserver]="reportServerAudit" [reporturl]="reportUrlAudit"
+        [showparameters]="showParametersAudit" [parameters]="parametersAudit" [language]="languageAudit"
+        [width]="widthAudit" [height]="heightAudit" [toolbar]="toolbarAudit" [format]="format" [isDownload]="isDownload"
+        [reportName]="'Invoice'">
+      </ssrs-reportviewer>
+    </div>
+  </mat-card-content>
+</mat-card>

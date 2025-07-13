@@ -1,0 +1,47 @@
+<mat-card *ngIf="(isLoading$ | async)">
+  <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+  <label class="mat-label other-label"><i>{{loadingMessage$ | async}}</i></label>
+</mat-card>
+
+<div *ngIf="!(isLoading$ | async)">
+  <div class="menu-bar">
+    <span class="material-icons">call_split</span>&nbsp;Acknowledgment
+    <span (click)="close()" class="material-icons pointer right" matTooltip="Close">
+      close
+    </span>
+    <span (click)="save()" class="material-icons pointer right pulseGreen" matTooltip="Save"
+      *ngIf="selectedPolicies.length > 0 &&  !isVapsDiseaseAcknowlegment">
+      save
+    </span>
+  </div>
+
+  <div class="margin-bottom" *ngIf="isAugmentationOnly">
+    <mat-card>
+      <label class="mat-label other-label">
+        <span>
+          <span class="material-icons info">
+            info
+          </span>
+          Augmentation cannot be selected as a standalone
+        </span>
+      </label>
+    </mat-card>
+  </div>
+
+  <div class="margin-bottom" *ngIf="isVapsDiseaseAcknowlegment">
+    <mat-card>
+      <label class="mat-label other-label">
+        <span>
+          <span class="material-icons info">
+            info
+          </span>
+         Cannot acknowledge Non Stat VAPS for disease claims
+        </span>
+      </label>
+    </mat-card>
+  </div>
+  
+  <role-player-policy-selector [rolePlayerId]="rolePlayerId" [eventDate]="eventDate" [categoryInsured]="categoryInsured"
+    (selectedPoliciesEmit)="getSelectedPolicies($event)">
+  </role-player-policy-selector>
+</div>

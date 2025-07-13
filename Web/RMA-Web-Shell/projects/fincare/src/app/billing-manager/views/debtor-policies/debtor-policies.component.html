@@ -1,0 +1,102 @@
+<mat-accordion>
+    <mat-expansion-panel [expanded]="panelOpenStatePolicies$ | async" class="searchBgColor">
+        <mat-expansion-panel-header>
+            <mat-panel-description class="left-aligned">
+                <span [hidden]="!(roleplayerId > 0)" class="mat-header-label">
+                    <div class="display-inline" *ngIf="checkMemberCompliance"><member-compliance  [rolePlayerId]="roleplayerId" (complianceResultEmit)="setComplianceResult($event)"></member-compliance></div>
+                    <div *ngIf="(complianceCheckDone$ | async) && !isMemberDeclarationCompliant" class="display-inline" >Member is Declarations {{nonCompliant}}</div>
+                    <div *ngIf="(complianceCheckDone$ | async) && isMemberDeclarationCompliant"  class="display-inline" >Member is Declarations {{compliant}}</div></span>
+                <span>Debtor's Product Categories</span>
+            </mat-panel-description>
+        </mat-expansion-panel-header>
+<div *ngIf="isLoadingPolicies$ | async">
+    <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+    <label class="mat-label other-label"><i>Loading Products...please wait</i></label>
+</div>
+<div [hidden]="!(roleplayerId > 0)">
+    <mat-card>
+        <br />
+        <mat-chip-list>
+            <mat-chip class="site-blue-theme" *ngFor="let policy of selectedPolicies" (removed)="remove(policy)">
+                {{policy.policyNumber}} - {{policy.productOption.code}}
+                <mat-icon matChipRemove>cancel</mat-icon>
+            </mat-chip>
+        </mat-chip-list>
+
+        <mat-table #table [dataSource]="datasource" matSort class="clear-both" multiTemplateDataRows>            
+            <ng-container matColumnDef="product">
+                <mat-header-cell *matHeaderCellDef mat-sort-header aria-colspan="6"> Product Category </mat-header-cell>
+                <mat-cell *matCellDef="let row" (click)="expandCollapse(row)"><b>{{row.productDescription | uppercase}}</b> 
+                    <span *ngIf="!row.isExpanded" class="pointer"><span class="material-icons">expand_more</span></span>
+                    <span *ngIf="row.isExpanded"  class="pointer"><span class="material-icons">expand_less</span></span>
+                </mat-cell>
+            </ng-container>
+            <!-- Actions -->
+            <ng-container matColumnDef="actions">
+                <mat-header-cell *matHeaderCellDef> <mat-checkbox
+                        [checked]="isAllPoliciesSelected$ | async"
+                        (change)="policiesAllChecked($event)" class="margin-right" *ngIf ="multiselect">
+                    </mat-checkbox>
+                </mat-header-cell>
+                <mat-cell *matCellDef="let row">
+                    <mat-checkbox [checked]="selectedPolicyIds.indexOf(row.policyId) > -1 || (isAllPoliciesSelected$ | async)"
+                        (change)="policyChecked($event,row)" class="margin-right" *ngIf ="multiselect">
+                    </mat-checkbox>
+                </mat-cell>                
+            </ng-container>            
+            <div [hidden]="true" class="greenbg">
+                <ng-container matColumnDef="expandedDetail">
+                    <mat-cell class="expand" *matCellDef="let row"  class="childData">
+                  <div *ngIf="row.categoryPolicies;else noChildPolicies" class="inner-table greenbg">
+                        <mat-table #tableChild [dataSource]="row.categoryPolicies" matSort class="clear-both">                       
+                            <ng-container matColumnDef="product">
+                                <mat-header-cell *matHeaderCellDef mat-sort-header> Product Description </mat-header-cell>
+                                <mat-cell *matCellDef="let rowchild"> {{rowchild.productOption.description}}
+                                </mat-cell>
+                            </ng-container>
+                            <ng-container matColumnDef="code">
+                                <mat-header-cell *matHeaderCellDef mat-sort-header> Product </mat-header-cell>
+                                <mat-cell *matCellDef="let rowchild"> {{rowchild.productOption.code}}
+                                </mat-cell>
+                            </ng-container>      
+                            <ng-container matColumnDef="policyNumber">
+                                <mat-header-cell *matHeaderCellDef mat-sort-header> Policy No. </mat-header-cell>
+                                <mat-cell *matCellDef="let rowchild"> {{rowchild.policyNumber}}
+                                </mat-cell>
+                            </ng-container> 
+                            <ng-container matColumnDef="productBalance">
+                                <mat-header-cell *matHeaderCellDef mat-sort-header> Balance </mat-header-cell>
+                                <mat-cell *matCellDef="let rowchild" class="right-aligned-amounts"> {{rowchild.productBalance | currency:'':''}}
+                                </mat-cell>
+                            </ng-container>                      
+                            <ng-container matColumnDef="actions">
+                                <mat-header-cell *matHeaderCellDef>
+                                </mat-header-cell>
+                                <mat-cell *matCellDef="let rowchild">
+                                    <mat-checkbox [checked]="selectedPolicyIds.indexOf(rowchild.policyId) > -1"
+                                        (change)="policyChecked($event,rowchild)" class="margin-right"  [disabled] ="checkMemberCompliance && !isMemberDeclarationCompliant">
+                                    </mat-checkbox>
+                                </mat-cell>
+                            </ng-container>	
+                            <mat-header-row *matHeaderRowDef="displayedChildTableColumns;"></mat-header-row>
+                            <mat-row *matRowDef="let rowchild; columns: displayedChildTableColumns;"></mat-row>
+                        </mat-table>
+                    </div>
+                    <ng-template #noChildPolicies>
+                        <div ><b>Policy Number</b><br />{{row.policyNumber}}</div>
+                    </ng-template>
+                  </mat-cell> 
+                </ng-container>
+              </div>
+            <mat-header-row *matHeaderRowDef="displayedColumns;"></mat-header-row>
+            <mat-row *matRowDef="let row; columns: displayedColumns;" [class.expanded]="row.isExpanded"></mat-row>
+            <mat-row *matRowDef="let row; columns: ['expandedDetail'];"
+              [@detailExpand]="row.isExpanded == true ? 'expanded' : 'collapsed'">
+            </mat-row>
+        </mat-table>
+    </mat-card>
+    <br />
+    <button mat-raised-button   class="small-button" (click)="submit()" [disabled]="selectedPolicyIds.length === 0"><mat-icon>done_outline</mat-icon></button>
+</div>
+</mat-expansion-panel>
+</mat-accordion>

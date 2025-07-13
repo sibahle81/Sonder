@@ -1,0 +1,132 @@
+<mat-card>
+  <mat-card-content>
+    <form [formGroup]="form" *ngIf="this.form">
+      <mat-label class="other-label mandatory-field">Is the patient unfit for work?</mat-label>
+      <br>
+      <mat-radio-group aria-label="Is the patient unfit for work?" formControlName="isUnfitForWork" id="isUnfitForWork">
+        <mat-radio-button value="Yes">Yes</mat-radio-button>&nbsp;
+        <mat-radio-button value="No">No</mat-radio-button>
+      </mat-radio-group>
+      <br>
+      <ng-container *ngIf="form.value.isUnfitForWork == 'Yes'">
+        <br>
+        <mat-label class="other-label mandatory-field">Unfit Start Date</mat-label>
+        <br />
+        <mat-form-field>
+          <input matInput [matDatepicker]="unfitStartPicker" formControlName="unfitStartDate" id="unfitStartDate">
+          <mat-datepicker-toggle matSuffix [for]="unfitStartPicker"></mat-datepicker-toggle>
+          <mat-datepicker #unfitStartPicker></mat-datepicker>
+        </mat-form-field>
+        <br>
+        <mat-label class="other-label mandatory-field">Unfit End Date</mat-label>
+        <br />
+        <mat-form-field>
+          <input matInput [matDatepicker]="unfitEndPicker" formControlName="unfitEndDate" id="unfitEndDate">
+          <mat-datepicker-toggle matSuffix [for]="unfitEndPicker"></mat-datepicker-toggle>
+          <mat-datepicker #unfitEndPicker></mat-datepicker>
+        </mat-form-field>
+      </ng-container>
+      <br>
+      <mat-label class="other-label mandatory-field">Date symptoms first started:</mat-label><br />
+      <mat-form-field>
+        <input matInput [matDatepicker]="pickerSymptomsStartDate" formControlName="ctlSymptomsStartDate" id="ctlSymptomsStartDate">
+        <mat-datepicker-toggle matSuffix [for]="pickerSymptomsStartDate"></mat-datepicker-toggle>
+        <mat-datepicker #pickerSymptomsStartDate></mat-datepicker>
+      </mat-form-field>
+      <br />
+      <br />
+      <mat-label class="other-label mandatory-field">First consultation date:</mat-label><br />
+      <mat-form-field>
+        <input matInput [matDatepicker]="pickerFirstConsultationDate" formControlName="ctlFirstConsultationDate" id="ctlFirstConsultationDate">
+        <mat-datepicker-toggle matSuffix [for]="pickerFirstConsultationDate"></mat-datepicker-toggle>
+        <mat-datepicker #pickerFirstConsultationDate></mat-datepicker>
+      </mat-form-field>
+      <br />
+      <br />
+      <mat-label class="other-label mandatory-field">Date of specific diagnosis:</mat-label><br />
+      <mat-form-field>
+        <input matInput [matDatepicker]="pickerDiagnosisDate" formControlName="ctlDiagnosisDate" id="ctlDiagnosisDate"><br />
+        <mat-datepicker-toggle matSuffix [for]="pickerDiagnosisDate"></mat-datepicker-toggle>
+        <mat-datepicker #pickerDiagnosisDate></mat-datepicker>
+      </mat-form-field>
+      <br />
+      <br />
+      <mat-label class="other-label mandatory-field">Specific diagnosis of this disorder</mat-label><br />
+      <mat-form-field appearance="standard">
+        <textarea matInput cdkTextareaAutosize cdkAutosizeMinRows="3" cdkAutosizeMaxRows="5" id="ctlDiagnosis"
+          formControlName="ctlDiagnosis" class="mat-input-element" maxlength="1000"></textarea>
+      </mat-form-field>
+      <br />
+      <br />
+      <mat-label class="other-label mandatory-field">Describe symptoms the patient experiences:</mat-label><br />
+      <mat-form-field appearance="standard">
+        <textarea matInput cdkTextareaAutosize cdkAutosizeMinRows="3" cdkAutosizeMaxRows="5" id="ctlSymptoms"
+          formControlName="ctlSymptoms" maxlength="1000"></textarea>
+      </mat-form-field>
+      <br />
+      <br />
+      <mat-label class="other-label mandatory-field">Describe the clinical signs found on examination:</mat-label><br />
+      <mat-form-field appearance="standard">
+        <textarea matInput cdkTextareaAutosize cdkAutosizeMinRows="3" cdkAutosizeMaxRows="5" id="ctlClinicalPresentation"
+          formControlName="ctlClinicalPresentation" maxlength="1000"></textarea>
+      </mat-form-field>
+      <br />
+      <br />
+
+      <mat-label class="other-label mandatory-field">Has the patient been referred to a specialist?</mat-label><br />
+      <mat-radio-group aria-label="Has the patient been referred to a specialist? "
+        formControlName="radioWasReferredToSpecialist"  id="radioWasReferredToSpecialist">
+        <mat-radio-button value="Yes">Yes</mat-radio-button>&nbsp;
+        <mat-radio-button value="No">No</mat-radio-button>
+      </mat-radio-group>
+      <ng-container *ngIf="form.value.radioWasReferredToSpecialist == 'Yes'">
+        <br />
+        <br />
+        <mat-label>Provide specialists details : Practice name(s):
+        </mat-label><br />
+        <mat-form-field appearance="standard">
+          <textarea matInput cdkTextareaAutosize cdkAutosizeMinRows="3" cdkAutosizeMaxRows="5" id="ctlSpecialistReferralDetails"
+            formControlName="ctlSpecialistReferralDetails" maxlength="500"></textarea>
+        </mat-form-field>
+      </ng-container>
+      <br />
+      <br />
+      <mat-label class="other-label mandatory-field">Has the patient undergone any special medical investigation(s)
+        and
+        /or job analysis or ergonomic assessments been done?</mat-label><br />
+      <mat-radio-group formControlName="radioAdditionalAnalysisDone" id="radioAdditionalAnalysisDone">
+        <mat-radio-button value="Yes">Yes</mat-radio-button>&nbsp;
+        <mat-radio-button value="No">No</mat-radio-button>
+      </mat-radio-group>
+      <ng-container *ngIf="form.value.radioAdditionalAnalysisDone == 'Yes'">
+        <br />
+        <br />
+        <mat-label class="other-label">Provide details of special medical investigation(s) and /or job analysis or ergonomic assessments:
+        </mat-label><br />
+        <mat-form-field appearance="standard">
+          <textarea matInput cdkTextareaAutosize cdkAutosizeMinRows="3" cdkAutosizeMaxRows="5" id="ctlAdditionalAnalysisDone"
+            formControlName="ctlAdditionalAnalysisDone" maxlength="1000"></textarea>
+        </mat-form-field>
+        <br />
+        <mat-label class="instructions">* Please upload supporting documentation on Compcare</mat-label><br />
+      </ng-container>
+      <br />
+      <br />
+      <mat-label class="other-label">Specify any other diseases or pre-existing conditions:</mat-label><br />
+      <mat-form-field appearance="standard">
+        <textarea matInput cdkTextareaAutosize cdkAutosizeMinRows="3" cdkAutosizeMaxRows="5" id="ctlPreExistingConditions"
+          formControlName="ctlPreExistingConditions" maxlength="1000"></textarea>
+      </mat-form-field>
+      <br />
+      <br />
+      <mat-label class="other-label mandatory-field">Explain how this alleged occupational disease progressed over a period of time in terms of function:
+      </mat-label>
+      <br />
+      <mat-form-field appearance="standard">
+        <textarea matInput cdkTextareaAutosize cdkAutosizeMinRows="3" cdkAutosizeMaxRows="5" id="ctlDiseaseProgressionDetails"
+          formControlName="ctlDiseaseProgressionDetails" maxlength="1000"></textarea>
+      </mat-form-field>
+
+    </form>
+  </mat-card-content>
+</mat-card>

@@ -1,0 +1,40 @@
+import { ClaimLiabilityStatusEnum } from 'projects/shared-models-lib/src/lib/enums/claim-liability-status.enum';
+import { ClaimStatusEnum } from 'projects/shared-models-lib/src/lib/enums/claim-status.enum';
+import { STPExitReasonEnum } from 'projects/shared-models-lib/src/lib/enums/stp-exit-reason.enum';
+import { EventTypeEnum } from '../../enums/event-type-enum';
+import { PersonEventStatusEnum } from 'projects/shared-models-lib/src/lib/enums/person-event-status.enum';
+
+export class PersonEventSearch {
+    personEventNumber: number;
+    personEventReferenceNumber: string;
+    personEventStatus: PersonEventStatusEnum;
+    claimNumber: string;
+    claimId: number;
+    eventId: number;
+    eventType: EventTypeEnum;
+    memberNumber: string;
+    memberName: string;
+    identificationNumber: string;
+    insuredLife: string;
+    createdDate: Date | string;
+    medicalReportForm: number;
+    isStraightThroughProcess: boolean;
+    suspiciousTransactionStatus: number;
+    claimStatus: ClaimStatusEnum;
+    claimLiabilityStatus: ClaimLiabilityStatusEnum;
+    stpExitReason: STPExitReasonEnum;
+    isExpanded: boolean = false;
+    stpDescription: string;
+    claimStatusDescription: string;
+    claimLiabilityStatusDescription: string;
+    stpExitReasonDescription: string;
+    eventTypeDescription: string;
+    suspiciousTransactionStatusDescription: string;
+    eventNumber: string;
+    dob: Date;
+    employeeNumber: string;
+    employeeIndustryNumber: string;
+    eventDate: Date | string;
+    employerRolePlayerId: number;
+    employeeRolePlayerId: number;
+}

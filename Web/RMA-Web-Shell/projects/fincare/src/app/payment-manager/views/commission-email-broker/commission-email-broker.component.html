@@ -1,0 +1,14 @@
+<div *ngIf="isLoading">
+    <mat-progress-bar *ngIf="!emailSent && !emailSentError" mode="indeterminate"></mat-progress-bar>
+    <label *ngIf="emailDataLoading" class="mat-label other-label"><i>Getting broker's email...please wait</i></label>
+    <label *ngIf="emailDataLoaded" class="mat-label other-label"><i>Sending emails...please wait</i></label>
+    <label *ngIf="emailSent" class="mat-label other-label"><i>Email sent</i></label>
+    <label *ngIf="emailSentError" class="mat-label other-label"><i>Error while sending email</i></label>
+</div>
+<div *ngIf="noEmailsFound" class="no-emails-margin">
+    <b>No emails found for the brokerage</b>
+</div>
+
+<div class="close-main">
+    <button class="button submit-button close-button-left" (click)="closeDialog()">Close</button>
+</div>

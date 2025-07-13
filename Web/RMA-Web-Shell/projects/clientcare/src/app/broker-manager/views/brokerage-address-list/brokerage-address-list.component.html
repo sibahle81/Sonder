@@ -1,0 +1,139 @@
+<div class="page-header">
+</div>
+<div *ngIf="!canAdd">
+    <div class="wizard-permissions-error">
+        You do not have sufficient permissions to add brokerage bank accounts.</div>
+    <div (click)="back()" class="form-buttons submit-button">
+        <button type="button" class="button float-button">Back</button>
+    </div>
+</div>
+<div class="wizard-main-content">
+    <div class="menu-bar">            
+        <span class="material-icons pointer right" matTooltip="audit"
+            (click)="openAuditDialog(physicalAddressFormId)">
+            fingerprint
+        </span>
+    </div>
+    
+    <h4>Address Details</h4>
+    <mat-card class="wizard-mat-card">
+        <mat-card-header>            
+            <h4>Physical Address</h4>                      
+        </mat-card-header>        
+        <mat-card-content class="wizard-mat-card-content">
+            <div  [hidden]="!canAdd">
+                <form [formGroup]="physicalAddressForm" class="mat-container details-form" novalidate>
+                    <section>
+                        <!--Line1-->
+                        <mat-form-field>
+                          <label class="mat-label other-label mandatory-field"> Line 1</label>
+                          <input matInput id="line1" name="line1" formControlName="line1">
+                          <mat-error *ngIf="physicalAddressForm.get('line1').hasError('required')">
+                            Address Line 1 is <strong>required</strong>
+                          </mat-error>
+                        </mat-form-field>
+                        <!--Line2-->
+                        <mat-form-field class="mat-form-field-right">
+                            <label class="mat-label other-label"> Line 2</label>
+                            <input matInput id="line2" name="line2" formControlName="line2">
+                        </mat-form-field>
+                    </section>
+                    <section>
+                        <!--City-->
+                        <mat-form-field>
+                            <label class="mat-label other-label mandatory-field">City</label>
+                            <input matInput id="city" name="city" formControlName="city">
+                            <mat-error *ngIf="physicalAddressForm.get('city').hasError('required')">
+                               City is <strong>required</strong>
+                            </mat-error>
+                        </mat-form-field>
+                        <!--Province-->
+                        <mat-form-field class="mat-form-field-right">
+                            <label class="mat-label other-label">Province</label>
+                            <input matInput id="province" name="province" formControlName="province">
+                        </mat-form-field>
+                    </section>
+                    <section>
+                        <!--PostalCode-->
+                        <mat-form-field>
+                            <label class="mat-label other-label mandatory-field">Postal Code</label>
+                            <input matInput id="postalCode" name="postalCode" formControlName="postalCode" NumberOnly>
+                            <mat-error *ngIf="physicalAddressForm.get('postalCode').hasError('required')">
+                               Postal Code is <strong>required</strong>
+                            </mat-error>
+                        </mat-form-field>
+                            <!--Type-->
+                        <mat-form-field class="mat-form-field-right">
+                            <label class="mat-label other-label"> Type</label>
+                            <input matInput id="addressType" name="addressType" formControlName="addressType">
+                        </mat-form-field>
+                    </section>
+                </form>
+            </div>
+        </mat-card-content>
+    </mat-card>
+
+    <div class="menu-bar">            
+        <span class="material-icons pointer right" matTooltip="audit"
+            (click)="openAuditDialog(postalAddressFormId)">
+            fingerprint
+        </span>
+    </div>
+    <mat-card class="wizard-mat-card"> 
+        <mat-card-header>            
+            <h4 class="card-header">Postal Address</h4>
+            <mat-checkbox *ngIf="isWizard && !isDisabled" (change)="sameAsPhysicalAddressChange($event)">Same as physical address</mat-checkbox>                      
+        </mat-card-header>         
+        <mat-card-content class="wizard-mat-card-content">
+            <div  [hidden]="!canAdd">
+                <form [formGroup]="postalAddressForm" class="mat-container details-form" novalidate>
+                    <section>
+                        <!--Line1-->
+                        <mat-form-field>
+                          <label class="mat-label other-label mandatory-field"> Line 1</label>
+                          <input matInput id="line1" name="line1" formControlName="line1">
+                          <mat-error *ngIf="postalAddressForm.get('line1').hasError('required')">
+                            Address Line 1 is <strong>required</strong>
+                          </mat-error>
+                        </mat-form-field>
+                        <!--Line2-->
+                        <mat-form-field class="mat-form-field-right">
+                            <label class="mat-label other-label"> Line 2</label>
+                            <input matInput id="line2" name="line2" formControlName="line2">
+                        </mat-form-field>
+                    </section>
+                    <section>
+                        <!--City-->
+                        <mat-form-field>
+                            <label class="mat-label other-label mandatory-field">City</label>
+                            <input matInput id="city" name="city" formControlName="city">
+                            <mat-error *ngIf="postalAddressForm.get('city').hasError('required')">
+                               City is <strong>required</strong>
+                            </mat-error>
+                        </mat-form-field>
+                        <!--Province-->
+                        <mat-form-field class="mat-form-field-right">
+                            <label class="mat-label other-label">Province</label>
+                            <input matInput id="province" name="province" formControlName="province">
+                        </mat-form-field>
+                    </section>
+                    <section>
+                        <!--PostalCode-->
+                        <mat-form-field>
+                            <label class="mat-label other-label mandatory-field">Postal Code</label>
+                            <input matInput id="postalCode" name="postalCode" formControlName="postalCode" NumberOnly>
+                            <mat-error *ngIf="postalAddressForm.get('postalCode').hasError('required')">
+                               Postal Code is <strong>required</strong>
+                            </mat-error>
+                        </mat-form-field>
+                            <!--Type-->
+                        <mat-form-field class="mat-form-field-right">
+                            <label class="mat-label other-label"> Type</label>
+                            <input matInput id="addressType" name="addressType" formControlName="addressType">
+                        </mat-form-field>
+                    </section>
+                </form>
+            </div>
+        </mat-card-content>
+    </mat-card>
+</div>

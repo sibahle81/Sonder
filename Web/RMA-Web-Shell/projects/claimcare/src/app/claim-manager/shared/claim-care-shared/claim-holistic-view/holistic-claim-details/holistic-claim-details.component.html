@@ -1,0 +1,110 @@
+<mat-card *ngIf="(isLoading$ | async)">
+    <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+    <label class="mat-label other-label"><i>{{loadingMessages$ | async}}</i></label>
+</mat-card>
+
+
+<div *ngIf="!(isLoading$ | async)">
+    <mat-card-content>
+        <div class="menu-bar" *ngIf="!(isLoading$ | async)">
+            <span class="material-icons">
+                monitor_heart
+            </span>&nbsp;Claims<span *ngIf="personEvent?.rolePlayer"> for Employee:
+                ({{personEvent.rolePlayer.displayName}})</span>
+        </div>
+
+        <mat-card *ngIf="personEvent.claims && personEvent.claims.length <= 0">
+            <i>No claim details were found...</i>
+        </mat-card>
+
+        <div *ngIf="personEvent.claims && personEvent.claims.length > 0">
+
+            <mat-table #table [dataSource]="dataSource" matSort id="tblData">
+                <ng-container matColumnDef="claimRefNumber">
+                    <mat-header-cell *matHeaderCellDef> Claim Ref Number </mat-header-cell>
+                    <mat-cell *matCellDef="let row">{{row.claimReferenceNumber}}</mat-cell>
+                </ng-container>
+
+                <ng-container matColumnDef="claimStatus">
+                    <mat-header-cell *matHeaderCellDef> Claim Status </mat-header-cell>
+                    <mat-cell *matCellDef="let row">
+                        <label [ngClass]="{
+                            'green' : row.claimStatusId == submitted, 
+                            'green' : row.claimStatusId == open, 
+                            'amber' : row.claimStatusId == waived, 
+                            'blue'  : row.claimStatusId == autoAcknowledged, 
+                            'blue'  : row.claimStatusId == manuallyAcknowledged, 
+                            'red'   : row.claimStatusId == closed}">
+                            {{row && row.claimStatusId ? getClaimStatus(row.claimStatusId) : 'N/A'}}
+                        </label>
+                    </mat-cell>
+                </ng-container>
+
+                <ng-container matColumnDef="liabilityStatus">
+                    <mat-header-cell *matHeaderCellDef> Claim Liability Status </mat-header-cell>
+                    <mat-cell *matCellDef="let row"> {{getLiabilityStatus(row.claimLiabilityStatus)}}</mat-cell>
+                </ng-container>
+
+                <ng-container matColumnDef="pd">
+                    <mat-header-cell *matHeaderCellDef> Final PD% </mat-header-cell>
+                    <mat-cell *matCellDef="let row">
+                        {{ row.disabilityPercentage !== 0 ? row.disabilityPercentage + '%' : 'N/A' }}
+                    </mat-cell>
+                </ng-container>
+
+                <ng-container matColumnDef="pdVerified">
+                    <mat-header-cell *matHeaderCellDef> Estimated PD% Status </mat-header-cell>
+                    <mat-cell *matCellDef="let row">
+                        <label [ngClass]="{
+                            'green' : row.pdVerified, 
+                            'amber': !row.pdVerified}">
+                            {{row.pdVerified ? 'PD% Verified' : 'PD% not Verified'}}
+                        </label>
+                    </mat-cell>
+                </ng-container>
+
+                <ng-container matColumnDef="actions">
+                    <mat-header-cell *matHeaderCellDef> Actions </mat-header-cell>
+                    <mat-cell *matCellDef="let row">
+                        <span class="material-icons pointer right" (click)="setSelectedClaim(row)" matTooltip="view">
+                            visibility
+                        </span>
+                        <span class="material-icons pointer right"
+                            *ngIf="currentUser?.isInternalUser && row.pdVerified && !isClaimStatusClosed(row) && ((currentUser.id == row.assignedToUserId) || (userHasPermission(scaPermission) || userHasPermission(caPermission)))"
+                            class="material-icons pointer right" (click)="openOptionsDialog(row)"
+                            matTooltip="close claim">
+                            stop
+                        </span>
+                        <span class="material-icons pointer right"
+                            *ngIf="currentUser?.isInternalUser && isClaimStatusClosed(row)"
+                            class="material-icons pointer right" (click)="openClaim(row)" matTooltip="re-open claim">
+                            play_arrow
+                        </span>
+                        <span class="material-icons pointer right"
+                            *ngIf="currentUser?.isInternalUser && row.pdVerified && !isClaimStatusClosed(row) && userHasPermission(ccaPermission)"
+                            (click)="sendClaimClose(row)" matTooltip="send reminder to CA/SCA to close claim">
+                            add_alert
+                        </span>
+
+                        <span class="material-icons pointer right" (click)="openRemittanceViewDialog(row)"
+                            matTooltip="view / download remittance for claim ({{row.claimReferenceNumber}})">
+                            account_balance_wallet
+                        </span>
+
+                        <span class="material-icons pointer right"
+                            *ngIf="currentUser?.isInternalUser && userHasPermission(viewAuditPermission)"
+                            (click)="openAuditDialog(row)" matTooltip="view audit">
+                            fingerprint
+                        </span>
+                    </mat-cell>
+                </ng-container>
+
+                <mat-header-row *matHeaderRowDef="getDisplayedColumns()"></mat-header-row>
+                <mat-row *matRowDef="let row; columns: getDisplayedColumns();"></mat-row>
+            </mat-table>
+            <mat-paginator #paginator [length]="dataSource.data ? dataSource.data.length : 0" [pageIndex]="0"
+                [pageSize]="5" [pageSizeOptions]="[5, 10, 25, 100]">
+            </mat-paginator>
+        </div>
+    </mat-card-content>
+</div>

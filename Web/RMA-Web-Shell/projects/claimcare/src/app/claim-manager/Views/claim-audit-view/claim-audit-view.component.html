@@ -1,0 +1,25 @@
+<mat-card *ngIf="isLoading$ | async" class="body">
+  <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+  <label class="mat-label other-label"><i>loading...please wait</i></label>
+</mat-card>
+
+<div [hidden]="isLoading$ | async" class="auditPopup">
+  <div *ngIf="logs.length > 0">
+    <div class="audit" *ngFor='let log of logs'>
+      <a class="pointer" (mouseenter)="getUser(log)" (mouseout)="clearUser(log)">
+        <span class="material-icons">
+          fingerprint</span></a>
+      {{log}}
+    </div>
+  </div>
+
+  <div *ngIf="logs.length <= 0">
+    <label class="mat-label other-label"><i>No audit logs have been created...</i></label>
+  </div>
+
+  <mat-dialog-actions>
+    <div (click)="closeDialog()" class="form-buttons submit-button">
+      <button type="button" class="button float-button">Close</button>
+    </div>
+  </mat-dialog-actions>
+</div>

@@ -1,0 +1,15 @@
+<div class="menu-bar">
+  <span class="material-icons">
+    list
+  </span>
+ Policy Payment Transactions - {{policy.policyNumber}}
+  <span class="material-icons pointer right pulse" (click)="close()" matTooltip="close">
+    cancel
+  </span>
+</div>
+
+<policy-payment-list 
+[paymentTrasanctions]="policy.paymentAllocations" 
+(onBusyProcessing)="onBusyProcessing($event)"
+(onPaymentReversed)="onPaymentReversed($event)">
+</policy-payment-list>

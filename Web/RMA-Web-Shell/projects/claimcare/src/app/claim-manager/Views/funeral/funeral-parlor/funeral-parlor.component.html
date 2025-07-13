@@ -1,0 +1,114 @@
+<div class="page-header"></div>
+<div *ngIf="!canAdd">
+    <h1>Funeral Parlor</h1>
+    <div style="padding-bottom: 15px; color: orange; font-family: 'Oswald', sans-serif;">You do not have sufficient
+        permissions to add a funeral parlor.</div>
+    <div (click)="back()" class="form-buttons submit-button">
+        <button type="button" class="button float-button">Back</button>
+    </div>
+</div>
+
+<div [hidden]="!canAdd" style="padding-top: 15px;">
+    <mat-card style="margin: 15px 30px 15px 30px">
+
+        <mat-card-content style="margin-left: 10px;">
+            <form [formGroup]="form" class="mat-container" novalidate>
+                <div style="margin-top: 20px;">
+                    <div class="menu-bar">
+                        <!-- Row 0 -->
+                        <section>
+                            <span *ngIf="canEditForm && !showSetting" (click)="cancel()" class="material-icons pointer right" matTooltip="cancel">
+                                close
+                            </span>
+                          
+                            <span *ngIf="form.valid && !form.pristine && canEditForm && !showSetting" (click)="save()"
+                                class="material-icons pointer right pulse greenFont" matTooltip="save">
+                                save
+                             </span>
+                                                  
+                              <span *ngIf="!(isSaving$ | async) && canEditForm && showSetting"
+                                (click)="edit()" class="material-icons pointer right" matTooltip="edit">
+                                settings
+                            </span>
+    
+                        </section>
+                     </div>                 
+                     <br />
+                    <!-- Row 1 -->
+                    <section>
+                        <!--Registration Number-->
+                        <mat-form-field>
+                            <label class="mat-label other-label">Registration Number</label>
+                            <input matInput maxlength="50" formControlName="registrationNumber"
+                                name="registrationNumber" (blur)="search()">
+                            <span [style.visibility]="isLoading ? 'visible' : 'hidden'">
+                                <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+                                <span class="grey site-font"><i>Searching Funeral Parlor...please wait</i></span>
+                            </span>
+                        </mat-form-field>
+                        <!--Parlour Name-->
+                        <mat-form-field class="mat-form-field-right">
+                            <label class="mat-label other-label">Name of Funeral Parlor</label>
+                            <input matInput maxlength="50" formControlName="funeralParlorName" name="funeralParlorName">
+                        </mat-form-field>
+                    </section>
+                    <!-- Row 2 -->
+                    <section>
+                        <mat-form-field>
+                            <label class="mat-label other-label">First Name</label>
+                            <input matInput maxlength="50" formControlName="firstName" name="firstName">
+                        </mat-form-field>
+                        <mat-form-field class="mat-form-field-right">
+                            <label class="mat-label other-label">Last Name</label>
+                            <input matInput maxlength="50" formControlName="lastName" name="lastName">
+                        </mat-form-field>
+                    </section>
+                    <section>
+                        <!--Identity number-->
+                        <mat-form-field>
+                            <label class="mat-label other-label">Identity Number</label>
+                            <input matInput minlength="13" maxlength="13" formControlName="idNumber" name="idNumber">
+                            <!--(blur)="setDOB()"-->
+                            <mat-error *ngIf="form.get('idNumber').hasError('minlength')">
+                                Identity Number must be <strong>thirteen digits</strong>
+                            </mat-error>
+                        </mat-form-field>
+                        <!--Passport number-->
+                        <mat-form-field class="mat-form-field-right">
+                            <label>Passport number (if foreigner)</label>
+                            <input matInput maxlength="50" formControlName="passportNumber" name="passportNumber">
+                        </mat-form-field>
+                    </section>
+                    <!-- Row 3 -->
+                    <section>
+                        <!--Address Line 1-->
+                        <mat-form-field>
+                            <label class="mat-label other-label">Address Line 1</label>
+                            <input matInput maxlength="50" formControlName="addressLine1" name="addressLine1">
+                        </mat-form-field>
+                        <!--Address Line 2-->
+                        <mat-form-field class="mat-form-field-right">
+                            <label class="mat-label other-label">Address Line 2</label>
+                            <input matInput maxlength="50" formControlName="addressLine2" name="addressLine2">
+                        </mat-form-field>
+                    </section>
+                    <!-- Row 4 -->
+                    <section>
+                        <mat-form-field>
+                            <label class="mat-label other-label">Contact Number</label>
+                            <input matInput minlength="3" maxlength="10" formControlName="contactNumber"
+                                name="contactNumber" NumberOnly="true">
+                            <mat-error *ngIf="form.get('contactNumber').hasError('minlength')">
+                                Contact number must be at least <strong>three digits</strong>
+                            </mat-error>
+                            <mat-error *ngIf="form.get('contactNumber').hasError('maxlength')">
+                                Contact number must be no more then <strong>ten digits</strong>
+                            </mat-error>
+                        </mat-form-field>
+                    </section>
+                </div>
+                <!--Buttons-->
+            </form>
+        </mat-card-content>
+    </mat-card>
+</div>

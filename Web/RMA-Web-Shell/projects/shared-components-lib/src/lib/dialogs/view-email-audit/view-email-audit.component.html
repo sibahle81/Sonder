@@ -1,0 +1,13 @@
+<div class="menu-bar">
+  <span class="material-icons">mail</span>
+  Email Communications Audit
+  <span (click)="close()" class="material-icons pointer right" matTooltip="close">
+    close
+  </span>
+</div>
+
+<div *ngIf="data && data.itemType && data.itemId">
+  <email-audit-search [itemType]="data.itemType" [itemId]="data.itemId"
+    [rolePlayerContactOptions]="data.rolePlayerContactOptions" [documentSystemName]="data.documentSystemName"
+    [keyName]="data.keyName" [keyValue]="data.keyValue" [consolidatedView]="data.consolidatedView"></email-audit-search>
+</div>

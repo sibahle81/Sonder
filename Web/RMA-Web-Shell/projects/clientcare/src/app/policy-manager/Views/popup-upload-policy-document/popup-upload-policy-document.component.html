@@ -1,0 +1,36 @@
+<mat-card style="margin: 15px 30px 15px 30px">
+  <mat-card-header>
+    <mat-card-title class="wizard-font card-title grey">
+      <h1 style="padding: 0;">Upload Documents</h1>
+    </mat-card-title>
+    <mat-card-subtitle>
+      <span class="grey site-font"><i>Upload Documents that may be required</i></span>
+    </mat-card-subtitle>
+  </mat-card-header>
+  <mat-card-content style="margin-left: 10px;">
+    <div>
+      <section>
+        <mat-form-field>
+          <label class="mat-label other-label">Select type of document</label>
+          <mat-select name="required" id="required" (selectionChange)="getValue($event)">
+            <mat-option *ngFor="let doc of requiredDocs" [value]="doc.id">{{doc.name}}
+            </mat-option>
+          </mat-select>
+        </mat-form-field>
+        <div style="margin-top: 20px;" [hidden]="!showUploadControl">
+          <upload-control #registrationDocuments [acceptedTypes]="'.pdf'"></upload-control>
+        </div>
+        <div class="form-group-button mat-form-button">
+          <div class="form-buttons" [hidden]="!registrationDocuments.isDocumentLoaded">
+            <button (click)='UploadDocuments()' class="button float-button">Upload</button>
+          </div>
+          <div class="form-buttons">
+            <!--use form-group-button mat-form-button clas to get inside card fully-->
+            <button (click)='onNoClick()' type="button" class="button float-button">Close</button>
+          </div>
+        </div>
+        <br/>
+      </section>
+    </div>
+  </mat-card-content>
+</mat-card>

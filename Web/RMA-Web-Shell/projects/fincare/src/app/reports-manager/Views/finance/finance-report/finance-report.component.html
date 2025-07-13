@@ -1,0 +1,102 @@
+<div>
+  <mat-card style="margin: 15px 30px">
+    <mat-card-header>
+      <mat-card-title class="wizard-font card-title grey">
+        <h1 style="color:#389cae"></h1>
+        <h3>{{reportTitle}}</h3>
+      </mat-card-title>
+    </mat-card-header>
+    <mat-card-content>
+      <form [formGroup]="form" class="mat-container details-form" novalidate>
+        <div class="form">
+          <section>
+            <div class="field-container">
+              <div><label class="mat-label other-label mandatory-field">From</label></div>
+              <mat-form-field class="mat-form-field">
+                <input matInput [matDatepicker]="startDatePicker" date="true" [value]="startDt.value"
+                  [max]="startMaxDate" time="false" [formControl]="startDt" readonly
+                  (ngModelChange)="startDateChange($event)">
+                <mat-datepicker-toggle matSuffix class="picker-toggle" [for]="startDatePicker"></mat-datepicker-toggle>
+                <mat-datepicker #startDatePicker touchUi="true" ng-model-options="{ timezone: 'sast' }">
+                </mat-datepicker>
+              </mat-form-field>
+            </div>
+            <div class="field-container-right">
+              <div><label class="mat-label other-label mandatory-field">To</label></div>
+              <mat-form-field class="mat-form-field">
+                <input matInput [matDatepicker]="endDatePicker" date="true" [value]="endDt.value" time="false"
+                  [formControl]="endDt" readonly (ngModelChange)="endDateChange($event)" [min]="endMinDate">
+                <mat-datepicker-toggle matSuffix class="picker-toggle" [for]="endDatePicker"></mat-datepicker-toggle>
+                <mat-datepicker #endDatePicker touchUi="true" ng-model-options="{ timezone: 'sast' }"></mat-datepicker>
+              </mat-form-field>
+            </div>
+          </section>
+          <br><br><br><br><br><br>
+          <section>
+            <div class="field-container">
+              <div><label class="mat-label other-label mandatory-field">Report Type</label></div>
+              <mat-form-field class="mat-form-field">
+                <mat-select name="financeReportTypes" id="financeReportTypes"
+                  (selectionChange)="financeReportTypeChanged($event)">
+                  <mat-option *ngFor="let financeReportType of financeReportTypes" [value]="financeReportType">
+                    {{ financeReportType.name}}
+                  </mat-option>
+                </mat-select>
+              </mat-form-field>
+            </div>
+            <div class="field-container-right" [hidden]="!showPaymentType">
+              <div><label class="mat-label other-label mandatory-field">Payment Type</label></div>
+              <mat-form-field class="mat-form-field">
+                <mat-select name="paymentTypes" id="paymentTypes" (selectionChange)="paymentTypeChanged($event)">
+                  <mat-option *ngFor="let paymentType of paymentTypes" [value]="paymentType">
+                    {{ paymentType.name}}
+                  </mat-option>
+                </mat-select>
+              </mat-form-field>
+            </div>
+            <div class="field-container-right" style="margin-top:19px;">
+              <div class="mat-form-field">
+                <div class="form-buttons" (click)="viewReport()">
+                  <button class="button submit-button">View</button>
+                </div>
+              </div>
+            </div>
+          </section>
+        </div>
+        <div class="form" [hidden]="!showExport">
+          <section>
+            <div class="field-container">
+              <div><label class="mat-label other-label">Select Export Type</label></div>
+              <div>
+                <mat-form-field class="mat-form-field">
+                  <mat-select name="ExportTypes" id="ExportTypes" (selectionChange)="ExportTypeChanged($event)">
+                    <mat-option [value]="1">PDF</mat-option>
+                    <mat-option [value]="2">CSV</mat-option>
+                    <mat-option [value]="3">EXCEL</mat-option>
+                  </mat-select>
+                </mat-form-field>
+              </div>
+            </div>
+            <div class="field-container-right" style="margin-top: 19px;">
+              <div class="form-buttons" (click)="exportReport()">
+                <button class="button submit-button">Export</button>
+              </div>
+            </div>
+          </section>
+        </div>
+        <label style="color: red;">{{dateError}}</label>
+        <!-- report contain -->
+        <div [hidden]="!showReport">
+          <mat-tab-group>
+            <mat-tab label="">
+              <ssrs-reportviewer [reportserver]="reportServer" [reporturl]="reportUrl"
+                [showparameters]="showParametersAudit" [format]="formatAudit" [parameters]="parametersAudit"
+                [language]="languageAudit" [width]="widthAudit" [height]="heightAudit" [toolbar]="toolbarAudit">
+              </ssrs-reportviewer>
+            </mat-tab>
+          </mat-tab-group>
+        </div>
+      </form>
+    </mat-card-content>
+  </mat-card>
+</div>

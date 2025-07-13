@@ -1,0 +1,15 @@
+﻿export enum PersonEventStatusEnum {
+    Unknown = 0,
+    Open = 1,
+    Closed = 2,
+    Pended = 3,
+    Cancelled = 4,
+    PendingInvestigations = 5,
+    InvestigationsCompleted = 6,
+    AutoAcknowledged = 7,
+    ManuallyAcknowledged = 8,
+    Submitted = 9,
+    PendingAcknowledgement = 10,
+    New = 11,
+    PendingRequirements = 12,
+}

@@ -1,0 +1,87 @@
+﻿<div class="page-header"></div>
+<div *ngIf="canAdd === false && campaignId === 0">
+    <h1>Campaign Template</h1>
+    <div style="padding: 15px 0; color: orange; font-family: 'Oswald', sans-serif;">You do not have sufficient permissions to add a new template.</div>
+    <div (click)="back()" class="form-buttons submit-button">
+        <button type="button" class="button float-button">Back</button>
+    </div>
+</div>
+<div [hidden]="canAdd === false && campaignId === 0" style="padding-top: 15px;">
+    <mat-card style="margin: 0 5px">
+        <mat-card-header>
+            <mat-card-title class="wizard-font card-title grey">
+                <h1 class="wizard-font" style="padding: 0;">Campaign Template Details</h1>
+            </mat-card-title>
+        </mat-card-header>
+        <mat-card-content style="margin-left: 10px;">
+            <form [formGroup]="form" (ngSubmit)="save()" class="mat-container details-form" novalidate>
+                <section>
+                    <mat-form-field>
+                        <label class="mat-label other-label">Template Name</label>
+                        <input matInput maxlength="50" formControlName="templateName" />
+                        <mat-error *ngIf="form.get('templateName').hasError('required')">
+                            Template name is required
+                        </mat-error>
+                    </mat-form-field>
+                    <mat-form-field class="mat-form-field-right">
+                        <label class="mat-label other-label">Template Type</label>
+                        <mat-select #templateType formControlName="templateTypeId" (selectionChange)="clearTemplate($event)">
+                            <mat-option *ngFor="let templateType of templateTypes" [value]="templateType.id">{{ templateType.name }}</mat-option>
+                        </mat-select>
+                        <mat-error *ngIf="templateType.errorState && (form.get('templateTypeId').hasError('required') || form.get('templateTypeId').hasError('min'))">
+                            Template type is required
+                        </mat-error>
+                    </mat-form-field>
+                </section>
+                <section>
+                    <mat-form-field>
+                        <label class="mat-label other-label">Template</label>
+                        <input [hidden]="true" matInput formControlName="template"/>
+                        <div *ngIf="form.get('templateTypeId').value == 1" class="templateContent">
+                            <div class="ignore-css">
+                                <div [innerHtml]="templateContent | safeHtml"
+                                     (paste)="pasteTemplate($event.clipboardData.getData('text/plain'))"
+                                     (dblclick)="selectTemplate($event)"
+                                     (dragenter)="dragEnter($event)"
+                                     (dragover)="dragOver($event)"
+                                     (drop)="dropTemplate($event)"
+                                     (dragleave)="dragLeave($event)">
+                                </div>
+                            </div>
+                        </div>
+                        <div *ngIf="form.get('templateTypeId').value == 2">
+                            <mat-form-field>
+                                <textarea matInput maxlength="160" formControlName="template" style="min-height: 54px;"
+                                 (paste)="pasteTemplate($event.clipboardData.getData('text/plain'))"
+                                 (dblclick)="selectTemplate($event)"
+                                 (dragenter)="dragEnter($event)"
+                                 (dragover)="dragOver($event)"
+                                 (drop)="dropTemplate($event)"
+                                 (dragleave)="dragLeave($event)">
+                            </textarea>
+                            </mat-form-field>
+                        </div>
+                        <mat-error *ngIf="form.get('template').hasError('required')">
+                            Template is required
+                        </mat-error>
+                    </mat-form-field>
+                </section>
+                <last-modified-by type="Template"></last-modified-by>
+                <div *ngIf="showButtons" class="form-group-button">
+                    <div *ngIf="showSaveButton" class="form-buttons" matTooltip="No changes have been made" [matTooltipDisabled]="!form.pristine">
+                        <button [disabled]="form.pristine" class="button float-button submit-button">Save</button>
+                    </div>
+                    <div *ngIf="showEditButton" (click)="edit()" class="form-buttons submit-button">
+                        <button type="button" class="button float-button">Edit</button>
+                    </div>
+                    <div *ngIf="showSaveButton" (click)="clearCurrentTemplate()" class="form-buttons submit-button">
+                        <button type="button" class="button float-button">Clear</button>
+                    </div>
+                    <div (click)="back()" class="form-buttons submit-button">
+                        <button type="button" class="button float-button">Back</button>
+                    </div>
+                </div>
+            </form>
+        </mat-card-content>
+    </mat-card>
+</div>

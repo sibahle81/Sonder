@@ -1,0 +1,97 @@
+<div  [hidden]="viewMonthlyPensionLedgerList">
+  <mat-card style="margin: 15px 30px 15px 30px">
+    <mat-card-content style="margin-left: 10px;">
+      <div>
+        <form [formGroup]="form" class="mat-container" novalidate>
+          <!--Query-->
+          <div class="page-header">
+            <h1 style="margin-bottom: 15px;">Find Monthly Pension</h1>
+          </div>
+          <mat-form-field floatLabel="never">
+              <input #searchField matInput maxlength="50" formControlName="query" name="query" width="300" minLength="3">
+              <mat-placeholder class="placeholder">Search by Monthly Pension Id, Payment Date, Total Amount, Released Amount, Status
+                </mat-placeholder>
+              <mat-icon class="search-icon" (click)="search()" matSuffix>search</mat-icon>
+              <mat-error *ngIf="form.get('query').hasError('minlength')">
+                  Please enter a search term longer than <strong>3 characters</strong>
+              </mat-error>
+          </mat-form-field>
+        </form>
+
+        <div *ngIf="dataSource.isLoading">
+            <mat-progress-bar mode="indeterminate" [ngClass]="{ 'loading-main-double-menu-progress': doubleMenu, 'loading-main-single-menu-progress': !doubleMenu }"></mat-progress-bar>
+            <p class="site-font grey">Searching...</p>
+        </div>
+
+        <div [hidden]="dataSource.isLoading || (dataSource.data && dataSource.data.data && dataSource.data.data.length === 0)">
+            <mat-table #table [dataSource]="dataSource" matSort>
+                <ng-container matColumnDef="monthlyPensionId">
+                    <mat-header-cell *matHeaderCellDef mat-sort-header> Monthly Pension Id </mat-header-cell>
+                    <mat-cell *matCellDef="let row"> {{row.monthlyPensionId}}</mat-cell>
+                </ng-container>
+
+                <ng-container matColumnDef="paymentDate">
+                  <mat-header-cell *matHeaderCellDef mat-sort-header> Payment Date </mat-header-cell>
+                  <mat-cell *matCellDef="let row"> {{row.paymentDate | date: 'yyyy/MM/dd'}} </mat-cell>
+                </ng-container>
+
+                <ng-container matColumnDef="totalAmount">
+                  <mat-header-cell *matHeaderCellDef mat-sort-header> Total Amount </mat-header-cell>
+                  <mat-cell *matCellDef="let row"> {{row.totalAmount | currency: 'R'}} </mat-cell>
+                </ng-container>
+
+                <ng-container matColumnDef="releasedAmount">
+                  <mat-header-cell *matHeaderCellDef mat-sort-header> Released Amount</mat-header-cell>
+                  <mat-cell *matCellDef="let row">{{row.releasedAmount | currency: 'R'}}</mat-cell>
+                </ng-container>
+
+                <ng-container matColumnDef="batchStatus">
+                  <mat-header-cell *matHeaderCellDef mat-sort-header> Status</mat-header-cell>
+                  <mat-cell *matCellDef="let row">{{batchStatus[row.batchStatus]}}</mat-cell>
+                </ng-container>
+
+
+                <!-- Actions Column -->
+                <ng-container matColumnDef="actions">
+                  <mat-header-cell *matHeaderCellDef> Actions </mat-header-cell>
+                  <mat-cell *matCellDef="let row" [matMenuTriggerFor]="menu" (click)="filterMenu(row)">
+                    <span class="material-icons pointer">more_vert</span>
+                    <mat-menu #menu="matMenu">
+                      <ng-container *ngFor="let menu of menus">
+                        <button *ngIf="!menu.disable" mat-menu-item
+                          (click)="onMenuItemClick(row, menu)">{{menu.title}}</button>
+                      </ng-container>
+                    </mat-menu>
+                  </mat-cell>
+                </ng-container>
+
+                <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
+                <mat-row *matRowDef="let row; columns: displayedColumns;"></mat-row>
+            </mat-table>
+
+            <mat-paginator #paginator   [pageIndex]="0" [pageSize]="5" [pageSizeOptions]="[5, 10, 25, 100]">
+            </mat-paginator>
+        </div>
+
+        <div [hidden]="(dataSource.data && dataSource.data.data && dataSource.data.data.length > 0) || !currentQuery || currentQuery == ''" class="no-search-results-add-button">
+            <div class="site-font grey">
+                <p class="grey">Your search - <strong>{{currentQuery}}</strong> - did not match any policies.</p>
+                <span>Suggestions: </span>
+                <ul>
+                    <li>Make sure that all words are spelled correctly.</li>
+                    <li>Try different keywords.</li>
+                    <li>Try more general keywords.</li>
+                    <li>Try fewer keywords.</li>
+                </ul>
+            </div>
+        </div>
+      </div>
+    </mat-card-content>
+  </mat-card>
+</div>
+
+<app-monthly-pension-ledger-list *ngIf="viewMonthlyPensionLedgerList" [monthlyPensionId]="selectedMonthlyPensionId"></app-monthly-pension-ledger-list>
+
+
+
+

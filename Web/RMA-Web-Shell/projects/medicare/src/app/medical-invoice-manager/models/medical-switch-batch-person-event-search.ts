@@ -1,0 +1,35 @@
+export interface MedicalSwitchBatchPersonEventSearch {
+    industryNumber: string;
+    clientIds: string;
+    surname: string;
+    fullFirstNames: string;
+    initials: string;
+    iDNumber: string;
+    individualType: string;
+    otherIdentification: string;
+    dateOfBirth: string;
+    employeeNumber: string;
+    bagNumber: string;
+    isActive: number;
+    queryHistory: number;
+    pFNumber: string;
+    friendlyPensionCaseNumber: string;
+    pensionCaseGUID: string;
+    pensionIndividualGUID: string;
+    passportNumber: string;
+    passportNationality: number;
+    taxRefNo: string;
+    mBODBureau: string;
+    commissionerRef: string;
+    dMERef: string;
+    pensionNumber: string;
+    eventID: number;
+    mainClaimRefNo: string;
+    dateOfEvent: string;
+    claimRefNo: string;
+    claimID: number;
+    memberNo: string;
+    personId: string;
+    columns: string;
+    rMAEmployeeRef: string;
+}

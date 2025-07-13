@@ -1,0 +1,2015 @@
+<section class="legal-common-dialog">
+
+  <div *ngIf="data.action == 'acknowledge'" class="acknowledgement-div">
+<h2>Acknowledge</h2>
+<p class="ack-que">Do you want to confirm the receipt ?</p>
+<div class="action-div">
+  <span class="select-action option-yes" (click)="onConfirm()"> <mat-icon
+     class="action-icon">check</mat-icon> <span class="option">YES CONFIRM</span> </span>
+  <span class="select-action option-no" (click)="closeDialog()"> <mat-icon
+    class="action-icon">close</mat-icon> <span class="option">NO THANKS</span> </span>
+</div>
+  </div>
+
+  <div *ngIf="data.action == 'Notes'" [ngClass]=" isSpinner ? 'on-disabled' : 'on-enabled' ">
+<div class="heading-text-div">
+  <h2 class="margin-left-text-0 heading-text legal-recovery-admin">Notes</h2>
+</div>
+<div class="acknowledgement-div">
+  <p class="ack-que popup-label-text">Add Notes</p>
+  <form [formGroup]="notesFormLegal">
+    <div class="message-box">
+      <textarea class="message-textarea legalNotes" formControlName="addNotes"
+        [ngClass]="{'invalid-input': isControlInvalid('addNotes')}" cols="30" rows="10" [maxlength]="maxChars"></textarea>
+        <br/>
+        <label class="textarea-length-span">
+          Characters Remaining: {{
+            (maxChars - (notesFormLegal.get('addNotes').value?.length ?? 0))
+          }}/{{ maxChars }}
+        </label> 
+        <p *ngIf="notesFormLegal.get('addNotes').hasError('required') && isControlInvalid('addNotes')"
+        class="error-message invalid-text">Please add notes.</p>
+      <p *ngIf=" notesFormLegal.get('addNotes').hasError('maxlength') && isControlInvalid('addNotes')"
+        class="error-message invalid-text">Your notes has exceeded the
+        maximum length.</p>
+        <p *ngIf="isControlInvalid('addNotes') && notesFormLegal.get('addNotes').hasError('containsOnlySpaces')" class="error-message invalid-text">
+          Please enter non-empty text.
+        </p>
+    </div>
+    <div>
+      <p class="popup-label-text upload-doc-lable">Upload Document</p>
+        <mat-form-field class="status-update-mff" appearance="outline"
+        [ngClass]="{'has-error':notesFormLegal.get('courtOrder').hasError('required') && isControlInvalid('courtOrder')  && formSubmitted }">
+          <input [hidden]="true" (change)="uploadCourtOrder($event)" type="file" accept="all/*" #fileSelect />
+          <input readonly matInput formControlName="courtOrder" [(ngModel)]="filename" (click)="fileSelect.click()"
+            class="input-field-data" placeholder="Select file..." />
+          <button matSuffix class="padding-none" mat-icon-button>
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
+              <path
+                d="M6.50345 19.0042C5.41963 19.005 4.37192 18.6146 3.55287 17.9048C2.73383 17.195 2.19849 16.2134 2.04523 15.1405C1.89197 14.0676 2.13109 12.9754 2.71866 12.0646C3.30622 11.1539 4.20274 10.4858 5.24345 10.1832C5.68499 8.5403 6.70968 7.11444 8.12601 6.1721C9.54234 5.22976 11.2534 4.83544 12.9393 5.06284C14.6252 5.29024 16.1706 6.1238 17.2866 7.40772C18.4027 8.69163 19.013 10.338 19.0034 12.0392C19.8806 12.1641 20.6776 12.6171 21.2339 13.3067C21.7902 13.9962 22.0642 14.8711 22.0008 15.7548C21.9373 16.6385 21.5411 17.4652 20.8921 18.0683C20.243 18.6713 19.3894 19.0058 18.5034 19.0042H6.50345Z"
+                stroke="#292929" stroke-linejoin="round" />
+              <path d="M14.0039 11.0039L12.0039 9.00391M12.0039 9.00391L10.0039 11.0039M12.0039 9.00391V15.0039"
+                stroke="#292929" stroke-linecap="round" stroke-linejoin="round" />
+            </svg>
+          </button>
+        </mat-form-field>
+        <p *ngIf="notesFormLegal.get('courtOrder').hasError('required') && formSubmitted"
+          class="form-field-validations-text">Please select file</p>
+          <p *ngIf="isInvalidDocType" class="form-field-validations-text">Invalid file type, file should be in PDF format</p>
+          <p *ngIf="invalideFileSize" class="form-field-validations-text">File is too big, maximum file size should be 2 MB</p>
+
+    </div>
+  </form>
+  <div class="action-div action-btn-right">
+    <span class="select-action action-btns" (click)="closeDialog()"> <mat-icon
+        class="action-icon">close</mat-icon> <span>CANCEL</span> </span>
+    <button class="select-action action-submit" (click)="onSubmitNotes()">SUBMIT</button>
+  </div>
+</div>
+  </div>
+
+  <div *ngIf="data.action == currentAction[currentAction.RecoveryNotes]" [ngClass]=" isSpinner ? 'on-disabled' : 'on-enabled' ">
+    <div class="heading-text-div">
+      <h2 class="margin-left-text-0 heading-text legal-recovery-admin">Notes</h2>
+    </div>
+    <div class="acknowledgement-div">
+      <p class="ack-que popup-label-text">Add Notes</p>
+      <form [formGroup]="recoveryNotesFormLegal">
+        <div class="message-box">
+          <textarea class="message-textarea legalNotes" formControlName="addNotes"
+            [ngClass]="{'invalid-input': recovNotesControlInvalid('addNotes')}" cols="30" rows="10" [maxlength]="maxChars"></textarea>
+            <br/>
+            <label class="textarea-length-span">
+              Characters Remaining: {{
+                (maxChars - (recoveryNotesFormLegal.get('addNotes').value?.length ?? 0))
+              }}/{{ maxChars }}
+            </label> 
+            <p *ngIf="recoveryNotesFormLegal.get('addNotes').hasError('required') && recovNotesControlInvalid('addNotes')"
+            class="error-message invalid-text">Please add notes.</p>
+          <p *ngIf=" recoveryNotesFormLegal.get('addNotes').hasError('maxlength') && recovNotesControlInvalid('addNotes')"
+            class="error-message invalid-text">Your notes has exceeded the
+            maximum length.</p>
+            <p *ngIf="recovNotesControlInvalid('addNotes') && recoveryNotesFormLegal.get('addNotes').hasError('containsOnlySpaces')" class="error-message invalid-text">
+              Please enter non-empty text.
+            </p>
+        </div>
+      </form>
+      <div class="action-div action-btn-right">
+        <span class="select-action action-btns" (click)="closeDialog()"> <mat-icon
+            class="action-icon">close</mat-icon> <span>CANCEL</span> </span>
+        <button class="select-action action-submit" (click)="submitRecoveryNotes()">SUBMIT</button>
+      </div>
+    </div>
+  </div>
+
+
+  <div *ngIf="data.action == 'PotentialRecovery'" [ngClass]="isSpinner ? 'on-disabled' : 'on-enabled' ">
+<div class="heading-text-div">
+  <h2 class="heading-text">Potential Recovery</h2>
+</div>
+<form [formGroup]="potntialRecoveryForm">
+  <div class="question-div question-div-legal">
+    <p class="popup-label-text">Is this a Potential Recovery ?</p>
+    <div class="div-radio">
+      <div class="radio-btn">
+        <span>
+          <input type="radio" id="No" value="No" formControlName="potentialRecovery" [(ngModel)]="isPotentialRecv"
+            class="radio-btn-input">
+        </span>
+        <span>
+          <label for="No" class="popup-label-text">No</label>
+        </span>
+      </div>
+      <div class="radio-btn">
+        <span>
+          <input type="radio" id="Yes" value="Yes" formControlName="potentialRecovery" [(ngModel)]="isPotentialRecv"
+            class="radio-btn-input">
+        </span>
+        <span>
+          <label for="Yes" class="popup-label-text">Yes</label>
+        </span>
+      </div>
+    </div>
+    <p *ngIf="potntialRecoveryForm.get('potentialRecovery').hasError('required') && isControlInvalidPotential('potentialRecovery')"
+      class="invalid-text">Please select option</p>
+      <p class="ack-que">Add Notes</p>
+    <div class="message-box">
+      <textarea class="message-textarea potential" formControlName="addNotes" #textAreaRef
+        [ngClass]="{'invalid-input': isControlInvalidPotential('addNotes')}" cols="30" rows="10" [maxlength]="maxChars"></textarea>
+        <br/>
+        <label class="textarea-length-span">
+          Characters Remaining: {{
+            (maxChars - (potntialRecoveryForm.get('addNotes').value?.length ?? 0))
+          }}/{{ maxChars }}
+        </label> 
+      <p *ngIf="potntialRecoveryForm.get('addNotes').hasError('maxlength') && isControlInvalidPotential('addNotes')"
+        class="invalid-text">Your notes has exceeded the maximum length.</p>
+    </div>
+    <p *ngIf="potntialRecoveryForm.get('addNotes').hasError('required') && isControlInvalidPotential('addNotes')"
+      class="invalid-text">Please add notes</p>
+      <p *ngIf="isControlInvalidPotential('addNotes') && potntialRecoveryForm.get('addNotes').hasError('containsOnlySpaces')" class="error-message invalid-text">
+        Please enter non-empty text.
+      </p>
+    <div class="action-div action-btn-right">
+      <span class="select-action action-btns" (click)="closeDialog()"> <mat-icon
+          class="action-icon">close</mat-icon> <span>CANCEL</span> </span>
+      <button class="select-action action-submit" (click)="onSubmitPotentialRecovery()">SUBMIT</button>
+    </div>
+  </div>
+</form>
+  </div>
+
+  <div *ngIf="data.action == 'UpdateStatus'" [ngClass]=" isSpinner ? 'on-disabled' : 'on-enabled' ">
+<div class="heading-text-div">
+  <h2 class="margin-left-text-0 heading-text">Update Status</h2>
+</div>
+<form action="" [formGroup]="updateStatusForm">
+
+<div class="question-div question-div-legal">
+  <div  class="borderCss">
+    <p class="popup-label-text">Status</p>
+    <div mat-select-trigger>
+
+      <mat-form-field class="status-update-mff" appearance="outline"
+        [ngClass]="{'has-error': isControlInvalidUpdateStatus('status')}">
+          <mat-select class="select-mat-field" formControlName="status" (selectionChange)="onSelectValue($event.value)"
+          placeholder="Select" [panelClass]="'custom-dropdown'">
+          <ng-container *ngFor="let option of statusOptions; let i=index">
+            <mat-option [value]="option" (click)="onSelectStatus(i)">
+              {{getStatusText(option)}}
+            </mat-option>
+            </ng-container>
+          </mat-select>
+      </mat-form-field>
+      </div>
+      <p *ngIf="updateStatusForm.get('status').hasError('required')&& isControlInvalidUpdateStatus('status')"
+        class="form-field-validations-text">Please select status</p>
+  </div>
+
+  <div *ngIf="enableInputs">
+    <p class="popup-label-text">Upload / Court Order</p>
+      <mat-form-field class="status-update-mff" appearance="outline"
+      [ngClass]="{'has-error':updateStatusForm.get('uploadCourtOrder').hasError('required') && isControlInvalidUpdateStatus('uploadCourtOrder')  && formSubmitted }">
+        <input [hidden]="true" (change)="uploadCourtOrder($event)" type="file" accept="all/*" #fileSelect />
+        <input readonly matInput formControlName="uploadCourtOrder" [(ngModel)]="filename" (click)="fileSelect.click()"
+          class="input-field-data" placeholder="Select file..." />
+        <button matSuffix class="padding-none" mat-icon-button>
+          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
+            <path
+              d="M6.50345 19.0042C5.41963 19.005 4.37192 18.6146 3.55287 17.9048C2.73383 17.195 2.19849 16.2134 2.04523 15.1405C1.89197 14.0676 2.13109 12.9754 2.71866 12.0646C3.30622 11.1539 4.20274 10.4858 5.24345 10.1832C5.68499 8.5403 6.70968 7.11444 8.12601 6.1721C9.54234 5.22976 11.2534 4.83544 12.9393 5.06284C14.6252 5.29024 16.1706 6.1238 17.2866 7.40772C18.4027 8.69163 19.013 10.338 19.0034 12.0392C19.8806 12.1641 20.6776 12.6171 21.2339 13.3067C21.7902 13.9962 22.0642 14.8711 22.0008 15.7548C21.9373 16.6385 21.5411 17.4652 20.8921 18.0683C20.243 18.6713 19.3894 19.0058 18.5034 19.0042H6.50345Z"
+              stroke="#292929" stroke-linejoin="round" />
+            <path d="M14.0039 11.0039L12.0039 9.00391M12.0039 9.00391L10.0039 11.0039M12.0039 9.00391V15.0039"
+              stroke="#292929" stroke-linecap="round" stroke-linejoin="round" />
+          </svg>
+        </button>
+      </mat-form-field>
+      <p *ngIf="isControlInvalidUpdateStatus('uploadCourtOrder') && formSubmitted"
+        class="form-field-validations-text">Please select file</p>
+        <p *ngIf="isInvalidDocType" class="form-field-validations-text">Invalid file type, file should be in PDF format</p>
+        <p *ngIf="invalideFileSize" class="form-field-validations-text">File is too big, maximum file size should be 2 MB</p>
+
+  </div>
+
+  <div *ngIf="enableInputs borderCss">
+    <p class="popup-label-text">Amount</p>
+      <mat-form-field class="status-update-mff" appearance="outline" 
+      [ngClass]="{'has-error': formSubmitted }">
+        <div class="amount-input" >
+          <input class="select-mat-field" formControlName="amount" decimal-mask matInput 
+            placeholder="" [ngClass]="{'invalid-border-color': isControlInvalidUpdateStatus('amount')}">
+          <span matTextPrefix class="font-weight-value">R&nbsp;</span>
+        </div>
+      </mat-form-field>
+      <p *ngIf="isControlInvalidUpdateStatus('amount') && formSubmitted" class="form-field-validations-text">Please
+        add amount</p>
+  </div>
+</div>
+<div>
+  <p class="ack-que">Add Notes</p>
+    <div class="message-box">
+      <textarea class="message-textarea" [ngClass]="{'invalid-input': isControlInvalidUpdateStatus('addNotes')}"
+        formControlName="addNotes" [(ngModel)]="updateStatusAddNotes" cols="30" rows="5" [maxlength]="maxChars"></textarea>
+        <br />
+        <label class="textarea-length-span">
+          Characters Remaining: {{
+            (maxChars - (updateStatusForm.get('addNotes').value?.length ?? 0))
+          }}/{{ maxChars }}
+        </label>      
+    </div>
+    <p *ngIf="updateStatusForm.get('addNotes').hasError('required') && isControlInvalidUpdateStatus('addNotes')"
+      class="invalid-text">Please add notes</p>
+    <p *ngIf="updateStatusForm.get('addNotes').hasError('maxlength') && isControlInvalidPotential('addNotes')"
+      class="invalid-text">Your notes has exceeded the maximum length.</p>
+      <p *ngIf="isControlInvalidPotential('addNotes') && updateStatusForm.get('addNotes').hasError('containsOnlySpaces')" class="error-message invalid-text">
+        Please enter non-empty text.
+      </p>
+</div>
+</form>
+<div class="action-div action-btn-right action-div-padding">
+  <span class="select-action action-btns" (click)="closeDialog()"> <mat-icon
+      class="action-icon">close</mat-icon> <span>CANCEL</span> </span>
+  <button [ngClass]="isSpinner ?  'on-disabled' : 'on-enabled' " class="select-action action-submit" (click)="updateRecoveryStatus()">SUBMIT</button>
+</div>
+  </div>
+
+  <div *ngIf="(data.action == 'AttorneyInstructions' && !isAttorneyInsDocPack) || attorneyInstructions == 'out_doc_pack'" [ngClass]=" isSpinner ? 'on-disabled' : 'on-enabled' ">
+  <div *ngIf="documentPackCurrentAction == 'gen_att_ins'" class="generate-attorney-instructions">
+    <div class="heading-text-div">
+      <h2 class="heading-text">Generate Attorney Instructions</h2>
+    </div>
+    <div class="question-div question-div-legal flex-view">
+      <div class="inside-view">
+        <form [formGroup]="attorneyInstructionForm">
+         
+         <div class="flex-view">
+          <div class="borderCss half-view LR-Border">
+        <p>Attorney</p>
+          <mat-form-field class="status-update-mff shrink-field" appearance="outline"
+          [ngClass]="{
+            'has-error': formSubmitted && isControlInvalidAttorneyInstruction('attorney') && isAttorneyInstructionSubmitted}">
+            <mat-select class="input-field-data" formControlName="attorney" placeholder="Select"  [panelClass]="'custom-dropdown'">
+              <ng-container *ngFor="let option of attornyList;let i=index">
+                <mat-option [value]="option.id" (click)="selectAttorney(option,i)">
+                  {{option.attorneyName}}
+                </mat-option>
+              </ng-container>
+            </mat-select>
+          </mat-form-field>
+          <p *ngIf="isControlInvalidAttorneyInstruction('attorney') && isAttorneyInstructionSubmitted" class="invalid-text">Please select attorney</p>
+        </div>
+        
+        <div class="borderCss half-view LR-Border">
+        <p>Document Pack</p>
+          <mat-form-field class="status-update-mff shrink-field"  appearance="outline"
+          [ngClass]="{
+            'has-error': formSubmitted && (attorneyInstructionForm.get('documentPack').hasError('required') || !attorneyInstructionForm.get('documentPack').touched) }">
+            <input matInput placeholder="Create Document Pack" formControlName="documentPack" (click)="createAttorneyInsDocumentPack()" readonly class="input-field-data">
+            <span matSuffix>
+              <svg xmlns="http://www.w3.org/2000/svg" width="18" height="24" viewBox="0 0 18 24" fill="none">
+                <path d="M3 21.75C2.5875 21.75 2.25 21.4125 2.25 21V3C2.25 2.5875 2.5875 2.25 3 2.25H5.25C5.25 2.6625 5.5875 3 6 3H7.5C7.9125 3 8.25 2.6625 8.25 2.25H10.5V6C10.5 6.82969 11.1703 7.5 12 7.5H15.75V21C15.75 21.4125 15.4125 21.75 15 21.75H3ZM3 0C1.34531 0 0 1.34531 0 3V21C0 22.6547 1.34531 24 3 24H15C16.6547 24 18 22.6547 18 21V7.24219C18 6.44531 17.6859 5.68125 17.1234 5.11875L12.8766 0.876563C12.3141 0.314063 11.5547 0 10.7578 0H3ZM5.25 5.25C5.25 5.6625 5.5875 6 6 6H7.5C7.9125 6 8.25 5.6625 8.25 5.25C8.25 4.8375 7.9125 4.5 7.5 4.5H6C5.5875 4.5 5.25 4.8375 5.25 5.25ZM5.25 8.25C5.25 8.6625 5.5875 9 6 9H7.5C7.9125 9 8.25 8.6625 8.25 8.25C8.25 7.8375 7.9125 7.5 7.5 7.5H6C5.5875 7.5 5.25 7.8375 5.25 8.25ZM4.95469 11.6156L3.84844 15.7453C3.78281 15.9984 3.75 16.2562 3.75 16.5141C3.75 18.1641 5.1 19.5 6.75 19.5C8.4 19.5 9.75 18.1641 9.75 16.5141C9.75 16.2562 9.71719 15.9937 9.65156 15.7453L8.55 11.6109C8.37656 10.9547 7.78125 10.4953 7.10156 10.4953H6.40313C5.72344 10.4953 5.12812 10.95 4.95469 11.6109V11.6156ZM6 15.75H7.5C7.9125 15.75 8.25 16.0875 8.25 16.5C8.25 16.9125 7.9125 17.25 7.5 17.25H6C5.5875 17.25 5.25 16.9125 5.25 16.5C5.25 16.0875 5.5875 15.75 6 15.75Z" fill="#061E2F"/>
+              </svg>
+            </span>
+          </mat-form-field>
+          <div *ngIf="formSubmitted && documentPackID == null && showMessage && isControlInvalidAttorneyInstruction('documentPack')">
+            <span class="warning-text">Kindly add document pack to continue</span>
+          </div>
+        </div>  
+
+        </div>  
+          <p class="ack-que LR-Border">Add Notes</p>
+          <div class="message-box LR-Border">
+            <textarea class="message-textarea"
+              [ngClass]="{'invalid-input': isControlInvalidAttorneyInstruction('addNotes') && isAttorneyInstructionSubmitted }" formControlName="addNotes"
+              [(ngModel)]="genAttNotes" cols="30" rows="5" [maxlength]="maxChars"></textarea>
+              <br />
+              <label class="textarea-length-span">
+                Characters Remaining: {{
+                  (maxChars - (attorneyInstructionForm.get('addNotes').value?.length ?? 0))
+                }}/{{ maxChars }}
+              </label>      
+            <p *ngIf="attorneyInstructionForm.get('addNotes').hasError('required') 
+            && isControlInvalidAttorneyInstruction('addNotes') && !isAddNotesRequiredError"
+              class="invalid-text">Please add notes</p>
+            <p *ngIf=" attorneyInstructionForm.get('addNotes').hasError('maxlength') && isControlInvalidAttorneyInstruction('addNotes')"
+              class="error-message invalid-text">Your notes has exceeded the maximum length.</p>
+              <p *ngIf="isControlInvalidAttorneyInstruction('addNotes') && attorneyInstructionForm.get('addNotes').hasError('containsOnlySpaces')" class="error-message invalid-text">
+                Please enter non-empty text.
+              </p>
+          </div>
+        </form>
+      </div>
+    </div>
+    <div class="action-div action-btn-right">
+      <span class="select-action action-btns" (click)="closeDialog()"> <mat-icon
+          class="action-icon">close</mat-icon> <span>CANCEL</span> </span>
+      <button class="select-action action-submit" (click)="generateAttorneyInstructions()">SUBMIT</button>
+    </div>
+    
+  </div>
+
+
+    <div *ngIf="documentPackCurrentAction === 'att_ins_final'" class="create-document-pack">
+      <div class="heading-text-div align-center">
+        <h2 class="heading-text">Generate Attorney Instructions</h2>
+      </div>
+      <div class="question-div question-div-legal" class="flex-view">
+        <div class="que-text-div" >
+          <p>Status</p>
+          <mat-form-field class="status-update-mff" appearance="outline">
+            <mat-select (selectionChange)="onSelectValue($event.value)" class="no-border-content" placeholder="Select"  [panelClass]="'custom-dropdown'">
+              <ng-container *ngFor="let option of nameOptions">
+                <mat-option [value]="option">
+                  {{option}}
+                </mat-option>
+              </ng-container>
+            </mat-select>
+          </mat-form-field>
+        </div>
+        <div class="doc-pack-div">
+          <p>Document Pack</p>
+          <div class="doc-pack-btns">
+            <button mat-button class="doc-name-tab">ricky_012455555</button>
+            <span class="doc-name-option-tab">Edit Pack</span>
+            <span class="doc-name-option-tab">Download Pack</span>
+            <span class="doc-name-option-tab">Delete Pack</span>
+          </div>
+        </div>
+      </div>
+      <div class="question-div question-div-legal flex-view">
+        <div class="que-text-div">
+          <div>
+            <p>Upload Acknowledgement</p>
+            <mat-form-field class="status-update-mff" appearance="outline">
+              <input [hidden]="true" (change)="onFileSelect($event)" type="file" accept="all/*" #fileSelect />
+              <input readonly class="no-border-content" matInput [(ngModel)]="filename" (click)="fileSelect.click()" class="cursor-pointer"
+                placeholder="Select file..." />
+              <button matSuffix class="no-padding" mat-icon-button (click)="fileSelect.click()">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
+                  <path
+                    d="M6.50345 19.0042C5.41963 19.005 4.37192 18.6146 3.55287 17.9048C2.73383 17.195 2.19849 16.2134 2.04523 15.1405C1.89197 14.0676 2.13109 12.9754 2.71866 12.0646C3.30622 11.1539 4.20274 10.4858 5.24345 10.1832C5.68499 8.5403 6.70968 7.11444 8.12601 6.1721C9.54234 5.22976 11.2534 4.83544 12.9393 5.06284C14.6252 5.29024 16.1706 6.1238 17.2866 7.40772C18.4027 8.69163 19.013 10.338 19.0034 12.0392C19.8806 12.1641 20.6776 12.6171 21.2339 13.3067C21.7902 13.9962 22.0642 14.8711 22.0008 15.7548C21.9373 16.6385 21.5411 17.4652 20.8921 18.0683C20.243 18.6713 19.3894 19.0058 18.5034 19.0042H6.50345Z"
+                    stroke="#292929" stroke-linejoin="round" />
+                  <path d="M14.0039 11.0039L12.0039 9.00391M12.0039 9.00391L10.0039 11.0039M12.0039 9.00391V15.0039"
+                    stroke="#292929" stroke-linecap="round" stroke-linejoin="round" />
+                </svg>
+              </button>
+            </mat-form-field>
+          </div>
+        </div>
+        <div class="ack-add-description">
+          <div>
+            <p>Add Description</p>
+            <mat-form-field class="status-update-mff" appearance="outline">
+              <input matInput placeholder="">
+            </mat-form-field>
+          </div>
+        </div>
+      </div>
+      <div class="acknowledgement-div">
+        <p class="ack-que">Add Notes</p>
+        <div class="message-box">
+          <textarea class="message-textarea" cols="30" rows="5" [(ngModel)]="note_text"></textarea>
+        </div>
+        <div class="action-div action-btn-right sub-btn-right">
+          <span class="select-action action-btns" (click)="closeDialog()"> <mat-icon
+              class="action-icon">close</mat-icon> <span>CANCEL</span> </span>
+          <button class="select-action action-submit" (click)="onSubmitNotes()">SUBMIT</button>
+        </div>
+      </div>
+    </div>
+
+    <div *ngIf="documentPackCurrentAction == 'create_document_pack'" [ngClass]=" isSpinner ? 'on-disabled' : 'on-enabled' ">
+      <div *ngIf="documentPackSubAction == 'cre_doc_pck'" class="create-document-pack">
+        <div class="heading-text-div align-center"> 
+          <span *ngIf="data.currentModuleId && data.currentModuleId != 3">
+            <mat-icon class="back-icon" (click)="documentPackCurrentAction = 'gen_att_ins'">arrow_back</mat-icon>
+          </span>
+          <h2 class="heading-text-space heading-text margin-none">Document Pack </h2>
+        </div>
+        <div [ngClass]="isSpinner ? 'on-disabled' : 'on-enabled'">
+        <form [formGroup]="documentPack">
+          <div class="question-div question-div-legal flex-view">
+            <div class="common-form-dialog margin-none">
+              <p>Pack Name</p>
+              <mat-form-field class="status-update-mff">
+                <input matInput class="input-height" formControlName="packName" placeholder="">
+              </mat-form-field>
+              <p *ngIf="((documentPack.get('packName').hasError('required') && isControlInvalidTribunaldocPack('packName')) || isNotAttorneyInsPackName) && !documentPack.get('packName').value"
+                class="error-message invalid-text">Please add pack name</p>
+            </div>
+            <div class="common-form-dialog margin-none inv-tab-heading-act-padding">
+              <p>Add Document</p>
+              <div class="flex-view">
+                <button mat-button class="pack-docuemnts-tab-btn" (click)="selectFileFromLocal('upload_doc')"><span>SELECT
+                    DOCUMENTS</span></button>
+                <button mat-button class="pack-docuemnts-tab-btn"
+                (click)="uploadDocumentFromLocal('select_from_local')" ><span>UPLOAD FROM LOCAL </span>
+                <div *ngIf="isNoDocumentAdded" class="add-doc-message">
+                  <p class="error-message invalid-text">Kindly add document to continue</p>
+                </div></button>
+              </div>
+             
+            </div>
+          </div>
+          <div class="acknowledgement-div">
+            <div class="recovery-btn">
+              <button mat-button class="heading-tab-btns">Documents</button>
+            </div>
+
+            <div *ngIf="uploadDocPackList?.length == 0" class="document-details">
+              <span class="ststus-msg">No Documents Added</span>
+            </div>
+            <div *ngIf="uploadDocPackList?.length > 0" class="current-document-list">
+              <table class="table-inside">
+                <tr class="heading-row">
+                  <th class="th-inside">Document Name</th>
+                  <th class="th-inside">Description</th>
+                  <th class="th-inside">Date</th>
+                  <th class="th-inside">Uploaded By</th>
+                  <th class="th-inside">Action</th>
+                </tr>
+                <ng-container *ngFor="let item of uploadDocPackList">
+                  <tr class="content-row">
+                    <td class="table-data-inside"><span *ngIf="item">{{item.documentName}}</span></td>
+                    <td class="table-data-inside">--</td>
+                    <td class="table-data-inside"><span *ngIf="item">{{item.createdDate | date: 'yyyy-MM-dd'}}</span></td>
+                    <td class="table-data-inside"><span *ngIf="item">{{item.modifiedBy}}</span></td>
+                    <td class="table-data-inside">
+                      <span *ngIf="item">
+                      <span class="input" (click)="downloadDocument(item?.documentId)"><mat-icon matTooltip="Download">arrow_downward</mat-icon> </span>
+                      <span class="input" 
+                      (click)="openActionDialog('delete',item,'Document')"> | <mat-icon matTooltip="Delete">delete</mat-icon></span>
+                      </span>
+                    </td>
+                  </tr>
+                </ng-container>
+              </table>
+            </div>
+
+          </div>
+        </form>
+        <div class="action-div action-btn-right">
+          <span class="select-action action-btns" (click)="closeDialog()">
+            <mat-icon class="action-icon">close</mat-icon> <span>CANCEL</span> </span>
+          <button class="select-action action-submit" (click)="onCreateDocumentPack()">CREATE PACK</button>
+        </div>
+        </div>
+      </div>
+  
+      <div *ngIf="documentPackSubAction == 'upload_doc'" class="create-document-pack">
+        <div class="heading-text-div align-center">
+          <span>
+            <mat-icon class="back-icon" (click)="documentPackSubAction = 'cre_doc_pck'">arrow_back</mat-icon>
+          </span>
+          <h2 class="heading-text-space heading-text">Select Documents</h2>
+        </div>
+        <div class="acknowledgement-div">
+          <div class="recovery-btn">
+            <button mat-button class="heading-tab-btns">Documents</button>
+          </div>
+          <div class="document-details">
+            <table class="table-documents">
+              <tr>
+                <td class="documents-folder" (click)="showDocuments(0)">
+                  <span>
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="16" viewBox="0 0 20 16" fill="none">
+                      <path d="M1 1V15H19V3H10L8 1H1Z" stroke="#292929" stroke-linecap="round" stroke-linejoin="round" />
+                    </svg>
+                  </span>
+                  <span class="document-value-text">
+                    Signed Policy Documents
+                  </span>
+                  <span>
+                    <mat-icon>{{ this.isExpand[0] && currentIndex == 0 ? 'expand_less' : 'expand_more'}}</mat-icon>
+                  </span>
+                </td>
+              </tr>
+              <tr *ngIf="isExpand[0] && currentIndex == 0">
+                <td>
+                  <div class="align-center">
+                    <table class="table-inside">
+                      <tr class="heading-row">
+                        <th class="th-inside"></th>
+                        <th class="th-inside">Document Name</th>
+                        <th class="th-inside">Description</th>
+                        <th class="th-inside">Date</th>
+                        <th class="th-inside">Uploaded by</th>
+                        <th class="th-inside">Action</th>
+                      </tr>
+                      <tr class="content-row">
+                        <td class="td-inside"><input type="checkbox"></td>
+                        <td class="td-inside  padding-left-text">doc_1.pdf</td>
+                        <td class="td-inside  padding-left-text">description1</td>
+                        <td class="td-inside  padding-left-text">2023-02-28</td>
+                        <td class="td-inside  padding-left-text">Mlaka</td>
+                        <td class="td-inside td-inside-action  padding-left-text"><span><mat-icon matTooltip="Download">arrow_downward</mat-icon></span><span><mat-icon matTooltip="Delete">delete</mat-icon></span></td>
+                      </tr>
+                      <tr class="content-row">
+                        <td class="td-inside"><input type="checkbox"></td>
+                        <td class="td-inside">doc_1.pdf</td>
+                        <td class="td-inside">description1</td>
+                        <td class="td-inside">2023-02-28</td>
+                        <td class="td-inside">Mlaka</td>
+                        <td class="td-inside td-inside-action"><span><mat-icon matTooltip="Download">arrow_downward</mat-icon></span><span><mat-icon matTooltip="Delete">delete</mat-icon></span></td>
+                      </tr>
+                    </table>
+                  </div>
+                </td>
+              </tr>
+              <tr>
+                <td class="documents-folder" (click)="showDocuments(1)">
+                  <span>
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="16" viewBox="0 0 20 16" fill="none">
+                      <path d="M1 1V15H19V3H10L8 1H1Z" stroke="#292929" stroke-linecap="round" stroke-linejoin="round" />
+                    </svg>
+                  </span>
+                  <span class="document-value-text">
+                    Other Documents
+                  </span>
+                  <span>
+                    <mat-icon> {{ this.isExpand[1] && currentIndex == 1 ? 'expand_less' : 'expand_more' }} </mat-icon>
+                  </span>
+                </td>
+              </tr>
+              <tr *ngIf="isExpand[1] && currentIndex == 1">
+                <td>
+                  <div class="align-center">
+                    <table class="table-inside">
+                      <tr class="heading-row">
+                        <th class="th-inside"></th>
+                        <th class="th-inside">Document Name</th>
+                        <th class="th-inside">Description</th>
+                        <th class="th-inside">Date</th>
+                        <th class="th-inside">Uploaded by</th>
+                        <th class="th-inside">Action</th>
+                      </tr>
+                      <tr class="content-row">
+                        <td class="td-inside"><input type="checkbox"></td>
+                        <td class="td-inside  padding-left-text">doc_1.pdf</td>
+                        <td class="td-inside  padding-left-text">description1</td>
+                        <td class="td-inside  padding-left-text">2023-02-28</td>
+                        <td class="td-inside  padding-left-text">Mlaka</td>
+                        <td class="td-inside td-inside-action  padding-left-text"><span><mat-icon matTooltip="Download">arrow_downward</mat-icon></span><span>mat-icon</span></td>
+                      </tr>
+                    </table>
+                  </div>
+                </td>
+              </tr>
+            </table>
+          </div>
+          <div class="action-div action-btn-right">
+            <span class="select-action action-btns" (click)="closeDialog()">
+              <mat-icon class="action-icon">close</mat-icon> <span>CANCEL</span> </span>
+            <button class="select-action action-submit" (click)="onSelect('att_ins_final')">PROCEED</button>
+          </div>
+        </div>
+      </div>
+
+      <div *ngIf="documentPackSubAction == 'select_from_local'">
+        <div class="heading-text-div align-center">
+          <span>
+            <mat-icon class="back-icon" (click)="documentPackSubAction = 'cre_doc_pck'">arrow_back</mat-icon>
+          </span>
+          <h2 class="heading-text-space heading-text">Upload Documents</h2>
+        </div>
+        <div [ngClass]="isSpinner ? 'on-disabled' : 'on-enabled' " class="flex-view justify-center">
+        <div class="upload-from-local-div">
+        <h2 class="upload-heding">Upload Document</h2>
+        <div class="center-align">
+          <svg xmlns="http://www.w3.org/2000/svg" width="80" height="80" viewBox="0 0 80 80" fill="none">
+            <path d="M21.6795 63.3485C18.0667 63.3513 14.5744 62.0501 11.8442 59.684C9.11407 57.318 7.32959 54.0461 6.81873 50.4696C6.30787 46.8932 7.10495 43.2525 9.06349 40.2167C11.022 37.181 14.0104 34.954 17.4795 33.9452C18.9513 28.469 22.3669 23.7161 27.088 20.575C31.8091 17.4338 37.5125 16.1194 43.1322 16.8774C48.7519 17.6354 53.9032 20.414 57.6234 24.6937C61.3435 28.9734 63.3779 34.4614 63.3461 40.1319C66.2698 40.5485 68.9267 42.0583 70.7809 44.3569C72.6352 46.6554 73.5487 49.5716 73.3372 52.5173C73.1257 55.4629 71.8051 58.2187 69.6415 60.2289C67.478 62.239 64.6327 63.3539 61.6795 63.3485H21.6795Z" stroke="#006586" stroke-linejoin="round"/>
+            <path d="M46.681 36.6823L40.0143 30.0156M40.0143 30.0156L33.3477 36.6823M40.0143 30.0156V50.0156" stroke="#006586" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </div>
+        <div class="upload-message">
+          <span class="browser-file-tab" (click)="fileSelect.click()">Browse</span>
+          <span class="margin-top-value">{{selectedDocumentName != null ? selectedDocumentName : 'No File Choosen'}}</span>
+          <mat-form-field  class="status-update-mff hidden-visibility" appearance="outline">
+            <input [hidden]="true" (change)="onFileSelected($event,{},0,'uploadLocal')" type="file" accept=".pdf" #fileSelect />
+            <input readonly class="documents-folder" matInput [(ngModel)]="filename" (click)="fileSelect.click()" 
+              placeholder="Select file..." />
+            <button matSuffix class="no-padding" mat-icon-button>
+            </button>  
+          </mat-form-field>
+          <p *ngIf="isInvalidDocType" class="form-field-validations-text">Invalid file type, file should be in PDF format</p>
+          <p *ngIf="invalideFileSize" class="form-field-validations-text">File is too big, maximum file size should be 2 MB</p>
+        </div>
+        </div>
+        </div>
+        <div class="add-description-doc">
+          <div class="doc-file-name-width">
+          <label for="docUpload">Document Name</label>
+          <form [formGroup]="documentPack">
+          <mat-form-filed appearance="outline">
+            <input matInput id="docUpload" formControlName="document" [(ngModel)]="docUploadName">
+          </mat-form-filed>
+        </form>
+          
+          </div>
+        </div>
+        <div class="action-div action-btn-right" [ngClass]="isSpinner ? 'on-disabled' : 'on-enabled' ">
+          <button class="select-action action-submit" [ngClass]="(selectedDocumentName == null || docUploadName == null) || isControlInvalidTribunaldocPack('document') ? 'on-disabled' : 'on-enabled'"
+          (click)="uploadDocumentForDocPack('doc_pack')">UPLOAD</button>
+        </div>
+      </div>
+    </div>
+
+    
+  </div>  
+
+  <div *ngIf="data.action == 'AttorneyInvoices'" [ngClass]=" isSpinner ? 'on-disabled' : 'on-enabled' ">
+<div *ngIf="attorneyInvCurrentAction === 'attorney_inv'">
+  <div class="heading-text-div flex-view">
+    <div class="view-three-fourth">
+      <h2 class="heading-text">Invoices</h2>
+    </div>
+    <div class="view-one-fourth flex-view justify-right">
+      <button class="upload-inv-btn" (click)="onSelectAttInv('upload_attorney_inv')"> <mat-icon
+          class="upload-icon">arrow_upward</mat-icon> <span>UPLOAD INVOICE</span></button>
+    </div>
+  </div>
+  <div >
+    <div *ngIf="!isInfoLoading && invoicesData?.length > 0" class="question-div question-div-legal">
+      <div class="invoice-table-height">
+      <table class="table-inside">
+        <tr class="heading-row border-top-none">
+          <th class="th-inside nvoice-table-heading-content border-top-none">Invoice</th>
+          <th class="th-inside inv-tab-heading-padding border-top-none">Date</th>
+          <th class="th-inside inv-tab-heading-padding border-top-none">Uploaded By</th>
+          <th class="th-inside inv-tab-heading-padding border-top-none">Amount</th>
+          <th class="th-inside inv-tab-heading-padding border-top-none" >Status</th>
+          <th class="th-inside inv-tab-heading-act-padding border-top-none">Action</th>
+        </tr>
+        <ng-container *ngFor="let item of invoicesData">
+          <tr class="content-row nvoice-table-heading-content">
+            <td class="table-row-data"><span *ngIf="item">{{item.invoiceFile}}</span></td>
+            <td class="table-row-data"><span *ngIf="item">{{item.createdDate | date: "yyyy-MM-dd"}}</span></td>
+            <td class="table-row-data"><span *ngIf="item">{{item.createdBy}}</span></td>
+            <td class="table-data-inside"><span *ngIf="item">{{item.amount}}</span></td>
+            <td class="table-row-data">
+              <span *ngIf="item" class="invoice-status inv-status"
+                [ngClass]="(item.legalCareInvoiceApprovalStatus == InvoiceUploadStatus.Pending || item.legalCareInvoiceApprovalStatus == InvoiceUploadStatus.Rejected) ? 'pending-tab' : 'acknowledged-tab' ">
+                {{ getInvoiceStatusText(item.legalCareInvoiceApprovalStatus)}}</span>
+            </td>
+            <td *ngIf="item" class="table-row-data td-inside-action"><span (click)="downloadDocument(item?.documentId)"><mat-icon matTooltip="Download">arrow_downward</mat-icon></span>
+              <span *ngIf="item.legalCareInvoiceApprovalStatus != InvoiceUploadStatus.Approved" (click)="openActionDialog('delete',item,'Invoice')"><mat-icon matTooltip="Delete">delete</mat-icon></span></td>
+          </tr>
+        </ng-container>
+      </table>
+    
+      </div>
+      <hr *ngIf="!isInfoLoading && invoicesData?.length != 0">
+      <mat-paginator *ngIf="invoicesData?.length > 0" #paginator class="demo-paginator" 
+        (page)="handlePageinatorEventAttorneyInvoice($event)"
+        [hidePageSize]="false"
+        [length]="totalItems" 
+        [pageIndex]="page - 1"
+        [pageSize]="pageSize"
+        [pageSizeOptions]="pageSizeOptions"
+        [showFirstLastButtons]="false">
+      </mat-paginator>
+    </div>
+      <div *ngIf="!isInfoLoading && invoicesData?.length == 0">
+        <h2 class="upload-heding align-text-center">No data available</h2>
+      </div>
+    <div [hidden]="!isInfoLoading" [ngClass]="isInfoLoading ? 'progress-bar-container' : '' ">
+      <mat-progress-bar *ngIf="isInfoLoading" mode="indeterminate"></mat-progress-bar>
+    </div>
+  </div>
+  </div>
+
+
+<div *ngIf="attorneyInvCurrentAction === 'upload_attorney_inv'" class="create-document-pack">
+  <div class="heading-text-div align-center">
+    <span>
+      <mat-icon class="back-icon" (click)="onSelectAttInv('attorney_inv')">arrow_back</mat-icon>
+    </span>
+    <h2 class="heading-text-space heading-text">UPLOAD INVOICE</h2>
+  </div>
+  <form [formGroup]="uploadInvoiceForm">
+
+  <div class="question-div question-div-legal flex-view">
+    <div class="view-half margin-right">
+      <div class="borderCss">
+        <p class="popup-label-text">Add Invoice</p>
+          <mat-form-field class="status-update-mff" appearance="outline"  [ngClass]="{'has-error': isControlInvalidAddPayment('amountRMA') && formSubmitted }">
+            <input [hidden]="true" (change)="uploadInvoiceDocument($event)" type="file" accept="all/*" #fileSelect />
+            <input readonly matInput formControlName="addInvoice" [(ngModel)]="filename" (click)="fileSelect.click()"
+              class="input-field-data" placeholder="Select file..." />
+            <button matSuffix class="no-padding" mat-icon-button>
+              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
+                <path
+                  d="M6.50345 19.0042C5.41963 19.005 4.37192 18.6146 3.55287 17.9048C2.73383 17.195 2.19849 16.2134 2.04523 15.1405C1.89197 14.0676 2.13109 12.9754 2.71866 12.0646C3.30622 11.1539 4.20274 10.4858 5.24345 10.1832C5.68499 8.5403 6.70968 7.11444 8.12601 6.1721C9.54234 5.22976 11.2534 4.83544 12.9393 5.06284C14.6252 5.29024 16.1706 6.1238 17.2866 7.40772C18.4027 8.69163 19.013 10.338 19.0034 12.0392C19.8806 12.1641 20.6776 12.6171 21.2339 13.3067C21.7902 13.9962 22.0642 14.8711 22.0008 15.7548C21.9373 16.6385 21.5411 17.4652 20.8921 18.0683C20.243 18.6713 19.3894 19.0058 18.5034 19.0042H6.50345Z"
+                  stroke="#292929" stroke-linejoin="round" />
+                <path d="M14.0039 11.0039L12.0039 9.00391M12.0039 9.00391L10.0039 11.0039M12.0039 9.00391V15.0039"
+                  stroke="#292929" stroke-linecap="round" stroke-linejoin="round" />
+              </svg>
+            </button>
+          </mat-form-field>
+          <p *ngIf="isControlInvalidLegalUploadInvoice('addInvoice') && isFileSizeExceeds && formSubmitted" class="invalid-text">Please
+            Select File</p>
+            <p *ngIf="isInvalidDocType" class="form-field-validations-text">Invalid file type, file should be in PDF format</p>
+            <p *ngIf="invalideFileSize" class="form-field-validations-text">File is too big, maximum file size should be 2 MB</p>
+                   </div>
+    </div>
+   
+    <div class="view-half">
+        <div class="borderCss">
+          <p class="popup-label-text">Amount</p>
+            <mat-form-field class="status-update-mff shrink-field" appearance="outline"
+            [ngClass]="{'has-error': isControlInvalidLegalUploadInvoice('addNotes') }">
+             <input matInput formControlName="addAmount" placeholder="" decimal-mask 
+             class="amount-input-field input-field-data">
+            </mat-form-field>
+            <p *ngIf="isControlInvalidLegalUploadInvoice('addAmount') && formSubmitted"
+            class="error-message invalid-text">Please add amount.</p>
+            
+          </div>
+      </div>
+
+    </div>
+    <div class="question-div question-div-legal">
+      <p class="ack-que popup-label-text">Add Notes</p>
+        <div class="message-box">
+          <textarea class="message-textarea"
+            [ngClass]="{'invalid-input':isControlInvalidLegalUploadInvoice('addNotes')}" formControlName="addNotes"
+            cols="30" rows="5" [(ngModel)]="addDesInvoice" [maxlength]="maxChars"></textarea>
+            <br/>
+            <label class="textarea-length-span">
+              Characters Remaining: {{
+                (maxChars - (uploadInvoiceForm.get('addNotes').value?.length ?? 0))
+              }}/{{ maxChars }}
+            </label>  
+        </div>
+        <p *ngIf="uploadInvoiceForm.get('addNotes').hasError('required') && isControlInvalidLegalUploadInvoice('addNotes') && formSubmitted"
+          class="error-message invalid-text">Please add notes.</p>
+        <p *ngIf=" uploadInvoiceForm.get('addNotes').hasError('maxlength') && isControlInvalidLegalUploadInvoice('addNotes') && formSubmitted"
+          class="error-message invalid-text">Your notes has exceeded the maximum length.</p>
+          <p *ngIf="isControlInvalidLegalUploadInvoice('addNotes') && uploadInvoiceForm.get('addNotes').hasError('containsOnlySpaces') && formSubmitted" class="error-message invalid-text">
+            Please enter non-empty text.
+          </p>
+    </div>
+   </form> 
+    <div class="acknowledgement-div">
+      <div class="action-div action-btn-right">
+        <span class="select-action action-btns" (click)="closeDialog()">
+          <mat-icon class="action-icon">close</mat-icon> <span>CANCEL</span> </span>
+        <button [ngClass]="isSpinner ? 'on-disabled' : 'on-enabled' " class="select-action action-submit" (click)="uploadInvoice()">ADD INVOICE</button>
+      </div>
+    </div>
+  </div>
+  </div>
+
+  <div *ngIf="data.action == 'RecoveredPayment'" [ngClass]=" isSpinner ? 'on-disabled' : 'on-enabled' ">
+
+<div *ngIf="recvPaymentCurrentAction == 'recv_payment'">
+  <div class="heading-text-div flex-view border-bottom-none">
+    <div class="view-three-fourth">
+      <h2 class="heading-text">Recovered Payment Invoices</h2>
+    </div>
+    <div class="flex-view view-one-fourth justify-right">
+      <button class="upload-inv-btn" (click)="onSelectRecvPayment('add_payment')">
+        <mat-icon class="upload-icon no-border-content">add</mat-icon> <span>ADD PAYMENT</span></button>
+    </div>
+  </div>
+  <div class="question-div question-div-legal">
+    <div class="invoice-table-height">
+    <table *ngIf="invoicesData?.length > 0 && !isRPILoading" class="table-inside">
+      <tr class="heading-row">
+        <th class="th-inside file-name-tab-padding">File Name</th>
+        <th class="th-inside">Date Uploaded</th>
+        <th class="th-inside">Date of Payment</th>
+        <th class="th-inside">Amount</th>
+        <th class="th-inside">Uploaded By</th>
+        <th class="th-inside">Action</th>
+      </tr>
+      <ng-container *ngFor="let item of invoicesData">
+        <tr class="content-row">
+          <td class="td-inside file-name-tab-padding"><span *ngIf="item">{{item.file}}</span></td>
+          <td class="table-data-inside"><span *ngIf="item">{{item.createdDate.split('T')[0]}}</span></td>
+          <td class="table-data-inside"><span *ngIf="item">{{item.date.split('T')[0]}}</span></td>
+          <td class="table-data-inside"><span *ngIf="item">{{item.amount}}</span></td>
+          <td class="table-data-inside"><span *ngIf="item">{{item.createdBy}}</span></td>
+          <td class="table-data-inside td-inside-action">
+            <div *ngIf="item" class="download-btn"><span (click)="downloadDocument(item?.documentId)"> <mat-icon matTooltip="Download">arrow_downward</mat-icon> </span>
+              <span (click)="openActionDialog('delete',item,'Payment')"><mat-icon matTooltip="Delete">delete</mat-icon></span>
+             </div>
+          </td>
+        </tr>
+      </ng-container>
+    </table>
+    <div [hidden]="!isRPILoading" [ngClass]="isRPILoading ? 'progress-bar-container' : '' ">
+      <mat-progress-bar *ngIf="isRPILoading" mode="indeterminate"></mat-progress-bar>
+    </div>
+    </div>
+    <hr *ngIf="!isRPILoading">
+    <div *ngIf="invoicesData?.length > 0 && !isRPILoading">
+    <mat-paginator #paginator class="demo-paginator" 
+      (page)="handlePageinatorEventRecoveredPayment($event)" 
+      [hidePageSize]="false"
+      [length]="totalItems" 
+      [pageIndex]="page - 1"
+      [pageSize]="pageSize"
+      [pageSizeOptions]="pageSizeOptions"
+      [showFirstLastButtons]="false">
+    </mat-paginator> 
+    </div>
+    
+  </div>
+</div>
+<div *ngIf="recvPaymentCurrentAction === 'add_payment'">
+  <div class="heading-text-div align-center">
+    <span>
+      <mat-icon class="back-icon" (click)="onSelectRecvPayment('recv_payment')">arrow_back</mat-icon>
+    </span>
+    <h2 class="heading-text-space heading-text">ADD PAYMENT</h2>
+  </div>
+  <div class="add-payment-form">
+  <form action="" [formGroup]="addPaymentForm" [ngClass]="{'spinner-disabled': isSpinner, 'spinner-enabled': !isSpinner}" >
+    <div class="question-div question-div-legal flex-view">
+      <div class="legal-add-payment-field add-des-field">
+        <div class="borderCss">
+          <p class="popup-label-text shrink-field">Upload Proof of Payment</p>
+          <mat-form-field class="status-update-mff" appearance="outline"
+          [ngClass]="{'has-error': formSubmitted && addPaymentForm.get('uploadProof').hasError('required')}">
+            <input [hidden]="true" (change)="uploadDocumentForProof($event)" type="file" accept="all/*" #fileSelect />
+            <input readonly matInput formControlName="uploadProof" [(ngModel)]="filename" (click)="fileSelect.click()"
+              class="input-field-data" placeholder="Select file..."
+             >
+            <button matSuffix class="no-padding" (click)="fileSelect.click()" mat-icon-button>
+              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
+                <path
+                  d="M6.50345 19.0042C5.41963 19.005 4.37192 18.6146 3.55287 17.9048C2.73383 17.195 2.19849 16.2134 2.04523 15.1405C1.89197 14.0676 2.13109 12.9754 2.71866 12.0646C3.30622 11.1539 4.20274 10.4858 5.24345 10.1832C5.68499 8.5403 6.70968 7.11444 8.12601 6.1721C9.54234 5.22976 11.2534 4.83544 12.9393 5.06284C14.6252 5.29024 16.1706 6.1238 17.2866 7.40772C18.4027 8.69163 19.013 10.338 19.0034 12.0392C19.8806 12.1641 20.6776 12.6171 21.2339 13.3067C21.7902 13.9962 22.0642 14.8711 22.0008 15.7548C21.9373 16.6385 21.5411 17.4652 20.8921 18.0683C20.243 18.6713 19.3894 19.0058 18.5034 19.0042H6.50345Z"
+                  stroke="#292929" stroke-linejoin="round" />
+                <path d="M14.0039 11.0039L12.0039 9.00391M12.0039 9.00391L10.0039 11.0039M12.0039 9.00391V15.0039"
+                  stroke="#292929" stroke-linecap="round" stroke-linejoin="round" />
+              </svg>
+            </button>
+          </mat-form-field>
+          <p *ngIf="addPaymentForm.get('uploadProof').hasError('required') && isControlInvalidAddPayment('uploadProof')"
+          class="invalid-text">Please select file</p>
+          <p *ngIf="isInvalidDocType" class="form-field-validations-text">Invalid file type, file should be in PDF format</p>
+          <p *ngIf="invalideFileSize" class="form-field-validations-text">File is too big, maximum file size should be 2 MB</p>
+        </div>
+      </div>
+      <div class="legal-add-payment-field hidden-visibility add-des-field">
+        <div>
+          <p class="popup-label-text">Add Description</p>
+          <mat-form-field class="status-update-mff" appearance="outline">
+            <input matInput placeholder="">
+          </mat-form-field>
+        </div>
+      </div>
+    </div>
+    <div class="question-div question-div-legal borderCss flex-view">
+      <div class="legal-add-payment-field dialog-form-field">
+        <div>
+          <p class="popup-label-text">Amount</p>
+          <mat-form-field class="status-update-mff shrink-field" appearance="outline"
+          [ngClass]="{'has-error': isControlInvalidAddPayment('amount') }" >
+            <div class="amount-input"
+           placeholder="" >
+              <input matInput formControlName="amount" decimal-mask placeholder=""
+                class="input-field-data" (keydown.enter)="preventEnter($event)" >
+              <span matTextPrefix class="font-weight-value">R&nbsp;</span>
+            </div>
+          </mat-form-field>
+          <p *ngIf="addPaymentForm.get('amount').hasError('required') && isControlInvalidAddPayment('amount')"
+          class="invalid-text">Please add amount</p>
+        </div>
+      </div>
+      <div class="legal-add-payment-field dialog-form-field">
+        <div class="legal-add-payment-date-picker status-update-mff">
+          <p class="popup-label-text">Date</p>
+          <mat-form-field appearance="outline" class="date-picker-field"
+          [ngClass]="{'has-error': isControlInvalidAddPayment('date')}">
+            <input matInput [matDatepicker]="picker" [max]="dateToday" formControlName="date" readonly
+              (click)="picker.open()"
+              class="input-field-data">
+            <mat-datepicker-toggle matIconSuffix [for]="picker"></mat-datepicker-toggle>
+            <mat-datepicker #picker panelClass="custom-datepicker-date"></mat-datepicker>
+          </mat-form-field>
+          <p *ngIf="isControlInvalidAddPayment('date')"
+          class="invalid-text">Please select date</p>
+        </div>
+      </div>
+    </div>
+    <div class="question-div question-div-legal borderCss flex-view">
+      <div class="legal-add-payment-field dialog-form-field">
+        <div>
+          <p class="popup-label-text">Capital Amount</p>
+          <mat-form-field class="status-update-mff shrink-field" appearance="outline"
+          [ngClass]="{'has-error': isControlInvalidAddPayment('capitalAmount') && formSubmitted }" >
+            <div class="amount-input"
+           placeholder="">
+              <input matInput decimal-mask formControlName="capitalAmount"
+                class="input-field-data" (keydown.enter)="preventEnter($event)" >
+              <span matTextPrefix class="font-weight-value">R&nbsp;</span>
+            </div>
+          </mat-form-field>
+          <p *ngIf="addPaymentForm.get('capitalAmount').hasError('required')  && isControlInvalidAddPayment('capitalAmount')"
+          class="invalid-text">Please add capital amount</p>
+        </div>
+      </div>
+      <div class="legal-add-payment-field dialog-form-field">
+        <div>
+          <p class="popup-label-text">Contingency fee</p>
+          <mat-form-field class="status-update-mff" appearance="outline"
+          [ngClass]="{'has-error': isControlInvalidAddPayment('contigencyFees') && formSubmitted }" >
+            <div class="amount-input"  placeholder="">
+              <input matInput formControlName="contigencyFees" decimal-mask
+               placeholder=""
+                class="input-field-data" (keydown.enter)="preventEnter($event)" >
+              <span matTextPrefix class="font-weight-value">R&nbsp;</span>
+            </div>
+          </mat-form-field>
+          <p *ngIf="addPaymentForm.get('contigencyFees').hasError('required') && isControlInvalidAddPayment('contigencyFees')"
+          class="invalid-text">Please add contingency fee</p>
+        </div>
+      </div>
+    </div>
+    <div class="question-div question-div-legal borderCss flex-view">
+      <div class="legal-add-payment-field dialog-form-field">
+        <div>
+          <p class="popup-label-text">Disbursed amount</p>
+          <mat-form-field class="status-update-mff shrink-field" appearance="outline"
+          [ngClass]="{'has-error': isControlInvalidAddPayment('disbursedAmount') && formSubmitted }">
+            <div class="amount-input">
+              <input matInput formControlName="disbursedAmount" decimal-mask
+                placeholder=""
+                class="input-field-data" (keydown.enter)="preventEnter($event)" >
+              <span matTextPrefix class="font-weight-value">R&nbsp;</span>
+            </div>
+          </mat-form-field>
+          <p *ngIf="addPaymentForm.get('disbursedAmount').hasError('required') && isControlInvalidAddPayment('disbursedAmount')"
+          class="invalid-text">Please add disbursed amount</p>
+        </div>
+      </div>
+      <div class="legal-add-payment-field dialog-form-field">
+        <div>
+          <p class="popup-label-text">Amount (RMA)</p>
+          <mat-form-field class="status-update-mff" appearance="outline"  [ngClass]="{'has-error': isControlInvalidAddPayment('amountRMA') && formSubmitted }">
+            <div class="amount-input">
+              <input matInput formControlName="amountRMA" decimal-mask
+                placeholder=""
+                class="input-field-data" (keydown.enter)="preventEnter($event)" >
+              <span matTextPrefix class="font-weight-value">R&nbsp;</span>
+            </div>
+          </mat-form-field>
+          <p *ngIf="addPaymentForm.get('amountRMA').hasError('required') && isControlInvalidAddPayment('amountRMA')"
+          class="invalid-text">Please add amount</p>
+        </div>
+      </div>
+    </div>
+    <p class="heading-text margin-left-text ack-que popup-label-text">Add Notes</p>
+    <div class="message-box  dialog-form-field">
+      <textarea class="message-textarea margin-right-addNote" cols="30" rows="5"
+        [ngClass]="{'invalid-input': isControlInvalidAddPayment('addNotes')}" formControlName="addNotes" cols="30" rows="5"
+        [(ngModel)]="recoveredPaymentAddNotes" [maxlength]="maxChars"></textarea>
+        <br/>
+        <label class="ntextarea-length-span">
+          Characters Remaining: {{
+            (maxChars - (addPaymentForm.get('addNotes').value?.length ?? 0))
+          }}/{{ maxChars }}
+        </label> 
+    </div>
+    <p *ngIf="addPaymentForm.get('addNotes').hasError('required') && isControlInvalidAddPayment('addNotes')"
+      class="padding-left-text invalid-text">Please add notes</p>
+    <p *ngIf=" addPaymentForm.get('addNotes').hasError('maxlength') && isControlInvalidAddPayment('addNotes')"
+      class=" padding-left-text error-message invalid-text">Your notes has exceeded the maximum length.</p>
+      <p *ngIf="isControlInvalidAddPayment('addNotes') && addPaymentForm.get('addNotes').hasError('containsOnlySpaces')" class="padding-left-text  error-message invalid-text">
+        Please enter non-empty text.
+      </p>
+  </form>
+  </div>
+  <div class="action-div action-btn-right sub-btn-right">
+    <span class="select-action action-btns" (click)="closeDialog()"> <mat-icon
+        class="action-icon">close</mat-icon> <span>CANCEL</span> </span>
+    <button class="select-action action-submit" (click)="onAddPayment()"
+    >SUBMIT</button>
+  </div>
+</div>
+  </div>
+
+  <div *ngIf="(data.action == 'DocumentPack' || isAttorneyInsDocPack ) || attorneyInstructions == 'in_doc_pack'" [ngClass]=" isSpinner ? 'on-disabled' : 'on-enabled' ">
+  <div *ngIf="documentPackCurrentAction == 'cre_doc_pck'" class="create-document-pack">
+    <div class="heading-text-div align-center"> 
+      <span *ngIf="data.currentModuleId && data.currentModuleId != 3">
+        <mat-icon class="back-icon" (click)="goTo('Attorney Instructions','gen_att_ins',false)">arrow_back</mat-icon>
+      </span>
+      <h2 class="heading-text-space heading-text margin-none">Document Pack </h2>
+    </div>
+    <div [ngClass]="isSpinner ? 'on-disabled' : 'on-enabled' ">
+    <form [formGroup]="documentPack">
+      <div class="question-div question-div-legal flex-view">
+        <div class="common-form-dialog margin-none">
+          <p>Pack Name</p>
+          <mat-form-field class="status-update-mff">
+            <input matInput class="input-height" formControlName="packName" placeholder="">
+          </mat-form-field>
+          <p *ngIf="((documentPack.get('packName').hasError('required') && isControlInvalidTribunaldocPack('packName')) || isNotAttorneyInsPackName) && !documentPack.get('packName').value"
+            class="error-message invalid-text">Please add pack name</p>
+        </div>
+        <div class="common-form-dialog margin-none inv-tab-heading-act-padding">
+          <p>Add Document</p>
+          <div class="flex-view">
+            <button mat-button class="pack-docuemnts-tab-btn" (click)="onSelect('upload_doc')"><span>SELECT
+                DOCUMENTS</span></button>
+            <button mat-button class="pack-docuemnts-tab-btn"
+            (click)="onSelect('select_from_local')" ><span>UPLOAD FROM LOCAL </span>
+            <div *ngIf="isNoDocumentAdded" class="add-doc-message">
+              <p class="error-message invalid-text">Kindly add document to continue</p>
+            </div></button>
+          </div>
+         
+        </div>
+      </div>
+      <div class="acknowledgement-div">
+        <div class="recovery-btn">
+          <button mat-button class="heading-tab-btns">Documents</button>
+        </div>
+
+        <div *ngIf="uploadDocPackList?.length == 0" class="document-details">
+          <span class="ststus-msg">No Documents Added</span>
+        </div>
+        <div *ngIf="uploadDocPackList?.length > 0" class="current-document-list">
+          <table class="table-inside">
+            <tr class="heading-row">
+              <th class="th-inside">Document Name</th>
+              <th class="th-inside">Description</th>
+              <th class="th-inside">Date</th>
+              <th class="th-inside">Uploaded By</th>
+              <th class="th-inside">Action</th>
+            </tr>
+            <ng-container *ngFor="let item of uploadDocPackList">
+              <tr class="content-row">
+                <td class="table-data-inside"><span *ngIf="item">{{item.documentName}}</span></td>
+                <td class="table-data-inside">--</td>
+                <td class="table-data-inside"><span *ngIf="item">{{item.createdDate | date: 'yyyy-MM-dd'}}</span></td>
+                <td class="table-data-inside"><span *ngIf="item">{{item.uploadedBy}}</span></td>
+                <td class="table-data-inside">
+                  <span *ngIf="item">
+                  <span class="input" (click)="downloadDocument(item?.documentId)"><mat-icon matTooltip="Download">arrow_downward</mat-icon> </span>
+                  <span class="input" (click)="openActionDialog('delete',item,'Document')"> | <mat-icon matTooltip="Delete">delete</mat-icon></span>
+                  </span>
+                </td>
+              </tr>
+            </ng-container>
+          </table>
+        </div>
+
+      </div>
+    </form>
+    <div class="action-div action-btn-right">
+      <span class="select-action action-btns" (click)="closeDialog()">
+        <mat-icon class="action-icon">close</mat-icon> <span>CANCEL</span> </span>
+      <button class="select-action action-submit" (click)="onCreateDocumentPack()">CREATE PACK</button>
+    </div>
+    </div>
+  </div>
+
+  <div *ngIf="documentPackCurrentAction === 'upload_doc'" class="create-document-pack">
+    <div class="heading-text-div align-center">
+      <span>
+        <mat-icon class="back-icon" (click)="documentPackCurrentAction = 'cre_doc_pck'">arrow_back</mat-icon>
+      </span>
+      <h2 class="heading-text-space heading-text">Select Documents</h2>
+    </div>
+    <div class="acknowledgement-div">
+      <div class="recovery-btn">
+        <button mat-button class="heading-tab-btns">Documents</button>
+      </div>
+      <div class="document-details">
+        <table class="table-documents">
+          <tr>
+            <td class="documents-folder" (click)="showDocuments(0)">
+              <span>
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="16" viewBox="0 0 20 16" fill="none">
+                  <path d="M1 1V15H19V3H10L8 1H1Z" stroke="#292929" stroke-linecap="round" stroke-linejoin="round" />
+                </svg>
+              </span>
+              <span class="document-value-text">
+                Signed Policy Documents
+              </span>
+              <span>
+                <mat-icon>{{ this.isExpand[0] && currentIndex == 0 ? 'expand_less' : 'expand_more'}}</mat-icon>
+              </span>
+            </td>
+          </tr>
+          <tr *ngIf="isExpand[0] && currentIndex == 0">
+            <td>
+              <div class="align-center">
+                <table class="table-inside">
+                  <tr class="heading-row">
+                    <th class="th-inside"></th>
+                    <th class="th-inside">Document Name</th>
+                    <th class="th-inside">Description</th>
+                    <th class="th-inside">Date</th>
+                    <th class="th-inside">Uploaded by</th>
+                    <th class="th-inside">Action</th>
+                  </tr>
+                  <tr class="content-row">
+                    <td class="td-inside"><input type="checkbox"></td>
+                    <td class="td-inside  padding-left-text">doc_1.pdf</td>
+                    <td class="td-inside  padding-left-text">description1</td>
+                    <td class="td-inside  padding-left-text">2023-02-28</td>
+                    <td class="td-inside  padding-left-text">Mlaka</td>
+                    <td class="td-inside td-inside-action  padding-left-text"><span><mat-icon matTooltip="Download">arrow_downward</mat-icon></span><span><mat-icon matTooltip="Delete">delete</mat-icon></span></td>
+                  </tr>
+                  <tr class="content-row">
+                    <td class="td-inside"><input type="checkbox"></td>
+                    <td class="td-inside">doc_1.pdf</td>
+                    <td class="td-inside">description1</td>
+                    <td class="td-inside">2023-02-28</td>
+                    <td class="td-inside">Mlaka</td>
+                    <td class="td-inside td-inside-action"><span><mat-icon matTooltip="Download">arrow_downward</mat-icon></span><span><mat-icon matTooltip="Delete">delete</mat-icon></span></td>
+                  </tr>
+                </table>
+              </div>
+            </td>
+          </tr>
+          <tr>
+            <td class="documents-folder" (click)="showDocuments(1)">
+              <span>
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="16" viewBox="0 0 20 16" fill="none">
+                  <path d="M1 1V15H19V3H10L8 1H1Z" stroke="#292929" stroke-linecap="round" stroke-linejoin="round" />
+                </svg>
+              </span>
+              <span class="document-value-text">
+                Other Documents
+              </span>
+              <span>
+                <mat-icon> {{ this.isExpand[1] && currentIndex == 1 ? 'expand_less' : 'expand_more' }} </mat-icon>
+              </span>
+            </td>
+          </tr>
+          <tr *ngIf="isExpand[1] && currentIndex == 1">
+            <td>
+              <div class="align-center">
+                <table class="table-inside">
+                  <tr class="heading-row">
+                    <th class="th-inside"></th>
+                    <th class="th-inside">Document Name</th>
+                    <th class="th-inside">Description</th>
+                    <th class="th-inside">Date</th>
+                    <th class="th-inside">Uploaded by</th>
+                    <th class="th-inside">Action</th>
+                  </tr>
+                  <tr class="content-row">
+                    <td class="td-inside"><input type="checkbox"></td>
+                    <td class="td-inside  padding-left-text">doc_1.pdf</td>
+                    <td class="td-inside  padding-left-text">description1</td>
+                    <td class="td-inside  padding-left-text">2023-02-28</td>
+                    <td class="td-inside  padding-left-text">Mlaka</td>
+                    <td class="td-inside td-inside-action  padding-left-text"><span><mat-icon matTooltip="Download">arrow_downward</mat-icon></span><span>mat-icon</span></td>
+                  </tr>
+                </table>
+              </div>
+            </td>
+          </tr>
+        </table>
+      </div>
+      <div class="action-div action-btn-right">
+        <span class="select-action action-btns" (click)="closeDialog()">
+          <mat-icon class="action-icon">close</mat-icon> <span>CANCEL</span> </span>
+        <button class="select-action action-submit" (click)="onSelect('att_ins_final')">PROCEED</button>
+      </div>
+    </div>
+  </div>
+
+  <div *ngIf="documentPackCurrentAction === 'select_from_local'">
+    <div class="heading-text-div align-center">
+      <span>
+        <mat-icon class="back-icon" (click)="onSelect('cre_doc_pck')">arrow_back</mat-icon>
+      </span>
+      <h2 class="heading-text-space heading-text">Upload Documents</h2>
+    </div>
+    <div [ngClass]="isSpinner ? 'on-disabled' : 'on-enabled' " class="flex-view justify-center">
+    <div class="upload-from-local-div">
+    <h2 class="upload-heding">Upload Document</h2>
+    <div class="center-align">
+      <svg xmlns="http://www.w3.org/2000/svg" width="80" height="80" viewBox="0 0 80 80" fill="none">
+        <path d="M21.6795 63.3485C18.0667 63.3513 14.5744 62.0501 11.8442 59.684C9.11407 57.318 7.32959 54.0461 6.81873 50.4696C6.30787 46.8932 7.10495 43.2525 9.06349 40.2167C11.022 37.181 14.0104 34.954 17.4795 33.9452C18.9513 28.469 22.3669 23.7161 27.088 20.575C31.8091 17.4338 37.5125 16.1194 43.1322 16.8774C48.7519 17.6354 53.9032 20.414 57.6234 24.6937C61.3435 28.9734 63.3779 34.4614 63.3461 40.1319C66.2698 40.5485 68.9267 42.0583 70.7809 44.3569C72.6352 46.6554 73.5487 49.5716 73.3372 52.5173C73.1257 55.4629 71.8051 58.2187 69.6415 60.2289C67.478 62.239 64.6327 63.3539 61.6795 63.3485H21.6795Z" stroke="#006586" stroke-linejoin="round"/>
+        <path d="M46.681 36.6823L40.0143 30.0156M40.0143 30.0156L33.3477 36.6823M40.0143 30.0156V50.0156" stroke="#006586" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+    </div>
+    <div class="upload-message">
+      <span class="browser-file-tab" (click)="fileSelect.click()">Browse</span>
+      <span class="margin-top-value">{{selectedDocumentName != null ? selectedDocumentName : 'No File Choosen'}}</span>
+      <mat-form-field  class="status-update-mff hidden-visibility" appearance="outline">
+        <input [hidden]="true" (change)="onFileSelected($event,{},0,'uploadLocal')" type="file" accept=".pdf" #fileSelect />
+        <input readonly class="documents-folder" matInput [(ngModel)]="filename" (click)="fileSelect.click()" 
+          placeholder="Select file..." />
+        <button matSuffix class="no-padding" mat-icon-button>
+        </button>  
+      </mat-form-field>
+      <p *ngIf="isInvalidDocType" class="form-field-validations-text">Invalid file type, file should be in PDF format</p>
+      <p *ngIf="invalideFileSize" class="form-field-validations-text">File is too big, maximum file size should be 2 MB</p>
+    </div>
+    </div>
+    </div>
+    <div class="add-description-doc">
+      <div class="doc-file-name-width">
+      <label for="docUpload">Document Name</label>
+      <form [formGroup]="documentPack">
+      <mat-form-filed appearance="outline">
+        <input matInput id="docUpload" formControlName="document" [(ngModel)]="docUploadName">
+      </mat-form-filed>
+    </form>
+     
+      </div>
+    </div>
+    <div class="action-div action-btn-right" [ngClass]="isSpinner ? 'on-disabled' : 'on-enabled'">
+      <button class="select-action action-submit" [ngClass]="((selectedDocumentName == null || docUploadName == null) || isControlInvalidTribunaldocPack('document')) ? 'on-disabled' : 'on-enabled'"
+      (click)="uploadDocumentForDocPack('doc_pack')">UPLOAD</button>
+    </div>
+  </div>
+  </div>
+
+  <div *ngIf="data.action == 'SetMeeting'">
+      <div *ngIf="setMeetingCurrentAction == 'scheduled_meeting'"> 
+        <div class="heading-text-div flex-view">
+          <div class="view-three-fourth flex-view">
+            <span *ngIf="meetingType == subAction.attendeed">
+              <mat-icon class="back-icon" (click)="meetingType = subAction.completed">arrow_back</mat-icon>
+            </span>
+            <h2 class="heading-text-space heading-text doc-pack-btns">Meetings</h2>
+          </div>
+          <div class="view-one-fourth flex-view justify-right">
+            <button *ngIf="meetingType != subAction.attendeed" class="upload-inv-btn"
+              (click)="onSelectMeeting('schedule_new_meeting')">
+              <mat-icon class="upload-icon no-border-content">add</mat-icon> <span class="add-schedule-meeting">Schedule Meeting</span></button>
+          </div>
+        </div>
+        <div>
+          <div *ngIf="(meetingType == subAction.schedule || meetingType == subAction.completed)" class="recovery-btn">
+            <button mat-button class="button-active"
+              [ngClass]="meetingType == subAction.schedule ? 'tab-active' : 'tab-inactive' "
+              (click)="getTribunalMeetingDetails(3)">Scheduled Meetings</button>
+            <button mat-button class="button-active"
+              [ngClass]="meetingType == subAction.completed ? 'tab-active' : 'tab-inactive' "
+              (click)="getTribunalMeetingDetails(4)">Completed Meetings</button>
+          </div>
+        </div>
+        <div *ngIf="meetingType == subAction.schedule && !isCommonLoading" class="question-div question-div-legal">
+
+          <div *ngIf="tribunalMeetings?.length > 0 && !isLogsLoading" class="height-meeting-table">
+          <table class="table-inside">
+            <tr class="heading-row border-top-none">
+              <th class="th-inside">Meeting Title</th>
+              <th class="th-inside">Date & Time</th>
+              <th class="th-inside">Attendees</th>
+              <th class="th-inside">Action</th>
+            </tr>
+            <tr class="content-row" *ngFor="let item of tribunalMeetings">
+              <td class="td-inside"> <span class="checkbox-and-text">  <span class="text-span">{{
+                    item.description }}</span> </span></td>
+              <td class="td-inside">{{ item.date | date:'yyyy-MM-dd'}} | {{ item.timeFrom | date:'HH:mm'}}-{{ item.timeTo
+                |
+                date:'HH:mm'}}</td>
+              <td class="td-inside attendies-name" >
+                <div>
+                  <ng-container *ngIf="item.attendeesName; else noEmails">
+                    <div *ngIf="processAttendeeNames(item.attendeesName).displayedEmails?.length > 0; else noEmails">
+                      <span *ngFor="let email of processAttendeeNames(item.attendeesName).displayedEmails; let last = last">
+                        {{ email }}{{ !last ? ', ' : '' }}
+                      </span>
+                      <span *ngIf="processAttendeeNames(item.attendeesName).remainingCount > 0">
+                        +{{ processAttendeeNames(item.attendeesName).remainingCount }}
+                      </span>
+                    </div>
+                  </ng-container>
+                </div>
+              </td>
+              <td class="td-inside td-inside-action"><span class="cursor-pointer" (click)="editMeeting(item)"><mat-icon>edit</mat-icon></span>
+                <span class="cursor-pointer"
+                  (click)="openActionDialog('delete',item,1,subAction.attachment)"><mat-icon matTooltip="Delete">delete</mat-icon></span></td>
+            </tr>
+          </table>
+          </div>
+
+          <mat-paginator *ngIf="tribunalMeetings?.length > 0 && !isLogsLoading" #paginator class="demo-paginator" 
+            (page)="handlePageinatorEventScheduledMeeting($event)" 
+            [hidePageSize]="false"
+            [length]="totalItems" 
+            [pageIndex]="page - 1"
+            [pageSize]="pageSize"
+            [pageSizeOptions]="pageSizeOptions"
+            [showFirstLastButtons]="false">
+          </mat-paginator> 
+          <div  *ngIf="tribunalMeetings?.length == 0 && !isLogsLoading"  class="no-data">
+            <h2>No data available</h2>
+          </div>
+          <div [hidden]="!isInfoLoading" [ngClass]="isInfoLoading ? 'progress-bar-container' : '' ">
+            <mat-progress-bar *ngIf="isInfoLoading" mode="indeterminate"></mat-progress-bar>
+          </div>
+        </div>
+
+        <div *ngIf="meetingType == subAction.completed && !isCommonLoading" class="question-div question-div-legal meeting-content-padding">
+
+        <div *ngIf="tribunalMeetings?.length > 0 && !isLogsLoading" class="height-meeting-table">
+          <table class="table-inside">
+            <tr class="heading-row">
+              <th class="th-inside">Meeting Title</th>
+              <th class="th-inside">Date & Time</th>
+              <th class="th-inside">Attendees</th>
+              <th class="th-inside">Action</th>
+            </tr>
+            <tr class="content-row" *ngFor="let item of tribunalMeetings">
+              <td class="td-inside"> <span class="checkbox-and-text"> <span class="text-span">{{
+                    item.description }}</span> </span></td>
+              
+                <td class="td-inside">{{ item.date | date:'yyyy-MM-dd'}} | {{ item.timeFrom | date:'HH:mm'}}-{{ item.timeTo
+                  |
+                  date:'HH:mm'}}</td>
+              <td class="td-inside attendies-name">
+                <div>
+                  <ng-container *ngIf="item.attendeesName; else noEmails">
+                    <div *ngIf="processAttendeeNames(item.attendeesName).displayedEmails?.length > 0; else noEmails">
+                      <span *ngFor="let email of processAttendeeNames(item.attendeesName).displayedEmails; let last = last">
+                        {{ email }}{{ !last ? ', ' : '' }}
+                      </span>
+                      <span *ngIf="processAttendeeNames(item.attendeesName).remainingCount > 0">
+                        +{{ processAttendeeNames(item.attendeesName).remainingCount }}
+                      </span>
+                    </div>
+                  </ng-container>
+                </div>
+              </td>
+              <td class="td-inside td-inside-action"><span (click)="showDetails(item)" class="cursor-pointer"><mat-icon>view_list</mat-icon></span></td>
+            </tr>
+          </table>
+        </div>  
+          <hr>
+
+          <mat-paginator *ngIf="tribunalMeetings?.length > 0 && !isLogsLoading" #paginator class="demo-paginator" 
+          (page)="handlePageinatorEventScheduledMeeting($event)" 
+          [hidePageSize]="false"
+            [length]="totalItems" 
+            [pageIndex]="page - 1"
+            [pageSize]="pageSize"
+            [pageSizeOptions]="pageSizeOptions"
+            [showFirstLastButtons]="false">
+          </mat-paginator> 
+        <div *ngIf="tribunalMeetings?.length == 0 && !isLogsLoading" class="no-data">
+          <h2>No data available</h2>
+        </div>
+        <div [hidden]="!isInfoLoading" [ngClass]="isInfoLoading ? 'progress-bar-container' : '' ">
+          <mat-progress-bar *ngIf="isInfoLoading" mode="indeterminate"></mat-progress-bar>
+        </div>
+      </div>
+
+        <div *ngIf="meetingType == subAction.attendeed" [ngClass]="isSpinner ?  'on-disabled' : 'on-enabled' " class="question-div question-div-legal attendies-table-details">
+          <div class="meeting-schedule-div">
+            <div class="scheduled-box"><span> <strong>Meeting Agenda:</strong> <span> {{meetingData?.description}} </span></span></div>
+            <div class="scheduled-box"><span> <strong>Date:</strong><span> {{meetingData?.date | date:'yyyy-MM-dd'}} </span></span></div>
+            <div class="scheduled-box"><span> <strong>Time:</strong><span> {{ meetingData?.timeFrom | date:'HH:mm'}} - {{
+                  meetingData?.timeTo | date:'HH:mm'}} </span></span></div>
+          </div>
+          <div *ngIf="attendyMeetingJoinOptions?.length > 0 && !isCommonLoading" class="height-meeting-table">
+          <table class="table-inside">
+            <tr class="heading-row">
+              <th class="th-inside border-top-none view-one-third">Attendee</th>
+              <th class="th-inside border-top-none view-one-third">Attendance</th>
+              <th class="th-inside border-top-none view-one-third">Claim Form</th>
+            </tr>
+            <tr class="content-row" *ngFor="let attendy of attendyMeetingJoinOptions; let i = index">
+              <td class="email-text-1">{{ attendy?.emailId }}</td>
+              <td class="email-text-2">
+                <mat-select class="view-half" [placeholder]="attendy.isAttended == null ? 'Select' : attendy.isAttended ? 'Present' : 'Absent'"  [panelClass]="'custom-dropdown'">
+                  <mat-option value="1" (click)="updateAttendiesAttendance(true,attendy.id,i)">Present</mat-option>
+                  <mat-option value="0" (click)="updateAttendiesAttendance(false,attendy.id,i)">Absent</mat-option>
+                </mat-select>
+              </td>
+              <td class="td-inside-action no-border-content">
+                  <span class="flex-view border-bottom-none">
+                    <span *ngIf="attendy && attendy?.isAttended && attendy?.claimForm?.length == 0" matTooltip="Upload" class="file-upload-button border-bottom-none no-border-content">
+                    <span class="cursor-pointer no-border-content"> <mat-icon matTooltip="Download">arrow_upward</mat-icon></span>
+                      <input type="file" class="cursor-pointer" (change)="onFileSelected($event,attendy,i,'claimForm')" accept=".pdf" id="upload-doc" />
+                    </span>
+                    <span *ngIf="attendy && attendy?.isAttended && attendy?.claimForm?.length > 0" (click)="downloadDocument(attendy?.claimForm)"><mat-icon matTooltip="Download">arrow_downward</mat-icon></span>
+                    <span *ngIf="attendy && attendy?.isAttended && attendy?.claimForm?.length > 0" (click)="openActionDialog('delete',attendy,6,subAction.delete)"><mat-icon matTooltip="Delete">delete</mat-icon></span>
+                    <span *ngIf="attendy && !attendy?.isAttended">-</span>
+                  </span>
+              </td>
+            </tr>
+
+          </table>
+          </div>
+          <hr *ngIf="attendyMeetingJoinOptions?.length == 0 && !isCommonLoading" >
+          <div *ngIf="attendyMeetingJoinOptions?.length == 0 && !isCommonLoading" class="no-data">
+            <h2>No data available</h2>
+          </div>
+
+        </div>
+
+      </div>
+
+        <div *ngIf="setMeetingCurrentAction == 'schedule_new_meeting'">
+          <div [ngClass]="isSpinner ? 'spinner-disabled' : 'spinner-enabled' ">
+        <div class="heading-text-div align-center">
+          <span>
+            <mat-icon class="back-icon" (click)="onSelectMeeting('scheduled_meeting')">arrow_back</mat-icon>
+          </span>
+          <h2 class="heading-text-space heading-text">Schedule Meeting</h2>
+        </div>
+        <form action="" [formGroup]="setMeetingForm" (keydown.enter)="preventEnter($event)">
+        <div class="question-div question-div-legal setMeetingSchudule flex-view">
+
+          <div class="borderCss borderCss-2">
+            <p class="check">Meeting Title</p>
+              <mat-form-field class="status-update-mff" appearance="outline" width="95% !important"
+              [ngClass]="{'has-error': isControlInvalidLegalSetMeeting('meetingTitle') && formSubmitted }">
+                <input matInput placeholder="" formControlName="meetingTitle" class="border-none-data">
+              </mat-form-field>
+              <p *ngIf="validateMeetingTitle() && formSubmitted" class="form-field-validations-text">Please add meeting title</p>
+          </div>
+
+          <div class="borderCss borderCss-2">
+            <p>Upload Documents</p>
+              <mat-form-field class="status-update-mff" appearance="outline"
+              [ngClass]="{'has-error': isControlInvalidLegalSetMeeting('uploadDocument') && formSubmitted }">
+                <input [hidden]="true" (change)="onFileSelect($event)" type="file" accept="all/*" #fileSelect />
+                <input readonly matInput [(ngModel)]="filename" formControlName="uploadDocument"
+                  (click)="fileSelect.click()" class="input-field-data meeting-upload-doc" placeholder="Select file..."
+                  />
+                <button matSuffix class="no-padding"(click)="fileSelect.click()" mat-icon-button>
+                  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
+                    <path
+                      d="M6.50345 19.0042C5.41963 19.005 4.37192 18.6146 3.55287 17.9048C2.73383 17.195 2.19849 16.2134 2.04523 15.1405C1.89197 14.0676 2.13109 12.9754 2.71866 12.0646C3.30622 11.1539 4.20274 10.4858 5.24345 10.1832C5.68499 8.5403 6.70968 7.11444 8.12601 6.1721C9.54234 5.22976 11.2534 4.83544 12.9393 5.06284C14.6252 5.29024 16.1706 6.1238 17.2866 7.40772C18.4027 8.69163 19.013 10.338 19.0034 12.0392C19.8806 12.1641 20.6776 12.6171 21.2339 13.3067C21.7902 13.9962 22.0642 14.8711 22.0008 15.7548C21.9373 16.6385 21.5411 17.4652 20.8921 18.0683C20.243 18.6713 19.3894 19.0058 18.5034 19.0042H6.50345Z"
+                      stroke="#292929" stroke-linejoin="round" />
+                    <path d="M14.0039 11.0039L12.0039 9.00391M12.0039 9.00391L10.0039 11.0039M12.0039 9.00391V15.0039"
+                      stroke="#292929" stroke-linecap="round" stroke-linejoin="round" />
+                  </svg>
+                </button>    
+              </mat-form-field>
+              <p *ngIf="validateUploadDocument() && formSubmitted" class="form-field-validations-text">Please select document</p>
+              <p *ngIf="isInvalidDocType" class="form-field-validations-text">Invalid file type, file should be in PDF format</p>
+              <p *ngIf="invalideFileSize" class="form-field-validations-text">File is too big, maximum file size should be 2 MB</p>    
+          </div>
+        </div>
+
+        <div class="question-div question-div-legal borderCss flex-view">
+          <div class="legal-date-picker half-view borderCss-2">
+            <p>Date</p>
+              <mat-form-field appearance="outline" class="date-picker-field setMeeting shrink-field judgemnt-dropdown jd-2"
+              [ngClass]="{'has-error': isControlInvalidLegalSetMeeting('date') && formSubmitted }">
+                <input matInput [min]="minDate" [matDatepicker]="picker" formControlName="date" readonly (click)="picker.open()" class="border-none-data">
+                <mat-datepicker-toggle matIconSuffix [for]="picker" class="zero-margin-top"></mat-datepicker-toggle>
+                <mat-datepicker #picker (selectedChanged)="handleDateSelection($event)" panelClass="custom-datepicker-date"></mat-datepicker>
+              </mat-form-field>
+              <p *ngIf="validateDate() && formSubmitted" class="form-field-validations-text">Please select date</p>
+          </div>
+
+          <div class="legal-date-picker flex-view borderCss borderCss-2">
+            <div class="status-update-mff">
+              <p>Time From</p>
+              <mat-form-field appearance="outline" class="full-view"
+                [ngClass]="{'has-error': isControlInvalidLegalSetMeeting('timeFrom') && formSubmitted }">
+                <input matInput formControlName="timeFrom" placeholder="Enter or Select Time" [matAutocomplete]="autoFrom" class="time-picker"  (input)="onScheduleTimeInputChange($event, 'timeFrom')" (click)="onTimeDropdownOpened('timeFrom')"
+                  (blur)="onTimeDropdownClosed('timeFrom')">
+                 <mat-autocomplete #autoFrom="matAutocomplete">
+                    <mat-option *ngFor="let time of filteredTimesFrom | async" [value]="time">
+                      {{ time }}
+                      </mat-option>
+                    </mat-autocomplete>
+                  </mat-form-field>
+                  <p *ngIf="validateTimeFrom() && formSubmitted" class="form-field-validations-text">Please select time</p>
+            </div>
+            <div class="arrow-fwd">
+              <span><mat-icon class="back-icon arrow-fwd-2">arrow_forward</mat-icon></span>
+            </div>
+            <div class="message-box status-update-mff">
+              <p class="shrink-field align-text-left">Time To</p>
+                <mat-form-field appearance="outline" class="full-view"
+                  [ngClass]="{'has-error': isControlInvalidLegalSetMeeting('timeTo') && formSubmitted }">
+                  <input matInput formControlName="timeTo" placeholder="Enter or Select Time" [matAutocomplete]="autoTo" class="time-picker"  (input)="onScheduleTimeInputChange($event, 'timeTo')" (click)="onTimeDropdownOpened('timeTo')"
+                  (blur)="onTimeDropdownClosed('timeTo')">
+                  <mat-autocomplete #autoTo="matAutocomplete">
+                    <mat-option *ngFor="let time of filteredTimesTo | async" [value]="time">
+                      {{ time }}
+                    </mat-option>
+                  </mat-autocomplete>
+                </mat-form-field>
+                <p *ngIf="validateTimeTo() && formSubmitted" class="form-field-validations-text">Please select time</p>
+            </div>
+          </div>
+          </div>    
+          <div class="question-div question-div-legal flex-view  full-view">
+          <div class="legal-mat-chips input-margin flex-view message-box"
+          [ngClass]=" isSpinner ? 'on-disabled' : 'on-enabled'">
+            <p>Pick Name</p>
+            
+              <mat-form-field  appearance="outline" [class.has-selected-items]="selectedItems?.length > 0" class="form-field view-half"
+                [ngClass]="{'has-error': isControlInvalidLegalSetMeeting('packName') && formSubmitted }">
+                <div class="selected-items" *ngIf="selectedItems?.length > 0">
+                  <div class="selected-item selected-item-2" *ngFor="let item of selectedItems">
+                    {{ item.displayName }}
+                    <span (click)="removeSelectedItem(item)"><mat-icon>close</mat-icon></span>
+                  </div>
+                </div>
+                <input type="text" matInput name="packName" (blur)="addEmailToSelectedItems(pickName)"
+                (keyup.enter)="addEmailToSelectedItems(pickName)" formControlName="packName" [(ngModel)]="pickName" (input)="onSearchChange($event.target.value)" class="border-none-data">
+               
+              </mat-form-field>
+              <div class="dropdown" *ngIf="searchResults?.length > 0">
+                <div
+                  class="option option-2"
+                  *ngFor="let item of searchResults"
+                  (click)="addSelectedItem(item)"
+                >
+                  {{ item.displayName }}
+                </div>
+              </div>              
+              <p *ngIf="setMeetingForm.get('packName').hasError('required') && formSubmitted" class="form-field-validations-text">Please add name</p>    
+          </div>
+          </div>
+      </form>
+        <div class="action-div action-btn-right ac-rt">
+          <span class="select-action action-btns" (click)="closeDialog()">
+            <mat-icon class="action-icon">close</mat-icon> <span>CANCEL</span> </span>
+            <button 
+            class="select-action action-submit"
+            [ngClass]=" isSpinner && (validateTimeFrom() || validateTimeTo() || !validateTimeRange()) ? 'on-disabled' : 'on-enabled' " (click)="onScheduleMeeting('att_ins_final')">PROCEED</button>
+        </div>
+        </div>
+      </div>
+      <div *ngIf="setMeetingCurrentAction == 'edit_schedule_meeting'">
+        <div class="heading-text-div align-center">
+          <span>
+            <mat-icon class="back-icon" (click)="onSelectMeeting('scheduled_meeting')">arrow_back</mat-icon>
+          </span>
+          <h2 class="heading-text-space heading-text">Meetings</h2>
+        </div>
+        <form action="" [formGroup]="editMeetingForm">
+        <div class="question-div question-div-legal flex-view">
+          <div class="borderCss-2">
+            <p>Meeting Title</p>
+              <mat-form-field class="status-update-mff shrink-field" appearance="outline">
+                <input matInput placeholder="" formControlName="meetingTitle" [(ngModel)]="meetingAgenda"
+                  class="judgemnt-dropdown border-none-data">
+              </mat-form-field>
+              <p *ngIf="validateMeetingEditTitle() && formSubmitted" class="form-field-validations-text">Please add meeting title</p>
+          </div>
+          <div class="borderCss-2">
+            <p>Upload Documents</p>
+              <mat-form-field class="status-update-mff edit meeting" appearance="outline">
+                <input [hidden]="true" (change)="onFileSelect($event)" type="file" accept="all/*" #fileSelect />
+                <input readonly matInput [(ngModel)]="filename" formControlName="uploadDocument"
+                  (click)="fileSelect.click()" class="input-field-data meeting-upload-doc judgemnt-dropdown" placeholder="Select file..."
+                   />
+                <button matSuffix class="no-padding" (click)="fileSelect.click()" mat-icon-button>
+                  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
+                    <path
+                      d="M6.50345 19.0042C5.41963 19.005 4.37192 18.6146 3.55287 17.9048C2.73383 17.195 2.19849 16.2134 2.04523 15.1405C1.89197 14.0676 2.13109 12.9754 2.71866 12.0646C3.30622 11.1539 4.20274 10.4858 5.24345 10.1832C5.68499 8.5403 6.70968 7.11444 8.12601 6.1721C9.54234 5.22976 11.2534 4.83544 12.9393 5.06284C14.6252 5.29024 16.1706 6.1238 17.2866 7.40772C18.4027 8.69163 19.013 10.338 19.0034 12.0392C19.8806 12.1641 20.6776 12.6171 21.2339 13.3067C21.7902 13.9962 22.0642 14.8711 22.0008 15.7548C21.9373 16.6385 21.5411 17.4652 20.8921 18.0683C20.243 18.6713 19.3894 19.0058 18.5034 19.0042H6.50345Z"
+                      stroke="#292929" stroke-linejoin="round" />
+                    <path d="M14.0039 11.0039L12.0039 9.00391M12.0039 9.00391L10.0039 11.0039M12.0039 9.00391V15.0039"
+                      stroke="#292929" stroke-linecap="round" stroke-linejoin="round" />
+                  </svg>
+                </button>    
+              </mat-form-field>
+              <p *ngIf="validateEditUploadDocument() && formSubmitted" class="form-field-validations-text">Please select document</p>
+              <p *ngIf="isInvalidDocType" class="form-field-validations-text">Invalid file type, file should be in PDF format</p>
+              <p *ngIf="invalideFileSize" class="form-field-validations-text">File is too big, maximum file size should be 2 MB</p>   
+          </div>
+        </div>
+        <div class="question-div question-div-legal flex-view" >
+          <div class="legal-date-picker borderCss-2">
+            <p>Date</p>
+              <mat-form-field appearance="outline" class="date-picker-field setMeeting">
+                <input matInput [min]="minDate" [matDatepicker]="picker" formControlName="date" readonly (click)="picker.open()"
+                  [(ngModel)]="selectedDate" class="judgemnt-dropdown jd-2">
+                <mat-datepicker-toggle matIconSuffix [for]="picker" class="zero-margin-top"></mat-datepicker-toggle>
+                <mat-datepicker #picker (selectedChanged)="handleDateSelection($event)" panelClass="custom-datepicker-date"></mat-datepicker>
+              </mat-form-field>
+              <p *ngIf="validateEditDate() && formSubmitted" class="form-field-validations-text">Please select date</p>
+          </div>
+          <div class="legal-date-picker input-margin half-view flex-view">
+            <div class="full-view">
+              <p class="shrink-field time-text">Time From</p>
+              <mat-form-field appearance="outline" class="shrink-field">
+                <input matInput formControlName="timeFrom" [(ngModel)]="timeFrom" placeholder="Enter or Select Time" [matAutocomplete]="autoFrom" class="time-picker" (input)="onEditTimeInputChange($event, 'timeFrom')" (click)="onTimeDropdownOpened('timeFrom')"
+                (blur)="onTimeDropdownClosed('timeFrom')" [disabled]="editMeetingForm.get('timeFrom').disabled">
+                <mat-autocomplete #autoFrom="matAutocomplete">
+                  <mat-option *ngFor="let time of filteredTimesFrom | async" [value]="time">
+                    {{ time }}
+                  </mat-option>
+                </mat-autocomplete>
+              </mat-form-field>
+                <p *ngIf="validateEditTimeFrom() && formSubmitted" class="form-field-validations-text">Please select time</p>
+            </div>
+            <div class="arrow-fwd">
+              <span><mat-icon class="back-icon">arrow_forward</mat-icon></span>
+            </div>
+            <div class="message-box status-update-mff">
+              <p class="shrink-field time-text">Time To</p>
+              <mat-form-field appearance="outline" class="full-view">
+                <input matInput formControlName="timeTo"  [(ngModel)]="timeTo" placeholder="Enter or Select Time" [matAutocomplete]="autoTo" class="time-picker"  (input)="onEditTimeInputChange($event, 'timeTo')" (click)="onTimeDropdownOpened('timeTo')"
+                (blur)="onTimeDropdownClosed('timeTo')" [disabled]="editMeetingForm.get('timeTo').disabled">
+                <mat-autocomplete #autoTo="matAutocomplete">
+                  <mat-option *ngFor="let time of filteredTimesTo | async" [value]="time"> 
+                    {{ time }}
+                  </mat-option> 
+                </mat-autocomplete>
+              </mat-form-field>
+                <p *ngIf="validateEditTimeTo() && formSubmitted" class="form-field-validations-text">Please select time</p>
+            </div>
+          </div>
+        </div>
+        <div class="question-div question-div-legal flex-view full-view">
+          <div class="legal-mat-chips input-margin flex-view message-box"
+          [ngClass]=" isSpinner ? 'on-disabled' : 'on-enabled'">
+            <p>Pick Name</p>
+              <mat-form-field  appearance="outline" [class.has-selected-items]="selectedItems?.length > 0" class="form-field">
+                <div *ngIf="selectedItems?.length > 0" class="selected-items">
+                  <div *ngFor="let item of selectedItems" class="selected-item selected-item-2">
+                    {{ item.displayName }}
+                    <span (click)="removeSelectedItem(item)"><mat-icon>close</mat-icon></span>
+                  </div>
+                </div>
+                <input type="text" matInput name="packName"  (blur)="addEmailToSelectedItems(pickName)"
+                (keydown.enter)="preventEnter($event)"
+                (keyup.enter)="addEmailToSelectedItems(pickName)" formControlName="packName" [(ngModel)]="pickName" (input)="onSearchChange($event.target.value)" class="border-none-data width-auto  width-border">
+              </mat-form-field>
+              <div class="dropdown" *ngIf="searchResults && searchResults?.length > 0">
+                <div
+                  class="option"
+                  *ngFor="let item of searchResults"
+                  (click)="addSelectedItem(item)"
+                >
+                  {{ item.displayName }}
+                </div>
+              </div>
+              <p *ngIf="editMeetingForm.get('packName').hasError('required') && formSubmitted && !selectedItems?.length" class="form-field-validations-text">Please add name</p>
+          </div>
+        </div>
+      </form>
+        <div class="action-div action-btn-right ac-rt">
+          <span class="select-action action-btns" (click)="closeDialog()">
+            <mat-icon class="action-icon">close</mat-icon> <span>CANCEL</span> </span>
+          <button class="select-action action-submit" [ngClass]=" isSpinner ? 'on-disabled' : 'on-enabled' " (click)="onEditScheduleMeeting()">PROCEED</button>
+        </div>
+      </div>
+  </div>
+
+  <div *ngIf="data.action == 'JudgementDecision'" [ngClass]=" isSpinner ? 'on-disabled' : 'on-enabled' ">
+    <div class="heading-text-div flex-view">
+      <div class="view-three-fourth">
+        <h2 class="heading-text">Judgement Decision</h2>
+      </div>
+    </div>
+    <div [ngClass]="isSpinner ? 'on-disabled' : 'on-enabled' ">
+    <form [formGroup]="judgementDecisionForm">
+      <div class="question-div-judgement-decision question-div-legal">
+        <div class="borderCss">
+          <p>Collection Status</p>
+          <mat-form-field class="status-update-mff" appearance="outline"
+          [ngClass]="{'has-error': isControlInvalidLegaljudgment('collectionStatus') && formSubmitted }">
+            <mat-select (selectionChange)="onSelectValue($event.value)" 
+            placeholder="Select" class="input-field-data" formControlName="collectionStatus"  [panelClass]="'custom-dropdown'">
+              <ng-container *ngFor="let option of collectionStatus">
+                <mat-option [value]="option">
+                  {{getjudgementCollectionStatus(option)}}
+                </mat-option>
+              </ng-container>
+            </mat-select>
+          </mat-form-field>
+        </div>
+        <mat-error *ngIf="judgementDecisionForm.get('collectionStatus').hasError('required') && isControlInvalidLegaljudgment('collectionStatus')" class="form-field-validations-text">
+          Please select option</mat-error>
+      </div>
+      <div class="question-div">
+        <p>Add Notes</p>
+        <div class="message-box">
+          <textarea class="message-textarea" formControlName="addNotes" [(ngModel)]="note_text_pr" cols="30"  [maxlength]="maxChars"
+          [ngClass]="isControlInvalidLegaljudgment('addNotes') ? 'invalid-input' : '' "
+            rows="5"></textarea>
+            <br/>
+            <label class="textarea-length-span">
+              Characters Remaining: {{
+                (maxChars - (judgementDecisionForm.get('addNotes').value?.length ?? 0))
+              }}/{{ maxChars }}
+            </label> 
+            <p *ngIf="judgementDecisionForm.get('addNotes').hasError('required') && isControlInvalidLegaljudgment('addNotes')"
+            class="error-message invalid-text">Please add notes.</p>
+          <p *ngIf=" judgementDecisionForm.get('addNotes').hasError('maxlength') && isControlInvalidLegaljudgment('addNotes')"
+            class="error-message invalid-text">Your notes has exceeded the maximum length.</p>
+            <p *ngIf="isControlInvalidLegaljudgment('addNotes') && judgementDecisionForm.get('addNotes').hasError('containsOnlySpaces')" class="error-message invalid-text">
+              Please enter non-empty text.
+            </p>
+        </div>
+        <div class="action-div action-btn-righ sub-btn-val">
+          <span class="select-action action-btns" (click)="closeDialog()"> <mat-icon
+              class="action-icon">close</mat-icon> <span>CANCEL</span> </span>
+          <button class="select-action action-submit" (click)="onSubmitJD()">SUBMIT</button>
+        </div>
+      </div>
+    </form>
+    </div>
+  </div>
+
+  <div *ngIf="data.action == 'SendEmail'" class="debtcare-send-email" [ngClass]=" isSpinner ? 'on-disabled' : 'on-enabled' ">
+    <div [ngClass]="isSpinner ? 'on-disabled' : 'on-enabled'" class="send-email-div-inside">
+    <div class="heading-text-div align-center">
+        <h2 class="heading-text">Send Email</h2>
+    </div>
+    <div class="question-div question-div-legal legal-add-payment-field">
+  
+      <form [formGroup]="sendEmailForm" class="sendMailForm">
+      <div class="collections-send-email-div-type legal-mat-chips email-chips-values">
+        <div class="input-container">
+            <mat-form-field appearance="outline"  class="example-chip-list" class="full-view-shrinked">
+            <mat-chip-list #chipList formControlName="sendTo">
+              <mat-chip *ngFor="let item of emailList; let i=index" [color]="(item.invalid)?'warn':''" selected 
+                [selectable]="true" 
+                [removable]="removable"
+                (removed)="removeEmail(item)" 
+                class="mat-chip-list-input">
+                {{item.value}}
+                <mat-icon *ngIf="removable" matChipRemove>cancel</mat-icon>
+              </mat-chip>
+              <input formControlName="sendTo"
+              class="sendMailTOCC mat-chip-list-input no-border-content"
+                [matChipInputFor]="chipList" 
+                [matChipInputSeparatorKeyCodes]="separatorKeysCodes " 
+                [matChipInputAddOnBlur]="true "
+                (matChipInputTokenEnd)="addTab($event) "
+                matInput
+                required 
+                [ngClass]="{'invalid-input': isControlInvalidLegalCollectionEmail('sendTo') && formSubmitted}"
+                />
+            </mat-chip-list>
+            <span class="labelTextCss" matPrefix>TO</span>
+   </mat-form-field>
+        </div>
+        <p class="invalid-text" *ngIf="sendEmailForm.controls['sendTo'].hasError('duplicateEmail') || duplicateEmailError">
+          Duplicate email is not allowed.
+        </p>
+        <p *ngIf="sendEmailForm.get('sendTo').hasError('incorrectEmail')"
+        class="invalid-text">Invalid email ID</p>
+        <p *ngIf="sendEmailForm.get('sendTo')?.errors && sendEmailForm.get('sendTo')?.value && !isEmptyOrSpaces(sendEmailForm.get('sendTo')?.value)"
+        class="invalid-text">Please Enter Valid Email</p>
+     
+        <p *ngIf="sendEmailForm.get('sendTo').hasError('required') "
+        class="invalid-text">Please Enter An Email Address</p>
+      </div>
+      <div class="collections-send-email-div-type legal-mat-chips email-chips-values">
+        <div class="input-container">
+            <mat-form-field appearance="outline" class="example-chip-list" class="full-view-shrinked">
+              <mat-chip-list #chipListCC formControlName="sendToCc">
+                <mat-chip  selected *ngFor="let item of emailListCC; let i=index" 
+                  [selectable]="true" 
+                  [removable]="removable"
+                  (removed)="removeEmail(item)" 
+                  required name="chipsCC"
+                  class="mat-chip-list-input">
+                  {{item.value}}
+                  <mat-icon matChipRemove *ngIf="removable">cancel</mat-icon>
+                </mat-chip>
+                <input formControlName="sendToCc"
+                class="sendMailTOCC mat-chip-list-input no-border-content"
+                  [matChipInputFor]="chipListCC" 
+                  [matChipInputSeparatorKeyCodes]="separatorKeysCodes " 
+                  [matChipInputAddOnBlur]="true "
+                  (matChipInputTokenEnd)="addTabCC($event) "
+                  [ngClass]="{'invalid-input':isControlInvalidLegalCollectionEmail('sendToCc') && formSubmitted}"
+                   />
+              </mat-chip-list>
+              <span class="labelTextCss" matPrefix>CC</span>
+            </mat-form-field>
+            <p class="invalid-text" *ngIf="sendEmailForm.controls['sendToCc'].hasError('duplicateEmail') || duplicateEmailError">
+              Duplicate email is not allowed.
+            </p>
+            <mat-error *ngIf="sendEmailForm?.get('sendToCc').hasError('incorrectEmail') "
+            class="invalid-text">Invalid email ID</mat-error>
+            <mat-error *ngIf="sendEmailForm?.get('sendToCc').hasError('pattern') "
+            class="invalid-text">Please Enter An Email Address</mat-error>
+        </div>
+      </div>  
+      <div class="collections-send-email-div-type legal-mat-chips email-chips-values">
+        <div>
+          <mat-label class="labelTextCssSubject">Subject</mat-label>
+          <mat-form-field class="example-chip-list" class="full-view-shrinked">
+            <input matInput formControlName="subject" class="cursor-pointer sub-height"
+            [ngClass]="{'invalid-input': isControlInvalidLegalCollectionEmail('subject') && formSubmitted}" />
+          </mat-form-field>
+        </div>
+        <p *ngIf="sendEmailForm.get('subject').hasError('required') && isControlInvalidLegalCollectionEmail('subject')"
+        class="invalid-text">Please Add subject</p>
+        <p *ngIf="sendEmailForm.get('subject').hasError('maxlength') && isControlInvalidLegalCollectionEmail('subject')"
+            class="error-message invalid-text">Your suject has exceeded the maximum length.</p>
+        <p *ngIf="isControlInvalidLegalCollectionEmail('subject') && sendEmailForm.get('subject').hasError('containsOnlySpaces')" class="error-message invalid-text">
+          Please enter non-empty text.
+        </p>
+      </div>  
+        <div class="collections-send-email-div-type legal-mat-chips email-chips-values">
+          <div>
+              <textarea class="height-auto full-view-shrinked" formControlName="emailBody" matInput rows="12" cols="10"  [maxlength]="maxChars"
+               [ngClass]="{'invalid-input':isControlInvalidLegalCollectionEmail('emailBody') && formSubmitted}"></textarea>
+               <label class="textarea-length-span">
+                Characters Remaining: {{
+                  (maxChars - (sendEmailForm.get('emailBody').value?.length ?? 0))
+                }}/{{ maxChars }}
+              </label> 
+            <p *ngIf="sendEmailForm.get('emailBody').hasError('required') && isControlInvalidLegalCollectionEmail('emailBody')"
+            class="invalid-text">Please Add Email Body</p>
+          <p *ngIf="sendEmailForm.get('emailBody').hasError('maxlength') && isControlInvalidLegalCollectionEmail('emailBody')"
+            class="error-message invalid-text">Your notes has exceeded the maximum length.</p>
+            <p *ngIf="isControlInvalidLegalCollectionEmail('emailBody') && sendEmailForm.get('emailBody').hasError('containsOnlySpaces')" class="error-message invalid-text">
+              Please enter non-empty text.
+            </p>
+          </div>
+        </div>
+        </form>
+    </div>
+    <div class="action-div action-btn-right send-email-action-btns">
+      <span class="select-action action-btns" (click)="closeDialog()"> <mat-icon
+          class="action-icon">close</mat-icon> <span>CANCEL</span> </span>
+      <button class="select-action action-submit" (click)="sendEmail()">SEND EMAIL</button>
+    </div>
+    <div [hidden]="!isSpinner" class="spinner-view">
+      <mat-spinner *ngIf="isSpinner"></mat-spinner>
+    </div>
+    </div>
+  </div>
+
+  <div *ngIf="data.action == 'RequestEarningDeciation'" class="requested-earning-div">
+  <div class="heading-text-div">
+      <h2 class="heading-text">Request Earning Deciation</h2>
+  </div>
+
+  <div class="question-div question-div-legal">
+    <p>Departmant</p>
+    <mat-form-field class="status-update-mff" appearance="outline">
+      <input matInput placeholder="" [(ngModel)]="dept_name" disabled>
+    </mat-form-field>
+  </div>
+
+  <div class="question-div question-div-legal">
+    <p>Transfer To</p>
+    <mat-form-field class="status-update-mff" appearance="outline">
+      <mat-select (selectionChange)="onSelectValue($event.value)" placeholder="Select"  [panelClass]="'custom-dropdown'">
+        <ng-container *ngFor="let option of TransferToList">
+          <mat-option [value]="option">
+            {{option}}
+          </mat-option>
+        </ng-container>
+      </mat-select>
+    </mat-form-field>
+  </div>
+
+  <div class="acknowledgement-div">
+    <p class="ack-que">Add Notes</p>
+    <form action="" [formGroup]="noteFormTribunal">
+      <div class="message-box">
+        <textarea class="message-textarea" forContolName="addNotes" [(ngModel)]="note_text_pr" cols="30"
+          rows="5"></textarea>
+      </div>
+      <p *ngIf="notesValidation()" class="form-field-validations-text">Please Add Notes</p>
+    </form>
+  </div>
+
+
+  <div class="action-div action-btn-right ac-padding">
+    <span class="select-action action-btns" (click)="closeDialog()"> <mat-icon
+        class="action-icon">close</mat-icon> <span>CANCEL</span> </span>
+    <button class="select-action action-submit" (click)="onSubmitPR()">SUBMIT</button>
+  </div>
+
+  </div>
+
+  <div *ngIf="data.action == 'Assessment'" [ngClass]=" isSpinner ? 'on-disabled' : 'on-enabled' ">
+<div class="heading-text-div">
+  <h2 class="heading-text">Assessment Decision</h2>
+</div>
+<div [ngClass]="isSpinner ? 'on-disabled' : 'on-enabled' ">
+<form [formGroup]="assesmentForm">
+  <div class="question-div question-div-legal">
+    <div class="div-radio">
+      <div class="radio-btn rbt-2">
+        <span>
+          <input type="radio" id="No" formControlName="assesmentDecision" value="No"
+            (change)="onSelectAssessment('ReferredBack')" class="radio-btn-input">
+        </span>
+        <span>
+          <label [ngClass]="currentAssessment == 'ReferredBack' ? 'radio-enabled' : 'radio-disabled'" for="No" class="popup-label-text">Referred Back</label>
+        </span>
+      </div>
+
+      <div class="radio-btn rbt-2">
+        <span>
+          <input type="radio" id="Yes" value="Yes" formControlName="assesmentDecision"
+            (change)="onSelectAssessment('TrialReady')"  class="radio-btn-input">
+        </span>
+        <span>
+          <label [ngClass]="currentAssessment == 'TrialReady' ? 'radio-enabled' : 'radio-disabled'" for="Yes" class="popup-label-text">Trial  Ready</label>
+        </span>
+      </div>
+
+    </div>
+    <p *ngIf="assesmentForm.get('assesmentDecision').hasError('required') && isControlInvalidTribunalAssesement('assesmentDecision')"
+      class="invalid-text">Please select option</p>
+  </div>
+  <div *ngIf="currentAssessment == 'ReferredBack'" class="flex-view">
+    <div class="question-div question-div-legal legal-add-payment-field half-view" >
+      <p class="popup-label-text">Transfer From</p>
+      <mat-form-field class="status-update-mff" appearance="outline" class="transfer-field">
+        <mat-select (selectionChange)="onSelectValue($event.value)" formControlName="transferFrom"
+           placeholder="Select" class="judgemnt-dropdown"
+          class="input-field-data"  [panelClass]="'custom-dropdown'">
+          <ng-container *ngFor="let option of deptList">
+            <mat-option [value]="option.departmentId">
+              {{option.displayName}}
+            </mat-option>
+          </ng-container>
+        </mat-select>
+      </mat-form-field>
+      <p *ngIf="assesmentForm.get('transferFrom').hasError('required') && isControlInvalidTribunalAssesement('transferFrom')"
+        && formSubmitted class="form-field-validations-text">Please select option</p>
+    </div>
+    <div class="question-div question-div-legal legal-add-payment-field add-des-field">
+      <p class="popup-label-text">Transfer To</p>
+      <mat-form-field class="status-update-mff" appearance="outline">
+        <mat-select (selectionChange)="onSelectUser($event.value)" formControlName="transferTo"
+         placeholder="Select" class="judgemnt-dropdown" class="input-field-data"  [panelClass]="'custom-dropdown'">
+          <ng-container *ngFor="let option of TransferToList">
+            <mat-option [value]="option.id">
+              {{option.displayName}}
+            </mat-option>
+          </ng-container>
+        </mat-select>
+      </mat-form-field>
+      <p *ngIf="assesmentForm.get('transferTo').hasError('required') && isControlInvalidTribunalAssesement('transferTo')"
+      class="form-field-validations-text">Please select option</p>
+    </div>
+
+  </div>
+  <p class="ack-que popup-label-text ack-top-padding">Add Notes</p>
+  <div class="message-box">
+    <textarea class="message-textarea" formControlName="addNotes" [(ngModel)]="note_text_pr" cols="30"  [maxlength]="maxChars"
+    [ngClass]="isControlInvalidTribunalAssesement('addNotes') ? 'invalid-input' : '' "
+      rows="10"></textarea>
+      <br/>
+      <label class="textarea-length-span">
+        Characters Remaining: {{
+          (maxChars - (assesmentForm.get('addNotes').value?.length ?? 0))
+        }}/{{ maxChars }}
+      </label> 
+  </div>
+  <p *ngIf="assesmentForm.get('addNotes').hasError('required') && isControlInvalidTribunalAssesement('addNotes')"
+    class="invalid-text">Please add notes</p>
+  <p *ngIf="assesmentForm.get('addNotes').hasError('maxlength') && isControlInvalidTribunalAssesement('addNotes')"
+    class="error-message invalid-text">Your notes has exceeded the maximum length.</p>
+    <p *ngIf="isControlInvalidTribunalAssesement('addNotes') && assesmentForm.get('addNotes').hasError('containsOnlySpaces')" class="error-message invalid-text">
+      Please enter non-empty text.
+    </p>
+</form>
+<div class="action-div action-btn-right">
+  <span class="select-action action-btns" (click)="closeDialog()"> <mat-icon
+      class="action-icon">close</mat-icon> <span>CANCEL</span> </span>
+  <button class="select-action action-submit" (click)="onSubmitAssesment()">SUBMIT</button>
+</div>
+</div>
+  </div>
+
+  <div *ngIf="data.action == 'ApproveOrReject'" class="acknowledgement-div">
+<h2>Are you sure ?</h2>
+<p>You want to {{ data.statusAction == 'Approved' ? 'Approve' : 'Reject' }}</p>
+<div class="action-div">
+  <span class="select-action option-yes" (click)="onConfirmAction()"> <mat-icon
+      class="action-icon">check</mat-icon> <span class="option">YES CONFIRM</span> </span>
+  <span class="select-action option-no" (click)="closeDialog()"> <mat-icon
+      class="action-icon">close</mat-icon> <span class="option">NO THANKS</span> </span>
+</div>
+  </div>
+
+  <div [hidden]="!isSpinner" class="spinner-view">
+  <mat-spinner *ngIf="isSpinner"></mat-spinner>
+  </div>
+
+  <div [hidden]="!isCommonLoading" [ngClass]="isCommonLoading ? 'progress-bar-container' : '' ">
+  <mat-progress-bar *ngIf="isCommonLoading" mode="indeterminate"></mat-progress-bar>
+  </div>
+
+</section>
+
+

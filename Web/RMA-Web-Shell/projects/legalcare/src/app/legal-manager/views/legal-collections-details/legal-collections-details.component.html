@@ -1,0 +1,301 @@
+<section class="collection-data">
+  <div [ngClass]=" isSpinner ? 'on-disabled' : 'on-enabled' ">
+  <div class="legal-collection-div">
+
+  <div class="legal-collection-inside">
+    <div class="recovery-btn recovery-back-btn" (click)="goBack()">
+      <mat-icon class="back-icon">arrow_back</mat-icon>
+    </div>
+    <div class="recovery-btn">
+      <button mat-button class="user-info-tab"> {{userDetails?.customerName}}</button>
+    </div>
+
+  </div>
+
+
+  </div>
+
+  <div class="legal-info-div">
+  <div class="legal-info-div-inside">
+
+    <div class="information">
+      <div class="inside-content-div">
+        <div class="info-tabs info-inside">
+          <ng-container *ngFor="let tab of HeadingTabs">
+            <div (click)="onSelectHeadingTab(tab)" class="tab-name-text">
+              <span class="heading-text"
+                [ngStyle]="selectedTab == tab ? {'color':'#006586'} : {'color': '#5BB5D0'}">{{tab}}</span>
+              <span [ngStyle]="selectedTab == tab ? { 'visibility': 'visible' } : { 'visibility': 'hidden' }"
+                class="type-class-border"></span>
+            </div>
+          </ng-container>
+        </div>
+        <div>
+          <div *ngIf="selectedTab == 'All Address' && !isNoInformation" class="all-address-details-tabs">
+            <ng-container *ngFor="let tab of allAddressSubTabs">
+              <div class="details-tab">
+                <button (click)="onSelectAddressTab(tab)"
+                  [ngStyle]="selectedAllAddressSubTab == tab ? { 'background': '#BDE3F6' } : { 'background': '#FFF' }"
+                  mat-button>{{tab}}</button>
+              </div>
+            </ng-container>
+          </div>
+
+          <div [hidden]="allAddressSubTabs.length == 0 && !isInfoLoading"
+            [ngClass]="isInfoLoading ? 'progress-bar-container' : '' ">
+            <mat-progress-bar *ngIf="isInfoLoading" mode="indeterminate"></mat-progress-bar>
+          </div>
+
+          <div *ngIf="selectedTab == 'More Details' && !isNoInformation" class="all-address-details-tabs">
+            <ng-container *ngFor="let tab of allMoreDetailsSubTabs">
+              <div class="details-tab">
+                <button (click)="onSelectMoreDetailsTab(tab)"
+                  [ngStyle]="selectedMoreDetailsSubTab == tab ? { 'background': '#BDE3F6' } : { 'background': '#FFF' }"
+                  mat-button>{{tab}}</button>
+              </div>
+            </ng-container>
+          </div>
+          <div *ngIf="!isNoInformation">
+            <ng-container *ngFor="let item of allInformation">
+              <div class="value-div"><span
+                  [ngStyle]=" selectedTab == 'All Address' ?  { 'width': '55%' } : { 'width': '40%' } "
+                  class="info-key">{{item.key}} :</span>
+                <span [ngClass]=" selectedTab == 'All Address' ?  'rightcol' : 'rightcol-2' " class="info-value"
+                  [ngStyle]="item.key == 'Date Assessed' || item.key == 'Date of Referal' || item.key == 'Comments' ? {'font-weight': 'bold'} : {}">{{item.value}}</span>
+              </div>
+            </ng-container>
+          </div>
+          <div *ngIf="isNoInformation && !isInfoLoading" class="no-data-text">
+            <h4>No Data Available</h4>
+          </div>
+        </div>
+      </div>
+
+      <div *ngIf="selectedTab == 'More Details'" class="inside-content-div age-analysis-box">
+        <div class="heading-tab flex-view">
+            <div class="tab-display-text">
+              <span class="heading-text"
+                [ngStyle]="{'color':'#006586'}">Age Analysis</span>
+            </div>
+        </div>
+
+        <div [hidden]="!ageAnalysisLoading" [ngClass]="ageAnalysisLoading ? 'progress-bar-container' : '' ">
+          <mat-progress-bar *ngIf="ageAnalysisLoading" mode="indeterminate"></mat-progress-bar>
+        </div>
+
+        <div *ngIf="!ageAnalysisLoading && ageAnalysisDetails">
+        <div class="value-div">
+          <span class="information-list left-column-view">Balance Current :</span>
+          <span class="span-tab-css rightcol col-rt">
+            {{ageAnalysisDetails.currentBalance}}</span>
+        </div>
+
+        <div class="value-div">
+          <span class="information-list left-column-view">Balance 30 Days :</span>
+          <span class="span-tab-css rightcol col-rt">
+            {{ageAnalysisDetails.balance30Days}}</span>
+        </div>
+
+        <div class="value-div">
+          <span class="information-list left-column-view">Balance 60 Days :</span>
+          <span class="span-tab-css rightcol col-rt">
+            {{ageAnalysisDetails.balance60Days}}</span>
+        </div>
+
+        <div class="value-div">
+          <span class="information-list left-column-view">Balance 90 Days :</span>
+          <span class="span-tab-css rightcol col-rt">
+            {{ageAnalysisDetails.balance90Days}}</span>
+        </div>
+
+        <div class="value-div">
+          <span class="information-list left-column-view">Balance 120 Days :</span>
+          <span class="span-tab-css rightcol col-rt">
+            {{ageAnalysisDetails.balance120Days}}</span>
+        </div>
+
+        <div class="value-div">
+          <span class="information-list left-column-view">Net Balance:</span>
+          <span class="span-tab-css rightcol col-rt">
+            {{ageAnalysisDetails.netBalance}}</span>
+        </div>
+
+        </div>
+       
+      </div>
+
+    </div>
+
+    <div class="action">
+      <div class="inside-content-div">
+        <div class="heading-tab header-with-search">
+          <div class="action-logs-text-tab">
+            <span class="heading-text ac-logs-border">Action Logs</span>
+            </div>
+          <div class="action-tab-search-field">
+          <div class="search-container-css">
+            <div class="search-container-data border-none">
+              
+              <span matPrefix (click)="toggleSearchInput()" class="information-list border-none padding-bottom">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <path d="M0 0H24V24H0V0Z" fill="white"/>
+                  <path d="M4 6H20H4ZM7 12H17H7ZM11 18H13H11Z" fill="white"/>
+                  <path d="M4 6H20M7 12H17M11 18H13" stroke="black" stroke-linecap="round" stroke-linejoin="round"/>
+                  </svg>
+              </span>
+              <mat-form-field *ngIf="showSearchInput" class="search-popup">
+                <button mat-icon-button matSuffix (click)="toggleSearchInput()">
+                  <mat-icon>close</mat-icon>
+                </button>
+                <div class="detailHeadInnerDiv">
+                  <div class="date-picker-upadte-status status-update-mff legal-add-payment-field question-div question-div-legal">
+                    <p>Date From</p>
+                    <mat-form-field appearance="outline" class="date-picker-field date-picker-container-css">
+                      <input matInput [matDatepicker]="fromPicker" [formControl]="fromDateControl" readonly class="border-none">
+                      <mat-datepicker-toggle matSuffix [for]="fromPicker" class="date-picker-toggle-css"></mat-datepicker-toggle>
+                      <mat-datepicker #fromPicker [matDatepickerFilter]="fromDateFilter" (dateChange)="fromDateSelected($event);filterLogsByDateRange()"></mat-datepicker>
+                    </mat-form-field>
+                  </div>
+                  <div class="date-picker-upadte-status status-update-mff legal-add-payment-field question-div question-div-legal">
+                    <p>Date To</p>
+                    <mat-form-field appearance="outline" class="date-picker-field date-picker-container-css">
+                      <input matInput [matDatepicker]="toPicker" [formControl]="toDateControl" readonly class="border-none">
+                      <mat-datepicker-toggle matSuffix [for]="toPicker" class="date-picker-toggle-css"></mat-datepicker-toggle>
+                      <mat-datepicker #toPicker [matDatepickerFilter]="toDateFilter" (dateChange)="toDateSelected($event);filterLogsByDateRange()"></mat-datepicker>
+                    </mat-form-field>
+                  </div>
+                </div>
+                <div class="detaildropdownInnerDiv">
+                 
+                <div class="search-container-data">
+                  <span matPrefix class="border-none padding-bottom">
+                      <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none">
+                          <path
+                              d="M19 11C19 12.5823 18.5308 14.129 17.6518 15.4446C16.7727 16.7602 15.5233 17.7856 14.0615 18.3911C12.5997 18.9966 10.9911 19.155 9.43928 18.8463C7.88743 18.5376 6.46197 17.7757 5.34315 16.6569C4.22433 15.5381 3.4624 14.1126 3.15372 12.5608C2.84504 11.0089 3.00347 9.40038 3.60897 7.93857C4.21447 6.47676 5.23985 5.22733 6.55544 4.34828C7.87103 3.46923 9.41775 3.00004 11 3.00004C12.0515 2.99674 13.0933 3.20141 14.0654 3.60228C15.0375 4.00315 15.9207 4.5923 16.6642 5.33582C17.4077 6.07935 17.9969 6.96257 18.3978 7.93467C18.7986 8.90677 19.0033 9.94854 19 11Z"
+                              stroke="#292929" stroke-linecap="round" stroke-linejoin="round" />
+                          <path d="M20.9993 21L16.6562 16.657" stroke="#292929" stroke-linecap="round"
+                              stroke-linejoin="round" />
+                      </svg>
+                  </span>
+                  <mat-select [formControl]="selectedOptionsControl" multiple
+                  [panelClass]="'custom-dropdown'" class="mat-multi-select border-none .mat-multi-select-scroll">
+                  <input matInput placeholder="Search here..." #input class="search-input" (input)="filterList($event.target.value)" (keydown)="handleSpaceKey($event)">
+                    <mat-checkbox (change)="selectAllOptions($event.checked)" class="mat-multi-select border-none select-all-checkbox primary">Select All</mat-checkbox>
+                    <hr class="margin-none">
+                    <ng-container *ngFor="let option of filteredOptions; let last = last">
+                    <mat-option  [value]="option">
+                      {{ option }}
+                    </mat-option>
+                      <hr class="margin-none" *ngIf="!last">
+                    </ng-container>
+                 
+                </mat-select>
+            </div>
+              </div>
+              <div class="action-div action-btn-right">
+                <button class="select-action action-submit" mat-button (click)="resetFilters()">Reset</button>
+              <button class="select-action action-submit" mat-button (click)="filterLogsByDateRange()">Apply Filter</button>
+</div>
+              </mat-form-field>
+
+
+
+            </div>
+            <div class="download-icon-div">
+              <mat-icon matTooltip="download" (click)="exportToPdf()">arrow_downward</mat-icon>
+            </div> 
+          </div>
+        </div>
+        </div>
+        <div class="legalActionLogList">
+          <div class="action-value-div"
+            *ngFor="let item of (filteredList.length > 0 ? filteredList : actionLogs); let i=index">
+            <div class="flex-view">
+              <span class="user-icon">
+                <svg xmlns="http://www.w3.org/2000/svg" width="34" height="34" viewBox="0 0 34 34" fill="none">
+                  <path
+                    d="M33 17C33 20.3012 32.0002 23.3689 30.287 25.9168C27.4142 30.1891 22.5354 33 17 33C11.4646 33 6.58582 30.1891 3.71305 25.9168C1.99977 23.3689 1 20.3012 1 17C1 8.16344 8.16344 1 17 1C25.8366 1 33 8.16344 33 17Z"
+                    stroke="#292929" />
+                  <path
+                    d="M20.5564 11.6649C20.5564 13.6286 18.9645 15.2205 17.0009 15.2205C15.0372 15.2205 13.4453 13.6286 13.4453 11.6649C13.4453 9.70125 15.0372 8.10938 17.0009 8.10938C18.9645 8.10938 20.5564 9.70125 20.5564 11.6649Z"
+                    stroke="#292929" />
+                  <path
+                    d="M17.0011 32.9988C12.1405 32.9988 7.78599 30.8313 4.85156 27.4101C5.72618 24.4734 8.44693 22.332 11.6678 22.332H22.3345C25.5554 22.332 28.2761 24.4734 29.1507 27.4101C26.2163 30.8313 21.8618 32.9988 17.0011 32.9988Z"
+                    stroke="#292929" />
+                </svg>
+              </span>
+              <span class="action-item-name">
+                <span class="heading-text">{{item.title}}</span>
+                <span class="note-comment" [ngClass]="{'show-less': item.showShortDesciption}">{{ item.comment }}</span>
+
+              </span>
+            </div>
+            <button class="show-button" *ngIf="item.comment?.length > 250" type="button"
+              (click)="alterDescriptionText(item)">
+              {{ item.showShortDesciption ? 'SHOW ALL': 'SHOW LESS' }}
+            </button>
+            <div class="add-by-user">
+
+              <div class="download-file">
+
+              <div *ngIf="item && item?.customerName && item.customerName?.length > 0 && getDownloadDocStatus(item?.customerName)" class="download-action-log-doc">
+                <div  (click)="downloadDocument(item.customerName)" class="download-action-log-icon" matTooltip="Download">
+                  <mat-icon>arrow_downward</mat-icon>
+                </div>
+              </div>
+
+              <span>{{item.addedByUser}} - {{item.modifiedDate | date: "yyyy-MM-dd"}} | {{item.modifiedDate |
+                date: "hh:mm"}}</span>
+                
+               </div> 
+            </div>
+          </div>
+          <div *ngIf="(actionLogs && actionLogs?.length == 0) && !isLogsLoading" class="no-data-text">
+            <h4>No Data Available</h4>
+          </div>
+        </div>
+
+        <div [hidden]="actionLogs.length == 0 && !isLogsLoading"
+          [ngClass]="isLogsLoading ? 'progress-bar-container' : '' ">
+          <mat-progress-bar *ngIf="isLogsLoading" mode="indeterminate"></mat-progress-bar>
+        </div>
+
+      </div>
+    </div>
+
+    <div class="option">
+      <div>
+
+        <div class="option-item" (click)="openDialog('Notes','45vw')">
+          <svg xmlns="http://www.w3.org/2000/svg" width="18" height="24" viewBox="0 0 18 24" fill="none">
+            <path
+              d="M13.125 3H15C16.6547 3 18 4.34531 18 6V21C18 22.6547 16.6547 24 15 24H3C1.34531 24 0 22.6547 0 21V6C0 4.34531 1.34531 3 3 3H4.875H5.325C5.67188 1.28906 7.18594 0 9 0C10.8141 0 12.3281 1.28906 12.675 3H13.125ZM3 5.25C2.5875 5.25 2.25 5.5875 2.25 6V21C2.25 21.4125 2.5875 21.75 3 21.75H15C15.4125 21.75 15.75 21.4125 15.75 21V6C15.75 5.5875 15.4125 5.25 15 5.25H14.25V6.375C14.25 6.99844 13.7484 7.5 13.125 7.5H9H4.875C4.25156 7.5 3.75 6.99844 3.75 6.375V5.25H3ZM9 4.875C9.29837 4.875 9.58452 4.75647 9.7955 4.5455C10.0065 4.33452 10.125 4.04837 10.125 3.75C10.125 3.45163 10.0065 3.16548 9.7955 2.9545C9.58452 2.74353 9.29837 2.625 9 2.625C8.70163 2.625 8.41548 2.74353 8.2045 2.9545C7.99353 3.16548 7.875 3.45163 7.875 3.75C7.875 4.04837 7.99353 4.33452 8.2045 4.5455C8.41548 4.75647 8.70163 4.875 9 4.875Z"
+              fill="#0E456A" fill-opacity="0.75" />
+          </svg>
+          <div> <span>Notes</span></div>
+        </div>
+
+
+        <div class="option-item" (click)="openDialog('SendEmail','70vw')">
+
+          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="18" viewBox="0 0 24 18" fill="none">
+            <path
+              d="M2.25 0C1.00781 0 0 1.00781 0 2.25C0 2.95781 0.332813 3.62344 0.9 4.05L11.1 11.7C11.6344 12.0984 12.3656 12.0984 12.9 11.7L23.1 4.05C23.6672 3.62344 24 2.95781 24 2.25C24 1.00781 22.9922 0 21.75 0H2.25ZM0 5.25V15C0 16.6547 1.34531 18 3 18H21C22.6547 18 24 16.6547 24 15V5.25L13.8 12.9C12.7312 13.7016 11.2688 13.7016 10.2 12.9L0 5.25Z"
+              fill="#0E456A" fill-opacity="0.75" />
+          </svg>
+
+          <div><span>Send Email</span></div>
+        </div>
+
+
+
+      </div>
+    </div>
+
+  </div>
+  </div>
+  <div [hidden]="!isSpinner" class="spinner-view">
+    <mat-spinner *ngIf="isSpinner"></mat-spinner>
+  </div>
+</div>
+</section>

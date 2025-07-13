@@ -1,0 +1,26 @@
+<mat-card *ngIf="(isLoading$ | async)">
+    <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+    <label class="mat-label other-label"><i>{{loadingMessage$ | async}}</i></label>
+</mat-card>
+
+<financial-period-filter
+(parameterEmit)="periodFilterChanged($event)"></financial-period-filter>
+  <br/>
+
+  <form [formGroup]="form" class="mat-container details-form" novalidate>
+    <section>           
+        <label class="mat-label other-label">Collection Type</label>
+        <mat-select [(value)]="selectedCollectionTypeId" name="collectionType" id="collectionType"
+            formControlName="collectionType"  class="mat-form-field">
+            <mat-option *ngFor="let collectionType of collectionTypes" [value]="collectionType.id">
+                {{formatLookup(collectionType.name)}}
+            </mat-option>
+        </mat-select>
+    </section>
+</form>
+<br />
+<span *ngIf="!(isLoading$ | async)">
+    <xlsx-parser [title]="title" [expectedColumnHeadings]="expectedColumnHeadings"
+        (fileDataEmit)="receiveFileData($event)" [invalidRowsForExport]="invalidRowsForExport"
+        (processConfirmedEmit)="submit($event)"></xlsx-parser>
+</span>

@@ -1,0 +1,65 @@
+<div>
+  <mat-card style="margin: 15px 30px 15px 30px">
+      <mat-card-content style="margin-left: 10px;">
+          <div>
+            <div *ngIf="isSending">
+                <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+                <label class="mat-label other-label"><i>Posting to ability...please wait</i></label>
+            </div>
+              <!--[hidden]="isLoading"-->
+              <div class="mat-container mat-elevation-z8" #TABLE>
+                  <div class="mat-header">
+                      <h1>Collections Transaction Details</h1><br />
+                  </div>
+                  <app-search-input (searchcriteria)="searchData($event)"
+                  [placeHolder]="placeHolder"></app-search-input>
+                  <mat-table #table [dataSource]="dataSource" matSort>
+                      <ng-container matColumnDef="PolicyDetails">
+                          <mat-header-cell *matHeaderCellDef mat-sort-header> Policy Details </mat-header-cell>
+                          <mat-cell *matCellDef="let row" class="left-align"> {{trimWord(row.onwerDetails) |titlecase}} 
+                           
+                          </mat-cell>
+                      </ng-container>
+                      <ng-container matColumnDef="PaymentDate">
+                          <mat-header-cell *matHeaderCellDef mat-sort-header>Transaction Date</mat-header-cell>
+                          <mat-cell *matCellDef="let row">  {{row.createdDate | date:'yyyy/MM/dd'}} </mat-cell>
+                      </ng-container>
+                      <ng-container matColumnDef="PaymentType">
+                          <mat-header-cell *matHeaderCellDef mat-sort-header> Payment Type</mat-header-cell>
+                          <mat-cell *matCellDef="let row">  {{row.paymentTypeDesc}} </mat-cell>
+                      </ng-container>
+                      <ng-container matColumnDef="Reference">
+                          <mat-header-cell *matHeaderCellDef mat-sort-header> Reference </mat-header-cell>
+                          <mat-cell *matCellDef="let row"> {{row.itemReference}} </mat-cell>
+                      </ng-container>                  
+                      <ng-container matColumnDef="Amount">
+                          <mat-header-cell *matHeaderCellDef mat-sort-header> {{amountLabel  |titlecase }} </mat-header-cell>
+                          <mat-cell *matCellDef="let row" class="right-aligned-amounts"> {{row.amount | currency:'':''}} </mat-cell>
+                      </ng-container>
+                      <ng-container matColumnDef="PolicyStatus">
+                        <mat-header-cell *matHeaderCellDef mat-sort-header> Policy Status </mat-header-cell>
+                        <mat-cell *matCellDef="let row"> 
+                            {{ row.isDeleted ? 'Deleted' : row.isActive ? 'Active' : row.isBilling ? 'Billing' : 'Pending' }} 
+                        </mat-cell>
+                    </ng-container>
+                      <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
+                      <mat-row *matRowDef="let row; columns: displayedColumns;"></mat-row>
+                  </mat-table>
+                  <mat-paginator #paginator
+                                 [length]="dataSource.filteredData.length"
+                                 [pageIndex]="0"
+                                 [pageSize]="10"
+                                 [pageSizeOptions]="[5, 10, 25, 100]">
+                  </mat-paginator>
+              </div>
+          </div>
+      </mat-card-content>
+  </mat-card>
+</div>
+
+<div>
+  <table class="form-group row" class="margin_left">
+      <button [disabled]="canExport==0" (click)="exporttoCSV()" class="button float-button">Export</button>
+      <button type="button" (click)="clear()" class="button float-button">Back</button>
+  </table>
+</div>

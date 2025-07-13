@@ -1,0 +1,15 @@
+<mat-card>
+  <mat-card-content>
+    <app-table [hidden]="creatingWizard"
+               [isSearchable]="true"
+               [title]="title"
+               [searchPlaceHolder]="searchPlaceHolder"
+               [dataSource]="dataSource"
+               [pageMetaData]="metaData"
+               (onActionClick)="onMenuItemClick($event)"></app-table>
+  </mat-card-content>
+  <div *ngIf="creatingWizard">
+    <mat-progress-bar mode="indeterminate" [ngClass]="{ 'loading-main-double-menu-progress': doubleMenu, 'loading-main-single-menu-progress': !doubleMenu }"></mat-progress-bar>
+    <p class="site-font grey">Creating Wizard...</p>
+  </div>
+</mat-card>

@@ -1,0 +1,178 @@
+<div class="continue-content">
+  <div *ngIf="!this.datasourceMembers || this.datasourceMembers.data.length == 0">
+    <mat-error class="pad-error">There are no eligible members to continue the policy...</mat-error>
+  </div>
+  <div *ngIf="this.datasourceMembers && this.datasourceMembers.data.length > 0">
+    <mat-table [dataSource]="datasourceMembers">
+      <ng-container matColumnDef="select">
+        <mat-header-cell *matHeaderCellDef class="select-column">&nbsp;</mat-header-cell>
+        <mat-cell *matCellDef="let person" class="select-column">
+          <mat-checkbox [checked]="person.isSelected" [disabled]="isDisabled"
+            (change)="selectNewMainMember($event, person)">
+          </mat-checkbox>
+        </mat-cell>
+      </ng-container>
+      <ng-container matColumnDef="memberName">
+        <mat-header-cell *matHeaderCellDef>Member</mat-header-cell>
+        <mat-cell *matCellDef="let person"> {{ person.firstName }} {{ person.surname }}</mat-cell>
+      </ng-container>
+      <ng-container matColumnDef="idNumber">
+        <mat-header-cell *matHeaderCellDef>ID / Passport Number</mat-header-cell>
+        <mat-cell *matCellDef="let person"> {{ person.idNumber || person.passportNumber }}</mat-cell>
+      </ng-container>
+      <ng-container matColumnDef="dateOfBirth">
+        <mat-header-cell *matHeaderCellDef>DOB</mat-header-cell>
+        <mat-cell *matCellDef="let person"> {{ person.dateOfBirth | date:'yyyy/MM/dd' }}</mat-cell>
+      </ng-container>
+      <ng-container matColumnDef="age">
+        <mat-header-cell *matHeaderCellDef>Age</mat-header-cell>
+        <mat-cell *matCellDef="let person"> {{ person.age }}</mat-cell>
+      </ng-container>
+      <mat-header-row *matHeaderRowDef="memberColumns"></mat-header-row>
+      <mat-row *matRowDef="let row; columns: memberColumns;"></mat-row>
+    </mat-table>
+  </div>
+  <div>
+    <form [formGroup]="form" class="mat-container details-form" novalidate>
+      <section>
+        <mat-form-field class="mat-form-field">
+          <label class="mat-label other-label">Policy Number</label>
+          <input matInput formControlName="policyNumber">
+        </mat-form-field>
+        <mat-form-field class="mat-form-field-right">
+          <label class="mat-label other-label mandatory-field">Continue Effective Date</label>
+          <input matInput formControlName="continueEffectiveDate" [min]="minDate" (dateChange)="changeContinueDate()"
+            [matDatepickerFilter]="isFirstDay" [matDatepicker]="continueEffectiveDate">
+          <mat-datepicker-toggle matSuffix [for]="continueEffectiveDate" [disabled]="form.disabled">
+          </mat-datepicker-toggle>
+          <mat-datepicker touchUi="true" #continueEffectiveDate></mat-datepicker>
+          <mat-error *ngIf="form.get('continueEffectiveDate').hasError('required')">
+            Please select policy continuation date
+          </mat-error>
+        </mat-form-field>
+      </section>
+      <section>
+        <mat-form-field class="mat-form-field">
+          <label class="mat-label other-label">Identification Type</label>
+          <mat-select formControlName="idType">
+            <mat-option *ngFor="let type of idTypes" [value]="type.id">
+              {{type.name}}
+            </mat-option>
+          </mat-select>
+        </mat-form-field>
+        <mat-form-field class="mat-form-field-right">
+          <label class="mat-label other-label">Identification Number</label>
+          <input matInput formControlName="idNumber">
+        </mat-form-field>
+      </section>
+      <section>
+        <mat-form-field class="mat-form-field">
+          <label class="mat-label other-label">First Name</label>
+          <input matInput formControlName="firstName">
+        </mat-form-field>
+        <mat-form-field class="mat-form-field-right">
+          <label class="mat-label other-label">Surname</label>
+          <input matInput formControlName="surname">
+        </mat-form-field>
+      </section>
+      <section>
+        <mat-form-field class="mat-form-field">
+          <label class="mat-label other-label">Date of Birth</label>
+          <input matInput formControlName="dateOfBirth" [matDatepicker]="dateOfBirth">
+          <mat-datepicker-toggle matSuffix [for]="dateOfBirth" [disabled]="form.disabled"></mat-datepicker-toggle>
+          <mat-datepicker touchUi="true" #dateOfBirth></mat-datepicker>
+        </mat-form-field>
+        <mat-form-field class="mat-form-field-right">
+          <label class="mat-label other-label">Age</label>
+          <input matInput formControlName="age">
+        </mat-form-field>
+      </section>
+      <section>
+        <mat-form-field class="mat-form-field">
+          <label class="mat-label other-label">Policy Inception Date</label>
+          <input matInput formControlName="policyInceptionDate" [min]="minDate" [matDatepickerFilter]="isFirstDay"
+            [matDatepicker]="policyInceptionDate">
+          <mat-datepicker-toggle matSuffix [for]="policyInceptionDate" [disabled]="form.disabled">
+          </mat-datepicker-toggle>
+          <mat-datepicker touchUi="true" #policyInceptionDate></mat-datepicker>
+        </mat-form-field>
+        <mat-form-field class="mat-form-field-right">
+          <label class="mat-label other-label">Join Age</label>
+          <input matInput formControlName="policyJoinAge">
+        </mat-form-field>
+      </section>
+      <section>
+        <mat-form-field class="mat-form-field">
+          <label class="mat-label other-label">Product</label>
+          <input matInput formControlName="productName">
+        </mat-form-field>
+        <mat-form-field class="mat-form-field-right">
+          <label class="mat-label other-label">Product Option</label>
+          <mat-select formControlName="productOptionId" (selectionChange)="reloadBenefits($event)">
+            <mat-option *ngFor="let option of productOptions" [value]="option.id">
+              {{option.name}}
+            </mat-option>
+          </mat-select>
+          <div *ngIf="loadingProductOptions">
+            <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+            <label class="mat-label other-label"><i>loading product options...please wait</i></label>
+          </div>
+        </mat-form-field>
+      </section>
+    </form>
+    <div [hidden]="this.datasourceMembers && this.datasourceMembers.data.length == 0">
+      <h4>Main Member Benefits</h4>
+      <div *ngIf="loadingBenefits; else not_loading">
+        <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+        <label class="mat-label other-label"><i>loading benefits...please wait</i></label>
+      </div>
+      <ng-template #not_loading>
+        <div *ngIf="!this.datasourceBenefits || this.datasourceBenefits.data.length == 0">
+          <span class="error-message">No benefits found for selected product option</span>
+        </div>
+        <div *ngIf="this.datasourceBenefits && this.datasourceBenefits.data.length > 0">
+          <mat-table [dataSource]="datasourceBenefits">
+            <ng-container matColumnDef="select">
+              <mat-header-cell *matHeaderCellDef class="select-column">&nbsp;</mat-header-cell>
+              <mat-cell *matCellDef="let benefit" class="select-column">
+                <mat-checkbox [checked]="isSelectedBenefit(benefit.benefitId)" [disabled]="isDisabled"
+                  (change)="selectedBenefit($event, benefit)">
+                </mat-checkbox>
+              </mat-cell>
+            </ng-container>
+            <ng-container matColumnDef="age">
+              <mat-header-cell *matHeaderCellDef class="age-column">Age</mat-header-cell>
+              <mat-cell *matCellDef="let benefit" class="age-column"> {{ joinAge }}</mat-cell>
+            </ng-container>
+            <ng-container matColumnDef="benefitType">
+              <mat-header-cell *matHeaderCellDef class="text-column">Benefit Type</mat-header-cell>
+              <mat-cell *matCellDef="let benefit" class="text-column"> {{ getBenefitType(benefit.benefitType)
+                }}</mat-cell>
+            </ng-container>
+            <ng-container matColumnDef="coverMemberType">
+              <mat-header-cell *matHeaderCellDef class="text-column">Cover Type</mat-header-cell>
+              <mat-cell *matCellDef="let benefit" class="text-column"> {{ getCoverMemberType(benefit.coverMemberType)
+                }}</mat-cell>
+            </ng-container>
+            <ng-container matColumnDef="benefitName">
+              <mat-header-cell *matHeaderCellDef>Name</mat-header-cell>
+              <mat-cell *matCellDef="let benefit"> {{ benefit.benefitName }}</mat-cell>
+            </ng-container>
+            <ng-container matColumnDef="premium">
+              <mat-header-cell *matHeaderCellDef class="number-column">Premium</mat-header-cell>
+              <mat-cell *matCellDef="let benefit" class="number-column"> {{benefit.baseRate | number:'1.2-10'}}
+              </mat-cell>
+            </ng-container>
+            <ng-container matColumnDef="amount">
+              <mat-header-cell *matHeaderCellDef class="number-column">Cover Amount</mat-header-cell>
+              <mat-cell *matCellDef="let benefit" class="number-column">{{benefit.benefitAmount |
+                number:'1.2-2'}}</mat-cell>
+            </ng-container>
+            <mat-header-row *matHeaderRowDef="benefitColumns"></mat-header-row>
+            <mat-row *matRowDef="let row; columns: benefitColumns;"></mat-row>
+          </mat-table>
+        </div>
+      </ng-template>
+    </div>
+  </div>
+</div>

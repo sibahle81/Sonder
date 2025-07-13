@@ -1,0 +1,63 @@
+<div class="menu-bar">
+    <span class="material-icons">
+        rule
+    </span>&nbsp;Additional Claim Benefits
+    <span (click)="cancel()" class="material-icons pointer right" matTooltip="close">
+        close
+    </span>
+    <span (click)="submit()" class="material-icons pointer right pulseGreen" matTooltip="save"
+        *ngIf="selectedBenefits.length > 0 && !(isLoading$ | async)">
+        save
+    </span>
+</div>
+
+<mat-card *ngIf="(isLoading$ | async)" class="loadingDiv">
+    <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+    <span class="site-font">{{loadingMessages$ | async}}</span>
+</mat-card>
+
+<div *ngIf="!(isLoading$ | async)" class="scrollTable">
+
+    <mat-card *ngIf="!hasAccidentEarnings">Accident earnings are required before estimates can be created...</mat-card>
+
+    <div *ngIf="dataSource.data.length > 0 && hasAccidentEarnings">
+        <mat-table #table [dataSource]="dataSource" id="tblData">
+            <ng-container matColumnDef="select">
+                <mat-header-cell *matHeaderCellDef>
+                    <span class="material-icons noHover">
+                        security_update_good
+                    </span>
+                </mat-header-cell>
+                <mat-cell *matCellDef="let row">
+                    <mat-checkbox (change)="benefitSelected(row)" [disabled]="checkBenefitExist(row)"
+                        [checked]="checkBenefitExist(row)">
+                    </mat-checkbox>
+                </mat-cell>
+            </ng-container>
+            <ng-container matColumnDef="code">
+                <mat-header-cell *matHeaderCellDef> Code </mat-header-cell>
+                <mat-cell *matCellDef="let row">{{row.code}}</mat-cell>
+            </ng-container>
+            <ng-container matColumnDef="displayName">
+                <mat-header-cell *matHeaderCellDef> Name </mat-header-cell>
+                <mat-cell *matCellDef="let row">{{row.name}}</mat-cell>
+            </ng-container>
+            <ng-container matColumnDef="estimateType">
+                <mat-header-cell *matHeaderCellDef> Type </mat-header-cell>
+                <mat-cell *matCellDef="let row">{{getEstimateType(row.estimateTypeId)}}</mat-cell>
+            </ng-container>
+            <mat-header-row *matHeaderRowDef="getDisplayedColumns()"></mat-header-row>
+            <mat-row *matRowDef="let row; columns: getDisplayedColumns();"></mat-row>
+        </mat-table>
+
+        <mat-paginator #paginator [pageIndex]="0" [pageSize]="5" [pageSizeOptions]="[5, 10, 25, 100]"
+            [length]="dataSource.data ? dataSource.data.length : 0 ">
+        </mat-paginator>
+    </div>
+
+    <div *ngIf="dataSource.data && dataSource.data.length <= 0">
+        <label class="mat-label other-label">
+            No claim benefits found...
+        </label>
+    </div>
+</div>

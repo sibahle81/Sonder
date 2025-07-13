@@ -1,0 +1,228 @@
+<mat-card-header>
+  <mat-card-title class="wizard-font card-title grey">
+    <h3>Reallocation</h3>
+  </mat-card-title>
+</mat-card-header>
+<br />
+<div *ngIf="!hasPermission">
+  <div class="error-message">
+    You do not have sufficient permissions to perform reallocations.
+  </div>
+  <div (click)="back()" class="form-buttons submit-button">
+    <button type="button" class="button float-button">Back</button>
+  </div>
+</div>
+
+<div [hidden]="!hasPermission">
+  <mat-card *ngIf="isSubmitting$ | async">
+    <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+    <label class="mat-label other-label"><i>Submitting reallocation...please wait</i></label>
+  </mat-card>
+
+  <div [hidden]="(isSubmitting$ | async)">
+    <form [formGroup]="form" class="mat-container details-form" novalidate>
+      <mat-card>
+        <section>
+          <mat-form-field class="mat-form-field">
+            <label class="mat-label other-label">From Debtor Account</label>
+            <input matInput formControlName="fromDebtorAccount" name="fromDebtorAccount" id="fromDebtorAccount" />
+          </mat-form-field>
+
+          <mat-form-field class="mat-form-field-right">
+            <label class="mat-label other-label">To Debtor Account</label>
+            <input matInput formControlName="toDebtorAccount" name="toDebtorAccount" id="toDebtorAccount" />
+          </mat-form-field>
+        </section>      
+        <section *ngIf="hideButtons">
+          <mat-form-field>
+            <label class="mat-label other-label mandatory-field">Reason for reallocation</label>
+            <textarea matTextareaAutosize matAutosizeMinRows="5" matAutosizeMaxRows="3" maxlength="255" matInput
+              minlength="3" id="reason" name="reason" formControlName="reason"></textarea>
+            <mat-error *ngIf="form.get('reason').hasError('required')">
+              Reason is <strong>required</strong>
+            </mat-error>
+            <mat-error *ngIf="form.get('reason').hasError('minlength')">
+              Reason must be at least <strong>three characters</strong>
+            </mat-error>
+          </mat-form-field>
+        </section>
+      </mat-card>
+      <br />
+
+      <mat-card *ngIf="isLoadingTransactions$ | async">
+        <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+        <label *ngIf="transactionTypeId !=-1" class="mat-label other-label"><i>loading transactions...please wait</i></label>
+        <label *ngIf="transactionTypeId ===-1" class="mat-label other-label"><i>Calculating debtor balance...please wait</i></label>
+      </mat-card>
+
+      <div *ngIf="isCheckingBankAccountClass$ | async">
+        <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+        <label class="mat-label other-label"><i>checking for cross class allocation...please wait</i></label>
+      </div>
+      <div style="font-size:x-small; color: red;">{{message}}</div>
+
+      <mat-card
+        *ngIf="transactions && !(transactions.length > 0) && selectedFromDebtorAccount && !(isLoadingTransactions$ | async) && selectedTransactionTypeId != debtorBalanceAllocationType">
+        <br />
+        <i>There were no transactions found for the selected from account</i> <br />
+        <span class="pointer" style="color: cornflowerblue;" (click)="reset()"><span
+            class="material-icons pointer">search</span><strong>Search Again</strong></span>
+      </mat-card>
+
+      <div *ngIf="!hideTransactionTypeSelector">
+        <mat-card>
+          <section>
+            <mat-form-field>
+              <label class="mat-label other-label mandatory-field">Transaction Type</label>
+              <mat-select name="transactionTypes" id="transactionTypes"
+                (selectionChange)="transactionTypeChanged($event)" [(ngModel)]="selectedTransactionTypeId"
+                [ngModelOptions]="{standalone: true}">
+                <mat-option *ngFor="let transactionType of transactionTypes" [value]="transactionType.id">
+                  {{ transactionType.name}}
+                </mat-option>
+              </mat-select>
+              <mat-error *ngIf="form.get('transactionTypes').hasError('required')">
+                Please select a transaction type
+              </mat-error>
+            </mat-form-field>
+          </section>
+
+        </mat-card>
+      </div>
+
+      <div *ngIf="!hideSearch">
+        <br />
+        <account-search [hidden]="hideFromAccount || selectedTransactionTypeId === 0"
+          [title]="'From Debtor Account Search'" (itemSelected)="onAccountSelected($event)">
+        </account-search>       
+      </div>
+      <br />
+<mat-card *ngIf ="debtorBalanceSearched && selectedTransactionTypeId === debtorBalanceAllocationType">
+  <div ><b>Current Transferable Debtor Balance : {{debtorBalance | currency:'':''}}</b></div>
+</mat-card>      
+        <div [hidden]="transactionsDatasource.data.length === 0">
+            <mat-table  [hidden]="showOwnAmount"  #table [dataSource]="transactionsDatasource" matSort #sort1="matSort">
+              <ng-container matColumnDef="transactionTypeName" class="mat-column-created">
+                <mat-header-cell *matHeaderCellDef mat-sort-header> Transaction Type</mat-header-cell>
+                <mat-cell *matCellDef="let row"> {{row.transactionTypeName}} </mat-cell>
+              </ng-container>
+              <ng-container matColumnDef="documentNumber"  class="mat-column-created">
+                <mat-header-cell *matHeaderCellDef mat-sort-header> Document Number</mat-header-cell>
+                <mat-cell *matCellDef="let row"> {{row.documentNumber}} </mat-cell>
+              </ng-container>
+              <ng-container matColumnDef="amount" class="mat-column-created">
+                <mat-header-cell *matHeaderCellDef mat-sort-header> Transaction Amount</mat-header-cell>
+                <mat-cell *matCellDef="let row"> {{row.amount | currency:'':''}} </mat-cell>
+              </ng-container>
+              <ng-container matColumnDef="balance" class="mat-column-created">
+                <mat-header-cell *matHeaderCellDef mat-sort-header> Balance</mat-header-cell>
+                <mat-cell *matCellDef="let row"> {{row.balance | currency:'':''}} </mat-cell>
+              </ng-container>
+
+              <ng-container matColumnDef="unallocatedAmount" class="mat-column-created">
+                <mat-header-cell *matHeaderCellDef mat-sort-header> Reallocation Balance</mat-header-cell>
+                <mat-cell *matCellDef="let row"> {{row.unallocatedAmount | currency:'':''}} </mat-cell>
+              </ng-container>
+
+              <ng-container matColumnDef="reallocatedAmount" class="mat-column-created">
+                <mat-header-cell *matHeaderCellDef mat-sort-header> Reallocation Amount</mat-header-cell>
+                <mat-cell *matCellDef="let row"> {{row.reallocatedAmount | currency:'':''}} </mat-cell>
+              </ng-container>
+
+              <ng-container matColumnDef="transactionDate" class="mat-column-created">
+                <mat-header-cell *matHeaderCellDef mat-sort-header> Document Date</mat-header-cell>
+                <mat-cell *matCellDef="let row"> {{row.transactionDate | date: 'yyyy/MM/dd' }} </mat-cell>
+              </ng-container>
+
+              <ng-container  *ngIf="!hideButtons" matColumnDef="actions" class="mat-column-action">
+                <mat-header-cell *matHeaderCellDef class="Action">Action
+                </mat-header-cell>
+                <mat-cell *matCellDef="let row">
+
+                  <a role="button" class="link-edit" *ngIf="!(selectedTransactions.includes(row))&& !hideButtons"
+                  (click)="transactionSelected(row)">full amount</a>
+                <a role="button" class="link-edit" *ngIf="!(selectedTransactions.includes(row))  && selectedTransactionTypeId != reversalAllocationType"
+                  (click)="toggleOwnAmount(row)"> | own
+                  amount</a>
+                <a role="button" class="link-edit" *ngIf="selectedTransactions.includes(row) && !hideButtons"
+                  (click)="transactionSelected(row)">remove</a>
+
+                </mat-cell>
+              </ng-container>
+              <mat-header-row *matHeaderRowDef="displayedTransactionsColumns;"></mat-header-row>
+              <mat-row *matRowDef="let row; columns: displayedTransactionsColumns;" [ngClass]="{'selectedRow': selectedTransactions.includes(row) }"></mat-row>
+            </mat-table>
+            <mat-paginator #paginator1 [length]="transactionsDatasource.data ? transactionsDatasource.data.length : 0" [pageIndex]="0"
+              [pageSize]="5" [pageSizeOptions]="[5, 10, 25, 100]">
+            </mat-paginator>
+
+          <br />
+          <div [hidden]="!showOwnAmount">
+            <section>
+              <mat-form-field class="mat-form-field">
+                <label class="mat-label other-label mandatory-field">Amount</label>
+                <input matInput formControlName="partialAmount" name="partialAmount" id="partialAmount" DecimalNumber
+                  min="1" max="{{maxAmountAllowed}}" />
+                <div style="color: red; font-size: x-small;" *ngIf="showMessage">Amount must be between 1 and
+                  {{maxAmountAllowed | currency:'R'}}</div>
+              </mat-form-field>
+            </section>
+            <button type="button" (click)="addPartialAmount()" class="button float-button">Continue</button>
+            <br />
+            <br />
+          </div>
+        </div>
+     
+
+      <div *ngIf="!hideSearch">
+        <br />       
+        <account-search [hidden]="hideToAccount || (isLoadingTransactions$ | async) || (selectedTransactions.length === 0 &&  selectedTransactionTypeId != debtorBalanceAllocationType) " [title]="'To Debtor Account Search'"
+          (itemSelected)="onAccountSelected($event)">
+        </account-search>
+      </div>
+
+      <div [hidden]="datasource.data.length === 0" class="table-container">
+        <p class="labelParagraph">Invoice(s) To unallocate from selected transaction(s)</p>
+          <mat-table #table [dataSource]="datasource" matSort matSort #sort2="matSort">
+              <ng-container matColumnDef="documentNumber">
+                  <mat-header-cell *matHeaderCellDef mat-sort-header>Doc Number</mat-header-cell>
+                  <mat-cell *matCellDef="let row">{{row.documentNumber}}</mat-cell>
+              </ng-container>              
+              <ng-container matColumnDef="amount">
+                  <mat-header-cell *matHeaderCellDef mat-sort-header>Amount</mat-header-cell>
+                  <mat-cell *matCellDef="let row">{{row.amount}}</mat-cell>
+              </ng-container>  
+              
+              <ng-container matColumnDef="actions">
+                <mat-header-cell *matHeaderCellDef>Select/De-select</mat-header-cell>
+                <mat-cell *matCellDef="let row" class="checkedCell">
+                  <mat-checkbox [checked]="selectedInvoiceAllocationIds.indexOf(row.invoiceAllocationId) > -1"
+                    (change)="debitTransactionChecked($event,row)">
+                  </mat-checkbox>
+                </mat-cell>
+              </ng-container>              
+              <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
+              <mat-row *matRowDef="let row; columns: displayedColumns;"></mat-row>
+          </mat-table>
+          <mat-paginator #paginator2 [pageIndex]="0" [pageSize]="5" [pageSizeOptions]="[5, 10, 25, 100]">
+          </mat-paginator>
+
+      </div>
+
+      <br />
+      <div [hidden]="hideDocuments">      
+        <document-uploader [documentSet]="reallocationDocSet" [systemName]="documentSystemName" [keyName]="'transferId'"
+        [keyValue]="documentKeyValue" 
+        (requiredDocumentsUploadedEmit)="isRequiredDocumentsUploaded($event)"></document-uploader>
+      </div>
+
+      <div class="form-buttons submit-button" *ngIf="!hideButtons">
+        <button
+          [disabled]="submitDisabled ||(isSubmitting$ | async)  || crossAccountAllocation ||  selectedFromRoleplayerId ===0 || selectedToRoleplayerId ===0 || (selectedTransactions.length === 0 &&  selectedTransactionTypeId != debtorBalanceAllocationType) "
+          class="button submit-button" (click)="submit()" style="margin-top: 5px;">Submit</button>
+        <button type="button" class="button submit-button" (click)="back()" style="margin-top: 5px;">Back</button>
+      </div>
+      <br />
+    </form>
+  </div>
+</div>

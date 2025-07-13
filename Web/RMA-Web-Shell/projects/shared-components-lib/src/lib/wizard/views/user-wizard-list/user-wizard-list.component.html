@@ -1,0 +1,213 @@
+﻿<div class="margin">
+  <mat-card>    
+    <div class="menu-bar">
+      <span class="material-icons">
+        rebase_edit
+      </span>
+      <span *ngIf="mineOnly"> My</span> Workflows <span
+        *ngIf="dataSource && dataSource.data && dataSource.data.rowCount && dataSource.data.rowCount > 0">({{dataSource.data.rowCount}})</span>
+    </div>
+
+    <mat-expansion-panel [expanded]='false'>
+      <mat-expansion-panel-header>
+        <mat-panel-title>
+          <span class="material-icons">
+            filter_alt
+          </span> Filters
+        </mat-panel-title>
+      </mat-expansion-panel-header>
+      <form [formGroup]="form" class="mat-container details-form" novalidate>
+        <section class="field-container check-box">
+          <mat-checkbox formControlName="myInboxOnly" id="myInboxOnly" (change)="myInboxOnlyChange($event)">
+              <mat-label class="other-label">My Inbox</mat-label>
+          </mat-checkbox>
+          <br />
+          <br />
+      </section>
+        <section>
+          <mat-form-field class="mat-form-field controlSize">
+            <label class="mat-label">Type</label>
+            <mat-select name="type" id="type" (selectionChange)="typeChanged($event)" formControlName="type">
+              <mat-option *ngFor="let type of wizardConfiguration" [value]="type.id">
+                {{type.name}}
+              </mat-option>
+            </mat-select>
+          </mat-form-field>
+
+          <mat-form-field class="mat-form-field-right controlSize">
+            <label class="mat-label">Status</label>
+            <mat-select name="wizardStatus" id="wizardStatus" (selectionChange)="wizardStatusChanged($event)"
+              formControlName="wizardStatus">
+              <mat-option *ngFor="let status of wizardStatuses" [value]="status.id">
+                {{formatLookup(status.name)}}
+              </mat-option>
+            </mat-select>
+          </mat-form-field>
+        </section>
+        <section>
+          <mat-form-field class="mat-form-field controlSize">
+            <label class="mat-label other-label">Locked</label>
+            <mat-select name="lockStatus" id="lockStatus" (selectionChange)="lockStatusChanged($event)"
+              formControlName="lockStatus">
+              <mat-option *ngFor="let lockStatus of lockStatuses" [value]="lockStatus.value">
+                {{lockStatus.name}}
+              </mat-option>
+            </mat-select>
+          </mat-form-field>
+          <mat-form-field class="mat-form-field-right controlSize">
+            <label class="mat-label other-label">User / Role <b *ngIf="selectedRoleUser && selectedRoleUser.length > 0">&nbsp;&nbsp;[{{selectedRoleUser}}]</b></label>
+            <mat-select name="roleUserOption" id="roleUserOption" (selectionChange)="userRoleFilterChanged($event)"
+              formControlName="roleUserOptions">
+              <mat-option *ngFor="let roleUserOption of roleUserOptions" [value]="roleUserOption.value">
+                {{roleUserOption.name}}
+              </mat-option>
+            </mat-select>
+          </mat-form-field>
+        </section>
+
+        <div class="form-group-button mat-form-button action-buttons">
+          <button (click)="apply()" class="button float-button">Apply</button>
+          <button (click)="reset()" class="button float-button">Reset</button>
+        </div>
+      </form>
+    </mat-expansion-panel>
+
+    <mat-divider *ngIf="!mineOnly" [inset]="true"></mat-divider>
+    <br />
+    <mat-form-field class="search" [floatLabel]="'never'">
+      <input #filter matInput maxlength="50" name="searchText" id="searchText" minLength="3" class="elementBox"
+        matTooltip="search" matTooltipShowDelay="1000">
+      <mat-placeholder class="placeholder">search workflows by name...</mat-placeholder>
+    </mat-form-field>
+
+    <mat-card *ngIf="dataSource.loading$ | async" class="loadingDiv">
+      <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+      <span class="site-font grey"><i>loading...please wait</i></span>
+    </mat-card>
+
+    <mat-card *ngIf="(isLoading$ | async)">
+      <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+      <label class="mat-label other-label"><i>{{loadingMessage$ | async}}</i></label>
+    </mat-card>
+
+    <div [hidden]="paginator.length === 0 || (dataSource.loading$ | async) || (isLoading$ | async)">
+      <div *ngIf="selectedWizards?.length > 0" class="menu-bar">
+        <span class="material-icons">
+          build_circle
+        </span>
+        Selected Workflow Options ({{selectedWizards?.length}})
+
+        <span *ngIf="selectedWizards?.length > 0">
+          <span *ngIf="showUnlock()" (click)="unlock()" matTooltip="unlock only" class="material-icons pointer right pulse">
+            lock_open
+          </span>
+          <span (click)="openUserSearchDialog()"
+            matTooltip="{{showUnlock() ? 'unlock & assign / re-assign' : 'assign'}}"
+            class="material-icons pointer right pulse">
+            assignment_add
+          </span>
+          <span (click)="openRoleAssignmentDialog()" *ngIf="selectedWizards?.length > 0"
+          matTooltip="{{showUnlock() ? 'unlock & assign / re-assign-role' : 'assign-role'}}"
+          class="material-icons pointer right pulse">
+          groups
+        </span>
+        </span>
+      </div>
+
+      <mat-table #table [dataSource]="dataSource" matSort>
+        <!-- Check Box  -->
+        <ng-container matColumnDef="select">
+          <mat-header-cell *matHeaderCellDef>Select</mat-header-cell>
+          <mat-cell *matCellDef="let row">
+            <mat-checkbox id="{{row.id}}" [disabled]="!canSelect(row)" [checked]="isSelected(row)"
+              (change)="handleChecked(row)">
+            </mat-checkbox>
+          </mat-cell>
+        </ng-container>
+
+        <!-- Name -->
+        <ng-container matColumnDef="name">
+          <mat-header-cell *matHeaderCellDef mat-sort-header> Name </mat-header-cell>
+          <mat-cell *matCellDef="let row"> {{row.name}} </mat-cell>
+        </ng-container>
+
+        <!-- Type -->
+        <ng-container matColumnDef="type">
+          <mat-header-cell *matHeaderCellDef mat-sort-header> Type </mat-header-cell>
+          <mat-cell *matCellDef="let row" matTooltip="{{row.wizardConfiguration.description}}">
+            {{formatWizardType(row.type)}} </mat-cell>
+        </ng-container>
+
+        <!-- Created By -->
+        <ng-container matColumnDef="createdBy">
+          <mat-header-cell *matHeaderCellDef mat-sort-header> Created By </mat-header-cell>
+          <mat-cell *matCellDef="let row" class="main-title">
+            <user-display-name [userName]="row.createdBy"></user-display-name>
+          </mat-cell>
+        </ng-container>
+
+        <!-- Locked status -->
+        <ng-container matColumnDef="lockedStatus" class="mat-column-overflow">
+          <mat-header-cell *matHeaderCellDef>Locked Status</mat-header-cell>
+          <mat-cell class="main-title" *matCellDef="let row">
+            <span *ngIf="!row.lockedToUser"><span class="material-icons">lock_open</span></span>
+            <span *ngIf="row.lockedToUser"><user-display-name [userName]="row.lockedToUser"></user-display-name></span>
+          </mat-cell>
+        </ng-container>
+
+        <!-- Wizard status -->
+        <ng-container matColumnDef="wizardStatusText">
+          <mat-header-cell *matHeaderCellDef mat-sort-header> Status </mat-header-cell>
+          <mat-cell *matCellDef="let row">
+            {{(row.createdDate | date: "yyyy-MM-dd HH:mm:ss") === (row.modifiedDate | date: "yyyy-MM-dd HH:mm:ss") ?
+            'New' : row.wizardStatusId ? getWizardStatusText(row.wizardStatusId) : 'N/A'}} </mat-cell>
+        </ng-container>
+
+        <!--Overall SLA -->
+        <ng-container matColumnDef="overAllSLAHours">
+          <mat-header-cell *matHeaderCellDef mat-sort-header> Overall SLA </mat-header-cell>
+          <mat-cell *matCellDef="let row"
+            [ngClass]="row.slaRAGIndicatorId == '1' ? 'greenSLA' : row.slaRAGIndicatorId == '3' ? 'redSLA' : row.slaRAGIndicatorId == '0' ? 'whiteSLA' : row.slaRAGIndicatorId == '2' ? 'amberSLA'  : ''">
+            {{row.overAllSLAHours}}
+          </mat-cell>
+        </ng-container>
+
+        <!-- Actions -->
+        <ng-container matColumnDef="actions">
+          <mat-header-cell *matHeaderCellDef> Actions </mat-header-cell>
+          <mat-cell style="text-align: left !important; justify-content: center !important;" *matCellDef="let row">
+            <a role="button" class="link-edit" (click)="onSelect(row)">open</a>&nbsp;
+          </mat-cell>
+        </ng-container>
+
+        <mat-header-row *matHeaderRowDef="getDisplayedColumns()"></mat-header-row>
+        <mat-row [ngClass]="{'priority-one': isPriority(row)}"
+        matTooltip="{{isPriority(row) ? 'Priority 1' : ''}}" *matRowDef="let row; columns: getDisplayedColumns();"></mat-row>
+      </mat-table>
+
+      <mat-paginator style="background-color:#F2F2F2; min-height: 40px !important; padding: 0px !important;" #paginator
+        [pageIndex]="0" [pageSize]="5" [pageSizeOptions]="[5, 10, 25, 100]">
+      </mat-paginator>
+    </div>
+
+    <mat-card *ngIf="!(paginator.length > 0 || (dataSource.loading$ | async) || currentQuery)">
+      <div *ngIf="!mineOnly" class="grey"><i>no workflows found...</i></div>
+      <div *ngIf="mineOnly" class="grey"><i>no workflows have been assigned to you...</i></div>
+    </mat-card>
+
+    <mat-card *ngIf="!(paginator.length > 0 || (dataSource.loading$ | async) || !currentQuery || currentQuery == '')">
+      <div class="site-font grey">
+        <p class="grey">Your search - <strong>{{currentQuery}}</strong> - did not match any workflows
+        </p>
+        <span>Suggestions: </span>
+        <ul>
+          <li>Make sure that all words are spelled correctly</li>
+          <li>Try different keywords.</li>
+          <li>Try more general keywords.</li>
+          <li>Try fewer keywords.</li>
+        </ul>
+      </div>
+      <button class="button" (click)="clearInput()">Clear search</button>
+    </mat-card>
+  </mat-card>
+</div>

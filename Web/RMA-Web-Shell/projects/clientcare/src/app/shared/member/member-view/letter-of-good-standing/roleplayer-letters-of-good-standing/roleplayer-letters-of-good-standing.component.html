@@ -1,0 +1,25 @@
+<mat-card *ngIf="(isLoading$ | async)">
+    <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+    <label class="mat-label other-label"><i>{{loadingMessage$ | async}}</i></label>
+</mat-card>
+
+<div *ngIf="!(isLoading$ | async)">
+    <div *ngIf="supportedPolicies && supportedPolicies.length > 0">
+        <div *ngFor="let policy of supportedPolicies">
+            <letter-of-good-standing [policy]="policy"></letter-of-good-standing>
+        </div>
+    </div>
+
+    <div *ngIf="!supportedPolicies || supportedPolicies.length <= 0">
+        <div class="menu-bar">
+            <span class="material-icons">
+                volunteer_activism
+            </span>
+            Letters of Good Standing
+        </div>
+
+        <mat-card>
+            This member does not have any policies that support Letters of Good Standing
+        </mat-card>
+    </div>
+</div>

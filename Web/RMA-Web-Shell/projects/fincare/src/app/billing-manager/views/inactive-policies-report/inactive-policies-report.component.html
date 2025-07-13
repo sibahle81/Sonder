@@ -1,0 +1,89 @@
+<div>
+    <mat-card style="margin: 15px 30px 15px 30px">
+        <mat-card-content style="margin-left: 10px;">
+            <div>
+                <form [formGroup]="form" class="mat-container details-form" novalidate>
+                    <section style="margin-bottom: 15px;">
+                        <div  class="field-container" style="word-wrap: normal;">
+                            <div><label class="mat-label other-label">Start Date</label>
+                            </div>
+                            <mat-form-field>
+                                <input matInput formControlName="startDate" [matDatepicker]="startDate" (dateChange)="validateDates()" [hidden]="true">
+                                <input matInput [ngModel]="displayStartDate | date : 'yyyy/MM/dd'" (click)="startDate.open()" [readonly]="true" [ngModelOptions]="{standalone: true}">
+                                <mat-datepicker-toggle matSuffix [for]="startDate"></mat-datepicker-toggle>
+                                <mat-datepicker touchUi="true" #startDate></mat-datepicker>
+    
+                                <mat-error *ngIf="form.get('startDate').hasError('min')">
+                                    start date cannot be <strong>after</strong> the end date
+                                </mat-error>
+                            </mat-form-field>
+                        </div>
+    
+                        <div class="field-container-right">
+                            <div><label class="mat-label other-label">End Date</label></div>
+                            <mat-form-field>
+                                <input matInput formControlName="endDate" [matDatepicker]="endDate" (dateChange)="validateDates()" [hidden]="true">
+                                <input matInput [ngModel]="displayEndDate | date : 'yyyy/MM/dd'" (click)="endDate.open()" [readonly]="true" [ngModelOptions]="{standalone: true}">
+                                <mat-datepicker-toggle matSuffix [for]="endDate"></mat-datepicker-toggle>
+                                <mat-datepicker touchUi="true" #endDate></mat-datepicker>
+                                <mat-error *ngIf="form.get('endDate').hasError('min')">
+                                    End date cannot be <strong>before</strong> the start date
+                                </mat-error>
+                            </mat-form-field>
+                        </div>
+                    </section>
+                </form>
+                <div class="form-group row" style="margin-left: 12px;">
+                    <button (click)="viewReport()" [disabled]="!formIsValid" class="button float-button">View</button>
+                    <button type="button" (click)="resetSearch()" class="button float-button">Reset</button>
+                </div>
+    
+                <!--[hidden]="isLoading"-->
+                <div class="mat-container mat-elevation-z8">
+                    <div class="mat-header">
+                        <h1>Inactive Policies</h1><br />
+
+                    </div>
+                    <app-search-input (searchcriteria)="searchData($event)" [placeHolder]="placeHolder"></app-search-input>
+                    <mat-table #table [dataSource]="dataSource" matSort>
+
+                        <ng-container matColumnDef="policyNumber">
+                            <mat-header-cell *matHeaderCellDef mat-sort-header> POLICY NUMBER </mat-header-cell>
+                            <mat-cell *matCellDef="let row"> {{row.policyNumber}} </mat-cell>
+                        </ng-container>
+                        <ng-container matColumnDef="policyStatus">
+                            <mat-header-cell *matHeaderCellDef mat-sort-header> POLICY STATUS </mat-header-cell>
+                            <mat-cell *matCellDef="let row"> {{dataSource.getStatus(row.policyStatus)}} </mat-cell>
+                        </ng-container>
+                        <ng-container matColumnDef="policyInceptionDate">
+                            <mat-header-cell *matHeaderCellDef mat-sort-header> INCEPTION DATE</mat-header-cell>
+                            <mat-cell *matCellDef="let row"> {{row.policyInceptionDate | date:'yyyy/MM/dd'}} </mat-cell>
+                        </ng-container>
+                        <ng-container matColumnDef="firstInstallmentDate">
+                            <mat-header-cell *matHeaderCellDef mat-sort-header> FIRST INSTALLMENT DATE </mat-header-cell>
+                            <mat-cell *matCellDef="let row"> {{row.firstInstallmentDate | date:'yyyy/MM/dd'}} </mat-cell>
+                        </ng-container>
+                        <ng-container matColumnDef="annualPremium" >
+                            <mat-header-cell *matHeaderCellDef mat-sort-header> ANNUAL PREMIUM </mat-header-cell>
+                            <mat-cell *matCellDef="let row" class="right-aligned-amounts"> {{row.annualPremium | currency:'R'}} </mat-cell>
+                        </ng-container>
+                        <ng-container matColumnDef="installmentPremium">
+                            <mat-header-cell *matHeaderCellDef mat-sort-header> INSTALLMENT PREMIUM </mat-header-cell>
+                            <mat-cell *matCellDef="let row" class="right-aligned-amounts"> {{row.installmentPremium | currency:'R'}} </mat-cell>
+                        </ng-container>
+                        <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
+                        <mat-row *matRowDef="let row; columns: displayedColumns;"></mat-row>
+                    </mat-table>
+                    <mat-paginator #paginator [length]="dataSource.filteredData.length" [pageIndex]="0" [pageSize]="10" [pageSizeOptions]="[5, 10, 25, 100]">
+                    </mat-paginator>
+                </div>
+            </div>
+        </mat-card-content>
+    </mat-card>
+</div>
+<div>
+    <table class="form-group row" style="    margin-left: 29px;">
+        <button [disabled]="canExport==0" (click)="exporttoCSV()" class="button float-button">Export</button>
+        <button type="button" (click)="clear()" class="button float-button">Back</button>
+    </table>
+</div>

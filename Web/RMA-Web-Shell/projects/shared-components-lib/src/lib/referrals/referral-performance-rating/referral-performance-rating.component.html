@@ -1,0 +1,42 @@
+<mat-card *ngIf="(isLoading$ | async)">
+  <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+  <label class="mat-label other-label"><i>{{loadingMessage$ | async}}</i></label>
+</mat-card>
+
+<mat-card *ngIf="!(isLoading$ | async)">
+  <div class="menu-bar">
+    <span class="material-icons">
+      rule_folder
+    </span>
+    Referral Rating<span *ngIf="referral.referralStatus != closed"></span>
+    <span *ngIf="form.valid && !form.pristine" (click)="confirmClosure()" class="material-icons pointer right pulse"
+      matTooltip="save">
+      save
+    </span>
+  </div>
+
+  <form [formGroup]="form" class="mat-container details-form" novalidate>
+    <section>
+      <mat-form-field class="mat-form-field">
+        <label class="mat-label other-label mandatory-field">Rating</label>
+        <mat-select name="referralRating" id="referralRating" formControlName="referralRating">
+          <mat-option *ngFor="let referralRating of referralRatings" [value]="referralRating">
+            {{formatLookup(referralRating)}}
+          </mat-option>
+        </mat-select>
+        <mat-error *ngIf="form.get('referralRating').hasError('required')">
+          rating is <strong>required</strong>
+        </mat-error>
+      </mat-form-field>
+
+      <mat-form-field class="mat-form-field-right">
+        <label class="mat-label other-label mandatory-field">Rating Comment</label>
+        <textarea matInput maxlength="4000" name="comment" id="comment" formControlName="comment" cdkTextareaAutosize
+          cdkAutosizeMinRows="1" cdkAutosizeMaxRows="10"></textarea>
+        <mat-error *ngIf="form.get('comment').hasError('required')">
+          rating comment is <strong>required</strong>
+        </mat-error>
+      </mat-form-field>
+    </section>
+  </form>
+</mat-card>

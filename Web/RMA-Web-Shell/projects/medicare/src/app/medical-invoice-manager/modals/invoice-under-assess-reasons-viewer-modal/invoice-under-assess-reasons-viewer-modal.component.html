@@ -1,0 +1,12 @@
+<div mat-dialog-content>
+    <div *ngIf="loading$ | async">
+      <mat-progress-bar mode="indeterminate"
+        [ngClass]="{ 'loading-main-double-menu-progress': doubleMenu, 'loading-main-single-menu-progress': !doubleMenu }">
+      </mat-progress-bar>
+      <p class="site-font grey">Loading...</p>
+    </div>
+    <app-under-assess-reasons-viewer [invoiceUnderAssessReasons]="invoiceData"></app-under-assess-reasons-viewer>
+  </div>
+  <div mat-dialog-actions>
+    <button mat-button class="cancel-btn" [mat-dialog-close]="true">Cancel</button>
+  </div>

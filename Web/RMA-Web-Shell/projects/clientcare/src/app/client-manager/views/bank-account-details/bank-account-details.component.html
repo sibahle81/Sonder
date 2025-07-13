@@ -1,0 +1,132 @@
+﻿<div class="page-header"></div>
+<div *ngIf="!canAdd">
+    <h1>Bank Account Details</h1>
+    <div style="padding-bottom: 15px; color: orange; font-family: 'Oswald', sans-serif;">You do not have sufficient permissions to add a new bank account.</div>
+    <div (click)="back()" class="form-buttons submit-button">
+        <button type="button" class="button float-button">Back</button>
+    </div>
+</div>
+<div [hidden]="!canAdd" style="padding-top: 15px;">
+    <mat-tab-group>
+        <mat-tab label="Bank Account Details">
+            <mat-card style="margin: 15px 30px 15px 30px">
+                <mat-card-header>
+                    <mat-card-title class="wizard-font card-title grey">
+                        <h1 class="wizard-font" style="padding: 0;">Bank Account Details</h1>
+                    </mat-card-title>
+                </mat-card-header>
+                <mat-card-content style="margin-left: 10px;">
+                    <form [formGroup]="form" (ngSubmit)="save()" class="mat-container details-form" novalidate>
+                        <section [hidden]="true">
+                            <!--Service Types-->
+                            <div>
+                                <multi-select [label]="'Account service types'"
+                                              [lookupName]="'BankAccountServiceType'"
+                                              [lookupConnectionName]="'BankAccountServiceType'"
+                                              [selectedIds]="selectedServiceTypes"
+                                              [isReadOnly]="form.disabled" (onChange)="onAccountServicesChanged()">
+                                </multi-select>
+                            </div>
+                            <mat-form-field *ngIf="isIndividualClient">
+                                <label class="mat-label other-label mandatory-field">Relationship</label>
+                                <div>
+                                    <mat-select formControlName="beneficiaryType" name="beneficiaryType" id="beneficiaryType" #beneficiaryType [(value)]="selectedBeneficiaryType">
+                                        <mat-option *ngFor="let beneficiaryType of beneficiaryTypes" [value]="beneficiaryType.id">{{beneficiaryType.name}}</mat-option>
+                                    </mat-select>
+                                </div>
+                                <mat-error *ngIf="beneficiaryType.errorState && (form.get('beneficiaryType').hasError('required'))">
+                                    Relationship is <strong>required</strong>
+                                </mat-error>
+                            </mat-form-field>
+                        </section>
+                        <section>
+                            <!--Payment method-->
+                            <mat-form-field>
+                                <label class="mat-label other-label mandatory-field">Payment method</label>
+                                <mat-select name="paymentMethod" id="paymentMethod" #payment formControlName="paymentMethod" [(value)]="paymentMethodId">
+                                    <mat-option *ngFor="let paymentMethod of paymentMethods" [value]="paymentMethod.id">{{paymentMethod.name}}</mat-option>
+                                </mat-select>
+                                <mat-error *ngIf="payment.errorState && (form.get('paymentMethod').hasError('required') || form.get('paymentMethod').hasError('min'))">
+                                    Payment method is required
+                                </mat-error>
+                            </mat-form-field>
+                            <!--Account holder-->
+                            <mat-form-field class="mat-form-field-right ">
+                                <label class="mat-label other-label mandatory-field">Account holder</label>
+                                <input matInput maxlength="50" id="accountHolderName" name="accountHolderName" formControlName="accountHolderName"/>
+                                <mat-error *ngIf="form.get('accountHolderName').hasError('required')">
+                                    Account holder name is required
+                                </mat-error>
+                            </mat-form-field>
+                        </section>
+                        <section>
+                            <!--Account type-->
+                            <mat-form-field>
+                                <label class="mat-label other-label mandatory-field">Account type</label>
+                                <mat-select name="accountType" id="accountType" #account formControlName="accountType" [(value)]="accountTypeId">
+                                    <mat-option *ngFor="let accountType of bankAccountTypes" [value]="accountType.id">{{accountType.name}}</mat-option>
+                                </mat-select>
+                                <mat-error *ngIf="account.errorState && (form.get('accountType').hasError('required') || form.get('accountType').hasError('min'))">
+                                    Account type is required
+                                </mat-error>
+                            </mat-form-field>
+                            <!--Bank name-->
+                            <mat-form-field class="mat-form-field-right">
+                                <label class="mat-label other-label mandatory-field">Bank name</label>
+                                <mat-select name="bank" id="banks" formControlName="bank" #bank [(value)]="bankId" (selectionChange)="bankChange($event)">
+                                    <mat-option *ngFor="let bank of banks" [value]="bank.id">{{bank.name}}</mat-option>
+                                </mat-select>
+                                <mat-error *ngIf="bank.errorState && (form.get('bank').hasError('required') || form.get('bank').hasError('min'))">
+                                    Bank is required
+                                </mat-error>
+                            </mat-form-field>
+                        </section>
+                        <section>
+                            <!--Branch code-->
+                            <mat-form-field>
+                                <label class="mat-label other-label">Branch code</label>
+                                <input matInput id="universalBranchCode" name="universalBranchCode" formControlName="universalBranchCode" NumberOnly="true">
+                            </mat-form-field>
+                            <!--Account number-->
+                            <mat-form-field class="mat-form-field-right ">
+                                <label class="mat-label other-label mandatory-field">Account number</label>
+                                <input matInput maxlength="20" id="accountNumber" name="accountNumber" formControlName="accountNumber" NumberOnly="true">
+                                <mat-error *ngIf="form.get('accountNumber').hasError('required')">
+                                    Account number is required
+                                </mat-error>
+                            </mat-form-field>
+                        </section>
+                        <section>
+                            <!--Validate bank account-->
+                            <label class="mat-label other-label">&nbsp;</label>
+                            <input [hidden]="true" matInput formControlName="validateAccount"/>
+                            <mat-checkbox formControlName="validateAccount">
+                                <label class="mat-label other-label">Verify banking details are valid?</label>
+                            </mat-checkbox>
+                        </section>
+                        <!-- Last modified info -->
+                        <last-modified-by type="Bank Account"></last-modified-by>
+                        <!--Buttons-->
+                        <div *ngIf="showButtons" class="form-group-button mat-form-button">
+                            <div *ngIf="showSaveButton" class="form-buttons" matTooltip="No changes have been made" [matTooltipDisabled]="!form.pristine">
+                                <button [disabled]="form.pristine" class="button float-button submit-button">Save</button>
+                            </div>
+                            <div *ngIf="showEditButton" (click)="edit()" class="form-buttons submit-button">
+                                <button type="button" class="button float-button">Edit</button>
+                            </div>
+                            <div (click)="back()" class="form-buttons submit-button">
+                                <button type="button" (click)="goBack()" class="button float-button">Back</button>
+                            </div>
+                        </div>
+                    </form>
+                </mat-card-content>
+            </mat-card>
+        </mat-tab>
+        <mat-tab label="Notes">
+            <notes name="bank account"></notes>
+        </mat-tab>
+        <mat-tab label="Audit Log">
+            <audit-log name="bank account"></audit-log>
+        </mat-tab>
+    </mat-tab-group>
+</div>

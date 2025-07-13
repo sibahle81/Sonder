@@ -1,0 +1,91 @@
+<mat-card>
+    <div class="menu-bar">
+      <span class="material-icons">
+        assignment
+      </span>
+      Eye Injury
+      <span *ngIf="form && form.valid" (click)="save()" class="material-icons pointer right pulseGreen" matTooltip="save">
+          save
+      </span>
+    </div>    
+    <form [formGroup]="form" name="form" class="mat-container details-form">
+        <div *ngIf="isLoadingCategories">
+            <mat-progress-bar mode="indeterminate" [ngClass]="{ 'loading-main-double-menu-progress': doubleMenu, 'loading-main-single-menu-progress': !doubleMenu }">
+            </mat-progress-bar>
+            <p class="site-font grey">Loading categories...</p>
+        </div>
+
+        <section>
+            <mat-form-field class="mat-form-field" color="accent">
+                <label class="mat-label other-label mandatory-field">Is Use Of Glasses Necessary</label>
+                <input [hidden]="true" matInput formControlName="glassesNecessary"/>
+                <mat-select formControlName="glassesNecessary" id="glassesNecessary" name="glassesNecessary">
+                    <mat-option value="Yes">Yes</mat-option>
+                    <mat-option value="No">No</mat-option>
+                </mat-select>
+            </mat-form-field>
+            <mat-form-field class="mat-form-field-right" color="accent">
+                <label class="mat-label other-label">Reason Glasses Not Prescribed</label>
+                <textarea matInput cdkTextareaAutosize cdkAutosizeMinRows="3" cdkAutosizeMaxRows="5" id="reasonGlasses"
+                    formControlName="reasonGlasses" class="mat-input-element" maxlength="1000"></textarea>
+            </mat-form-field>
+        </section>
+
+        <section>
+            <mat-form-field class="mat-form-field" color="accent">
+                <label class="mat-label other-label">Were Any Operations Performed</label>
+                <input [hidden]="true" matInput formControlName="anyOperationsPerformed"/>
+                <mat-select formControlName="anyOperationsPerformed" id="anyOperationsPerformed" name="anyOperationsPerformed">
+                    <mat-option value="Yes">Yes</mat-option>
+                    <mat-option value="No">No</mat-option>
+                </mat-select>
+            </mat-form-field>
+            <mat-form-field class="date-field mat-form-field-right" color="accent">
+                <label class="mat-label other-label">Fit For Normal Work Since</label>
+                <input matInput [matDatepicker]="fitForNormalWorkSince" formControlName="fitForNormalWorkSince" id="fitForNormalWorkSince">
+                <mat-datepicker-toggle matSuffix [for]="fitForNormalWorkSince"></mat-datepicker-toggle>
+                <mat-datepicker #fitForNormalWorkSince></mat-datepicker>
+            </mat-form-field>
+        </section>
+
+        <section>
+            <mat-form-field class="date-field mat-form-field" color="accent">
+                <label class="mat-label other-label">Date Can Resume Normal Work</label>
+                <input matInput [matDatepicker]="resumeNormalWork" formControlName="resumeNormalWork" id="resumeNormalWork">
+                <mat-datepicker-toggle matSuffix [for]="resumeNormalWork"></mat-datepicker-toggle>
+                <mat-datepicker #resumeNormalWork></mat-datepicker>
+            </mat-form-field>
+            <mat-form-field class="mat-form-field-right" color="accent">
+                <label class="mat-label other-label">Loss Of Field Of Vision</label>
+                <input [hidden]="true" matInput formControlName="lossFieldVision"/>
+                <mat-select formControlName="lossFieldVision" id="lossFieldVision" name="lossFieldVision">
+                    <mat-option value="Yes">Yes</mat-option>
+                    <mat-option value="No">No</mat-option>
+                </mat-select>
+            </mat-form-field>
+        </section>        
+
+        <section>
+            <mat-form-field class="mat-form-field" color="accent">                
+                <label class="mat-label other-label mandatory-field">Percentage Loss FOV RightEye</label>
+                <input matInput formControlName="percentageLossFOVRightEye" id="percentageLossFOVRightEye" name="percentageLossFOVRightEye">
+            </mat-form-field>
+            <mat-form-field class="mat-form-field-right" color="accent">                
+                <label class="mat-label other-label mandatory-field">Percentage Loss FOV LeftEye</label>
+                <input matInput formControlName="percentageLossFOVLeftEye" id="percentageLossFOVLeftEye" name="percentageLossFOVLeftEye">
+            </mat-form-field>
+        </section>
+
+        <section>
+            <mat-form-field class="mat-form-field" color="accent">
+                <label class="mat-label other-label">Loss Of Motility</label>
+                <input [hidden]="true" matInput formControlName="lossOfMotility"/>
+                <mat-select formControlName="lossOfMotility" id="lossOfMotility" name="lossOfMotility">
+                    <mat-option value="Yes">Yes</mat-option>
+                    <mat-option value="No">No</mat-option>
+                </mat-select>
+            </mat-form-field>
+        </section>
+        
+    </form>
+</mat-card>

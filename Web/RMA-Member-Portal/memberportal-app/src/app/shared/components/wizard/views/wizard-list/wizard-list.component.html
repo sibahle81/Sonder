@@ -1,0 +1,94 @@
+﻿<!-- 6 -->
+<div [hidden]="isError">
+    <div class="page-header">
+        <h1>{{label}}</h1>
+    </div>
+    <div class="mat-container mat-elevation-z8">
+
+        <div [hidden]="dataSource.data.length === 0 || isLoading">
+            <div class="mat-header">
+                <div class="search-container search-container-right">
+                    <input type="text" name="local-search" placeholder="search..." #filter (keyup)="filterData($event)">
+                </div>
+                <div *ngIf="allowAdd" class="new-button new-button-top" (click)="newWizard()">
+                    <button name="top-button" class="button">{{buttonLabel}}</button>
+                </div>
+            </div>
+
+            <div [hidden]="dataSource.filteredData.length === 0 || isLoading">
+
+                <mat-table #table [dataSource]="dataSource" matSort>
+
+                    <!-- Name -->
+                    <ng-container matColumnDef="name">
+                        <mat-header-cell *matHeaderCellDef mat-sort-header> Name </mat-header-cell>
+                        <mat-cell *matCellDef="let row"> {{row.name}} </mat-cell>
+                    </ng-container>
+
+                    <!-- Type -->
+                    <ng-container matColumnDef="type">
+                        <mat-header-cell *matHeaderCellDef mat-sort-header> Type </mat-header-cell>
+                        <mat-cell *matCellDef="let row"> {{row.type}} </mat-cell>
+                    </ng-container>
+
+                    <!-- Last Modified By -->
+                    <ng-container matColumnDef="modifiedByDisplayName">
+                        <mat-header-cell *matHeaderCellDef mat-sort-header> Last Modified By </mat-header-cell>
+                        <mat-cell *matCellDef="let row"> {{row.modifiedByDisplayName}} </mat-cell>
+                    </ng-container>
+
+                    <!-- Locked status -->
+                    <ng-container matColumnDef="lockedStatus">
+                        <mat-header-cell *matHeaderCellDef mat-sort-header> Locked Status </mat-header-cell>
+                        <mat-cell *matCellDef="let row">
+                            <span *ngIf="!row.lockedReason && (!row.lockedToUser || row.lockedToUser === '')">Unlocked.</span>
+                            <span *ngIf="!row.lockedReason && (row.lockedToUser && row.lockedToUser === currentUser)">Locked
+                            to you.</span>
+                            <span *ngIf="row.lockedReason">{{row.lockedReason}}</span>
+                        </mat-cell>
+                    </ng-container>
+
+                    <!-- Wizard status -->
+                    <ng-container matColumnDef="wizardStatus">
+                        <mat-header-cell *matHeaderCellDef mat-sort-header> Status </mat-header-cell>
+                        <mat-cell *matCellDef="let row"> {{row.wizardStatus}} </mat-cell>
+                    </ng-container>
+
+                    <!-- Actions -->
+                    <ng-container matColumnDef="actions">
+                        <mat-header-cell *matHeaderCellDef mat-sort-header> Actions </mat-header-cell>
+                        <mat-cell *matCellDef="let row">
+                            <a role="button" class="link-edit" (click)="onSelect(row)">Open</a>
+                        </mat-cell>
+                    </ng-container>
+
+                    <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
+                    <mat-row *matRowDef="let row; columns: displayedColumns;"></mat-row>
+                </mat-table>
+
+                <mat-paginator #paginator [length]="dataSource.data.length" [pageIndex]="0" [pageSize]="5" [pageSizeOptions]="[5, 10, 25, 100]">
+                </mat-paginator>
+            </div>
+        </div>
+
+        <div [hidden]="dataSource.data.length > 0" style="margin-left: 20px;">
+            <p class="grey">No {{label | lowercase}} have been added.</p>
+        </div>
+
+        <div [hidden]="dataSource.filteredData.length > 0 || dataSource.data.length === 0" class="no-search-results-add-button">
+            <div class="site-font grey">
+                <p class="grey">Your search - <strong>{{filter.value}}</strong> - did not match any {{label}}.</p>
+                <span>Suggestions: </span>
+                <ul>
+                    <li>Make sure that all words are spelled correctly</li>
+                    <li>Try different keywords.</li>
+                    <li>Try more general keywords.</li>
+                    <li>Try fewer keywords.</li>
+                </ul>
+            </div>
+            <div class="new-button" (click)="clearFilter()">
+                <button class="button float-button">Clear search</button>
+            </div>
+        </div>
+    </div>
+</div>

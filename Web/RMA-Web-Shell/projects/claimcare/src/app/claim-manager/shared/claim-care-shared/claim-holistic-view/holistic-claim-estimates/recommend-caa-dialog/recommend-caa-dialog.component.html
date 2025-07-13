@@ -1,0 +1,27 @@
+<mat-card>
+    <div class="menu-bar">
+        <label>Disability percentage is {{disabilityPercent}}. Initiating to pensions</label>
+        <br>
+        <label>You can capture recommended CAA & FA</label>
+    </div>
+    <form [formGroup]="form" class="mat-container" novalidate>
+        <br />
+        <section>
+            <mat-form-field class="mat-form-field">
+                <label class="mat-label other-label">Recommended CAA</label>
+                <input matInput formControlName="caa" name="caa" id="caa"  type="number"/>
+            </mat-form-field>
+        </section>
+        <section>
+            <mat-form-field class="mat-form-field">
+                <label class="mat-label other-label">Recommended FA</label>
+                <input matInput formControlName="fa" name="fa" id="fa" type="number" />
+            </mat-form-field>
+        </section>
+        <div class="form-buttons" >
+            <button class="button float-button submit-button" (click)="submit()">Ok</button>
+            &nbsp;&nbsp;
+            <button class="button float-button submit-button" (click)="cancel()">Cancel</button>
+        </div>
+    </form>
+</mat-card>

@@ -1,0 +1,17 @@
+<div>
+  <div>
+    <nav class="innertop-nav">
+      <button mat-button [routerLink]="['/clientcare/quote-manager']" class='Activebutton'>Home</button>
+      <button mat-button [routerLink]="['/clientcare/quote-manager/quote-search']" class='Activebutton'>Search</button>
+
+      <button mat-button [matMenuTriggerFor]="menu3" class='Activebutton'>Reports</button>
+      <mat-menu #menu3="matMenu" [overlapTrigger]="false">
+        <button mat-menu-item [routerLink]="['quote-reports']">Quote Reports</button>
+        <button mat-menu-item [routerLink]="['referral-reports']">Referral Reports</button>
+      </mat-menu>
+    </nav>
+  </div>
+  <div [hidden]="loadingMessage != null" class="container-padding">
+    <router-outlet></router-outlet>
+  </div>
+</div>

@@ -1,0 +1,45 @@
+<div class="menu-bar">
+    <span class="material-icons">
+        account_circle
+    </span>&nbsp;360 Profile<span *ngIf="selectedRolePlayer">:<b> {{selectedRolePlayer.displayName}}</b></span>
+    <span *ngIf="selectedRolePlayer || selectedPolicy" (click)="reset()" class="material-icons pointer right"
+        matTooltip="reset">
+        restart_alt
+    </span>
+</div>
+
+<mat-expansion-panel [(expanded)]='advancedFiltersExpanded'>
+    <mat-expansion-panel-header>
+        <mat-panel-title>
+            Searches
+        </mat-panel-title>
+        <mat-panel-description *ngIf="selectedRolePlayer || selectedPolicy">
+            <span class="material-icons" matTooltip="pinned context">
+                push_pin
+            </span>
+            <span *ngIf="selectedRolePlayer"><b>(Role Player):</b> {{selectedRolePlayer.displayName}}</span>
+
+            <span *ngIf="selectedRolePlayer && selectedPolicy">&nbsp;|&nbsp;</span>
+            <span *ngIf="selectedPolicy"><b>(Policy):</b> {{selectedPolicy.policyNumber}}</span>
+        </mat-panel-description>
+    </mat-expansion-panel-header>
+    <mat-tab-group animationDuration="500ms">
+        <mat-tab label="Search Role Player">
+            <role-player-search (rolePlayerSelectedEmit)="rolePlayerSelected($event)"></role-player-search>
+        </mat-tab>
+        <mat-tab label="Search Policies">
+            <policy-search-V2 (policySelectedEmit)="policySelected($event)"></policy-search-V2>
+        </mat-tab>
+    </mat-tab-group>
+</mat-expansion-panel>
+
+<br />
+
+<div *ngIf="selectedRolePlayer">
+    <person-view *ngIf="supportedPersonTypes.includes(selectedRolePlayer.rolePlayerIdentificationType)"
+        [rolePlayer]="selectedRolePlayer"></person-view>
+
+    <company-view *ngIf="supportedCompanyTypes.includes(selectedRolePlayer.rolePlayerIdentificationType)"
+        [rolePlayer]="selectedRolePlayer"></company-view>
+</div>
+

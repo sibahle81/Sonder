@@ -1,0 +1,13 @@
+<mat-card>
+  <quote-documents [quoteCode]="data.quote.quoteNumber"></quote-documents>
+  <div *ngIf="data.quote !== null">
+    <div class="form-group-button mat-form-button form-buttons shift-up">
+      <button *ngIf="data.quote.quoteStatusId != acceptedEnum" (click)="submit()"
+        class="button float-button submit-button">Submit</button>
+      <button *ngIf="data.quote.quoteStatusId != acceptedEnum" (click)="cancel()"
+        class="button float-button submit-button">Cancel</button>
+      <button *ngIf="data.quote.quoteStatusId == acceptedEnum" (click)="cancel()"
+        class="button float-button submit-button">Close</button>
+    </div>
+  </div>
+</mat-card>

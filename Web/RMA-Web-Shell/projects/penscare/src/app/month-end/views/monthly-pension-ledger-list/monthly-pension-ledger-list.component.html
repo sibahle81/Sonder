@@ -1,0 +1,86 @@
+<mat-card style="margin: 15px 30px 15px 30px">
+  <mat-card-content style="margin-left: 10px;">
+    <div>
+      <form [formGroup]="form" class="mat-container" novalidate>
+        <!--Query-->
+        <div class="page-header">
+          <h1 style="margin-bottom: 15px;">Find Pension Ledger Payment</h1>
+        </div>
+        <mat-form-field floatLabel="never">
+            <input #searchField matInput maxlength="50" formControlName="query" name="query" width="300" minLength="3">
+            <mat-placeholder class="placeholder">Search by Pension Ledger Id, Recipient, Amount, Status , PAYE, Additional Tax
+              </mat-placeholder>
+            <mat-icon class="search-icon" (click)="search()" matSuffix>search</mat-icon>
+            <mat-error *ngIf="form.get('query').hasError('minlength')">
+                Please enter a search term longer than <strong>3 characters</strong>
+            </mat-error>
+        </mat-form-field>
+      </form>
+
+      <div *ngIf="dataSource.isLoading">
+          <mat-progress-bar mode="indeterminate" [ngClass]="{ 'loading-main-double-menu-progress': doubleMenu, 'loading-main-single-menu-progress': !doubleMenu }"></mat-progress-bar>
+          <p class="site-font grey">Searching...</p>
+      </div>
+
+      <div [hidden]="dataSource.isLoading || (dataSource.data && dataSource.data.data && dataSource.data.data.length === 0)">
+          <mat-table #table [dataSource]="dataSource" matSort>
+              <ng-container matColumnDef="pensionLedgerId">
+                <mat-header-cell *matHeaderCellDef mat-sort-header> Pension Ledger Id </mat-header-cell>
+                <mat-cell *matCellDef="let row"> {{row.ledgerId}} </mat-cell>
+              </ng-container>
+
+              <ng-container matColumnDef="recipient">
+                <mat-header-cell *matHeaderCellDef mat-sort-header> Recipient </mat-header-cell>
+                <mat-cell *matCellDef="let row"> {{row.recipientName}} {{row.recipientSurname}}</mat-cell>
+              </ng-container>
+
+              <ng-container matColumnDef="amount">
+                <mat-header-cell *matHeaderCellDef mat-sort-header> Amount</mat-header-cell>
+                <mat-cell *matCellDef="let row">{{row.amount | currency: 'R'}}</mat-cell>
+              </ng-container>
+
+              <ng-container matColumnDef="paymentStatus">
+                <mat-header-cell *matHeaderCellDef mat-sort-header>Payment Status</mat-header-cell>
+                <mat-cell *matCellDef="let row">{{paymentStatus[row.paymentStatus]}}</mat-cell>
+              </ng-container>
+
+
+
+              <ng-container matColumnDef="paye">
+                <mat-header-cell *matHeaderCellDef mat-sort-header> PAYE</mat-header-cell>
+                <mat-cell *matCellDef="let row">{{row.paye | currency: 'R'}}</mat-cell>
+              </ng-container>
+
+
+
+              <ng-container matColumnDef="additionalTax">
+                <mat-header-cell *matHeaderCellDef mat-sort-header> Additional Tax</mat-header-cell>
+                <mat-cell *matCellDef="let row">{{row.additionalTax | currency: 'R'}}</mat-cell>
+              </ng-container>
+
+              <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
+              <mat-row *matRowDef="let row; columns: displayedColumns;"></mat-row>
+          </mat-table>
+
+          <mat-paginator #paginator   [pageIndex]="0" [pageSize]="5" [pageSizeOptions]="[5, 10, 25, 100]">
+          </mat-paginator>
+      </div>
+
+      <div [hidden]="(dataSource.data && dataSource.data.data && dataSource.data.data.length > 0) || !currentQuery || currentQuery == ''" class="no-search-results-add-button">
+          <div class="site-font grey">
+              <p class="grey">Your search - <strong>{{currentQuery}}</strong> - did not match any pension ledger payments.</p>
+              <span>Suggestions: </span>
+              <ul>
+                  <li>Make sure that all words are spelled correctly.</li>
+                  <li>Try different keywords.</li>
+                  <li>Try more general keywords.</li>
+                  <li>Try fewer keywords.</li>
+              </ul>
+          </div>
+      </div>
+    </div>
+  </mat-card-content>
+</mat-card>
+
+
+

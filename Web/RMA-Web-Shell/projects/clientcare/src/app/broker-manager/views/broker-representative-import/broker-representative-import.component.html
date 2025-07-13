@@ -1,0 +1,66 @@
+﻿<div class="wizard-main-content">
+    <mat-card class="wizard-mat-card-content">
+        <mat-card-header>
+            <mat-card-title class="wizard-font card-title grey">
+                <h1>Import Brokerage Representatives</h1>
+            </mat-card-title>
+        </mat-card-header>
+        <mat-card-content class="mat-card-content">
+            <div *ngIf="isLoading">
+                <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+            </div>
+            <form [formGroup]="form" class="mat-container details-form" novalidate>
+                <section>
+                    <div>
+                        <mat-form-field class="mat-form-field">
+                            <label class="mat-label other-label">Enter FSP Number</label>
+                            <input matInput maxlength="7" id="fspNumber" name="fspNumber" formControlName="fspNumber" /><br />
+                            <div [hidden]="validateFspNumberLength" (click)="search()" class="form-buttons import-icon">
+                                <button type="button" title="Search FSP Details" class="button float-button submit-button import-button"><i
+                                        class="material-icons">search</i></button>
+                            </div>
+                        </mat-form-field>
+                    </div>
+                </section>
+                <section>
+                    <div [hidden]="hideFSPImport">
+                        <div>
+                            <mat-form-field class="mat-form-field">
+                                <label class="mat-label other-label mandatory-field">Representative Identification
+                                    Number</label>
+                                <input matInput id="idNumber" name="idNumber" formControlName="idNumber" type="text" onKeyPress="if(this.value.length==15) return false;" />
+                                <div (click)="addIdNumber()" class="form-buttons import-icon">
+                                    <button type="button" title="Add Representative Id Number" class="button float-button submit-button import-button"><i
+                                            class="material-icons">group_add</i></button>
+                                </div>
+                                <mat-card>
+                                    <mat-card-header>
+                                        <mat-card-title> Representative</mat-card-title>
+                                        <mat-card-subtitle>Identification Number ({{representativeIdNumbers.length}})
+                                        </mat-card-subtitle>
+                                    </mat-card-header>
+                                    <mat-card-content class="card-container">
+                                        <mat-expansion-panel>
+                                            <mat-expansion-panel-header class="panel-header">
+                                            </mat-expansion-panel-header>
+                                            <div>
+                                                <ul>
+                                                    <li *ngFor="let idNumber of representativeIdNumbers" (click)="removeIdNumber(idNumber)">
+                                                        {{ idNumber }}</li>
+                                                </ul>
+                                            </div>
+                                        </mat-expansion-panel><br>
+                                        <div [hidden]="hasRepresentativeIdNumbers" (click)="submitFSPDataImportRequest()" class="import-data">
+                                            <button title="Submit FSP Import Request" type="button" class="button import-button import-data"><i
+                                                    class="material-icons">trending_flat</i></button>
+                                        </div>
+                                    </mat-card-content>
+                                </mat-card>
+                            </mat-form-field>
+                        </div>
+                    </div>
+                </section>
+            </form>
+        </mat-card-content>
+    </mat-card>
+</div>

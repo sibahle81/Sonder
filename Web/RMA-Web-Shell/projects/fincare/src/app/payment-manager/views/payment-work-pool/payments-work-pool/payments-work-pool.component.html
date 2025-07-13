@@ -1,0 +1,449 @@
+<form [formGroup]="form" class="mat-container" novalidate (keydown.enter)="$event.preventDefault()">
+  <div *ngIf="(dataSource.loading$ | async) || (isLoading$ | async)" class="loadingDiv">
+    <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+    <span class="site-font">loading {{heading}}...please wait</span>
+  </div>
+  <div [hidden]="(dataSource.loading$ | async) || (isLoading$ | async)">
+    <div [hidden]="(dataSource.loading$ | async)">
+      <section>
+        <div class="menu-bar">
+          <span class="material-icons">
+            engineering
+          </span>&nbsp;Search Payments
+          <span *ngIf="!hideVisibility" class="material-icons pointer right" matTooltip="refresh" (click)="ClearData()">
+            restart_alt
+          </span>&nbsp;&nbsp;
+          <span *ngIf="!hideVisibility" class="material-icons pointer right" (click)="applyData()"
+            matTooltip="apply filters">
+            save
+          </span>
+          &nbsp;&nbsp;
+          <span *ngIf="hideVisibility" (click)="showDetail()"
+            [ngClass]="{'material-icons pointer right': hideVisibility}" matTooltip="view details">
+            visibility
+          </span>
+          &nbsp;&nbsp;
+          <span *ngIf="!hideVisibility" (click)="showDetail()"
+            [ngClass]="{'material-icons pointer right': !hideVisibility}" matTooltip="hide details">
+            visibility_off
+          </span>
+        </div>
+
+        <div *ngIf="!hideVisibility">
+          <div>
+            <mat-form-field class="mat-form-field inputDate">
+              <label class="other-label">From Date</label>
+              <input readonly matInput [min]="minDate" [max]="maxDate" date="true" time="false"
+                formControlName="startDate" [matDatepicker]="startDate" id="startDate" />
+              <mat-datepicker-toggle matSuffix [for]="startDate"></mat-datepicker-toggle>
+              <mat-datepicker touchUi="true" #startDate></mat-datepicker>
+            </mat-form-field>
+            &nbsp;
+            <mat-form-field class="mat-form-field inputDate">
+              <label class="other-label">End Date</label>
+              <input readonly matInput [max]="maxDate" date="true" time="false" formControlName="endDate"
+                [matDatepicker]="endDate" id="endDate" />
+              <mat-datepicker-toggle matSuffix [for]="endDate">
+              </mat-datepicker-toggle>
+              <mat-datepicker touchUi="true" #endDate></mat-datepicker>
+              <mat-error *ngIf="form.get('endDate').hasError('min-date')" class="validations">
+                End date cannot be before <strong>From date</strong>
+              </mat-error>
+            </mat-form-field>
+          </div>
+          <mat-form-field class="mat-form-field inputDate">
+            <label class="other-label">Payment Type</label>
+            <mat-select name="paymentType" id="paymentType" formControlName="paymentType"
+            (selectionChange)="paymentTypeChange($event)">
+            <mat-option [value]="0">All</mat-option>
+              <mat-option *ngFor="let item of paymentTypes" [value]="item.id">
+                {{item.name}}
+              </mat-option>
+            </mat-select>
+          </mat-form-field>
+          &nbsp;
+          <mat-form-field class="mat-form-field inputDate">
+            <label class="other-label">Payment Status</label>
+            <mat-select name="paymentStatus" id="paymentStatus" formControlName="paymentStatus"
+              (selectionChange)="paymentStatusChange($event)">
+              <mat-option [value]="0">All</mat-option>
+              <mat-option *ngFor="let item of paymentStatuses" [value]="item.id">{{item.name}}
+              </mat-option>
+            </mat-select>
+          </mat-form-field>
+          &nbsp;
+          <div *ngIf="isShowClaimTypes">
+            <mat-form-field class="mat-form-field inputDate">
+              <label class="other-label">Claim Type</label>
+              <mat-select name="claimTypes" id="claimTypes" formControlName="claimTypes">
+                <mat-option *ngFor="let claimType of claimTypes" [value]="claimType.value">
+                    {{ claimType.key}}
+                </mat-option>
+            </mat-select>
+            </mat-form-field>
+          </div>
+          &nbsp;
+          <div *ngIf="form.get('claimTypes').value !== funeralClaimsPayment && !disable_coid_vaps_e2e_fincare">
+            <mat-form-field class="mat-form-field inputDate">
+              <label class="other-label">Transaction Type</label>
+              <mat-select name="coidPaymentType" id="coidPaymentType" formControlName="coidPaymentType">
+                <mat-option *ngFor="let item of coidPaymentTypes" [value]="item.value">
+                  {{item.key}}
+                </mat-option>
+              </mat-select>
+            </mat-form-field>
+          </div>
+          &nbsp;
+          <div *ngIf="form.get('paymentType').value === pensionPayment">
+            <mat-form-field class="mat-form-field inputDate">
+              <label class="other-label">Pension Payment Type</label>
+              <mat-select name="pensionPaymentType" id="pensionPaymentType" formControlName="pensionPaymentType">
+                <mat-option *ngFor="let item of pensionTransactionTypes" [value]="item.value">
+                  {{item.key}}
+                </mat-option>
+              </mat-select>
+            </mat-form-field>
+          </div>
+        &nbsp;
+          <mat-form-field [floatLabel]="'never'">
+            <input matInput maxlength="50" name="searchTerm" id="searchTerm" formControlName="searchTerm" minLength="3"
+              class="inputColor elementBox" matTooltip="Search by Claim Number, Payee, Member Name, Member Number, Policy Reference,
+                      ID number, Reference, Product" matTooltipShowDelay="1000" (keyup.enter)="applyData()">
+            <mat-placeholder class="placeholder">
+              Search by Claim Number, Payee, Member Name, Member Number, Policy Number, ID number
+            </mat-placeholder>
+          </mat-form-field>
+        </div>
+      </section>
+    </div>
+
+    <div [hidden]="(dataSource.loading$ | async)
+                || (dataSource && dataSource.data && dataSource.data.data && dataSource.data.data.length <= 0)
+                || (paginator && paginator.length === 0 && !(dataSource.loading$ | async))">
+
+      <div class="table-responsive">
+        <mat-table #table [dataSource]="dataSource" matSort id="tblData" multiTemplateDataRows
+        (matSortChange)="getData()" [ngClass]="{'mat-table-reconciled': (selectedPaymentStatus == 2 || selectedPaymentStatus == 3 || selectedPaymentStatus == 5 || selectedPaymentStatus == 6),
+        'mat-table-rejected': (selectedPaymentStatus == 4)}">
+
+        <ng-container matColumnDef="select">
+          <mat-header-cell *matHeaderCellDef>
+            <mat-checkbox (change)="selectAll()" id="chk_main_header" [checked]="isSelectAllSelected"
+              matTooltip="select/deselect all" [disabled]="dataSource.isSelectAllDisabled"></mat-checkbox>
+          </mat-header-cell>
+          <mat-cell *matCellDef="let row">
+            <mat-checkbox id="chk_{{row.paymentId}}" (change)="AddCheckedItems(row, false)"
+              [disabled]="row.disableSelection || disableReAllocate(row) || disableAllocate(row)" [checked]="isSelected(row)">
+            </mat-checkbox>
+          </mat-cell>
+          <mat-footer-cell *matFooterCellDef></mat-footer-cell>
+        </ng-container>
+
+        <ng-container matColumnDef="reference">
+          <mat-header-cell *matHeaderCellDef> Payment Reference Number </mat-header-cell>
+          <mat-cell *matCellDef="let row"> {{row.reference}} </mat-cell>
+          <mat-footer-cell *matFooterCellDef></mat-footer-cell>
+        </ng-container>
+        `
+        <ng-container matColumnDef="batchReference">
+          <mat-header-cell *matHeaderCellDef> Batch Number </mat-header-cell>
+          <mat-cell *matCellDef="let row"> {{row.batchReference}} </mat-cell>
+          <mat-footer-cell *matFooterCellDef></mat-footer-cell>
+        </ng-container>
+
+        <ng-container matColumnDef="assignedTo">
+          <mat-header-cell *matHeaderCellDef> Assigned
+            To</mat-header-cell>
+          <mat-cell *matCellDef="let row">
+            <div>
+              <user-display-name *ngIf="row.assignedTo" [userId]="row.assignedTo"></user-display-name>
+
+              <ng-container *ngIf="!row.assignedTo">
+                <span class="material-icons noHover" matTooltip="Unassigned">
+                  assignment_ind
+                </span>
+              </ng-container>
+            </div>
+          </mat-cell>
+          <mat-footer-cell *matFooterCellDef></mat-footer-cell>
+        </ng-container>
+
+        <ng-container matColumnDef="paymentStatus">
+          <mat-header-cell *matHeaderCellDef [disabled]="!hasSearchPermission()"> Payment Status
+          </mat-header-cell>
+          <mat-cell *matCellDef="let row">
+            <label [ngClass]="{
+                            'green' : row.paymentStatus == submitted || row.paymentStatus == paid,
+                            'amber' : row.paymentStatus == queued || row.paymentStatus == pending,
+                            'blue'  : row.paymentStatus == reconciled,
+                            'red'   : row.paymentStatus == rejected || row.paymentStatus == notReconciled,
+                            'gray'  : !row.paymentStatus}">
+              {{row.paymentStatus ? getPaymentStatus(row.paymentStatus) : 'no data'}}
+            </label>
+          </mat-cell>
+          <mat-footer-cell *matFooterCellDef></mat-footer-cell>
+        </ng-container>
+
+        <ng-container matColumnDef="isReversed">
+          <mat-header-cell *matHeaderCellDef> Reversed </mat-header-cell>
+          <mat-cell *matCellDef="let row">
+            <mat-checkbox id="ch_rev_{{row.paymentId}}"
+            [disabled]="true" [checked]="row.isReversed">
+          </mat-checkbox>
+          </mat-cell>
+          <mat-footer-cell *matFooterCellDef></mat-footer-cell>
+        </ng-container>
+
+        <!-- Bank Statement Reference  -->
+        <ng-container matColumnDef="bankStatementReference">
+          <mat-header-cell *matHeaderCellDef> Bank Reference Number </mat-header-cell>
+          <mat-cell *matCellDef="let row"> {{row.bankReference}} </mat-cell>
+          <mat-footer-cell *matFooterCellDef></mat-footer-cell>
+        </ng-container>
+
+        <!-- Date -->
+        <ng-container matColumnDef="createdDate">
+          <mat-header-cell *matHeaderCellDef> Date Authorized </mat-header-cell>
+          <mat-cell *matCellDef="let row">
+            {{row.createdDate | date:"yyyy-MM-dd"}}
+          </mat-cell>
+          <mat-footer-cell *matFooterCellDef></mat-footer-cell>
+        </ng-container>
+
+        <ng-container matColumnDef="sla">
+          <mat-header-cell *matHeaderCellDef> SLA </mat-header-cell>
+          <mat-cell *matCellDef="let row">
+            <sla-status-change-audit [slaItemType]="slaItemType" [itemId]="row.paymentId"></sla-status-change-audit>
+          </mat-cell>
+          <mat-footer-cell *matFooterCellDef></mat-footer-cell>
+        </ng-container>
+
+        <!-- Date -->
+        <ng-container matColumnDef="submissionDate">
+          <mat-header-cell *matHeaderCellDef> Submission Date </mat-header-cell>
+          <mat-cell *matCellDef="let row">
+            {{row.submissionDate | date:"yyyy-MM-dd"}}
+          </mat-cell>
+          <mat-footer-cell *matFooterCellDef></mat-footer-cell>
+        </ng-container>
+
+        <!-- Date -->
+        <ng-container matColumnDef="rejectionDate">
+          <mat-header-cell *matHeaderCellDef> Rejection Date </mat-header-cell>
+          <mat-cell *matCellDef="let row">
+            {{row.rejectionDate | date:"yyyy-MM-dd"}}
+          </mat-cell>
+          <mat-footer-cell *matFooterCellDef></mat-footer-cell>
+        </ng-container>
+
+        <!-- Date -->
+        <ng-container matColumnDef="paymentConfirmationDate">
+          <mat-header-cell *matHeaderCellDef> Payment Date </mat-header-cell>
+          <mat-cell *matCellDef="let row">
+            {{row.paymentConfirmationDate | date:"yyyy-MM-dd"}}
+          </mat-cell>
+          <mat-footer-cell *matFooterCellDef></mat-footer-cell>
+        </ng-container>
+
+        <!-- Date -->
+        <ng-container matColumnDef="clientNotificationDate">
+          <mat-header-cell *matHeaderCellDef>
+            Client Notification Date
+          </mat-header-cell>
+          <mat-cell *matCellDef="let row">
+            {{row.clientNotificationDate | date:"yyyy-MM-dd"}}
+          </mat-cell>
+          <mat-footer-cell *matFooterCellDef></mat-footer-cell>
+        </ng-container>
+
+        <!-- Date -->
+        <ng-container matColumnDef="reconciliationDate">
+          <mat-header-cell *matHeaderCellDef> Reconciliation Date </mat-header-cell>
+          <mat-cell *matCellDef="let row">
+            {{row.reconciliationDate | date:"yyyy-MM-dd"}}
+          </mat-cell>
+          <mat-footer-cell *matFooterCellDef></mat-footer-cell>
+        </ng-container>
+        <!--Payment Type -->
+        <ng-container matColumnDef="product">
+          <mat-header-cell *matHeaderCellDef> Product </mat-header-cell>
+          <mat-cell *matCellDef="let row"> {{row.product}} </mat-cell>
+          <mat-footer-cell *matFooterCellDef></mat-footer-cell>
+        </ng-container>
+
+        <!--Role -->
+        <ng-container matColumnDef="paymentType">
+          <mat-header-cell *matHeaderCellDef> Payment Type </mat-header-cell>
+          <mat-cell *matCellDef="let row">
+            {{row.claimInvoiceTypeId ? getClaimInvoiceTypeById(row.claimInvoiceTypeId) :
+            this.getPaymentType(row.paymentType)}} </mat-cell>
+          <mat-footer-cell *matFooterCellDef></mat-footer-cell>
+        </ng-container>
+
+        <ng-container matColumnDef="payee">
+          <mat-header-cell *matHeaderCellDef>{{this.payeeDetail}} </mat-header-cell>
+          <mat-cell *matCellDef="let row"> {{row.payee}} </mat-cell>
+          <mat-footer-cell *matFooterCellDef></mat-footer-cell>
+        </ng-container>
+
+        <ng-container matColumnDef="accountNo">
+          <mat-header-cell *matHeaderCellDef> Payee Account</mat-header-cell>
+          <mat-cell *matCellDef="let row"> {{row.accountNo}} </mat-cell>
+          <mat-footer-cell *matFooterCellDef></mat-footer-cell>
+        </ng-container>
+
+        <ng-container matColumnDef="policyReference">
+          <mat-header-cell *matHeaderCellDef> Policy Number </mat-header-cell>
+          <mat-cell *matCellDef="let row"> {{row.policyReference}} </mat-cell>
+          <mat-footer-cell *matFooterCellDef></mat-footer-cell>
+        </ng-container>
+
+        <ng-container matColumnDef="claimId">
+          <mat-header-cell *matHeaderCellDef> Claim Number </mat-header-cell>
+          <mat-cell *matCellDef="let row"> {{row.claimReference}} </mat-cell>
+          <mat-footer-cell *matFooterCellDef></mat-footer-cell>
+        </ng-container>
+
+        <ng-container matColumnDef="pensionRef">
+          <mat-header-cell *matHeaderCellDef> Pension Number </mat-header-cell>
+          <mat-cell *matCellDef="let row"> {{row.pensionRef}} </mat-cell>
+          <mat-footer-cell *matFooterCellDef></mat-footer-cell>
+        </ng-container>
+
+        <ng-container matColumnDef="benefitCode">
+          <mat-header-cell *matHeaderCellDef> Benefit Code </mat-header-cell>
+          <mat-cell *matCellDef="let row"> {{row.benefitCode}} </mat-cell>
+          <mat-footer-cell *matFooterCellDef></mat-footer-cell>
+        </ng-container>
+
+        <ng-container matColumnDef="amount">
+          <mat-header-cell *matHeaderCellDef> Amount to be paid </mat-header-cell>
+          <mat-cell *matCellDef="let row">
+            {{ row.amount | currency:'ZAR':'' | replace:',':' ' }}
+          </mat-cell>
+          <mat-footer-cell *matFooterCellDef> Total: {{ calculateTotalAmount(dataSource) | currency:'ZAR':'' | replace:',':' ' }}
+          </mat-footer-cell>
+        </ng-container>
+
+        <ng-container matColumnDef="destinationCountry">
+          <mat-header-cell *matHeaderCellDef> Destination </mat-header-cell>
+          <mat-cell *matCellDef="let row">{{ getCountryName(row.destinationCountryId) }}</mat-cell>
+          <mat-footer-cell *matFooterCellDef></mat-footer-cell>
+        </ng-container>
+
+        <ng-container matColumnDef="errorDescription">
+          <mat-header-cell *matHeaderCellDef> Rejection Reason </mat-header-cell>
+          <mat-cell *matCellDef="let row"> {{row.errorDescription}} </mat-cell>
+          <mat-footer-cell *matFooterCellDef></mat-footer-cell>
+        </ng-container>
+
+        <ng-container matColumnDef="senderAccountNo">
+          <mat-header-cell *matHeaderCellDef> Sender Account Number </mat-header-cell>
+          <mat-cell *matCellDef="let row"> {{row.senderAccountNo}} </mat-cell>
+          <mat-footer-cell *matFooterCellDef></mat-footer-cell>
+        </ng-container>
+
+        <ng-container matColumnDef="actions">
+          <mat-header-cell *matHeaderCellDef>
+            <span class="material-icons noHover">
+              more_vert
+            </span>
+          </mat-header-cell>
+          <mat-cell *matCellDef="let row" [matMenuTriggerFor]="menu" (click)="filterMenu(row)">
+            <span class="material-icons pointer right">
+              more_vert
+            </span>
+            <mat-menu #menu="matMenu">
+              <button mat-menu-item *ngFor="let menu of menus" disabled={{menu.disable}}
+                (click)="onMenuSelect(row, menu)">{{menu.title}}</button>
+            </mat-menu>
+          </mat-cell>
+          <mat-footer-cell *matFooterCellDef></mat-footer-cell>
+        </ng-container>
+        <mat-header-row *matHeaderRowDef="getDisplayedColumns()"></mat-header-row>
+        <mat-row *matRowDef="let row; columns: getDisplayedColumns();" [class.expanded]="row.isExpanded"></mat-row>
+        <mat-footer-row *matFooterRowDef="getDisplayedColumns()"></mat-footer-row>
+      </mat-table>
+      </div>
+
+      <mat-paginator #paginator [pageIndex]="0" [pageSize]="5" [pageSizeOptions]="[5, 10, 25, 100, 500, 1000]"
+        [length]="this.dataSource.rowCount$ | async" (page)="getData()">
+      </mat-paginator>
+
+      <message-float-shared [floatMessage]="floatMessage"></message-float-shared>
+
+      <div *ngIf="(isSubmitting$ | async)" class="loadingDiv">
+        <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+        <span class="site-font">submitting payments...please wait</span>
+      </div>
+
+      <div class="download-section">
+        <table>
+          <tr>
+            <td class="download-sub">
+              <input type="image" alt="Dowload" (click)="downloadReport()" src="/assets/images/downloads-icon.png"
+                width="40" height="40" />
+            </td>
+            <td class="download-sub">
+              <mat-radio-group aria-labelledby="reportformat-radio-group-label" class="reportformat-radio-group"
+                formControlName="selectedreportFormat" (change)="reportFormatChange($event)">
+                <mat-radio-button class="reportformat-radio-button" *ngFor="let reportFormat of reportFormats"
+                  [value]="reportFormat">
+                  {{reportFormat}} &nbsp;&nbsp;
+                </mat-radio-button>
+              </mat-radio-group>
+            </td>
+          </tr>
+          <tr *ngIf="(isDownloading$ | async)">
+            <td colspan="2" class="download-sub">
+              <div>
+                <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+                <label class="mat-label other-label">
+                  <i>
+                    downloading {{selectedreportFormat}} payment list
+                    report...
+                  </i>
+                </label>
+              </div>
+            </td>
+          </tr>
+          <tr>
+          </tr>
+        </table>
+      </div>
+      <div [hidden]="true">
+        <ssrs-reportviewer [reportserver]="reportServerAudit" [reporturl]="reportUrlAudit"
+          [showparameters]="showParametersAudit" [parameters]="parametersAudit" [language]="languageAudit"
+          [width]="widthAudit" [height]="heightAudit" [toolbar]="toolbarAudit" [format]="selectedreportFormat"
+          [isDownload]="isDownload" [reportName]="'Payment_List_Report'">
+        </ssrs-reportviewer>
+      </div>
+
+      <div class="form-group-button mat-form-button action-buttons">
+        <button type="button" *ngIf="userHasPermission('Work Pool Allocate User') && canAllocate"
+          (click)="sendForAllocation(true, true)" class="button float-button">Allocate</button>
+        <button type="button" *ngIf="userHasPermission('Work Pool Re-Allocate User') && canReAllocate"
+          (click)="sendForAllocation(true)" class="button float-button">Re-Allocate</button>
+        <button type="button" *ngIf="userHasPermission('Work Pool Manage User')" (click)="openManageUsersPopup()"
+          class="button float-button">Manage User</button>
+        <button type="button" *ngIf="userHasPermission('Work Pool Manage User') && isCcaPool"
+          (click)="openSceduleUsersPopup()" class="button float-button">Schedule user</button>
+        <button type="button" *ngIf="selectedPaymentsToSubmit.length > 0 && hasPermissionSubmitAllPayments && showSubmitAllButton"
+          [disabled]="(isSubmitting$ | async)" (click)="submitSelected()" class="button float-button">Submit
+          Selected</button>
+          <button type="button" *ngIf="hasPermissionSubmitAllPayments && showSubmitAllButton && submit_all_pending_payments_133770;"
+            [disabled]="(isSubmitting$ | async)" (click)="submitAllPayments()" class="button float-button">Submit All Payments</button>
+      </div>
+      <br />
+    </div>
+
+    <div *ngIf="paginator.length === 0 && !(dataSource.loading$ | async)">
+      No data found...
+    </div>
+    <br />
+
+    <allocate-work-pool-item *ngIf="canAllocate$ | async" [selectedPaymentsToAllocate]="selectedPaymentsToAllocateApi"
+      [loggedInUerId]="userLoggedIn.id" [workPool]="selectedWorkPool"
+      [filteredUsersDropdown]="!userHasPermission('Work Pool Re-Allocate User') ? users : workPoolUsers"></allocate-work-pool-item>
+  </div>
+</form>

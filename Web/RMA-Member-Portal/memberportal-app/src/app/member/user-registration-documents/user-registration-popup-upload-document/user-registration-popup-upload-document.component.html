@@ -1,0 +1,36 @@
+<mat-card>
+    <mat-card-header>
+      <mat-card-title class="wizard-font card-title grey">
+        <h1 style="padding: 0;">Documents</h1>
+      </mat-card-title>
+      <mat-card-subtitle>
+        <span class="grey site-font"><i>Upload documents that may be required</i></span>
+      </mat-card-subtitle>
+    </mat-card-header>
+  
+    <mat-card-content style="margin-left: 10px;">
+      <div style="margin-top: 20px;">
+        <section>
+          <section>
+            <mat-label class="mat-label other-label">Document Type</mat-label>
+            <input matInput id="{{data.item.docTypeId}}" disabled value="{{data.item.documentTypeName}}">
+          </section>
+        </section>
+      </div>
+  
+      <span [style.visibility]="isUploading ? 'visible' : 'hidden'">
+        <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+        <span class="grey site-font"><i>uploading file...please wait</i></span>
+      </span>
+  
+      <div style="margin-top: 20px;">
+        <upload-control #uploadDocuments></upload-control>
+      </div>
+  
+      <div class="form-group-button mat-form-button">
+        <button [disabled]="!uploadDocuments.isDocUploaded" (click)='UploadDocuments()' class="button float-button">Upload</button>
+        <button [disabled]="isUploading" (click)='onNoClick()' type="button" class="button float-button">Close</button>
+      </div>
+    </mat-card-content>
+  </mat-card>
+  

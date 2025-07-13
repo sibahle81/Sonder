@@ -1,0 +1,81 @@
+<mat-card>
+    <div *ngIf="(dataSource?.loading$ | async)  || (isLoading$ | async)">
+        <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+        <span class="site-font">{{ loadingMessages$ | async }}</span>
+    </div>
+
+    <div [hidden]="(dataSource?.loading$ | async) 
+            || (isLoading$ | async)
+            || (dataSource?.data?.data?.length <= 0) 
+            || (paginator?.length === 0 && !(dataSource?.loading$ | async))">
+        
+        <mat-table #table [dataSource]="dataSource" matSort id="tblData" (matSortChange)="getData()">
+            <ng-container matColumnDef="select">
+                <mat-header-cell *matHeaderCellDef>
+                    <span class="material-icons noHover">
+                        security_update_good
+                    </span>
+                </mat-header-cell>
+                <mat-cell *matCellDef="let row">
+                    <mat-checkbox id="chk_{{row.claimInvoiceId}}" (change)="AddCheckedItems(row, false)">
+
+                    </mat-checkbox>
+                </mat-cell>
+            </ng-container>
+
+            <ng-container matColumnDef="claimInvoiceType">
+                <mat-header-cell *matHeaderCellDef> Invoice Type </mat-header-cell>
+                <mat-cell *matCellDef="let row"> {{getClaimInvoiceType(row.claimInvoiceType)}} </mat-cell>
+            </ng-container>
+
+            <ng-container matColumnDef="claimInvoiceStatus">
+                <mat-header-cell *matHeaderCellDef> Status </mat-header-cell>
+                <mat-cell *matCellDef="let row"> {{getClaimInvoiceStatus(row.claimInvoiceStatusId)}} </mat-cell>
+            </ng-container>
+
+            <ng-container matColumnDef="invoiceDate">
+                <mat-header-cell *matHeaderCellDef> Invoice Date </mat-header-cell>
+                <mat-cell *matCellDef="let row"> {{row.invoiceDate}} </mat-cell>
+            </ng-container>
+
+            <ng-container matColumnDef="payee">
+                <mat-header-cell *matHeaderCellDef> Payee </mat-header-cell>
+                <mat-cell *matCellDef="let row"> {{ row.payee ? row.payee : 'N/A' }} </mat-cell>
+            </ng-container>
+
+            <ng-container matColumnDef="invoiceAmount">
+                <mat-header-cell *matHeaderCellDef> Amount </mat-header-cell>
+                <mat-cell *matCellDef="let row"> {{'R' + formatMoney(row.invoiceAmount.toFixed(2))}} </mat-cell>
+            </ng-container>
+
+            <ng-container matColumnDef="sla">
+                <mat-header-cell *matHeaderCellDef> SLA </mat-header-cell>
+                <mat-cell *matCellDef="let row">
+                    <sla-status-change-audit [slaItemType]="setSLAType(row.claimInvoiceType)"
+                        [itemId]="row.claimInvoiceId"></sla-status-change-audit>
+                </mat-cell>
+            </ng-container>
+
+            <ng-container matColumnDef="actions">
+                <mat-header-cell *matHeaderCellDef>Action</mat-header-cell>
+                <mat-cell *matCellDef="let row" [matMenuTriggerFor]="menu" (click)="filterMenu(row); $event.stopPropagation()">
+                    <span class="material-icons pointer right">more_vert</span>
+                    <mat-menu #menu="matMenu">
+                        <button mat-menu-item *ngFor="let menu of menus" disabled={{menu.disable}}
+                            (click)="onMenuSelect(row, menu)">{{menu.title}}</button>
+                    </mat-menu>
+                </mat-cell>
+            </ng-container>
+            <mat-header-row *matHeaderRowDef="getDisplayedColumns()"></mat-header-row>
+            <mat-row *matRowDef="let row; columns: getDisplayedColumns();"></mat-row>
+        </mat-table>
+
+        <mat-paginator #paginator [pageIndex]="0" [pageSize]="5" [pageSizeOptions]="[5, 10, 25, 100]"
+            [length]="this.dataSource.rowCount$ | async" (page)="getData()">
+        </mat-paginator>
+    </div>
+
+    <div *ngIf="paginator.length === 0 && !(dataSource.loading$ | async)">
+        No payments found...
+    </div>
+</mat-card>

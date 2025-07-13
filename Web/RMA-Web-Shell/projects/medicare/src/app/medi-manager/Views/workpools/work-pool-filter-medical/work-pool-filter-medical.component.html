@@ -1,0 +1,66 @@
+<mat-tab-group animationDuration="500ms">
+    <mat-tab label="Work Pools">
+        <div *ngIf="filteredPools.length == 0">User does not have access to any pools</div>
+        <mat-card *ngIf="(isLoading$ | async) && filteredPools.length > 0">
+            <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+            <label class="mat-label other-label"><i>loading work pools...please wait</i></label>
+        </mat-card>
+
+        <mat-card *ngIf="!(isLoading$ | async) && filteredPools.length > 0">
+            <form [formGroup]="form" novalidate>
+                <div class="menu-bar">
+                    <span class="material-icons">
+                        waves
+                    </span>&nbsp;Work Pools
+                </div>
+                <section>
+                    <mat-form-field class="mat-form-field controlSize">
+                        <label class="mat-label other-label">Work-Pool</label>
+                        <mat-select id="filter" name="filter" matInput formControlName="filter"
+                            (selectionChange)="selectedWorkPoolChanged($event)">
+                            <mat-option *ngFor="let workPool of filteredPools" [value]="workPool.id">
+                                {{getWorkPoolType(workPool.name).toUpperCase()}}
+                            </mat-option>
+                        </mat-select>
+                    </mat-form-field>
+
+                    <mat-form-field class="mat-form-field-right controlSize"
+                        >
+                        <label class="mat-label other-label">Users</label>
+                        <mat-select id="filterUser" name="filterUser" matInput formControlName="filterUser"
+                            (selectionChange)="filterByUserName($event)">
+                            <input matInput name="searchUserList" id="searchUserList" formControlName="searchUserList">
+                            <mat-option [value]="'Unassigned'">Unassigned</mat-option>
+                            <mat-option [value]="'MainPool'">Main Pool</mat-option>
+                            <mat-option *ngFor="let user of filteredUsers" [value]="user.id">
+                                {{ user.displayName }}
+                            </mat-option>
+                        </mat-select>
+                    </mat-form-field>                   
+                </section>
+
+                <div *ngIf="userHasPermission('search work pool') || isUserBox">
+                    <mat-form-field [floatLabel]="'never'">
+                        <input matInput maxlength="50" name="searchTerm" id="searchTerm" formControlName="searchTerm"
+                            width="300" minLength="3" class="elementBox" matTooltip="Search" matTooltipShowDelay="1000">
+                        <mat-placeholder class="placeholder">{{placeholder$ | async}}</mat-placeholder>
+                    </mat-form-field>
+                </div>
+
+                <app-employee-work-pool-medical *ngIf="users" [selectedUserId]="selectedUser"
+                    [selectedWorkPool]="selectedWorkPoolType" [userLoggedIn]="user" [workPoolUsers]="users"
+                    [currentQuery]="currentQuery" [action]="isUserBox" (searchUserBox)="searchUserBox($event)">
+                </app-employee-work-pool-medical>
+            </form>
+        </mat-card>
+
+        <my-workflows-search *ngIf="!(isLoading$ | async) && isUserBox && wizardConfigs && wizardConfigs != ''"
+            [wizardConfigIds]="wizardConfigs"></my-workflows-search>
+
+        <user-wizard-list *ngIf="!(isLoading$ | async) && !isUserBox && wizardConfigs && wizardConfigs != ''"
+            [wizardConfigIds]="wizardConfigs"></user-wizard-list>
+    </mat-tab> 
+    <mat-tab label="Referrals">
+        <referral-view [targetModuleType]="targetModuleType"></referral-view>
+    </mat-tab>
+</mat-tab-group>

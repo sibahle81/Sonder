@@ -1,0 +1,208 @@
+<mat-card class="matCard">
+    <div class="items-heading-center">
+        <h1>{{switchBatchType == switchBatchTypeEnum.MedEDI ? 'Medical Invoice Breakdown Details':'Teba Invoice Breakdown
+            Details'}}</h1>
+    </div>
+    <br />
+    <div *ngIf="loadingLineItems$ | async">
+        <mat-progress-bar mode="indeterminate"
+            [ngClass]="{ 'loading-main-double-menu-progress': doubleMenu, 'loading-main-single-menu-progress': !doubleMenu }">
+        </mat-progress-bar>
+        <p class="site-font grey">Please wait, line items data processing...</p>
+    </div>
+    <br />
+    <div>
+        <mat-table [dataSource]="dataSource" class="mat-elevation-z8">
+            <div [hidden]="true">
+                <!-- Checkbox Column -->
+                <ng-container matColumnDef="select">
+                    <mat-header-cell *matHeaderCellDef>select</mat-header-cell>
+                    <mat-cell *matCellDef="let row">
+                        <mat-checkbox (click)="$event.stopPropagation()" (change)="selectHandler(row)"
+                            [checked]="selection.isSelected(row)">
+                        </mat-checkbox>
+                    </mat-cell>
+                    <mat-footer-cell *matFooterCellDef> </mat-footer-cell>
+                </ng-container>
+                <!-- Action Column-->
+                <ng-container matColumnDef="edit">
+                    <mat-header-cell *matHeaderCellDef> Edit </mat-header-cell>
+                    <mat-cell *matCellDef="let element"> <button mat-icon-button matTooltip="Click to Edit"
+                            class="iconbutton" color="primary" (click)="onEditLineItem(element)">
+                            <mat-icon>edit</mat-icon>
+                        </button> </mat-cell>
+                    <mat-footer-cell *matFooterCellDef> </mat-footer-cell>
+                </ng-container>
+                <ng-container matColumnDef="delete">
+                    <mat-header-cell *matHeaderCellDef> Delete </mat-header-cell>
+                    <mat-cell *matCellDef="let element"> <button mat-icon-button matTooltip="Click to Delete"
+                            class="iconbutton" (click)="onDeleteLineItem(element)" color="warn">
+                            <mat-icon>delete</mat-icon>
+                        </button> </mat-cell>
+                    <mat-footer-cell *matFooterCellDef> </mat-footer-cell>
+                </ng-container>
+            </div>
+            <!-- ServiceDate Column -->
+            <ng-container matColumnDef="ServiceDate">
+                <mat-header-cell *matHeaderCellDef> Service Date </mat-header-cell>
+                <mat-cell *matCellDef="let element"> {{element.serviceDate | date:'yyyy-MM-dd'}} </mat-cell>
+                <mat-footer-cell *matFooterCellDef> Total </mat-footer-cell>
+            </ng-container>
+            <!-- TariffCode Column -->
+            <ng-container matColumnDef="hcpTariffCode">
+                <mat-header-cell *matHeaderCellDef> {{(switchBatchType == switchBatchTypeEnum.MedEDI) ? 'Tariff
+                    Code' : 'Travel Rate'}} </mat-header-cell>
+                <mat-cell [style.color]="element.isModifier ? 'red' : 'green'" *matCellDef="let element; let i = index"
+                    matTooltip="{{(switchBatchType == switchBatchTypeEnum.MedEDI) ? resultMedicalTariff[i]?.tariffDescription : resultTebaTariff[i]?.description}}">
+                    {{element.hcpTariffCode}} </mat-cell>
+                <mat-footer-cell *matFooterCellDef> </mat-footer-cell>
+            </ng-container>
+            <!-- TariffDiscription Column -->
+            <ng-container matColumnDef="description">
+                <mat-header-cell *matHeaderCellDef> {{(switchBatchType == switchBatchTypeEnum.MedEDI) ? 'Tariff
+                    Description' : 'Travel Description'}} </mat-header-cell>
+                <mat-cell *matCellDef="let element; let i = index" matTooltip="{{element.description}}"> {{element.description}} </mat-cell>
+                <mat-footer-cell *matFooterCellDef> </mat-footer-cell>
+            </ng-container>
+            <!-- ICD10Code Column -->
+            <ng-container matColumnDef="icd10Code">
+                <mat-header-cell *matHeaderCellDef> ICD10 Code </mat-header-cell>
+                <mat-cell *matCellDef="let element; let i = index"
+                    matTooltip="{{icd10CodesDescriptions[i]?.icd10CodeDescription}}">
+                    {{element.icd10Code}}
+                </mat-cell>
+                <mat-footer-cell *matFooterCellDef> </mat-footer-cell>
+            </ng-container>
+            <!-- TariffAmount Column -->
+            <ng-container matColumnDef="totalTariffAmount">
+                <mat-header-cell *matHeaderCellDef> Tariff Amount </mat-header-cell>
+                <mat-cell *matCellDef="let element"> {{element.totalTariffAmount | currency:"R":"symbol":'1.0-2'}}
+                </mat-cell>
+                <mat-footer-cell *matFooterCellDef> </mat-footer-cell>
+            </ng-container>
+            <!-- creditAmount Column -->
+            <ng-container matColumnDef="creditAmount">
+                <mat-header-cell *matHeaderCellDef>Discount</mat-header-cell>
+                <mat-cell *matCellDef="let element"> {{element.creditAmount | currency:"R":"symbol":'1.0-2'}}
+                </mat-cell>
+                <mat-footer-cell *matFooterCellDef> </mat-footer-cell>
+            </ng-container>
+            <!-- Quantity Column -->
+            <ng-container matColumnDef="quantity">
+                <mat-header-cell *matHeaderCellDef> Default Quantity </mat-header-cell>
+                <!-- element.authorisedQuantity -->
+                <mat-cell *matCellDef="let element"> {{element.defaultQuantity}} </mat-cell>
+                <mat-footer-cell *matFooterCellDef> </mat-footer-cell>
+            </ng-container>
+            <!-- InvUnitAmount Column -->
+            <ng-container matColumnDef="InvUnitAmount">
+                <mat-header-cell *matHeaderCellDef> Inv Unit Amount </mat-header-cell>
+                <!-- element.invUnitAmount -->
+                <mat-cell *matCellDef="let element"> {{(element.requestedAmount + element.requestedVat +
+                    element.creditAmount) /
+                    element.requestedQuantity |
+                    currency:"R":"symbol":'1.0-2'}}
+                </mat-cell>
+                <mat-footer-cell *matFooterCellDef> </mat-footer-cell>
+            </ng-container>
+            <!-- RequestedQuantity Column -->
+            <ng-container matColumnDef="requestedQuantity">
+                <mat-header-cell *matHeaderCellDef> {{(this.switchBatchType != switchBatchTypeEnum.Teba ? "Requested Quantity" : "KMs/Qty")}} </mat-header-cell>
+                <mat-cell *matCellDef="let element"> {{element.requestedQuantity}} </mat-cell>
+                <mat-footer-cell *matFooterCellDef> </mat-footer-cell>
+            </ng-container>
+            <ng-container matColumnDef="authorisedQuantity">
+                <mat-header-cell *matHeaderCellDef> Approved Quantity </mat-header-cell>
+                <mat-cell *matCellDef="let element"> {{element.authorisedQuantity}} </mat-cell>
+                <mat-footer-cell *matFooterCellDef> </mat-footer-cell>
+            </ng-container>
+            <!-- InvTotalAmount Column -->
+            <ng-container matColumnDef="authorisedAmount">
+                <mat-header-cell *matHeaderCellDef> Inv Total Amount </mat-header-cell>
+                <mat-cell *matCellDef="let element"> {{(element.requestedAmount + element.requestedVat) |
+                    currency:"R":"symbol":'1.0-2'}} </mat-cell>
+                <mat-footer-cell *matFooterCellDef> </mat-footer-cell>
+            </ng-container>
+            <!-- SubTotalEx Column -->
+            <ng-container matColumnDef="requestedAmount">
+                <mat-header-cell *matHeaderCellDef> Sub Total Ex </mat-header-cell>
+                <!-- (invUnitAmount * quantity) - discount -->
+                <mat-cell *matCellDef="let element"> {{(element.requestedAmount) |
+                    currency:"R":"symbol":'1.0-2'}} </mat-cell>
+                <mat-footer-cell *matFooterCellDef> {{getSubTotalEx() | currency:"R":"symbol":'1.0-2'}}
+                </mat-footer-cell>
+            </ng-container>
+            <!-- VAT Column -->
+            <ng-container matColumnDef="totalTariffVat">
+                <mat-header-cell *matHeaderCellDef> VAT </mat-header-cell>
+                <mat-cell *matCellDef="let element"> {{element.requestedVat |
+                    currency:"R":"symbol":'1.0-2'}} </mat-cell>
+                <mat-footer-cell *matFooterCellDef>{{captureGetTotalVAT() | currency:"R":"symbol":'1.0-2'}}
+                </mat-footer-cell>
+            </ng-container>
+            <!-- TotalIncl - to -totalIncl Column -->
+            <ng-container matColumnDef="totalIncl">
+                <mat-header-cell *matHeaderCellDef> Total Incl </mat-header-cell>
+                <mat-cell *matCellDef="let element">
+                    {{(element.requestedAmount + element.requestedVat) |
+                    currency:"R":"symbol":'1.0-2'}} </mat-cell>
+                <mat-footer-cell *matFooterCellDef> {{ captureGetTotalIncl() | currency:"R":"symbol":'1.0-2'}}
+                    <!-- {{dataSource.filteredData |
+                            invoiceTotalsCalculations:"captureGetTotalIncl":healthCareProviderVatAmount |
+                            currency:"R":"symbol":'1.0-2'}}  -->
+                </mat-footer-cell>
+            </ng-container>
+            <!-- ApprovedSubAmount Column -->
+            <ng-container matColumnDef="approvedSubAmount">
+                <mat-header-cell *matHeaderCellDef> Approved Sub Amount </mat-header-cell>
+                <mat-cell *matCellDef="let element"> {{element.authorisedAmount}} </mat-cell>
+                <!--element.approvedSubAmount-->
+                <mat-footer-cell *matFooterCellDef> {{getTotalAuthorisedAmount() |
+                    currency:"R":"symbol":'1.0-2'
+                    }} </mat-footer-cell>
+            </ng-container>
+            <!-- ApprovedVAT Column -->
+            <ng-container matColumnDef="ApprovedVAT">
+                <mat-header-cell *matHeaderCellDef> Approved VAT </mat-header-cell>
+                <mat-cell *matCellDef="let element"> {{element.authorisedVat}} </mat-cell>
+                <!--element.approvedVAT-->
+                <mat-footer-cell *matFooterCellDef> {{getTotalAuthorisedVat() |
+                    currency:"R":"symbol":'1.0-2'
+                    }} </mat-footer-cell>
+            </ng-container>
+            <!-- ApprovedTotalAmountIncl Column -->
+            <ng-container matColumnDef="ApprovedTotalAmountIncl">
+                <mat-header-cell *matHeaderCellDef> Approved Total Amount Incl </mat-header-cell>
+                <mat-cell *matCellDef="let element"> {{element.authorisedAmountInclusive}} </mat-cell>
+                <!--element.approvedTotalAmountIncl-->
+                <mat-footer-cell *matFooterCellDef> {{getTotalAuthorisedAmountInc() |
+                    currency:"R":"symbol":'1.0-2'
+                    }} </mat-footer-cell>
+            </ng-container>
+
+            <ng-container matColumnDef="Validation">
+                <mat-header-cell *matHeaderCellDef> Validation </mat-header-cell>
+                <mat-cell *matCellDef="let element; let i = index"
+                    [style.background]="element | invoiceLineUnderAssessReasonColor">
+
+                    <div *ngIf="element.invoiceLineUnderAssessReasons?.length > 0; else validationErrors">
+                        <span class="material-icons"
+                            matTooltip="{{element | medicalInvoiceValidations:validationStateEnum[6]:validationStateEnum[1]:i}}">
+                            {{"close"}}
+                        </span>
+                    </div>
+
+                    <ng-template #validationErrors>
+                        <span class="material-icons validation-pass" matTooltip="All is correct">{{"done"}}</span>
+                    </ng-template>
+
+                </mat-cell>
+                <mat-footer-cell *matFooterCellDef> </mat-footer-cell>
+            </ng-container>
+
+            <mat-header-row *matHeaderRowDef="getDisplayedColumns()"></mat-header-row>
+            <mat-row *matRowDef="let row; columns: getDisplayedColumns();"></mat-row>
+            <mat-footer-row *matFooterRowDef="getDisplayedColumns(); sticky: true"></mat-footer-row>
+        </mat-table>
+    </div>
+</mat-card>

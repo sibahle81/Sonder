@@ -1,0 +1,100 @@
+<h1>Manage Claim Benefits Amount (COID Period)</h1>
+<br />
+<mat-card>
+  <div class="form-group-button mat-form-button">
+    <div class="form-buttons submit-button">
+      <button (click)="configureNewClaimsBenefitsAmounts()"
+        [disabled]="(isConfiguring$ | async) || (isLoading$ | async)" type="button"
+        class="button float-button">Configure new benefits amounts</button>
+    </div>
+    <div class="form-buttons submit-button">
+      <button (click)="loadActiveClaimsBenefitsAmounts()" [disabled]="(isConfiguring$ | async) || (isLoading$ | async)"
+        type="button" class="button float-button">View active benefits amounts</button>
+    </div>
+    <div class="form-buttons submit-button">
+      <button (click)="loadHistoricalClaimsBenefitsAmounts()"
+        [disabled]="(isConfiguring$ | async) || (isLoading$ | async)" type="button" class="button float-button">View
+        historical benefits amounts</button>
+    </div>
+  </div>
+  <br/>
+  <br/>
+</mat-card>
+
+<mat-card *ngIf="doNewClaimsBenefitsConfiguration && !(isConfiguring$ | async)">
+  <input type="file" class="file-input" accept="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+    (change)="onExcelFileSelected($event)" #excelFileUpload>
+  <div class="file-upload">
+    {{"Select excel file to capture claims benefits from."}}
+    <button mat-mini-fab class="upload-btn file-upload-button" (click)="excelFileUpload.click()">
+      <mat-icon>file_upload</mat-icon>
+    </button>
+  </div>
+</mat-card>
+
+<br/>
+
+<mat-card>
+  <div *ngIf="isConfiguring$ | async">
+    <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+    <label class="mat-label other-label"><i>configuring new benefits amounts...please wait</i></label>
+  </div>
+
+  <div *ngIf="isLoading$ | async">
+    <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+    <label class="mat-label other-label"><i>{{loadingNotification}}</i></label>
+  </div>
+
+  <div *ngIf="dataSource && !(isLoading$ | async) && !(isConfiguring$ | async) && !(doNewClaimsBenefitsConfiguration)">
+    <h4>{{benefitHeadingText}}</h4>
+    <mat-table #table [dataSource]="dataSource">
+      <ng-container matColumnDef="benefitType">
+        <mat-header-cell *matHeaderCellDef> Benefit Type </mat-header-cell>
+        <mat-cell *matCellDef="let row"> {{getBenefitType(row.benefitType)}} </mat-cell>
+      </ng-container>
+
+      <ng-container matColumnDef="benefitName">
+        <mat-header-cell *matHeaderCellDef> Benefit Name </mat-header-cell>
+        <mat-cell *matCellDef="let row"> {{row.benefitName}} </mat-cell>
+      </ng-container>
+
+      <ng-container matColumnDef="formula">
+        <mat-header-cell *matHeaderCellDef> Formula </mat-header-cell>
+        <mat-cell *matCellDef="let row"> {{row.formula}} </mat-cell>
+      </ng-container>
+
+      <ng-container matColumnDef="minimumCompensationAmount">
+        <mat-header-cell *matHeaderCellDef> Min Compensation Amount </mat-header-cell>
+        <mat-cell *matCellDef="let row">{{row.minimumCompensationAmount}}</mat-cell>
+      </ng-container>
+
+      <ng-container matColumnDef="maximumCompensationAmount">
+        <mat-header-cell *matHeaderCellDef> Max Compensation Amount </mat-header-cell>
+        <mat-cell *matCellDef="let row">{{row.maximumCompensationAmount}}</mat-cell>
+      </ng-container>
+
+      <ng-container matColumnDef="startDate">
+        <mat-header-cell *matHeaderCellDef> Start Date </mat-header-cell>
+        <mat-cell *matCellDef="let row"> {{row.startDate}} </mat-cell>
+      </ng-container>
+
+      <ng-container matColumnDef="endDate">
+        <mat-header-cell *matHeaderCellDef> End Date </mat-header-cell>
+        <mat-cell *matCellDef="let row"> {{row.endDate}} </mat-cell>
+      </ng-container>
+
+      <ng-container matColumnDef="actions">
+        <mat-header-cell *matHeaderCellDef> Actions </mat-header-cell>
+        <mat-cell *matCellDef="let row">
+          <a role="button" (click)="openEditBenefitsAmountDialog(row)" class="link-edit">Edit</a>
+        </mat-cell>
+      </ng-container>
+
+      <mat-header-row *matHeaderRowDef="getDisplayedColumns()"></mat-header-row>
+      <mat-row *matRowDef="let row; columns: getDisplayedColumns();"></mat-row>
+
+    </mat-table>
+    <mat-paginator #paginator [pageSize]="5" [pageSizeOptions]="[5, 10, 25, 100]" [showFirstLastButtons]="true">
+    </mat-paginator>
+  </div>
+</mat-card>

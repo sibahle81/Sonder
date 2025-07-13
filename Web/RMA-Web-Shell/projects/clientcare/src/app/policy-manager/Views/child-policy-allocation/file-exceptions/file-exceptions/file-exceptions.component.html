@@ -1,0 +1,79 @@
+<div>
+  <h3>Allocation File Exceptions</h3>
+  <br>
+</div>
+<div *ngIf="datasource.isLoading">
+  <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+  <label class="mat-label other-label"><i>loading...please wait</i></label>
+</div>
+<br>
+<br>
+<div [hidden]="datasource.isLoading || datasource.data.length === 0">
+  <app-search-input (searchcriteria)="searchData($event)" [placeHolder]="placeHolder"></app-search-input>
+  <mat-table #table [dataSource]="datasource" matSort>
+    <ng-container matColumnDef="memberPolicyNumber">
+      <mat-header-cell *matHeaderCellDef mat-sort-header>Member Policy Number</mat-header-cell>
+      <mat-cell *matCellDef="let row">
+        <span
+          *ngIf="row.memberPolicyNumber.length > 0; else noMemberPolicyNumber">{{row.memberPolicyNumber}}</span>
+        <ng-template #noMemberPolicyNumber>N/A</ng-template>
+      </mat-cell>
+    </ng-container>
+    <ng-container matColumnDef="memberIdNumber">
+      <mat-header-cell *matHeaderCellDef mat-sort-header>Id Number</mat-header-cell>
+      <mat-cell *matCellDef="let row">
+        {{row.memberIdNumber}}
+      </mat-cell>
+    </ng-container>
+    <ng-container matColumnDef="firstname">
+      <mat-header-cell *matHeaderCellDef mat-sort-header>First Name</mat-header-cell>
+      <mat-cell *matCellDef="let row">
+        <span *ngIf="row.firstName.length > 0; else noFirstName"> {{row.firstName}}</span>
+        <ng-template #noFirstName>N/A</ng-template>
+      </mat-cell>
+    </ng-container>
+    <ng-container matColumnDef="surname">
+      <mat-header-cell *matHeaderCellDef mat-sort-header>Surname</mat-header-cell>
+      <mat-cell *matCellDef="let row">
+        <span *ngIf="row.surname.length > 0; else noSurname"> {{row.surname}}</span>
+        <ng-template #noSurname>N/A</ng-template>
+      </mat-cell>
+    </ng-container>
+    <ng-container matColumnDef="paymentDate">
+      <mat-header-cell *matHeaderCellDef mat-sort-header>Payment Date</mat-header-cell>
+      <mat-cell *matCellDef="let row">
+        {{row.paymentDate}}
+      </mat-cell>
+    </ng-container>
+    <ng-container matColumnDef="paymentAmount">
+      <mat-header-cell *matHeaderCellDef mat-sort-header>Payment Amount</mat-header-cell>
+      <mat-cell *matCellDef="let row"> {{row.paymentAmount}} </mat-cell>
+    </ng-container>
+    <ng-container matColumnDef="errorMessage">
+      <mat-header-cell *matHeaderCellDef mat-sort-header>Error Message</mat-header-cell>
+      <mat-cell *matCellDef="let row"> {{row.errorMessage}} </mat-cell>
+    </ng-container>
+
+    <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
+    <mat-row *matRowDef="let row; columns: displayedColumns;"></mat-row>
+  </mat-table>
+  <mat-paginator #paginator [length]="datasource.data ? datasource.data.length : 0" [pageIndex]="0" [pageSize]="5"
+    [pageSizeOptions]="[5, 10, 20, 50]">
+  </mat-paginator>
+  <div>
+    <button type="button" class="button float-button submit-button" (click)="back()">Back</button>
+  </div>
+  <div>
+    <button type="button" class="button float-button submit-button" (click)="downloadReport()">Download</button>
+  </div>
+</div>
+<div *ngIf="noData">
+  No data found...
+</div>
+<div [hidden]="true">
+  <ssrs-reportviewer [reportserver]="reportServerAudit" [reporturl]="reportUrlAudit"
+    [showparameters]="showParametersAudit" [parameters]="parametersAudit" [language]="languageAudit"
+    [width]="widthAudit" [height]="heightAudit" [toolbar]="toolbarAudit" [format]="format"
+    (downloadComplete)="completeDownload($event)">
+  </ssrs-reportviewer>
+</div>

@@ -1,0 +1,47 @@
+import { GenderEnum } from 'projects/shared-models-lib/src/lib/enums/gender-enum';
+import { MaritalStatusEnum } from 'projects/shared-models-lib/src/lib/enums/marital-status-enum';
+import { NationalityEnum } from 'projects/shared-models-lib/src/lib/enums/nationality-enum';
+import { TitleEnum } from 'projects/shared-models-lib/src/lib/enums/title-enum';
+import { PersonEmployment } from './person-employment';
+import { PreviousInsurerRolePlayer } from './previous-insurer-roleplayer';
+import { LanguageEnum } from '../enums/language-enum';
+import { MarriageTypeEnum } from 'projects/shared-models-lib/src/lib/enums/marriage-type-num';
+
+export class Person {
+  rolePlayerId: number;
+  firstName: string;
+  surname: string;
+  idType: number;
+  idNumber: string;
+  passportNumber: string;
+  dateOfBirth: Date;
+  isAlive: boolean = true;
+  isStudying: boolean = false;
+  isDisabled: boolean = false;
+  isBeneficiary: boolean = false;
+  isSelected: boolean = false;
+  dateOfDeath: Date;
+  deathCertificateNumber: string;
+  isVopdVerified: boolean = false;
+  dateVopdVerified: Date;
+  isDeleted: boolean = false;
+  createdBy: string;
+  createdDate: Date;
+  modifiedBy: string;
+  modifiedDate: Date;
+  age: number;
+  gender: GenderEnum | null;
+  maritalStatus: MaritalStatusEnum | null;
+  nationality: NationalityEnum | null;
+  countryOriginId: number | null;
+  title: TitleEnum | null;
+  language: LanguageEnum | null;
+  provinceId: number;
+  populationGroup: string;
+  marriageType: MarriageTypeEnum | null;
+  marriageDate: Date;
+  manualBeneficiary: boolean = true;
+  previousPolicy?: PreviousInsurerRolePlayer;
+  personEmployments: PersonEmployment[];
+  vopdVerifiedDescription: string;
+}

@@ -1,0 +1,84 @@
+<mat-card>
+  <mat-card-content>
+    <div class="mat-header">
+      <h5>PreAuth ICD10 Codes</h5>
+    </div>
+    <div class="row">
+      <div>
+        <table mat-table [dataSource]="existingICD10Records" class="tableWidth">
+          <ng-container matColumnDef="icd10Code">
+            <th mat-header-cell *matHeaderCellDef>ICD10Code </th>
+            <td mat-cell *matCellDef="let element"> {{element.icd10Code}} </td>
+          </ng-container>
+
+          <ng-container matColumnDef="description">
+            <th mat-header-cell *matHeaderCellDef> Description </th>
+            <td mat-cell *matCellDef="let element"> {{element.description}} </td>
+          </ng-container>
+
+          <ng-container matColumnDef="bodySideId">
+            <th mat-header-cell *matHeaderCellDef>Body Side </th>
+            <td mat-cell *matCellDef="let element">
+              {{ getBodySideDescription(element.bodySideId) }}
+            </td>
+          </ng-container>
+
+          <ng-container matColumnDef="injuryType">
+            <th mat-header-cell *matHeaderCellDef>Injury Type </th>
+            <td mat-cell *matCellDef="let element"> {{ getInjuryTypeDescription(element.injuryType) }} </td>
+          </ng-container>
+
+          <ng-container matColumnDef="isClinicalUpdate">
+            <th mat-header-cell *matHeaderCellDef>Clinical Update </th>
+            <td mat-cell *matCellDef="let element"> {{element.isClinicalUpdate ? 'Yes' : 'No'}} </td>
+          </ng-container>
+
+          <ng-container matColumnDef="updateSequenceNo">
+            <th mat-header-cell *matHeaderCellDef>Update Sequence No </th>
+            <td mat-cell *matCellDef="let element"> {{element.updateSequenceNo}} </td>
+          </ng-container>
+
+          <ng-container matColumnDef="authorizationCheck">
+            <th mat-header-cell *matHeaderCellDef>Authorization Check </th>
+            <td mat-cell *matCellDef="let element">
+                <mat-checkbox value="Authorised" (change)="onChange(element)" [(ngModel)]="element.isAuthorised"> Authorised
+                </mat-checkbox>
+            </td>
+          </ng-container>
+
+          <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+          <tr mat-row *matRowDef="let element; columns: displayedColumns;"></tr>
+        </table>
+      </div>
+    </div>
+
+    <div *ngIf="!isClinicalUpdate" class="warning">
+      Please authorise at least one icd10 code item
+    </div>
+
+    <br><br>
+    <div *ngIf="isHospitalAuth">
+      <i>Treatment baskets</i>
+    </div>
+    <div *ngIf="isHospitalAuth">
+      <ul>
+        <li *ngFor="let x of existingTreatmentBaskets">
+          <div><span class="listitem-hover">{{ x.description }}</span></div>
+          <div><span class="listitem-hover">
+              <mat-checkbox value="Authorised" (change)="onChangeTreatmentBasket(x)" [(ngModel)]="x.isAuthorised">
+                Authorised </mat-checkbox>
+            </span></div>
+        </li>
+      </ul>
+    </div>
+    <br><br>
+    <div>
+      <i (click)="onClickAddICD10Code()">Add new ICD10 Codes to PreAuth</i>
+      <i class="material-icons" (click)="onClickAddICD10Code()">add</i>
+    </div>
+    <div [hidden]="hideICD10CodeSearch">
+      <preauth-diagnosis></preauth-diagnosis>
+    </div>
+
+  </mat-card-content>
+</mat-card>

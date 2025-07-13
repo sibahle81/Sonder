@@ -1,0 +1,189 @@
+<section>
+    <div class="padding-width">
+        <div class="padding-display-border">
+
+            <div class="recovery-btn  padding-width" [ngClass]="isSpinner ? 'on-disabled' : 'on-enabled'">
+                <button mat-button class="top-nav-detail-tab">Scheduled Campaigns</button>
+            </div>
+
+            <div class="recovery-btn  padding-width" [ngClass]="isSpinner ? 'on-disabled' : 'on-enabled'">
+                <button mat-button class="top-nav-detail-tab on-enabled" (click)="openCampaignTask()">Campaigns Task</button>
+            </div>
+            <div class="notifi-icon">
+            </div>
+        </div>
+    </div>
+
+    <div class="padding-width-div"  [ngStyle]="isSpinner ? { 'opacity': '0.5' } : { 'opacity': '1' }">
+        <div class="legal-manager-table">
+            <div class="display-border-bottom">
+                <div class="width-padding">
+                    <div  class="search-field-box">
+                        <span matPrefix class="display-flex">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24"
+                                fill="none">
+                                <path
+                                    d="M19 11C19 12.5823 18.5308 14.129 17.6518 15.4446C16.7727 16.7602 15.5233 17.7856 14.0615 18.3911C12.5997 18.9966 10.9911 19.155 9.43928 18.8463C7.88743 18.5376 6.46197 17.7757 5.34315 16.6569C4.22433 15.5381 3.4624 14.1126 3.15372 12.5608C2.84504 11.0089 3.00347 9.40038 3.60897 7.93857C4.21447 6.47676 5.23985 5.22733 6.55544 4.34828C7.87103 3.46923 9.41775 3.00004 11 3.00004C12.0515 2.99674 13.0933 3.20141 14.0654 3.60228C15.0375 4.00315 15.9207 4.5923 16.6642 5.33582C17.4077 6.07935 17.9969 6.96257 18.3978 7.93467C18.7986 8.90677 19.0033 9.94854 19 11Z"
+                                    stroke="#292929" stroke-linecap="round" stroke-linejoin="round" />
+                                <path d="M20.9993 21L16.6562 16.657" stroke="#292929" stroke-linecap="round"
+                                    stroke-linejoin="round" />
+                            </svg>
+                        </span>
+                        <input matInput (keyup)="applyFilter($event)" placeholder="Search here..." #input
+                            class="search-input">
+                            
+                    </div>
+                </div>
+                <div class="right-action-btn">
+                    <div>
+                        <button class="action-button-right" mat-button (click)="createSchedule()"> <span>CREATE
+                                SCHEDULE</span> </button>
+                    </div>
+                </div>
+
+
+
+            </div>
+
+
+            <div *ngIf="dataSource.data?.length > 0 && !isLoaderLoading" class="legal-table-content">
+
+                <div class="table-insie">
+                    <table mat-table [dataSource]="dataSource"  class="mat-table-data">
+
+                        <ng-container matColumnDef="campaignName">
+                            <th mat-header-cell *matHeaderCellDef class="font-size-weight">Campaign Name</th>
+                            <td mat-cell *matCellDef="let row" class="font-size-height">
+                                <span class="select-td">
+                                    <span class="select-text" (click)="showDetails(row)">
+                                        <div>{{row.campaignName? row.campaignName:'-' }}</div>
+                                    </span>
+                                </span>
+                            </td>
+                        </ng-container>
+
+                        <ng-container matColumnDef="campaignType">
+                            <th mat-header-cell *matHeaderCellDef class="font-size-weight"> Groups </th>
+                            <td mat-cell *matCellDef="let row" (click)="showDetails(row)" class="font-size-weight2">
+                                <div>{{row.groups?row.groups:'-'}}</div>
+                            </td>
+                        </ng-container>
+
+                        <ng-container matColumnDef="channels">
+                            <th mat-header-cell *matHeaderCellDef class="font-size-weight"> Channels </th>
+                            <td mat-cell *matCellDef="let row" (click)="showDetails(row)" class="font-size-weight2">
+
+                                <div class="display-flex  align-items">
+
+                                    <span class="width-margin" *ngIf="row?.channelName?.includes('SMS')">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40"
+                                            viewBox="0 0 40 40" fill="none">
+                                            <rect width="40" height="40" rx="3" fill="#F7F7F7" />
+                                            <rect x="0.5" y="0.5" width="39" height="39" rx="2.5" stroke="#58585B"
+                                                stroke-opacity="0.2" />
+                                            <rect x="8" y="8" width="24" height="24" rx="3" fill="#0B52A6" />
+                                            <path
+                                                d="M14 12C12.8969 12 12 12.8969 12 14V23C12 24.1031 12.8969 25 14 25H17V27.5C17 27.6906 17.1063 27.8625 17.275 27.9469C17.4437 28.0312 17.6469 28.0125 17.8 27.9L21.6656 25H26C27.1031 25 28 24.1031 28 23V14C28 12.8969 27.1031 12 26 12H14Z"
+                                                fill="white" />
+                                        </svg>
+                                    </span>
+
+                                    <span class="width-margin" *ngIf="row?.channelName?.includes('EMail')">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40"
+                                            viewBox="0 0 40 40" fill="none">
+                                            <rect width="40" height="40" rx="3" fill="#F7F7F7" />
+                                            <rect x="0.5" y="0.5" width="39" height="39" rx="2.5" stroke="#58585B"
+                                                stroke-opacity="0.2" />
+                                            <path
+                                                d="M11.4286 8C9.5375 8 8 9.5375 8 11.4286V28.5714C8 30.4625 9.5375 32 11.4286 32H28.5714C30.4625 32 32 30.4625 32 28.5714V11.4286C32 9.5375 30.4625 8 28.5714 8H11.4286ZM19.6786 20.8411L11.4393 15.5214C11.5357 14.6643 12.2589 14 13.1429 14H26.8571C27.7411 14 28.4643 14.6643 28.5607 15.5214L20.3214 20.8411C20.225 20.9054 20.1125 20.9375 20 20.9375C19.8875 20.9375 19.775 20.9054 19.6786 20.8411ZM21.2536 22.2821L28.5714 17.5571V24.2857C28.5714 25.2339 27.8054 26 26.8571 26H13.1429C12.1946 26 11.4286 25.2339 11.4286 24.2857V17.5571L18.7464 22.2821C19.1214 22.5232 19.5554 22.6518 20 22.6518C20.4446 22.6518 20.8786 22.5232 21.2536 22.2821Z"
+                                                fill="#E27D20" />
+                                        </svg>
+                                    </span>
+
+                                    <span class="width-margin" *ngIf="row?.channelName?.includes('Whatsapp')">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40"
+                                            viewBox="0 0 40 40" fill="none">
+                                            <rect width="40" height="40" rx="3" fill="#F7F7F7" />
+                                            <rect x="0.5" y="0.5" width="39" height="39" rx="2.5" stroke="#58585B"
+                                                stroke-opacity="0.2" />
+                                            <path
+                                                d="M20 12.8643C16.1054 12.8643 12.9393 16.0304 12.9339 19.925C12.9339 21.2589 13.3089 22.5607 14.0161 23.6804L14.1821 23.9482L13.4696 26.5518L16.1429 25.85L16.4 26.0054C17.4821 26.6482 18.725 26.9911 19.9946 26.9911H20C23.8893 26.9911 27.1411 23.825 27.1411 19.9304C27.1411 18.0446 26.3268 16.2714 24.9929 14.9375C23.6536 13.5982 21.8857 12.8643 20 12.8643ZM24.1518 22.9571C23.975 23.4554 23.1286 23.9054 22.7214 23.9643C22.0464 24.0661 21.5214 24.0125 20.1768 23.4339C18.05 22.5125 16.6571 20.3696 16.55 20.2304C16.4429 20.0911 15.6821 19.0786 15.6821 18.0339C15.6821 16.9893 16.2286 16.475 16.4268 16.2607C16.6196 16.0464 16.85 15.9929 16.9946 15.9929C17.1339 15.9929 17.2786 15.9929 17.4018 15.9982C17.5304 16.0036 17.7071 15.95 17.8786 16.3625C18.0554 16.7857 18.4786 17.8304 18.5321 17.9375C18.5857 18.0446 18.6232 18.1679 18.5482 18.3071C18.1411 19.1214 17.7071 19.0893 17.9268 19.4643C18.7464 20.8732 19.5661 21.3607 20.8143 21.9875C21.0286 22.0946 21.1518 22.0786 21.275 21.9339C21.3982 21.7946 21.8054 21.3125 21.9446 21.1036C22.0839 20.8893 22.2286 20.9268 22.4214 20.9964C22.6143 21.0661 23.6589 21.5804 23.8732 21.6875C24.0875 21.7946 24.2268 21.8482 24.2804 21.9339C24.3286 22.0357 24.3286 22.4643 24.1518 22.9571ZM29.4286 8H10.5714C9.15179 8 8 9.15179 8 10.5714V29.4286C8 30.8482 9.15179 32 10.5714 32H29.4286C30.8482 32 32 30.8482 32 29.4286V10.5714C32 9.15179 30.8482 8 29.4286 8ZM19.9946 28.4214C18.5696 28.4214 17.1714 28.0625 15.9339 27.3875L11.4286 28.5714L12.6339 24.1679C11.8893 22.8821 11.4982 21.4196 11.4982 19.9196C11.5036 15.2375 15.3125 11.4286 19.9946 11.4286C22.2661 11.4286 24.3982 12.3125 26.0054 13.9196C27.6071 15.5268 28.5714 17.6589 28.5714 19.9304C28.5714 24.6125 24.6768 28.4214 19.9946 28.4214Z"
+                                                fill="#2BB741" />
+                                        </svg>
+                                    </span>
+
+                                </div>
+
+                            </td>
+                        </ng-container>
+
+                        <ng-container matColumnDef="createdDate">
+                            <th mat-header-cell *matHeaderCellDef class="font-size-weight"> Scheduled Start Date & Time
+                            </th>
+                            <td mat-cell *matCellDef="let row" (click)="showDetails(row)" class="font-size-weight2">
+                                <span class="select-text">{{row.startDate | date:'yyyy-MM-dd'}} </span>
+                                <span class="select-text">| {{row.startDate | date:'HH:mm'}} </span>
+                            </td>
+                        </ng-container>
+
+                        <ng-container matColumnDef="status">
+                            <th mat-header-cell *matHeaderCellDef> Scheduled Status </th>
+                            <td mat-cell *matCellDef="let row" (click)="showDetails(row)" class="font-size-weight2">
+                                <span class="status-value"
+            [ngStyle]="{
+                'background': getStatusBackgroundColor(row.marketingCampaignScheduleStatus),
+                'color': getStatusColor(row.marketingCampaignScheduleStatus)
+            }">{{ getStatusText(row.marketingCampaignScheduleStatus) }}</span>
+                            </td>
+                        </ng-container>
+                        <ng-container matColumnDef="action">
+                            <th mat-header-cell *matHeaderCellDef> Action</th>
+                            <td mat-cell *matCellDef="let row;let i = index">
+                                <div class="text-align-left">
+                                    <span *ngIf="row.marketingCampaignScheduleStatus != '3'" class="border-bottom" matTooltip="Delete"
+                                        (click)="openDialog('delete_action', row.id,'campaign scheduled')"><mat-icon>delete</mat-icon> 
+                                    </span>
+                                    <span *ngIf="row.marketingCampaignScheduleStatus == '3'" class="border-bottom">
+                                        -- 
+                                    </span>
+                                </div>
+                            </td>
+                        </ng-container>
+                        <ng-container matColumnDef="assign">
+                            <th mat-header-cell *matHeaderCellDef class="padding-left font-size-weight"> Delivery Report
+                            </th>
+                            <td mat-cell *matCellDef="let row;let i = index" class="padding-left  font-size-weight2">
+                                <div>
+                                    <span *ngIf="row.marketingCampaignScheduleStatus == 1">--</span>
+                                    <span *ngIf="row.marketingCampaignScheduleStatus != 1"  class="border-bottom" (click)="getDeliveryReportDetails(row.id)"><mat-icon matTooltip="Download">cloud_download</mat-icon></span>
+                                </div>
+                            </td>
+                        </ng-container>
+                        <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+                        <tr mat-row *matRowDef="let row; columns: displayedColumns;" class="height"></tr>
+                    </table>
+                    <hr class="border-top">
+                    <mat-paginator #paginator class="demo-paginator"
+                        (page)="handlePageinatorEventScheduledCampaign($event)" [hidePageSize]="false"
+                        [length]="totalItems" [pageIndex]="page - 1" [pageSize]="pageSize"
+                        [pageSizeOptions]="pageSizeOptions" [showFirstLastButtons]="false">
+                    </mat-paginator>
+                </div>
+
+            </div>
+
+        </div>
+
+        <div *ngIf="dataSource.data?.length == 0 && !isLoaderLoading" class="no-data">
+            <h2 class="text-align-center no-data-text">No data available</h2>
+        </div>
+
+    </div>
+
+    <div [hidden]="!isLoaderLoading" [ngClass]="isLoaderLoading ? 'progress-bar-container' : '' ">
+        <mat-progress-bar *ngIf="isLoaderLoading" mode="indeterminate"></mat-progress-bar>
+    </div>
+    <div [hidden]="!isSpinner" class="spinner-view">
+        <mat-spinner *ngIf="isSpinner"></mat-spinner>
+    </div>
+</section>

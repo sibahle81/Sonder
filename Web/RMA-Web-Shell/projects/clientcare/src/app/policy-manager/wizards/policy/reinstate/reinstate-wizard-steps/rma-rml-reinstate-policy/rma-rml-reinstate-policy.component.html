@@ -1,0 +1,35 @@
+<mat-card class="margin" *ngIf="(isLoading$ | async)">
+  <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+  <label class="mat-label other-label"><i>initialising wizard...please wait</i></label>
+</mat-card>
+
+<div *ngIf="!(isLoading$ | async) && policy">
+  <member-view [rolePlayerId]="policy.policyOwnerId" [isWizard]="false" [isReadOnly]="inApprovalMode"></member-view>
+  <policy-view [rolePlayerId]="policy.policyOwnerId" [isWizard]="true" [isReadOnly]="inApprovalMode"
+    [filteredPolicyIds]="filteredPolicyIds"></policy-view>
+
+  <mat-card *ngIf="model">
+    <span *ngIf="model.reason"><label class="mat-label other-label blue">Reason for policy cancellation:
+        <b>{{formatLookup(model.reason)}}</b></label></span>
+    <br /><br />
+
+    <form [formGroup]="form" class="mat-container details-form" novalidate>
+      <section>
+        <mat-form-field class="mat-form-field">
+          <label class="mat-label other-label">Effective Date</label>
+          <input matInput formControlName="effectiveDate" [matDatepicker]="effectiveDate" [min]="minDate"
+            [max]="maxDate">
+          <mat-datepicker-toggle matSuffix [for]="effectiveDate">
+          </mat-datepicker-toggle>
+          <mat-datepicker touchUi="true" #effectiveDate></mat-datepicker>
+          <mat-error *ngIf="form.get('effectiveDate').hasError('required')">
+            effective date is <strong>required</strong>
+          </mat-error>
+        </mat-form-field>
+      </section>
+    </form>
+
+    <document-uploader [documentSet]="documentSet" [systemName]="documentSystemName" [keyName]="'WizardId'"
+      [keyValue]="wizardId" [isReadOnly]="inApprovalMode" (requiredDocumentsUploadedEmit)="isRequiredDocumentsUploaded($event)"></document-uploader>
+  </mat-card>
+</div>

@@ -1,0 +1,17 @@
+<label>There is a balance of <strong>{{balance | number:'1.2-2'}}</strong> remaining</label><br />
+<label>What would you like to do with the remaining balance?<br /><br />
+  <mat-radio-group>
+    <mat-radio-button style="margin-bottom: 10px;" value="suspense" (change)="toggle($event.value)">
+      <span class="material-icons">account_balance</span> Leave balance in the suspense account
+    </mat-radio-button><br />
+    <mat-radio-button style="margin-bottom: 10px;" value="debtor" (change)="toggle($event.value)">
+      <span class="material-icons">account_balance_wallet</span> Allocate balance to the debtors account
+    </mat-radio-button>
+  </mat-radio-group>
+
+
+  <div class="form-group-button mat-form-button">
+    <div class="form-buttons" (click)="submit()">
+      <button [disabled]="!canSubmit" class="button float-button submit-button">Submit</button>
+    </div>
+  </div>

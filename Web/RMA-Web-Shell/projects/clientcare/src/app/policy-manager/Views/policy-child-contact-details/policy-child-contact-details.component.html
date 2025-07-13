@@ -1,0 +1,312 @@
+<div class="page-header"></div>
+<div *ngIf="!canAdd">
+  <div class="wizard-permissions-error">
+    You do not have sufficient permissions to add policy contact details.
+  </div>
+</div>
+<div class="wizard-main-content">
+  <mat-card class="wizard-mat-card">
+    <div>
+      <mat-card-content class="wizard-mat-card-content">
+        <form [formGroup]="form" class="mat-container details-form" novalidate>
+          <mat-accordion>
+            <!--Main Member Contacts-->
+            <mat-expansion-panel>
+              <mat-expansion-panel-header>
+                <h4>Main Member Details</h4>
+              </mat-expansion-panel-header>
+              <mat-card>
+                <div class="menu-bar">
+                  Main Member Contacts
+                </div>
+                <mat-card>
+                  <section>
+                    <mat-form-field class="mat-form-field">
+                      <label class="mat-label other-label"> Telephone Number</label>
+                      <input matInput type="tel" minlength="10" NumberOnly maxlength="10" id="tellNumber"
+                        name="tellNumber" formControlName="tellNumber">
+                      <mat-error *ngIf="form.get('tellNumber').hasError('minlength')">
+                        Telephone number must be at least <strong>10 digits</strong>
+                      </mat-error>
+                    </mat-form-field>
+                    <mat-form-field class="mat-form-field-right">
+                      <label class="mat-label other-label mandatory-field"> Mobile Number</label>
+                      <input matInput type="tel" minlength="10" NumberOnly maxlength="10" id="cellNumber"
+                        name="cellNumber" formControlName="cellNumber">
+                      <mat-error *ngIf="form.get('cellNumber').hasError('required')">
+                        Mobile number is <strong>required</strong>
+                      </mat-error>
+                      <mat-error *ngIf="form.get('cellNumber').hasError('minlength')">
+                        Mobile number must be at least <strong>10 digits</strong>
+                      </mat-error>
+                    </mat-form-field>
+                  </section>
+                  <section>
+                    <mat-form-field>
+                      <label class="mat-label other-label mandatory">Email address</label>
+                      <input matInput maxlength="50" id="emailAddress" name="emailAddress"
+                        formControlName="emailAddress" />
+                      <mat-error *ngIf="form.get('emailAddress').hasError('required')">
+                        A <strong>valid</strong> email address required
+                      </mat-error>
+                      <mat-error *ngIf="form.get('emailAddress').hasError('required')">
+                        Email address<strong> is required</strong>
+                      </mat-error>
+                    </mat-form-field>
+                    <mat-form-field class="mat-form-field-right">
+                      <label class="mat-label other-label mandatory-field">Preferred Communication</label>
+                      <div>
+                        <mat-select formControlName="commPreference" id="commPreference" name="commPreference"
+                          (selectionChange)="commPreferenceChange($event)">
+                          <mat-option *ngFor="let preference of commPreferences"
+                            [value]="preference.id">{{preference.name}}
+                          </mat-option>
+                        </mat-select>
+                        <mat-error *ngIf="form.get('commPreference').hasError('min')">
+                          Communication preference is required
+                        </mat-error>
+                      </div>
+                    </mat-form-field>
+                  </section>
+                </mat-card>
+              </mat-card>
+            </mat-expansion-panel>
+            <br />
+            <mat-expansion-panel>
+              <!--Broker Details-->
+              <mat-expansion-panel-header>
+                <h4>Broker Details</h4>
+              </mat-expansion-panel-header>
+              <mat-card>
+                <div class="menu-bar">
+                  Broker Contacts
+                </div>
+                <mat-card>
+                  <section>
+                    <mat-form-field class="mat-form-field">
+                      <label class="mat-label other-label">Contact Name</label>
+                      <input matInput type="text" id="brokerContactName" name="brokerContactName" readonly="false"
+                        [value]="brokerDetail.contactName">
+                    </mat-form-field>
+                    <mat-form-field class="mat-form-field-right">
+                      <label class="mat-label other-label"> Telephone Number</label>
+                      <input matInput type="tel" minlength="10" NumberOnly maxlength="10" id="brokerTelNumber"
+                        name="brokerTelNumber" readonly="false" [value]="brokerDetail.telephoneNumber">
+                    </mat-form-field>
+                  </section>
+                  <section>
+                    <mat-form-field class="mat-form-field">
+                      <label class="mat-label other-label">Email Address</label>
+                      <input type="email" matInput maxlength="50" id="brokerEmailAddress" name="brokerEmailAddress"
+                        readonly="false" [value]="brokerDetail.emailAddress" />
+                    </mat-form-field>
+                    <mat-form-field class="mat-form-field-right">
+                      <label class="mat-label other-label">Mobile Number</label>
+                      <input matInput type="tel" minlength="10" NumberOnly maxlength="10" id="brokerMobileNumber"
+                        name="brokerMobileNumber" readonly="false" [value]="brokerDetail.mobileNumber" />
+                    </mat-form-field>
+                  </section>
+                </mat-card>
+              </mat-card>
+            </mat-expansion-panel>
+            <br />
+            <mat-expansion-panel>
+              <!--Scheme Details-->
+              <mat-expansion-panel-header>
+                <h4>Scheme Details</h4>
+              </mat-expansion-panel-header>
+              <mat-card>
+                <div class="menu-bar">
+                  Scheme Contacts
+                </div>
+                <mat-card>
+                  <section>
+                    <mat-form-field class="mat-form-field">
+                      <label class="mat-label other-label">Contact Name</label>
+                      <input matInput type="text" id="contactName" name="contactName" readonly="false"
+                        [value]="schemeDetail.contactPersonName">
+                    </mat-form-field>
+                    <mat-form-field class="mat-form-field-right">
+                      <label class="mat-label other-label"> Telephone Number</label>
+                      <input matInput type="tel" minlength="10" NumberOnly maxlength="10" id="telephoneNumber"
+                        readonly="false" [value]="schemeDetail.contactTelephone">
+                    </mat-form-field>
+                  </section>
+                  <section>
+                    <mat-form-field class="mat-form-field">
+                      <label class="mat-label other-label">Email Address</label>
+                      <input type="email" matInput maxlength="50" id="schemeEmailAddress" name="schemeEmailAddress"
+                        readonly="false" [value]="schemeDetail.contactEmail" />
+                    </mat-form-field>
+                    <mat-form-field class="mat-form-field-right">
+                      <label class="mat-label other-label">Mobile Number</label>
+                      <input matInput type="tel" minlength="10" NumberOnly maxlength="10" id="mobileNumber"
+                        name="mobileNumber" readonly="false" [value]="schemeDetail.contactMobile" />
+                    </mat-form-field>
+                  </section>
+                </mat-card>
+              </mat-card>
+            </mat-expansion-panel>
+            <br />
+            <!--First Alternative Person Details-->
+            <mat-expansion-panel>
+              <mat-expansion-panel-header>
+                <h4>First Alternative Person Details</h4>
+              </mat-expansion-panel-header>
+              <mat-card>
+                <div class="menu-bar">
+                  First Alternative Person Contacts
+                </div>
+                <mat-card>
+                  <section>
+                    <mat-form-field class="mat-form-field">
+                      <label class="mat-label other-label">Contact Type</label>
+                      <div>
+                        <mat-select formControlName="firstAlternativeContactType" id="firstAlternativeContactType"
+                          name="firstAlternativeContactType">
+                          <mat-option *ngFor="let firstAlternativeContactType of contactTypes"
+                            [value]="firstAlternativeContactType.id">
+                            {{firstAlternativeContactType.name}}
+                          </mat-option>
+                        </mat-select>
+                        <mat-error *ngIf="isFirstAlternativeContactRequired">
+                          Contact type is required
+                        </mat-error>
+                      </div>
+                      <input [hidden]="true" matInput formControlName="firstAlternativePolicyContactId" />
+                    </mat-form-field>
+                    <mat-form-field class="mat-form-field-right">
+                      <label class="mat-label other-label">Contact Name</label>
+                      <input matInput type="text" id="firstAlternativeContactName" name="firstAlternativeContactName"
+                        formControlName="firstAlternativeContactName">
+                      <mat-error *ngIf="isFirstAlternativeContactRequired">
+                        Contact name is <strong>required</strong>
+                      </mat-error>
+                    </mat-form-field>
+                  </section>
+                  <section>
+                    <mat-form-field class="mat-form-field">
+                      <label class="mat-label other-label">Email Address</label>
+                      <input type="email" matInput maxlength="50" id="firstAlternativeEmailAddress"
+                        name="firstAlternativeEmailAddress" formControlName="firstAlternativeEmailAddress" />
+                      <mat-error *ngIf="form.get('firstAlternativeEmailAddress').hasError('required')">
+                        Email address<strong> is required</strong>
+                      </mat-error>                        
+                      <mat-error *ngIf="isFirstAlternativeContactRequired">
+                        A <strong>valid</strong> email address required
+                      </mat-error>
+                    </mat-form-field>
+                    <mat-form-field class="mat-form-field-right">
+                      <label class="mat-label other-label"> Telephone Number</label>
+                      <input matInput type="tel" minlength="10" NumberOnly maxlength="10" id="firstAlternativeTelNumber"
+                        name="firstAlternativeTelNumber" formControlName="firstAlternativeTelNumber">
+                      <mat-error *ngIf="form.get('firstAlternativeTelNumber').hasError('phoneNumber')">
+                        Please enter a valid phone number
+                      </mat-error>
+                    </mat-form-field>
+                  </section>
+                  <section>
+                    <mat-form-field class="mat-form-field">
+                      <label class="mat-label other-label">Mobile Number</label>
+                      <input matInput type="tel" minlength="10" NumberOnly maxlength="10"
+                        id="firstAlternativeMobileNumber" name="firstAlternativeMobileNumber"
+                        formControlName="firstAlternativeMobileNumber" />
+                      <mat-error *ngIf="form.get('firstAlternativeMobileNumber').hasError('phoneNumber')">
+                        Please enter a valid mobile number
+                      </mat-error>
+                    </mat-form-field>
+                    <mat-form-field class="mat-form-field-right">
+                      <label class="mat-label other-label"> Alternative Number</label>
+                      <input matInput type="tel" minlength="10" NumberOnly maxlength="10"
+                        id="firstAlternativeContactNumber" name="firstAlternativeContactNumber"
+                        formControlName="firstAlternativeContactNumber">
+                      <mat-error *ngIf="form.get('firstAlternativeContactNumber').hasError('phoneNumber')">
+                        Please enter a valid alternative phone number
+                      </mat-error>
+                    </mat-form-field>
+                  </section>
+                </mat-card>
+              </mat-card>
+            </mat-expansion-panel>
+            <br />
+            <mat-expansion-panel>
+              <mat-expansion-panel-header>
+                <h4>Second Alternative Person Details</h4>
+              </mat-expansion-panel-header>
+              <mat-card>
+                <div class="menu-bar">
+                  Second Alternative Person Contacts
+                </div>
+                <mat-card>
+                  <section>
+                    <mat-form-field class="mat-form-field">
+                      <label class="mat-label other-label">Contact Type</label>
+                      <div>
+                        <mat-select formControlName="secondAlternativeContactType" id="secondAlternativeContactType"
+                          name="secondAlternativeContactType">
+                          <mat-option *ngFor="let secondAlternativeContactType of contactTypes"
+                            [value]="secondAlternativeContactType.id">
+                            {{secondAlternativeContactType.name}}
+                          </mat-option>
+                        </mat-select>
+                      </div>
+                      <input [hidden]="true" matInput formControlName="secondAlternativePolicyContactId" />
+                    </mat-form-field>
+                    <mat-form-field class="mat-form-field-right">
+                      <label class="mat-label other-label">Contact Name</label>
+                      <input matInput type="text" id="secondAlternativeContactName" name="secondAlternativeContactName"
+                        formControlName="secondAlternativeContactName">
+                    </mat-form-field>
+                  </section>
+                  <section>
+                    <mat-form-field class="mat-form-field">
+                      <label class="mat-label other-label">Email Address</label>
+                      <input type="email" matInput maxlength="50" id="secondAlternativeEmailAddress"
+                        name="secondAlternativeEmailAddress" formControlName="secondAlternativeEmailAddress" />
+                      <mat-error *ngIf="form.get('secondAlternativeEmailAddress').hasError('email')">
+                        A valid email address required
+                      </mat-error>
+                    </mat-form-field>
+                    <mat-form-field class="mat-form-field-right">
+                      <label class="mat-label other-label"> Telephone Number</label>
+                      <input matInput type="tel" minlength="10" NumberOnly maxlength="10"
+                        id="secondAlternativeTelNumber" name="secondAlternativeTelNumber"
+                        formControlName="secondAlternativeTelNumber">
+                      <mat-error *ngIf="form.get('secondAlternativeTelNumber').hasError('phoneNumber')">
+                        A valid telephone number is required
+                      </mat-error>
+                    </mat-form-field>
+                  </section>
+                  <section>
+                    <mat-form-field class="mat-form-field">
+                      <label class="mat-label other-label">Mobile Number</label>
+                      <input matInput type="tel" minlength="10" NumberOnly maxlength="10"
+                        id="secondAlternativeMobileNumber" name="secondAlternativeMobileNumber"
+                        formControlName="secondAlternativeMobileNumber" />
+                      <mat-error *ngIf="isSecondAlternativeContactRequired">
+                        A valid mobile number is required
+                      </mat-error>
+                    </mat-form-field>
+                    <mat-form-field class="mat-form-field-right">
+                      <label class="mat-label other-label"> Alternative Number</label>
+                      <input matInput type="tel" minlength="10" NumberOnly maxlength="10"
+                        id="secondAlternativeContactNumber" name="secondAlternativeContactNumber"
+                        formControlName="secondAlternativeContactNumber">
+                      <mat-error *ngIf="form.get('secondAlternativeContactNumber').hasError('phoneNumber')">
+                        A valid alternative number is required
+                      </mat-error>
+                    </mat-form-field>
+                  </section>
+                </mat-card>
+              </mat-card>
+            </mat-expansion-panel>
+          </mat-accordion>
+        </form>
+      </mat-card-content>
+    </div>
+  </mat-card>
+</div>
+<div *ngIf="addressMissing">
+  <p class="address-error">Business address and postal address are required</p>
+</div>
+<policy-address-details></policy-address-details>

@@ -1,0 +1,16 @@
+<mat-card>
+    <div *ngIf="selectedPersonEvent && selectedClaim && selectedEvent">
+        <person-event-medi-view [selectedPersonEvent]="selectedPersonEvent" 
+            [selectedClaim]="selectedClaim" [event]="selectedEvent"></person-event-medi-view>
+    </div>
+</mat-card>
+<holistic-event [eventId]="eventId"></holistic-event>
+<br />
+<mat-card>
+<div *ngIf="selectedPersonEvent && searchedPreauthType">
+    <medicare-view-results-generic-action-menu [claimId]="claimId" [personEvent]="selectedPersonEvent"
+        [preloadMedicalInvoices]="preloadMedicalInvoices" [searchedPreauthType]="searchedPreauthType"
+        [selectedPreAuthId]="selectedPreAuthId" [isWizard]="true"></medicare-view-results-generic-action-menu>
+</div>
+</mat-card>
+

@@ -1,0 +1,59 @@
+<div>
+  <div class="side-nav" [ngClass]="{ 'nav-open': navigationOpen }">
+    <!--User Profile-->
+    <div class="profile-container">
+      <div class="left-profile-container">
+        <div class="image-container-tenant" (dragenter)="dragEnter($event)" (dragover)="dragOver($event)" (drop)="dragDrop($event)" (click)="openUploadControl()">
+          <img class="circle-image pointer" matTooltip="change my profile picture" src="{{rmaLogo}}" alt="{{userTenant}}" />
+        </div>
+        <input type="file" #fileInput accept="image/*" style="display:none" (change)="profilePictureChange($event)" />
+      </div>
+      <div class="right-profile-container">
+        <p>
+          <span class="profile">{{ user.name }}</span><br />
+          <span class="userrole">{{ user.roleName }}</span><br />
+          <span class="profile">{{ userTenant }}</span><br /><br />
+          <span class="manage blue"><a href="#">Manage</a> |
+            <a href="#" (click)="logout()">Logout</a></span>
+        </p>
+      </div>
+    </div>
+    <div *ngIf="!menuGroups && !isError" class="menu-container">
+      <div style="margin-right: 15px">
+        <br />
+        <br />
+        <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+      </div>
+    </div>
+
+    <div *ngIf="isError" class="menu-container error-container">
+      There was an error loading the menu
+    </div>
+
+    <mat-accordion *ngIf="menuGroups">
+      <mat-expansion-panel *ngFor="let menuGroup of menuGroups" [expanded]="step === menuGroup.title"
+        (opened)="setStep(menuGroup.title)" hideToggle="false">
+
+        <mat-expansion-panel-header>
+          <mat-panel-title>
+            <span class="menu-title">{{ menuGroup.title }} </span>
+          </mat-panel-title>
+        </mat-expansion-panel-header>
+
+        <div *ngFor="let menuItem of menuGroup.menuItems" (click)="navigate(menuItem)"
+          matTooltip="{{ menuItem.title }} is unavailable" [matTooltipDisabled]="menuItem.isActive"
+          class="sub-accordion" [ngClass]="{ 'menu-not-available': !menuItem.isActive }">
+          <a><span class="title-description">{{ menuItem.title }}</span></a>
+        </div>
+
+      </mat-expansion-panel>
+    </mat-accordion>
+
+    <footer>
+      <p>
+        &#169; Copyright 2018 - {{ currentYear() }} <br />Rand Mutual Assurance
+      </p>
+    </footer>
+
+  </div>
+</div>

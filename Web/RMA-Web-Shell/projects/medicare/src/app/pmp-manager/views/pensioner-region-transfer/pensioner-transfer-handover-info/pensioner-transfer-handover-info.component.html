@@ -1,0 +1,122 @@
+<h5>Pensioner Transfer Handover Details</h5>
+<form [formGroup]="disabilityDetailsFormGroup">
+
+    <section class="clear-both">
+        <div class="field-container">
+
+            <mat-form-field class="">
+                <label class="mat-label other-label">Date Of Assessment</label>
+                <input matInput formControlName="dateOfAssessment" id="dateOfAssessment" name="dateOfAssessment"
+                    [matDatepicker]="dateOfAssessment">
+                <mat-datepicker-toggle matSuffix [for]="dateOfAssessment"></mat-datepicker-toggle>
+                <mat-datepicker touchUi="true" #dateOfAssessment></mat-datepicker>
+            </mat-form-field>
+
+        </div>
+        <div class="field-container-right">
+
+            <mat-form-field class="mat-form-field">
+                <label class="mat-label other-label">DRG Group</label>
+                <input matInput type="text" formControlName="drgGroup" name="drgGroup" id="drgGroup" />
+            </mat-form-field>
+
+        </div>
+    </section>
+
+    <br>
+
+    <section class="clear-both">
+        <div class="field-container">
+
+            <mat-form-field class="mat-form-field">
+                <label class="other-label mandatory-field">Daigonsis</label>
+                <textarea matInput cdkTextareaAutosize cdkAutosizeMinRows="3" cdkAutosizeMaxRows="5" id="daigonsis"
+                    formControlName="daigonsis" class="mat-input-element" maxlength="1000"></textarea>
+            </mat-form-field>
+
+        </div>
+        <div class="field-container-right">
+
+            <mat-form-field class="mat-form-field">
+                <label class="mat-label other-label">Is Spousal Training</label>
+                <mat-select name="isSpousalTraining" id="isSpousalTraining" formControlName="isSpousalTraining">
+                    <mat-option *ngFor="let yesNoInputType of yesNoInputType" [value]="yesNoInputType.value">
+                        {{yesNoInputType.text}}
+                    </mat-option>
+                </mat-select>
+            </mat-form-field>
+
+        </div>
+    </section>
+
+    <section class="clear-both">
+        <div class="field-container">
+
+            <mat-form-field class="mat-form-field">
+                <label class="other-label mandatory-field">Treatment Received</label>
+                <textarea matInput cdkTextareaAutosize cdkAutosizeMinRows="3" cdkAutosizeMaxRows="5"
+                    id="treatmentReceived" name="treatmentReceived" formControlName="treatmentReceived"
+                    class="mat-input-element" maxlength="1000"></textarea>
+            </mat-form-field>
+
+        </div>
+        <div class="field-container-right">
+
+            <mat-form-field class="mat-form-field">
+                <label class="mat-label other-label">Is UDS</label>
+                <mat-select name="isUDS" id="isUDS" formControlName="isUDS">
+                    <mat-option *ngFor="let inputTypeVal of yesNoInputType" [value]="inputTypeVal.value">
+                        {{inputTypeVal.text}}
+                    </mat-option>
+                </mat-select>
+            </mat-form-field>
+
+        </div>
+    </section>
+
+    <br>
+    <section class="clear-both">
+        <div class="field-container">
+            <mat-form-field>
+                <label class="other-label mandatory-field">Medication Sundries Issued</label>
+                <textarea matInput cdkTextareaAutosize cdkAutosizeMinRows="3" cdkAutosizeMaxRows="5"
+                    id="medicationSundriesIssued" formControlName="medicationSundriesIssued" class="mat-input-element"
+                    maxlength="1000"></textarea>
+            </mat-form-field>
+        </div>
+    </section>
+
+    <br>
+    <section class="clear-both">
+        <div class="field-container">
+            <mat-form-field class="">
+                <label class="mat-label other-label">Issued Date</label>
+                <input matInput formControlName="issuedDate" id="issuedDate" name="issuedDate"
+                    [matDatepicker]="issuedDate">
+                <mat-datepicker-toggle matSuffix [for]="issuedDate"></mat-datepicker-toggle>
+                <mat-datepicker touchUi="true" #issuedDate></mat-datepicker>
+            </mat-form-field>
+        </div>
+        <div class="field-container-right">
+
+            <mat-form-field>
+                <label class="mat-label other-label">Issued Month</label>
+                <mat-select name="issuedMonth" id="issuedMonth" formControlName="issuedMonth">
+                    <mat-option *ngFor="let issuedMonthInputType of issuedMonthInputType"
+                        [value]="issuedMonthInputType.value">
+                        {{issuedMonthInputType.text}}
+                    </mat-option>
+                </mat-select>
+            </mat-form-field>
+
+        </div>
+    </section>
+
+    <br>
+
+    <div class="form-group-button mat-form-button" *ngIf="nextButtonClicked == false">
+        <button class="button float-button" (click)="onEmitHandoverDetails()">Next</button>
+    </div>
+
+</form> <br> <br> <br>
+<div class="clear">&nbsp;</div>

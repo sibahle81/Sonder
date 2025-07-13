@@ -1,0 +1,100 @@
+<mat-card *ngIf="(isLoading$ | async)">
+    <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+    <label class="mat-label other-label"><i>{{loadingMessages$ | async}}</i></label>
+</mat-card>
+
+<mat-card>
+    <claim-paged-estimates [personEvent]="personEvent" [claimInvoice]="claimInvoice"></claim-paged-estimates>
+</mat-card>
+
+<mat-card>
+    <form [formGroup]="form" class="mat-container" novalidate *ngIf="!(isLoading$ | async)">
+        <section>
+            <mat-form-field class="mat-form-field">
+                <label class="mat-label other-label mandatory-field">{{date}}</label>
+                <input matInput formControlName="invoiceDate" [matDatepicker]="invoiceDate" readonly [min]="minDate" [max]="maxDate"
+                    date="true" time="false">
+                <mat-datepicker-toggle matSuffix [for]="invoiceDate">
+                </mat-datepicker-toggle>
+                <mat-datepicker touchUi="true" #invoiceDate></mat-datepicker>
+                <mat-error *ngIf="form.get('invoiceDate').hasError('required')">
+                    {{date}} is <strong>required</strong>
+                </mat-error>
+            </mat-form-field>
+            <mat-form-field class="mat-form-field-right" *ngIf="ttdInvoice">
+                <label class="mat-label other-label">Date Received</label>
+                <input matInput formControlName="dateReceived" [matDatepicker]="dateReceived" readonly [min]="minDate" [max]="maxDate" 
+                    date="true" time="false">
+                <mat-datepicker-toggle matSuffix [for]="dateReceived">
+                </mat-datepicker-toggle>
+                <mat-datepicker touchUi="true" #dateReceived></mat-datepicker>
+                <mat-error *ngIf="form.get('dateReceived').hasError('required')">
+                    date received is <strong>required</strong>
+                </mat-error>
+            </mat-form-field>
+        </section>
+    
+        <section>
+            <mat-form-field class="mat-form-field">
+                <label class="mat-label other-label">Description</label>
+                <input matInput formControlName="description" name="description" id="description" />
+            </mat-form-field>
+            <mat-form-field class="mat-form-field-right" *ngIf="!hideAmount">
+                <label class="mat-label other-label mandatory-field">Invoice Amount</label>
+                <input matInput formControlName="invoiceAmount" name="invoiceAmount"
+                    id="invoiceAmount" type="number" />
+                <mat-error *ngIf="form.get('invoiceAmount').hasError('required')">
+                    Invoice amount is <strong>required</strong>
+                </mat-error>
+                <mat-error *ngIf="form.get('invoiceAmount').hasError('min')">
+                    Invoice amount <strong>must be greater than 0</strong>
+                </mat-error>
+                <mat-error *ngIf="form.get('invoiceAmount').hasError('max')">
+                    Invoice Amount cannot exceed <strong>{{ maxAmountAllowed }}</strong>
+                </mat-error>
+                <mat-error *ngIf="form.get('invoiceAmount').hasError('allowedPaymentExceeded')">
+                  {{beneficiaryAmountExceedMessage}}
+                </mat-error>
+            </mat-form-field>
+        </section>
+
+        <section>
+            <mat-form-field class="mat-form-field">
+                <label class="mat-label other-label mandatory-field">Payee Type</label>
+                <mat-select name="payeeType" id="payeeType"
+                    formControlName="payeeType"
+                    (selectionChange)="payeeTypeChange($event.value, null)">
+                    <mat-option *ngFor="let payeeType of payeeTypes"
+                        [value]="payeeType">
+                        {{formatLookup(payeeType)}}
+                    </mat-option>
+                </mat-select>
+                <mat-error *ngIf="form.get('payeeType').hasError('required')">
+                    payee type is <strong>required</strong>
+                </mat-error>
+            </mat-form-field>
+    
+            <mat-form-field class="mat-form-field-right" *ngIf="payees.length > 0">
+                <label class="mat-label other-label mandatory-field">Payee</label>
+                <mat-select name="payee" id="payee" formControlName="payee">
+                    <mat-option *ngFor="let payee of payees" [value]="payee">
+                        {{payee ? payee : 'N/A'}}
+                    </mat-option>
+                </mat-select>
+                <mat-error *ngIf="form.get('payee').hasError('required')">
+                    payee is <strong>required</strong>
+                </mat-error>
+            </mat-form-field>
+        </section>
+    
+        <section style="display:none;">
+            <mat-form-field class="mat-form-field">
+                <input id="payeeRolePlayer" name="payeeRolePlayer" matInput formControlName="payeeRolePlayer" />
+            </mat-form-field>
+        </section>
+    
+        <payee-type-search *ngIf="(payeeType == healthCareProvider || payeeType == sundryProvider || payeeType == beneficiary) && isEdit"
+            [payeeType]="payeeType" (populatePayee)="populatePayee($event)" [personEvent]="personEvent"
+            (closePayeeTableEmit)="closePayeeTableEmit()"></payee-type-search>
+    </form>
+</mat-card>

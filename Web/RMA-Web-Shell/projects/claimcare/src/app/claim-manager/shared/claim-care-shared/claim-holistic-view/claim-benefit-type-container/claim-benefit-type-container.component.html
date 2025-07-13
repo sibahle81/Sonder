@@ -1,0 +1,18 @@
+<mat-card *ngIf="isLoading$ | async">
+    <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+    <label class="mat-label other-label"><i>{{loadingMessages$ | async}}</i></label>
+</mat-card>
+
+<div *ngIf="!(isLoading$ | async)">
+    <mat-card>
+        <div class="mat-form-field">
+            <label class="mat-label other-label">Benefit Type</label>
+            <mat-select (selectionChange)="onBenefitChange($event)">
+                <mat-option *ngFor="let type of BenefitTypes;" [value]="type">
+                    {{formatText(type)}}</mat-option>
+            </mat-select>
+        </div><br />
+
+
+    </mat-card>
+</div>

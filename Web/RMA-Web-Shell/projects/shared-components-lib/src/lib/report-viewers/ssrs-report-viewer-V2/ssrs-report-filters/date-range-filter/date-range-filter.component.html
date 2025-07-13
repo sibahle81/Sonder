@@ -1,0 +1,31 @@
+<form [formGroup]="form" class="mat-container details-form" novalidate>
+    <section>
+        <mat-form-field class="mat-form-field">
+            <label class="mat-label other-label">Pre-defined Date Range</label><br />
+            <mat-select class="control" (selectionChange)="setDateRange($event.value)" formControlName="predefinedDate" name="predefinedDate" id="predefinedDate">
+                <mat-option *ngFor="let preDefinedDate of preDefinedDates" [value]="preDefinedDate">
+                    {{formatLookup(preDefinedDate)}}
+                </mat-option>
+            </mat-select>
+        </mat-form-field>
+    </section>
+    <section>
+        <mat-form-field class="mat-form-field">
+            <label class="mat-label other-label">Start Date</label>
+            <input matInput (dateChange)="readForm()" [max]="getEndDate()" matInput formControlName="startDate"
+                [matDatepicker]="startDate" name="startDate" id="startDate">
+            <mat-datepicker-toggle matSuffix [for]="startDate">
+            </mat-datepicker-toggle>
+            <mat-datepicker touchUi="true" #startDate></mat-datepicker>
+        </mat-form-field>
+
+        <mat-form-field class="mat-form-field-right">
+            <label class="mat-label other-label">End Date</label>
+            <input matInput (dateChange)="readForm()" [min]="getStartDate()" matInput formControlName="endDate"
+                [matDatepicker]="endDate" name="endDate" id="endDate">
+            <mat-datepicker-toggle matSuffix [for]="endDate">
+            </mat-datepicker-toggle>
+            <mat-datepicker touchUi="true" #endDate></mat-datepicker>
+        </mat-form-field>
+    </section>
+</form>

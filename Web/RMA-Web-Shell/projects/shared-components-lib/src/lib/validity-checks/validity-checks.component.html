@@ -1,0 +1,45 @@
+<div *ngIf="!canAdd">
+    <div class="wizard-permissions-error">You do not have sufficient permissions to confirm {{getValidityCheckTypeDesc()}} validity checks.</div>
+    <div (click)="back()" class="form-buttons submit-button">
+        <button type="button" class="button float-button">Back</button>
+    </div>
+</div>
+<div class="wizard-main-content" style="margin-left: -33px;">
+ <mat-card class="wizard-mat-card" style="box-shadow: none;">
+    <mat-card-content class="wizard-mat-card-content" style="overflow: auto;">    
+        <div class="mat-container mat-elevation-z8" style="padding-bottom: 24px;">
+          <div *ngIf="dataSource.isLoading">
+                <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+                <span *ngIf="isLoading" class="site-font grey" style="margin-top: 15px;"><i>{{dataSource.statusMsg}}</i></span>
+          </div>
+          <div [hidden]="!dataSource.checksFound">
+            <div style="display: flex;">
+            <ng-container *ngFor="let category of dataSource.data">
+            <ng-container *ngIf="category.validityCheckSets">
+              <div style="    margin-right:14px;line-height: 2;width: 20%; box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);padding: 16px;">
+              <label style=" font-weight:bold;color:teal;margin-left: -4px;">{{category.name}}</label>
+              <div style="margin-left: -4px;" *ngIf="inApprovalMode">
+                    <mat-checkbox type="checkbox" #cbAll (change)="onSelectAll(cbAll.checked, category.id)" [value]="category.id" [disabled]="!inApprovalMode">Select
+                                  All</mat-checkbox>
+              </div>
+          <div *ngFor="let validityCheck of category.validityCheckSets, let i =index">
+              <ng-container>
+                    <div style="display:inline-block;margin-left: 14px;">
+                     <mat-checkbox type="checkbox"  [value]="validityCheck.id"
+                      [checked]="validityCheck.isChecked" [(ngModel)]="validityCheck.isChecked" [disabled]="!inApprovalMode">{{validityCheck.description}}</mat-checkbox>
+                  </div>
+              </ng-container>   
+          </div>
+        </div>
+          </ng-container>
+          </ng-container> 
+          </div>  
+          </div>
+          <div [hidden]="dataSource.checksFound  || dataSource.isLoading">
+            <span class="grey site-font">No {{getValidityCheckTypeDesc()}} validity checks found.</span>
+         </div>
+        </div>
+  </mat-card-content>
+</mat-card>
+</div>
+            

@@ -1,0 +1,41 @@
+<div *ngIf="(isLoading$ | async)">
+    <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+    <span class="site-font">loading invoice types...please wait</span>
+</div>
+
+<div class="margin-bottom" *ngIf="displayMessage && !(isLoading$ | async)">
+    <mat-card>
+        <label class="mat-label other-label">
+            <span>
+                <span class="material-icons info">
+                    info
+                </span>
+                {{this.displayMessage}}
+            </span>
+        </label>
+    </mat-card>
+</div>
+
+<mat-card *ngIf="!(isLoading$ | async)">
+    <div class="menu-bar">
+        <span class="material-icons">
+            receipt_long
+        </span>&nbsp;Invoices
+        <span *ngIf="claimInvoiceType && canAddInvoice" class="material-icons pointer right" matTooltip="capture"
+            (click)="openInvoiceDialog()">
+            post_add
+        </span>
+    </div>
+
+    <form [formGroup]="form" novalidate>
+        <mat-form-field class="mat-form-field-left" *ngIf="invoiceTypes?.length > 0">
+            <label class="mat-label other-label">Invoice Type</label>
+            <mat-select name="invoiceTypeFilter" id="invoiceTypeFilter" formControlName="invoiceTypeFilter"
+                (selectionChange)="invoiceTypeChanged($event.value)">
+                <mat-option *ngFor="let invoiceType of invoiceTypes" [value]="invoiceType">
+                    {{formatLookup(invoiceType)}}
+                </mat-option>
+            </mat-select>
+        </mat-form-field>
+    </form>
+</mat-card>

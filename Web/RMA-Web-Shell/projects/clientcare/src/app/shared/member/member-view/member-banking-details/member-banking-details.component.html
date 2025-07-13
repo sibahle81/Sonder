@@ -1,0 +1,191 @@
+<div *ngIf="isViewMode">
+  <mat-card class="card">
+    <div>
+      <form [formGroup]="addForm" class="mat-container details-form" novalidate>
+        <div class="expansionTitle"> <span class="material-icons">
+            monetization_on
+          </span>Banking Details <span (click)="view()" class="material-icons pointer right"
+            matTooltip="View Banking details">
+            close
+          </span>
+
+          <span *ngIf="hideForm && !viewBankingDetails && !isReadOnly && hasAddPermission" (click)="toggle()" class="material-icons pointer right"
+            matTooltip="Add Banking Details">
+            add_circle_outline
+          </span>
+
+          <span *ngIf="!(isSaving$ | async) && !hideForm && !isReadOnly && !isAddMode && hasEditPermission" (click)="edit()"
+            class="material-icons pointer right" matTooltip="edit contact">
+            settings
+          </span>
+        </div>
+        <div *ngIf="viewBankingDetails && hasPermission">
+          <section>
+            <mat-form-field>
+              <label class="mat-label other-label mandatory-field">Bank</label>
+              <mat-select formControlName="bankId" name="bankId" id="bankId" (selectionChange)="loadBranches()">
+                <mat-option *ngFor="let bank of banks" [value]="bank.id">
+                  {{bank.name}}
+                </mat-option>
+              </mat-select>
+              <mat-error *ngIf="addForm.get('bankId').hasError('min')">
+                Please select a bank
+              </mat-error>
+            </mat-form-field>
+            <mat-form-field class="mat-form-field-right">
+              <label class="mat-label other-label mandatory-field">Branch</label>
+              <mat-select formControlName="bankBranchId" name="bankBranchId" id="bankBranchId"
+                (selectionChange)="loadBranchCode()">
+                <mat-option *ngFor="let branch of filteredBranches" [value]="branch.id">
+                  {{branch.name}}
+                </mat-option>
+              </mat-select>
+              <mat-error *ngIf="addForm.get('bankBranchId').hasError('min')">
+                Please select a bank branch
+              </mat-error>
+            </mat-form-field>
+          </section>
+
+          <section>
+            <mat-form-field>
+              <label class="mat-label other-label mandatory-field">Account Type</label>
+              <mat-select formControlName="bankAccountType" name="bankAccountType" id="bankAccountType">
+                <mat-option *ngFor="let accountType of bankAccountTypes" [value]="accountType.id">
+                  {{accountType.name}}
+                </mat-option>
+              </mat-select>
+              <mat-error *ngIf="addForm.get('bankAccountType').hasError('min')">
+                Please select a bank account type
+              </mat-error>
+            </mat-form-field>
+            <mat-form-field class="mat-form-field-right">
+              <label class="mat-label other-label mandatory-field">Branch Code</label>
+              <input NumberOnly matInput maxlength="6" name="branchCode" id="branchCode" formControlName="branchCode" />
+              <mat-error *ngIf="addForm.get('branchCode').hasError('required')">
+                Branch code is required
+              </mat-error>
+            </mat-form-field>
+          </section>
+
+          <section>
+            <mat-form-field>
+              <label class="mat-label other-label mandatory-field">Account Holder</label>
+              <input matInput formControlName="name" name="name" id="name" />
+              <mat-error *ngIf="addForm.get('name').hasError('required')">
+                Account Holder is required
+              </mat-error>
+            </mat-form-field>
+          </section>
+
+          <section>
+            <mat-form-field>
+              <label class="mat-label other-label mandatory-field">Account Number</label>
+              <input NumberOnly matInput maxlength="13" name="accountNumber" id="accountNumber"
+                formControlName="accountNumber" />
+              <mat-error *ngIf="addForm.get('accountNumber').hasError('required')">
+                Account number is required
+              </mat-error>
+            </mat-form-field>
+            <mat-form-field class="mat-form-field-right">
+              <label class="mat-label other-label mandatory-field">Effective Date</label>
+              <input matInput formControlName="effectiveDate" [matDatepicker]="effectiveDate">
+              <mat-datepicker-toggle matSuffix [for]="effectiveDate">
+              </mat-datepicker-toggle>
+              <mat-datepicker touchUi="true" #effectiveDate></mat-datepicker>
+              <mat-error *ngIf="addForm.get('effectiveDate').hasError('required')">
+                Effective date is required
+              </mat-error>
+            </mat-form-field>
+          </section>
+
+          <section>
+            <span *ngIf="addForm.valid && !addForm.pristine" class="mat-label other-label pointer"
+              style="margin-left: 10px;" (click)="addBankAccount()">
+              <span class="material-icons" style="color: green;">check_circle</span>
+            </span>
+            <span *ngIf="!addForm.valid || addForm.pristine && !isReadOnly"
+              class="mat-label other-label pointer" style="margin-left: 10px;">
+              <span class="material-icons" style="color: lightpink;">check_circle</span>
+            </span>
+            <span class="mat-label other-label pointer" (click)="cancel()"><span
+                class="material-icons">cancel</span></span>
+          </section>
+        </div>
+
+        <div *ngIf="viewBankingDetails && !hasPermission">
+          <label class="mat-label other-label"><i>Permission denied...</i></label><br />
+        </div>
+      </form>
+    </div>
+
+    <div *ngIf="hideForm && (!rolePlayerBankAccounts || rolePlayerBankAccounts.length <= 0)">
+      <label class="mat-label other-label"><i>No Banking Details have been added...</i></label><br />
+    </div>
+
+    <div *ngIf="hideForm && (!rolePlayerBankAccounts || rolePlayerBankAccounts.length <= 0) && !hasPermission">
+      <label class="mat-label other-label"><i>Permission denied...</i></label><br />
+    </div>
+
+    <div *ngIf="rolePlayerBankAccounts.length > 0 && !viewBankingDetails && hideForm && hasPermission" class="scrollTable">
+      <table class="altRowTable" style="width:100%;">
+        <tr>
+          <th>Bank</th>
+          <th>Branch</th>
+          <th>Account Type</th>
+          <th>Branch Code</th>
+          <th>Account Holder</th>
+          <th>Account Number</th>
+          <th>Effective Date</th>
+          <th>Action</th>
+        </tr>
+        <tr *ngFor="let account of rolePlayerBankAccounts">
+          <td>{{getBank(account.branchCode)}}</td>
+          <td>{{getBranch(account.branchCode)}}</td>
+          <td>{{getAccountType(account.bankAccountType)}}</td>
+          <td>{{account.branchCode}}</td>
+          <td>{{account.accountHolderName}}</td>
+          <td>{{account.accountNumber}}</td>
+          <td>{{formatDate(account.effectiveDate)}}</td>
+          <td *ngIf="account.rolePlayerBankingId > 0">
+            <a role="button" class="link-edit" (click)="toggleBankDetails(account)">
+              <span class="material-icons icn">
+              visibility
+              </span>
+            </a>
+
+            <a *ngIf="hasAuditPermission" role="button" class="link-edit" (click)="openAuditDialog(account)">
+              <span class="material-icons icn" matTooltip="view audit details">
+                fingerprint
+              </span>
+            </a>
+          </td>
+          <td *ngIf="(!account.rolePlayerBankingId || account.rolePlayerBankingId <= 0) && !isReadOnly">
+            <a role="button" class="link-edit" (click)="delete(account)"><span class="material-icons icn">
+                delete
+              </span></a>
+          </td>
+        </tr>
+      </table>
+    </div>
+
+    <div *ngIf="rolePlayerBankAccounts.length > 0 && !viewBankingDetails && hideForm && !hasPermission">
+      <label class="mat-label other-label"><i>Permission denied...</i></label><br />
+    </div>
+    <div *ngIf="!rolePlayerBankAccounts && !hideForm">
+      <label class="mat-label other-label"><i>No banking details have been added...</i><span
+          *ngIf="hasPermission && isWizard" class="mat-label other-label pointer" (click)="toggle()"><span
+            *ngIf="!isReadOnly" class="material-icons">add_circle</span></span></label><br />
+    </div>
+  </mat-card>
+</div>
+
+<div *ngIf="!isViewMode">
+  <mat-card>
+    <div class="expansionTitle"><span class="material-icons">
+        monetization_on
+      </span> Banking Details<span (click)="view()" class="material-icons pointer right"
+        matTooltip="View banking details">
+        expand_more
+      </span></div>
+  </mat-card>
+</div>

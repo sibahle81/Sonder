@@ -1,0 +1,66 @@
+<div class="main-container">
+    <mat-card>
+        <h1 >{{headerTitle}}</h1>
+        <mat-card-content >
+            <mat-form-field>
+                <input matInput maxlength="50" name="query" id="query" #filter minLength="3" matTooltipShowDelay="1000" class="search"
+                placeholder ="&nbsp;&nbsp;&nbsp;  Search by account number, client name, identification number, registration number, group number or invoice number"
+                >                   
+                <mat-icon class="search-icon" (click)="search()" matSuffix>search</mat-icon>               
+            </mat-form-field>
+            <div *ngIf="dataSource.isLoading">
+                <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+                <label class="mat-label other-label"><i>searching...please wait</i></label>
+            </div>
+
+            <div [hidden]="paginator.length === 0 || dataSource.isLoading  || filter.value === ''" class="table-container">
+                <mat-table #table [dataSource]="dataSource" matSort>
+
+                    <ng-container matColumnDef="finPayeNumber">
+                        <mat-header-cell *matHeaderCellDef mat-sort-header>Account Number</mat-header-cell>
+                        <mat-cell *matCellDef="let row">{{row.finPayeNumber}}</mat-cell>
+                    </ng-container>
+
+                    <!--Display Name-->
+                    <ng-container matColumnDef="displayName">
+                        <mat-header-cell *matHeaderCellDef mat-sort-header>Client Name</mat-header-cell>
+                        <mat-cell *matCellDef="let row">{{row.displayName}}</mat-cell>
+                    </ng-container>
+
+                    <!--Email-->
+                    <ng-container matColumnDef="emailAddress">
+                        <mat-header-cell *matHeaderCellDef mat-sort-header>Email</mat-header-cell>
+                        <mat-cell *matCellDef="let row">{{row.emailAddress}}</mat-cell>
+                    </ng-container>
+
+                    <!-- Actions -->
+                    <ng-container matColumnDef="actions">
+                        <mat-header-cell *matHeaderCellDef mat-sort-header>Actions</mat-header-cell>
+                        <mat-cell *matCellDef="let row">
+                            <span><a role="button" class="link-edit" (click)="onSelected(row)">Select</a></span>
+                        </mat-cell>
+                    </ng-container>
+
+                    <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
+                    <mat-row *matRowDef="let row; columns: displayedColumns;"></mat-row>
+                </mat-table>
+
+                <mat-paginator #paginator [length]="paginator.length" [pageIndex]="0" [pageSize]="5" [pageSizeOptions]="[5, 10, 25, 100]">
+                </mat-paginator>
+            </div>
+
+            <div [hidden]="dataSource.isLoading || paginator.length > 0 || !currentQuery || currentQuery == ''" class="no-search-results-add-button">
+                <div class="site-font grey">
+                    <p class="grey">Your search - <strong>{{currentQuery}}</strong> - did not match any records.</p>
+                    <span>Suggestions: </span>
+                    <ul>
+                        <li>Make sure that all words are spelled correctly.</li>
+                        <li>Try different keywords.</li>
+                        <li>Try more general keywords.</li>
+                        <li>Try fewer keywords.</li>
+                    </ul>
+                </div>
+            </div>
+
+        </mat-card-content>
+    </mat-card>

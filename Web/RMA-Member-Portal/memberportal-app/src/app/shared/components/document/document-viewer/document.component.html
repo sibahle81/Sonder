@@ -1,0 +1,140 @@
+<mat-card *ngIf="(isLoading$ | async)">
+  <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+  <label class="mat-label other-label"><i>loading documents...please wait</i></label>
+</mat-card>
+
+<div *ngIf="!(isLoading$ | async)">
+  <div *ngIf="documentSets && !documentTypes" class="menu-bar">
+    <span class="material-icons">
+      file_copy
+    </span>Document Sets
+
+    <span *ngIf="!(isLoading$ | async) && keyName && keyValue && systemName" class="material-icons pointer right"
+      matTooltip="refresh" (click)="refresh()">
+      restart_alt
+    </span>
+
+    <span *ngIf="!isReadOnly" matTooltip="browse document sets" class="material-icons pointer right"
+      (click)="openDocumentSetDialog()">add_circle</span>
+
+    <span *ngIf="selectedDocuments?.length > 0" matTooltip="selection completed" class="material-icons pointer right"
+      (click)="emitSelectedDocuments()">checklist</span>
+  </div>
+
+  <mat-card *ngIf="!documentSets || documentSets?.length <= 0">
+    <label class="mat-label other-label"><i>No documents found...</i></label>
+  </mat-card>
+
+  <div *ngIf="documentSets && !documentTypes">
+    <div class="grid-container">
+      <div *ngFor="let documentSet of documentSets" matTooltip="click to open {{getDocumentSet(documentSet)}}"
+        class="grid-item pointer" (click)="getUniqueDocumentTypes(documentSet)">
+        <div class="document-card"><b><u>{{getDocumentSet(documentSet)}}</u></b></div>
+      </div>
+    </div>
+  </div>
+
+  <div *ngIf="documentTypes && !(documents$ | async) && !showUploader">
+    <div *ngIf="selectedDocumentSet" class="menu-bar"><span
+        class="material-icons">file_copy</span>&nbsp;{{getDocumentSet(selectedDocumentSet)}}
+
+      <span matTooltip="close" class="material-icons pointer right" (click)="closeDocumentTypes()">close</span>
+
+      <span *ngIf="selectedDocuments?.length > 0" matTooltip="selection completed" class="material-icons pointer right"
+        (click)="emitSelectedDocuments()">checklist</span>
+    </div>
+
+    <div class="grid-container">
+      <div matTooltip="click to open {{getDocumentType(documentType)}}" *ngFor="let documentType of documentTypes"
+        class="grid-item pointer" [ngClass]="{'grid-item-no-files': getDocumentCount(documentType) <= 0}"
+        (click)="getDocuments(documentType)">
+        <div class="document-card">
+          <span class="document-type"><b><u>{{getDocumentType(documentType)}}</u></b></span><br /><br />
+          <span class="document-count">(<b>{{getDocumentCount(documentType)}}</b>) file(s)</span><br />
+          <span *ngIf="getDocumentCount(documentType) > 0 && isExpired(documentType)"
+            class="redFont"><b>*Expired</b><br /></span>
+          <span
+            *ngIf="getDocumentCount(documentType) > 0 && getConfiguredValidDays(documentType) != 0 && !isExpired(documentType) && getDaysTillExpired(documentType) >= 0"
+            class="blueFont"><b>expires in {{getDaysTillExpired(documentType)}}</b> days<br /></span>
+          <span *ngIf="getConfiguredValidDays(documentType) != 0"><br />
+
+            <span class="blue" *ngIf="expiryDate && getConfiguredValidDays(documentType) < 0">files expire on
+              <b>{{expiryDate | date: "yyyy-MM-dd"}}</b></span>
+            <span class="blue" *ngIf="getConfiguredValidDays(documentType) > 0">files expire every
+              <b>{{getConfiguredValidDays(documentType)}}</b> days</span>
+
+            <br /></span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div *ngIf="(documents$ | async) && !showUploader">
+    <div *ngIf="selectedDocumentType" class="menu-bar"><span class="material-icons">file_copy</span>&nbsp;
+      <a matTooltip="click to go back to {{getDocumentSet(selectedDocumentSet)}}" class="pointer"
+        (click)="closeDocuments()">{{getDocumentSet(selectedDocumentSet)}}</a> >>
+      {{getDocumentType(selectedDocumentType)}}
+
+      <span matTooltip="back" class="material-icons pointer right" (click)="closeDocuments()">close</span>
+
+      <span *ngIf="!isReadOnly" matTooltip="upload more" class="material-icons pointer right"
+        (click)="toggleUploader()">file_upload</span>
+
+      <span *ngIf="selectedDocuments?.length > 0" matTooltip="selection completed" class="material-icons pointer right"
+        (click)="emitSelectedDocuments()">checklist</span>
+    </div>
+    <div class="grid-container">
+      <div *ngIf="getDocumentCount(selectedDocumentType) <= 0">
+        <label class="mat-label other-label"><i>no documents have been uploaded...</i></label>
+      </div>
+
+      <div *ngFor="let document of (documents$ | async)" class="grid-item pointer">
+        <mat-checkbox *ngIf="enableMultiSelect" [checked]="isSelected(document)"
+          (change)="documentSelected(document)">Selected?</mat-checkbox><br />
+
+        <div class="document-card">
+          <div class="document-menu">
+            <span matTooltip="document set"><b><u>{{getDocumentType(selectedDocumentType)}}</u></b></span><br /><br />
+            <span matTooltip="file name">{{formatText(document.fileName)}}</span><br />
+            <span matTooltip="upload date">{{document.createdDate | date:"yyyy-MM-dd HH:mm:ss"}}</span><br />
+            <span matTooltip="description">{{document.documentDescription ? document.documentDescription : '-'}}</span><br />
+            <mat-checkbox *ngIf="currentUser.isInternalUser" [checked]="document.isMemberVisible" (change)="setMemberVisible(document)">Visible to Member?</mat-checkbox>
+          </div>
+
+          <a matTooltip="open in new tab" class="pointer" (click)="openInNewTab(document)"><span
+              class="material-icons icn-button">tab</span></a>
+
+          <a matTooltip="download" class="pointer" (click)="downloadDocument(document)"><span
+              class="material-icons pointer">file_download</span></a>
+
+          <a *ngIf="hasAuditPermission" matTooltip="audit" class="pointer" (click)="openAuditDialog(document)"><span
+              class="material-icons pointer">fingerprint</span></a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div [hidden]="!(showUploader)">
+    <div class="menu-bar">
+      Upload Document(s) >> <span *ngIf="selectedDocumentType">{{getDocumentType(selectedDocumentType)}}</span>
+      <span *ngIf="!(isUploading$ | async)" matTooltip="back" class="material-icons pointer right"
+        (click)="toggleUploader()">close</span>
+      <span *ngIf="!(isUploading$ | async) && uploadDocuments?.uploadFileList?.length > 0"
+        (click)="save(selectedDocumentType)" class="material-icons pointer right pulse" matTooltip="upload file">
+        upload
+      </span>
+    </div>
+
+    <mat-card *ngIf="(isUploading$ | async)">
+      <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+      <label class="mat-label other-label"><i>uploading...please wait</i></label>
+    </mat-card>
+
+    <div [hidden]="(isUploading$ | async)">
+      <label class="mat-label other-label">Document Description</label><br />
+      <input class="mat-form-field" type="text" name="description" [(ngModel)]="documentDescription" maxlength="25">
+      <upload-control #uploadDocuments [acceptedTypes]="'.pdf,.jpg,.png,.wma,.msg,.xls,.xlsx,.doc,.docx,.csv'">
+      </upload-control>
+    </div>
+  </div>
+</div>

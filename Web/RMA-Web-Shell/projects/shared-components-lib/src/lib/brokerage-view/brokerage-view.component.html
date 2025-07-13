@@ -1,0 +1,9 @@
+<span *ngIf="isLoading$ | async" class="material-icons rotating" matTooltip="loading brokerage">
+    loop
+</span>
+
+<div *ngIf="!(isLoading$ | async)">
+    <div *ngIf="brokerage">
+        <b>{{brokerage.name}}</b> FSP: ({{brokerage.fspNumber}})
+    </div>
+</div>

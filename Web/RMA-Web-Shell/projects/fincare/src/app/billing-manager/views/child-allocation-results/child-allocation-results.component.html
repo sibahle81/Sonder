@@ -1,0 +1,13 @@
+
+<h3>Premium Listing Allocation Reports</h3>
+<br />
+<label class="mat-label other-label">Select a Report</label><br />
+<mat-select class="control" (selectionChange)="reportSelected($event.value)">
+    <mat-option *ngFor="let report of reports" [value]="report">
+        {{report.key}}
+    </mat-option>
+</mat-select>
+<div *ngIf="parameters && parameters.length > 0 && reportUrl">
+    <br />
+    <ssrs-report-viewer-V2 [reporturl]="reportUrl" [parameters]="parameters"></ssrs-report-viewer-V2>
+</div>

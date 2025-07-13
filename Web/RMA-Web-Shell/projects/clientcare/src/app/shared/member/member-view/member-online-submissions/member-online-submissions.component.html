@@ -1,0 +1,37 @@
+<mat-card *ngIf="(isLoading$ | async)">
+    <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+    <label class="mat-label other-label"><i>{{loadingMessage$ | async}}</i></label>
+</mat-card>
+
+<div *ngIf="!(isLoading$ | async)">
+    <div class="menu-bar">
+        <span class="material-icons">
+            balance
+        </span>
+        Online Submissions
+        <span *ngIf="canCapture() && canSubmit() && isOnlineSubmissionPeriodOpen()" (click)="submit()" class="material-icons pointer right pulse"
+            matTooltip="submit">
+            save
+        </span>
+    </div>
+    <div *ngIf="isOnlineSubmissionPeriodOpen()">
+        <mat-card *ngIf="canCapture()">
+            <mat-checkbox [checked]="applyAll" (change)="applyAllChanged($event.checked)">Apply captured submission
+                values across all products?</mat-checkbox>
+        </mat-card>
+        <div *ngFor="let policy of policies">
+            <role-player-policy-online-submission [policy]="policy" [isReadOnly]="isReadOnly"
+                [industryClassDeclarationConfiguration]="industryClassDeclarationConfiguration"
+                (applyToAllEmit)="applyToAll($event)"></role-player-policy-online-submission>
+        </div>
+    </div>
+
+    <mat-card *ngIf="!isOnlineSubmissionPeriodOpen()">
+        <span class="material-icons green" matTooltip="online submissions closed">
+            event
+        </span>&nbsp;&nbsp;
+        <label class="mat-label other-label">
+            Online submissions are currently closed. Submissions open <b>{{onlineSubmissionStartDate | date: "yyyy-MM-dd"}}</b>
+        </label>
+    </mat-card>
+</div>

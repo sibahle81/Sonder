@@ -1,0 +1,69 @@
+<h3>Bankstatement GL Recon Report</h3>
+<form [formGroup]="form" class="mat-container details-form" novalidate>
+  <section>
+    <mat-form-field class="mat-form-field">
+      <label class="mat-label other-label">Start Date</label>
+      <input readonly matInput date="true" time="false" [max]="maxDate" [matDatepicker]="startDate" id="startDate"
+        formControlName="startDate" />
+      <mat-datepicker-toggle matSuffix [for]="startDate">
+      </mat-datepicker-toggle>
+      <mat-datepicker touchUi="true" #startDate ng-model-options="{ timezone: 'sast' }"></mat-datepicker>
+    </mat-form-field>
+
+    <mat-form-field class="mat-form-field-right">
+      <label class="mat-label other-label">End Date</label>
+      <input readonly matInput date="true" time="false" [max]="maxDate" [matDatepicker]="endDate" id="endDate"
+        formControlName="endDate" />
+      <mat-datepicker-toggle matSuffix [for]="endDate">
+      </mat-datepicker-toggle>
+      <mat-datepicker touchUi="true" #endDate ng-model-options="{ timezone: 'sast' }"></mat-datepicker>
+    </mat-form-field>
+  </section>
+  <section>
+    <mat-form-field class="mat-form-field">
+      <label class="mat-label other-label mandatory-field">Company</label>
+      <mat-select formControlName="company" (selectionChange)="companyChanged($event)">
+        <mat-option *ngFor="for let company of companies" [value]="company.id">{{company.name}}</mat-option>
+      </mat-select>
+    </mat-form-field>
+    <mat-form-field class="mat-form-field-right">
+      <label class="mat-label other-label mandatory-field">Branch</label>
+      <mat-select formControlName="branch" (selectionChange)="branchChanged($event)">
+        <mat-option *ngFor="for let branch of branches" [value]="branch.id">{{branch.name}}</mat-option>
+      </mat-select>
+    </mat-form-field>
+  </section>
+  <section>
+    <mat-form-field>
+      <label class="mat-label other-label mandatory-field">Bank Account</label>
+      <mat-select id="bankAccount" name="bankAccount" formControlName="bankAccount"
+        (selectionChange)="selectedBankAccountChanged($event)">
+        <mat-option selected [value]="-1">All</mat-option>
+        <mat-option *ngFor="let rmaBankAccount of rmaBankAccountsFiltered" [value]="rmaBankAccount.id">
+          {{rmaBankAccount.accountName}} - {{rmaBankAccount.accountNumber}}
+        </mat-option>
+      </mat-select>
+    </mat-form-field>
+  </section>
+  <div *ngIf="isDownloading">
+    <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+    <label class="mat-label other-label">downloading...please wait</label>
+  </div>
+  <br />
+  <div class="form-group-button-lookup mat-form-button">
+    <div class="form-buttons" (click)="loadReport()">
+        <button class="button submit-button" [disabled]="isDownloading">View</button>
+    </div>   
+    <div class="form-buttons" (click)="downloadReport()">
+        <button class="button submit-button" [disabled]="isDownloading">Download</button>
+    </div>
+</div>
+</form>
+
+<div [hidden]="!showReport" class="report-container" id="trialBalanceRecon">
+  <ssrs-reportviewer [reportserver]="reportServerAudit" [reporturl]="reportUrlAudit"
+    [showparameters]="showParametersAudit" [parameters]="parametersAudit" [language]="languageAudit"
+    [width]="widthAudit" [height]="heightAudit" [toolbar]="toolbarAudit" [format]="format"
+    (downloadComplete)="completeDownload($event)">
+  </ssrs-reportviewer>
+</div>

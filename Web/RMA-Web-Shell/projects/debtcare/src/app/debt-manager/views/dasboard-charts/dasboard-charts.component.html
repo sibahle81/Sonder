@@ -1,0 +1,81 @@
+<div class="campaignHead">
+  <div class="campaignHeadInnerDiv">
+    <div class="recovery-btn">
+      <button mat-button class="btnCssClass">Dashboard</button>
+    </div>
+  </div>
+</div>
+<div class="chart-row">
+
+  <div class="display-style">
+    <div class="dashboard-input-label">
+    <label for="days" class="label-css">Select Days:</label>
+    </div>
+    <div class="dashboard-input-field">
+    <mat-form-field class="status-update-mff padding-left-css select-days-dropdown" appearance="outline">
+    <mat-select class="display-style-dropdown border-none" id="days" [(ngModel)]="selectedDays" (selectionChange)="onDaysChange($event.value)" 
+    placeholder="{{ selectedDaysLabel }}"  [panelClass]="'custom-dropdown'">
+      <mat-option value="7">Last 7 days</mat-option>
+      <mat-option value="30">Last 30 days</mat-option>
+      <mat-option value="90">Last 90 days</mat-option>
+    </mat-select>
+    </mat-form-field>
+    </div>
+  </div>
+  
+  <div class="display-style">
+    <div class="dashboard-input-label">
+    <label for="agent" class="label-css">Agent</label>
+    </div>
+    <div class="readonly-overlay" *ngIf="!hasAccess"></div>
+    <div class="dashboard-input-field">
+    <mat-form-field class="status-update-mff padding-left-css agent-list-dropdown" appearance="outline">
+  <input #agentSelect matInput placeholder="Search for an agent" id="agent" 
+    class="display-style-dropdown border-none agent-list" [matAutocomplete]="auto"
+    (input)="filterAssignList(agentSelect.value)" [value]="selectedOptionUsername">
+  <mat-autocomplete #auto="matAutocomplete" [displayWith]="displayUserName"
+    (optionSelected)="onAgentSelect($event.option.value)" #autoPanel="matAutocomplete">
+    <mat-option *ngFor="let item of filteredAssignList" [value]="item.id" [disabled]="displayDropdown"  [ngClass]="{'hide-autocomplete-panel': displayDropdown}">
+      {{ item.userName }}
+    </mat-option>
+  </mat-autocomplete>
+  <button class="dropdown-icon" mat-button matSuffix mat-icon-button aria-label="Toggle dropdown" [disabled]="displayDropdown">
+    <mat-icon>arrow_drop_down</mat-icon>
+  </button>
+    </mat-form-field>
+    </div>
+  </div>
+</div>                   
+<div class="displayData" [ngClass]=" isSpinner ? 'on-disabled' : 'on-enabled' ">
+  <mat-card *ngFor="let data of jsonData" class="customMatCard">
+    <mat-card-header class="cardHeadStyle">
+      <mat-card-title class="titleStyle">{{ data?.value }}</mat-card-title>
+      <mat-card-subtitle class="dataStyle">{{ data?.name }}</mat-card-subtitle>
+    </mat-card-header>
+  </mat-card>
+</div>
+<div class="chart-row" [ngClass]=" isSpinner ? 'on-disabled' : 'on-enabled' ">
+    <div class="inside-chart">
+      <h4 class="chart-heading">Status wise analytics</h4>
+  <hr />​
+      <canvas baseChart
+              [datasets]="barChartData"
+              [options]="barChartOptions"
+              [colors]="barChartColors"
+              [legend]="barChartLegend"
+              [chartType]="barChartType"></canvas>
+    </div>
+    <div class="inside-chart">
+      <h4 class="chart-heading">Status wise analytics</h4>
+  <hr  />​
+            <canvas  baseChart
+                  [data]="demodoughnutChartData"
+            [labels]="doughnutChartLabels"
+            [chartType]="doughnutChartType"
+            [options]="doughnutChartOptions"
+            [colors]="doughnutChartColors"></canvas>
+    </div>
+    <div [hidden]="!isSpinner" class="spinner-view">
+      <mat-spinner *ngIf="isSpinner"></mat-spinner>
+    </div>
+    </div> 

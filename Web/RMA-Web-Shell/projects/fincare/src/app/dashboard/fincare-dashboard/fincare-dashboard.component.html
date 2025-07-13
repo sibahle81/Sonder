@@ -1,0 +1,107 @@
+<div>
+  <mat-card class="main-container">
+    <mat-card class="top-selector-container">
+      <mat-card class="document-container margin-top-0 margin-left-5">
+        <mat-card-header>
+          <mat-card-title>
+            <h1 class="wizard-font">Daily Payment Estimates</h1>
+          </mat-card-title>
+        </mat-card-header>
+        <mat-card-content>
+          <div *ngIf="!isShowNewFinanceDashboard" class="estimateDiv">
+            <payment-daily-estimates></payment-daily-estimates>
+          </div>
+          <div *ngIf="isShowNewFinanceDashboard" class="estimateDiv">
+            <app-daily-payments-estimates></app-daily-payments-estimates>
+          </div>
+        </mat-card-content>
+      </mat-card>
+    </mat-card>
+    <mat-card class="top-selector-container">
+      <mat-card class="document-container margin-right-5">
+        <mat-card-header>
+          <mat-card-title>
+            <h1 class="wizard-font">Funeral Payments Overview</h1>
+          </mat-card-title>
+        </mat-card-header>
+        <mat-card-content>
+          <mat-accordion multi="false">
+            <div *ngFor="let product of products" >
+                  <claim-payment-overview [product]="product"></claim-payment-overview>
+            </div>
+        </mat-accordion>
+        </mat-card-content>
+      </mat-card>
+      <mat-card class="document-container margin-right-5 margin-top-0">
+        <mat-card-header>
+          <mat-card-title>
+            <h1 class="wizard-font">PRMA Payments Overview</h1>
+          </mat-card-title>
+        </mat-card-header>
+        <mat-card-content>
+          <mat-accordion multi="false">
+            <div *ngFor="let product of prmaProducts">
+              <prma-payment-overview [product]="product"></prma-payment-overview>
+            </div>
+        </mat-accordion>
+        </mat-card-content>
+      </mat-card>      
+      <mat-card *ngIf="!disable_coid_vaps_e2e_fincare" class="document-container margin-top-0 margin-left-5">
+        <mat-card-header>
+          <mat-card-title>
+            <h1 class="wizard-font">Live Bank Balances</h1>
+          </mat-card-title>
+        </mat-card-header>
+        <mat-card-content>
+          <div class="estimateDiv">
+            <bank-account-balances></bank-account-balances>
+          </div>
+        </mat-card-content>
+      </mat-card>
+    </mat-card>    
+
+    <mat-card class="top-selector-container">
+      <mat-card class="document-container margin-right-5">
+        <mat-card-header>
+          <mat-card-title>
+            <h1 class="wizard-font">Refund Payments Overview</h1>
+          </mat-card-title>
+        </mat-card-header>
+        <mat-card-content>
+          <payment-overview [paymentType]="refund"></payment-overview>
+        </mat-card-content>
+      </mat-card>
+
+      <mat-card *ngIf="!disable_coid_vaps_e2e_fincare" class="document-container margin-top-0 margin-left-5">
+        <mat-card-header>
+          <mat-card-title>
+            <h1 class="wizard-font">Commission Payments Overview</h1>
+          </mat-card-title>
+        </mat-card-header>
+        <mat-card-content>
+          <payment-overview [paymentType]="commission"></payment-overview>
+        </mat-card-content>
+      </mat-card>
+    </mat-card>
+
+    <mat-card class="top-selector-container">
+      <mat-card *ngIf="!disable_coid_vaps_e2e_fincare" class="document-container margin-right-5">
+        <mat-card-header>
+          <mat-card-title>
+            <h1 class="wizard-font">Commission Dashboard</h1>
+          </mat-card-title>
+        </mat-card-header>
+        <mat-card-content>
+          <div class="estimateDiv">
+            <app-payment-pending  [paymentType1]="commission1"></app-payment-pending>
+          </div>
+        </mat-card-content>
+      </mat-card>
+
+      <mat-card class="document-container margin-top-0 margin-left-5">
+        
+      </mat-card>
+
+    </mat-card>
+  </mat-card>
+</div>

@@ -1,0 +1,13 @@
+<div class="home-icon">
+  <div class="breadcrumb-container">
+      <img src="/assets/images/home-icon.png" width="14" height="15" alt=""/>
+      <a href="#">Home</a>
+      <span *ngIf="breadcrumbs">
+          <span *ngFor="let breadcrumb of breadcrumbs">
+              <a *ngIf="breadcrumb.url && breadcrumb.url !== ''" routerLink="breadcrumb.url" routerLinkActive="active"> / {{breadcrumb.title}}</a>
+              <span *ngIf="!breadcrumb.url || breadcrumb.url === ''"
+                    style="font-family: 'Oswald', sans-serif; color: #389cae; font-size: 14px;"> / {{breadcrumb.title}}</span>
+          </span>
+      </span>
+  </div>
+</div>

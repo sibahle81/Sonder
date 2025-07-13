@@ -1,0 +1,35 @@
+<mat-card class="mat-card-margin">
+    <mat-card-content class="margin-left-10 ">
+        <form componentLabel="Form" [formGroup]="irp5DocForm">
+            <div>
+                <h1 class="margin-bottom-15">Download Month End IRP5 Document</h1>
+            </div>
+            <div fxLayout="column" >
+                <mat-form-field class="mat-form-field" class="padding-right-20">
+                    <mat-label> Environment Type </mat-label>
+                    <mat-select id="irp5Type" name="irp5Type" formControlName="indicator" required>
+                        <mat-option *ngFor="let type of testType" [value]="type.value">
+                            {{type.viewValue}}
+                        </mat-option>
+                    </mat-select>
+                </mat-form-field>
+
+                <mat-form-field class="mat-form-field">
+                    <mat-label> Document Year</mat-label>
+                    <mat-select id="irp5Year" name="irp5Year" formControlName="year" required>
+                        <mat-option *ngFor="let year of years" [value]="year">
+                            {{year}}
+                        </mat-option>
+                    </mat-select>
+                </mat-form-field>
+            </div>
+            <div fxLayout="row" class="padding-bottom-30">
+                <button class="button submit-button" class="margin-top-3"
+                    (click)="generateDocument()">
+                    Generate Document
+                </button>
+            </div>
+
+        </form>
+    </mat-card-content>
+</mat-card>

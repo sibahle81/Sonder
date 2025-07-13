@@ -1,0 +1,82 @@
+<form [formGroup]="form" *ngIf="this.form">
+  <mat-vertical-stepper>
+    <mat-step>
+      <ng-template matStepLabel>Claimant and Healthcare Provider Details</ng-template>
+      <preauth-claim-search #ClaimDetails></preauth-claim-search>
+      <br><br>
+      <healthcareprovider-search  #EditHealthcareProvider  [showTelephoneNumber]="false"></healthcareprovider-search>
+      <br><br>
+      <preauth-hcp-view #HealthcareProvider [healthCareProviderId]="healthCareProviderId" [isInternalUser]="isInternalUser" 
+      [preAuthClaimDetails]="preAuthClaimDetails$"
+      [authDetails]="mainPreAuthorisation">
+      </preauth-hcp-view>
+    </mat-step>
+    <mat-step>
+      <ng-template matStepLabel>Authorisation Details</ng-template>
+      <br>
+      <div *ngIf="isTreatmentAuth">
+        <app-is-in-or-out-hospital-check #IsInHospital (isInHospitalSetEvent)="getIsInHospitalSetValue($event)"
+          [isInHospitalSet]="isInHospitalValue" [crudActionType]="crudActionType.edit"></app-is-in-or-out-hospital-check>
+      </div>
+      
+      <div *ngIf="isTreatmentAuth">
+        <app-treatment-preauth-document-type [linkedId]="preAuthId" 
+        [hideTreatmentDocTypeDropdown]="false"
+        ></app-treatment-preauth-document-type>
+      </div>
+
+      <mat-form-field class="date-field mat-form-field-right" color="accent">
+        <label class="mat-label other-label">Injury Date</label>
+        <input matInput [matDatepicker]="picker1" formControlName="injuryDate">
+        <mat-datepicker-toggle style=" position: absolute !important;right: 0 !important;top: 18px  !important;"
+          matSuffix [for]="picker1"></mat-datepicker-toggle>
+        <mat-datepicker #picker1></mat-datepicker>
+      </mat-form-field>
+      <br><br>
+      <mat-form-field class="date-field mat-form-field-right" color="accent">
+        <label class="mat-label other-label mandatory-field">Date authorised from</label>
+        <input matInput [matDatepicker]="pickerAuthFrom" formControlName="dateAuthorisedFrom">
+        <mat-datepicker-toggle style=" position: absolute !important;right: 0 !important;top: 18px  !important;"
+          matSuffix [for]="pickerAuthFrom"></mat-datepicker-toggle>
+        <mat-datepicker #pickerAuthFrom></mat-datepicker>
+      </mat-form-field>
+      <mat-form-field class="date-field mat-form-field-right" color="accent">
+        <label class="mat-label other-label mandatory-field">Date authorised to</label>
+        <input matInput [matDatepicker]="pickerAuthTo" formControlName="dateAuthorisedTo">
+        <mat-datepicker-toggle style=" position: absolute !important;right: 0 !important;top: 18px  !important;"
+          matSuffix [for]="pickerAuthTo"></mat-datepicker-toggle>
+        <mat-datepicker #pickerAuthTo></mat-datepicker>
+      </mat-form-field>
+      <br />
+      <mat-form-field class="mat-form-field-right">
+        <label class="mat-label other-label mandatory-field">Motivation</label>
+        <textarea matInput cdkTextareaAutosize cdkAutosizeMinRows="3" cdkAutosizeMaxRows="5"
+          formControlName="requestComments" class="mat-input-element" minlength="10" maxlength="1000"></textarea>
+      </mat-form-field>
+      <br />
+      <mat-form-field class="mat-form-field-right" *ngIf="isTreatmentAuth">
+        <label class="mat-label other-label">Treatment options: </label>
+        <br>
+        <mat-checkbox formControlName="isClaimReopeningRequest">
+            <label class="mat-label other-label">Is Claim Reopening Request?</label>
+        </mat-checkbox>
+        <mat-checkbox formControlName="isRehabilitationRequest">
+            <label class="mat-label other-label">Is this a Rehabilitation Treatment?</label>
+        </mat-checkbox>
+        <mat-checkbox formControlName="isWoundCareTreatment">
+            <label class="mat-label other-label">Is Wound Care Treatment?</label>
+        </mat-checkbox>
+        <mat-checkbox formControlName="isMedicationRequired">
+            <label class="mat-label other-label">Is Medication Required?</label>
+        </mat-checkbox>
+        <input hidden="true" matInput>
+        <br>
+      </mat-form-field>
+    </mat-step>
+    <mat-step>
+      <ng-template matStepLabel>ICD10Codes</ng-template>
+      <preauth-diagnosis [showTreamentBaskets]="true"></preauth-diagnosis>
+    </mat-step>
+  </mat-vertical-stepper>
+
+</form>

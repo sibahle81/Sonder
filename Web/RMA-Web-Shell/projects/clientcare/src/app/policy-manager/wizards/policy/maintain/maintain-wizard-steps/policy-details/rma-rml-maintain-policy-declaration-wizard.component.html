@@ -1,0 +1,12 @@
+<div *ngIf="!model">
+  <mat-card class="margins">
+    <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+    <label class="mat-label other-label"><i>{{loadingMessage$ | async}}</i></label>
+  </mat-card>
+</div>
+
+<div *ngIf="model">
+    <roleplayer-policy-declaration [policy]="model" [startDate]="model.targetedPolicyInceptionDate"
+      [endDate]="model.policyInceptionDate" [isReadOnly]="inApprovalMode"
+      (requiredDeclarationsValidEmit)="requiredDeclarationsSubmitted($event)"></roleplayer-policy-declaration>
+</div>

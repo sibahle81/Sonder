@@ -1,0 +1,153 @@
+<div class="page-header"></div>
+<mat-card style="margin: 15px 30px 15px 30px">
+    <mat-card-content style="margin-left: 10px;">
+        <form [formGroup]="form" (ngSubmit)="save()" class="mat-container" novalidate>
+            <div [hidden]="hasBeneficiaries">
+                <label style="font-size: 20px; margin-left: 30px;">No beneficiaries exist for this policy to add banking details</label>
+            </div>
+            <div [hidden]="!hasBeneficiaries">
+                <div *ngIf="!showBankAccount">
+                    <div class="card" style="margin-left: -300px; margin-top: -100px;" *ngFor="let beneficiaryBankingDetail of beneficiaryBankingDetails">
+                        <div class="container">
+                            <br/><br/>
+                            <label style="font-size: 20px; margin-left: 30px;">{{beneficiaryBankingDetail.firstname}} {{beneficiaryBankingDetail.lastname}}</label><br/>
+                            <label style="font-size: 15px; margin-left: 30px;"><strong>Identity Number:</strong> {{beneficiaryBankingDetail.idNumber}}</label><br/>
+                            <label style="font-size: 15px; margin-left: 30px;"><strong>DOB:</strong> {{beneficiaryBankingDetail.dateOfBirth | date:'yyyy-MM-dd'}}</label><br/>
+                            <label style="font-size: 15px; margin-left: 30px;"><strong>Contact:</strong> {{beneficiaryBankingDetail.contactNumber}}</label><br/>
+                            <label style="font-size: 15px; margin-left: 30px;"><strong>Email:</strong> {{beneficiaryBankingDetail.email}}</label><br/>
+                            <label style="font-size: 15px; margin-left: 30px;"><strong>Relation:</strong> {{beneficiaryBankingDetail.relationOfDeceased}}</label><br/>
+                            <label style="font-size: 15px; margin-left: 30px;"><strong>Percentage Allocated:</strong> {{beneficiaryBankingDetail.allocationPercentage}}</label><br/>
+                            <br/>
+<div (click)="addBankDetails(beneficiaryBankingDetail.beneficiaryId)" class="form-buttons submit-button" style="float:right; position:absolute;">
+    <button type="button" class="button float-button" style="margin-left: 50px;" [disabled]="isWizardCompleted">Add</button>
+</div>
+                            <br/><br/> <br/><br/>
+                            <div *ngFor="let bankAccount of beneficiaryBankingDetail.bankAccounts">
+
+                                <div *ngIf="bankAccount.isPendingAdd" style="color: blue; margin-left: 50px;">
+                                    <span><b>Bank:</b> {{bankAccount.bankName}}</span><br/>
+                                    <span><b>Account Type:</b> {{bankAccount.accountType}}</span><br/>
+                                    <span><b>Account Number:</b> {{bankAccount.accountNumber}}</span><br/>
+                                    <span><b>Accountholder Name:</b> {{bankAccount.nameOfAccountHolder}}</span><br/>
+                                    <span><b>Branch:</b> {{bankAccount.universalBranchCode}}</span><br/>
+                                    <span><b>Approved:</b><i> Add pending, this will be sent for approval when this wizard is submitted</i></span>
+                                </div>
+
+                                <div *ngIf="bankAccount.isPendingEdit" style="color: orange; margin-left: 50px;">
+                                    <span><b>Bank:</b> {{bankAccount.bankName}}</span><br/>
+                                    <span><b>Account Type:</b> {{bankAccount.accountType}}</span><br/>
+                                    <span><b>Account Number:</b> {{bankAccount.accountNumber}}</span><br/>
+                                    <span><b>Accountholder Name:</b> {{bankAccount.nameOfAccountHolder}}</span><br/>
+                                    <span><b>Branch:</b> {{bankAccount.universalBranchCode}}</span><br/>
+                                    <span><b>Approved:</b><i> Update pending, this will be sent for approval when this wizard is submitted</i></span>
+                                </div>
+
+                                <div *ngIf="!bankAccount.isPendingEdit && !bankAccount.isPendingAdd" style="margin-left: 50px;">
+                                    <span><b>Bank:</b> {{bankAccount.bankName}}</span><br/>
+                                    <span><b>Account Type:</b> {{bankAccount.accountType}}</span><br/>
+                                    <span><b>Account Number:</b> {{bankAccount.accountNumber}}</span><br/>
+                                    <span><b>Accountholder Name:</b> {{bankAccount.nameOfAccountHolder}}</span><br/>
+                                    <span><b>Branch:</b> {{bankAccount.universalBranchCode}}</span><br/>
+                                    <span><b>Approved:</b> {{bankAccount.isApproved}}</span>
+                                </div>
+
+<div *ngIf="!bankAccount.isPendingAdd" (click)="editBankDetails(beneficiaryBankingDetail.beneficiaryId, bankAccount.id)" class="form-buttons submit-button">
+<button type="button" class="button float-button" style="margin-left: 50px;" [disabled]="isWizardCompleted">Edit</button>
+</div>
+<div *ngIf="bankAccount.isPendingAdd" (click)="removeBankDetails(beneficiaryBankingDetail.beneficiaryId, bankAccount.accountNumber)" class="form-buttons submit-button">
+<button type="button" class="button float-button" style="margin-left: 50px;" [disabled]="isWizardCompleted">Remove</button>
+</div>
+                                <br/><br/><br/><br/>
+                            </div>
+                            <hr style="margin-left: 30px;" />
+                        </div>
+                    </div>
+
+                    <!--Buttons-->
+                    <div *ngIf="showButtons" class="form-group-button mat-form-button">
+
+                        <div *ngIf="showSaveButton" class="form-buttons" matTooltip="No changes have been made" [matTooltipDisabled]="!form.pristine">
+                            <button [disabled]="form.pristine" class="button float-button submit-button">Save</button>
+                        </div>
+
+                        <div *ngIf="showEditButton" (click)="edit()" class="form-buttons submit-button">
+                            <button type="button" class="button float-button">Edit</button>
+                        </div>
+
+                        <div (click)="back()" class="form-buttons submit-button">
+                            <button type="button" class="button float-button">Back</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!--Edit Banking Details-->
+            <div *ngIf="showBankAccount">
+                <section>
+                    <!--Account type-->
+                    <mat-form-field>
+                        <label class="mat-label other-label">Account type</label>
+                        <mat-select name="accountType" id="accountType" #account formControlName="accountType">
+                            <mat-option *ngFor="let accountType of bankAccountTypes" [value]="accountType.id">{{accountType.name}}</mat-option>
+                        </mat-select>
+                        <!-- <mat-error *ngIf="form.get('accountType').hasError('required')">
+                            Account type is <strong>required</strong>
+                        </mat-error> -->
+                    </mat-form-field>
+
+                    <!--Bank name-->
+                    <mat-form-field class="mat-form-field-right">
+                        <label class="mat-label other-label">Bank name</label>
+                        <mat-select name="bank" id="banks" formControlName="bank" #bank (selectionChange)="bankChange($event)">
+                            <mat-option *ngFor="let bank of banks" [value]="bank.id">{{bank.name}}</mat-option>
+                        </mat-select>
+                        <!-- <mat-error *ngIf="form.get('bank').hasError('required')">
+                            Bank name is <strong>required</strong>
+                        </mat-error> -->
+                    </mat-form-field>
+                </section>
+
+                <section>
+                    <!-- AccountNumber -->
+                    <mat-form-field>
+                        <label class="mat-label other-label">Account Number</label>
+                        <input matInput maxlength="50" name="accountNumber" id="accountNumber" formControlName="accountNumber" NumberOnly="true">
+                        <!-- <mat-error *ngIf="form.get('accountNumber').hasError('required')">
+                            Account Number is <strong>required</strong>
+                        </mat-error> -->
+                    </mat-form-field>
+
+                    <!-- AccountHolderName -->
+                    <mat-form-field class="mat-form-field-right">
+                        <label class="mat-label other-label">Account Holder Name</label>
+                        <input matInput maxlength="50" name="accountHolderName" id="accountHolderName" formControlName="accountHolderName">
+                        <!-- <mat-error *ngIf="form.get('accountHolderName').hasError('required')">
+                            Account Holder Name is <strong>required</strong>
+                        </mat-error> -->
+                    </mat-form-field>
+                </section>
+
+                <section>
+                    <!--Branch code-->
+                    <mat-form-field>
+                        <label class="mat-label other-label">Branch code</label>
+                        <input matInput id="universalBranchCode" name="universalBranchCode" formControlName="universalBranchCode" NumberOnly="true">
+                        <!-- <mat-error *ngIf="form.get('universalBranchCode').hasError('required')">
+                            Branch code is <strong>required</strong>
+                        </mat-error> -->
+                    </mat-form-field>
+                </section>
+
+                <div class="form-group-button mat-form-button">
+                    <div (click)="saveBankAccount()" class="form-buttons submit-button">
+                        <button type="button" class="button float-button" [disabled]="form.pristine" >Save</button>
+                    </div>
+                    <div (click)="cancel()" class="form-buttons submit-button">
+                        <button type="button" class="button float-button">Cancel</button>
+                    </div>
+                </div>
+            </div>
+
+        </form>
+    </mat-card-content>
+</mat-card>

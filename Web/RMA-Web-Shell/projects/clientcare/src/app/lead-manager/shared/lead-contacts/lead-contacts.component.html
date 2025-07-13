@@ -1,0 +1,156 @@
+<div *ngIf="!hideForm">
+  <form [formGroup]="form" class="mat-container details-form" novalidate>
+    <section>
+      <mat-form-field class="mat-form-field">
+        <label class="mat-label other-label">Communication Type</label>
+        <mat-select (selectionChange)="communictionTypeChanged($event)" name="communicationType" id="communicationType"
+          formControlName="communicationType">
+          <mat-option *ngFor="let communicationType of communicationTypes" [value]="communicationType">
+            {{formatLookup(communicationType)}}
+          </mat-option>
+        </mat-select>
+        <mat-error *ngIf="form.get('communicationType').hasError('required')">
+          Communication Type is <strong>required</strong>
+        </mat-error>
+      </mat-form-field>
+      <mat-form-field class="mat-form-field-right">
+        <div class="checkbox-container"><label class="mat-label other-label">&nbsp;</label></div>
+        <input matInput [hidden]="true" formControlName="isPreffered" />
+        <mat-checkbox formControlName="isPreffered">
+          <label class="mat-label other-label">Is Preferred Communication Method?</label>
+        </mat-checkbox>
+      </mat-form-field>
+    </section>
+
+    <section>
+      <mat-form-field class="mat-form-field">
+        <label class="mat-label other-label mandatory-field">Contact Name</label>
+        <input matInput id="name" name="name" formControlName="name" />
+        <mat-error *ngIf="form.get('name').hasError('required')">
+          Contact Name is <strong>required</strong>
+        </mat-error>
+      </mat-form-field>
+
+      <mat-form-field class="mat-form-field-right">
+        <label class="mat-label other-label mandatory-field">Contact</label>
+        <input matInput id="communicationTypeValue" name="communicationTypeValue"
+          formControlName="communicationTypeValue" />
+        <mat-error *ngIf="form.get('communicationTypeValue').hasError('required')">
+          Contact is <strong>required</strong>
+        </mat-error>
+        <mat-error *ngIf="form.get('communicationTypeValue').hasError('phoneNumber')">
+          Contact number must be <strong>valid</strong>
+        </mat-error>
+        <mat-error *ngIf="form.get('communicationTypeValue').hasError('email')">
+          Please enter a valid<strong> email address </strong>
+        </mat-error>
+        <mat-error *ngIf="form.get('communicationTypeValue').hasError('maxlength')">
+          Contact number must be at most<strong> ten characters</strong>
+        </mat-error>
+      </mat-form-field>
+    </section>
+  </form>
+
+  <span *ngIf="form.valid && !form.pristine" class="mat-label other-label pointer" style="margin-left: 10px;"
+    (click)="add()"><span class="material-icons" style="color: green;">check_circle</span></span>
+  <span *ngIf="!form.valid || form.pristine" class="mat-label other-label pointer" style="margin-left: 10px;"><span
+      class="material-icons" style="color: lightpink;">check_circle</span></span>
+  <span class="mat-label other-label pointer" (click)="cancel()"><span class="material-icons">cancel</span></span>
+</div>
+
+<div *ngIf="contacts">
+
+  <div *ngIf="hideForm && contacts.length <= 0">
+    <label class="mat-label other-label"><i>No contacts have been added...</i><span *ngIf="hasPermission"
+        class="mat-label other-label pointer" (click)="toggle()"><span
+          class="material-icons">add_circle</span></span></label><br />
+  </div>
+
+  <div *ngIf="hideForm && contacts.length > 0 && hasPermission && !(isWizard)">
+    <label class="mat-label other-label"><span *ngIf="hideForm" class="mat-label other-label pointer"
+        (click)="toggle()"><span class="material-icons">add_circle</span></span></label><br />
+  </div>
+
+  <div *ngIf="contacts.length > 0 && hideForm" class="scrollTable">
+    <table class="altRowTable" style="width:100%;">
+      <tr>
+        <th>Contact Name</th>
+        <th>Communication Type</th>
+        <th>Contact</th>
+        <th>Action</th>
+      </tr>
+      <tr *ngFor="let contact of contacts">
+        <td>{{contact.name}}</td>
+
+        <td *ngIf="contact.communicationTypeId == 1"><span class="material-icons">email</span> Email<span
+            *ngIf="contact.isPreferred"> <span class="material-icons" style="color: rgb(214, 214, 0);">
+              star_rate
+            </span>(preferred)</span></td>
+        <td *ngIf="contact.communicationTypeId == 2"><span class="material-icons">phone</span> Phone<span
+            *ngIf="contact.isPreferred"> (<span class="material-icons" style="color: rgb(214, 214, 0);">
+              star_rate
+            </span> preferred)</span></td>
+        <td *ngIf="contact.communicationTypeId == 3"><span class="material-icons">sms</span> SMS<span
+            *ngIf="contact.isPreferred"> (<span class="material-icons" style="color: rgb(214, 214, 0);">
+              star_rate
+            </span> preferred)</span></td>
+        <td *ngIf="contact.communicationTypeId == 4"><span class="material-icons">local_post_office</span> Post<span
+            *ngIf="contact.isPreferred"> (<span class="material-icons" style="color: rgb(214, 214, 0);">
+              star_rate
+            </span> preferred)</span></td>
+
+        <td *ngIf="contact.communicationTypeId == 1"><a
+            href="mailto:{{contact.communicationTypeValue}}">{{contact.communicationTypeValue}}</a></td>
+        <td *ngIf="contact.communicationTypeId != 1">{{contact.communicationTypeValue}}</td>
+
+        <td *ngIf="contact.contactId > 0">
+          <div *ngIf="!(isWizard)">
+            <a role="button" class="link-edit" (click)="toggleContactForAdd(contact)"><span class="material-icons icn" matTooltip="Add Contact Detail">
+                add_circle
+              </span></a>
+            <a role="button" class="link-edit" (click)="toggleContact(contact)"><span class="material-icons icn" matTooltip="Edit Contact Detail">
+                settings
+              </span></a>
+            <a role="button" class="link-edit" (click)="openAuditDialog(contact)"><span class="material-icons icn" matTooltip="View Audit Details">
+              fingerprint
+              </span></a>              
+          </div>
+          <div *ngIf="(isWizard)">
+            <a role="button" class="link-edit" (click)="toggleContact(contact)"><span class="material-icons icn" matTooltip="Edit Contact Details">
+                settings
+              </span></a>
+              <a role="button" class="link-edit" (click)="openAuditDialog(contact)"><span class="material-icons icn" matTooltip="View Audit Details">
+                fingerprint
+                </span></a>
+          </div>
+          <a *ngIf="(!(contact.contactId) || contact.contactId <= 0) && !(isWizard)" role="button" class="link-edit"
+            (click)="toggleContact(contact)"><span class="material-icons icn" matTooltip="Delete Contact Details">
+              delete
+            </span></a>
+        </td>
+        <td *ngIf="(!(contact.contactId) || contact.contactId <= 0) && !(isWizard)">
+          <a role="button" class="link-edit" (click)="toggleContactForAdd(contact)"><span class="material-icons icn" matTooltip="Add Contact Details">
+              add_circle
+            </span></a>
+          <a role="button" class="link-edit" (click)="delete(contact)"><span class="material-icons icn" matTooltip="Delete Contact Details">
+              delete
+            </span></a>
+        </td>
+        <td *ngIf="(!(contact.contactId) || contact.contactId <= 0) && isWizard">
+          <a role="button" class="link-edit" (click)="toggleContact(contact)"><span class="material-icons icn" matTooltip="Edit Contact Details">
+              settings
+            </span></a>
+            <a *ngIf="contact.contactId > 0" role="button" class="link-edit" (click)="openAuditDialog(contact)"><span class="material-icons icn" matTooltip="View Audit Details">
+              fingerprint
+              </span></a>
+        </td>
+      </tr>
+    </table>
+  </div>
+</div>
+
+<div *ngIf="!contacts && hideForm">
+  <label class="mat-label other-label"><i>No contacts have been added...</i><span *ngIf="hasPermission"
+      class="mat-label other-label pointer" (click)="toggle()"><span
+        class="material-icons">add_circle</span></span></label><br />
+</div>

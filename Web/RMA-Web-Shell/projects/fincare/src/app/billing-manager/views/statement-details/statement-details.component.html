@@ -1,0 +1,88 @@
+<mat-tab-group>
+  <mat-tab label="Statement Details">
+    <br />
+      <div *ngIf="isLoading$ | async">
+        <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+        <label class="mat-label other-label"><i>loading...please wait</i></label>
+      </div>
+    <div *ngIf="!showStatement">
+      <statement-account-search (resultEmit)="policySearchChangeHandler($event)" [title]="'Search Statement'">
+      </statement-account-search>
+    </div>
+    <div *ngIf="rolePlayerId > 0">
+      <mat-card>
+       <app-debtor-policies [roleplayerId]="rolePlayerId" (policiesSelectedHandler)="policiesSelected($event)"
+        [multiselect]="true"  [showProductBalances] = "false"></app-debtor-policies>  
+      </mat-card>
+      <br />
+    </div>
+    <div *ngIf="showStatement">
+      <div [hidden]="isLoading$ | async">
+        <mat-card>
+          <div class="form-group-button mat-form-button" style="margin-top: -10px;">
+            <button type="button" (click)="back()" class="button float-button"
+              style="margin: -1px 0px 0px 5px;">Back</button>
+          </div><br/>
+        </mat-card>
+        <br />
+        <div [hidden]="!showReport" style="width: 100%; height: auto; margin-left: auto; margin-right: auto;"
+          id="statementDocument">
+          <ssrs-reportviewer [reportserver]="reportServerAudit" [reporturl]="reportUrlAudit"
+            [showparameters]="showParametersAudit" [parameters]="parametersAudit" [language]="languageAudit"
+            [width]="widthAudit" [height]="heightAudit" [toolbar]="toolbarAudit">
+          </ssrs-reportviewer>
+        </div>
+      </div>
+    </div>
+  </mat-tab>
+
+  <mat-tab label="Email Statement" [disabled]="!showStatement">
+    <br />
+    <mat-form-field class="mat-form-field-right">
+      <label class="mat-label other-label">Recipient Email Address<br />
+        <i><span style="font-size: x-small;">Use colon(;) separated email addresses for multiple
+            recipients</span></i></label>
+      <input matInput maxlength="300" matTooltip="Use colon(;) separated email addresses for multiple recipients"
+        (input)="onEmailChange($event.target.value)" name="ownerEmail" id="ownerEmail" value="{{recipientEmail}}">
+    </mat-form-field>
+
+    <div *ngIf="isSending$ | async">
+      <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+      <label class="mat-label other-label"><i>sending email...please wait</i></label>
+    </div>
+
+    <div class="form-group-button mat-form-button" style="margin-left: 15px; margin-top: -10px;">
+      <button matTooltip="send email" class="button float-button" [disabled]="(isSending$ | async)"
+        (click)="sendStatement()"><span class="material-icons">send</span></button>
+    </div>
+
+  </mat-tab>
+
+  <mat-tab label="Audit" [disabled]="!showStatement">
+    <br>
+    <div *ngIf="isLoading$ | async">
+      <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+      <label class="mat-label other-label"><i>loading audit details...please wait</i></label>
+    </div>
+
+    <div *ngIf="!(isLoading$ | async) && auditResults && auditResults.length <=0">
+      <i>No audit details found...</i>
+    </div>
+
+    <table *ngIf="!(isLoading$ | async) && auditResults && auditResults.length >0" class="altRowTable"
+      style="width:100%;">
+      <tr>
+        <th>Date</th>
+        <th>User email</th>
+        <th>Action</th>
+        <th>Details</th>
+      </tr>
+      <tr *ngFor="let auditResult of auditResults">
+        <td>{{auditResult.date | date: 'yyyy/MM/dd'}}</td>
+        <td>{{auditResult.username}}</td>
+        <td>{{auditResult.action}}</td>
+        <td>{{auditResult.newItem}}</td>
+      </tr>
+    </table>
+  </mat-tab>
+</mat-tab-group>

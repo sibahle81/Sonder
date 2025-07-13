@@ -1,0 +1,119 @@
+<div class="scrollerForBody">
+  <div style="margin-bottom:12px;">
+    <div *ngIf="isLoading  && !isDisabled">
+      <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+      <label class="mat-label other-label"><i>Loading insured lives...please wait</i></label>
+    </div>
+    <div [hidden]="datasourceInsuredLives.data.length < 0  || isDisabled">
+      <mat-table #table [dataSource]="datasourceInsuredLives" class="wizard-main-content" matSort
+        matSortActive="rolePlayerId" matSortDirection="asc" style="z-index:-1">
+        <ng-container matColumnDef="select">
+          <mat-header-cell *matHeaderCellDef>select</mat-header-cell>
+          <mat-cell *matCellDef="let insuredLife">
+            <mat-checkbox [checked]="selectedNewMainMember.indexOf(insuredLife.rolePlayerId) > -1"
+              (change)="onSelectNewMainMember($event,insuredLife)">
+            </mat-checkbox>
+          </mat-cell>
+        </ng-container>
+        <ng-container matColumnDef="displayName">
+          <mat-header-cell *matHeaderCellDef mat-sort-header>Name</mat-header-cell>
+          <mat-cell *matCellDef="let insuredLife"> {{insuredLife.displayName}} </mat-cell>
+        </ng-container>
+        <ng-container matColumnDef="idNumber">
+          <mat-header-cell *matHeaderCellDef mat-sort-header>Id/Passport Number</mat-header-cell>
+          <mat-cell *matCellDef="let insuredLife">{{insuredLife.person.idNumber}}</mat-cell>
+        </ng-container>
+        <ng-container matColumnDef="age">
+          <mat-header-cell *matHeaderCellDef mat-sort-header>Age</mat-header-cell>
+          <mat-cell *matCellDef="let insuredLife">{{calculateAgeUsingDateOfBirth(insuredLife.person.dateOfBirth)}}
+          </mat-cell>
+        </ng-container>
+        <mat-header-row *matHeaderRowDef="displayedColumns; sticky: true"></mat-header-row>
+        <mat-row *matRowDef="let row; columns: displayedColumns;"></mat-row>
+      </mat-table>
+      <mat-paginator #paginator [length]="rowCount" [pageIndex]="0" [pageSize]="5" [pageSizeOptions]="[5, 10]">
+      </mat-paginator>
+    </div>
+    <div>
+      <form [formGroup]="formPolicyDetails" class="mat-container details-form" novalidate>
+        <section class="wizard-main-content">
+          <div class="field-container">
+            <mat-form-field class="mat-form-field">
+              <label class="mat-label other-label">Policy Number</label>
+              <input matInput formControlName="mainMemberPolicyNumber">
+            </mat-form-field>
+          </div>
+        </section>
+      </form>
+    </div>
+    <div class="button-container" *ngIf="datasourceInsuredLives.data.length < 0  && !isLoading && !isDisabled">
+      <div (click)="addRelation()" class="link-container">
+        <a role="button">
+          <mat-icon class="person-link">person_add</mat-icon><span class="person-link person-link-text">Add
+            Guardian</span>
+        </a>
+      </div>
+    </div>
+
+    <div>
+      <person-details [showAge]="true" [parentModel]="detailsModel" (isSaIDtype)="setIDType($event)"
+        [newMainMember]="newMainMember" (ageChanged)="onAgeChanged($event)"></person-details>
+    </div>
+    <form [formGroup]="formMainMember" class="mat-container details-form" novalidate>
+      <section>
+        <section>
+          <div [hidden]="!isSaIDtype">
+            <div class="person-checkbox-container"><label class="mat-label other-label">&nbsp;</label></div>
+            <mat-checkbox formControlName="isVopdRequired" name="isVopdRequired" id="isVopdRequired">
+              <label class="mat-label other-label">VOPD Required (RSA ID Only)?</label>
+            </mat-checkbox>
+          </div>
+        </section>
+      </section>
+      <section>
+        <div class="field-container">
+          <div>
+            <label class="mat-label other-label mandatory-field">Policy Inception Date</label>
+            <label class="mat-label other-label" *ngIf="canBackDate">
+              <i> (back dating is enabled)</i>
+            </label>
+          </div>
+          <mat-form-field class="mat-form-field">
+            <input matInput formControlName="policyInceptionDate" name="policyInceptionDate">
+          </mat-form-field>
+        </div>
+        <div class="field-container-right">
+          <mat-form-field class="mat-form-field">
+            <label class="mat-label other-label mandatory-field">Policy Entry Age</label>
+            <input matInput formControlName="joinAge" name="joinAge" id="joinAge" />
+            <mat-error
+              *ngIf="formMainMember.get('joinAge').hasError('required') || formMainMember.get('joinAge').hasError('min')">
+              Could not calculate age at policy inception date
+            </mat-error>
+          </mat-form-field>
+        </div>
+      </section>
+      <section>
+        <div class="field-container">
+          <mat-form-field class="mat-form-field">
+            <label class="mat-label other-label mandatory-field">Continue Effective Date</label>
+            <input matInput formControlName="continueDate">
+          </mat-form-field>
+        </div>
+        <div class="field-container-right">
+          <div class="mat-form-field" style="padding-top:30px ;">
+            <a *ngIf="!isDisabled" role="button" (click)="onEditContinueDate()" class="link-edit"
+              style="cursor: pointer">Edit/Capture</a>
+          </div>
+
+        </div>
+      </section>
+    </form>
+    <policy-product-options [parentModel]="detailsModel" (productOptionSelected)="onSelectedOption($event)"
+      [isDisabled]="isDisabled" [caseCausesProductsDisabling]="caseCausesProductsDisabling">
+    </policy-product-options>
+    <policy-benefits [title]="'Main Member Benefits'" [parentModel]="detailsModel"
+      [selectedProductOption]="selectedProductOption" [coverMemberType]="coverMemberType"></policy-benefits>
+  </div>
+
+</div>

@@ -1,0 +1,91 @@
+<div [hidden]="personEventResultsTableShow == personEventSearchNavigationEnum.HideOption" class="table-container">
+  <div class="container-tables">
+    <div class="items-heading heading-left">
+      <h1>Medical Switch Batch </h1>
+    </div>
+    <mat-card>
+      <div class="items-heading-center">
+        <h1>Person Event Search Results List</h1>
+      </div>
+
+      <div *ngIf="dataSource.loading$ | async" class="loadingDiv">
+        <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+        <span class="site-font grey">Loading Results...</span>
+      </div>
+
+      <div class="items-list-table">
+        <mat-table #table [dataSource]="dataSource" matSort class="mat-elevation-z8">
+          <!-- Checkbox Column -->
+          <ng-container matColumnDef="select">
+            <mat-header-cell *matHeaderCellDef>select</mat-header-cell>
+            <mat-cell *matCellDef="let row">
+              <mat-checkbox (click)="$event.stopPropagation()" (change)="selectHandler(row)"
+                [checked]="selection.isSelected(row)">
+              </mat-checkbox>
+            </mat-cell>
+            <mat-footer-cell *matFooterCellDef> </mat-footer-cell>
+          </ng-container>
+          <!--  eventDate  Column -->
+          <ng-container matColumnDef="dateOfEvent">
+            <mat-header-cell *matHeaderCellDef mat-sort-header> Event Date </mat-header-cell>
+            <mat-cell *matCellDef="let element" matTooltip="{{element.dateOfEvent | date:'yyyy-MM-dd'}}"> {{element.dateOfEvent | date:'yyyy-MM-dd'}} </mat-cell>
+          </ng-container>
+          <!-- mainClaimRefNo Column -->
+          <ng-container matColumnDef="mainClaimRefNo">
+            <mat-header-cell *matHeaderCellDef mat-sort-header> Main Claim </mat-header-cell>
+            <mat-cell *matCellDef="let element" matTooltip="{{element.mainClaimRefNo}}"> {{element.mainClaimRefNo}} </mat-cell>
+          </ng-container>
+          <!-- fullFirstName Column -->
+          <ng-container matColumnDef="fullFirstName">
+            <mat-header-cell *matHeaderCellDef mat-sort-header> Name </mat-header-cell>
+            <mat-cell *matCellDef="let element" matTooltip="{{element.fullFirstname}}"> {{element.fullFirstname}} </mat-cell>
+          </ng-container>
+          <!-- MSP Column -->
+          <ng-container matColumnDef="industryNumber">
+            <mat-header-cell *matHeaderCellDef mat-sort-header>Industry No. </mat-header-cell>
+            <mat-cell *matCellDef="let element" matTooltip="{{element.industryNumber}}"> {{element.industryNumber }}
+            </mat-cell>
+          </ng-container>
+          <!-- Invoice No Column -->
+          <ng-container matColumnDef="idNumber">
+            <mat-header-cell *matHeaderCellDef mat-sort-header> ID Numner </mat-header-cell>
+            <mat-cell *matCellDef="let element" matTooltip="{{element.idNumber}}"> {{element.idNumber}} </mat-cell>
+          </ng-container>
+          <!-- AccountNo Column -->
+          <ng-container matColumnDef="otherIdentification">
+            <mat-header-cell *matHeaderCellDef mat-sort-header> Other ID Number</mat-header-cell>
+            <mat-cell *matCellDef="let element" matTooltip="{{element.otherIdentification}}"> {{element.otherIdentification}} </mat-cell>
+          </ng-container>
+          <!-- SvcData Column -->
+          <ng-container matColumnDef="dateOfBirth">
+            <mat-header-cell *matHeaderCellDef mat-sort-header>Date of Birth </mat-header-cell>
+            <mat-cell *matCellDef="let element" matTooltip="{{element.dateOfBirth | date:'yyyy-MM-dd'}}"> {{element.dateOfBirth | date:'yyyy-MM-dd'}} </mat-cell>
+          </ng-container>
+          <!-- InvDate Column -->
+          <ng-container matColumnDef="pensionNumber">
+            <mat-header-cell *matHeaderCellDef mat-sort-header> Pension Number </mat-header-cell>
+            <mat-cell *matCellDef="let element" matTooltip="{{element.pensionNumber}}"> {{element.pensionNumber }} </mat-cell>
+            <mat-footer-cell *matFooterCellDef> </mat-footer-cell>
+          </ng-container>
+
+          <mat-header-row *matHeaderRowDef="displayedColumnsInvoiceDetails"></mat-header-row>
+          <mat-row *matRowDef="let row; columns: displayedColumnsInvoiceDetails;" class="element-row"
+            (click)="selectHandler(row)"></mat-row>
+        </mat-table>
+
+        <mat-paginator #paginator [length]="dataSource.rowCount$" [pageIndex]="0" [pageSize]="5"
+          [pageSizeOptions]="[5, 10, 25, 100]">
+        </mat-paginator>
+
+      </div>
+
+    </mat-card>
+  </div>
+
+  <div class="items-buttons-container">
+    <div class="form-buttons submit-button">
+      <button type="button" class="button float-button" (click)="onNewSearch()">New Search</button>
+    </div>
+  </div>
+  <br>
+</div>

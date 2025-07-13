@@ -1,0 +1,113 @@
+<div>
+    <mat-card style="margin: 15px 30px 15px 30px">
+        <mat-card-content style="margin-left: 10px;">
+            <div [hidden]="dataSource.isLoading$ | async">
+                <!--[hidden]="isLoading"-->
+                <div class="mat-container mat-elevation-z8" #TABLE>
+                    <div class="mat-header">
+                        <h1>Collections Summary</h1><br />
+
+                    </div>
+                    <mat-card appearance="outlined">
+                        <mat-card-content>
+                            <h4>Premiums: </h4>
+                            <p>R {{ getTotalPremiums() | number:amountFormat }}</p>
+                            <h4>Receipts: </h4>
+                            <p>R {{ getTotalReceipts() | number:amountFormat }}</p>                        
+                        </mat-card-content>
+                      </mat-card>
+                   
+                    <hr>
+                    
+                    <app-premium-listing-search
+                        [companies]="companies"
+                        [branches]="branches"
+                        [controls]="controls"
+                        (searchcriteria)="searchData($event)">
+                    </app-premium-listing-search>
+                    <app-search-input (searchcriteria)="applyFilter($event)"
+                    [placeHolder]="placeHolder"></app-search-input>
+                    <mat-table #table [dataSource]="dataSource" matSort>
+                        <!-- Expand Column -->                        
+                        <ng-container matColumnDef="reference">
+                            <mat-header-cell *matHeaderCellDef mat-sort-header>Reference</mat-header-cell>
+                            <mat-cell *matCellDef="let row"> {{row.reference}} </mat-cell>
+                        </ng-container>
+                        <ng-container matColumnDef="createdDate">
+                            <mat-header-cell *matHeaderCellDef mat-sort-header>Transaction Date</mat-header-cell>
+                            <mat-cell *matCellDef="let row"> {{row.createdDate | date:'yyyy/MM/dd'}} </mat-cell>
+                        </ng-container>
+                        <ng-container matColumnDef="lineCount">
+                            <mat-header-cell *matHeaderCellDef mat-sort-header>No. Of Transactions</mat-header-cell>
+                            <mat-cell *matCellDef="let row"> {{row.lineCount}} </mat-cell>
+                        </ng-container>
+                        <ng-container matColumnDef="companyNo">
+                            <mat-header-cell *matHeaderCellDef mat-sort-header>Company</mat-header-cell>
+                            <mat-cell *matCellDef="let row"> {{row.companyNo}} </mat-cell>
+                        </ng-container>
+                        <ng-container matColumnDef="branchNo">
+                            <mat-header-cell *matHeaderCellDef mat-sort-header>Branch</mat-header-cell>
+                            <mat-cell *matCellDef="let row"> {{row.branchNo}} </mat-cell>
+                        </ng-container>
+                        <ng-container matColumnDef="level3">
+                            <mat-header-cell *matHeaderCellDef mat-sort-header>Control No.</mat-header-cell>
+                            <mat-cell *matCellDef="let row"> {{row.level3}} </mat-cell>
+                        </ng-container>
+                        <ng-container matColumnDef="processed">
+                            <mat-header-cell *matHeaderCellDef mat-sort-header>Processed</mat-header-cell>
+                            <mat-cell *matCellDef="let row"> {{row.processed}} </mat-cell>
+                        </ng-container>
+                        <ng-container matColumnDef="bankAccountNumber">
+                            <mat-header-cell *matHeaderCellDef mat-sort-header>Bank Account No.</mat-header-cell>
+                            <mat-cell *matCellDef="let row"> {{row.bankAccountNumber}} </mat-cell>
+                        </ng-container>
+                        <ng-container matColumnDef="dailyTotal">
+                            <mat-header-cell *matHeaderCellDef mat-sort-header>Daily Total</mat-header-cell>
+                            <mat-cell *matCellDef="let row" class="right-aligned-amounts"> R{{row.dailyTotal |
+                                number:amountFormat }} </mat-cell>
+                        </ng-container>
+                        <ng-container matColumnDef="Actions">
+                            <mat-header-cell *matHeaderCellDef> <mat-checkbox
+                                    [checked]="dataSource.data && selectedCollectionIds.length === dataSource.data.length"
+                                    (change)="collectionAllChecked($event)" class="margin-right">
+                                </mat-checkbox>
+                                <span class="material-icons pointer" (click)="postCollectionSummariesToAbility()"
+                                    matTooltip="Post Selected To Ability">
+                                    send
+                                </span></mat-header-cell>
+                            <mat-cell *matCellDef="let row">
+                                <mat-checkbox [checked]="selectedCollectionIds.indexOf(row.id) > -1"
+                                    (change)="collectionTransactionChecked($event,row)" class="margin-right"
+                                    [disabled]="shouldDisableSelect(row)">
+                                </mat-checkbox>
+                                <span class="material-icons pointer margin-right bg_green" (click)="onViewDetails(row)"
+                                    matTooltip="View Details">
+                                    visibility
+                                </span>
+                            </mat-cell>
+                        </ng-container>
+                        <mat-header-row *matHeaderRowDef="displayedColumns;"></mat-header-row>
+                        <mat-row *matRowDef="let row; columns: displayedColumns;"></mat-row>
+                    </mat-table>
+                    <mat-paginator #paginator [length]="dataSource.data.length" [pageIndex]="0" [pageSize]="10"
+                        [pageSizeOptions]="[5, 10, 25, 100]">
+                    </mat-paginator>
+                </div>
+            </div>
+        </mat-card-content>
+
+        <div *ngIf="isSending">
+            <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+            <label class="mat-label other-label"><i>Posting to ability...please wait</i></label>
+        </div>
+
+        <div *ngIf="dataSource.isLoading$ | async">
+            <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+            <label class="mat-label other-label"><i>Loading transactions...please wait</i></label>
+        </div>
+    </mat-card>
+</div>
+<div>
+    <button [disabled]="canExport==0" (click)="exporttoCSV()" class="button float-button">Export</button>
+    <button type="button" (click)="clear()" class="button float-button">Back</button>
+</div>

@@ -1,0 +1,78 @@
+<div>
+  <table mat-table [dataSource]="breakdowns" class="mat-elevation-z8" multiTemplateDataRows>
+    <ng-container matColumnDef="itemCode">
+      <th mat-header-cell *matHeaderCellDef> Item Code </th>
+      <td mat-cell *matCellDef="let element"> {{element.tariffCode}} </td>
+    </ng-container>
+
+    <ng-container matColumnDef="description">
+      <th mat-header-cell *matHeaderCellDef> Description </th>
+      <td mat-cell *matCellDef="let element"> {{element.tariffDescription}} </td>
+    </ng-container>
+
+    <ng-container matColumnDef="treatmentCode">
+      <th mat-header-cell *matHeaderCellDef> CPT </th>
+      <td mat-cell *matCellDef="let element"> {{element.treatmentCode}} </td>
+    </ng-container>
+
+    <ng-container matColumnDef="treatmentCodeDescription">
+      <th mat-header-cell *matHeaderCellDef> CPT Description </th>
+      <td mat-cell *matCellDef="let element"> {{element.treatmentCodeDescription}} </td>
+    </ng-container>
+    
+    <ng-container matColumnDef="tariffAmount">
+      <th mat-header-cell *matHeaderCellDef> Tariff Amount </th>
+      <td mat-cell *matCellDef="let element"> {{element.tariffAmount}} </td>
+    </ng-container>
+
+    <ng-container matColumnDef="dateAuthorisedFrom">
+      <th mat-header-cell *matHeaderCellDef> Date Authorised From </th>
+      <td mat-cell *matCellDef="let element"> {{element.dateAuthorisedFrom | date:'yyyy-MM-dd'}} </td>
+    </ng-container>
+
+    <ng-container matColumnDef="dateAuthorisedTo">
+      <th mat-header-cell *matHeaderCellDef> Date Authorised To </th>
+      <td mat-cell *matCellDef="let element"> {{element.dateAuthorisedTo | date:'yyyy-MM-dd'}} </td>
+    </ng-container>
+
+    <ng-container matColumnDef="requestedQuantity">
+      <th mat-header-cell *matHeaderCellDef> Requested Quantity </th>
+      <td mat-cell *matCellDef="let element"> {{element.requestedTreatments}} </td>
+    </ng-container>
+
+    <ng-container matColumnDef="requestedAmount">
+      <th mat-header-cell *matHeaderCellDef > Requested Amount </th>
+      <td mat-cell *matCellDef="let element" > {{ element.requestedAmount }} </td>
+    </ng-container>
+
+    <ng-container matColumnDef="authorisedAmount">
+      <th mat-header-cell *matHeaderCellDef > Authorised Amount </th>
+      <td mat-cell *matCellDef="let element" > {{ element.isAuthorised ? element.authorisedAmount : ''}} </td>
+    </ng-container>
+
+    <ng-container matColumnDef="isAuthorised">
+      <th mat-header-cell *matHeaderCellDef> Is Authorised </th>
+      <td mat-cell *matCellDef="let element" [ngClass]="{'authorised' : !element.isAuthorised}"> {{element.isAuthorised ? 'Authorised': 'Not Authorised' }} </td>
+    </ng-container>
+
+    <ng-container matColumnDef="quantityReducedReason">
+      <th mat-header-cell *matHeaderCellDef> Quantity Reduced Description </th>
+      <td mat-cell *matCellDef="let element">{{element.reviewComments }} </td>
+    </ng-container>
+
+    <ng-container matColumnDef="isClinicalUpdate">
+      <th mat-header-cell *matHeaderCellDef> Clinical Update </th>
+      <td mat-cell *matCellDef="let element"> {{element.isClinicalUpdate ? 'Yes' : 'No' }} </td>
+    </ng-container>
+
+    <ng-container matColumnDef="updateSequenceNo">
+      <th mat-header-cell *matHeaderCellDef> Update Sequence No </th>
+      <td mat-cell *matCellDef="let element"> {{element.updateSequenceNo}} </td>
+    </ng-container>
+
+    <tr mat-header-row *matHeaderRowDef="getDisplayedColumns()"></tr>
+    <tr mat-row *matRowDef="let element; columns: getDisplayedColumns();" 
+      class="example-element-row"></tr>
+  
+    </table>
+  </div>

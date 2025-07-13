@@ -1,0 +1,68 @@
+<div>
+  <mat-card style="margin: 15px 30px 15px 30px">
+      <mat-card-content style="margin-left: 10px;">
+          <div>
+              <!--[hidden]="isLoading"-->
+              <div class="mat-container mat-elevation-z8">
+                  <div class="mat-header">
+                      <h1>Europ Assist Premiums</h1><br />
+
+                  </div>
+                  <app-search-input (searchcriteria)="searchData($event)" [placeHolder]="placeHolder"></app-search-input>
+                  <mat-table #table [dataSource]="dataSource" matSort>
+                    <ng-container matColumnDef="debtorName">
+                      <mat-header-cell *matHeaderCellDef mat-sort-header> DEBTOR NAME </mat-header-cell>
+                      <mat-cell *matCellDef="let row"> {{row.debtorName}} </mat-cell>
+                  </ng-container>
+                  <ng-container matColumnDef="schemeName">
+                    <mat-header-cell *matHeaderCellDef mat-sort-header> SCHEME NAME </mat-header-cell>
+                    <mat-cell *matCellDef="let row"> {{row.schemeName}} </mat-cell>
+                </ng-container>
+                  <ng-container matColumnDef="clientType">
+                    <mat-header-cell *matHeaderCellDef mat-sort-header> CLIENT TYPE </mat-header-cell>
+                    <mat-cell *matCellDef="let row"> {{row.clientType}} </mat-cell>
+                </ng-container>
+                <ng-container matColumnDef="brokerName">
+                  <mat-header-cell *matHeaderCellDef mat-sort-header> BROKER NAME </mat-header-cell>
+                  <mat-cell *matCellDef="let row"> {{row.brokerName}} </mat-cell>
+                </ng-container>
+                  <ng-container matColumnDef="invoiceNumber">
+                    <mat-header-cell *matHeaderCellDef mat-sort-header> INVOICE NUMBER </mat-header-cell>
+                    <mat-cell *matCellDef="let row"> {{row.invoiceNumber}} </mat-cell>
+                </ng-container>
+                <ng-container matColumnDef="policyNumber">
+                  <mat-header-cell *matHeaderCellDef mat-sort-header> POLICY NUMBER </mat-header-cell>
+                  <mat-cell *matCellDef="let row"> {{row.policyNumber}} </mat-cell>
+              </ng-container>
+              <ng-container matColumnDef="policyStatus">
+                <mat-header-cell *matHeaderCellDef mat-sort-header> POLICY STATUS </mat-header-cell>
+                <mat-cell *matCellDef="let row"> {{row.policyStatus}} </mat-cell>
+            </ng-container>
+                      <ng-container matColumnDef="transactionDate">
+                          <mat-header-cell *matHeaderCellDef mat-sort-header> TRANSACTION DATE</mat-header-cell>
+                          <mat-cell *matCellDef="let row"> {{row.transactionDate | date:'yyyy/MM/dd'}} </mat-cell>
+                      </ng-container>
+                      <ng-container matColumnDef="amount">
+                        <mat-header-cell *matHeaderCellDef mat-sort-header> AMOUNT </mat-header-cell>
+                        <mat-cell *matCellDef="let row"> {{row.amount | currency:'ZAR':'' | replace:',':' ' }} </mat-cell>
+                    </ng-container>
+                      <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
+                      <mat-row *matRowDef="let row; columns: displayedColumns;"></mat-row>
+                  </mat-table>
+                  <mat-paginator #paginator
+                                 [length]="dataSource.filteredData.length"
+                                 [pageIndex]="0"
+                                 [pageSize]="10"
+                                 [pageSizeOptions]="[5, 10, 25, 100]">
+                  </mat-paginator>
+              </div>
+          </div>
+      </mat-card-content>
+  </mat-card>
+</div>
+<div>
+  <table class="form-group row" style="    margin-left: 29px;">
+      <button [disabled]="canExport==0" (click)="exporttoCSV()" class="button float-button">Export</button>
+      <button type="button" (click)="clear()" class="button float-button">Back</button>
+  </table>
+</div>

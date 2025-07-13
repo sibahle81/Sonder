@@ -1,0 +1,26 @@
+<div class="menu-bar">
+  Decline Quote
+  <span (click)="cancel()" class="material-icons pointer right" matTooltip="close">
+    cancel
+  </span>
+  <span *ngIf="form.valid && !form.pristine" (click)="submit()" class="material-icons pointer right pulseGreen" matTooltip="save">
+    save
+  </span>
+</div>
+
+<form [formGroup]="form" class="mat-container details-form" novalidate>
+  <mat-form-field>
+    <label class="mat-label other-label mandatory-field">Reason for declining the quote?</label>
+    <textarea matTextareaAutosize matAutosizeMinRows="5" matAutosizeMaxRows="3" max="255" matInput min="3"
+      id="text" name="text" formControlName="text"></textarea>
+    <mat-error *ngIf="form.get('text').hasError('required')">
+      Reason is <strong>required</strong>
+    </mat-error>
+    <mat-error *ngIf="form.get('text').hasError('min')">
+      Reason must be at least <strong>3 characters</strong>
+    </mat-error>
+    <mat-error *ngIf="form.get('text').hasError('max')">
+      Reason must be at most <strong>255 characters</strong>
+    </mat-error>
+  </mat-form-field>
+</form>

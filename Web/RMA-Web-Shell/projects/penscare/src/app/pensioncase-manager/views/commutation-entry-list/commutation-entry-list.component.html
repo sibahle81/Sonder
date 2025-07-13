@@ -1,0 +1,9 @@
+<mat-card>
+    <mat-card-content>
+      <div *ngIf="creatingWizard">
+        <mat-progress-bar mode="indeterminate" [ngClass]="{ 'loading-main-double-menu-progress': doubleMenu, 'loading-main-single-menu-progress': !doubleMenu }"></mat-progress-bar>
+        <p class="site-font grey">Creating Wizard...</p>
+      </div>
+      <app-table [hidden]="creatingWizard" [title]="title" [searchPlaceHolder]="searchPlaceHolder" [isSearchable]="true" [dataSource]="dataSource" [pageMetaData]="metaData" [buttonTitle]="buttonTitle" [ledgerId]="componentInputData['id']" (buttonClick)="newApplication()"></app-table>
+    </mat-card-content>
+  </mat-card>

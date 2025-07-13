@@ -1,0 +1,426 @@
+<mat-card>
+<mat-card-content>
+
+<form [formGroup]="form" *ngIf="this.form">
+
+  <div class="mat-header">
+    <h1 class="mat-header-text">New chronic Medication application</h1>
+  </div>
+  <div>
+    <mat-form-field class="field-width-100">
+      <label class="mat-label other-label mandatory-field radio-padding">Chronic Application Type</label> 
+    
+      <mat-radio-group formControlName="chronicApplicationType" [(ngModel)]="selectedChronicAppType">      
+        <mat-radio-button class="radio-padding" *ngFor="let chronicType of chronicApplicationTypes" [value]="chronicType" 
+        (change)="onChronicApplicationType($event)">                   
+            {{chronicType}}
+        </mat-radio-button>
+      </mat-radio-group>
+    <input hidden="true" matInput>
+    </mat-form-field>
+  </div>
+
+  <div *ngIf="isNewChronicApplication && showChronicForm">
+
+     <mat-expansion-panel hideToggle>
+    <mat-expansion-panel-header>
+      <mat-panel-title>
+       Medical History
+      </mat-panel-title>
+    </mat-expansion-panel-header>
+
+    <div>
+      <mat-form-field class="mat-form-field-right">
+        <label class="mat-label other-label">Chronic Condition/Disease</label>
+        <input matInput formControlName="disease" type="text" />
+      </mat-form-field>
+
+      <mat-form-field class="date-field mat-form-field-right" color="accent">
+          <label class="mat-label other-label">Date Diagnosed</label>
+          <input matInput [matDatepicker]="picker1" name="diagnosedDate" id="diagnosedDate"
+              formControlName="diagnosedDate" (change)="onChange();">
+          <mat-datepicker-toggle
+              style=" position: absolute !important;right: 0 !important;top: 18px  !important;" matSuffix
+              [for]="picker1"></mat-datepicker-toggle>
+          <mat-datepicker #picker1></mat-datepicker>
+      </mat-form-field>
+     
+      <mat-form-field class="mat-form-field-right">
+        <label class="mat-label other-label">Treatment</label>
+        <input matInput formControlName="treatment" type="text" />
+      </mat-form-field>
+
+    </div>
+    
+    <div>
+      <button class="button submit-button mat-form-field-right" (click)="addHistory()">
+       <span *ngIf="medicalHistoryIndex > -1;else other_content">Update History</span>
+       <ng-template #other_content>Add History</ng-template>
+      </button>
+      <br/>
+      <div style="width:100%" class="mat-form-field-right" *ngIf="medicalHistorySource.length > 0; else norecords">
+        <br/>
+        <mat-table #table [dataSource]="medicalHistorySource" matSort>
+          
+          <ng-container matColumnDef="disease">
+            <mat-header-cell *matHeaderCellDef mat-sort-header> Disease </mat-header-cell>
+            <mat-cell *matCellDef="let row"> {{row.disease}} </mat-cell>
+          </ng-container>
+
+          <ng-container matColumnDef="diagnosedDate">
+            <mat-header-cell *matHeaderCellDef mat-sort-header> Diagnosed Date </mat-header-cell>
+            <mat-cell *matCellDef="let row"> {{row.diagnosedDate | date: 'YYYY/MM/dd'}} </mat-cell>
+          </ng-container>
+
+          <ng-container matColumnDef="treatment">
+            <mat-header-cell *matHeaderCellDef mat-sort-header> Treatment </mat-header-cell>
+            <mat-cell *matCellDef="let row"> {{row.treatment}} </mat-cell>
+          </ng-container>
+
+          <!-- Actions -->
+          <ng-container matColumnDef="action">
+            <mat-header-cell *matHeaderCellDef mat-sort-header> Action </mat-header-cell>
+            <mat-cell style="text-align: left !important; justify-content: center !important;" *matCellDef="let row">
+              <a role="button" class="link-edit" (click)="onEditMedicalHistory(row)">Edit |</a>&nbsp;
+              <a role="button" class="link-edit" (click)="onRemoveMedicalHistory(row)"> Delete</a>
+            </mat-cell>
+          </ng-container>
+
+                      
+          <mat-header-row *matHeaderRowDef="medicalHistoryColumns; sticky: true"></mat-header-row>
+          <mat-row *matRowDef="let row; columns: medicalHistoryColumns;"></mat-row>
+        </mat-table>
+      </div>
+      
+      <ng-template #norecords>
+        <div class="mat-form-field-right">No records found...</div>
+      </ng-template>      
+    </div>
+   
+  </mat-expansion-panel>
+
+  <mat-expansion-panel>
+    <mat-expansion-panel-header>
+      <mat-panel-title>
+        Clinical Details
+      </mat-panel-title>
+     
+    </mat-expansion-panel-header>
+    <div>
+      <mat-form-field class="mat-form-field-right">
+        <label class="mat-label other-label">Height(cm)</label>
+        <input matInput DecimalNumber formControlName="height" type="text" />
+      </mat-form-field>
+
+      <mat-form-field class="mat-form-field-right">
+        <label class="mat-label other-label">Weight(Kg)</label>
+        <input matInput DecimalNumber formControlName="weight" type="text" />
+      </mat-form-field>
+
+      <mat-form-field class="mat-form-field-right">
+        <label class="mat-label other-label">Blood Pressure (mm/Hg)</label>
+        <input matInput formControlName="bloodPressure" type="text" />
+      </mat-form-field>
+
+      <mat-form-field class="mat-form-field-right">
+        <label class="mat-label other-label">Urine</label>
+        <input matInput formControlName="urine" type="text" />
+      </mat-form-field>
+
+      <mat-form-field class="mat-form-field-right">
+        <label class="mat-label other-label">Allergies</label>
+        <input matInput formControlName="allergies" type="text" />
+      </mat-form-field>
+
+      <mat-form-field class="mat-form-field-right">
+        <label class="mat-label other-label">HIV Status</label>
+        <mat-select formControlName="hivStatus">
+          <mat-option *ngFor="let hivStatus of hivStatuses" [value]="hivStatus">{{hivStatus}}
+          </mat-option>
+        </mat-select>
+      </mat-form-field>      
+      
+      <mat-form-field class="mat-form-field-right">
+        <label class="mat-label other-label">Motivation</label>
+        <textarea matInput cdkTextareaAutosize cdkAutosizeMinRows="3" cdkAutosizeMaxRows="5"
+            formControlName="motivation" id="motivation" class="mat-input-element"
+            maxlength="300"></textarea>
+    </mat-form-field>
+    
+    </div>
+  </mat-expansion-panel>
+
+  </div>
+
+  <div *ngIf="!isNewChronicApplication && showChronicForm">
+    <mat-expansion-panel hideToggle>
+      <mat-expansion-panel-header>
+        <mat-panel-title>
+         Clinical Details
+        </mat-panel-title>
+      </mat-expansion-panel-header>
+  
+      <div>
+        <mat-form-field class="mat-form-field-right field-width-50">
+          <label class="mat-label other-label mandatory-field">Authorised Chronic Auth Number</label>
+          <mat-select name="authorisedNumber" [(value)]="selectedCondition" formControlName="authorisedNumber">
+            <mat-option *ngFor="let auth of clinicalAuthNumber" [value]="auth.preAuthId">
+              {{auth.preAuthNumber}}
+            </mat-option>
+          </mat-select>
+          <input hidden="true" matInput>
+        </mat-form-field>
+  
+        <mat-form-field class="mat-form-field-right field-width-100">
+          <label class="mat-label other-label mandatory-field">Types of Pain</label>                            
+          <mat-card-content>
+              <div fxLayout="row" fxFlex="100" fxLayoutAlign="space-around center">                 
+                <div *ngFor="let pain of clinicalTypesofPain; let itemIndex = index">
+                    <mat-checkbox formControlName="typesOfPain" [(ngModel)]="pain.selected" [checked]="pain.selected">                                                                                   
+                     {{pain.text}}                    
+                    </mat-checkbox>
+                </div>
+              </div>
+        </mat-card-content>  
+        <input hidden="true" matInput>
+        <br>
+        </mat-form-field>
+  
+        <mat-form-field class="mat-form-field-right">
+          <label class="mat-label other-label mandatory-field">Alternative and adjuvants used for pain</label>                            
+          <mat-card-content>
+              <div fxLayout="row" fxFlex="100" fxLayoutAlign="space-around center">
+                  <div *ngFor="let adjuvant of adjuvantsforPain; let itemIndex = index">
+                    <mat-checkbox formControlName="adjuvantsPain" [(ngModel)]="adjuvant.selected" [checked]="adjuvant.selected">                                                                                   
+                     {{adjuvant.text}}                    
+                    </mat-checkbox>
+                </div>
+              </div>
+        </mat-card-content>                            
+        <input hidden="true" matInput>
+        <br>
+        </mat-form-field>
+
+
+  
+        <mat-form-field class="evaluation-pain">
+          <label class="mat-label other-label mandatory-field radio-padding">Objective Evaluation of Pain</label>
+          <mat-radio-group formControlName="objectiveEvaluation">
+            <mat-radio-button class="radio-padding" value="0">Mild</mat-radio-button>
+            <mat-radio-button class="radio-padding" value="1">Moderate</mat-radio-button>
+            <mat-radio-button class="radio-padding" value="2">Severe</mat-radio-button>
+            <mat-radio-button class="radio-padding" value="3">Restrictive</mat-radio-button>
+          </mat-radio-group>
+          <input hidden="true" matInput>
+        </mat-form-field>
+  
+        <mat-form-field class="mat-form-field-right">
+          <label class="mat-label other-label mandatory-field">Motivation</label>
+          <textarea matInput cdkTextareaAutosize cdkAutosizeMinRows="3" cdkAutosizeMaxRows="5"
+              formControlName="motivation" id="motivation" class="mat-input-element"
+              maxlength="300"></textarea>
+      </mat-form-field>
+  
+      </div>    
+     
+    </mat-expansion-panel>
+  </div>
+
+ <div *ngIf="showChronicForm">
+  <mat-expansion-panel>
+    <mat-expansion-panel-header>
+      <mat-panel-title>
+        Chronic Medication prescribed for Current Condition
+      </mat-panel-title>
+    </mat-expansion-panel-header>
+    <div>
+
+      <mat-form-field class="mat-form-field-right" *ngIf="isNewChronicApplication">
+        <label class="mat-label other-label mandatory-field">Condition</label>
+        <mat-select name="condition" [(value)]="selectedCondition" formControlName="condition">
+          <mat-option *ngFor="let condition of medicalConditions" [value]="condition">
+            {{condition}}
+          </mat-option>
+        </mat-select>
+        <input hidden="true" matInput>
+      </mat-form-field>
+      
+      <mat-form-field class="mat-form-field-right" *ngIf="!isNewChronicApplication">
+        <label class="mat-label other-label mandatory-field">Injury Related Problem</label>
+        <input matInput formControlName="injuryRelatedProblem" type="text" />
+      </mat-form-field>
+
+      <mat-form-field class="mat-form-field-right">
+        <label class="mat-label other-label mandatory-field">ICD10 Code</label>
+        <input matInput formControlName="icd10Code_current" type="text" />
+      </mat-form-field>
+
+      <mat-form-field class="mat-form-field-right">
+        <label class="mat-label other-label mandatory-field">Medication Prescribed</label>
+        <input matInput formControlName="medicationPrescribed" type="text" />
+      </mat-form-field>
+
+      <mat-form-field class="mat-form-field-right">
+        <label class="mat-label other-label mandatory-field">Dosage</label>
+        <input matInput formControlName="dosage" type="text" />
+      </mat-form-field>
+
+      <mat-form-field class="mat-form-field-right">
+        <label class="mat-label other-label mandatory-field">Number Of Repeats</label>
+        <input matInput formControlName="numberOfRepeats" type="text" />
+      </mat-form-field>
+    </div>
+    <br/>
+    
+    <div>
+
+      <button class="button submit-button mat-form-field-right" (click)="addMedication()">
+        <span *ngIf="medicationIndex > -1;else other_content">Update Medication</span>
+        <ng-template #other_content>Add Medication</ng-template>
+      </button>
+      <br/>    
+      <div style="width:100%" class="mat-form-field-right" *ngIf="medicationSource.length > 0; else norecords">
+      <br/>
+      
+      <mat-table #table [dataSource]="medicationSource" matSort>
+          
+            <!-- condition -->           
+            <ng-container matColumnDef="condition">
+              <div  *ngIf="isNewChronicApplication">
+                <mat-header-cell *matHeaderCellDef mat-sort-header> Condition </mat-header-cell>
+                <mat-cell *matCellDef="let row"> {{row.condition}} </mat-cell>
+              </div>
+              <div *ngIf="!isNewChronicApplication">
+                <mat-header-cell *matHeaderCellDef mat-sort-header> Injury Related Problem </mat-header-cell>
+                <mat-cell *matCellDef="let row"> {{row.description}} </mat-cell>
+              </div>
+              
+            </ng-container>
+         
+
+            <ng-container matColumnDef="icd10Code">
+              <mat-header-cell *matHeaderCellDef mat-sort-header> ICD10 Code </mat-header-cell>
+              <mat-cell *matCellDef="let row"> {{row.icd10Code}} </mat-cell>
+            </ng-container>
+
+            <ng-container matColumnDef="medicationPrescribed">
+              <mat-header-cell *matHeaderCellDef mat-sort-header> Medication Prescribed </mat-header-cell>
+              <mat-cell *matCellDef="let row"> {{row.medicationPrescribed}} </mat-cell>
+            </ng-container>
+
+            <ng-container matColumnDef="dosage">
+              <mat-header-cell *matHeaderCellDef mat-sort-header> Dosage </mat-header-cell>
+              <mat-cell *matCellDef="let row"> {{row.dosage}} </mat-cell>
+            </ng-container>
+
+            <ng-container matColumnDef="numberOfRepeats">
+              <mat-header-cell *matHeaderCellDef mat-sort-header> Number Of Repeats </mat-header-cell>
+              <mat-cell *matCellDef="let row"> {{row.numberOfRepeats}} </mat-cell>
+            </ng-container>
+
+            <!-- Actions -->
+            <ng-container matColumnDef="action">
+              <mat-header-cell *matHeaderCellDef mat-sort-header> Action </mat-header-cell>
+              <mat-cell style="text-align: left !important; justify-content: center !important;" *matCellDef="let row">
+                <a role="button" class="link-edit" (click)="onEditMedication(row)">Edit |</a>&nbsp; 
+                <a role="button" class="link-edit" (click)="onRemoveMedication(row)">Delete</a>
+              </mat-cell>
+            </ng-container>
+
+                        
+            <mat-header-row *matHeaderRowDef="medicationColumns; sticky: true"></mat-header-row>
+            <mat-row *matRowDef="let row; columns: medicationColumns;"></mat-row>
+
+        </mat-table>
+      </div>
+        
+        <ng-template #norecords>
+          <div class="mat-form-field-right">No records found...</div>
+        </ng-template>      
+    </div>
+    
+  </mat-expansion-panel>
+
+  <mat-expansion-panel>
+    <mat-expansion-panel-header>
+      <mat-panel-title>
+        Delivery Method
+      </mat-panel-title>
+     
+    </mat-expansion-panel-header>
+    <div>
+      <mat-form-field>
+        <label class="mat-label other-label mandatory-field radio-padding">Select Delivery Method</label>
+        <mat-radio-group formControlName="deliveryMethod" [(ngModel)]="selectedDelieryMethod" (change)="onDeliveryMethodChange($event)">
+          <mat-radio-button class="radio-padding" [value]="deliveryCollection">Collection</mat-radio-button>
+          <mat-radio-button [value]="deliveryCourier">Courier</mat-radio-button>
+        </mat-radio-group>
+        <input hidden="true" matInput>
+      </mat-form-field>
+
+      <div *ngIf="selectedDelieryMethod == '1'">
+        <mat-form-field class="mat-form-field-right">
+          <label class="mat-label other-label">Nearest PostOffice </label>
+          <textarea matInput cdkTextareaAutosize cdkAutosizeMinRows="3" cdkAutosizeMaxRows="5"
+              formControlName="postOfficeAddress" id="postOffice" class="mat-input-element"
+              maxlength="300"></textarea>
+        </mat-form-field>
+      </div>
+      <div *ngIf="selectedDelieryMethod == '2'">
+        <mat-form-field class="mat-form-field-right addressWidth">
+          <label class="mat-label other-label">Residential Address </label>
+          <textarea matInput cdkTextareaAutosize cdkAutosizeMinRows="3" cdkAutosizeMaxRows="5"
+              formControlName="residentialAddress" id="residentialAddress" class="mat-input-element"
+              maxlength="300"></textarea>
+        </mat-form-field>
+        <span class="addressSpan" >Or</span>
+        <mat-form-field class="mat-form-field-right addressWidth">
+          <label class="mat-label other-label">Postal Address </label>
+          <textarea matInput cdkTextareaAutosize cdkAutosizeMinRows="3" cdkAutosizeMaxRows="5"
+              formControlName="postalAddress" id="postalAddress" class="mat-input-element"
+              maxlength="300"></textarea>
+        </mat-form-field>
+      </div>
+      
+    </div>
+
+
+  </mat-expansion-panel>
+
+  <mat-expansion-panel>
+    <mat-expansion-panel-header>
+      <mat-panel-title>
+        Prescribing Doctor Details
+      </mat-panel-title>     
+    </mat-expansion-panel-header>
+     <div>
+      <healthcareprovider-search 
+      #healthCareProviderSearchComponent 
+      [showTelephoneNumber]="false" 
+      (healthCareProviderChanged)="onHealthCareProviderChanged($event)"></healthcareprovider-search>     
+    </div>
+   
+  </mat-expansion-panel>
+ 
+  <div *ngIf="claimId > 0">
+  <mat-expansion-panel>
+      <mat-expansion-panel-header>
+        <mat-panel-title>
+          Upload Chronic Documents
+        </mat-panel-title>
+      </mat-expansion-panel-header>
+       <div *ngIf="documentTypeFilter && documentTypeFilter?.length > 0">        
+          <document-uploader [documentSet]="documentSet" [systemName]="documentSystemName" 
+          [keyName]="'claimId'"  [documentTypeFilter]="documentTypeFilter"
+          [forceRequiredDocumentTypeFilter]="documentTypeFilter"          
+          [keyValue]="documentKeyValue" [canDelete]="true"
+          (requiredDocumentsUploadedEmit)="isRequiredDocumentsUploaded($event)"></document-uploader>      
+      </div>
+  </mat-expansion-panel>
+  </div>
+
+</div>
+
+</form>
+</mat-card-content>
+</mat-card>

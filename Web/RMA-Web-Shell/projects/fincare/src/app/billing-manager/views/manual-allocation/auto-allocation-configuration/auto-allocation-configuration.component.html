@@ -1,0 +1,57 @@
+<mat-card-header>
+    <mat-card-title>
+      <h1>Auto Allocate Account Config</h1>
+    </mat-card-title>
+  </mat-card-header>
+<mat-card>
+    <div *ngIf="(isLoadingAccounts$ | async)">
+        <div>
+          <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+          <label class="mat-label other-label"><i>Loading Accounts...</i></label>
+        </div>
+        <br />
+      </div>
+      <div *ngIf="(isSubmittingAccounts$ | async)">
+        <div>
+          <mat-progress-bar mode="indeterminate">Submitting...</mat-progress-bar>
+          <label class="mat-label other-label"><i>Submitting...</i></label>
+        </div>
+        <br />
+      </div>
+    <div [hidden]="datasource.data.length === 0">
+        <br />
+        <mat-table #table [dataSource]="datasource" matSort>
+            <ng-container matColumnDef="accountNumber">
+                <mat-header-cell *matHeaderCellDef mat-sort-header> Account Number </mat-header-cell>
+                <mat-cell *matCellDef="let row">
+                    {{row.bankAccountNumber}}
+                </mat-cell>
+            </ng-container>
+            <ng-container matColumnDef="accountName">
+                <mat-header-cell *matHeaderCellDef mat-sort-header> Account Name </mat-header-cell>
+                <mat-cell *matCellDef="let row"  class="left-align">
+                    {{row.description}}
+                </mat-cell>
+            </ng-container>
+            <!-- Actions -->
+            <ng-container matColumnDef="actions">
+                <mat-header-cell *matHeaderCellDef>Auto Allocate
+                </mat-header-cell>
+                <mat-cell *matCellDef="let row">
+                    <mat-slide-toggle  [checked]="row.isConfigured" (change)="accountChecked($event, row)">
+                    </mat-slide-toggle>
+                </mat-cell>
+            </ng-container>
+            <mat-header-row *matHeaderRowDef="displayedColumns;"></mat-header-row>
+            <mat-row *matRowDef="let row; columns: displayedColumns;"></mat-row>
+        </mat-table>
+        <mat-paginator #paginator [pageIndex]="0" [pageSize]="5" [pageSizeOptions]="[5, 10, 25, 100]">
+        </mat-paginator>
+    </div>
+</mat-card>
+<div class="form-buttons submit-button">
+    <br />
+    <button [disabled] ="(isLoadingAccounts$ | async) || (isSubmittingAccounts$ | async) "
+      class="button submit-button margin_top" (click)="save()" >Save</button>
+    <button type="button"  class="button submit-button margin_top" (click)="back()"  >Back</button>
+  </div>

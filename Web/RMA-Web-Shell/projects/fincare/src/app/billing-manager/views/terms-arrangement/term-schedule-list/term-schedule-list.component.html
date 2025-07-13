@@ -1,0 +1,54 @@
+
+<div *ngIf="(isLoadingTermArrangements$ | async)">
+  <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+  <label class="mat-label other-label"><i>Loading Term Arrangements...please wait...</i></label>
+</div>
+
+<div [hidden]="datasource.data.length === 0" class="table-container">
+  <p class="labelParagraph"> {{filterWithStatus ?  getStatusDescription(termArrangementScheduleStatus) : 'All' }} Terms Arrangement Schedules</p>
+     <mat-table #table [dataSource]="datasource" matSort> 
+         <ng-container matColumnDef="paymentDate">
+             <mat-header-cell *matHeaderCellDef>Contract Payment Date</mat-header-cell>
+             <mat-cell *matCellDef="let row"> {{row.paymentDate | date:'yyyy/MM/dd'}} </mat-cell>                        
+           </ng-container>    
+         <ng-container matColumnDef="status">
+             <mat-header-cell *matHeaderCellDef >Status</mat-header-cell>
+             <mat-cell *matCellDef="let row">{{row.termArrangementScheduleStatus}}</mat-cell>
+         </ng-container>
+           <ng-container matColumnDef="amount">
+             <mat-header-cell *matHeaderCellDef >Contract Amount</mat-header-cell>
+             <mat-cell *matCellDef="let row" class="right-aligned-amounts"> {{row.amount | currency:'':''}} </mat-cell>
+           </ng-container>
+           <ng-container matColumnDef="balance">
+             <mat-header-cell *matHeaderCellDef >Balance</mat-header-cell>
+             <mat-cell *matCellDef="let row" class="right-aligned-amounts"> {{row.balance | currency:'':''}} </mat-cell>
+           </ng-container>
+           <ng-container matColumnDef="collectableBalance">
+            <mat-header-cell *matHeaderCellDef >Collectable Balance</mat-header-cell>
+            <mat-cell *matCellDef="let row" class="right-aligned-amounts"> {{ getCollectableBalance(row) | currency:'':''}} </mat-cell>
+          </ng-container>        
+         <ng-container matColumnDef="termStatus">
+             <mat-header-cell *matHeaderCellDef >Status</mat-header-cell>
+             <mat-cell *matCellDef="let row">{{getStatusDescription(row.termArrangementScheduleStatus)}}</mat-cell>
+         </ng-container> 
+
+         <ng-container matColumnDef="actions">
+          <mat-header-cell *matHeaderCellDef>Select</mat-header-cell>
+          <mat-cell *matCellDef="let row; let i = index" class="tableActions">
+              <mat-checkbox [checked]="selectedTermArrangementScheduleIds.indexOf(row.termArrangementScheduleId) > -1"
+                (change)="termScheduleChecked($event,row)"
+               >
+              </mat-checkbox>               
+            </mat-cell>
+        </ng-container>    
+
+         <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
+         <mat-row *matRowDef="let row; columns: displayedColumns;"></mat-row>
+     </mat-table>
+     <mat-paginator #paginator [pageIndex]="0" [pageSize]="5" [pageSizeOptions]="[5, 10, 25, 100]">
+     </mat-paginator>  
+ </div>
+
+ <div class="errorMessage" *ngIf=" errorMessage.length > 0">{{errorMessage}}
+</div>
+

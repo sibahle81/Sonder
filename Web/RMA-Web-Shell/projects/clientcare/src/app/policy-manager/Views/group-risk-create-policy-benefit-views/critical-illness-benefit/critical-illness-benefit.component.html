@@ -1,0 +1,102 @@
+<div class="wizard-main-content mat-elevation-z8">
+  <form [formGroup]="form" class="mat-container details-form">
+    <section>
+      <mat-form-field class="mat-form-field">
+        <label class="mat-label other-label mandatory-field">Benefit Basis</label>
+        <mat-select formControlName="benefitBasis">
+          <mat-option *ngFor="let option of benefitBasisOptions" [value]="option.benefitOptionItemValueId">
+            {{option.optionItemName}}
+          </mat-option>
+        </mat-select>
+        <mat-error *ngIf="form.get('benefitBasis').hasError('required')">
+          Benefit Basis is <strong>required</strong>
+        </mat-error>
+      </mat-form-field>
+      <mat-form-field class="mat-form-field-right">
+        <label class="mat-label other-label mandatory-field">Free Cover Limit</label>
+        <input matInput formControlName="freeCoverLimit" type="number" DecimalNumber>
+      </mat-form-field>
+    </section>
+    <section>
+      <mat-form-field class="mat-form-field">
+        <label class="mat-label other-label mandatory-field">Previous Insurer FCL</label>
+        <input matInput formControlName="previousInsurerFCL" type="number" DecimalInput>
+      </mat-form-field>
+      <mat-form-field class="mat-form-field-right">
+        <label class="mat-label other-label mandatory-field">Continued Cover</label>
+        <mat-select formControlName="continuedCover">
+          <mat-option *ngFor="let option of continuedCoverOptions" [value]="option.benefitOptionItemValueId">
+            {{option.optionItemName}}
+          </mat-option>
+        </mat-select>
+        <mat-error *ngIf="form.get('continuedCover').hasError('required')">
+          Continued Cover is <strong>required</strong>
+        </mat-error>
+      </mat-form-field>
+    </section>
+    <section>
+      <mat-form-field class="mat-form-field">
+        <label class="mat-label other-label mandatory-field">Conversion Option</label>
+        <mat-select formControlName="conversionOption">
+          <mat-option *ngFor="let option of conversionOptions" [value]="option.benefitOptionItemValueId">
+            {{option.optionItemName}}
+          </mat-option>
+        </mat-select>
+        <mat-error *ngIf="form.get('conversionOption').hasError('required')">
+          Conversion Option is <strong>required</strong>
+        </mat-error>
+      </mat-form-field>
+      <mat-form-field class="mat-form-field-right">
+        <label class="mat-label other-label mandatory-field">Top Up Benefit</label>
+        <mat-select formControlName="topUpBenefit">
+          <mat-option *ngFor="let option of topUpBenefitOptions" [value]="option.benefitOptionItemValueId">
+            {{option.optionItemName}}
+          </mat-option>
+        </mat-select>
+        <mat-error *ngIf="form.get('topUpBenefit').hasError('required')">
+          Top Up Benefit is <strong>required</strong>
+        </mat-error>
+      </mat-form-field>
+    </section>
+    <section>
+      <mat-form-field class="mat-form-field">
+        <label class="mat-label other-label mandatory-field">Survival Period</label>
+        <mat-select formControlName="survivalPeriod" (selectionChange)="onSurvivalPeriodChanged($event)">
+          <mat-option *ngFor="let option of survivalPeriodOptions" [value]="option.benefitOptionItemValueId">
+            {{option.optionItemName}}
+          </mat-option>
+        </mat-select>
+        <mat-error *ngIf="form.get('survivalPeriod').hasError('required')">
+          Survival Period is <strong>required</strong>
+        </mat-error>
+      </mat-form-field>
+      <mat-form-field class="mat-form-field-right">
+        <label class="mat-label other-label mandatory-field">Restoring Death Benefit</label>
+        <mat-select formControlName="restoreDeathBenfit">
+          <mat-option *ngFor="let option of restoreDeathOptions" [value]="option.benefitOptionItemValueId">
+            {{option.optionItemName}}
+          </mat-option>
+        </mat-select>
+        <mat-error *ngIf="form.get('restoreDeathBenfit').hasError('required')">
+          Restoring Death Benefit is <strong>required</strong>
+        </mat-error>
+      </mat-form-field>
+    </section>
+    <section>
+      <mat-form-field class="mat-form-field">
+        <label class="mat-label other-label">Maximum Benefit Multiple</label>
+        <span class="material-icons md-18" style="color: lightseagreen;" matTooltip="The maximum benefit multiple is: {{maximumBenefitMultiple}}">
+          info
+        </span>
+        <input matInput formControlName="maximumBenefitMultiple" type="number">
+      </mat-form-field>
+      <mat-form-field class="mat-form-field-right">
+        <label class="mat-label other-label">Maximum Sum Assured</label>
+        <span class="material-icons md-18" style="color: lightseagreen;" matTooltip="The maximum sum assured is: R{{maximumSumAssured | number: '1.2-6'}}">
+          info
+        </span>
+        <input matInput formControlName="maximumSumAssured" type="number">
+      </mat-form-field>
+    </section>
+  </form>
+</div>

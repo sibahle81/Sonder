@@ -1,0 +1,35 @@
+<div *ngIf="isLoading$ | async">
+    <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+    loading please wait ...
+</div>
+
+<div class="margine-space" *ngIf="!(isLoading$ | async)">
+    <div class="mat-header" [hidden]="hideTreatmentDocTypeDropdown">
+        <mat-card-title> Treatment Auth Document Type </mat-card-title>
+    </div>
+
+    <mat-card class="matCard">
+        <div *ngIf="documentSet && documentSystemName && key && linkedId">
+            <document-uploader [documentSet]="documentSet" [systemName]="documentSystemName" [keyName]="key"
+                [keyValue]="linkedId" [canDelete]="true"
+                (requiredDocumentsUploadedEmit)="isRequiredDocumentsUploaded($event)"></document-uploader>
+        </div>
+
+        <section>
+            <div class="" [hidden]="hideTreatmentDocTypeDropdown">
+                <mat-form-field>
+                    <label class="mat-label other-label mandatory-field">Treatment Auth Document Type</label>
+                    <mat-select [formControl]="treatmentAuthDocumentType" id="treatmentAuthDocumentType"
+                        name="treatmentAuthDocumentType">
+                        <mat-option *ngFor="let authDocumentType of treatmentAuthDocumentTypes"
+                            [value]="authDocumentType">
+                            {{formatLookup(authDocumentType)}}
+                        </mat-option>
+                    </mat-select>
+                </mat-form-field>
+            </div>
+        </section>
+
+    </mat-card>
+    <br>
+</div>

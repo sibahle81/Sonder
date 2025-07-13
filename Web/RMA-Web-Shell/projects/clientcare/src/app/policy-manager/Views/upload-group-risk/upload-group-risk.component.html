@@ -1,0 +1,44 @@
+<div>
+  <h1>Upload Group Risk Policies</h1>
+</div>
+<mat-tab-group animationDuration="500ms">
+  <mat-tab label="Search Members">
+    <member-search-V2 [basicMode]="false" (memberSelectedEmit)="setRolePlayer($event)"></member-search-V2>
+  </mat-tab>
+</mat-tab-group>
+<div [hidden]="schemeRolePlayerPayeeId === 0">
+  <mat-tab-group animationDuration="500ms">
+    <mat-tab label="Selected Company :{{ selectedRolePlayerName }}">
+      <div class="mat-container">
+        <div>
+          <upload-control #uploadControl [acceptedTypes]="'.xlsx'" [isSingleInput]="true" [allowDelete]="true"
+            [isReadOnly]="false">
+          </upload-control>
+        </div>
+        <div class="left-padding" *ngIf="uploadControlComponent.uploadFileList.length > 0">
+          <div>
+            Uploading large files may take several minutes. Please be patient.
+          </div>
+          <div>
+            The wizard task is created in the background, and should be available
+            after a short time.
+          </div>
+          <br />
+        </div>
+        <div class="left-padding" *ngIf="errorMessage.length > 0">
+          <div class="red">
+            <br />
+            <ng-container *ngFor="let msg of errorMessage">
+              {{ msg }}<br />
+            </ng-container>
+          </div>
+        </div>
+        <div *ngIf="schemeRolePlayerPayeeId > 0 && productOptionCode !== ''">
+          <button class="button submit-button" [disabled]="disabled" (click)="save()">
+            Upload File
+          </button>
+        </div>
+      </div>
+    </mat-tab>
+  </mat-tab-group>
+</div>

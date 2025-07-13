@@ -1,0 +1,643 @@
+<div *ngIf="showDebtor">
+    <br />
+    <button type="button" class="button submit-button" (click)="back()" style="margin-left: 25px;">Back</button>
+</div>
+
+<div *ngIf="!showDebtor">
+    <statement-account-search (resultEmit)="accountSearchChangeHandler($event)" [title]="'Search Debtor Account'">
+    </statement-account-search>
+</div>
+
+<div *ngIf="showDebtor">
+    <mat-card class="main-container">
+        <div style="width:100%; margin-left:15px;">
+            <mat-card *ngIf="clientName != '' && !(isLoadingPolicy$ | async)" style="width: 45%;">
+                <mat-card-content>
+                    <span style="font-size: large;"><b>
+              <mat-icon>account_circle</mat-icon>{{clientName}}
+            </b></span><br />
+
+                    <table *ngIf="company && !(isLoadingPolicy$ | async)" style="width:45%;">
+                        <tr style="height: 30px;">
+                            <td matTooltip="Company registration"><b>Company Registration:</b></td>
+                            <td>{{company.referenceNumber}}</td>
+                        </tr>
+                        <tr>
+                            <td matTooltip="Vat Registration No"><b>Vat Registration No :</b></td>
+                            <td>{{company.vatRegistrationNo}}</td>
+                        </tr>
+                        <tr *ngIf="debtor">
+                            <td matTooltip="Debtor Status"><b>Debtor Status :</b></td>
+                            <td>{{getDebtorStatusEnumDescription(debtor.debtorStatus)}}</td>
+                        </tr>
+                    </table>
+                </mat-card-content>
+            </mat-card>
+        </div>
+        <mat-card class="top-selector-container">
+            <mat-card class="insured-lives-container">
+                <mat-card-content>
+                    <div class="fill-grid-tile insured-lives-table">
+
+                        <br />
+                        <h1 class="wizard-font">List Of Policies</h1>
+
+                        <mat-card style="width: 95%;">
+                            <mat-card-content>
+
+                                <div *ngIf="isLoadingPolicies$ | async">
+                                    <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+                                    <label class="mat-label other-label"><i>loading policies...please wait</i></label>
+                                </div>
+
+                                <table *ngIf="!(isLoadingPolicies$ | async)" class="altRowTable" style="width:100%;">
+                                    <tr>
+                                        <th>Policy Number</th>
+                                        <th>Product Option</th>
+                                        <th>Status</th>
+                                        <th>Action</th>
+                                    </tr>
+                                    <tr *ngFor="let policy of roleplayerPolicies">
+                                        <td>{{policy.policyNumber}}</td>
+                                        <td>{{policy.productOption.code + "-" + policy.productOption.name}}</td>
+                                        <td *ngIf="greenPolicyStatus.includes(getStatus(policy.policyStatus))" align="center"><span class="material-icons lightGreen" matTooltip="{{getStatus(policy.policyStatus)}}">play_circle_filled</span></td>
+                                        <td *ngIf="amberPolicyStatus.includes(getStatus(policy.policyStatus))" align="center"><span class="material-icons lightAmber" matTooltip="{{getStatus(policy.policyStatus)}}">pause_circle_filled</span></td>
+                                        <td *ngIf="redPolicyStatus.includes(getStatus(policy.policyStatus))" align="center"><span class="material-icons lightRed" matTooltip="{{getStatus(policy.policyStatus)}}">stop</span>
+                                        </td>
+                                        <td *ngIf="bluePolicyStatus.includes(getStatus(policy.policyStatus))" align="center"><span class="material-icons lightBlue" matTooltip="{{getStatus(policy.policyStatus)}}">cached</span>
+                                        </td>
+                                        <td *ngIf="policyId != policy.policyId" align="center"><a role="button" class="link-edit" (click)="togglePolicy(policy.policyId)"><span class="material-icons"
+                          matTooltip="View this policy">visibility</span></a></td>
+                                        <td *ngIf="policyId == policy.policyId" align="center">
+                                            <a role="button" class="link-edit">
+                                                <span class="material-icons" matTooltip="Currently being viewed">check_box</span></a>
+                                        </td>
+                                    </tr>
+                                </table>
+                            </mat-card-content>
+                        </mat-card>
+
+                        <br />
+
+                        <!--INSURED LIVES-->
+                        <mat-card style="width: 95%;">
+                            <mat-card-content>
+                                <policy-member-widget style="width: 100%"></policy-member-widget>
+                            </mat-card-content>
+                        </mat-card>
+
+                    </div>
+                </mat-card-content>
+            </mat-card>
+            <mat-card class="document-container">
+                <mat-card-header>
+                    <mat-card-title>
+                        <h1 class="wizard-font">Policy Details</h1>
+                    </mat-card-title>
+                </mat-card-header>
+                <mat-card-content>
+
+                    <div *ngIf="isLoadingPolicy$ | async">
+                        <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+                        <label class="mat-label other-label"><i>loading policy details...please wait</i></label>
+                    </div>
+
+                    <table *ngIf="policy && !(isLoadingPolicy$ | async)" class="altRowTable" style="width:100%;">
+                        <tr>
+                            <td><b>Policy Number: </b></td>
+                            <td>{{policy.policyNumber}}</td>
+                        </tr>
+                        <tr>
+                            <td><b>Policy Status: </b></td>
+                            <td>{{getStatus(policy.policyStatus)}}</td>
+                        </tr>
+                        <tr>
+                            <td><b>Old Policy Number: </b></td>
+                            <td>{{policy.clientReference}}</td>
+                        </tr>
+                        <tr>
+                            <td><b>Client Name: </b></td>
+                            <td>{{clientName}}</td>
+                        </tr>
+                        <tr>
+                            <td><b>Inception Date: </b></td>
+                            <td>{{policy.policyInceptionDate| date: 'yyyy/MM/dd' }}</td>
+                        </tr>
+                        <tr>
+                            <td><b>Expiry Date: </b></td>
+                            <td>{{policy.expiryDate| date: 'yyyy/MM/dd' }}</td>
+                        </tr>
+                        <tr>
+                            <td><b>Cancellation Date: </b></td>
+                            <td>{{policy.cancellationDate| date: 'yyyy/MM/dd' }}</td>
+                        </tr>
+                        <tr>
+                            <td><b>First Installment Date: </b></td>
+                            <td>{{policy.firstInstallmentDate| date: 'yyyy/MM/dd' }}</td>
+                        </tr>
+                        <tr>
+                            <td><b>Last Installment Date: </b></td>
+                            <td>{{policy.lastInstallmentDate| date: 'yyyy/MM/dd' }}</td>
+                        </tr>
+                        <tr>
+                            <td><b>Last Lapsed Date: </b></td>
+                            <td>{{policy.lastLapsedDate| date: 'yyyy/MM/dd' }}</td>
+                        </tr>
+                        <tr>
+                            <td><b>Last Re-instate Date: </b></td>
+                            <td>{{policy.lastReinstateDate| date: 'yyyy/MM/dd' }}</td>
+                        </tr>
+                        <tr>
+                            <td><b>Regular Installment Day: </b></td>
+                            <td>{{policy.regularInstallmentDayOfMonth}}</td>
+                        </tr>
+                        <tr>
+                            <td><b>December Installment Day: </b></td>
+                            <td>{{policy.decemberInstallmentDayOfMonth}}</td>
+                        </tr>
+                        <tr>
+                            <td><b>Annual Premium: </b></td>
+                            <td>{{policy.annualPremium | currency: 'R'}}</td>
+                        </tr>
+                        <tr>
+                            <td><b>Installment Premium: </b></td>
+                            <td>{{policy.installmentPremium | currency: 'R'}}</td>
+                        </tr>
+                        <tr>
+                            <td><b>Commission Fee (%): </b></td>
+                            <td>{{ formatPercentage(policy.commissionPercentage) }}%</td>
+                        </tr>
+                        <tr>
+                            <td><b>Intermediary Service Fee (%): </b></td>
+                            <td>{{ formatPercentage(policy.adminPercentage) }}%</td>
+                        </tr>
+                        <tr>
+                            <td><b>Binder Fee (%): </b></td>
+                            <td>{{ formatPercentage(policy.binderFeePercentage) }}%</td>
+                        </tr>
+                        <tr>
+                            <td><b>Premium Adjustment (%): </b></td>
+                            <td>{{ formatPercentage(policy.premiumAdjustmentPercentage) }}%</td>
+                        </tr>
+                    </table>
+                </mat-card-content>
+            </mat-card>
+        </mat-card>
+        <!--middle-container-->
+        <mat-card class="middle-container">
+            <!-- <account-history [rolePlayerId]="rolePlayerId"></account-history> -->
+            <mat-card class="account-history-container" style="width: 95%;">
+                <mat-card-content>
+                    <h1>Account History</h1>
+                    <br />
+
+                    <div *ngIf="isLoadingPolicy$ | async">
+                        <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+                        <label class="mat-label other-label"><i>loading transactions...please wait</i></label>
+                    </div>
+
+                    <div *ngIf="!(isLoadingPolicy$ | async) && statements && statements.length <=0 ">
+                        <i>No transactions were found</i>
+                    </div>
+                    <div *ngIf="statements && statements.length >0 && !(isLoadingPolicy$ | async)">
+                        <div class="text-container" *ngIf="statements != null else statementWarning">
+                            <table class="altRowTable" style="width:100%;">
+                                <thead>
+                                    <tr>
+                                        <th><b>Month</b></th>
+                                        <th><b>Policy Number</b></th>
+                                        <th><b>Document Number</b></th>
+                                        <th><b>Description</b></th>
+                                        <th><b>Debit</b></th>
+                                        <th><b>Credit</b></th>
+                                        <th><b>Balance</b></th>
+                                    </tr>
+                                </thead>
+
+                                <tbody>
+                                    <tr *ngFor="let row of statements;let i = index;">
+                                        <td>
+                                            {{row.transactionDate | date: 'yyyy/MM/dd'}}
+                                        </td>
+                                        <td>
+                                            {{getPolicyNumber(row)}}
+                                        </td>
+                                        <td>
+                                            {{row.documentNumber}}
+                                        </td>
+                                        <td>
+                                            {{row.description}}
+                                        </td>
+                                        <td>
+                                            {{row.debitAmount | currency: 'R'}}
+                                        </td>
+                                        <td>
+                                            {{row.creditAmount | currency: 'R'}}
+                                        </td>
+                                        <td>
+                                            {{row.balance | currency: 'R'}}
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td></td>
+                                        <td></td>
+                                        <td></td>
+                                        <td></td>
+                                        <td></td>
+                                        <td class="debtorNetBalance">
+                                            <a routerLink="" (click)="loadDebtorAccountView()">R{{debtorNetBalance | number:'1.2-2'}}</a>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                        <ng-template #statementWarning>&nbsp;&nbsp;&nbsp;&nbsp;No account details have been found
+                        </ng-template>
+                    </div>
+                </mat-card-content>
+            </mat-card>
+
+            <!-- END -->
+            <mat-card class="account-history-container" style="width:30%;margin: 0% 1%;">
+                <mat-card-header>
+                    <mat-card-title>
+                        <h1 class="wizard-font" style="padding: 0;">Pending Payments</h1>
+                    </mat-card-title>
+                </mat-card-header>
+                <mat-card-content>
+                    <div *ngIf="isLoadingPolicy$ | async">
+                        <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+                        <label class="mat-label other-label"><i>loading pending payments...please wait</i></label>
+                    </div>
+
+                    <div *ngIf="!(isLoadingPolicy$ | async) && invoices && invoices.length <=0">
+                        <i>No pending payments were found</i>
+                    </div>
+
+                    <table *ngIf="!(isLoadingPolicy$ | async) && invoices && invoices.length >0" class="altRowTable" style="width:100%;">
+                        <tr>
+                            <th>Document Number</th>
+                            <!-- <th>DOB</th>
+                          <th>Age</th> -->
+                            <th>Document Date</th>
+                            <th>Amount</th>
+                            <!-- <th>Status</th>
+                          <th>Beneficiary</th>totalInvoiceAmount
+                          <th>DOD</th> -->
+                        </tr>
+                        <tr *ngFor="let invoice of invoices">
+                            <td>{{invoice.invoiceNumber}}</td>
+                            <td>{{invoice.invoiceDate | date: 'yyyy/MM/dd'}}</td>
+                            <td>{{invoice.totalInvoiceAmount | currency: 'R'}}</td>
+                        </tr>
+                    </table>
+                </mat-card-content>
+            </mat-card>
+            <mat-card class="account-history-container" style="width:25%;">
+                <mat-card-header>
+                    <mat-card-title>
+                        <h1 class="wizard-font" style="padding: 0;"> Unmet Payments</h1>
+                    </mat-card-title>
+                </mat-card-header>
+                <mat-card-content>
+                    <div *ngIf="isLoadingPolicy$ | async">
+                        <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+                        <label class="mat-label other-label"><i>loading unmet payments...please wait</i></label>
+                    </div>
+
+                    <div *ngIf="!(isLoadingPolicy$ | async) && invoicePaymentAllocations && invoicePaymentAllocations.length <=0">
+                        <i>No unmet payments were found</i>
+                    </div>
+
+                    <table *ngIf="!(isLoadingPolicy$ | async) && invoicePaymentAllocations && invoicePaymentAllocations.length >0" class="altRowTable" style="width:100%;">
+                        <tr>
+                            <th>Document Number</th>
+                            <!-- <th>DOB</th>
+                          <th>Age</th> -->
+                            <th>Collection Date</th>
+                            <th>Invoice Amount</th>
+                            <th>Outstanding Amount</th>
+                            <!-- <th>Status</th>
+                          <th>Beneficiary</th>totalInvoiceAmount
+                          <th>DOD</th> -->
+                        </tr>
+                        <tr *ngFor="let invoice of invoicePaymentAllocations">
+                            <td>{{invoice.invoiceNumber}}</td>
+                            <td>{{invoice.collectionDate | date: 'yyyy/MM/dd'}}</td>
+                            <td>{{invoice.totalInvoiceAmount | currency: 'R'}}</td>
+                            <td>{{invoice.amountOutstanding | currency: 'R'}}</td>
+                        </tr>
+                    </table>
+                </mat-card-content>
+            </mat-card>
+        </mat-card>
+        <!--bottom-container-->
+        <mat-card class="bottom-container">
+            <mat-card class="account-history-container" style="width: 95%;">
+                <mat-card-header>
+                    <mat-card-title>
+                        <h1 class="wizard-font" style="padding: 0;"></h1>
+                    </mat-card-title>
+                </mat-card-header>
+                <mat-card-content>
+                    <div *ngIf="isLoadingPolicy$ | async">
+                        <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+                        <label class="mat-label other-label"><i>loading documents...please wait</i></label>
+                    </div>
+
+                    <form [formGroup]="form" class="mat-container details-form" novalidate>
+                        <div *ngIf="!(isLoadingPolicy$ | async) && selectedDocumentSetId !== 0">
+                            <mat-form-field class="mat-form-field-right">
+                                <label class="mat-label other-label">Document Set</label>
+                                <mat-select name="documentSets" id="documentSets" formControlName="documentSets" (selectionChange)="documentSetChanged($event.value)">
+                                    <mat-option [value]="12">Policy Case (Individual)</mat-option>
+                                    <mat-option [value]="18">Policy Documents(individual)</mat-option>
+                                    <mat-option [value]="13">Policy Case (Group)</mat-option>
+                                    <mat-option [value]="19">Policy Documents(group)</mat-option>
+                                    <mat-option [value]="14">Policy Maintanance</mat-option>
+                                    <mat-option [value]="15">Policy Cancellation</mat-option>
+                                    <mat-option [value]="21">Policy Reinstatement</mat-option>
+                                    <mat-option [value]="22">Policy Continuation</mat-option>
+                                    <mat-option [value]="16">Member Relations</mat-option>
+                                    <mat-option [value]="29">Interbank Transfer</mat-option>
+                                    <mat-option [value]="25">Reallocation</mat-option>
+                                    <mat-option [value]="24">Refund</mat-option>
+                                </mat-select>
+                            </mat-form-field>
+                        </div>
+                    </form>
+
+
+                    <div *ngIf="!(isLoadingPolicy$ | async)">
+                        <view-documents [documentSetId]="selectedDocumentSetId" [keyName]="docKeyValue" [keyValue]="requestCode">
+                        </view-documents>
+                    </div>
+
+                    <div *ngIf="!(isLoadingPolicy$ | async) && selectedDocumentSetId <= 0">
+                        <i>No document set has been selected</i>
+                    </div>
+                </mat-card-content>
+            </mat-card>
+            <mat-card class="account-history-container" style="width:30%;margin: 0% 1%;">
+                <mat-card-header>
+                    <mat-card-title>
+                        <h1 class="wizard-font" style="padding: 0;">Claim Details</h1>
+                    </mat-card-title>
+                </mat-card-header>
+                <mat-card-content>
+                    <div *ngIf="isLoadingPolicy$ | async">
+                        <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+                        <label class="mat-label other-label"><i>loading claim details...please wait</i></label>
+                    </div>
+
+                    <div *ngIf="!(isLoadingPolicy$ | async) && claims && claims.length <=0">
+                        <i>No claim details found...</i>
+                    </div>
+
+                    <table *ngIf="!(isLoadingPolicy$ | async) && claims && claims.length >0" class="altRowTable" style="width:100%;">
+                        <tr>
+                            <th>Claim Number</th>
+                            <!-- <th>DOB</th>
+                          <th>Age</th> -->
+                            <th>Claim Date</th>
+                            <th>Status</th>
+                            <!-- <th>Status</th>
+                          <th>Beneficiary</th>
+                          <th>DOD</th> -->
+                        </tr>
+                        <tr *ngFor="let claim of claims">
+                            <td>{{claim.claimReferenceNumber}}</td>
+                            <td>{{claim.createdDate | date: 'yyyy/MM/dd'}}</td>
+                            <td>{{getClaimStatus(claim.claimStatus)}}</td>
+                        </tr>
+                    </table>
+                </mat-card-content>
+            </mat-card>
+
+            <mat-card class="account-history-container" style="width:25%;">
+                <mat-card-header>
+                    <mat-card-title>
+                        <h1 class="wizard-font" style="padding: 0;">Banking Details</h1>
+                    </mat-card-title>
+                </mat-card-header>
+                <mat-card-content>
+                    <div *ngIf="isLoadingPolicy$ | async">
+                        <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+                        <label class="mat-label other-label"><i>loading banking details...please wait</i></label>
+                    </div>
+
+                    <div *ngIf="!rolePlayerBankingDetail &&  !(isLoadingPolicy$ | async)">
+                        <i>no banking details have been added</i>
+                    </div>
+
+                    <div *ngIf="rolePlayerBankingDetail && !(isLoadingPolicy$ | async)">
+                        <table style="width:100%;" class="altRowTable">
+                            <tr>
+                                <td><b>Bank:</b></td>
+                                <td>{{rolePlayerBankingDetail.bankName}}</td>
+                            </tr>
+                            <tr>
+                                <td><b>Account Holder:</b></td>
+                                <td>{{rolePlayerBankingDetail.accountHolderName}}</td>
+                            </tr>
+                            <tr>
+                                <td><b>Account Number:</b></td>
+                                <td>{{rolePlayerBankingDetail.accountNumber}}</td>
+                            </tr>
+                            <tr>
+                                <td><b>Account Type:</b></td>
+                                <td>{{getAccountType(rolePlayerBankingDetail.bankAccountType)}}</td>
+                            </tr>
+                            <tr>
+                                <td><b>Branch</b></td>
+                                <td>{{rolePlayerBankingDetail.branchCode}}</td>
+                            </tr>
+                            <tr>
+                                <td><b>Purpose</b></td>
+                                <td>{{getPurpose(rolePlayerBankingDetail.purposeId)}}</td>
+                            </tr>
+                        </table>
+                    </div>
+                </mat-card-content>
+            </mat-card>
+
+        </mat-card>
+        <mat-card class="bottom-container">
+            <!--BROKER DETAILS-->
+            <mat-card class="account-history-container" style="width: 72%;">
+                <mat-card-content>
+
+                    <h1>Broker Details</h1>
+                    <br />
+
+                    <div *ngIf="isLoadingPolicy$ | async">
+                        <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+                        <label class="mat-label other-label"><i>loading broker details...please wait</i></label>
+                    </div>
+
+                    <div *ngIf="!broker &&  !(isLoadingPolicy$ | async)">
+                        <i>no broker details found...</i>
+                    </div>
+
+                    <div *ngIf="broker && !(isLoadingPolicy$ | async)">
+                        <table style="width:100%;" class="altRowTable">
+                            <tr style="height: 30px;">
+                                <td matTooltip="Code"><b>Code:</b></td>
+                                <td>{{broker.code}}</td>
+                            </tr>
+                            <tr style="height: 30px;">
+                                <td matTooltip="Broker name"><b>Name:</b></td>
+                                <td>{{broker.name}}</td>
+                            </tr>
+                            <tr>
+                                <mat-icon matTooltip="Contact name">account_circle</mat-icon>
+                                <td>{{brokerageContact?.firstName + ' ' + brokerageContact?.lastName}}</td>
+                            </tr>
+                            <tr>
+                                <span class="material-icons" matTooltip="Phone number">call</span>
+                                <td>{{brokerageContact?.telephoneNumber}}</td>
+                            </tr>
+                            <tr>
+                                <mat-icon matTooltip="Mobile phone number">phonelink_ring</mat-icon>
+                                <td>{{brokerageContact?.mobileNumber}}</td>
+                            </tr>
+                            <tr>
+                                <span class="material-icons" matTooltip="Email address">mail</span>
+                                <td><a href="mailto:{{brokerageContact?.email}}">{{brokerageContact?.email}}</a></td>
+                            </tr>
+                        </table>
+                        <br />
+                    </div>
+                </mat-card-content>
+            </mat-card>
+
+            <mat-card class="account-history-container" style="width: 75%;     margin: 0px 0px 0px 7px">
+                <mat-card-content>
+
+                    <h1>Agent Details</h1>
+                    <br />
+
+                    <div *ngIf="isLoadingPolicy$ | async">
+                        <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+                        <label class="mat-label other-label"><i>loading agent details...please wait</i></label>
+                    </div>
+
+                    <div *ngIf="!representative &&  !(isLoadingPolicy$ | async)">
+                        <i>no agent details found...</i>
+                    </div>
+
+                    <div *ngIf="representative && !(isLoadingPolicy$ | async)">
+                        <table style="width:100%;" class="altRowTable">
+                            <tr style="height: 30px;">
+                                <td matTooltip="Code"><b>Code:</b></td>
+                                <td>{{representative.code}}</td>
+                            </tr>
+                            <tr style="height: 30px;">
+                                <td matTooltip="Agent name"><b>Name:</b></td>
+                                <td>{{representative.firstName}}</td>
+                            </tr>
+                            <tr>
+                                <td matTooltip="Agent surname"><b>Surname:</b></td>
+                                <td>{{representative.surnameOrCompanyName}}</td>
+                            </tr>
+                            <tr>
+                                <span class="material-icons" matTooltip="Phone number">call</span>
+                                <td>{{representative.contactNumber}}</td>
+                            </tr>
+                            <tr>
+                                <span class="material-icons" matTooltip="Email address">mail</span>
+                                <td><a href="mailto:{{representative.email}}">{{representative.email}}</a></td>
+                            </tr>
+                        </table>
+                    </div>
+                </mat-card-content>
+            </mat-card>
+            <!--CONTACT DETAILS-->
+            <mat-card class="account-history-container" style="width: 60%;margin: 0px 0px 0px 17px;">
+                <mat-card-content>
+
+                    <h1>Contacts</h1>
+                    <br />
+
+                    <div *ngIf="isLoadingPolicy$ | async">
+                        <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+                        <label class="mat-label other-label"><i>loading contact details...please wait</i></label>
+                    </div>
+
+                    <div *ngIf="!contact &&  !(isLoadingPolicy$ | async)">
+                        <i>no contact details found...</i>
+                    </div>
+
+                    <table *ngIf="contact && !(isLoadingPolicy$ | async)" style="width:100%;" class="altRowTable">
+                        <tr>
+                            <td>
+                                <mat-icon matTooltip="Contact name">account_circle</mat-icon>
+                            </td>
+                            <td>{{contact.name}}</td>
+                        </tr>
+                        <tr>
+                            <td><span class="material-icons" matTooltip="Landline phone number">call</span></td>
+                            <td>{{contact.telephoneNumber}}</td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <mat-icon matTooltip="Mobile phone number">phonelink_ring</mat-icon>
+                            </td>
+                            <td>{{contact.mobileNumber}}</td>
+                        </tr>
+                        <tr>
+                            <td><span class="material-icons" matTooltip="Email address">mail</span></td>
+                            <td><a href="mailto:{{contact.email}}">{{contact.email}}</a></td>
+                        </tr>
+                    </table>
+
+                </mat-card-content>
+            </mat-card>
+
+            <!--ADDRESS DETAILS-->
+            <mat-card class="account-history-container" style="width: 60%;margin: 0px 0px 0px 17px;">
+                <mat-card-content>
+
+                    <h1>Address</h1>
+                    <br />
+
+                    <div *ngIf="isLoadingPolicy$ | async">
+                        <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+                        <label class="mat-label other-label"><i>loading address details...please wait</i></label>
+                    </div>
+
+                    <div *ngIf="!address &&  !(isLoadingPolicy$ | async)">
+                        <i>no address details found...</i>
+                    </div>
+
+                    <table *ngIf="address && !(isLoadingPolicy$ | async)" style="width:100%;" class="altRowTable">
+                        <tr style="height: 30px;">
+                            <td matTooltip="Address line 1"><b>Address Line 1:</b></td>
+                            <td>{{address.addressLine1}}</td>
+                        </tr>
+                        <tr style="height: 30px;">
+                            <td matTooltip="Address line "><b>Address Line :</b></td>
+                            <td>{{address.addressLine2}}</td>
+                        </tr>
+                        <tr style="height: 30px;">
+                            <td matTooltip="Postal Code"><b>Postal Code :</b></td>
+                            <td>{{address.postalCode}}</td>
+                        </tr>
+                        <tr style="height: 30px;">
+                            <td matTooltip="City"><b>City :</b></td>
+                            <td>{{address.city}}</td>
+                        </tr>
+
+                    </table>
+
+                </mat-card-content>
+            </mat-card>
+        </mat-card>
+        <div class="account-history-container" style="width: 95%;">
+
+            <div>
+                <dashboard-note [roleplayerId]="_roleplayerId"></dashboard-note>
+            </div>
+        </div>
+    </mat-card>
+</div>

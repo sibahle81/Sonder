@@ -1,0 +1,34 @@
+<div class="mat-container">
+	<div class="header-row" fxLayoutAlign="space-between center">
+		<div class="header-title">
+			<label class="form-label">
+				<b>Re-Open Claim</b>
+			</label>
+		</div>
+	</div>
+	<hr/>
+	<div class="content-holder">
+		<mat-form-field>
+			<mat-label>Reason</mat-label>
+			<mat-select [(ngModel)]="claimNote.reason">
+				<mat-option *ngFor="let reOpenReason of reOpenReasonTypes" [value]="reOpenReason">
+          {{formatLookup(reOpenReason)}}
+				</mat-option>
+			</mat-select>
+		</mat-form-field>
+    &nbsp;
+		<mat-form-field>
+			<mat-label>Comments</mat-label>
+			<textarea matInput="form-control" id="text-input-control" required [(ngModel)]="claimNote.text"></textarea>
+		</mat-form-field>
+	</div>
+	<br/>
+	<div class="form-group-button mat-form-button matformgroupbutton" fxLayoutAlign="end end">
+		<button type="button" class="button float-button" (click)="reOpenClaim()">
+      Re-Open
+		</button>
+		<button type="button" class="button float-button" (click)="close()">
+      Cancel
+		</button>
+	</div>
+</div>

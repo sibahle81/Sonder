@@ -1,0 +1,29 @@
+  <mat-table #table [dataSource]="levelOfCare" class="mat-elevation-z8">
+    <ng-container matColumnDef="tariffCode">
+      <th mat-header-cell *matHeaderCellDef> Item Code </th>
+      <td mat-cell *matCellDef="let element"> {{element.tariffCode}} </td>
+    </ng-container>
+
+    <ng-container matColumnDef="levelOfCare">
+      <th mat-header-cell *matHeaderCellDef> Level Of Care </th>
+      <td mat-cell *matCellDef="let element"> {{element.levelOfCare}} </td>
+    </ng-container>
+
+    <ng-container matColumnDef="dateTimeAdmitted">
+      <th mat-header-cell *matHeaderCellDef> Date Admitted </th>
+      <td mat-cell *matCellDef="let element"> {{element.dateTimeAdmitted}} </td>
+    </ng-container>
+
+    <ng-container matColumnDef="dateTimeDischarged">
+      <th mat-header-cell *matHeaderCellDef> Requested Quantity </th>
+      <td mat-cell *matCellDef="let element"> {{element.dateTimeDischarged}} </td>
+    </ng-container>
+
+    <ng-container matColumnDef="lengthOfStay">
+      <th mat-header-cell *matHeaderCellDef> Length Of Stay </th>
+      <td mat-cell *matCellDef="let element"> {{element.lengthOfStay}} {{ (element.lengthOfStay == 0 || element.lengthOfStay > 1) ? 'Days' : 'Day' }} </td>
+    </ng-container>
+
+    <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+    <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+  </mat-table>

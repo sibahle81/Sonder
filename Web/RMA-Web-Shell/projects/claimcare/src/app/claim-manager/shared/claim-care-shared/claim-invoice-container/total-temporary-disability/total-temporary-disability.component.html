@@ -1,0 +1,170 @@
+<mat-card class="pad" *ngIf="(isLoading$ | async)">
+  <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+  <label class="mat-label other-label"><i>{{loadingMessages$ | async}}</i></label>
+</mat-card>
+
+<div *ngIf="!(isLoading$ | async)">
+  <mat-card>
+    <div class="menu-bar">
+      <span class="material-icons">
+        receipt_long
+      </span>&nbsp;
+      <label>Days Off Invoice</label>
+      <span *ngIf="!isReadOnly && isEdit && selectedMedicalReport && isDatesValid && !isRepay" (click)="update()"
+        class="material-icons pointer right pulse" matTooltip="update">
+        edit
+      </span>
+      <span
+        *ngIf="(formValid() && selectedMedicalReport && !isEdit && isDatesValid && isRepay && selectedRepayReason > 0) || (formValid() && selectedMedicalReport && !isEdit && isDatesValid && !isRepay)"
+        (click)="save()" class="material-icons pointer right pulse" matTooltip="save">
+        save
+      </span>
+    </div>
+
+    <mat-card>
+      <div class="menu-bar" *ngIf="!(isLoading$ | async)">
+        <span>
+          Medical Report
+        </span>
+      </div>
+
+      <div *ngIf="!(isLoading$ | async) && firstMedicalReportForms && firstMedicalReportForms.length <= 0">
+        <label class="mat-label other-label"><i>No medical reports were found...</i></label>
+      </div>
+
+      <div *ngIf="!(isLoading$ | async) && firstMedicalReportForms && firstMedicalReportForms.length > 0">
+        <mat-table #table [dataSource]="dataSource" matSort id="tblData">
+          <ng-container matColumnDef="select">
+            <mat-header-cell *matHeaderCellDef>
+              <span class="material-icons noHover">
+                security_update_good
+              </span>
+            </mat-header-cell>
+            <mat-cell *matCellDef="let row">
+              <mat-checkbox [checked]="autoSelectLinkedReport(row)" [disabled]="isReadOnly || (selectedMedicalReport && selectedMedicalReport !== row)"
+                (change)="addCheckedItems($event, row)"></mat-checkbox>
+            </mat-cell>
+          </ng-container>
+
+          <ng-container matColumnDef="practitioner">
+            <mat-header-cell *matHeaderCellDef> Practitioner </mat-header-cell>
+            <mat-cell *matCellDef="let row">{{ row.medicalReportForm.healthcareProviderName }}</mat-cell>
+          </ng-container>
+
+          <ng-container matColumnDef="mechanismOfInjury">
+            <mat-header-cell *matHeaderCellDef> Mechanism Of Injury </mat-header-cell>
+            <mat-cell *matCellDef="let row">{{ row.mechanismOfInjury }}</mat-cell>
+          </ng-container>
+
+          <ng-container matColumnDef="clinicalDescription">
+            <mat-header-cell *matHeaderCellDef> Clinical Description </mat-header-cell>
+            <mat-cell *matCellDef="let row">{{ row.clinicalDescription }}</mat-cell>
+          </ng-container>
+
+          <ng-container matColumnDef="firstDayOff">
+            <mat-header-cell *matHeaderCellDef> First Day Off </mat-header-cell>
+            <mat-cell *matCellDef="let row">{{ row.firstDayOff | date: "yyyy-MM-dd" }}</mat-cell>
+          </ng-container>
+
+          <ng-container matColumnDef="lastDayOff">
+            <mat-header-cell *matHeaderCellDef> Last Day Off </mat-header-cell>
+            <mat-cell *matCellDef="let row">{{ row.lastDayOff | date: "yyyy-MM-dd" }}</mat-cell>
+          </ng-container>
+
+          <ng-container matColumnDef="estDaysOff">
+            <mat-header-cell *matHeaderCellDef> Est. Days off </mat-header-cell>
+            <mat-cell *matCellDef="let row">{{ row.estimatedDaysOff }}</mat-cell>
+          </ng-container>
+
+          <ng-container matColumnDef="reportType">
+            <mat-header-cell *matHeaderCellDef> Report Type </mat-header-cell>
+            <mat-cell *matCellDef="let row">{{ getReportTypeLabel(row?.medicalReportForm?.reportTypeId) }}</mat-cell>
+          </ng-container>
+
+          <mat-header-row *matHeaderRowDef="getDisplayedColumnsForFirstMedicalReport()"></mat-header-row>
+          <mat-row *matRowDef="let row; columns: getDisplayedColumnsForFirstMedicalReport();"></mat-row>
+        </mat-table>
+      </div>
+    </mat-card>
+
+    <invoice-generic [claimInvoice]="totalTemporaryDisability.claimInvoice" [personEvent]="personEvent"
+      [showMinimalView]="true" [claimInvoiceType]="daysOff" [disableControls]="invoiceAmount" [isReadOnly]="isReadOnly"
+      [action]="description$ | async"></invoice-generic>
+
+    <mat-card>
+      <form [formGroup]="form" class="mat-container" novalidate>
+        <section>
+          <mat-form-field class="mat-form-field">
+            <label class="mat-label other-label mandatory-field">Member Name</label>
+            <input id="memberName" name="memberName" matInput formControlName="memberName" />
+          </mat-form-field>
+
+          <mat-form-field class="mat-form-field-right">
+            <label class="mat-label other-label">Other Employer</label>
+            <mat-select name="otherEmployer" id="otherEmployer" formControlName="otherEmployer">
+              <mat-option *ngFor="let otherEmployer of otherEmployers" [value]="otherEmployer">
+                {{formatLookup(otherEmployer)}}
+              </mat-option>
+            </mat-select>
+          </mat-form-field>
+        </section>
+
+        <section>
+          <mat-form-field class="mat-form-field">
+            <label class="mat-label other-label mandatory-field">Date Off From</label>
+            <input matInput [matDatepicker]="dateOffFrom" formControlName="dateOffFrom" id="dateOffFrom"
+              name="dateOffFrom" [max]="maxDate" [min]="minEventDate" (ngModelChange)="startDateChanged($event)">
+            <mat-datepicker-toggle matSuffix [for]="dateOffFrom" [disabled]="false"></mat-datepicker-toggle>
+            <mat-datepicker startView="month" [startAt]="startDate" touchUi="true" #dateOffFrom></mat-datepicker>
+            <mat-error *ngIf="form.get('dateOffFrom').hasError('required')">
+              Date off from is <strong>required</strong>
+            </mat-error>
+          </mat-form-field>
+          <mat-form-field class="mat-form-field-right">
+            <label class="mat-label other-label mandatory-field">Date Off To</label>
+            <input matInput [matDatepicker]="dateOffTo" formControlName="dateOffTo" id="dateOffTo" name="dateOffTo"
+              [max]="maxDate" [min]="minDate" (ngModelChange)="endDateChanged($event)">
+            <mat-datepicker-toggle matSuffix [for]="dateOffTo" [disabled]="false"></mat-datepicker-toggle>
+            <mat-datepicker startView="month" [startAt]="startDate" touchUi="true" #dateOffTo></mat-datepicker>
+            <mat-error *ngIf="form.get('dateOffTo').hasError('required')">
+              Date off to is <strong>required</strong>
+            </mat-error>
+          </mat-form-field>
+        </section>
+
+        <section>
+          <mat-form-field class="mat-form-field">
+            <label class="mat-label other-label mandatory-field">Invoice Type</label>
+            <mat-select name="invoiceType" id="invoiceType" formControlName="invoiceType">
+              <mat-option *ngFor="let invoiceType of invoiceTypes" [value]="invoiceType">
+                {{formatLookup(invoiceType)}}
+              </mat-option>
+            </mat-select>
+            <mat-error *ngIf="form.get('invoiceType').hasError('required')">
+              Invoice type is <strong>required</strong>
+            </mat-error>
+          </mat-form-field>
+
+          <mat-form-field class="mat-form-field-right">
+            <label class="mat-label other-label mandatory-field">Final Invoice?</label>
+            <mat-select name="finalInvoice" id="finalInvoice" formControlName="finalInvoice">
+              <mat-option *ngFor="let finalInvoice of finalInvoices" [value]="finalInvoice">
+                {{formatLookup(finalInvoice)}}
+              </mat-option>
+            </mat-select>
+            <mat-error *ngIf="form.get('finalInvoice').hasError('required')">
+              Final invoice is <strong>required</strong>
+            </mat-error>
+          </mat-form-field>
+        </section>
+
+        <section>
+          <document-uploader *ngIf="personEvent" [documentSet]="documentSet" [systemName]="documentSystemName"
+            [keyName]="'personEventId'" [keyValue]="personEvent.personEventId"
+            [documentTypeFilter]="filterRequiredDocuments">
+          </document-uploader>
+        </section>
+      </form>
+    </mat-card>
+  </mat-card>
+</div>

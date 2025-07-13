@@ -1,0 +1,119 @@
+<div>
+  <div *ngIf="showPreAuthDetails">
+    <div class="grid">
+      <div>
+        <span class="title">Health Care Provider</span>
+        <span class="value">{{ auth.healthCareProviderName }} </span>
+      </div>
+
+      <div>
+        <span class="title">Practice Number</span>
+        <span class="value">{{ auth.practiceNumber }}</span>
+      </div>
+    </div>
+
+    <div class="grid">
+      <div>
+        <span class="title">Authorised</span>
+        <span class="value">{{ checkIfAuthorised(auth.preAuthStatus) }} </span>
+      </div>
+      <div>
+        <span class="title">PreAuth Status</span>
+        <span class="value"> {{ getPreauthStatus(auth.preAuthStatus) }} </span>
+      </div>
+    </div>
+
+    <div class="grid">
+      <div>
+        <span class="title">Auth Date From</span>
+        <span class="value">{{ auth.dateAuthorisedFrom | date: "d MMM y" }}
+        </span>
+      </div>
+
+      <div>
+        <span class="title">Auth Date To</span>
+        <span class="value">{{ auth.dateAuthorisedTo | date: "d MMM y" }} </span>
+      </div>
+    </div>
+
+    <div class="grid">
+      <div>
+        <span class="title"> {{switchBatchType != switchBatchTypeEnum.Teba ? 'Medical Service PAC No' : 'Travel Auth
+          No'}}</span>
+        <span class="value"> {{ auth.preAuthNumber }}</span>
+      </div>
+    
+      <div *ngIf="auth.isRequestFromHcp">
+        <span class="title">Injury Date</span>
+        <span class="value">{{ auth.injuryDate | date: "d MMM y" }} </span>
+      </div>
+    </div>
+
+    <div class="grid">
+      <div>
+        <span class="title">Is HCP Request</span>
+        <span class="value"> {{ auth.isRequestFromHcp ? 'Yes' : 'No' }}</span>
+      </div>
+      <div>
+        <span class="title">Contact Number(HCP-Auth)</span>
+        <span class="value">{{ auth.preAuthContactNumber }} </span>
+      </div>
+    </div>
+    <br />
+
+    <div class="grid" *ngIf="switchBatchType == switchBatchTypeEnum.MedEDI">
+      <div *ngIf="isInternalUser">
+        <span class="title">Treatment Baskets</span>
+        <preauth-treatmeant-baskets class="value" [icd10Codes]="auth.preAuthIcd10Codes"></preauth-treatmeant-baskets>
+      </div>
+    </div>
+
+    <div class="grid">
+      <div *ngIf="isInternalUser || (getPreauthStatus(auth.preAuthStatus) == preAuthStatus[6])">
+        <span class="title">Requested Amount</span>
+        <span class="value"> {{auth.requestedAmount | currency:'R '}}</span>
+      </div>
+
+      <div *ngIf="isInternalUser || (getPreauthStatus(auth.preAuthStatus) == preAuthStatus[6])">
+        <span class="title">Authorised Amount</span>
+        <span class="value"> {{ auth.authorisedAmount | currency:'R '}} </span>
+      </div>
+    </div>
+
+    <div class="grid">
+      <div>
+        <span class="title">Requested Comments</span>
+        <span class="value">{{auth.requestComments }} </span>
+      </div>
+
+      <div>
+        <span class="title">Review Comments</span>
+        <span class="value"> {{ auth.reviewComments }} </span>
+      </div>
+    </div>
+
+    <div class="grid" *ngIf="switchBatchType == switchBatchTypeEnum.MedEDI">
+      <div *ngIf="isTreatmentAuth">
+        <span class="title">Is In-Hospital?</span>
+        <span class="value">{{ getIsInHospital() }} </span>
+      </div>
+    </div>
+  </div>
+  <br />
+
+  <div *ngIf="isTreatmentAuth">
+    <app-treatment-preauth-document-type [linkedId]="auth.preAuthId" 
+    [hideTreatmentDocTypeDropdown]="true"
+    ></app-treatment-preauth-document-type>
+  </div>
+
+  <div *ngIf="switchBatchType == switchBatchTypeEnum.MedEDI">
+    <preauth-breakdowns [breakdowns]="auth?.preAuthorisationBreakdowns" [preAuthStatus]="auth?.preAuthStatus"
+      [preAuthType]="auth?.preAuthType"></preauth-breakdowns>
+    <br />
+    <level-of-care *ngIf="isHospitalAuth" [levelOfCare]="locDataSource"></level-of-care>
+    <br />
+    <preauth-icd10-codes type="preAuthView" [bodySides]="bodySides" [icd10Codes]="auth?.preAuthIcd10Codes"
+      [preAuthType]="auth?.preAuthType"></preauth-icd10-codes>
+  </div>
+</div>

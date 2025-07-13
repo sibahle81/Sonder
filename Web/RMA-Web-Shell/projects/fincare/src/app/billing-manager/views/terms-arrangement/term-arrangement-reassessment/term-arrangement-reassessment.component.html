@@ -1,0 +1,76 @@
+<p class="labelParagraph">Term Arrangement ReAssessment</p>
+<div *ngIf="rolePlayerName && rolePlayerName.length > 0">
+    <b>Debtor: {{rolePlayerName}}</b>
+    <br /> <br />
+    <b>Debtor No.: {{finPayeNumber}}</b>
+    <br />
+</div>
+<mat-accordion>
+  <mat-expansion-panel [expanded]="isPoliciesNotSelected">
+<div *ngIf="roleplayerId > 0">
+  <mat-card>
+      <app-debtor-policies [roleplayerId]="roleplayerId" (policiesSelectedHandler)="policiesSelected($event)"
+      [multiselect]="true"  [showProductBalances] = "true" [checkMemberCompliance]="false"></app-debtor-policies>  
+  </mat-card>
+  <br />
+  <br />
+</div>
+</mat-expansion-panel>
+</mat-accordion>
+<br />
+<div *ngIf="isLoadingProductBalances$ | async">
+    <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+    <label class="mat-label other-label"><i>Loading products...please wait</i></label>
+</div>
+<div [hidden]="datasourceProducts.data.length === 0" class="table-container">
+    <br />
+    <mat-accordion>
+        <mat-expansion-panel expanded="true"  class="searchBgColor">
+            <mat-expansion-panel-header>
+                <mat-panel-title>   
+                    <p class="labelParagraph">Debtor's product(s) that will form part of arrangement</p>                           
+                </mat-panel-title>
+            </mat-expansion-panel-header>                            
+            <mat-table #table [dataSource]="datasourceProducts">
+                <ng-container matColumnDef="productName">
+                    <mat-header-cell *matHeaderCellDef>Product</mat-header-cell>
+                    <mat-cell *matCellDef="let row">{{row.productOptionName}}</mat-cell>
+                    <mat-footer-cell *matFooterCellDef ></mat-footer-cell>
+                </ng-container>
+                <ng-container matColumnDef="finPayenumber">
+                  <mat-header-cell *matHeaderCellDef>Debtor No.</mat-header-cell>
+                  <mat-cell *matCellDef="let row">{{row.finPayenumber}}</mat-cell>
+                  <mat-footer-cell *matFooterCellDef class="footerBold">Total</mat-footer-cell>
+              </ng-container>
+                <ng-container matColumnDef="amount">
+                    <mat-header-cell *matHeaderCellDef>Term Arrangement Total</mat-header-cell>
+                    <mat-cell *matCellDef="let row"  class="right-aligned-amounts">{{row.contractAmount | currency:'':''}}</mat-cell>
+                    <mat-footer-cell *matFooterCellDef class="footerBold right-aligned-amounts">{{getProductTotals()  | currency:'':''}}</mat-footer-cell>
+                </ng-container>
+                <ng-container matColumnDef="actions">
+                    <mat-header-cell *matHeaderCellDef>Action</mat-header-cell>
+                    <mat-cell *matCellDef="let row">
+                      <a (click)="removeProductOption(row)" role="button" class="link-edit">
+                        <span matTooltip="remove" class="material-icons icn pointer">
+                          delete
+                        </span>
+                      </a>                
+                    </mat-cell>
+                    <mat-footer-cell *matFooterCellDef></mat-footer-cell>
+                  </ng-container>  
+                <mat-header-row *matHeaderRowDef="displayedColumnsProducts"></mat-header-row>
+                <mat-row *matRowDef="let row; columns: displayedColumnsProducts;"></mat-row>
+                <mat-footer-row class="sticky-footer"
+                    *matFooterRowDef="displayedColumnsProducts"></mat-footer-row>
+            </mat-table>
+            <mat-paginator #paginator [pageIndex]="0" [pageSize]="5" [pageSizeOptions]="[5, 10, 25, 100]">
+            </mat-paginator>
+        </mat-expansion-panel>
+    </mat-accordion>  
+</div>
+<br />
+<div>
+    <br>
+    <button (click)="submit()" [disabled]="!showSubmit" class="button submit-button">Submit</button>
+    <button (click)="close()" class="button submit-button">Dismiss</button>
+</div>

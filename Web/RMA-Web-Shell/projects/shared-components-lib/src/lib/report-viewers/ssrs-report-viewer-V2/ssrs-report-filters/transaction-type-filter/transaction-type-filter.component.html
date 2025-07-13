@@ -1,0 +1,18 @@
+<div>
+    <form [formGroup]="form" class="mat-container details-form" novalidate>
+        <section>
+            <span>
+                <mat-form-field class="mat-form-field">
+                    <label class="mat-label other-label">{{title}}</label><br />
+                    <mat-select class="control" (selectionChange)="readForm()"
+                        formControlName="transactionType" name="transactionType" id="transactionType">
+                        <mat-option [value]="'all'">All</mat-option>
+                        <mat-option *ngFor="let transactionType of transactionTypes" [value]="transactionType">
+                            {{formatLookup(transactionType)}}
+                        </mat-option>
+                    </mat-select>
+                </mat-form-field>
+            </span>
+        </section>
+    </form>
+</div>

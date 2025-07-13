@@ -1,0 +1,170 @@
+﻿<style type="text/css">
+    .redSLA {
+        color: #fff;
+        background: red;
+    }
+    
+    .greenSLA {
+        color: #fff;
+        background: green;
+    }
+    
+    .whiteSLA {
+        color: #fff;
+        background: green;
+    }
+    
+    .amberSLA {
+        background: #FF6B00;
+        color: #fff;
+    }
+</style>
+
+<mat-card style="margin: 15px 30px 15px 30px">
+    <mat-card-content style="margin-left: 10px;">
+        <mat-form-field [floatLabel]="'never'">
+            <input matInput maxlength="50" name="filter" #filter width="300" minLength="3" matTooltip="Please enter a search term" matTooltipShowDelay="1000">
+            <mat-placeholder class="placeholder">Please enter a search term.</mat-placeholder>
+            <mat-icon class="search-icon" (click)="search()" matSuffix>search</mat-icon>
+            <button style="visibility: hidden;" class="button submit-button" (click)="search()" matTooltip="Please enter a search term" matTooltipShowDelay="1000">Search</button>
+        </mat-form-field>
+
+        <div *ngIf="dataSource.loading$ | async">
+            <!-- <mat-progress-bar mode="indeterminate"
+                [ngClass]="{ 'loading-main-double-menu-progress': doubleMenu, 'loading-main-single-menu-progress': !doubleMenu }">
+            </mat-progress-bar> -->
+            <p class="site-font grey">Searching...</p>
+        </div>
+
+
+        <div [hidden]="paginator.length == 0">
+            <mat-table #table [dataSource]="dataSource" matSort matSortActive="Name" matSortDirection="asc" matSortDisableClear>
+
+                <!-- Name -->
+                <ng-container matColumnDef="name">
+                    <mat-header-cell *matHeaderCellDef mat-sort-header> Name </mat-header-cell>
+                    <mat-cell *matCellDef="let row"> {{row.name}} </mat-cell>
+                </ng-container>
+
+                <!-- Type -->
+                <ng-container matColumnDef="type">
+                    <mat-header-cell *matHeaderCellDef mat-sort-header> Type </mat-header-cell>
+                    <mat-cell *matCellDef="let row"> {{row.type}} </mat-cell>
+                </ng-container>
+
+                <!-- Created By -->
+                <ng-container matColumnDef="createdBy">
+                    <mat-header-cell *matHeaderCellDef mat-sort-header> Created By </mat-header-cell>
+                    <mat-cell *matCellDef="let row"> {{row.createdBy}} </mat-cell>
+                </ng-container>
+
+                <!-- Locked To -->
+                <ng-container matColumnDef="lockedToUser">
+                    <mat-header-cell *matHeaderCellDef mat-sort-header> Locked To User </mat-header-cell>
+                    <mat-cell *matCellDef="let row"> {{row.lockedToUser}} </mat-cell>
+                </ng-container>
+
+                <!-- Locked status -->
+                <ng-container matColumnDef="lockedStatus">
+                    <mat-header-cell *matHeaderCellDef> Locked Status</mat-header-cell>
+                    <mat-cell *matCellDef="let row">
+                        <span *ngIf="!row.lockedReason && (!row.lockedToUser || row.lockedToUser === '')">
+                          Unlocked
+                        </span>
+                        <span *ngIf="!row.lockedReason && (row.lockedToUser && row.lockedToUser === currentUser)">
+                          Locked to you
+                        </span>
+                        <span *ngIf="row.lockedReason">
+                          {{row.lockedReason}}
+                        </span>
+                    </mat-cell>
+                </ng-container>
+
+                <!-- Wizard status -->
+                <ng-container matColumnDef="wizardStatusText">
+                    <mat-header-cell *matHeaderCellDef mat-sort-header> Status </mat-header-cell>
+                    <mat-cell *matCellDef="let row"> {{row.createdDate === row.modifiedDate ? 'New' : row.wizardStatusText}} </mat-cell>
+                </ng-container>
+
+                <!--Overall SLA -->
+                <ng-container matColumnDef="overAllSLAHours">
+                    <mat-header-cell *matHeaderCellDef mat-sort-header> Overall SLA </mat-header-cell>
+                    <mat-cell *matCellDef="let row" [ngClass]="row.slaRAGIndicatorId == '1' ? 'greenSLA' : row.slaRAGIndicatorId == '3' ? 'redSLA' : row.slaRAGIndicatorId == '0' ? 'greenSLA' : row.slaRAGIndicatorId == '2' ? 'amberSLA'  : ''">
+                        {{row.overAllSLAHours}} </mat-cell>
+                </ng-container>
+
+                <!-- Actions -->
+                <ng-container matColumnDef="actions">
+                    <mat-header-cell *matHeaderCellDef>Actions</mat-header-cell>
+                    <mat-cell *matCellDef="let row">
+                        <div [hidden]="row.type === null">
+                            <a role="button" class="link-edit" (click)="onSelect(row)">Open</a>
+                            <span>&nbsp;|&nbsp;</span>
+                        </div>
+                        <a role="button" class="link-edit" (click)="onViewDetails(row)">View Details</a>
+                    </mat-cell>
+                </ng-container>
+
+                <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
+                <mat-row *matRowDef="let row; columns: displayedColumns;"></mat-row>
+            </mat-table>
+
+            <mat-paginator #paginator [length]="dataSource.rowCount$" [pageSize]="5" [pageSizeOptions]="[5, 10, 25, 100]">
+            </mat-paginator>
+        </div>
+
+        <div [hidden]="paginator.length > 0 || !currentQuery || currentQuery == ''" class="no-search-results-add-button">
+            <div class="site-font grey">
+                <p class="grey">Your search - <strong>{{currentQuery}}</strong> - did not match any wizards.</p>
+                <span>Suggestions: </span>
+                <ul>
+                    <li>Make sure that all words are spelled correctly.</li>
+                    <li>Try different keywords.</li>
+                    <li>Try more general keywords.</li>
+                    <li>Try fewer keywords.</li>
+                </ul>
+            </div>
+        </div>
+
+    </mat-card-content>
+</mat-card>
+<style>
+    mat-form-field {
+        width: 100%;
+    }
+    
+    input.mat-input-element {
+        height: 50px;
+        border-radius: 22px !important;
+    }
+    
+    mat-error {
+        text-align: center;
+    }
+    
+    .placeholder {
+        position: relative;
+        right: -26px;
+        top: 14px;
+        height: 42px;
+    }
+    
+    .mat-form-field-appearance-legacy .mat-form-field-label {
+        height: 42px;
+    }
+    
+    .mat-focused .placeholder {
+        visibility: hidden
+    }
+    
+    .search-icon {
+        position: absolute;
+        right: 16px;
+        top: 7px;
+        color: #33BFE6;
+    }
+    
+    .search-icon:hover {
+        cursor: pointer
+    }
+</style>

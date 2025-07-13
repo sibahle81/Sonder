@@ -1,0 +1,33 @@
+<h2 mat-dialog-title>Main Member Policies</h2>
+<div mat-dialog-content>
+  <mat-table #table [dataSource]="policies" matSort>
+
+    <ng-container matColumnDef="selected">
+      <mat-header-cell *matHeaderCellDef mat-sort-header>&nbsp;</mat-header-cell>
+      <mat-cell *matCellDef="let row">
+        <mat-checkbox [checked]="row.selected" (change)="selectPolicy($event, row)"></mat-checkbox>
+      </mat-cell>
+    </ng-container>
+
+    <ng-container matColumnDef="policyNumber">
+      <mat-header-cell *matHeaderCellDef mat-sort-header>Policy Number</mat-header-cell>
+      <mat-cell *matCellDef="let row">{{row.policyNumber}}</mat-cell>
+    </ng-container>
+
+    <ng-container matColumnDef="policyInceptionDate">
+      <mat-header-cell [hidden]="true" *matHeaderCellDef mat-sort-header>Join Date</mat-header-cell>
+      <mat-cell [hidden]="true" *matCellDef="let row">
+        <input matInput [matDatepicker]="joinDate" [matDatepickerFilter]="isFirstDay" [(ngModel)]="row.policyInceptionDate">
+        <mat-datepicker-toggle matSuffix [for]="joinDate"></mat-datepicker-toggle>
+        <mat-datepicker #joinDate touchUi="true"></mat-datepicker>
+      </mat-cell>
+    </ng-container>
+
+    <mat-header-row *matHeaderRowDef="getDisplayedColumns()"></mat-header-row>
+    <mat-row *matRowDef="let row; columns: getDisplayedColumns();"></mat-row>
+  </mat-table>
+</div>
+<div mat-dialog-actions>
+  <button mat-button (click)="closeDialog()">Close</button>
+  <button mat-button cdkFocusInitial (click)="saveRoleplayerPolicies()">Save</button>
+</div>

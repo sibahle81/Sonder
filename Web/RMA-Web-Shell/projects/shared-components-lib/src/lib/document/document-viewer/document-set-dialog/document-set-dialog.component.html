@@ -1,0 +1,29 @@
+<div class="menu-bar">
+  <span class="material-icons">
+    file_copy
+  </span>Document Sets
+  <span (click)="close()" class="material-icons pointer right" matTooltip="cancel">
+    close
+  </span>
+  <span *ngIf="form.valid && !form.pristine"
+    (click)="save()" class="material-icons pointer right pulseGreen" matTooltip="save">
+    save
+  </span>
+</div>
+
+<form [formGroup]="form" class="mat-container details-form" novalidate>
+  <section>
+    <mat-form-field class="mat-form-field">
+
+      <label>Document Sets</label>
+      <mat-select name="documentSets" id="documentSets" formControlName="documentSets" multiple>
+        <mat-option *ngFor="let documentSet of allDocumentSets"
+          [value]="documentSet">{{getDocumentSet(documentSet)}}</mat-option>
+      </mat-select>
+
+      <mat-error *ngIf="form.get('documentSets').hasError('required')">
+        At lease one document set is <strong>required</strong>
+      </mat-error>
+    </mat-form-field>
+  </section>
+</form>

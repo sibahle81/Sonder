@@ -1,0 +1,18 @@
+<span *ngIf="isLoading$ | async" class="material-icons rotating" matTooltip="loading policy">
+    loop
+</span>
+
+<div *ngIf="!(isLoading$ | async)">
+    <div *ngIf="policy">
+        <span *ngIf="!isReadOnly">
+            <b><a matTooltip="navigate to policy" href="clientcare/member-manager/member-wholistic-view/{{policy.policyOwnerId}}/1/{{policy.policyId}}">{{policy.policyNumber}} ({{policy.productOptionCode}})</a></b>
+        </span>
+        <span *ngIf="isReadOnly">
+            <b>{{policy.policyNumber}} ({{policy.productOptionCode}})</b>
+        </span>
+    </div>
+
+    <div *ngIf="message">
+        {{message}}
+    </div>
+</div>

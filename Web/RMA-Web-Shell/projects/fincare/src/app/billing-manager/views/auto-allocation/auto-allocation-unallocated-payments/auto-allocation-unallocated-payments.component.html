@@ -1,0 +1,89 @@
+<mat-card-header>
+  <mat-card-title class="wizard-font card-title grey">
+    <h3>Payment Lookup Reference</h3>
+  </mat-card-title>
+</mat-card-header>
+<mat-tab-group (selectedTabChange)="onTabActivated($event);">
+  <mat-tab label="Capture Reference Lookups">
+    <div *ngIf="!hasPermission && !hasclaimRecoveryAllocationPermission">
+      <div style="padding: 15px 0; color: orange; font-family: 'Oswald', sans-serif;">
+        You do not have sufficient permissions to perform payment allocations.
+      </div>
+      <div (click)="back()" class="form-buttons submit-button">
+        <button type="button" class="button float-button">Back</button>
+      </div>
+    </div>
+    
+    <div *ngIf="isSubmitting$ | async">
+      <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+      <label class="mat-label other-label"><i>submitting...please wait</i></label>
+    </div>
+    
+    <app-seach-debtor (itemSelected)="onDebtorSelected($event)"></app-seach-debtor>
+    
+    <form *ngIf="formGroup && isDebtorSelected" [formGroup]="formGroup" class="mat-container details-form" novalidate>
+      <section>
+          <mat-form-field class="mat-form-field">
+            <label class="mat-label other-label">Debtor Number</label>
+            <div *ngIf="isDebtorSelected && loadingData">
+              <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+            </div>
+            <input matInput required minLength="3" maxlength="50" id="debtorNumber"
+              name="debtorNumber" formControlName="debtorNumber" class="elementBox" readonly disabled />
+            <mat-error *ngIf="formGroup.get('debtorNumber').hasError('required')">
+              Debtor number is required
+            </mat-error>
+          </mat-form-field>
+          <mat-form-field class="mat-form-field">
+            <label class="mat-label other-label">Reference Number</label>
+            <input matInput required id="userReference" name="userReference" formControlName="userReference" />
+            <mat-error *ngIf="formGroup.get('userReference').hasError('required')">
+              Reference number is required
+            </mat-error>
+          </mat-form-field>
+        </section>
+    </form>
+    <div *ngIf="isDebtorSelected" class="form-group-button shift-down" (click)="addToList();" style="cursor: pointer">
+      <span class="material-icons">add_circle_outline</span><span>Add to List</span>
+    </div>
+    <div [hidden]="allocationLookupDataSource.data.length === 0" class="table-container">
+      <p class="labelParagraph">Payment Allocation Reference Lookups</p>
+        <mat-table #table [dataSource]="allocationLookupDataSource" matSort #sort2="matSort">
+            <ng-container matColumnDef="debtorNumber">
+                <mat-header-cell *matHeaderCellDef mat-sort-header>Debtor Number</mat-header-cell>
+                <mat-cell *matCellDef="let row">{{row.debtorNumber}}</mat-cell>
+            </ng-container>
+                        
+            <ng-container matColumnDef="userReference">
+              <mat-header-cell *matHeaderCellDef mat-sort-header>Reference Number</mat-header-cell>
+              <mat-cell *matCellDef="let row">{{row.userReference}}</mat-cell>
+            </ng-container>
+            
+            <ng-container matColumnDef="actions" class="mat-column-action">
+              <mat-header-cell *matHeaderCellDef class="Action">Action</mat-header-cell>
+              <mat-cell *matCellDef="let row">
+                <a role="button" class="link-delete" *ngIf="row.id == undefined || row.id === 0"
+                (click)="removeRow(row.userReference)">remove</a>
+                <a role="button" class="link-delete delete" *ngIf="row.id > 0"
+                (click)="delete(row.id, row.userReference)">delete</a>
+              </mat-cell>
+            </ng-container>
+                  
+            <mat-header-row *matHeaderRowDef="displayedAllocationLookupColumns"></mat-header-row>
+            <mat-row *matRowDef="let row; columns: displayedAllocationLookupColumns;"></mat-row>
+        </mat-table>
+        <!-- <mat-paginator #paginator2 [pageIndex]="0" [pageSize]="5" [pageSizeOptions]="[5, 10, 25, 100]">
+        </mat-paginator> -->
+    </div>
+    <div class="form-group-button mat-form-button">
+      <div class="form-buttons">
+          <button [disabled]="submitDisabled || (isSubmitting$ | async)"
+          (click)='saveAllocationLookups();' class="button float-button">Save & Allocate</button>
+      </div>
+    </div>
+  </mat-tab>
+  <!-- <mat-tab label="List Reference Lookups" [disabled]="true">
+    <div>Still in development</div>
+    <app-list-reference-lookups shouldLoadAllReferences="false"></app-list-reference-lookups>
+  </mat-tab> -->
+</mat-tab-group>

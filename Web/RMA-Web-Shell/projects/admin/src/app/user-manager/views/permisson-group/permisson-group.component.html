@@ -1,0 +1,53 @@
+<div style="margin-bottom: 10px">
+  <div *ngIf="permissionGroup.permissions.length > 0; else noPermisions">
+    <div style="clear: both; margin-bottom: 15px">
+      <label style="margin-right: 15px; font-weight: bold; color: teal">{{
+        permissionGroup.name
+        }}</label>
+      <div *ngIf="permissionGroup.id != permissionGroupId">
+        <input type="checkbox" #cbAll (change)="onSelectAll(cbAll)" [value]="permissionGroup.id"
+          [disabled]="!inEditPermissionsMode" /><label>Select All</label>
+      </div>
+    </div>
+    <div *ngIf="permissionGroup.id == permissionGroupId">
+      <app-authority-limits-list [showSelectButton]="true" [showEditButton]="false" [permissionGroup]="permissionGroup"
+        [roleSecurityRank]="roleSecurityRank" [selectedComponentPermissions]="selectedComponentPermissions"
+        [currentEntityPermissions]="currentEntityPermissions" (singleCheckedReferral)="onSelect($event)"
+        [inEditPermissionsMode]="inEditPermissionsMode">
+      </app-authority-limits-list>
+    </div>
+
+    <div *ngIf="permissionGroup.id != permissionGroupId">
+      <div style="
+            display: inline-flex;
+            flex-wrap: wrap;
+            padding: 5px;
+            clear: both;
+            word-wrap: inherit;
+          " *ngFor="let permission of permissionGroup.permissions; let i = index">
+        <ng-container *ngIf="permission.securityRank">
+          <div style="display: inline-block" *ngIf="permission.securityRank <= roleSecurityRank">
+            <input type="checkbox" [value]="permission.id" #cb (change)="onSelect(cb)" [checked]="
+                  selectedComponentPermissions.indexOf(permission.id) > -1
+                " [disabled]="!inEditPermissionsMode" /><label [ngClass]="{
+                  permissionOverride: permission.overridesRolePermission,
+                  rolePermissionOverride:
+                    selectedComponentPermissions.indexOf(permission.id) > -1
+                }">{{ permission.name }}</label>
+          </div>
+        </ng-container>
+      </div>
+    </div>
+  </div>
+  <ng-template #noPermisions>
+    <div style="clear: both; margin-bottom: 15px">
+      <label style="margin-right: 15px; font-weight: bold; color: teal">{{
+        permissionGroup.name
+        }}</label>
+      <div style="margin: 15px 0 15px; font-weight: bold">
+        No permissions set for this manager
+      </div>
+    </div>
+  </ng-template>
+</div>
+<hr style="color: gray; width: 70%" />

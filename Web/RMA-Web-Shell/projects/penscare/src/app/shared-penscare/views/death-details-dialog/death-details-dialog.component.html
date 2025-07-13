@@ -1,0 +1,28 @@
+<div class="menu-bar">
+  <span class="material-icons">vaccines</span>
+  {{title}}
+  <span (click)="close()" class="material-icons pointer right icon-cancel" matTooltip="close">
+    close
+  </span>
+  <span (click)="submit()"  *ngIf="showSubmit"  class="material-icons pointer right icon-confirm" matTooltip="submit">
+    save
+  </span>
+</div> 
+
+
+<mat-card>
+<form [formGroup]="form">    
+        <mat-form-field>
+          <label class="mat-label other-label">Date Of Death</label>
+          <input matInput [matDatepicker]="deathDate" date="true" time="false" formControlName="deathDate"
+            readonly>
+          <mat-datepicker-toggle matSuffix [for]="deathDate"></mat-datepicker-toggle>
+          <mat-datepicker #deathDate touchUi="true">
+          </mat-datepicker>
+        </mat-form-field>     
+     
+    </form>
+    <document-uploader [documentSet]="documentSet" [systemName]="documentSystemName" [keyName]="'PersonEventId'"
+    [keyValue]="personEventId" [forceRequiredDocumentTypeFilter]="forceRequiredDocumentTypeFilter"
+    (requiredDocumentsUploadedEmit)="isRequiredDocumentsUploaded($event)" ></document-uploader>
+  </mat-card>

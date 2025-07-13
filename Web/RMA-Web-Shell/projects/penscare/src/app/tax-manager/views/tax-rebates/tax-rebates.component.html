@@ -1,0 +1,133 @@
+<div [hidden]="creatingWizard">
+  <mat-card class="matcard">
+    <mat-card-content class="matcard content">
+      <div [hidden]="addTaxRebatesMode">
+        <div *ngIf="showSearchProgress">
+          <mat-progress-bar mode="indeterminate"
+              [ngClass]="{ 'loading-main-double-menu-progress': doubleMenu, 'loading-main-single-menu-progress': !doubleMenu }">
+          </mat-progress-bar>
+          <p class="site-font grey">Loading tax rebates...</p>
+        </div>
+
+        <div [hidden]="showSearchProgress">
+          <button class="addProductButton" (click)="beforeAddTaxRate()" *ngIf="this.canEdit">
+            <p class="addProductText">Add Tax Rebate<span class="material-icons add">add_circle_outline</span></p>
+          </button>
+          <mat-table [hidden]="dataSource.length === 0 || addTaxRebatesMode" #table [dataSource]="dataSource" matSort matSortActive="year" matSortDirection="desc"
+            matSortDisableClear>
+            <ng-container matColumnDef="year">
+              <mat-header-cell *matHeaderCellDef mat-sort-header>Tax Year</mat-header-cell>
+              <mat-cell *matCellDef="let row">
+                <span class="truncate-text"> {{ row.year }} </span>
+              </mat-cell>
+            </ng-container>
+            <ng-container matColumnDef="primary">
+              <mat-header-cell *matHeaderCellDef>Primary</mat-header-cell>
+              <mat-cell *matCellDef="let row">
+                <span class="truncate-text"> {{ row.primary | currency:'R'}} </span>
+              </mat-cell>
+            </ng-container>
+
+            <ng-container matColumnDef="secondary">
+              <mat-header-cell *matHeaderCellDef>Secondary (65 and older)</mat-header-cell>
+              <mat-cell *matCellDef="let row">
+                <span class="truncate-text"> {{ row.secondary | currency:'R'}} </span>
+              </mat-cell>
+            </ng-container>
+
+            <ng-container matColumnDef="tertiary">
+              <mat-header-cell *matHeaderCellDef>Tertiary (75 and older)</mat-header-cell>
+              <mat-cell *matCellDef="let row">
+                <span class="truncate-text"> {{ row.tertiary | currency:'R'}} </span>
+              </mat-cell>
+            </ng-container>
+
+            <ng-container matColumnDef="actions">
+              <mat-header-cell *matHeaderCellDef> Actions </mat-header-cell>
+              <mat-cell *matCellDef="let row" [matMenuTriggerFor]="menu" (click)="filterMenu(row)">
+                <span class="material-icons pointer">more_vert</span>
+                <mat-menu #menu="matMenu">
+                  <ng-container *ngFor="let menu of menus">
+                    <button *ngIf="!menu.disable" mat-menu-item
+                      (click)="onMenuItemClick(row, menu)">{{menu.title}}</button>
+                  </ng-container>
+                </mat-menu>
+              </mat-cell>
+            </ng-container>
+
+
+            <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
+            <mat-row *matRowDef="let row; columns: displayedColumns;"></mat-row>
+          </mat-table>
+
+          <div [hidden]="dataSource.length > 0"
+            class="no-search-results-add-button">
+            <div class="site-font grey">
+                <p class="grey">No tax rebates found</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div [hidden]="!addTaxRebatesMode">
+        <section>
+          <input maxlength="50"
+            placeholder="Enter Tax Year"
+            #taxYear
+            (keypress)="validatorService.numberEntryCheck($event)"
+            name="taxYear"/>
+          <div [hidden]="!taxRebatesExists"
+            class="no-search-results-add-button">
+            <div class="site-font grey">
+                <p class="grey">Tax rebates for year <strong>{{taxYearInput}}</strong> already exist.</p>
+                <span>Suggestions: </span>
+                <ul>
+                    <li>Make sure that you enter year which has not yet been captured.</li>
+                </ul>
+            </div>
+          </div>
+
+          <div [hidden]="!negativeTaxYear"
+            class="no-search-results-add-button">
+            <div class="site-font grey">
+                <p class="grey">Tax rebates cannot be a negative amount.</p>
+                <span>Suggestions: </span>
+                <ul>
+                    <li>Make sure that you capture a correct year.</li>
+                </ul>
+            </div>
+          </div>
+        </section>
+
+        <div *ngIf="!validateTaxRebatesProgress">
+          <button class="submit-button button" (click)="validateTaxRebates()">Add Tax Rebates for selected Tax Year</button>
+          <button class="submit-button button back-button" (click)="back()">Back</button>
+        </div>
+
+        <div *ngIf="validateTaxRebatesProgress">
+          <mat-progress-bar mode="indeterminate"
+              class="loading-main-double-menu-progress">
+          </mat-progress-bar>
+          <p class="site-font grey">Validating Tax Year...</p>
+        </div>
+      </div>
+
+    </mat-card-content>
+  </mat-card>
+</div>
+
+
+<mat-card *ngIf="creatingWizard">
+  <mat-card-header>
+      <mat-card-title>
+          <h1>Creating requested Wizard</h1>
+      </mat-card-title>
+      <mat-card-subtitle>
+          <span class="wizard-font grey" style="font-size: 18px;">This shouldn't take long...</span>
+      </mat-card-subtitle>
+  </mat-card-header>
+  <mat-card-content>
+      <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+  </mat-card-content>
+</mat-card>
+

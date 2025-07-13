@@ -1,0 +1,262 @@
+﻿<div class="content">
+  <nav active-menu>
+    <button mat-button [routerLink]="['/fincare/billing-manager']" routerLinkActive="active-list-item"
+      [routerLinkActiveOptions]="{exact: true}" (click)="onMenuClicked('')">Home</button>
+
+    <!--Inserting menu for group risk billing-->
+    <button mat-button [matMenuTriggerFor]="groupriskbilling" (click)="onMenuClicked('groupriskbilling')"
+      [ngClass]="{'selected' : menu9Selected, 'unselected': !menu9Selected}">Billing</button>
+    <mat-menu #groupriskbilling="matMenu" [overlapTrigger]="false">
+      <button mat-menu-item [routerLink]="['create-group-risk-billing']"> Create Billing</button>
+      <button mat-menu-item [routerLink]="['maintain-group-risk-billing']"> Maintain Billing</button>
+    </mat-menu>
+
+    <button mat-button [matMenuTriggerFor]="menu2" (click)="onMenuClicked('menu2')"
+      [ngClass]="{'selected' : menu2Selected, 'unselected': !menu2Selected}">Collections</button>
+    <mat-menu #menu2="matMenu" [overlapTrigger]="false">
+      <button mat-menu-item [routerLink]="['collections-pool']" routerLinkActive="active-list-item">Collections
+        Pool</button>
+      <div *ngIf="hasCaptureAdhocPremiumCollectionPermission"><button mat-menu-item
+          [routerLink]="['create-adhoc-debit']" routerLinkActive="active-list-item">Adhoc Collection</button></div>
+      <div *ngIf="hasCreateCreditNotePermission"><button mat-menu-item [routerLink]="['credit-note-find-account']"
+          routerLinkActive="active-list-item">Credit Notes</button></div>
+      <button mat-menu-item [matMenuTriggerFor]="bunldeRaise">Bundle Raise</button>
+      <mat-menu #bunldeRaise="matMenu">
+        <button mat-menu-item [routerLink]="['bundle-raise-collections']" routerLinkActive="active-list-item"
+          (click)="onMenuClicked('bunldeRaise')">Collections Report</button>
+        <button mat-menu-item [routerLink]="['bundle-raise-premium-recon']" routerLinkActive="active-list-item"
+          (click)="onMenuClicked('bunldeRaise')">Premium Reconciliation</button>
+      </mat-menu>
+    </mat-menu>
+    <button mat-button [matMenuTriggerFor]="menu3" (click)="onMenuClicked('menu3')"
+      [ngClass]="{'selected' : menu3Selected, 'unselected': !menu3Selected}">Maintain Payments</button>
+    <mat-menu #menu3="matMenu" [overlapTrigger]="false">
+      <button mat-menu-item [matMenuTriggerFor]="allocation"
+        [ngClass]="{'selected' : allocationMenuSelected, 'unselected': !allocationMenuSelected}">
+        Allocations
+      </button>
+      <mat-menu #allocation="matMenu">
+        <button mat-menu-item [routerLink]="['manual-allocation-unallocated-payments']"
+          routerLinkActive="active-list-item" (click)="onMenuClicked('allocation')">
+          Allocate Payment
+        </button>
+        <button mat-menu-item [routerLink]="['auto-allocation-unallocated-payments']"
+          routerLinkActive="active-list-item" (click)="onMenuClicked('allocation')">
+          Payment Reference Lookups
+        </button>
+        <button *ngIf="hasCreditReallocationPermission" mat-menu-item [routerLink]="['re-allocation']"
+          routerLinkActive="active-list-item" (click)="onMenuClicked('allocation')">
+          Reallocations
+        </button>
+        <button mat-menu-item [matMenuTriggerFor]="menuBulkAllocations">
+          Bulk Allocations
+        </button>
+        <button mat-menu-item [routerLink]="['auto-allocation-accounts']" routerLinkActive="active-list-item"
+          (click)="onMenuClicked('allocation')">
+          Account Configurations
+        </button>
+        <mat-menu #menuBulkAllocations="matMenu" [overlapTrigger]="false">
+          <button mat-menu-item [routerLink]="['bulk-manual-allocation']" routerLinkActive="active-list-item"
+            (click)="onMenuClicked('allocation')">
+            Allocate
+          </button>
+          <button mat-menu-item [routerLink]="['bulk-manual-files']" routerLinkActive="active-list-item"
+            (click)="onMenuClicked('allocation')">
+            Uploaded Files
+          </button>
+        </mat-menu>
+        <button mat-menu-item [routerLink]="['child-policy-recon']" routerLinkActive="active-list-item"
+          (click)="onMenuClicked('allocation')">
+          Child Policy Recons
+        </button>
+      </mat-menu>
+
+      <div *ngIf="hasCreateInterBankTransferPermission">
+        <button mat-menu-item [routerLink]="['inter-bank-transfers-main']" routerLinkActive="active-list-item"
+          (click)="onMenuClicked('allocation')">
+          Interbank Transfers
+        </button>
+      </div>
+      <div *ngIf="hasCreateInterDebtorTransferPermission">
+        <button mat-menu-item [routerLink]="['inter-debtor-transfers-capture']" routerLinkActive="active-list-item"
+          (click)="onMenuClicked('allocation')">
+          Interdebtor Transfers
+        </button>
+      </div>
+       <button mat-menu-item [routerLink]="['inter-policy-debtor-transfers']" routerLinkActive="active-list-item"
+          (click)="onMenuClicked('allocation')">
+          Inter Policy Debtor Transfers
+        </button>
+      <button mat-menu-item [matMenuTriggerFor]="refunds"
+        [ngClass]="{'selected' : refundsMenuSelected, 'unselected': !refundsMenuSelected}">
+        Refunds
+      </button>
+      <mat-menu #refunds="matMenu" routerLinkActive="active-list-item">
+        <button mat-menu-item [routerLink]="['transactions-refund']" routerLinkActive="active-list-item"
+          (click)="onMenuClicked('refunds')">
+          Create Refund
+        </button>
+        <button mat-menu-item [routerLink]="['payment-refund-list']" routerLinkActive="active-list-item"
+          (click)="onMenuClicked('refunds')">
+          Payment Pool
+        </button>
+      </mat-menu>
+
+      <button mat-menu-item [matMenuTriggerFor]="reversals"
+        [ngClass]="{'selected' : reversalsMenuSelected, 'unselected': !reversalsMenuSelected}">
+        Reversals
+      </button>
+      <mat-menu #reversals="matMenu" routerLinkActive="active-list-item">
+        <button mat-menu-item [routerLink]="['transaction-reversal']" routerLinkActive="active-list-item"
+          (click)="onMenuClicked('reversals')">
+          Payment Reversal
+        </button>
+        <button mat-menu-item [routerLink]="['credit-note-reversal']" routerLinkActive="active-list-item"
+          (click)="onMenuClicked('reversals')">
+          Credit Note Reversal
+        </button>
+        <button mat-menu-item [routerLink]="['interest-reversal']" routerLinkActive="active-list-item"
+          (click)="onMenuClicked('reversals')">
+          Interest Reversal
+        </button>
+      </mat-menu>
+      <button *ngIf="hasConfirmPremiumReceivedPermission" mat-menu-item [routerLink]="['confirm-premium-received']"
+        routerLinkActive="active-list-item">
+        Confirm Premium
+        Received
+      </button>
+      <button mat-menu-item [matMenuTriggerFor]="writeoff"
+        [ngClass]="{'selected' : writeoffMenuSelected, 'unselected': !writeoffMenuSelected}">
+        Bad Debt Write-Off
+      </button>
+      <mat-menu #writeoff="matMenu" routerLinkActive="active-list-item">
+        <button mat-menu-item [routerLink]="['bad-debt-write-off']" routerLinkActive="active-list-item">
+          Single Debtor
+        </button>
+        <button mat-menu-item [routerLink]="['new-write-offlist']" routerLinkActive="active-list-item">
+          Bulk Write-Off
+        </button>
+      </mat-menu>
+      <button mat-menu-item [matMenuTriggerFor]="interest"
+        [ngClass]="{'selected' : interestMenuSelected, 'unselected': !interestMenuSelected}">
+        Interest
+      </button>
+      <mat-menu #interest="matMenu" routerLinkActive="active-list-item">
+        <button mat-menu-item [routerLink]="['manage-interest']" routerLinkActive="active-list-item"
+          (click)="onMenuClicked('interest')">
+          Manage Interest
+        </button>
+        <button mat-menu-item [routerLink]="['interest-adjustment']" routerLinkActive="active-list-item"
+          (click)="onMenuClicked('interest')">
+          Adjustments
+        </button>
+        <button mat-menu-item [routerLink]="['adhoc-interest_calculation']" routerLinkActive="active-list-item"
+          (click)="onMenuClicked('interest')">
+          Create Adhoc Interest
+        </button>
+      </mat-menu>
+      <button mat-menu-item [routerLink]="['bad-debt-reinstate']" routerLinkActive="active-list-item">
+        Bad Debt Reinstate
+      </button>
+      <button *ngIf="top50PlusMunicipalitiesFeatureFlag" mat-menu-item [routerLink]="['upload-payment-transactions']" routerLinkActive="active-list-item">
+        Upload Payment Transactions
+      </button>
+    </mat-menu>
+
+    <button mat-button [matMenuTriggerFor]="menu4" (click)="onMenuClicked('menu4')"
+      [ngClass]="{'selected' : menu4Selected, 'unselected': !menu4Selected}">General Ledger</button>
+    <mat-menu #menu4="matMenu" [overlapTrigger]="false" routerLinkActive="active-list-item">
+      <button mat-menu-item [routerLink]="['ability-collections-list']" routerLinkActive="active-list-item">Ability
+        Collections</button>
+    </mat-menu>
+
+    <button mat-button [matMenuTriggerFor]="menu5" (click)="onMenuClicked('menu5')"
+      [ngClass]="{'selected' : menu5Selected, 'unselected': !menu5Selected}">Age Analysis</button>
+    <mat-menu #menu5="matMenu" [overlapTrigger]="false" routerLinkActive="active-list-item">
+      <button mat-menu-item [routerLink]="['age-analysis']" routerLinkActive="active-list-item">View Age Analysis
+        Report</button>
+      <button mat-menu-item [routerLink]="['collection-ageing']" routerLinkActive="active-list-item">Collection
+        Ageing</button>
+      <div *ngIf="hasUploadAgentPermission"><button mat-menu-item [routerLink]="['upload-collection-agents']"
+          routerLinkActive="active-list-item">Upload
+          Agents</button></div>
+    </mat-menu>
+
+    <button mat-button [matMenuTriggerFor]="menu6" (click)="onMenuClicked('menu6')"
+      [ngClass]="{'selected' : menu6Selected, 'unselected': !menu6Selected}">Debtors</button>
+    <mat-menu #menu6="matMenu" [overlapTrigger]="false">
+      <button mat-menu-item [routerLink]="['view-debtor']" routerLinkActive="active-list-item">Debtor Dashboard</button>
+      <button mat-menu-item [routerLink]="['view-transaction']" routerLinkActive="active-list-item">Debtor
+        Account</button>
+      <button mat-menu-item [matMenuTriggerFor]="documents"
+        [ngClass]="{'selected' : documentsMenuSelected, 'unselected': !documentsMenuSelected}">Documents</button>
+        <button mat-menu-item  [matMenuTriggerFor]="handover"  routerLinkActive="active-list-item">Debtor Accounts
+          Handover</button>         
+    </mat-menu>
+    <mat-menu #handover="matMenu">
+      <button mat-menu-item [routerLink]="['bulk-debtor-handover-upload']" routerLinkActive="active-list-item"
+        (click)="onMenuClicked('documents')">Upload Handover List</button>
+      <button mat-menu-item  routerLinkActive="active-list-item"
+        (click)="onMenuClicked('documents')" routerLink ="handover-recon-upload">Handed Over Accounts Recon</button>
+      <button mat-menu-item  routerLinkActive="active-list-item"
+        (click)="onMenuClicked('documents')" routerLink="handedover-recon-report">Legal Collection Recon</button>          
+    </mat-menu>  
+    <mat-menu #documents="matMenu">
+      <button mat-menu-item [routerLink]="['view-letter-of-good-standing']" routerLinkActive="active-list-item"
+        (click)="onMenuClicked('documents')">Letter Of Good Standing</button>
+      <button mat-menu-item [routerLink]="['view-invoice']" routerLinkActive="active-list-item"
+        (click)="onMenuClicked('documents')">View Invoices</button>
+      <button mat-menu-item [routerLink]="['view-credit-notes']" routerLinkActive="active-list-item"
+        (click)="onMenuClicked('documents')">View Credit Notes</button>
+      <button mat-menu-item [matMenuTriggerFor]="statements"
+        [ngClass]="{'selected' : statementsMenuSelected, 'unselected': !statementsMenuSelected}">Statements</button>
+    </mat-menu>
+    <mat-menu #statements="matMenu">
+      <button mat-menu-item [routerLink]="['view-statement']" routerLinkActive="active-list-item"
+        (click)="onMenuClicked('statements')">Statement</button>
+      <button mat-menu-item [routerLink]="['view-transactional']" routerLinkActive="active-list-item"
+        (click)="onMenuClicked('statements')">Transactional Statement</button>
+    </mat-menu>
+
+    <button mat-button [matMenuTriggerFor]="menu7" (click)="onMenuClicked('menu7')"
+      [ngClass]="{'selected' : menu7Selected, 'unselected': !menu7Selected}">Month-End Report</button>
+    <mat-menu #menu7="matMenu" [overlapTrigger]="false">
+      <button mat-menu-item *ngFor="let item of monthMenuEndItems" [routerLink]="[item.route]"
+        routerLinkActive="active-list-item">{{item.text}}</button>
+    </mat-menu>
+
+    <button mat-button [matMenuTriggerFor]="menu8" (click)="onMenuClicked('menu8')"
+      [ngClass]="{'selected' : menu8Selected, 'unselected': !menu8Selected}">Audits</button>
+    <mat-menu #menu8="matMenu" [overlapTrigger]="false" routerLinkActive="active-list-item">
+      <button mat-menu-item [routerLink]="['debtor-audit']" routerLinkActive="active-list-item">Debtor Audit</button>
+      <button mat-menu-item [routerLink]="['invoice-audit']" routerLinkActive="active-list-item">Invoice Audit</button>
+      <button mat-menu-item [routerLink]="['inter-debtor-transfer-audit']" routerLinkActive="active-list-item">Inter
+        Debtor Transfer Audit</button>
+      <button mat-menu-item [routerLink]="['adhoc-payment-audit']" routerLinkActive="active-list-item">Adhoc Payment
+        Audit</button>
+      <button mat-menu-item [routerLink]="['inter-bank-transfer-audit']" routerLinkActive="active-list-item">Inter Bank
+        Transfer Audit</button>
+    </mat-menu>
+
+    <button mat-button [matMenuTriggerFor]="termsArrangement" (click)="onMenuClicked('terms-arrangement')"
+      [ngClass]="{'selected' : termsArrangementMenuSelected, 'unselected': !termsArrangementMenuSelected}">Term
+      Arrangements</button>
+    <mat-menu #termsArrangement="matMenu" [overlapTrigger]="false" routerLinkActive="active-list-item">
+      <div *ngIf="hasCaptureTermsArrangementApplicationPermission"><button mat-menu-item
+          [routerLink]="['terms-arrangement-init']" routerLinkActive="active-list-item">Initiation</button></div>
+      <div *ngIf="hasViewTermsArrangementPermission"><button mat-menu-item [routerLink]="['terms-arrangements']"
+          routerLinkActive="active-list-item">Term Arrangements</button></div>
+    </mat-menu>
+
+    <button mat-button [matMenuTriggerFor]="menu9" class='Activebutton'>Child Policies</button>
+    <mat-menu #menu9="matMenu" [overlapTrigger]="false">
+      <button mat-menu-item [routerLink]="['validate-payment-files', '0']" routerLinkActive="active-list-item">Validate
+        Only</button>
+      <button mat-menu-item [routerLink]="['validate-payment-files']" routerLinkActive="active-list-item">Validate &
+        Allocate</button>
+    </mat-menu>
+  </nav>
+  <div [hidden]="loadingMessage != null || error != null" class="container-padding">
+    <router-outlet></router-outlet>
+  </div>
+</div>

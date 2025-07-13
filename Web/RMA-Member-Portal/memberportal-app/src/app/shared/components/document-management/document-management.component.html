@@ -1,0 +1,79 @@
+<br />
+<div [hidden]="!hide">
+  <h3 class="heading">{{message}}</h3>
+</div>
+<br />
+<br />
+<div [hidden]="hide">
+  <div class="mainContainerDiv">
+    <div *ngIf="(isLoading$ | async)" class="menu-container" style="margin-top:12px">
+      <div style="margin-right: 15px;">
+        <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+        <i>loading documents...please wait</i>
+      </div>
+    </div>
+    <mat-card-content [hidden]="(isLoading$ | async)">
+      <div [hidden]="dataSource.data.length === 0">
+        <div class="mat-container mat-elevation-z8" [hidden]="(isLoading$ | async)" class="divAlign">
+          <div [hidden]="dataSource.data.length === 0">
+            <mat-table #table [dataSource]="dataSource" matSort>
+              <!-- Document type name -->
+              <ng-container matColumnDef="documentTypeName">
+                <mat-header-cell *matHeaderCellDef mat-sort-header> Document Type </mat-header-cell>
+                <mat-cell *matCellDef="let row"> {{row.documentTypeName}} </mat-cell>
+              </ng-container>
+              <!-- Date Received  -->
+              <ng-container matColumnDef="dateReceived">
+                <mat-header-cell *matHeaderCellDef mat-sort-header> Date Received </mat-header-cell>
+                <mat-cell *matCellDef="let row"> {{row.createdDate| date: "yyyy/MM/dd"}} </mat-cell>
+              </ng-container>
+              <!-- is Received  -->
+              <ng-container matColumnDef="isReceive">
+                <mat-header-cell *matHeaderCellDef mat-sort-header> Receive </mat-header-cell>
+                <mat-cell *matCellDef="let row"> {{row.isReceive}} </mat-cell>
+              </ng-container>
+              <!-- required -->
+              <ng-container matColumnDef="required">
+                <mat-header-cell *matHeaderCellDef mat-sort-header> Required </mat-header-cell>
+                <mat-cell *matCellDef="let row"> {{row.required ? "Yes" : ""}} </mat-cell>
+              </ng-container>
+              <!-- document status  -->
+              <ng-container matColumnDef="status">
+                <mat-header-cell *matHeaderCellDef mat-sort-header> Status </mat-header-cell>
+                <mat-cell *matCellDef="let row"> {{row.documentStatusText}} </mat-cell>
+              </ng-container>
+              <ng-container matColumnDef="actions">
+                <mat-header-cell *matHeaderCellDef mat-sort-header>Actions</mat-header-cell>
+                <mat-cell *matCellDef="let row" [matMenuTriggerFor]="menu" (click)="filterMenu(row)">
+                  <mat-icon>more_vert</mat-icon>
+                  <mat-menu #menu="matMenu">
+                    <button mat-menu-item *ngFor="let menu of menus" (click)="onMenuSelect(row, menu.title)"
+                      disabled={{menu.disable}}>{{menu.title}}</button>
+                  </mat-menu>
+                </mat-cell>
+              </ng-container>
+              <mat-header-row *matHeaderRowDef="getDisplayedColumns();"></mat-header-row>
+              <mat-row *matRowDef="let row; columns: getDisplayedColumns();"></mat-row>
+            </mat-table>
+
+            <mat-paginator #paginator [length]="dataSource.data.length" [pageIndex]="0" [pageSize]="5"
+              [pageSizeOptions]="[5, 10, 25, 100]">
+            </mat-paginator>
+          </div>
+        </div>
+        <div class="form-group-button mat-form-button">
+          <button *ngIf="showAdditionalDocumentsButton" (click)="openDialogAdditionalDouments()"
+            class="button float-button">Additional Documents</button>
+          <button *ngIf="showOutstandingDocumentsButton" (click)="openDialogOutstandingDouments()"
+            class="button float-button">Outstanding Documents</button>
+        </div>
+        <br>
+        <br>
+      </div>
+
+      <div [hidden]="dataSource.data.length > 0 || (isLoading$ | async)" style="margin-left: 20px;">
+        <span class="grey site-font">No records found.</span>
+      </div>
+    </mat-card-content>
+  </div>
+</div>

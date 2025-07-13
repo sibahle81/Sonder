@@ -1,0 +1,53 @@
+<div class="wizard-main-content mat-elevation-z8">
+  <form [formGroup]="form" class="mat-container details-form">
+    <section>
+      <mat-form-field class="mat-form-field">
+        <label class="mat-label other-label mandatory-field">Extended Death Benefit</label>
+        <mat-select formControlName="extendedDeathBenefit">
+          <mat-option *ngFor="let option of extendedBenefitOptions" [value]="option.benefitOptionItemValueId">
+            {{option.optionItemName}}
+          </mat-option>
+        </mat-select>
+        <mat-error *ngIf="form.get('extendedDeathBenefit').hasError('required')">
+          Extended Death Benefit is <strong>required</strong>
+        </mat-error>
+      </mat-form-field>
+      <mat-form-field class="mat-form-field-right">
+        <label class="mat-label other-label mandatory-field">Continued Cover</label>
+        <mat-select formControlName="continuedCover">
+          <mat-option *ngFor="let option of continuedCoverOptions" [value]="option.benefitOptionItemValueId">
+            {{option.optionItemName}}
+          </mat-option>
+        </mat-select>
+        <mat-error *ngIf="form.get('continuedCover').hasError('required')">
+          Continued Cover is <strong>required</strong>
+        </mat-error>
+      </mat-form-field>
+
+    </section>
+    <section>
+      <mat-form-field class="mat-form-field">
+        <label class="mat-label other-label mandatory-field">Body Repatriation</label>
+        <mat-select formControlName="bodyRepatriation">
+          <mat-option *ngFor="let option of bodyRepatriationOptions" [value]="option.benefitOptionItemValueId">
+            {{option.optionItemName}}
+          </mat-option>
+        </mat-select>
+        <mat-error *ngIf="form.get('bodyRepatriation').hasError('required')">
+          Body Repatriation is <strong>required</strong>
+        </mat-error>
+      </mat-form-field>
+      <mat-form-field class="mat-form-field-right">
+        <label class="mat-label other-label mandatory-field">Paid Up Benefit</label>
+        <mat-select formControlName="paidUpBenefit">
+          <mat-option *ngFor="let option of paidUpBenefitOptions" [value]="option.benefitOptionItemValueId">
+            {{option.optionItemName}}
+          </mat-option>
+        </mat-select>
+        <mat-error *ngIf="form.get('paidUpBenefit').hasError('required')">
+          Paid Up Benefit is <strong>required</strong>
+        </mat-error>
+      </mat-form-field>
+    </section>
+  </form>
+</div>

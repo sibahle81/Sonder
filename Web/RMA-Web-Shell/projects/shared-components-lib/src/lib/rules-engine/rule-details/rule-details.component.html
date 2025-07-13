@@ -1,0 +1,62 @@
+﻿<div class="page-header"></div>
+
+<div style="padding-top: 15px;">
+    <mat-card style="margin: 15px 30px 15px 30px">
+
+        <mat-card-header>
+            <mat-card-title class="card-title grey">
+                <h1 style="padding: 0;">Maintain {{name}}</h1>
+            </mat-card-title>
+        </mat-card-header>
+
+        <mat-card-content style="margin-left: 10px;">
+
+            <form [formGroup]="form" (ngSubmit)="save()" class="mat-container details-form" novalidate>
+                <!--Rule Config-->
+                <div formArrayName="ruleConfigurations">
+                    <section>
+                        <mat-form-field *ngFor="let ruleConfig of ruleConfigurations.controls; let i=index" [formGroupName]="i" style="display: block;">
+                            <h2 *ngIf="isSTP && i==0">Maintain Minor Injury Medical Costs</h2>
+                            <h2 *ngIf="isSTP && i==3">Treat and Return Medical Cost</h2>
+                            <label class="mat-label other-label">{{ruleConfig.controls.fieldName.value}}</label>
+                            <div [ngSwitch]="ruleConfig.controls.fieldType.value">
+                                <input *ngSwitchCase="'number'" matInput [name]="ruleConfig.controls.fieldName.value" formControlName="defaultValue" [type]="ruleConfig.controls.fieldType.value" NumberOnly required />                                    
+                                <div *ngSwitchCase="'decimal'">
+                                    <input *ngIf="isSTP" matInput [name]="ruleConfig.controls.fieldName.value" formControlName="defaultValue" [type]="ruleConfig.controls.fieldType.value" SixDecimalNumber required />
+                                    <input *ngIf="!isSTP" matInput [name]="ruleConfig.controls.fieldName.value" formControlName="defaultValue" [type]="ruleConfig.controls.fieldType.value" DecimalNumber required />
+                                </div>
+                                <div *ngSwitchCase="'date'">
+                                    <input matInput [matDatepicker]="ruleDatePicker" date="true" time="false" formControlName="defaultValue" [name]="ruleConfig.controls.fieldName.value" [min]="minDate" required>
+                                    <mat-datepicker-toggle matSuffix [for]="ruleDatePicker" style="position: absolute; margin: 10px 0px 10px -25px;" [disabled]="form.disabled"></mat-datepicker-toggle>
+                                    <mat-datepicker #ruleDatePicker touchUi="true" ng-model-options="{ timezone: 'sast' }"></mat-datepicker>
+                                </div>
+                                <input *ngSwitchDefault matInput [name]="ruleConfig.controls.fieldName.value" formControlName="defaultValue" [type]="ruleConfig.controls.fieldType.value" required />
+                            </div>
+                            <mat-error *ngIf="ruleConfig.controls.defaultValue.hasError('min')">
+                                {{ruleConfig.controls.fieldName.value}} is less than <strong>minimum value</strong>.
+                            </mat-error>
+                            <mat-error *ngIf="ruleConfig.controls.defaultValue.hasError('required')">
+                                {{ruleConfig.controls.fieldName.value}} is <strong>required</strong>.
+                            </mat-error>
+                        </mat-form-field>
+                    </section>
+                </div>
+
+                <div class="form-group-button mat-form-button">
+                    <div *ngIf="!form.disabled" class="form-buttons" matTooltip="No changes have been made" [matTooltipDisabled]="!pristine">
+                        <button type="submit" [disabled]="form.pristine" class="button float-button submit-button">Save</button>
+                    </div>
+
+                    <div (click)="editForm()" *ngIf="form.disabled && canEdit" class="form-buttons submit-button">
+                        <button type="button" class="button float-button">Edit</button>
+                    </div>
+
+                    <div (click)="back()" class="form-buttons submit-button">
+                        <button type="button" class="button float-button">Back</button>
+                    </div>
+                </div>
+            </form>
+
+        </mat-card-content>
+    </mat-card>
+</div>

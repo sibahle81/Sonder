@@ -1,0 +1,66 @@
+﻿<form [formGroup]="form" class="mat-container" novalidate>
+    <div class="mat-container">
+        <section>
+            <!--Company Name-->
+            <mat-form-field>
+                <label class="mat-label other-label mandatory-field">Company name</label>
+                <input matInput maxlength="50" formControlName="name" name="name" unique-validator [table]="'Client'" [field]="'Name'" [currentValue]="currentName" [serviceType]="6">
+                <mat-error *ngIf="form.get('name').hasError('required')">
+                    Company Name is <strong>required</strong>
+                </mat-error>
+                <mat-error *ngIf="form.get('name').hasError('isTaken')">
+                    This company name <strong>already exists</strong>
+                </mat-error>
+            </mat-form-field>
+
+            <!--Description-->
+            <mat-form-field class="mat-form-field-right">
+                <label class="mat-label other-label">Description (optional)</label>
+                <input matInput maxlength="50" formControlName="description" name="description">
+            </mat-form-field>
+
+        </section>
+
+        <section>
+            <!--Company registration number-->
+            <mat-form-field>
+                <label class="mat-label other-label mandatory-field">Registration number </label>
+                <input matInput maxlength="50" id="registrationNumber" name="registrationNumber" formControlName="registrationNumber" unique-validator [table]="'Client'" [field]="'RegistrationNumber'" [currentValue]="currentRegistrationNumber" [serviceType]="6" />
+                <mat-error *ngIf="form.get('registrationNumber').hasError('required')">
+                    Registration number is <strong>required</strong>
+                </mat-error>
+                <mat-error *ngIf="form.get('registrationNumber').hasError('isTaken')">
+                    Registration number <strong>already exists</strong>
+                </mat-error>
+            </mat-form-field>
+
+            <mat-form-field class="mat-form-field-right">
+                <label class="mat-label other-label">Reference number</label>
+                <input matInput maxlength="50" id="referenceNumber" name="referenceNumber" formControlName="referenceNumber" />
+                <mat-error *ngIf="form.get('referenceNumber').hasError('required')">
+                    Compensation comm. reference number is <strong>required</strong>
+                </mat-error>
+            </mat-form-field>
+
+        </section>
+
+        <section>
+            <mat-form-field>
+                <label class="mat-label other-label">Group</label>
+                <mat-select name="group" id="group" formControlName="group" [(value)]="groupId">
+                    <mat-option value=""></mat-option>
+                    <mat-option *ngFor="let group of groups" [value]="group.id">{{group.name}}</mat-option>
+                </mat-select>
+            </mat-form-field>
+
+
+            <mat-form-field class="mat-form-field-right">
+                <label>Communication Method</label>
+                <mat-select name="communicationType" id="communicationType" formControlName="communicationType" multiple>
+                    <mat-option *ngFor="let communicationTypeitem of communicationTypeList" [value]="communicationTypeitem.id">{{communicationTypeitem.name}}</mat-option>
+                </mat-select>
+            </mat-form-field>
+        </section>
+
+    </div>
+</form>

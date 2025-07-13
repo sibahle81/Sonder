@@ -1,0 +1,389 @@
+<section class="legal-admin">
+    <div *ngIf="!hasAccess" class="not-authorized-message">
+        <h3>You are not Authorized to view this Page</h3>
+    </div>
+    <div *ngIf="hasAccess" class="collection-team-leader-view">
+    <div [ngClass]="isSpinner ? 'disabled-field' : 'enabled-field'">
+        <div class="tab-container-div">
+            <div class="tab-container-inner-div">
+                <ng-container *ngFor="let item of typeTabs">
+                    <div class="type-class" (click)="onSelectTab(item)">
+                        <span class="type-class-item" [ngStyle]="selectedTab == getTabName(item) ? 
+             {'color' : '#006586' } : { 'color': '#5BB5D0' }">{{getTabName(item)}}</span>
+                        <span class="type-class-border"
+                            [ngStyle]="selectedTab == getTabName(item) ? 
+              { 'border': '2px solid #006586', 'visibility': 'visible' } : { 'border': '2px solid #5BB5D0','visibility': 'hidden' }"></span>
+                    </div>
+                </ng-container>
+            </div>
+        </div>
+        <div class="content-div-container" *ngIf="!isLoading">
+            <div class="debtor-table">
+                <div class="search-container-css">
+                    <div class="search-container-data">
+                        <span matPrefix>
+                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24"
+                                fill="none">
+                                <path
+                                    d="M19 11C19 12.5823 18.5308 14.129 17.6518 15.4446C16.7727 16.7602 15.5233 17.7856 14.0615 18.3911C12.5997 18.9966 10.9911 19.155 9.43928 18.8463C7.88743 18.5376 6.46197 17.7757 5.34315 16.6569C4.22433 15.5381 3.4624 14.1126 3.15372 12.5608C2.84504 11.0089 3.00347 9.40038 3.60897 7.93857C4.21447 6.47676 5.23985 5.22733 6.55544 4.34828C7.87103 3.46923 9.41775 3.00004 11 3.00004C12.0515 2.99674 13.0933 3.20141 14.0654 3.60228C15.0375 4.00315 15.9207 4.5923 16.6642 5.33582C17.4077 6.07935 17.9969 6.96257 18.3978 7.93467C18.7986 8.90677 19.0033 9.94854 19 11Z"
+                                    stroke="#292929" stroke-linecap="round" stroke-linejoin="round" />
+                                <path d="M20.9993 21L16.6562 16.657" stroke="#292929" stroke-linecap="round"
+                                    stroke-linejoin="round" />
+                            </svg>
+                        </span>
+                        <input matInput (keyup)="applyFilter($event)" placeholder="Search here..." #input
+                            class="search-input">
+                    </div>
+                    <div class="reasign-option">
+                    <div *ngIf="isDropdownDisabled && isRowSelected" class="reassign-dropdown">
+                        <div class="flex-view">
+                        <p class="full-view reassign-agent-label">Re-assign Agent</p>
+
+                        <mat-form-field appearance="outline" class="multi-agent-list-dropdown">
+                            <input #selectedAgent type="text" matInput [(ngModel)]="selectedAssignValue" placeholder="Select agent here" 
+                              [matAutocomplete]="auto" (input)="searchValueAgent(selectedAgent.value)"
+                              class="search-input border-none-imp search-input-agent">
+                            <mat-autocomplete #auto="matAutocomplete" class="agent-list-dropdown-scroll">
+                              <mat-option *ngFor="let item of  selectedAgentoption" [value]="item.id" (click)="onMultipleReAssignAgent(item, selectedRows)"> {{item.userName}}</mat-option></mat-autocomplete>
+                              <button mat-button matSuffix mat-icon-button aria-label="Toggle dropdown">
+                                <mat-icon>arrow_drop_down</mat-icon>
+                            </button>
+                          </mat-form-field>  
+                        </div>  
+                        <div>
+
+                        </div>
+                      </div>
+                      <div class="filter-icon">
+                        <span matPrefix class="information-list" (click)="openFilterBox()">
+                            <mat-icon>filter_list</mat-icon>
+                        </span>
+                      </div>
+
+                      <div class="filter-icon">
+                        <mat-icon [ngClass]="(dataSource.data && dataSource.data?.length > 0) ? 'enable-click-event' : 'disable-click-event'" matTooltip="download" (click)="downloadList()">arrow_downward</mat-icon>
+                      </div>
+
+                      <div *ngIf="showFilterBox" class="filter-details-box">
+                        <div class="filter-details">
+
+                            <mat-icon (click)="closeBox()" class="box-close-icon">close</mat-icon>
+
+                            <form [formGroup]="filterDetailsForm">
+                                <div class="create-message-temp-tabs-fields">
+                                    <label>Agent</label>
+                                    <mat-form-field appearance="outline" class="multi-agent-list-dropdown">
+                                        <input #selectedAgent type="text" matInput  
+                                        [matAutocomplete]="auto" (input)="searchValueAgent(selectedAgent.value)" formControlName="agent"
+                                        class="search-input border-none-imp search-input-agent">
+                                        <mat-autocomplete #auto="matAutocomplete" class="agent-list-dropdown-scroll">
+                                            <mat-option *ngFor="let item of selectedAgentoption" [value]="item.userName" 
+                                            (click)="selectAnAgent(item.id)"> {{item.userName}}</mat-option>
+                                        </mat-autocomplete>
+                                        <button mat-button matSuffix mat-icon-button aria-label="Toggle dropdown">
+                                            <mat-icon>arrow_drop_down</mat-icon>
+                                        </button>
+                                    </mat-form-field>  
+
+                                </div>
+                                <div class="create-message-temp-tabs-fields">
+                                    <label>Status</label>
+                                    <mat-form-field appearance="outline" class="multi-agent-list-dropdown">
+                                        <input #updateStatus type="text" matInput  
+                                        [matAutocomplete]="auto1" (input)="searchValueStatus(updateStatus.value)" formControlName="collectionStatus"
+                                        class="search-input border-none-imp search-input-agent">
+                                        <mat-autocomplete #auto1="matAutocomplete" class="agent-list-dropdown-scroll">
+                                            <mat-option *ngFor="let item of selectedStatusoption" [value]="item.statusCategoryName" 
+                                            (click)="onSelectCollectionStatus(item.id)"> {{item.statusCategoryName}} </mat-option>
+                                        </mat-autocomplete>
+                                        <button mat-button matSuffix mat-icon-button aria-label="Toggle dropdown">
+                                            <mat-icon>arrow_drop_down</mat-icon>
+                                        </button>
+                                    </mat-form-field> 
+                                    
+                                </div>
+
+                                <div class="create-message-temp-tabs-fields">
+                                    <label>Broken PTP</label>
+                                    <mat-form-field appearance="outline" class="multi-agent-list-dropdown">
+                                    <mat-select class="select-input-bptp" formControlName="brokenPTP" (selectionChange)="onSelectBrokenPTP($event.value)">
+                                        <mat-option value=0>All</mat-option>
+                                        <mat-option value=1>Less than 3</mat-option>
+                                        <mat-option value=2>Greater than equals to 3</mat-option>
+                                    </mat-select>
+                                    </mat-form-field> 
+                                </div>
+
+                                <div class="detailHeadInnerDiv sendSMSContent">
+                                    <div class="date-picker-upadte-status status-update-mff legal-add-payment-field question-div question-div-legal">
+                                      <p class="filter-date-label">Date From</p>
+                                      <mat-form-field appearance="outline" class="date-picker-field">
+                                        <input matInput [matDatepicker]="fromPicker" formControlName="fromDate" readonly class="border-none">
+                                        <mat-datepicker-toggle matSuffix [for]="fromPicker" class="date-picker-toggle-css"></mat-datepicker-toggle>
+                                        <mat-datepicker #fromPicker [matDatepickerFilter]="fromDateFilter" (dateChange)="fromDateSelected($event);applyFilters()"></mat-datepicker>
+                                      </mat-form-field>
+                                    </div>
+                                    <div class="date-picker-upadte-status status-update-mff legal-add-payment-field question-div question-div-legal">
+                                      <p class="filter-date-label">Date To</p>
+                                      <mat-form-field appearance="outline" class="date-picker-field">
+                                        <input matInput [matDatepicker]="toPicker" formControlName="toDate" readonly class="border-none">
+                                        <mat-datepicker-toggle matSuffix [for]="toPicker" class="date-picker-toggle-css"></mat-datepicker-toggle>
+                                        <mat-datepicker #toPicker [matDatepickerFilter]="toDateFilter" (dateChange)="toDateSelected($event);applyFilters()"></mat-datepicker>
+                                      </mat-form-field>
+                                    </div>
+                                </div>
+
+                                
+                            </form>
+
+                            <div class="action-div-box action-btn-right">
+                                <button class="select-action action-submit" mat-button (click)="resetFilters()">Reset</button>
+                                <button class="select-action action-submit" mat-button (click)="applyFilterOnData()">Apply Filter</button>
+                            </div>
+
+                        </div>
+                      </div>
+
+                     </div>
+                      
+                </div>
+                <div class="legal-table-content">
+                    <div class="table-insie" *ngIf="dataSource.data.length > 0">
+                        <table mat-table [dataSource]="dataSource"  class="mat-table-data">
+                          
+                            <ng-container matColumnDef="customerNumber">
+                                <th mat-header-cell *matHeaderCellDef  class="th-cell table-head">
+                                        <span *ngIf="selectedTab != debtcareTabs[debtcareTabs.OverDue]" class="select-text-col">
+                                            <span><mat-checkbox color="primary" (change)="onSelectAll($event)" class="select-text"></mat-checkbox></span>  
+                                            <span class="tabHeaderSapn">Customer Number</span>
+                                        </span>
+                                    <span *ngIf="selectedTab == debtcareTabs[debtcareTabs.OverDue]" class="tabHeaderSapn">Customer Number</span>
+                                </th>
+                                <td mat-cell *matCellDef="let row; let i = index">
+                                    <span class="select-td">
+                                        <mat-checkbox *ngIf="selectedTab != debtcareTabs[debtcareTabs.OverDue]" [checked]= "checkedRecordList[i]" (change)="onRowSelect(row)" color="primary" class="select-text"></mat-checkbox>
+                                        <span class="select-text"
+                                            (click)="showDetails(row)">{{row.customerNumber}}</span>
+                                    </span>
+                                </td>
+                            </ng-container>
+                            <ng-container matColumnDef="policyId">
+                                <th mat-header-cell *matHeaderCellDef  class="th-cell"><span
+                                        class="tabHeaderSapn"> Policy Number</span>
+                                </th>
+                                <td mat-cell *matCellDef="let row">
+                                    <span class="select-td">
+                                        <span class="select-text" (click)="showDetails(row)">{{row.policyNumber}}
+                                        </span>
+                                    </span>
+                                </td>
+                            </ng-container>
+                            <ng-container matColumnDef="customerName">
+                                <th mat-header-cell *matHeaderCellDef  class="th-cell"><span
+                                        class="tabHeaderSapn"> Customer Name</span>
+                                </th>
+                                <td mat-cell *matCellDef="let row">
+                                    <span class="select-td">
+                                        <span class="select-text" (click)="showDetails(row)">{{row.customerName}}
+                                        </span>
+                                    </span>
+                                </td>
+                            </ng-container>
+                            <ng-container matColumnDef="openingBalance">
+                                <th mat-header-cell *matHeaderCellDef  class="th-cell">
+                                    <span class="tabHeaderSapn"> Opening Balance</span>
+                                </th>
+                                <td mat-cell *matCellDef="let row">
+                                    <span class="select-td">
+                                        <span class="select-text" (click)="showDetails(row)"> {{row.openingBalance}}
+                                        </span>
+                                    </span>
+                                </td>
+                            </ng-container>
+                            <ng-container matColumnDef="currentBalance">
+                                <th mat-header-cell *matHeaderCellDef  class="th-cell">
+                                    <span class="tabHeaderSapn"> Current Balance</span>
+                                </th>
+                                <td mat-cell *matCellDef="let row">
+                                    <span class="select-td">
+                                        <span class="select-text" (click)="showDetails(row)"> {{row.currentBalance}}
+                                        </span>
+                                    </span>
+                                </td>
+                            </ng-container>
+                            <ng-container matColumnDef="assignedOn">
+                                <th mat-header-cell *matHeaderCellDef  class="th-cell">
+                                    <span class="tabHeaderSapn"> Assigned On</span>
+                                </th>
+                                <td mat-cell *matCellDef="let row">
+                                    <span class="select-td">
+                                        <span class="select-text" (click)="showDetails(row)"> {{row?.assignOnDate ==
+                                            null ? '-' : (row?.assignOnDate | date: 'yyyy-MM-dd') }} </span>
+                                    </span>
+                                </td>
+                            </ng-container>
+                            <ng-container matColumnDef="ptp">
+                                <th mat-header-cell *matHeaderCellDef  class="th-cell">
+                                    <span class="tabHeaderSapn"> PTP </span>
+                                </th>
+                                <td mat-cell *matCellDef="let row" (click)="showDetails(row)">
+                                    <span *ngIf="row.ptp != null || row.ptp != undefiend" class="debtors-details-value"
+                                        [ngStyle]="row.ptp == '0' ? { 'background': '#33C601' } : (row.ptp == '1' || row.ptp == '2') ? { 'background': '#EF6D21'} :
+                                { 'background': '#f44336'} ">
+                                        {{row.ptp}}</span>
+                                    <span *ngIf="row.ptp == null || row.ptp == undefiend"
+                                        class="no-ptp-value debtors-details-value">
+                                        0</span>
+                                </td>
+                            </ng-container>
+                            <ng-container matColumnDef="brokenPTP">
+                                <th mat-header-cell *matHeaderCellDef  class="th-cell">
+                                    <span class="tabHeaderSapn"> Broken PTP </span>
+                                </th>
+                                <td mat-cell *matCellDef="let row" (click)="showDetails(row)">
+                                    <span *ngIf="row.brokenPtpCount != null || row.brokenPtpCount != undefiend" class="debtors-details-value"
+                                        [ngStyle]="row.brokenPtpCount == '0' ? { 'background': '#33C601' } : row.brokenPtpCount == '1' ? { 'background': '#EF6D21'} :
+                                { 'background': '#EF6D21'} ">
+                                        {{row.brokenPtpCount}}</span>
+                                    <span *ngIf="row.brokenPtpCount == null || row.brokenPtpCount == undefiend"
+                                        class="no-ptp-value debtors-details-value">
+                                        0</span>
+                                </td>
+                            </ng-container>
+                            <ng-container matColumnDef="lastChanged">
+                                <th mat-header-cell *matHeaderCellDef  class="th-cell">
+                                    <span class="tabHeaderSapn"> Last Changed </span>
+                                </th>
+                                <td mat-cell *matCellDef="let row">
+                                    <span class="select-td">
+                                        <span class="select-text" (click)="showDetails(row)"> 
+                                            {{ row.lastChangedDate == null ? '-' : row.lastChangedDate | date: 'yyyy-MM-dd'}}
+                                        </span>
+                                    </span>
+                                </td>
+                            </ng-container>
+                            <ng-container matColumnDef="lastStatus">
+                                <th mat-header-cell *matHeaderCellDef  class="th-cell">
+                                    <span class="tabHeaderSapn table-data-head"> Last Status </span>
+                                </th>
+                                <td mat-cell *matCellDef="let row">
+                                    <span class="select-td">
+                                        <span class="select-text" (click)="showDetails(row)">{{row.lastStatus}} </span>
+                                    </span>
+                                </td>
+                            </ng-container>
+                            <ng-container *ngIf="selectedTab === 'OverDue'" matColumnDef="last_changed_date_status">
+                                <th mat-header-cell *matHeaderCellDef  class="th-cell">
+                                    <span class="tabHeaderSapn"> Last Changed by Agent </span>
+                                </th>
+                                <td mat-cell *matCellDef="let row">
+                                    <span class="select-td">
+                                        <span class="select-text" (click)="showDetails(row)">{{row.modifiedBy}}</span>
+                                    </span>
+                                </td>
+                            </ng-container>
+                            <ng-container matColumnDef="department">
+                                <th mat-header-cell *matHeaderCellDef  class="th-cell">
+                                    <span class="tabHeaderSapn"> Department </span>
+                                </th>
+                                <td mat-cell *matCellDef="let row">
+                                    <span class="select-td">
+                                        <span class="select-text" (click)="showDetails(row)">
+                                            {{row.transferedToDepartment != null ?  row.transferedToDepartment :'-' }}
+                                        </span>
+                                    </span>
+                                </td>
+                            </ng-container>
+                            <ng-container matColumnDef="documentStatus">
+                                <th mat-header-cell *matHeaderCellDef  class="th-cell">
+                                    <span class="tabHeaderSapn"> Document Status </span>
+                                </th>
+                                <td mat-cell *matCellDef="let row">
+                                    <span class="select-td">
+                                        <span class="select-text" (click)="showDetails(row)"> {{row.documentStatus ==
+                                            null ? '-' : row.documentStatus}} </span>
+                                    </span>
+                                </td>
+                            </ng-container>
+                            <ng-container matColumnDef="accountAge">
+                                <th mat-header-cell *matHeaderCellDef  class="th-cell">
+                                    <span class="tabHeaderSapn"> Account Age </span>
+                                </th>
+                                <td mat-cell *matCellDef="let row">
+                                    <span class="select-td">
+                                        <span class="select-text" (click)="showDetails(row)"> {{row.accountAge}} Days</span>
+                                    </span>
+                                </td>
+                            </ng-container>
+                            <ng-container *ngIf="selectedTab != 'OverDue'" matColumnDef="nextAction">
+                                <th mat-header-cell *matHeaderCellDef class="th-cell">
+                                    <span class="tabHeaderSapn"> Next Action </span>
+                                </th>
+                                <td mat-cell *matCellDef="let row">
+                                    <span class="select-td">
+                                        <span class="select-text"> {{(row.nextActionDate != null &&
+                                            row.nextActionDate.includes('T')) ? row.nextActionDate.split('T')[0] : '-'}}
+                                            |
+                                            {{ (row.nextActionDate != null && row.nextActionDate.includes('T')) ?
+                                            row.nextActionDate.split('T')[1].slice(0,5) : '-' }}</span>
+                                    </span>
+                                </td>
+                            </ng-container>
+                            <ng-container *ngIf="selectedTab != 'OverDue'" matColumnDef="overDueBy">
+                                <th mat-header-cell *matHeaderCellDef  class="th-cell">
+                                    <span class="tabHeaderSapn"> Over Due By </span>
+                                </th>
+                                <td mat-cell *matCellDef="let row">
+                                    <span class="over_due_by_text"
+                                        [ngStyle]="(row.dueByDay == 0) ? { 'background-color': '#33C601' } : 
+                                (row.dueByDay >= 1 && row.dueByDay <= 7) ?  { 'background-color': '#EF6D21' } : 
+                                (row.dueByDay >= 8 && row.dueByDay <= 9) ?  { 'background-color': '#FF7277' } : 
+                                (row.dueByDay >= 10) ? { 'background-color': '#FF0000'}: { 'background-color': '#33C601' }">
+                                        <span> {{row.dueByDay == 0 ? '-' : row.dueByDay}} <span
+                                                *ngIf="row.dueByDay != 0">DAYS</span></span>
+                                    </span>
+                                </td>
+                            </ng-container>
+                            <ng-container *ngIf="selectedTab != 'OverDue'" matColumnDef="reAssignAgent">
+                                <th mat-header-cell *matHeaderCellDef  class="th-cell">
+                                    <span class="tabHeaderSapn">Re-Assign Agent</span>
+                                </th>
+                                <td mat-cell *matCellDef="let row;let i=index">
+                                      <mat-form-field appearance="outline" class="agent-list-dropdown">
+                                        <input #selectedAgent type="text" matInput  [(ngModel)]="assignValues[i]"
+                                          [matAutocomplete]="auto" (input)="searchValueAgent(selectedAgent.value)"
+                                          class="search-input border-none-imp search-input-agent">
+                                        <mat-autocomplete class="agent-list-dropdown-scroll" #auto="matAutocomplete">
+                                          <mat-option *ngFor="let item of selectedAgentoption" [value]="item.id" (click)="onReAssignAgent(item, row)"> {{item.userName}}</mat-option></mat-autocomplete>
+                                          <button mat-button matSuffix mat-icon-button aria-label="Toggle dropdown">
+                                            <mat-icon>arrow_drop_down</mat-icon>
+                                        </button>
+                                      </mat-form-field>      
+                                </td>
+                            </ng-container>
+                            <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+                            <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+                        </table>
+                        <hr>
+                        <mat-paginator #paginator class="demo-paginator" (page)="handlePageinatorEvent($event)"
+                            [hidePageSize]="false" [length]="totalItems" [pageIndex]="page - 1"
+                            [pageSize]="pageSize" [pageSizeOptions]="pageSizeOptions" [showFirstLastButtons]="false">
+                        </mat-paginator>
+                    </div>
+                    <div *ngIf="dataSource.data.length == 0">
+                        <h3 class="no-data-text">No data available</h3>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="align-center">
+        <div [hidden]="!isLoading" [ngClass]="isLoading ? 'progress-bar-container' : '' ">
+            <mat-progress-bar *ngIf="isLoading" mode="indeterminate"></mat-progress-bar>
+        </div>
+    </div>
+    <div [hidden]="!isSpinner && isLoading" class="spinner-view">
+        <mat-spinner *ngIf="isSpinner && !isLoading"></mat-spinner>
+    </div>
+    </div>
+</section>

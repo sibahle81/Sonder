@@ -1,0 +1,77 @@
+<div class="wizard-main-content mat-elevation-z8">
+  <form [formGroup]="form" class="mat-container details-form">
+    <section>
+      <mat-form-field class="mat-form-field">
+        <label class="mat-label other-label mandatory-field">Maximum Cover Age</label>
+        <span *ngIf="isShowMaxCoverAge" class="material-icons md-18" style="color: lightseagreen;" matTooltip="The maximum cover age is: {{maximumCoverAge}}">
+          info
+        </span>
+        <input matInput formControlName="maxCoverAge" type="number">
+        <mat-error *ngIf="form.get('maxCoverAge').hasError('required')">
+          Maximum Cover Age is <strong>required</strong>
+        </mat-error>
+      </mat-form-field>
+      <mat-form-field class="mat-form-field-right">
+        <label class="mat-label other-label mandatory-field">Eligibility Waiting Period</label>
+        <mat-select formControlName="eligibilityWaitingPeriodOptionId" required>
+          <mat-option *ngFor="let option of waitingPeriodOptions" [value]="option.benefitOptionItemValueId">
+            {{option.optionItemName}}
+          </mat-option>
+        </mat-select>
+        <mat-error *ngIf="form.get('eligibilityWaitingPeriodOptionId').hasError('required')">
+          Eligibility Waiting Period is <strong>required</strong>
+        </mat-error>
+      </mat-form-field>
+    </section>
+    <section>
+      <mat-form-field class="mat-form-field">
+        <label class="mat-label other-label">Spouse Maximum Cover Age</label>
+        <input matInput formControlName="spouseMaxCoverAge" type="number">
+      </mat-form-field>
+      <mat-form-field class="mat-form-field-right">
+        <label class="mat-label other-label mandatory-field">Maximum Number of Spouse Covered</label>
+        <input matInput formControlName="maxSpouseCovered" type="number">
+        <mat-error *ngIf="form.get('maxSpouseCovered').hasError('required')">
+          Maximum Number of Spouse Covered is <strong>required</strong>
+        </mat-error>
+      </mat-form-field>
+    </section>
+    <section>
+      <mat-form-field class="mat-form-field">
+        <label class="mat-label other-label">Child Maximum Cover Age</label>
+        <input matInput formControlName="childMaxCoverAge" type="number">
+      </mat-form-field>
+      <mat-form-field class="mat-form-field-right">
+        <label class="mat-label other-label">Parent Entry Age</label>
+        <input matInput formControlName="parentEntryAge" type="number">
+      </mat-form-field>
+    </section>
+    <section>
+      <mat-form-field class="mat-form-field">
+        <label class="mat-label other-label">Parent Maximum Cover Age</label>
+        <input matInput formControlName="parentMaxCoverAge" type="number">
+      </mat-form-field>
+      <mat-form-field class="mat-form-field-right">
+        <label class="mat-label other-label">Extentded Family Entry Age</label>
+        <input matInput formControlName="extendedFamilyEntryAge" type="number">
+      </mat-form-field>
+    </section>
+    <section>
+      <mat-form-field class="mat-form-field">
+        <label class="mat-label other-label">Extended Family Member Maximum Cover Age</label>
+        <input matInput formControlName="extendedFamilyMaxCoverAge" type="number">
+      </mat-form-field>
+      <mat-form-field class="mat-form-field-right">
+        <label class="mat-label other-label mandatory-field">Cover Type</label>
+        <mat-select formControlName="coverTypeOptionId" (selectionChange)="coverTypeChanged($event.value)" required>
+          <mat-option *ngFor="let option of coverTypeOptions" [value]="option.id">
+            {{formatLookup(option.name)}}
+          </mat-option>
+        </mat-select>
+        <mat-error *ngIf="form.get('coverTypeOptionId').hasError('required')">
+          Cover Type is <strong>required</strong>
+        </mat-error>
+      </mat-form-field>
+    </section>
+  </form>
+</div>

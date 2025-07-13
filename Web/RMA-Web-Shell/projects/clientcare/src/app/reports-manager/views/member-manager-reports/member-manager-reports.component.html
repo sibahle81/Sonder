@@ -1,0 +1,205 @@
+<div>
+  <mat-card>
+    <mat-card-header>
+        <mat-card-title class="wizard-font card-title grey">
+            <h1></h1>
+            <h3>{{reportTitle}}</h3>
+        </mat-card-title>
+    </mat-card-header>
+    <mat-card-content> 
+      <form [formGroup]="form" class="mat-container details-form" novalidate> 
+        <div>
+          <section>
+              <div>
+                  <div><label class="mat-label other-label mandatory-field">Report Type</label></div>
+                  <mat-form-field class="mat-form-field">
+                      <mat-select name="memberReportTypes" id="memberReportTypes"
+                          formControlName="memberReportTypes"
+                          (selectionChange)="memberReportTypeChanged($event)">
+                          <mat-option *ngFor="let memberReportTypes of memberReportTypes"
+                              [value]="memberReportTypes">
+                              {{memberReportTypes.name}}
+                          </mat-option>
+                      </mat-select>
+                  </mat-form-field>
+              </div>
+          </section>
+      </div>
+      <div>
+        <div class="form">
+            <section [hidden]='!isDateFilterVisble'>
+                <div class="field-left">
+                    <div><label class="mat-label other-label mandatory-field">Start Date</label></div>
+                    <mat-form-field class="mat-form-field">
+                        <input matInput [matDatepicker]="startDatePicker" date="true" [value]="startDt.value"
+                            time="false" [formControl]="startDt" readonly
+                            (ngModelChange)="startDateChange($event)" [max]="startMaxDate">
+                        <mat-datepicker-toggle matSuffix class="picker-toggle" [for]="startDatePicker">
+                        </mat-datepicker-toggle>
+                        <mat-datepicker #startDatePicker touchUi="true" ng-model-options="{ timezone: 'sast' }">
+                        </mat-datepicker>
+                    </mat-form-field>
+                </div>
+                <div class="field-right">
+                    <div><label class="mat-label other-label mandatory-field field-container-left">End Date</label></div>
+                    <mat-form-field class="mat-form-field">
+                        <input matInput [matDatepicker]="endDatePicker" date="true" [value]="endDt.value"
+                            time="false" [formControl]="endDt" readonly (ngModelChange)="endDateChange($event)"
+                            [max]="endMinDate">
+                        <mat-datepicker-toggle matSuffix class="picker-toggle" [for]="endDatePicker">
+                        </mat-datepicker-toggle>
+                        <mat-datepicker #endDatePicker touchUi="true" ng-model-options="{ timezone: 'sast' }">
+                        </mat-datepicker>
+                    </mat-form-field>
+                </div>
+            </section>
+        </div>
+       </div>
+
+       <div>
+        <section [hidden]="!isContactStatus">
+            <div class="field-left">
+                <div><label class="mat-label other-label mandatory-field">Contact Status</label></div>
+                <mat-form-field class="mat-form-field">
+                    <mat-select name="contactStatus" id="contactStatus" (selectionChange)="contactStatusChanged($event)">
+                        <mat-option *ngFor="let contactStatus of contactStatus" [value] ="contactStatus">
+                            {{contactStatus.name}}
+                        </mat-option>  
+                    </mat-select>
+                </mat-form-field>
+            </div>
+        </section>
+        <section [hidden]="!isMemberStatus">
+            <div class="field-left">
+                <div><label class="mat-label other-label mandatory-field">Member Status</label></div>
+                <mat-form-field class="mat-form-field">
+                    <mat-select name="memberStatus" id="memberStatus" (selectionChange)="memberStatusChanged($event)">
+                        <mat-option *ngFor="let memberStatus of memberStatus" [value] ="memberStatus">
+                            {{memberStatus.name}}
+                        </mat-option>  
+                    </mat-select>
+                </mat-form-field>
+            </div>
+        </section>
+
+        <section [hidden]='!isMemberClientType'>
+            <div class="field-right" >
+                <div><label class="mat-label other-label mandatory-field">Client Type</label></div>
+                <mat-form-field class="mat-form-field">
+                    <mat-select name="memberClietType" id="memberClietType"
+                        (selectionChange)="memberClientTypeChanged($event)">
+                        <mat-option *ngFor="let memberClietType of memberClietType" [value]="memberClietType">
+                            {{memberClietType.name}}
+                        </mat-option>
+                    </mat-select>
+                </mat-form-field>
+            </div>
+       
+        </section>
+
+        <section [hidden]='!isMemberFilterDateType'>
+            <div class="field-container-right" >
+                <div><label class="mat-label other-label mandatory-field">Filter Date Type</label></div>
+                <mat-form-field class="mat-form-field">
+                    <mat-select name="memberFilterDate" id="memberFilterDate"
+                        (selectionChange)="memberFilterDateTypeChanged($event)">
+                        <mat-option *ngFor="let memberFilterDate of memberFilterDate" [value]="memberFilterDate">
+                            {{memberFilterDate.name}}
+                        </mat-option>
+                    </mat-select>
+                </mat-form-field>
+            </div>
+        </section>
+
+        <section [hidden]='!isContactType'>
+            <div class="field-container-right" >
+                <div><label class="mat-label other-label mandatory-field">Contact Type</label></div>
+                <mat-form-field class="mat-form-field">
+                    <mat-select name="contactType" id="contactType"
+                        (selectionChange)="contactTypeChanged($event)">
+                        <mat-option *ngFor="let contactType of contactType" [value]="contactType">
+                            {{contactType.name}}
+                        </mat-option>
+                    </mat-select>
+                </mat-form-field>
+            </div>
+          </section>  
+          
+         <section [hidden]='!isMemberType'>
+          <div class="field-container-right" >
+              <div><label class="mat-label other-label mandatory-field">Product Type</label></div>
+              <mat-form-field class="mat-form-field">
+                  <mat-select name="productType" id="productType"
+                      (selectionChange)="memberTypeChanged($event)">
+                      <mat-option *ngFor="let productType of productType" [value]="productType">
+                          {{productType.name}}
+                      </mat-option>
+                  </mat-select>
+              </mat-form-field>
+          </div>
+        </section>  
+      
+        <section [hidden]='!isDeclarationStatus'>
+            <div class="field-left" >
+                <div><label class="mat-label other-label mandatory-field">Declaration Status</label></div>
+                <mat-form-field class="mat-form-field">
+                    <mat-select name="declarationStatus" id="declarationStatus"
+                        (selectionChange)="declarationStatusChanged($event)">
+                        <mat-option *ngFor="let declarationStatus of declarationStatus" [value]="declarationStatus">
+                            {{declarationStatus.name}}
+                        </mat-option>
+                    </mat-select>
+                </mat-form-field>
+            </div>
+        </section> 
+      
+    </div>
+    <section>
+      <div class="ViewButton">
+          <div class="mat-form-field">
+              <div class="form-buttons" (click)="viewReport()">
+                  <button class="button submit-button pad-left">View</button>
+              </div>
+          </div>
+      </div>
+  </section>
+
+  <div class="form">
+    <section>
+        <table>
+            <tr>
+                <td>
+                    <input type="image" alt="export" (click)="exportReport()"
+                        src="/assets/images/downloads-icon.png" width="40" height="40" />
+                </td>
+                <td>
+                    <mat-radio-group aria-labelledby="reportformat-radio-group-label"
+                        class="reportformat-radio-group" (change)="reportFormatChange($event)">
+                        <mat-radio-button class="reportformat-radio-button"
+                            *ngFor="let reportFormat of reportFormats" [value]="reportFormat">
+                            {{reportFormat}} &nbsp;&nbsp;
+                        </mat-radio-button>
+                    </mat-radio-group>
+                </td>
+            </tr>
+        </table>
+    </section>
+</div>
+<div [hidden]="!showReport">
+  <br>
+  <ssrs-reportviewer [reportserver]="reportServerAudit" [reporturl]="reportUrlAudit"
+      [showparameters]="showParametersAudit" [format]="selectedReportFormat"
+      [extension]="extensionAudit" [parameters]="parametersAudit" [language]="languageAudit"
+      [width]="widthAudit" [height]="heightAudit" [toolbar]="toolbarAudit" [isDownload]="isDownload">
+  </ssrs-reportviewer>
+</div>
+
+       
+
+
+
+
+      </form> 
+    </mat-card-content>
+  </mat-card>
+</div>

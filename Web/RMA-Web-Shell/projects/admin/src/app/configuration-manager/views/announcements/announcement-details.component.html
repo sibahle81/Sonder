@@ -1,0 +1,131 @@
+<div *ngIf="showDetails == 0">
+    <announcements-list #announcementsListComponent (announcementEmit)="announcementChangeHandler($event)"></announcements-list>
+    <div>
+        <div class="rates-button">
+            <table class="form-group row">
+                <div style="margin: 0px 0px 0px 32px;">
+                    <button type="button" (click)="addNew()" class="button float-button">Add</button>
+                    <button type="button" (click)="backToSearch()" class="button float-button">Back</button>
+                </div>
+            </table>
+        </div>
+    </div>
+</div>
+
+<div *ngIf="showDetails == 1" class="page-container">
+    <mat-card style="margin: 15px 30px 15px 30px">
+        <mat-card-content style="margin-left: 10px;">
+            <h1>Announcment Details</h1><br />
+            <form [formGroup]="form" (ngSubmit)="save()" class="mat-container details-form" novalidate>
+                <section>
+                    <div class="field-container">
+                        <mat-label class="other-label">Name</mat-label><br/>
+                        <mat-form-field>
+                            <input matInput id="Name" name="Name" formControlName="name">
+                            <mat-error [hidden]="form.get('name').hasError('required')">
+                                Name is <strong>required</strong>
+                            </mat-error>
+                        </mat-form-field>
+                    </div>
+
+                    <div class="field-container-right">
+                        <mat-label class="other-label">Description</mat-label><br/>
+                        <mat-form-field>
+                            <input matInput id="Description" name="Description" formControlName="description">
+                            <mat-error [hidden]="form.get('description').hasError('required')">
+                                Description is <strong>required</strong>
+                            </mat-error>
+                        </mat-form-field>
+                    </div>
+                </section>
+
+                <section>
+                    <div class="field-container">
+                        <mat-label class="other-label">Start Date</mat-label><br/>
+                        <mat-form-field>
+                            <input matInput [matDatepicker]="startDatePicker" date="true" time="false" formControlName="startDate" readonly>
+                            <mat-datepicker-toggle style="position:absolute; top:-15px; right:0px;" matSuffix class="picker-toggle" [for]="startDatePicker"></mat-datepicker-toggle>
+                            <mat-datepicker #startDatePicker touchUi="true" ng-model-options="{ timezone: 'sast' }"></mat-datepicker>
+                            <mat-error [hidden]="form.get('startDate').hasError('required')">
+                                Start date is <strong>required</strong>
+                            </mat-error>
+                        </mat-form-field>
+                    </div>
+                    
+                    <div class="field-container-right">
+                        <mat-label class="other-label">End Date</mat-label><br/>
+                        <mat-form-field>
+                            <input matInput [matDatepicker]="endDatePicker" date="true" time="false" formControlName="endDate" readonly>
+                            <mat-datepicker-toggle style="position:absolute; top:-15px; right:0px;" matSuffix class="picker-toggle" [for]="endDatePicker"></mat-datepicker-toggle>
+                            <mat-datepicker #endDatePicker touchUi="true" ng-model-options="{ timezone: 'sast' }"></mat-datepicker>
+                            <mat-error [hidden]="form.get('endDate').hasError('required')">
+                                End date is <strong>required</strong>
+                            </mat-error>
+                        </mat-form-field>  
+                    </div>
+                </section>
+
+                <section>
+                    <div class="field-container">
+                        <mat-label class="other-label">Priority (1-High, 5-Low)</mat-label><br/>
+                        <mat-form-field>
+                            <input matInput formControlName="priority" type="number" min="1" max="5">
+                            <mat-error [hidden]="form.get('priority').hasError('required') || form.get('priority').hasError('min') || form.get('priority').hasError('max')">
+                                Priority is required and must be between 1 and 5
+                            </mat-error>
+                        </mat-form-field>                        
+                    </div>
+
+                    <div class="field-container-right check-box">
+                        <mat-label class="other-label">&nbsp;</mat-label><br/>
+                        <mat-checkbox formControlName="isMandatory">
+                            <mat-label class="other-label">Is Mandatory</mat-label>
+                        </mat-checkbox>
+                    </div>
+                    
+                    <div class="field-container-right check-box">
+                        <mat-label class="other-label">&nbsp;</mat-label><br/>
+                        <mat-checkbox formControlName="includeAllRoles" (change)="includeAllRolesChange($event)">
+                            <mat-label class="other-label">All Roles</mat-label>
+                        </mat-checkbox><br/><br/>
+                    </div>
+                </section>
+
+                <section>
+                    <div style="display: inline-flex; flex-direction: row; flex-wrap: wrap; padding: 5px; clear:both; word-wrap: inherit; position: inherit;"
+                        *ngFor="let role of roles, let i =index">
+                        <ng-container *ngIf="showRoles==1">
+                            <div style="display:inline-block">
+                                <input type="checkbox" [value]="role.id" #cb (change)="onSelect(cb)"
+                                    [checked]="selectedRoles.indexOf(role.id) > -1" [disabled]="showEditBtn!=0"><label>{{role.name}}</label>
+                            </div>
+                        </ng-container>   
+                    </div>
+                </section>
+
+                <section>
+                    <div class="field-container"><br/>
+                        <mat-label class="other-label">HTML</mat-label><br/>
+                        <mat-form-field appearance="standard">
+                            <textarea matInput cdkTextareaAutosize cdkAutosizeMinRows="3" cdkAutosizeMaxRows="5"
+                                formControlName="html" class="mat-input-element" maxlength="100000"></textarea>
+                            <mat-error [hidden]="form.get('html').hasError('required')">
+                                Html is <strong>required</strong>
+                            </mat-error>
+                        </mat-form-field>
+                    </div>
+                </section>
+
+                <div class="rates-button">
+                    <table class="form-group row">
+                        <div class="rates-button">
+                            <div id="div1" *ngIf="showEditBtn==1"><button type="button" (click)="edit()" class="button float-button">Edit</button></div>
+                            <div id="div2" *ngIf="showEditBtn==0"><button [disabled]="form.pristine" class="button float-button submit-button">Save</button></div>
+                            <div id="div3"><button type="button" (click)="clear()" class="button float-button">Back</button></div>
+                        </div>
+                    </table>
+                </div>
+            </form>
+        </mat-card-content>
+    </mat-card>
+</div>

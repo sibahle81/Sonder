@@ -1,0 +1,87 @@
+<mat-card *ngIf="(dataSource.loading$ | async)">
+    <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+    <label class="mat-label other-label"><i>loading beneficiary...please wait</i></label>
+</mat-card>
+
+<div [hidden]="(dataSource.loading$ | async)">
+    <div class="menu-bar" *ngIf="!isWizard || !(dataSource.data?.data?.length > 0)">
+        <span class="material-icons">
+            loyalty
+        </span>&nbsp;{{title}}
+        <span *ngIf="((diagnosticGroupEnum && diagnosticGroupEnum === drg00) || personEvent) && hasAddPermission"
+            class="material-icons pointer addIcon right" matTooltip="add beneficiary"
+            (click)="openAddBeneficiaryDialog()">
+            add_circle
+        </span>
+    </div>
+    <div [hidden]="!(dataSource.data?.data?.length > 0)">
+        <mat-table #table [dataSource]="dataSource" matSort id="tblData">
+            <ng-container matColumnDef="selectMultiple">
+                <mat-header-cell *matHeaderCellDef> Select </mat-header-cell>
+                <mat-cell *matCellDef="let row">
+                    <mat-checkbox (change)="beneficiarySelected(row)" [checked]="isSelected(row)"></mat-checkbox>
+                </mat-cell>
+            </ng-container>
+
+            <ng-container matColumnDef="beneficiaryName">
+                <mat-header-cell *matHeaderCellDef> Beneficiary Name </mat-header-cell>
+                <mat-cell *matCellDef="let row"> {{row.person.firstName}}
+                </mat-cell>
+            </ng-container>
+
+            <ng-container matColumnDef="beneficiaryLastName">
+                <mat-header-cell *matHeaderCellDef> Beneficiary Surname </mat-header-cell>
+                <mat-cell *matCellDef="let row"> {{row.person.surname}}
+                </mat-cell>
+            </ng-container>
+
+            <ng-container matColumnDef="idNumber">
+                <mat-header-cell *matHeaderCellDef> ID / Passport </mat-header-cell>
+                <mat-cell *matCellDef="let row"> {{row.person.idNumber ?? row.person.passportNumber}}
+                </mat-cell>
+            </ng-container>
+
+            <ng-container matColumnDef="relation">
+                <mat-header-cell *matHeaderCellDef> Relation </mat-header-cell>
+                <mat-cell *matCellDef="let row"> {{row.fromRolePlayers[0]?.rolePlayerTypeId ?
+                    getRelationName(row.fromRolePlayers[0]?.rolePlayerTypeId) : 'N/A'}}
+                </mat-cell>
+            </ng-container>
+
+            <ng-container matColumnDef="actions">
+                <mat-header-cell *matHeaderCellDef> Actions </mat-header-cell>
+                <mat-cell *matCellDef="let row" [matMenuTriggerFor]="menu" (click)="filterBeneficiaryMenu(row)">
+                    &nbsp;&nbsp;
+                    <a (click)="openViewBeneficiaryDialog(row, true)" role="button" class="link-edit">
+                        <span matTooltip="view" class="material-icons icn pointer">
+                            visibility
+                        </span>
+                    </a>
+                    <a (click)="openEditBeneficiaryDialog(row, false)" role="button" class="link-edit" *ngIf="currentUser?.isInternalUser">
+                        <span matTooltip="edit" class="material-icons icn pointer">
+                            settings
+                        </span>
+                    </a>
+                    <a (click)="openDeleteBeneficiaryDialog(row)" role="button" class="link-edit" *ngIf="currentUser?.isInternalUser">
+                        <span matTooltip="delete" class="material-icons icn pointer">
+                            delete
+                        </span>
+                    </a>
+                    <holistic-vopd-icon [rolePlayer]="row" [isWizard]="isWizard"></holistic-vopd-icon>
+                    &nbsp;&nbsp;
+                </mat-cell>
+            </ng-container>
+
+            <mat-header-row *matHeaderRowDef="getDisplayedColumns()"></mat-header-row>
+            <mat-row *matRowDef="let row; columns: getDisplayedColumns();"
+                [ngClass]="{ 'highlight': row === selectedBeneficiary }"></mat-row>
+        </mat-table>
+
+        <mat-paginator #paginator [pageIndex]="0" [pageSize]="5" [pageSizeOptions]="[5, 10, 25, 100]"
+            [length]="this.dataSource.rowCount$ | async" (page)="getData()">
+        </mat-paginator>
+    </div>
+</div>
+<mat-card *ngIf="!(dataSource.data?.data?.length > 0 || (dataSource.loading$ | async))">
+    <label class="mat-label other-label"><i>No beneficiaries found...</i></label>
+</mat-card>

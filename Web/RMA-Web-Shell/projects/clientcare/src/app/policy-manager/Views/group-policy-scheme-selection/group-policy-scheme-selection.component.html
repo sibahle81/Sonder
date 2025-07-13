@@ -1,0 +1,51 @@
+<div class="main-content">
+    <mat-card>
+      <h3>{{getTitle}}</h3>
+      <form *ngIf="form" [formGroup]="form" class="mat-container details-form" novalidate>
+        <section>
+          <div class="field-container">
+            <mat-form-field>
+              <label class="mat-label other-label">Policy Number</label>
+              <input matInput name="policyNumber" id="policyNumber" formControlName="policyNumber" [readonly]="isSourceScheme"
+                (keyup)="searchPolicyKeyup($event)">
+              <mat-icon *ngIf="!isSourceScheme" class="search-icon" (click)="searchPolicyButton($event)" matSuffix>search
+              </mat-icon>
+              <mat-progress-bar *ngIf="loadingPolicy" mode="indeterminate"></mat-progress-bar>
+            </mat-form-field>
+            <mat-error class="error-message" *ngIf="form.get('policyId').hasError('required') || form.get('policyId').hasError('min')">
+              Please select an existing policy
+            </mat-error>
+          </div>
+          <div class="field-container-right">
+            <mat-form-field>
+              <label class="mat-label other-label">Policy Status</label>
+              <input matInput name="policyStatus" id="policyStatus" formControlName="policyStatus" [readonly]="true">
+            </mat-form-field>
+          </div>
+        </section>
+        <section>
+          <mat-form-field class="mat-form-field">
+            <label class="mat-label other-label">Scheme</label>
+            <input matInput name="schemeName" id="schemeName" formControlName="schemeName" class="disabled-input" [readonly]="true">
+            <mat-error *ngIf="form.get('schemeName').hasError('required')">
+              The selected policy is not a group scheme
+            </mat-error>
+          </mat-form-field>
+          <mat-form-field class="mat-form-field-right">
+            <label class="mat-label other-label">Product Option</label>
+            <input matInput name="productOption" id="productOption" formControlName="productOption" [readonly]="true">
+          </mat-form-field>
+        </section>
+        <section>
+          <mat-form-field class="mat-form-field">
+            <label class="mat-label other-label">Brokerage</label>
+            <input matInput name="brokerage" id="brokerage" formControlName="brokerage" [readonly]="true">
+          </mat-form-field>
+          <mat-form-field class="mat-form-field-right">
+            <label class="mat-label other-label">Representative</label>
+            <input matInput name="representative" id="representative" formControlName="representative" [readonly]="true">
+          </mat-form-field>
+        </section>
+      </form>
+    </mat-card>
+  </div>

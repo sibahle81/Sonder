@@ -1,0 +1,110 @@
+<div>
+    <mat-card style="margin: 15px 30px">
+        <mat-card-header>
+            <mat-card-title class="wizard-font card-title grey">
+                <h1 style="color:#389cae"></h1>
+                <h3>{{reportTitle}}</h3>
+            </mat-card-title>
+        </mat-card-header>
+        <mat-card-content>
+            <form [formGroup]="form" class="mat-container details-form" novalidate>
+                <div>
+                    <section>
+                        <div>
+                            <div><label class="mat-label other-label mandatory-field">Report Type</label></div>
+                            <mat-form-field class="mat-form-field">
+                                <mat-select name="commissionReportTypes" id="commissionReportTypes" formControlName="commissionReportTypes" (selectionChange)="commissionReportTypeChanged($event)">
+                                    <mat-option *ngFor="let commissionReportType of commissionReportTypes" [value]="commissionReportType">
+                                        {{commissionReportType.name}}
+                                    </mat-option>
+                                </mat-select>
+                            </mat-form-field>
+                        </div>
+                    </section>
+                    <br>
+                    <section>
+                        <div *ngIf="isLoadingPeriods" style="width:400px; margin-bottom: 15px;">
+                            <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+                            <label class="mat-label other-label"><i>Loading periods...please wait</i></label>
+                        </div>
+                        <div>
+                            <mat-form-field>
+                                <label class="mandatory-field">Period</label>
+                                <mat-select id="period" name="period" formControlName="period" (selectionChange)="onPeriodSelect($event)">
+                                    <mat-option *ngFor="let period of periods" [value]="period.periodId">
+                                        {{getMonthName(period.mm)}}&nbsp;-&nbsp;{{period.yyyy}}
+                                    </mat-option>
+                                </mat-select>
+                                <mat-error *ngIf="form.get('period').hasError('required')">
+                                    Period<strong> is required</strong>
+                                </mat-error>
+                            </mat-form-field>
+                        </div>
+                    </section>
+                    <br>
+                    <div *ngIf="reportUseStartAndEndDates">
+                        <section>
+                            <div  class="field-container" style="word-wrap: normal;">
+                                <div><label class="mat-label other-label mandatory-field">Start Date</label>
+                                </div>
+                                <mat-form-field>
+                                    <input matInput formControlName="startDate" [matDatepicker]="startDate" (dateChange)="validateDates()" [min]="searchableStart" [max]="searchableEnd">
+                                    <mat-datepicker-toggle matSuffix [for]="startDate"></mat-datepicker-toggle>
+                                    <mat-datepicker touchUi="true" #startDate></mat-datepicker>
+                                    <mat-error *ngIf="form.get('startDate').hasError('min')">
+                                        start date cannot be <strong>after</strong> the end date
+                                    </mat-error>
+                                </mat-form-field>
+                            </div>
+
+                            <div class="field-container-right">
+                                <div><label class="mat-label other-label">End Date</label></div>
+                                <mat-form-field>
+                                    <input matInput formControlName="endDate" [matDatepicker]="endDate" (dateChange)="validateDates()" [min]="searchableStart" [max]="searchableEnd">
+                                    <mat-datepicker-toggle matSuffix [for]="endDate"></mat-datepicker-toggle>
+                                    <mat-datepicker touchUi="true" #endDate></mat-datepicker>
+                                    <mat-error *ngIf="form.get('endDate').hasError('min')">
+                                        End date cannot be <strong>before</strong> the start date
+                                    </mat-error>
+                                </mat-form-field>
+                            </div>
+                        </section>
+                    </div>
+                    <section>
+                        <div style="margin-top:19px;">
+                            <div class="mat-form-field">
+                                <div class="form-buttons" (click)="viewReport()">
+                                    <button class="button submit-button">View</button>
+                                </div>
+                            </div>
+                        </div>
+                    </section>
+                </div>
+                <div class="form">
+                    <section>
+                        <table>
+                            <tr>
+                                <td style="background-color: whitesmoke !important;">
+                                    <input type="image" alt="export" (click)="exportReport()" src="/assets/images/downloads-icon.png" width="40" height="40" />
+                                </td>
+                                <td style="background-color: whitesmoke !important;">
+                                    <mat-radio-group aria-labelledby="reportformat-radio-group-label" class="reportformat-radio-group" (change)="reportFormatChange($event)">
+                                        <mat-radio-button class="reportformat-radio-button" *ngFor="let reportFormat of reportFormats" [value]="reportFormat">
+                                            {{reportFormat}} &nbsp;&nbsp;
+                                        </mat-radio-button>
+                                    </mat-radio-group>
+                                </td>
+                            </tr>
+                        </table>
+                    </section>
+                </div>
+                <div [hidden]="!showReport">
+                    <br>
+                    <ssrs-reportviewer [reportserver]="reportServerAudit" [reporturl]="reportUrlAudit" [showparameters]="showParametersAudit" [format]="selectedReportFormat" [extension]="extensionAudit" [parameters]="parametersAudit" [language]="languageAudit" [width]="widthAudit"
+                        [height]="heightAudit" [toolbar]="toolbarAudit">
+                    </ssrs-reportviewer>
+                </div>
+            </form>
+        </mat-card-content>
+    </mat-card>
+</div>

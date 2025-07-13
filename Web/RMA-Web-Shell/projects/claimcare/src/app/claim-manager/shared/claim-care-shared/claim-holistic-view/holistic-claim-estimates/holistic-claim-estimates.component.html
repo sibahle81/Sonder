@@ -1,0 +1,103 @@
+<mat-card *ngIf="(isLoading$ | async)">
+    <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+    <label class="mat-label other-label"><i>loading estimates...please wait</i></label>
+</mat-card>
+
+<div *ngIf="!(isLoading$ | async)">
+    <div class="menu-bar">
+        <span class="material-icons">
+            calculate
+        </span>
+        Estimates
+        <span (click)="refresh()" class="material-icons pointer right"
+            matTooltip="refresh">
+            restart_alt
+        </span>
+        <span *ngIf="!isPolicyClaimProductCategoryTypeVaps && currentUser?.isInternalUser"
+            (click)="openSelectBenefitDialog()" class="material-icons pointer right" matTooltip="select claim benefits">
+            edit_attributes
+        </span>
+        <span
+            *ngIf="dataSource?.length > 0 && !isPolicyClaimProductCategoryTypeVaps && supportedLiabilityStatuses.includes(claim?.claimLiabilityStatus) && currentUser?.isInternalUser"
+            (click)="edit()" class="material-icons pointer right" matTooltip="edit & re-calculate PD">
+            calculate
+        </span>
+    </div>
+
+    <div [hidden]="!(dataSource && dataSource.length > 0)">
+        <mat-table #table [dataSource]="dataSource" matSort id="tblData">
+            <ng-container matColumnDef="estimateType">
+                <mat-header-cell *matHeaderCellDef>Estimate Type</mat-header-cell>
+                <mat-cell *matCellDef="let row">{{row.estimateType && row.estimateType > 0 ?
+                    getEstimateType(row.estimateType) : 'N/A (not configured)'}}</mat-cell>
+                <mat-footer-cell *matFooterCellDef></mat-footer-cell>
+            </ng-container>
+            <ng-container matColumnDef="estDays">
+                <mat-header-cell *matHeaderCellDef>Estimated Days</mat-header-cell>
+                <mat-cell *matCellDef="let row">{{row.estimatedDaysOff && row.estimatedDaysOff > 0 ?
+                    row.estimatedDaysOff + ' Day(s)' : '-'}}</mat-cell>
+                <mat-footer-cell *matFooterCellDef></mat-footer-cell>
+            </ng-container>
+            <ng-container matColumnDef="estPd">
+                <mat-header-cell *matHeaderCellDef>Estimated PD%</mat-header-cell>
+                <mat-cell *matCellDef="let row">{{ formatEstimatePd(row) }}</mat-cell>
+                <mat-footer-cell *matFooterCellDef></mat-footer-cell>
+            </ng-container>
+            <ng-container matColumnDef="estAmount">
+                <mat-header-cell *matHeaderCellDef>Estimated Amount</mat-header-cell>
+                <mat-cell class="pointer" matTooltip="{{ row.calcOperands == null || row.calcOperands === '' ? 'N/A' : row.calcOperands }}" 
+                    *matCellDef="let row">{{row.estimatedValue && row.estimatedValue > 0 ?
+                    'R ' + formatMoney(row.estimatedValue.toFixed(2)) : '-'}}</mat-cell>
+                <mat-footer-cell *matFooterCellDef><b>{{'R ' + calculateEstimatedAmount()}}</b></mat-footer-cell>
+            </ng-container>
+            <ng-container matColumnDef="allocaAmount">
+                <mat-header-cell *matHeaderCellDef>Allocated Amount</mat-header-cell>
+                <mat-cell *matCellDef="let row">{{row.allocatedValue && row.allocatedValue > 0 ?
+                    'R ' + formatMoney(row.allocatedValue.toFixed(2)) : '-'}}</mat-cell>
+                <mat-footer-cell *matFooterCellDef><b>{{'R ' + calculateAllocatedAmount()}}</b></mat-footer-cell>
+            </ng-container>
+            <ng-container matColumnDef="authAmount">
+                <mat-header-cell *matHeaderCellDef>Authorised Amount</mat-header-cell>
+                <mat-cell *matCellDef="let row">{{row.authorisedValue && row.authorisedValue > 0 ?
+                    'R ' + formatMoney(row.authorisedValue.toFixed(2)) : '-'}}</mat-cell>
+                <mat-footer-cell *matFooterCellDef><b>{{'R ' + calculateAuthorisedAmount()}}</b></mat-footer-cell>
+            </ng-container>
+            <ng-container matColumnDef="oustandingDaysOff">
+                <mat-header-cell *matHeaderCellDef>Oustanding Days</mat-header-cell>
+                <mat-cell *matCellDef="let row">{{row.estimatedDaysOff && row.estimatedDaysOff > 0 ?
+                    row.outstandingDaysOff + ' Day(s)' : '-'}}</mat-cell>
+                <mat-footer-cell *matFooterCellDef></mat-footer-cell>
+            </ng-container>
+
+            <ng-container matColumnDef="actions">
+                <mat-header-cell *matHeaderCellDef>
+                    <span class="material-icons noHover">
+                        more_vert
+                    </span>
+                </mat-header-cell>
+                <mat-cell *matCellDef="let row" [matMenuTriggerFor]="menu" (click)="filterMenu(row)">
+                    <span class="material-icons pointer right">
+                        more_vert
+                    </span>
+                    <span class="material-icons pointer right" (click)="openAuditDialog(row)">
+                        fingerprint
+                    </span>
+                    <mat-menu #menu="matMenu">
+                        <button mat-menu-item *ngFor="let menu of menus" (click)="onMenuSelect(row, menu)"
+                            disabled={{menu.disable}}>{{menu.title}}</button>
+                    </mat-menu>
+                </mat-cell>
+                <mat-footer-cell *matFooterCellDef></mat-footer-cell>
+            </ng-container>
+
+            <mat-header-row *matHeaderRowDef="getDisplayedColumns()"></mat-header-row>
+            <mat-row *matRowDef="let row; columns: getDisplayedColumns();"></mat-row>
+            <mat-footer-row *matFooterRowDef="getDisplayedColumns()"></mat-footer-row>
+        </mat-table>
+    </div>
+    <div *ngIf="!(dataSource && dataSource.length > 0)">
+        <mat-card>
+            <label class="mat-label other-label"><i>No estimates found...</i></label>
+        </mat-card>
+    </div>
+</div>

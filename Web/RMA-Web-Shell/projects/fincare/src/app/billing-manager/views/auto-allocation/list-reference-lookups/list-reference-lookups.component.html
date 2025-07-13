@@ -1,0 +1,29 @@
+<div [hidden]="allocationLookupDataSource.data.length === 0" class="table-container">
+  <p class="labelParagraph">Payment Allocation Reference Lookups</p>
+    <mat-table #table [dataSource]="allocationLookupDataSource" matSort #sort2="matSort">
+        <ng-container matColumnDef="debtorNumber">
+            <mat-header-cell *matHeaderCellDef mat-sort-header>Debtor Number</mat-header-cell>
+            <mat-cell *matCellDef="let row">{{row.debtorNumber}}</mat-cell>
+        </ng-container>
+                      
+        <ng-container matColumnDef="debtorName">
+            <mat-header-cell *matHeaderCellDef mat-sort-header>Debtor Name</mat-header-cell>
+            <mat-cell *matCellDef="let row">{{row.debtorName}}</mat-cell>
+        </ng-container>
+                      
+        <ng-container matColumnDef="userReference">
+          <mat-header-cell *matHeaderCellDef mat-sort-header>Reference Number</mat-header-cell>
+          <mat-cell *matCellDef="let row">{{row.userReference}}</mat-cell>
+        </ng-container>
+              
+        <mat-header-row *matHeaderRowDef="displayedAllocationLookupColumns"></mat-header-row>
+        <mat-row *matRowDef="let row; columns: displayedAllocationLookupColumns;"></mat-row>
+    </mat-table>
+    <mat-paginator 
+      #paginator
+      [length]="allocationLookupDataSource.data.length"
+      [pageIndex]="0"
+      [pageSize]="5"
+      [pageSizeOptions]="[5, 10, 25, 100]">
+    </mat-paginator>
+</div>

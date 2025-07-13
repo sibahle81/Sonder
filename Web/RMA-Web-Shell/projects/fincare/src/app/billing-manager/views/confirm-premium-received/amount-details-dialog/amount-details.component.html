@@ -1,0 +1,33 @@
+<div *ngIf="!undoCheck">
+  <form [formGroup]="form" (ngSubmit)="onClick()" class="mat-container" class="form">
+    <mat-form-field class="mat-form-field-righ">
+      <label>Actual amount paid for policy: <strong>{{policyNumber}}</strong></label><br/>
+      <label style="font-size: x-small;">balance remaining: <strong>{{balance | number:'1.2-2'}}</strong></label><br/>
+      <label style="font-size: x-small;">expected premium: <strong>{{expectedAmount | number:'1.2-2'}}</strong></label>
+      <input matInput maxlength="50" formControlName="amount" name="amount" id="amount" type="text"  DecimalNumber="true">
+      <label *ngIf="message != ''" style="font-size: x-small; color: red">{{message}}</label>
+    </mat-form-field>
+    <div class="form-group-button mat-form-button">
+      <div class="form-buttons" (click)="onClick()">
+        <button class="button float-button submit-button" [disabled]="!(form.valid)">Submit</button>
+      </div>
+      <div class="form-buttons submit-button">
+        <button type="button" (click)="close()" class="button float-button">Cancel</button>
+      </div>
+    </div>
+  </form>
+</div>
+
+
+<div *ngIf="undoCheck">
+  <label>Are you sure you want to undo?</label>
+  <br />
+  <div class="form-group-button mat-form-button">
+    <div class="form-buttons" (click)="onClick()">
+      <button class="button float-button submit-button">Yes</button>
+    </div>
+    <div class="form-buttons submit-button">
+      <button type="button" (click)="close()" class="button float-button">Cancel</button>
+    </div>
+  </div>
+</div>

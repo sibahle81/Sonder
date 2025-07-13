@@ -1,0 +1,129 @@
+<mat-card>
+  <div class="menu-bar">
+    <span class="material-icons">
+      search
+    </span>&nbsp;{{title}}
+    <span *ngIf="!(dataSource.loading$ | async) || (isLoading$ | async)" class="material-icons pointer right"
+      matTooltip="refresh" (click)="reset()">
+      restart_alt
+    </span>
+  </div>
+
+  <mat-card *ngIf="(dataSource.loading$ | async) || (isLoading$ | async)">
+    <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+    <label class="mat-label other-label"><i>{{loadingMessage$ | async}}</i></label>
+  </mat-card>
+
+  <div [hidden]="(dataSource.loading$ | async) || (isLoading$ | async)">
+    <mat-card>
+      <date-range-filter [triggerReset]="triggerReset" [defaultDateRange]="defaultDateRange"
+        (parameterEmit)="setParameters($event)"></date-range-filter>
+      <form [formGroup]="form" class="mat-container details-form" novalidate>
+        <mat-form-field [floatLabel]="'never'">
+          <input matInput maxlength="50" #searchTerm name="searchTerm" id="searchTerm" formControlName="searchTerm" minLength="3" class="inputColor elementBox">
+          <mat-placeholder *ngIf="this.currentUser?.isInternalUser" class="placeholder">Search by event number,
+            PEV/Claim number, member name, member number, passport,
+            ID number, employee surname, DOB (yyyy-mm-dd), industry number or employee number
+          </mat-placeholder>
+          <mat-placeholder *ngIf="!this.currentUser?.isInternalUser" class="placeholder">Search by event number,
+            PEV/Claim number, passport, ID number, employee surname, DOB(yyyy-mm-dd), industry number or employee number
+          </mat-placeholder>
+          <mat-icon *ngIf="!this.autoSearch" class="search-icon" (click)="maualSearch(searchTerm.value)" matSuffix>search</mat-icon>
+          <mat-error *ngIf="hasError">
+              Please enter a search term longer than 3 characters
+          </mat-error>
+        </mat-form-field>
+      </form>
+      <div [hidden]="!dataSource?.ready() || (dataSource.loading$ | async)">
+        <mat-table #table [dataSource]="dataSource" multiTemplateDataRows matSort (matSortChange)="getData()">
+          <ng-container matColumnDef="personEventNumber">
+            <mat-header-cell *matHeaderCellDef mat-sort-header>PEV/Claim Number</mat-header-cell>
+            <mat-cell *matCellDef="let row">{{row.claimNumber ? row.claimNumber :
+              row.personEventReferenceNumber}}</mat-cell>
+          </ng-container>
+
+          <ng-container matColumnDef="eventDate">
+            <mat-header-cell *matHeaderCellDef mat-sort-header>Event Date</mat-header-cell>
+            <mat-cell *matCellDef="let row">{{row.eventDate | date:'mediumDate'}}</mat-cell>
+          </ng-container>
+
+          <ng-container matColumnDef="memberNumber">
+            <mat-header-cell *matHeaderCellDef mat-sort-header>Member Number</mat-header-cell>
+            <mat-cell *matCellDef="let row">{{row.memberNumber ? row.memberNumber : ''}}
+            </mat-cell>
+          </ng-container>
+
+          <ng-container matColumnDef="claimLiabilityStatus">
+            <mat-header-cell *matHeaderCellDef>Claim Liability Status </mat-header-cell>
+            <mat-cell [ngClass]="{'pending': !row.claimLiabilityStatus}" *matCellDef="let row">
+              {{row.claimLiabilityStatus ? getLiabilityStatus(row.claimLiabilityStatus) :
+              '*Pending'}}</mat-cell>
+          </ng-container>
+
+          <ng-container matColumnDef="memberName">
+            <mat-header-cell *matHeaderCellDef mat-sort-header>Member Name</mat-header-cell>
+            <mat-cell *matCellDef="let row">{{row.memberName ? row.memberName : ''}}</mat-cell>
+          </ng-container>
+
+          <ng-container matColumnDef="identificationNumber">
+            <mat-header-cell *matHeaderCellDef>Identification Number</mat-header-cell>
+            <mat-cell *matCellDef="let row">{{row.identificationNumber}}</mat-cell>
+          </ng-container>
+
+          <ng-container matColumnDef="insuredLife">
+            <mat-header-cell *matHeaderCellDef>Employee Name</mat-header-cell>
+            <mat-cell *matCellDef="let row">{{row.insuredLife ? row.insuredLife : ''}}</mat-cell>
+          </ng-container>
+
+          <ng-container matColumnDef="createdDate">
+            <mat-header-cell *matHeaderCellDef mat-sort-header>Created Date</mat-header-cell>
+            <mat-cell *matCellDef="let row">{{row.createdDate | date:'mediumDate'}}</mat-cell>
+          </ng-container>
+
+          <ng-container matColumnDef="isStraightThroughProcess">
+            <mat-header-cell *matHeaderCellDef>Is STP</mat-header-cell>
+            <mat-cell *matCellDef="let row">{{row.isStraightThroughProcess}}</mat-cell>
+          </ng-container>
+
+          <ng-container matColumnDef="suspiciousTransactionStatus">
+            <mat-header-cell *matHeaderCellDef>Is STM</mat-header-cell>
+            <mat-cell *matCellDef="let row">
+              {{getSuspiciousTransactionStatus(row.suspiciousTransactionStatus)}}
+            </mat-cell>
+          </ng-container>
+
+          <ng-container matColumnDef="actions">
+            <mat-header-cell *matHeaderCellDef>Action</mat-header-cell>
+            <mat-cell *matCellDef="let row" [matMenuTriggerFor]="menu" (click)="filterMenu(row)">
+              <span class="material-icons pointer right">more_vert</span>
+              <mat-menu #menu="matMenu">
+                <button mat-menu-item *ngFor="let menu of menus" (click)="onMenuSelect(row, menu)"
+                  disabled={{menu.disable}}>{{menu.title}}</button>
+              </mat-menu>
+            </mat-cell>
+          </ng-container>
+
+          <mat-header-row *matHeaderRowDef="getDisplayedColumns()"></mat-header-row>
+          <mat-row *matRowDef="let row; columns: getDisplayedColumns();"></mat-row>
+        </mat-table>
+
+        <mat-paginator #paginator [pageIndex]="0" [pageSize]="5" [pageSizeOptions]="[5, 10, 25, 100]"
+          [length]="this.dataSource.rowCount$ | async" (page)="getData()">
+        </mat-paginator>
+      </div>
+    </mat-card>
+  </div>
+
+  <mat-card *ngIf="this.displayNotFound() && dataSource?.data?.data?.length <= 0 && !(dataSource.loading$ | async) && !(isLoading$ | async)">
+    <div class="site-font grey">
+      <p class="grey">Your search - <strong>{{currentQuery}}</strong> - did not match any records.</p>
+      <span>Suggestions: </span>
+      <ul>
+        <li>Make sure that all words are spelled correctly.</li>
+        <li>Try different keywords.</li>
+        <li>Try more general keywords.</li>
+        <li>Try fewer keywords.</li>
+      </ul>
+    </div>
+  </mat-card>
+</mat-card>

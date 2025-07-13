@@ -1,0 +1,124 @@
+<h3>Payment Reversal</h3>
+<div *ngIf="isAuthorized; else notAuthorized">
+  <mat-accordion>
+    <mat-expansion-panel [expanded]="panelOpenState">
+      <mat-expansion-panel-header>
+        <mat-panel-title>
+          <h4>Search</h4>
+        </mat-panel-title>
+      </mat-expansion-panel-header>
+      <app-seach-debtor (itemSelected)="onAccountSelected($event)"></app-seach-debtor>
+    </mat-expansion-panel>
+  </mat-accordion>
+  <br />
+  <div [hidden]="hideClientDetails">
+    <mat-card>
+      <div  class="grid-inputs"><h4>Source Debtor Account</h4><h4>{{finPayeNumber}}</h4></div>    
+      <div  class="grid-inputs"><h4>Source Debtor Name</h4><h4>{{rolePlayerName | titlecase}}</h4></div> 
+    </mat-card>
+  </div>  
+  <br />
+  <form [formGroup]="form" novalidate>
+    <mat-card>
+      <p><b>To Debtor Details</b> - (Not selected then reversal will be put in suspense)</p>      
+      <section>
+        <div *ngIf="!hideToDebtorDetails">        
+          <div class="grid-inputs">
+            <h4>Debtor Account</h4><h4>{{accountSearchResult.finPayeNumber}}</h4>
+          </div>
+        </div>
+      </section>
+      <section>
+        <mat-form-field class="mat-form-field">
+          <input matInput formControlName="toDebtor">
+        </mat-form-field>
+        <span (click)="onCaptureToDebtor()" matTooltip="edit" class="material-icons icn icn-button pointer edit-icon">
+          edit
+        </span>
+      </section>     
+    </mat-card>  
+    <mat-card>
+      <concurrent-period (periodSelected)="concurrentPeriodSelected($event)"></concurrent-period>
+    </mat-card>
+  </form>
+  <br />
+  <div *ngIf="isLoading && !isRefreshing">
+    <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+    <label class="mat-label other-label"><i>Loading Transactions for debtor...please wait</i></label>
+  </div>
+  <div *ngIf="isSubmitting">
+    <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+    <label class="mat-label other-label"><i>Submitting reversals...please wait</i></label>
+  </div>
+  <div class="error-message" *ngIf="searchFailedMessage.length > 0">{{searchFailedMessage}}</div>
+  <div class="div_scroll" *ngIf="!(isLoading && !isRefreshing)">
+    <mat-card>
+      <mat-table #table [dataSource]="datasource" matSort>
+        <ng-container matColumnDef="transactionType">
+          <mat-header-cell *matHeaderCellDef mat-sort-header> Type </mat-header-cell>
+          <mat-cell *matCellDef="let row"> {{row.transactionType}}
+          </mat-cell>
+        </ng-container>
+        <ng-container matColumnDef="documentNumber">
+          <mat-header-cell *matHeaderCellDef mat-sort-header>Document Number</mat-header-cell>
+          <mat-cell *matCellDef="let row"> {{row.documentNumber}} </mat-cell>
+        </ng-container>
+        <ng-container matColumnDef="description">
+          <mat-header-cell *matHeaderCellDef mat-sort-header>Description</mat-header-cell>
+          <mat-cell *matCellDef="let row"> {{row.description}} </mat-cell>
+        </ng-container>
+        <ng-container matColumnDef="transactionDate">
+          <mat-header-cell *matHeaderCellDef mat-sort-header>Document Date</mat-header-cell>
+          <mat-cell *matCellDef="let row"> {{row.transactionDate | date:'yyyy/MM/dd'}} </mat-cell>
+        </ng-container>
+        <ng-container matColumnDef="amount">
+          <mat-header-cell *matHeaderCellDef mat-sort-header>Amount</mat-header-cell>
+          <mat-cell *matCellDef="let row" class="right-aligned-amounts"> {{row.amount | currency:'R'}} </mat-cell>
+        </ng-container>
+        <ng-container matColumnDef="balance">
+          <mat-header-cell *matHeaderCellDef mat-sort-header>Balance</mat-header-cell>
+          <mat-cell *matCellDef="let row" class="right-aligned-amounts"> {{row.balance | currency:'R'}} </mat-cell>
+        </ng-container>
+        <ng-container matColumnDef="actions">
+          <mat-header-cell *matHeaderCellDef>Reverse</mat-header-cell>
+          <mat-cell *matCellDef="let row; let i = index" style="justify-content:center;display:flex !important;">
+            <mat-checkbox [checked]="selectedTransactionIds.indexOf(row.itemId) > -1"
+              (change)="refundTransactionChecked($event,row)"
+              *ngIf="(row.transactionType === 'Payment'); else noReversalCheck">
+            </mat-checkbox>
+            <ng-template #noReversalCheck>
+              <span>&nbsp;</span>
+            </ng-template>
+          </mat-cell>
+        </ng-container>
+        <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
+        <mat-row *matRowDef="let row; columns: displayedColumns;"></mat-row>
+      </mat-table>
+      <mat-paginator #paginator [pageSize]="10" [pageSizeOptions]="[5, 10, 25, 100]">
+      </mat-paginator>
+      <br />
+      <div *ngIf="isCheckingBankAccountClass$ | async">
+        <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+        <label class="mat-label other-label"><i>checking for cross class allocation...please wait</i></label>
+      </div>
+      <div style="font-size:x-small; color: red;">{{message}}</div>
+      <br />
+      <div *ngIf="showSubmit" class="form-buttons" style="margin-left: 10px">
+        <button class="button float-button submit-button" (click)="submitReversals()">Submit</button>
+        <button type="button" class="button float-button submit-button" (click)="back()">Back</button>
+      </div>
+      <div *ngIf="!showSubmit">
+        <button type="button" class="button float-button submit-button" (click)="back()">Back</button>
+      </div>
+      <br /><br />
+    </mat-card>
+  </div>
+</div>
+<ng-template #notAuthorized>
+  <div>
+    <div class="wizard-permissions-error">You do not have sufficient permissions to do payment reversals.</div>
+    <div (click)="navigateBack()" class="form-buttons submit-button">
+      <button type="button" class="button float-button">Back</button>
+    </div>
+  </div>
+</ng-template>

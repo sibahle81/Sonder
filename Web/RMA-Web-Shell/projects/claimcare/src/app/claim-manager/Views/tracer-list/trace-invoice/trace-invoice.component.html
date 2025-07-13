@@ -1,0 +1,40 @@
+<div>
+  <mat-card-header *ngIf="invoiceList.length === 0">
+    <mat-card-title class="wizard-font card-title grey">
+      <h1 style="padding: 0;">Tracer Invoices</h1>
+    </mat-card-title>
+    <mat-card-subtitle>
+      <span class="grey site-font">Currently no Invoices</span>
+    </mat-card-subtitle>
+  </mat-card-header>
+  <mat-card-header *ngIf="invoiceList.length !== 0">
+    <mat-card-title class="wizard-font card-title ">
+      <h1 style="padding: 0;">Tracer Invoices</h1>
+    </mat-card-title>
+    <mat-card-subtitle>
+      <span class="site-font">Invoices for Tracer</span>
+    </mat-card-subtitle>
+  </mat-card-header>
+  <mat-table #table [dataSource]="invoiceList" matSort *ngIf="invoiceList.length !== 0">
+    <ng-container matColumnDef="createdDate">
+      <mat-header-cell *matHeaderCellDef mat-sort-header> Created Date
+      </mat-header-cell>
+      <mat-cell *matCellDef="let row"> {{row.createdDate | date:'yyyy/MM/dd'}}
+      </mat-cell>
+    </ng-container>
+    <ng-container matColumnDef="paymentStatus">
+      <mat-header-cell *matHeaderCellDef mat-sort-header> Payment Status </mat-header-cell>
+      <mat-cell *matCellDef="let row"> {{paymentStatusEnum[row.paymentStatus]}} </mat-cell>
+    </ng-container>
+    <ng-container matColumnDef="tracingFee">
+      <mat-header-cell *matHeaderCellDef mat-sort-header> Tracing Fee </mat-header-cell>
+      <mat-cell *matCellDef="let row"> {{row.tracingFee | currency:'R '}} </mat-cell>
+    </ng-container>
+
+    <mat-header-row *matHeaderRowDef="displayTracerColumns;"></mat-header-row>
+    <mat-row *matRowDef="let row; columns: displayTracerColumns;"></mat-row>
+  </mat-table>
+  <div (click)="close()">
+    <button type="button" class="button float-button">Close</button>
+  </div>
+</div>

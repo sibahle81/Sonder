@@ -1,0 +1,35 @@
+<div class="mat-container">
+  <div *ngIf="isLoading">
+    <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+</div>
+  <div class="header-row" fxLayoutAlign="space-between center">
+    <div class="header-title">
+      <label class="form-label"><b>Delete Claim</b></label>
+    </div>
+  </div>
+  <hr />
+  <div class="content-holder">
+    <textarea
+      class="form-control"
+      id="text-input-control"
+      required
+      [(ngModel)]="noteText"
+    ></textarea>
+  </div>
+  <br />
+  <div
+    class="form-group-button mat-form-button matformgroupbutton"
+    fxLayoutAlign="end end"
+  >
+    <button type="button" class="button float-button" (click)="deleteClaim()">
+      OK
+    </button>
+    <button
+      type="button"
+      class="button float-button"
+      (click)="dialogRef.close()"
+    >
+      Cancel
+    </button>
+  </div>
+</div>

@@ -1,0 +1,265 @@
+<div class="menu-bar">
+  <span class="material-icons">groups</span>&nbsp;<b>Employee Documents</b>
+  <span class="material-icons pointer right heading" matTooltip="close" (click)="view()" *ngIf="viewSelectedDocuments">
+    close
+  </span>
+  <span *ngIf="!isWizard && !viewSelectedDocuments" (click)="expand()"
+    class="material-icons pointer right" matTooltip="Close Employee Document Details">
+    cancel
+  </span>
+</div>
+<div *ngIf="isViewMode">
+  <mat-card>
+    <div *ngIf="viewSelectedDocuments && selectedPersonEvent && !(isLoading$ | async)">
+      <mat-card-content>
+        <mat-card>
+          <claim-accident-document #claimAccidentDocumentComponent [personEvent]="selectedPersonEvent"
+            [eventModel]="event" [isWizard]="isWizard" (checkReportInDigiCare)="checkReportInDigiCare($event)">
+          </claim-accident-document>
+
+          <div class="form-group-button mat-form-button">
+            <button [disabled]="isDisabled || !canCaptureFirstMedicalReport"
+              *ngIf="isReadOnly && !isStraigthThroughProcess" class="button submit-button"
+              (click)="sendForCapturing()">Send For Capturing</button>
+          </div>
+        </mat-card>
+        <div *ngIf="(!isWizard)">
+          <br>
+          <mat-card>
+            <h2>First Medical Report</h2>
+
+            <div *ngIf="(isLoadingFirstMedicalReports$ | async)">
+              <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+              <label class="mat-label other-label"><i>Getting First Medical Report Details...please wait</i></label>
+              <br />
+            </div>
+
+            <div *ngIf="!(isLoadingFirstMedicalReports$ | async) && !showFirstMedicalReportTable">
+              <label class="mat-label other-label"><i>No First Medical Report details have been
+                  added...</i></label><br />
+            </div>
+
+            <div *ngIf="!(isLoadingFirstMedicalReports$ | async) && showFirstMedicalReportTable">
+              <mat-table #table [dataSource]="medicalReportDetails" matSort>
+
+                <!--  Healthcare Provider Name -->
+                <ng-container matColumnDef="healthcareProviderName">
+                  <mat-header-cell *matHeaderCellDef> Healthcare Provider Name </mat-header-cell>
+                  <mat-cell *matCellDef="let row"> {{row.medicalReportForm.healthcareProviderName}} </mat-cell>
+                </ng-container>
+
+                <!-- Healthcare Provider Number -->
+                <ng-container matColumnDef="healthcareProviderPracticeNumber">
+                  <mat-header-cell *matHeaderCellDef> Healthcare Provider Practice Number</mat-header-cell>
+                  <mat-cell *matCellDef="let row"> {{row.medicalReportForm.healthcareProviderPracticeNumber}}
+                  </mat-cell>
+                </ng-container>
+
+                <!-- ICD10Code Column -->
+                <ng-container matColumnDef="icd10Codes">
+                  <mat-header-cell *matHeaderCellDef> ICD10Code </mat-header-cell>
+                  <mat-cell *matCellDef="let row"> {{row.medicalReportForm.icd10Codes}}
+                  </mat-cell>
+                </ng-container>
+
+                <!-- Actions Column -->
+                <ng-container matColumnDef="actions">
+                  <mat-header-cell *matHeaderCellDef mat-sort-header> Actions </mat-header-cell>
+                  <mat-cell *matCellDef="let row" [matMenuTriggerFor]="menu" (click)="filterMenuFirstMedical(row)">
+                    <span class="material-icons pointer right">more_vert</span>
+                    <mat-menu #menu="matMenu">
+                      <button disabled="{{menu.disable}}" mat-menu-item *ngFor="let menu of firstMedicalMenus"
+                        (click)="onFirstMedicalMenuItemClick(row, menu)">{{menu.title}}</button>
+                    </mat-menu>
+                  </mat-cell>
+                </ng-container>
+
+                <mat-header-row *matHeaderRowDef="medicalDisplayedColumns"></mat-header-row>
+                <mat-row *matRowDef="let row; columns: medicalDisplayedColumns;"></mat-row>
+              </mat-table>
+            </div>
+
+          </mat-card>
+          <br>
+          <mat-card>
+            <h2>Progress Medical Reports</h2>
+
+            <div *ngIf="!(isLoadingProgressMedicalReports$ | async) && !showProgressMedicalReportTable">
+              <label class="mat-label other-label"><i>No Progress Medical Report details have been
+                  added...</i></label><br />
+            </div>
+
+            <div *ngIf="(isLoadingProgressMedicalReports$ | async)">
+              <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+              <label class="mat-label other-label"><i>Getting Progress Medical Report Details...please wait</i></label>
+              <br />
+            </div>
+
+            <div *ngIf="!(isLoadingProgressMedicalReports$ | async) && showProgressMedicalReportTable">
+              <mat-table #table [dataSource]="progressMedicalReportDetails" matSort class="scrollTable">
+
+                <!--  Name Column -->
+                <ng-container matColumnDef="healthcareProviderName">
+                  <mat-header-cell *matHeaderCellDef> Healthcare Provider Name </mat-header-cell>
+                  <mat-cell *matCellDef="let row"> {{row.medicalReportForm.healthcareProviderName}} </mat-cell>
+                </ng-container>
+
+                <!-- Surname Column -->
+                <ng-container matColumnDef="healthcareProviderPracticeNumber">
+                  <mat-header-cell *matHeaderCellDef> Healthcare Provider Practice Number</mat-header-cell>
+                  <mat-cell *matCellDef="let row"> {{row.medicalReportForm.healthcareProviderPracticeNumber}}
+                  </mat-cell>
+                </ng-container>
+
+                <!-- idPassportNumber Column -->
+                <ng-container matColumnDef="icd10Codes">
+                  <mat-header-cell *matHeaderCellDef> ICD10Code </mat-header-cell>
+                  <mat-cell *matCellDef="let row"> {{row.medicalReportForm.icd10Codes}}
+                  </mat-cell>
+                </ng-container>
+
+                <!-- Actions Column -->
+                <ng-container matColumnDef="actions">
+                  <mat-header-cell *matHeaderCellDef mat-sort-header> Actions </mat-header-cell>
+                  <mat-cell *matCellDef="let row" [matMenuTriggerFor]="menu" (click)="filterProgressMedicalMenu(row)">
+                    <span class="material-icons pointer right">more_vert</span>
+                    <mat-menu #menu="matMenu">
+                      <button disabled="{{menu.disable}}" mat-menu-item *ngFor="let menu of progressMedicalMenus"
+                        (click)="onProgressMedicalMenuItemClick(row, menu)">{{menu.title}}</button>
+                    </mat-menu>
+                  </mat-cell>
+                </ng-container>
+
+                <mat-header-row *matHeaderRowDef="medicalDisplayedColumns"></mat-header-row>
+                <mat-row *matRowDef="let row; columns: medicalDisplayedColumns;"></mat-row>
+              </mat-table>
+            </div>
+          </mat-card>
+          <br>
+          <mat-card>
+            <h2>Final Medical Report</h2>
+
+            <div *ngIf="(isLoadingFinalMedicalReports$ | async)">
+              <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+              <label class="mat-label other-label"><i>Getting Final Medical Report Details...please wait</i></label>
+              <br />
+            </div>
+
+            <div *ngIf="!(isLoadingFinalMedicalReports$ | async) && !showFinalMedicalReportTable">
+              <label class="mat-label other-label"><i>No Final Medical Report details have been
+                  added...</i></label><br />
+            </div>
+
+            <div *ngIf="!(isLoadingFinalMedicalReports$ | async) && showFinalMedicalReportTable">
+              <mat-table #table [dataSource]="finalMedicalReportDetails" matSort>
+
+                <!--  Name Column -->
+                <ng-container matColumnDef="healthcareProviderName">
+                  <mat-header-cell *matHeaderCellDef> Healthcare Provider Name </mat-header-cell>
+                  <mat-cell *matCellDef="let row"> {{row.medicalReportForm.healthcareProviderName}}
+                  </mat-cell>
+                </ng-container>
+
+                <!-- Surname Column -->
+                <ng-container matColumnDef="healthcareProviderPracticeNumber">
+                  <mat-header-cell *matHeaderCellDef> Healthcare Provider Practice Number</mat-header-cell>
+                  <mat-cell *matCellDef="let row">
+                    {{row.medicalReportForm.healthcareProviderPracticeNumber}} </mat-cell>
+                </ng-container>
+
+                <!-- idPassportNumber Column -->
+                <ng-container matColumnDef="icd10Codes">
+                  <mat-header-cell *matHeaderCellDef> ICD10Code </mat-header-cell>
+                  <mat-cell *matCellDef="let row"> {{row.medicalReportForm.icd10Codes}}
+                  </mat-cell>
+                </ng-container>
+
+                <!-- Actions Column -->
+                <ng-container matColumnDef="actions">
+                  <mat-header-cell *matHeaderCellDef mat-sort-header> Actions </mat-header-cell>
+                  <mat-cell *matCellDef="let row" [matMenuTriggerFor]="menu" (click)="filterMenuFinalMedical(row)">
+                    <span class="material-icons pointer right">more_vert</span>
+                    <mat-menu #menu="matMenu">
+                      <button disabled="{{menu.disable}}" mat-menu-item *ngFor="let menu of finalMedicalMenus"
+                        (click)="onFinalMedicalMenuItemClick(row, menu)">{{menu.title}}</button>
+                    </mat-menu>
+                  </mat-cell>
+                </ng-container>
+
+                <mat-header-row *matHeaderRowDef="medicalDisplayedColumns"></mat-header-row>
+                <mat-row *matRowDef="let row; columns: medicalDisplayedColumns;"></mat-row>
+              </mat-table>
+            </div>
+          </mat-card>
+        </div>
+      </mat-card-content>
+    </div>
+
+    <div *ngIf="(isLoading$ | async)">
+      <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+      <label class="mat-label other-label"><i>Sending Details To DigiCare...please wait</i></label>
+      <br />
+    </div>
+
+    <div *ngIf="!(isLoading$ | async) && !showTable && !viewSelectedDocuments">
+      <label class="mat-label other-label"><i>No employee details have been added...</i></label><br />
+    </div>
+
+    <div *ngIf="!(isLoading$ | async) && showTable && !viewSelectedDocuments">
+      <mat-table #table [dataSource]="dataSource" matSort>
+
+        <!-- Name Column -->
+        <ng-container matColumnDef="name">
+          <mat-header-cell *matHeaderCellDef> Name </mat-header-cell>
+          <mat-cell *matCellDef="let row"> {{row.rolePlayer.person.firstName}} </mat-cell>
+        </ng-container>
+
+        <!-- Surname Column -->
+        <ng-container matColumnDef="surname">
+          <mat-header-cell *matHeaderCellDef> Surname </mat-header-cell>
+          <mat-cell *matCellDef="let row"> {{row.rolePlayer.person.surname}} </mat-cell>
+        </ng-container>
+
+        <!-- idPassportNumber Column -->
+        <ng-container matColumnDef="idPassportNumber">
+          <mat-header-cell *matHeaderCellDef> Id/Passport Number </mat-header-cell>
+          <mat-cell *matCellDef="let row"> {{row.rolePlayer.person.idNumber ? row.rolePlayer.person.idNumber:
+            row.rolePlayer.person.passportNumber}}
+          </mat-cell>
+        </ng-container>
+        
+        <ng-container matColumnDef="isVopdVerified">
+          <mat-header-cell  *matHeaderCellDef> Is VOPD Verfied </mat-header-cell>
+          <mat-cell *matCellDef="let row"> {{row.rolePlayer.person.isVopdVerified}}
+          </mat-cell>
+        </ng-container>
+     
+        <!-- Actions Column -->
+        <ng-container matColumnDef="actions">
+          <mat-header-cell *matHeaderCellDef mat-sort-header> Actions </mat-header-cell>
+          <mat-cell *matCellDef="let row" [matMenuTriggerFor]="menu" (click)="filterMenu(row)">
+            <span class="material-icons pointer right">more_vert</span>
+            <mat-menu #menu="matMenu">
+              <button disabled="{{menu.disable}}" mat-menu-item *ngFor="let menu of menus"
+                (click)="onMenuItemClick(row, menu)">{{menu.title}}</button>
+            </mat-menu>
+          </mat-cell>
+        </ng-container>
+
+        <mat-header-row *matHeaderRowDef="getDisplayedColumns()"></mat-header-row>
+        <mat-row *matRowDef="let row; columns: getDisplayedColumns();"></mat-row>
+      </mat-table>
+      <mat-paginator #paginator [length]="dataSource.data ? dataSource.data.length : 0" [pageIndex]="0" [pageSize]="5"
+        [pageSizeOptions]="[5, 10, 25, 100]">
+      </mat-paginator>
+    </div>
+  </mat-card>
+</div>
+<div *ngIf="!isViewMode">
+  <mat-card>
+    <div class="expansionTitle"><span class="material-icons">groups</span>Employee Documents<span (click)="expand()"
+        class="material-icons pointer right" matTooltip="View Employee Details">
+        expand_more
+      </span></div>
+  </mat-card>
+</div>

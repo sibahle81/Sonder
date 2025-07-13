@@ -1,0 +1,134 @@
+<mat-tab-group animationDuration="500ms">
+  <mat-tab label="Earnings">
+    <div class="menu-bar">
+      <span class="material-icons">
+        paid
+      </span>Earnings
+      <span *ngIf="this.userHasPermission(addPermission) && !(isLoading$ | async) && canAdd()"
+        class="material-icons pointer addIcon right" matTooltip="add earnings" (click)="addEarning()">
+        add_circle
+      </span>
+    </div>
+
+    <mat-card *ngIf="(isLoading$ | async)">
+      <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+      <label class="mat-label other-label"><i>{{loadingMessages$ | async}}</i></label>
+    </mat-card>
+
+    <div class="margin-bottom" *ngIf="isEarningsWorkflowInProgress && !(isLoading$ | async) && currentUser?.isInternalUser">
+      <label class="mat-label other-label">
+        <mat-card>
+          <span class="material-icons info">
+            info
+          </span>
+          active earnings capture/maintenance in progress
+        </mat-card>
+      </label>
+    </div>
+
+    <div [hidden]="(isLoading$ | async)">
+      <div *ngIf="dataSource?.data?.length > 0">
+        <mat-table #table [dataSource]="dataSource" class="mat-elevation-z8">
+
+          <ng-container matColumnDef="variableSubTotal">
+            <mat-header-cell *matHeaderCellDef> Variable Subtotal </mat-header-cell>
+            <mat-cell *matCellDef="let element">{{element.variableSubTotal ?
+              formatMoney(element.variableSubTotal.toFixed(2)) : 'N/A' }}</mat-cell>
+          </ng-container>
+
+          <ng-container matColumnDef="nonVariableSubTotal">
+            <mat-header-cell *matHeaderCellDef>Non-Variable Subtotal</mat-header-cell>
+            <mat-cell *matCellDef="let element">{{element.nonVariableSubTotal ?
+              formatMoney(element.nonVariableSubTotal.toFixed(2)) : 'N/A' }}
+            </mat-cell>
+          </ng-container>
+
+          <ng-container matColumnDef="total">
+            <mat-header-cell *matHeaderCellDef>Total Earnings</mat-header-cell>
+            <mat-cell *matCellDef="let element">{{element.total ? formatMoney(element.total.toFixed(2)) :
+              'N/A'}}</mat-cell>
+          </ng-container>
+
+          <ng-container matColumnDef="createdBy">
+            <mat-header-cell *matHeaderCellDef>Created By</mat-header-cell>
+            <mat-cell *matCellDef="let element">
+              <user-display-name [userName]="element.createdBy"></user-display-name>
+            </mat-cell>
+          </ng-container>
+
+          <ng-container matColumnDef="createdDate">
+            <mat-header-cell *matHeaderCellDef>Created Date</mat-header-cell>
+            <mat-cell *matCellDef="let element">{{element.createdDate | date:'yyyy-MM-dd' }}</mat-cell>
+          </ng-container>
+
+          <ng-container matColumnDef="modifiedBy">
+            <mat-header-cell *matHeaderCellDef>Modified By</mat-header-cell>
+            <mat-cell *matCellDef="let element">
+              <user-display-name [userName]="element.modifiedBy"></user-display-name>
+            </mat-cell>
+          </ng-container>
+
+          <ng-container matColumnDef="modifiedDate">
+            <mat-header-cell *matHeaderCellDef>Modified Date</mat-header-cell>
+            <mat-cell *matCellDef="let element">{{element.modifiedDate | date:'yyyy-MM-dd' }}</mat-cell>
+          </ng-container>
+
+          <ng-container matColumnDef="isVerified">
+            <mat-header-cell *matHeaderCellDef>Is Verified</mat-header-cell>
+            <mat-cell *matCellDef="let element">{{!element.isEstimated ? element.isVerified ? 'Yes' : 'No' :
+              'N/A'}}</mat-cell>
+          </ng-container>
+
+          <ng-container matColumnDef="isEstimated">
+            <mat-header-cell *matHeaderCellDef>Is Estimated</mat-header-cell>
+            <mat-cell *matCellDef="let element">{{element.isEstimated ? 'Yes' : 'No'}}</mat-cell>
+          </ng-container>
+
+          <ng-container matColumnDef="earningType">
+            <mat-header-cell *matHeaderCellDef>Earning Type</mat-header-cell>
+            <mat-cell *matCellDef="let element">{{getEarningType(element.earningsType)}}</mat-cell>
+          </ng-container>
+
+          <ng-container matColumnDef="actions">
+            <mat-header-cell *matHeaderCellDef>Action</mat-header-cell>
+            <mat-cell *matCellDef="let row" [matMenuTriggerFor]="menu"
+              (click)="filterMenu(row); $event.stopPropagation()">
+              <span class="material-icons pointer right">more_vert</span>
+              <mat-menu #menu="matMenu">
+                <button mat-menu-item *ngFor="let menu of menus" (click)="onMenuSelect(row, menu)"
+                  disabled={{menu.disable}}>{{menu.title}}</button>
+              </mat-menu>
+            </mat-cell>
+          </ng-container>
+          <mat-header-row *matHeaderRowDef="getDisplayedColumns()"></mat-header-row>
+          <mat-row [ngClass]="{'excluded': applyStrikeThrough(row)}"
+            *matRowDef="let row; columns: getDisplayedColumns();"></mat-row>
+        </mat-table>
+        <mat-paginator #paginator [pageIndex]="0" [pageSize]="5" [pageSizeOptions]="[5, 10, 25, 100]"
+          [length]="dataSource?.data?.length">
+        </mat-paginator>
+      </div>
+    </div>
+    <mat-card *ngIf="!isEarningsWorkflowInProgress && !(isLoading$ | async) && dataSource?.data?.length <= 0">
+      <label class="mat-label other-label"><i>No earning details were found...</i></label>
+    </mat-card>
+  </mat-tab>
+
+  <mat-tab>
+    <ng-template mat-tab-label>
+      <span
+        [ngClass]="{'received': isWizard && allRequiredDocumentsUploaded , 'outstanding': isWizard && !allRequiredDocumentsUploaded}">Employee Earnings Documents</span>
+    </ng-template>
+    <document-uploader [documentSet]="documentSet" [systemName]="documentSystemName" [keyName]="'PersonEventId'"
+      [keyValue]="personEvent.personEventId" [forceRequiredDocumentTypeFilter]="forceRequiredDocumentTypeFilter"
+      (requiredDocumentsUploadedEmit)="isRequiredDocumentsUploaded($event)" (documentUploadedEmit)="documentUploaded($event)"></document-uploader>
+  </mat-tab>
+
+  <mat-tab *ngIf="!isWizard && currentUser?.isInternalUser"
+    label="Active Workflows ({{activeWizards && activeWizards.length ? activeWizards.length : '0' }})">
+    <lib-running-wizards *ngIf="personEvent" [linkedItemId]="personEvent.personEventId"
+      [wizardTypeCSVs]="'capture-earnings,capture-earnings-override,capture-earnings-section-51'" [hideActionColumn]="true" [managerName]="managerName"
+      [moduleName]="moduleName" [refresh]="triggerRefresh" (activeWizardsEmit)="setActiveWizards($event)">
+    </lib-running-wizards>
+  </mat-tab>
+</mat-tab-group>

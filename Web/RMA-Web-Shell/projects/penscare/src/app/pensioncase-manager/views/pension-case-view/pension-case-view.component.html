@@ -1,0 +1,77 @@
+
+<div [hidden]="isLoading" class="menu-container">
+  <nav mat-tab-nav-bar>
+    <a mat-tab-link (click)="loadPensionLedgers()"> Ledgers </a>
+    <a mat-tab-link (click)="loadPensionCase()"> Pension Case </a>
+    <a mat-tab-link (click)="loadClaims()"> Claims </a>
+    <a mat-tab-link (click)="loadBeneficiaries()"> Beneficiaries </a>
+    <a mat-tab-link (click)="loadRecipients()"> Recipients </a>
+    <a mat-tab-link (click)="loadCorrectiveEntries()"> Corrective Entries </a>
+    <a mat-tab-link (click)="loadBankingDetails()"> Banking details </a>
+    <a mat-tab-link (click)="loadNotes()"> Notes </a>
+  </nav>
+  <div>
+    <app-pension-banking-details-tab *ngIf="loadedTab === 'banking-details'"
+      [componentInputData]="{
+        model: model
+      }"></app-pension-banking-details-tab>
+
+    <app-pension-recipients-tab *ngIf="loadedTab === 'recipients'"
+      [componentInputData]="{
+        model: model
+      }"></app-pension-recipients-tab>
+
+    <app-pension-beneficiaries-tab *ngIf="loadedTab === 'beneficiaries'"
+      [componentInputData]="{
+        model: model
+      }"></app-pension-beneficiaries-tab>
+
+    <app-pension-ledgers-tab *ngIf="loadedTab === 'ledgers'"
+      [model]="model"
+      ></app-pension-ledgers-tab>
+
+    <app-pension-case-tab *ngIf="loadedTab === 'pensionCase'"
+      [componentInputData]="{
+      model: model,
+      lookups: {
+        genders: genders,
+        benefitTypes: benefitTypes
+      }
+    }"></app-pension-case-tab>
+
+    <app-penscare-notes *ngIf="loadedTab === 'notes'"
+      [dataSource]="notes"
+      [canEdit]="false"></app-penscare-notes>
+
+    <app-pension-claims-tab *ngIf="loadedTab === 'claims'"
+      [componentInputData]="{
+        model: model
+      }"></app-pension-claims-tab>
+
+    <div *ngIf="loadedTab === null">
+      <div style="margin-right: 15px;">
+        <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+      </div>
+      <span style="color: grey">Loading...</span>
+    </div>
+
+
+    <app-corrective-entry-list *ngIf="loadedTab === 'corrective-entries'" [componentInputData]="{
+      pensionCaseContext: pensionCaseContext.PensionCaseCorrectiveEntries,
+      id: pensionCaseId
+    }"></app-corrective-entry-list>
+
+  </div>
+
+  <mat-card-actions>
+    <div class="left-margin actions-container">
+      <div>
+        <button class="button submit-button" (click)="close()">Back to search</button>
+      </div>
+    </div>
+  </mat-card-actions>
+
+
+
+
+

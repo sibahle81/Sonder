@@ -1,0 +1,73 @@
+<div *ngIf="loading$ | async">
+    <mat-progress-bar mode="indeterminate"
+        [ngClass]="{ 'loading-main-double-menu-progress': doubleMenu, 'loading-main-single-menu-progress': !doubleMenu }">
+    </mat-progress-bar>
+    <p class="site-font grey">Loading ...</p>
+</div>
+
+<mat-card class="matCard">
+    <a mat-flat-button (click)="onNavigateBack()">
+        <mat-icon>arrow_back</mat-icon>
+        Back
+    </a>
+    <div class="items-heading heading-left">
+        <h1>View Prosthetist Quote</h1>
+    </div>
+    <div *ngIf="prosthetistQuote">
+        <div *ngIf="prosthetistQuote.preAuthId > 0;else documents_not_uploaded">
+                <app-prosthetic-quotation-type [hideQuotationTypeDropdown]="false" [claimId]="prosthetistQuote.claimId"
+                [preAuthId]="prosthetistQuote.preAuthId"
+                [quotationTypeDocsType]="prosthetistQuote?.prostheticQuotationType"></app-prosthetic-quotation-type>
+        </div>
+        <ng-template #documents_not_uploaded><span class="authorised">Prosthetic Documents not uploaded, please liaise with
+                Healthcare
+                Provider...</span></ng-template>
+    
+        <table class="mat-elevation-z8">
+            <tr>
+                <th class="mat-header-cell">Service Provider</th>
+                <td>{{ prosthetistQuote.healthCareProviderName }}</td>
+            </tr>
+            <tr>
+                <th class="mat-header-cell">QuotationType</th>
+                <td>{{ prostheticQuotationTypeEnum[prosthetistQuote.prostheticQuotationType] }}</td>
+            </tr>
+            <tr>
+                <th class="mat-header-cell">QuotationAmount</th>
+                <td>{{ prosthetistQuote.quotationAmount | currency:'R':'symbol':'1.0-2'}}</td>
+            </tr>
+            <tr>
+                <th class="mat-header-cell">Prosthetic Type Specification</th>
+                <td>{{prosthetistQuote.prosTypeSpecification}}</td>
+            </tr>
+            <tr>
+                <th class="mat-header-cell">PatientName</th>
+                <td>Value will come later - logic still to be implemented</td>
+            </tr>
+            <tr>
+                <th class="mat-header-cell">Comments</th>
+                <td>{{prosthetistQuote.comments}}</td>
+            </tr>
+            <tr>
+                <th class="mat-header-cell">SignedBy</th>
+                <td>{{ prosthetistQuote.signedBy }}</td>
+            </tr>
+            <tr>
+                <th class="mat-header-cell">CreatedBy</th>
+                <td>{{ prosthetistQuote.createdBy }}</td>
+            </tr>
+            <tr>
+                <th class="mat-header-cell">IsApproved</th>
+                <td>{{ (prosthetistQuote.isApproved == true)? "Yes":"No" }} </td>
+            </tr>
+            <tr>
+                <th class="mat-header-cell">IsRejected</th>
+                <td>{{ (prosthetistQuote.isRejected == true)? "Yes":"No" }}</td>
+            </tr>
+            <tr>
+                <th class="mat-header-cell">Quotation Status</th>
+                <td>{{ prostheticQuoteStatusEnum[prosthetistQuote.prostheticQuoteStatus] }}</td>
+            </tr>
+        </table>
+    </div>
+</mat-card>

@@ -1,0 +1,17 @@
+<span *ngIf="currentUser?.isInternalUser">
+    <div *ngIf="(isLoading$ | async)">
+        <span *ngIf="isLoading$ | async" class="material-icons rotating" matTooltip="refreshing inbox">
+            loop
+        </span>
+    </div>
+
+    <div *ngIf="!(isLoading$ | async)">
+        <div (click)="openUserRemindersDialog()">
+            <span>
+                <span [ngClass]="{'pop': (newMessagesReceived$ | async)}" class="circle"><b>{{(messageCount$ | async)}}</b></span>
+                <span class="material-icons pointer right align"
+                    matTooltip="my messages, reminders & system notifications">insert_comment</span>
+            </span>
+        </div>
+    </div>
+</span>

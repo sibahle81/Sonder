@@ -1,0 +1,128 @@
+<div>
+  <h1>Upload Bulk Payment Listing</h1>
+</div>
+
+<form [formGroup]="form" novalidate>
+<div *ngIf="transactionAmount === 0">
+    <mat-form-field class="mat-form-field">
+        <label class="mat-label other-label mandatory-field">Bank Account</label>
+        <mat-select id="bankAccount" name="bankAccount" matInput formControlName="bankAccount"
+          (selectionChange)="selectedBankAccountChanged($event)">
+          <mat-option *ngFor="let rmaBankAccount of rmaBankAccounts" [value]="rmaBankAccount.rmaBankAccountId">
+            {{rmaBankAccount.product}} {{rmaBankAccount.accountNumber}}
+          </mat-option>
+        </mat-select>
+        <mat-error *ngIf="form.get('bankAccount').hasError('required')">
+          Bank account is <strong>required</strong>
+        </mat-error>
+        <div *ngIf="isLoadingBankAccounts$ | async">
+          <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+          <label class="mat-label other-label"><i>loading...please wait</i></label>
+        </div>
+      </mat-form-field>
+
+      <!--search input field-->
+      <mat-form-field class="mat-form-field-right">
+          <label class="mat-label other-label mandatory-field">Search Transactions</label>
+          <input class="search" type="search" matInput formControlName="query" name="query" minLength="5" (keyup)="search()" matTooltip="Search by statement reference, client bank reference!" matTooltipShowDelay="1000">
+          <mat-icon class="search-icon" (click)="search();" matSuffix>search</mat-icon>
+          <mat-error *ngIf="form.get('query').hasError('required')">
+              Please enter a search term.
+          </mat-error>
+          <mat-error *ngIf="form.get('query').hasError('minlength')">
+              Please enter a search term longer than <strong>5 characters</strong>
+          </mat-error>
+          <mat-error *ngIf="form.get('query').hasError('bankAccNotChosen')">
+            Please select the bank account to be used to search for transaction/s
+          </mat-error>
+      </mat-form-field>
+      <p *ngIf="isLoadingTransactions$ | async">
+        <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+        <label class="mat-label other-label"><i>loading transactions...please wait</i></label>
+      </p>
+
+        <div [hidden]="datasource.data.length === 0">
+          <mat-table #table [dataSource]="datasource" matSort>
+            <ng-container matColumnDef="statementReference" class="mat-column-claimNumber">
+              <mat-header-cell *matHeaderCellDef mat-sort-header> Document Number </mat-header-cell>
+              <mat-cell *matCellDef="let row"> {{row.statementReference}} </mat-cell>
+            </ng-container >
+            <ng-container matColumnDef="bankAccountNumber" >
+              <mat-header-cell *matHeaderCellDef mat-sort-header > Bank Account Number </mat-header-cell>
+              <mat-cell *matCellDef="let row" > {{row.bankAccountNumber}} </mat-cell>
+            </ng-container>
+            <ng-container matColumnDef="amount" class="mat-column-created">
+              <mat-header-cell *matHeaderCellDef mat-sort-header > Amount </mat-header-cell>
+              <mat-cell *matCellDef="let row"> {{row.amount}}  </mat-cell>
+            </ng-container>
+            <ng-container matColumnDef="transactionDate" >
+              <mat-header-cell *matHeaderCellDef mat-sort-header > Document Date </mat-header-cell>
+              <mat-cell *matCellDef="let row" > {{row.transactionDate | date: 'yyyy/MM/dd' }} </mat-cell>
+            </ng-container>
+            <ng-container matColumnDef="billingReference" class="mat-column-created">
+              <mat-header-cell *matHeaderCellDef mat-sort-header > Bank Reference </mat-header-cell>
+              <mat-cell *matCellDef="let row"> {{row.billingReference}}  </mat-cell>
+            </ng-container>
+            <ng-container matColumnDef="actions" class="mat-column-action" >
+              <mat-header-cell *matHeaderCellDef class="Action">Action
+              </mat-header-cell>
+              <mat-cell *matCellDef="let row">
+                <a *ngIf="selectedTransactionId !== row.unallocatedPaymentId" role="button" (click)="selectedTransactionChanged(row)" class="link-edit">Select</a>
+                <a *ngIf="selectedTransactionId === row.unallocatedPaymentId" role="button" (click)="undoTransactionChanged()" class="link-edit">Undo</a>
+              </mat-cell>
+            </ng-container>
+            <mat-header-row *matHeaderRowDef="displayedColumns;"></mat-header-row>
+            <mat-row *matRowDef="let row; columns: displayedColumns;"></mat-row>
+          </mat-table>
+          <mat-paginator #paginator [length]="datasource.data ? datasource.data.length : 0" [pageIndex]="0" [pageSize]="5"
+            [pageSizeOptions]="[5, 10, 25, 100]">
+          </mat-paginator>
+      </div>
+</div>
+<div *ngIf = "transactionAmount > 0">
+  <section>
+  <mat-form-field class="mat-form-field">
+    <label class="mat-label other-label">Transaction Amount</label>
+    <input readonly [(ngModel)]="transactionAmount" matInput formControlName="transactionAmount" name="transactionAmount" id="transactionAmount" DecimalNumber="true" />
+    <mat-error *ngIf="form.get('transactionAmount').hasError('required')">
+      Transaction amount is <strong>required</strong>
+    </mat-error>
+  </mat-form-field>
+  <mat-form-field class="mat-form-field-right">
+    <label class="mat-label other-label">Statement Reference</label>
+    <input readonly [(ngModel)]="statementReference" matInput formControlName="statementReference" name="statementReference" id="statementReference" />
+    <mat-error *ngIf="form.get('statementReference').hasError('required')">
+      Statement reference is <strong>required</strong>
+    </mat-error>
+  </mat-form-field>
+</section>
+<section>
+  <mat-form-field class="mat-form-field">
+    <label class="mat-label other-label"> Transaction Date</label>
+    <input readonly [(ngModel)]="transactionDate" matInput formControlName="transactionDate" name="transactionDate" id="transactionDate" />
+    <mat-error *ngIf="form.get('transactionDate').hasError('required')">
+      Transaction date is <strong>required</strong>
+    </mat-error>
+  </mat-form-field>
+</section>
+</div>
+<div [hidden]="transactionAmount === 0">
+  <div>
+    <upload-control #uploadControl [acceptedTypes]="'.csv'" [isSingleInput]="false" [allowDelete]="true"
+      [isReadOnly]="false"></upload-control>
+  </div>
+  <div class="left-padding" *ngIf="uploadControlComponent.uploadFileList.length > 0">
+    <div>Uploading large files may take several minutes. Please be patient.</div>
+  </div>
+  <br />
+  <div [hidden]="!hasErrors" class="error-message">
+    <ng-container *ngFor="let msg of errors">
+      {{msg}}<br/>
+    </ng-container>
+  </div>
+  <br />
+  <div class="form-buttons" (click)="save()">
+    <button class="button float-button submit-button" [disabled]="disabled">Upload File</button>
+  </div>
+</div>
+</form>

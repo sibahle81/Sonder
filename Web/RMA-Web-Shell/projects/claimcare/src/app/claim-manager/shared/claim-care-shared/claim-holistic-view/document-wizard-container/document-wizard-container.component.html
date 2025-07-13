@@ -1,0 +1,11 @@
+<div *ngIf="selectedPersonEvent">
+    <div class="menu-bar">
+        Documents for <b>{{selectedPersonEvent && selectedPersonEvent.rolePlayer?.displayName}}</b>
+        <span (click)="close()" class="material-icons pointer right" matTooltip="Close">
+            close
+        </span>
+    </div>
+    <holistic-medical-report-container *ngIf="event && selectedPersonEvent && documentSets"
+        [personEvent]="selectedPersonEvent" [event]="event" [isWizard]="isWizard"
+        [documentSets]="documentSets"></holistic-medical-report-container>
+</div>

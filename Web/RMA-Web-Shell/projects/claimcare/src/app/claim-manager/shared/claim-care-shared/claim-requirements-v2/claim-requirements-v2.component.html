@@ -1,0 +1,142 @@
+<mat-card *ngIf="!selectedPersonEventClaimRequirement">
+    <div class="menu-bar" *ngIf="!(isLoading$ | async)">
+        <span class="material-icons">
+            checklist
+        </span>&nbsp;Claim Requirements
+
+        <span *ngIf="!(isLoading$ | async)" class="material-icons pointer right" matTooltip="refresh"
+            (click)="refresh()">
+            restart_alt
+        </span>
+
+        <span *ngIf="!(isLoading$ | async) && !isReadOnly && personEvent.personEventStatus != _new && !selectedRequirements?.length > 0 && currentUser?.isInternalUser"
+            class="material-icons pointer right" matTooltip="request additional documents"
+            (click)="openAdditionalRequirements()">
+            assignment_add
+        </span>
+
+        <span *ngIf="!(isLoading$ | async) && !isReadOnly && selectedRequirements?.length > 0"
+            class="material-icons pointer right pulse" [matMenuTriggerFor]="menu" matTooltip="send communication">
+            send
+        </span>
+
+        <span *ngIf="!(isLoading$ | async) && !isReadOnly && showMemberVisibilityOnOption()"
+            class="material-icons pointer right pulse" matTooltip="member visibility ON"
+            (click)="toggleMemberVisibility(true)">
+            visibility
+        </span>
+
+        <span *ngIf="!(isLoading$ | async) && !isReadOnly && showMemberVisibilityOffOption()"
+            class="material-icons pointer right pulse" matTooltip="member visibility OFF"
+            (click)="toggleMemberVisibility(false)">
+            visibility_off
+        </span>
+
+        <mat-menu #menu="matMenu">
+            <button mat-menu-item *ngFor="let menu of menus" (click)="onMenuItemClick(menu)">{{menu.title}}</button>
+        </mat-menu>
+    </div>
+
+    <div *ngIf="(isLoading$ | async)">
+        <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+        <label class="mat-label other-label"><i>{{loadingMessage$ | async}}</i></label>
+    </div>
+
+    <div *ngIf="personEvent?.personEventClaimRequirements?.length == 0 &&  !(isLoading$ | async)">
+
+        <label class="mat-label other-label"><i>No claim requirements were found...<span>would you like to
+                    regenerate?...</span></i>
+            <span (click)="regenerate()" class="material-icons icn-button pulse" matTooltip="regenerate">
+                restart_alt
+            </span>
+        </label>
+    </div>
+
+    <table *ngIf="personEvent?.personEventClaimRequirements?.length != 0 && !(isLoading$ | async)"
+        class="altRowTable table">
+        <tr>
+            <th *ngIf="personEvent.personEventStatus != _new && currentUser?.isInternalUser"><mat-checkbox (change)="handleSelectedRequirements()"
+                    [checked]="selectedRequirements?.length > 0"
+                    matTooltip="{{selectedRequirements?.length > 0 ? 'deselect all' : 'select all'}}"></mat-checkbox>
+            </th>
+            <th>Requirement Category</th>
+            <th class="col-date">Date Created</th>
+            <th class="col-date">Date Closed</th>
+            <th>Instruction</th>
+            <th class="col-bool">Is Minimum Requirement</th>
+            <th *ngIf="currentUser?.isInternalUser" class="col-bool">Member Visibility</th>
+            <th *ngIf="personEvent.personEventStatus != _new">Modified By</th>
+            <th *ngIf="!isReadOnly && selectedRequirements?.length <= 0" class="col-actions">Actions</th>
+        </tr>
+        <ng-container *ngFor="let personEventClaimRequirement of personEvent.personEventClaimRequirements">
+            <tr *ngIf="currentUser?.isInternalUser || (!currentUser?.isInternalUser && personEventClaimRequirement.isMemberVisible)"
+                [ngStyle]="{'color':  !personEventClaimRequirement.dateClosed && personEventClaimRequirement.isMinimumRequirement ? 'red' : personEventClaimRequirement.dateClosed ? 'green' : 'black'}"
+                [ngClass]="personEventClaimRequirement.isDeleted ? 'excluded' : ''">
+                <td *ngIf="personEvent.personEventStatus != _new && currentUser?.isInternalUser"><mat-checkbox
+                        (change)="requirementSelected(personEventClaimRequirement)"
+                        [checked]="isSelected(personEventClaimRequirement)"
+                        [disabled]="personEventClaimRequirement.isDeleted || personEventClaimRequirement.dateClosed"></mat-checkbox>
+                </td>
+                <td>{{personEventClaimRequirement.claimRequirementCategory.name}}</td>
+                <td class="col-date">{{personEventClaimRequirement.dateOpened ? (personEventClaimRequirement.dateOpened | date:'yyyy-MM-dd'):
+                    (personEvent.createdDate | date:'yyyy-MM-dd')}}</td>
+                <td class="col-date">{{personEventClaimRequirement.dateClosed ? (personEventClaimRequirement.dateClosed | date:'yyyy-MM-dd')
+                    : ''}}</td>
+                <td>{{personEventClaimRequirement.instruction != null ? personEventClaimRequirement.instruction :
+                    personEventClaimRequirement.claimRequirementCategory.name}}</td>
+                <td class="col-bool">{{personEventClaimRequirement.isMinimumRequirement ? 'Yes' : 'No'}}</td>
+                <td *ngIf="currentUser?.isInternalUser" class="col-bool">{{personEventClaimRequirement.isMemberVisible != null ? personEventClaimRequirement.isMemberVisible ? 'Yes' : 'No' : personEventClaimRequirement.claimRequirementCategory.isMemberVisible ? 'Yes' : 'No'}}</td>
+                <td *ngIf="this.personEvent.personEventStatus != _new">{{personEventClaimRequirement.modifiedBy}}</td>
+                <td *ngIf="!isReadOnly && selectedRequirements?.length <= 0" class="col-actions">
+                    <span
+                        *ngIf="personEventClaimRequirement?.claimRequirementCategory?.documentType && !personEventClaimRequirement.dateClosed && !personEventClaimRequirement.isDeleted"
+                        class="material-icons pointer right" (click)="uploadRequiredDocument(personEventClaimRequirement)"
+                        matTooltip="upload file">
+                        upload_file
+                    </span>
+                    <span
+                        *ngIf="personEventClaimRequirement?.claimRequirementCategory?.documentType && personEventClaimRequirement.dateClosed"
+                        class="material-icons pointer right" (click)="uploadRequiredDocument(personEventClaimRequirement)"
+                        matTooltip="view uploaded file">
+                        visibility
+                    </span>
+                    <span
+                        *ngIf="!personEventClaimRequirement?.claimRequirementCategory?.documentType && !personEventClaimRequirement.dateClosed && !personEventClaimRequirement.isDeleted"
+                        class="material-icons pointer right" (click)="openConfirmationDialog(personEventClaimRequirement)"
+                        matTooltip="close requirement">
+                        stop_circle
+                    </span>
+                    <span
+                        *ngIf="!personEventClaimRequirement?.claimRequirementCategory?.documentType && personEventClaimRequirement.dateClosed && !personEventClaimRequirement.isDeleted && currentUser?.isInternalUser"
+                        class="material-icons pointer right" (click)="openConfirmationDialog(personEventClaimRequirement)"
+                        matTooltip="reopen requirement">
+                        play_circle
+                    </span>
+                    <span *ngIf="!personEventClaimRequirement.isDeleted && currentUser?.isInternalUser" class="material-icons pointer right"
+                        (click)="deleteRequirement(personEventClaimRequirement)" matTooltip="delete requirement">
+                        delete
+                    </span>
+                    <span *ngIf="personEventClaimRequirement.isDeleted && currentUser?.isInternalUser" class="material-icons pointer right"
+                        (click)="deleteRequirement(personEventClaimRequirement)" matTooltip="add requirement">
+                        add_circle
+                    </span>
+                </td>
+            </tr>
+        </ng-container>
+    </table>
+</mat-card>
+
+<mat-card *ngIf="selectedPersonEventClaimRequirement">
+    <div class="menu-bar" *ngIf="!(isLoading$ | async)">
+        <span *ngIf="selectedPersonEventClaimRequirement" class="material-icons pointer right pulse" matTooltip="back"
+            (click)="reset()">
+            arrow_back
+        </span>
+    </div>
+
+    <document-uploader [documentSet]="selectedPersonEventClaimRequirement.claimRequirementCategory.documentSet"
+        [documentTypeFilter]="documentFilter" [forceRequiredDocumentTypeFilter]="documentFilter"
+        [systemName]="documentSystemName" [keyName]="'PersonEventId'" [keyValue]="personEvent.personEventId"
+        [documentUploadStatus]="documentUploadStatus"
+        (requiredDocumentsUploadedEmit)="requiredDocumentsUploaded($event)"></document-uploader>
+</mat-card>

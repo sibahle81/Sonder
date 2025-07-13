@@ -1,0 +1,44 @@
+import { InvoiceStatusEnum } from 'projects/medicare/src/app/medical-invoice-manager/enums/invoice-status.enum';
+import { MedicalInvoiceLineItem } from 'projects/medicare/src/app/medical-invoice-manager/models/medical-invoice-line-item';
+import { BaseClass } from 'projects/shared-models-lib/src/lib/common/base-class';
+import { InvoiceUnderAssessReason } from 'projects/medicare/src/app/medical-invoice-manager/models/invoice-under-assess-reason';
+import { MedicalInvoiceReport } from "projects/medicare/src/app/medical-invoice-manager/models/medical-invoice-report";
+import { PreAuthorisation } from '../../preauth-manager/models/preauthorisation';
+
+export class Invoice extends BaseClass {
+  invoiceId: number;
+  claimId: number | null;
+  personEventId: number | null;
+  healthCareProviderId: number;
+  hcpInvoiceNumber: string;
+  hcpAccountNumber: string;
+  invoiceNumber: string;
+  invoiceDate: string;
+  dateSubmitted: string | null;
+  dateReceived: string | null;
+  dateAdmitted: string | null;
+  dateDischarged: string | null;
+  invoiceStatus: InvoiceStatusEnum;
+  invoiceAmount: number;
+  invoiceVat: number;
+  invoiceTotalInclusive: number;
+  authorisedAmount: number;
+  authorisedVat: number;
+  authorisedTotalInclusive: number;
+  payeeId: number;
+  payeeTypeId: number;
+  underAssessReasonId: number;
+  underAssessedComments: string;
+  switchBatchInvoiceId: number | null;
+  switchBatchId: number | null;
+  holdingKey: string;
+  isPaymentDelay: boolean;
+  isPreauthorised: boolean;
+  preAuthXml: string;
+  comments: string;
+  invoiceLines: MedicalInvoiceLineItem[];
+  invoiceUnderAssessReasons: InvoiceUnderAssessReason[];
+  isMedicalReportExist: boolean;
+  medicalInvoiceReports: MedicalInvoiceReport[];
+  medicalInvoicePreAuths: PreAuthorisation[];
+}

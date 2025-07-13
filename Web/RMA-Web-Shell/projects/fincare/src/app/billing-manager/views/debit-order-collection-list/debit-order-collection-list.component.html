@@ -1,0 +1,209 @@
+<div [hidden]="activeSection !== 'showDebitOrders'">
+<mat-card-content>
+<div *ngIf="(dataSource.isLoading$ | async)">
+  <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+  <label class="mat-label other-label"><i>loading...please wait</i></label>
+</div>
+<div *ngIf="dataSource.data.length === 0 && !(dataSource.isLoading$ | async)">
+  <span class="grey site-font">No debit orders have been added.</span>
+</div>
+<div [hidden]="(dataSource.isLoading$ | async) || dataSource.data.length === 0">
+  <mat-table #table [dataSource]="dataSource" matSort>
+    <ng-container matColumnDef="finPayeNumber">
+      <mat-header-cell *matHeaderCellDef mat-sort-header>Debtor Number</mat-header-cell>
+      <mat-cell *matCellDef="let row">{{row.finPayeNumber}}</mat-cell>
+    </ng-container>
+
+    <ng-container matColumnDef="rolePlayerName">
+      <mat-header-cell *matHeaderCellDef mat-sort-header>Debtor</mat-header-cell>
+      <mat-cell *matCellDef="let row">{{row.rolePlayerName}}</mat-cell>
+    </ng-container>
+
+    <ng-container matColumnDef="amount">
+      <mat-header-cell *matHeaderCellDef mat-sort-header>Amount</mat-header-cell>
+      <mat-cell *matCellDef="let row">{{row.amount | number: '1.2-2'}}</mat-cell>
+    </ng-container>
+
+    <ng-container matColumnDef="dateToPay">
+      <mat-header-cell *matHeaderCellDef mat-sort-header>Debit Order Date</mat-header-cell>
+      <mat-cell *matCellDef="let row">
+
+        <input matInput [(ngModel)]="row.dateToPay" [matDatepicker]="dateToPay" [min]="minDate">
+        <mat-datepicker-toggle matSuffix [for]="dateToPay"></mat-datepicker-toggle>
+        <mat-datepicker touchUi="true" #dateToPay></mat-datepicker>
+      </mat-cell>
+    </ng-container>
+
+    <ng-container matColumnDef="bankAccountHolder">
+      <mat-header-cell *matHeaderCellDef mat-sort-header>Account Holder</mat-header-cell>
+      <mat-cell *matCellDef="let row">{{row.bankAccountHolder}}</mat-cell>
+    </ng-container>
+
+    <ng-container matColumnDef="bank">
+      <mat-header-cell *matHeaderCellDef mat-sort-header>Bank</mat-header-cell>
+      <mat-cell *matCellDef="let row">{{row.bank}}</mat-cell>
+    </ng-container>
+
+    <!-- <ng-container matColumnDef="bankBranchCode">
+      <mat-header-cell *matHeaderCellDef mat-sort-header>Branch Code</mat-header-cell>
+      <mat-cell *matCellDef="let row">{{row.bankBranchCode}}</mat-cell>
+    </ng-container> -->
+
+    <ng-container matColumnDef="bankAccountNumber">
+      <mat-header-cell *matHeaderCellDef mat-sort-header>Account Number</mat-header-cell>
+      <mat-cell *matCellDef="let row">{{row.bankAccountNumber}}</mat-cell>
+    </ng-container>
+
+    <ng-container matColumnDef="bankAccountType">
+      <mat-header-cell *matHeaderCellDef mat-sort-header>Account Type</mat-header-cell>
+      <mat-cell *matCellDef="let row">{{row.bankAccountType}}</mat-cell>
+    </ng-container>
+
+    <!-- <ng-container matColumnDef="bankAccountEffectiveDate">
+      <mat-header-cell *matHeaderCellDef mat-sort-header>Effective Date</mat-header-cell>
+      <mat-cell *matCellDef="let row"> {{ row.bankAccountEffectiveDate | date:'yyyy/MM/dd'}} </mat-cell>
+    </ng-container> -->
+
+    <ng-container matColumnDef="actions">
+      <mat-header-cell *matHeaderCellDef>Actions</mat-header-cell>
+      <mat-cell *matCellDef="let row">
+        <span><button (click)="remove(row)">Remove</button></span>
+      </mat-cell>
+    </ng-container>
+
+    <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
+    <mat-row *matRowDef="let row; columns: displayedColumns;"></mat-row>
+  </mat-table>
+
+  <mat-paginator #paginator [length]="dataSource.data.length" [pageIndex]="0" [pageSize]="5"
+    [pageSizeOptions]="[5, 10, 20]">
+  </mat-paginator>
+</div>
+<div style="margin-top: 15px;margin-bottom: 10px; margin-left:25px;" *ngIf="isWizard">
+  <button (click)="showAddDebitOrder()" class="button">Add </button>
+</div>
+</mat-card-content>
+</div>
+<div [hidden]="activeSection !== 'addDebitOrder'">
+  <div>
+  <mat-card-content>
+    <div class="form-content">
+      <div class="form-container">
+        <mat-card-header>
+          <mat-card-title class="wizard-font card-title grey">
+            <h1 class="wizard-font" style="padding: 0;">Add Debit Order</h1>
+          </mat-card-title>
+        </mat-card-header>
+        <form [formGroup]="debitOrderForm" class="mat-container details-form" novalidate>
+          <section>
+            <!--search input field-->
+            <mat-form-field class="mat-form-field">
+                <label class="mat-label other-label mandatory-field">Search for Debtor</label>
+                <input type="search" matInput formControlName="debtorQuery" name="debtorQuery" minLength="3" (keyup)="searchForDebtor()" matTooltip="Search by account number, client name, identification number!" matTooltipShowDelay="1000">
+                <mat-icon class="search-icon" style="margin-top: 15px !important;" (click)="searchForDebtor();" matSuffix>search for debtor</mat-icon>
+                <!--<mat-icon matSuffix>search</mat-icon>-->
+                <mat-error *ngIf="debitOrderForm.get('debtorQuery').hasError('required')">
+                    Please enter a search term.
+                </mat-error>
+                <mat-error *ngIf="debitOrderForm.get('debtorQuery').hasError('minlength')">
+                    Please enter a search term longer than <strong>2 characters</strong>
+                </mat-error>
+            </mat-form-field>
+            <p *ngIf="isLoadingDebtors$ | async">
+              <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+              <label class="mat-label other-label"><i>loading debtors...please wait</i></label>
+            </p>
+            </section>
+        
+          <section>
+            <div style="margin-top: 15px;"
+              *ngIf="!(isLoadingDebtors$ | async)  && debtors && debtors.length > 0">
+              <label class="mat-label other-label mandatory-field">Debtors</label>
+              <table>
+                <tr>
+                  <th>Account Number</th>
+                  <th>Client Name</th>
+                  <th>Action</th>
+                </tr>
+                <tr *ngFor="let debtor of debtors">
+                  <td *ngIf="selectedDebtorNumber === debtor.finPayeNumber" style="background-color: lightgreen;">
+                    {{debtor.finPayeNumber}}</td>
+                  <td *ngIf="selectedDebtorNumber !== debtor.finPayeNumber">{{debtor.finPayeNumber}}</td>
+                  <td>{{debtor.displayName}}</td>
+                  <td *ngIf="selectedDebtorNumber !== debtor.finPayeNumber">
+                    <button class="button submit-button"
+                      (click)="selectedDebtorChanged(debtor.rolePlayerId, debtor.finPayeNumber, debtor.displayName)"
+                      style="margin-top: 5px;">Select</button>
+                  </td>
+                  <td *ngIf="selectedDebtorNumber === debtor.finPayeNumber">
+                    <button class="button submit-button" (click)="undoDebtorChanged()"
+                      style="margin-top: 5px;">Undo</button>
+                  </td>
+                </tr>
+              </table>
+            </div>
+          </section>
+          <br />
+          <section>
+            <mat-form-field class="mat-form-field">
+              <label class="mat-label other-label mandatory-field">Debtor Number</label>
+              <input matInput formControlName="debtorNumber" name="debtorNumber" id="debtorNumber" readonly />
+              <mat-error *ngIf="debitOrderForm.get('debtorNumber').hasError('required')">
+                 Debtor number is <strong>required</strong>
+              </mat-error>
+            </mat-form-field>
+          </section>
+          <section>
+            <mat-form-field class="mat-form-field">
+              <label class="mat-label other-label mandatory-field">Debtor </label>
+              <input matInput formControlName="debtor" name="debtor" id="debtor" readonly />
+            </mat-form-field>
+          </section>
+          <section>
+            <mat-form-field>
+              <label class="mat-label other-label mandatory-field">Amount</label>
+              <input matInput DecimalNumber name="amount"  id="amount" formControlName="amount" />
+              <mat-error *ngIf="debitOrderForm.get('amount').hasError('required')">
+                Amount is <strong>required</strong>
+              </mat-error>
+              <mat-error *ngIf="debitOrderForm.get('amount').hasError('min')">
+                Amount must be <strong> greater than zero</strong>
+              </mat-error>
+            </mat-form-field>
+          </section>
+          <section>
+            <mat-form-field>
+              <label class="mat-label other-label mandatory-field">Debit Order Date</label>
+              <input matInput formControlName="debitOrderDate" [min]="minDate" [matDatepicker]="debitOrderDate" maxlength="10"
+                format="yyyy-MM-dd">
+              <mat-datepicker-toggle class="date-icon" matSuffix [for]="debitOrderDate"></mat-datepicker-toggle>
+              <mat-datepicker touchUi="true" #debitOrderDate></mat-datepicker>
+              <mat-error *ngIf="debitOrderForm.get('debitOrderDate').hasError('required')">
+                Debit order date is required
+              </mat-error>
+              <mat-error *ngIf="debitOrderForm.get('debitOrderDate').hasError('ValidateMinDateToday')">
+                Debit order date cannot be in the past
+              </mat-error>
+            </mat-form-field>
+          </section>
+          <br/>
+          <div *ngIf="(this.isLoadingBankingDetails$ | async)">
+            <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+            <label class="mat-label other-label"><i>loading active banking details...please wait</i></label>
+          </div>
+          <div *ngIf="(this.hasNoActiveBankingDetails)">
+            <span style="color:red"> This debtor <strong> does not have active banking details</strong></span>
+          </div>
+        </form>
+      </div>
+    </div>
+    <section>
+      <div class="form-group-button mat-form-button form-buttons submit-button" *ngIf="isWizard"
+        style="margin-bottom: 10px; margin-left:25px;">
+        <button class="button submit-button" (click)="addDebitOrder()">Save</button>
+        <button class="button submit-button" (click)="showSection('showDebitOrders')">Cancel</button>
+      </div>
+    </section>
+  </mat-card-content>
+</div>
+</div>

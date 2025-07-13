@@ -1,0 +1,25 @@
+<div *ngIf="isLoadingPolicies$ | async">
+    <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+    <label class="mat-label other-label"><i>Loading products...please wait</i></label>
+</div>
+<div [hidden]="datasource.data.length === 0" class="table-container">
+    <mat-table #table [dataSource]="datasource">
+        <ng-container matColumnDef="productName">
+            <mat-header-cell *matHeaderCellDef>Product</mat-header-cell>
+            <mat-cell *matCellDef="let row">{{row.productOptionName}}</mat-cell>
+            <mat-footer-cell *matFooterCellDef class="footerBold">Total</mat-footer-cell>
+        </ng-container>
+        <ng-container matColumnDef="amount">
+            <mat-header-cell *matHeaderCellDef>Balance</mat-header-cell>
+            <mat-cell *matCellDef="let row">{{row.balance}}</mat-cell>
+            <mat-footer-cell *matFooterCellDef class="footerBold">{{
+                getProductTotals()}}</mat-footer-cell>
+        </ng-container>
+        <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
+        <mat-row *matRowDef="let row; columns: displayedColumns;"></mat-row>
+        <mat-footer-row class="sticky-footer"
+            *matFooterRowDef="['productName', 'amount']"></mat-footer-row>
+    </mat-table>
+    <mat-paginator #paginator [pageIndex]="0" [pageSize]="5" [pageSizeOptions]="[5, 10, 25, 100]">
+    </mat-paginator>
+</div>

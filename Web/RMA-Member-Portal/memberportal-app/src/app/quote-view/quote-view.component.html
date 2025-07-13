@@ -1,0 +1,131 @@
+<div *ngIf="isLoading$ | async">
+  <mat-card style="margin-left: 10px; margin-right: 10px">
+    <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+    <label class="mat-label other-label"><i>{{loadingMessage}}</i></label>
+  </mat-card>
+  <br />
+</div>
+
+<mat-card *ngIf="!(isLoading$ | async)">
+  <mat-card-header>
+    <span class="material-icons">article</span><span class="expansionTitle">Quote Details</span>
+  </mat-card-header>
+  <br />
+  <br />
+
+  <mat-card-content *ngIf="!(isLoading$ | async)">
+    <form [formGroup]="quoteForm" novalidate>
+      <div *ngIf="fetchMessageStatus === 0">
+        <section>
+          <mat-form-field class="mat-form-field">
+            <label class="mat-label other-label">Quote Number</label>
+            <input matInput formControlName="quotenumber" name="quotenumber" id="quotenumber" type="text" />
+            <mat-error *ngIf="quoteForm.get('quotenumber').hasError('required')">
+              Quote number is required
+            </mat-error>
+            <mat-error *ngIf="quoteForm.get('quotenumber').hasError('quotenumber')">
+              Please enter a <strong>valid</strong> quote number.
+            </mat-error>
+          </mat-form-field>
+
+          <mat-form-field class="mat-form-field-right" *ngIf="otpStatus > 0">
+            <label class="mat-label other-label">Enter One Time Pin</label>
+            <input matInput formControlName="onetimepin" name="onetimepin" id="onetimepin" type="number" />
+            <label *ngIf="
+              (otpStatus < 200 || otpStatus == 200) &&
+              otpMessage.length > 0 &&
+              quoteForm.get('onetimepin').value < 11111
+            " class="mat-label other-label red-text"><i>{{ otpMessage }}</i></label>
+          </mat-form-field>
+        </section>
+
+        <div class="form-buttons">
+          <div>
+            <button class="button submit-button" (click)="requestPin()">
+              <span class="material-icons">verified</span>&nbsp;&nbsp;<label class="labelHeading">Requesting
+                OTP</label></button>
+            <button type="button" class="button submit-button" (click)="getQuoteDetails()"
+              [disabled]="quoteForm.get('onetimepin').value < 11111">
+              <span class="material-icons icons">search</span>&nbsp;<label class="labelHeading">Search
+                Quote</label></button>
+          </div>
+
+          <div *ngIf="fetchMessageStatus === 0 && fetchMessage.length > 0">
+            <label class="mat-label other-label red-text"><i>{{ fetchMessage }}</i></label>
+          </div>
+        </div>
+      </div>
+    </form>
+
+    <div *ngIf="!(isLoading$ | async) && fetchMessageStatus === 200 && quote != null">
+      <label>Quote: <b>{{ quote.quoteNumber }}</b></label><br />
+      <label>Status: <b>{{ getQuoteStatus(quote.quoteStatusId) }}</b></label><br />
+      <div *ngIf="quote.quoteStatusId == 6">
+        <label>Reason:
+          <b><span class="reason">{{ quote.declineReason }}</span></b></label>
+      </div>
+      <br />
+      <!-- <div >
+        <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+        <label class="mat-label other-label"><i>sending quote {{ quote.quoteNumber }}...please wait</i></label>
+        <br /><br />
+      </div> -->
+      <div class="form-buttons">
+        <div *ngIf="quote.quoteStatusId != acceptedEnum">
+          <button class="button submit-button" (click)="openAcceptDialog()" [disabled]="
+                    (isLoading$ | async) ||
+                    quote.quoteStatusId == declinedEnum ||
+                    quote.quoteStatusId == acceptedEnum ||
+                    quote.quoteStatusId == pendingApprovalEnum
+                  ">
+            <span class="material-icons">verified</span>
+            Accept
+          </button>
+          <button type="button" class="button submit-button" (click)="openDialog()" [disabled]="
+                    (isLoading$ | async) ||
+                    quote.quoteStatusId == declinedEnum ||
+                    quote.quoteStatusId == acceptedEnum ||
+                    quote.quoteStatusId == pendingApprovalEnum
+                  ">
+            <span class="material-icons">thumb_down_off_alt</span>
+            Decline
+          </button>
+        </div>
+        <div *ngIf="quote.quoteStatusId == acceptedEnum">
+          <button type="button" class="button submit-button" (click)="openAcceptDialog()" [disabled]="
+                    (isLoading$ | async) ||
+                    quote.quoteStatusId != acceptedEnum
+                  ">
+            <span class="material-icons">description</span>
+            Signed Document
+          </button>
+        </div>
+        <br />
+        <div *ngIf="quote.quoteStatusId == acceptedEnum">
+          <span class="material-icons">article</span> Documents
+          <member-documents [memberNumber]="memberNumber"></member-documents>
+        </div>
+        <div *ngIf="quote.quoteStatusId == acceptedEnum">
+          <button type="button" class="button submit-button" (click)="submitWizard()" [disabled]="
+                    (isLoading$ | async) ||
+                    quote.quoteStatusId != acceptedEnum
+                  ">
+            <span class="material-icons">description</span>
+            Submit
+          </button>
+        </div>
+      </div>
+      <br />
+      <div *ngIf="quote.quoteStatusId == 4">
+        <br />
+        <label class="info">This quote is being edited and can be viewed once
+          approved</label><br />
+      </div>
+      <div [hidden]="(isLoading$ | async) || !showReport || quote.quoteStatusId == 4">
+        <ssrs-reportviewer [reportserver]="reportServerAudit" [reporturl]="reportUrlAudit"
+          [parameters]="parametersAudit">
+        </ssrs-reportviewer>
+      </div>
+    </div>
+  </mat-card-content>
+</mat-card>

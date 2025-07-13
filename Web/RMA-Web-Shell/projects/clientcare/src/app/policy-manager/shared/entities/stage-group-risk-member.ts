@@ -1,0 +1,34 @@
+export class StageGroupRiskMember {
+  StageGroupRiskId: number;
+  ExcelRowNumber: number;
+  FileIdentifier: string;
+  SchemeNumber: string;
+  FinPayeeRolePlayerId: number;
+  EmployeeRolePlayerId: number;
+  EmployeeIndustryNumber: string;
+  EmployeeNumber: string;
+  IdOrPassport: string;
+  IdentityTypeId: number;
+  DateOfBirth: Date;
+  FirstName: string;
+  Surname: string;
+  Gender: number;
+  MobileNumber: string;
+  Email: string;
+  PreferredMethodOfCommunicationId: number;
+  MonthlyRiskSalary: number;
+  EmployeeStartDate: Date;
+  PolicyStartDate: Date;
+  BrokerageFspNumber: string;
+  RepresentativeIdNumber: string;
+  PolicyNumber: string;
+  PolicyId: number;
+  ProductOptionId: number;
+  BenefitId: number;
+  WizardId: number;
+  GroupRiskPolicyActionType: number;
+  GroupRiskStagingStatusType: number;
+  Escalation: string;
+  Note: string;
+  Errors: string;
+}

@@ -1,0 +1,86 @@
+﻿<error *ngIf="isError"></error>
+
+<div [hidden]="isError">
+    <div class="page-header">
+        <h1>{{titlePlural}}</h1>
+        <span class="grey site-font"><i>{{hideAddButtonText}}</i></span>
+    </div>
+    <div class="mat-container mat-elevation-z8">
+
+        <div [hidden]="dataSource.data.length === 0">
+            <div class="mat-header">
+                <div class="search-container search-container-right">
+                    <input type="text" name="search" placeholder="search {{titlePlural | lowercase}}..." #filter>
+                </div>
+                <div>
+                    <mat-checkbox [checked]="autoRefresh" (change)="toggle($event)" #checkBox><span style="font-size:small">Auto refresh</span></mat-checkbox>
+                    <div class="new-button new-button-top" (click)="reload()">
+                        <button class="button">{{message}}</button>
+                    </div>
+                </div>
+                <div>
+                    <p>
+                        <a class="link-edit list-pointer" (click)="downloadTemplate()">Download Template</a>
+                    </p>
+                </div>
+            </div>
+            <div [hidden]="dataSource.filteredData.length === 0">
+                <mat-table #table [dataSource]="dataSource" matSort>
+
+                    <!--All standard columns-->
+                    <ng-container *ngFor="let column of columns" [matColumnDef]="column.columnDefinition">
+                        <mat-header-cell mat-sort-header *matHeaderCellDef class="mat-header-cell ng-tns-c10-2 cdk-column-Name mat-column-Name">{{ column.header }}</mat-header-cell>
+                        <mat-cell *matCellDef="let row" class="mat-cell cdk-column-Name mat-column-Name">{{ column.cell(row) }}</mat-cell>
+                    </ng-container>
+
+                    <!-- Actions -->
+                    <ng-container *ngIf="!hideActionsLink" matColumnDef="actions">
+                        <mat-header-cell *matHeaderCellDef>Actions</mat-header-cell>
+                        <mat-cell *matCellDef="let row">
+                            <a *ngIf="row.status == 'InProgress'" role="button" (click)="onCancel(row)" class="link-edit">Cancel</a>
+                            <a *ngIf="row.status == 'Interupted'" role="button" (click)="onResume(row)" class="link-edit">Resume</a>
+                            <a *ngIf="row.status == 'Cancelled' || row.status == 'Error'" role="button" (click)="onDelete(row)" class="link-edit">Delete</a>
+                            <a *ngIf="row.status == 'Completed'" role="button" (click)="onDelete(row)" class="link-edit">Remove item from list</a>
+                        </mat-cell>
+                    </ng-container>
+
+                    <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
+                    <mat-row *matRowDef="let row; columns: displayedColumns;"></mat-row>
+                </mat-table>
+
+                <mat-paginator #paginator
+                               [length]="dataSource.data.length"
+                               [pageIndex]="0"
+                               [pageSize]="5"
+                               [pageSizeOptions]="[5, 10, 25, 100]">
+                </mat-paginator>
+            </div>
+        </div>
+
+        <div [hidden]="dataSource.data.length > 0" style="margin-left: 20px;">
+            <p class="grey">No {{titlePlural | lowercase}} have been added.</p>
+        </div>
+
+        <div [hidden]="dataSource.filteredData.length > 0 || dataSource.data.length === 0" class="no-search-results-add-button">
+            <div class="site-font grey">
+                <p class="grey">Your search - <strong>{{filter.value}}</strong> - did not match any {{titlePlural | lowercase}}.</p>
+                <span>Suggestions: </span>
+                <ul>
+                    <li>Make sure that all words are spelled correctly.</li>
+                    <li>Try different keywords.</li>
+                    <li>Try more general keywords.</li>
+                    <li>Try fewer keywords.</li>
+                </ul>
+            </div>
+            <div class="new-button" (click)="clearFilter()">
+                <button class="button float-button">Clear search</button>
+            </div>
+        </div>
+
+        <div style="display: flex; padding: 0 24px" role="row">
+            <div class="new-button new-button-top" (click)="newItem()" [hidden]="hideAddButton">
+                <button class="button">Add new {{title | lowercase}}</button>
+            </div>
+        </div>
+    </div>
+</div>

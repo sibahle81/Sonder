@@ -1,0 +1,156 @@
+<mat-card>
+  <mat-card-header>
+    <mat-card-title class="wizard-font card-title grey">
+      <h1>{{ isEdit ? 'Edit Travel Authorization' : 'New Travel Authorization' }}</h1>
+    </mat-card-title>
+    <mat-card-subtitle>
+    </mat-card-subtitle>
+  </mat-card-header>
+
+  <mat-card-content>
+    <form [formGroup]="form" class="mat-container" novalidate>
+      <div>
+        <section>
+          <!--Title-->
+          <mat-form-field class="mat-form-field">
+            <label class="mat-label other-label mandatory-field">Authorised Party</label>
+            <mat-select (selectionChange)="authorisedPartyChanged($event)" name="authorisedParty" id="authorisedParty" formControlName="authorisedParty">
+              <mat-option *ngFor="let authorisedParty of authorisedParties" [value]="authorisedParty.id">
+                {{authorisedParty.name}}
+              </mat-option>
+            </mat-select>
+            <mat-error *ngIf="form.get('authorisedParty').hasError('required') && form.get('authorisedParty').touched">
+              Title is <strong>required</strong>
+            </mat-error>
+          </mat-form-field>
+
+          <mat-form-field *ngIf="isShowClaimaint" class="mat-form-field-right">
+            <label class="mat-label other-label">Claimant Name</label>
+            <input matInput id="claimantName" name="claimantName" formControlName="claimantName" readonly />
+          </mat-form-field>
+        </section>
+          
+          <section>
+            <mat-expansion-panel *ngIf='isSearchRolePlayer' [(expanded)]='advancedFiltersExpanded'>
+              <mat-expansion-panel-header>
+                  <mat-panel-title>
+                      Search Any Person/Member/Service Provider
+                  </mat-panel-title>
+                  <mat-panel-description *ngIf="selectedRolePlayer"><span class="material-icons" matTooltip="pinned debtor">
+                          push_pin
+                      </span> {{selectedRolePlayer.displayName}}</mat-panel-description>
+              </mat-expansion-panel-header>
+              <role-player-search (rolePlayerSelectedEmit)="rolePlayerSelected($event)"></role-player-search>
+              <!-- <debtor-search [triggerReset]="triggerReset" (debtorSelectedEmit)="setDebtor($event)"></debtor-search> -->
+          </mat-expansion-panel>
+          </section>
+          <br/>
+          <section>
+          <mat-form-field class="mat-form-field inputDate">
+            <label class="mat-label other-label mandatory-field">Date Authorised From</label>
+            <input readonly matInput date="true" time="false"
+              formControlName="dateAuthorisedFrom" [matDatepicker]="dateAuthorisedFrom" id="dateAuthorisedFrom" />
+            <mat-datepicker-toggle matSuffix [for]="dateAuthorisedFrom"></mat-datepicker-toggle>
+            <mat-datepicker touchUi="true" #dateAuthorisedFrom></mat-datepicker>
+            <mat-error *ngIf="form.get('dateAuthorisedFrom')?.hasError('dateBeforeEvent')">
+              Date must be on or after event date ({{ data.eventModel?.eventDate | date:'shortDate' }})
+            </mat-error>
+          </mat-form-field>
+        </section>
+
+        <section>
+          <mat-form-field class="mat-form-field inputDate">
+            <label class="mat-label other-label mandatory-field">Date Authorised To</label>
+            <input readonly matInput date="true" time="false"
+              formControlName="dateAuthorisedTo" [matDatepicker]="dateAuthorisedTo" id="dateAuthorisedTo" />
+            <mat-datepicker-toggle matSuffix [for]="dateAuthorisedTo"></mat-datepicker-toggle>
+            <mat-datepicker touchUi="true" #dateAuthorisedTo></mat-datepicker>
+            <mat-error *ngIf="form.get('dateAuthorisedTo')?.hasError('dateBeforeEvent')">
+              Date must be on or after event date ({{ data.eventModel?.eventDate | date:'shortDate' }})
+            </mat-error>
+          </mat-form-field>
+
+          <mat-form-field class="mat-form-field-right">
+            <label id="lblEmail" class="mat-label other-label mandatory-field">Authorised KMs</label>
+            <input matInput id="authorisedKm" name="authorisedKm" formControlName="authorisedKm" (input)="onAuthorisedRateChange()"
+            [disabled]="isTypeRateExcluded" />
+            <mat-error *ngIf="form.get('authorisedKm').hasError('required') && form.get('authorisedKm').touched">
+              Authorised KM is <strong>required</strong>
+            </mat-error>
+          </mat-form-field>
+        </section>
+
+        <section>
+          <mat-form-field class="mat-form-field">
+            <label class="mat-label other-label mandatory-field">Type Rate</label>
+            <mat-select (selectionChange)="typeRateChanged($event)" name="typeRate" id="typeRate" formControlName="typeRate">
+              <mat-option *ngFor="let typeRate of typeRates" [value]="typeRate.id">
+                {{typeRate.name}}
+              </mat-option>
+            </mat-select>
+            <mat-error *ngIf="form.get('typeRate').hasError('required') && form.get('typeRate').touched">
+              Type rate is <strong>required</strong>
+            </mat-error>
+          </mat-form-field>
+
+          <mat-form-field class="mat-form-field-right">
+            <label id="lblEmail" class="mat-label other-label mandatory-field">Authorised Rate(R)</label>
+            <input matInput id="authorisedRate" name="authorisedRate" formControlName="authorisedRate" (input)="onAuthorisedRateChange()" (focusout)="onAuthorisedRateFocusOut()"
+            [disabled]="isTypeRateExcluded" />
+            <mat-error *ngIf="form.get('authorisedRate').hasError('required') && form.get('authorisedRate').touched">
+              Authorised Rate is <strong>required</strong>
+            </mat-error>
+          </mat-form-field>
+        </section>
+        
+
+        <section>
+          <mat-form-field class="mat-form-field">
+            <label class="mat-label other-label mandatory-field">Authorised Amount</label>
+            <input matInput id="authorisedAmount" name="authorisedAmount" formControlName="authorisedAmount" />
+          </mat-form-field>
+          
+          <mat-form-field class="mat-form-field-right">
+            <label class="mat-label other-label mandatory-field">Authorised Amount(Incl Admin Fee)</label>
+            <input matInput id="finalAuthorisedAmount" name="finalAuthorisedAmount" formControlName="finalAuthorisedAmount" readonly />
+          </mat-form-field>          
+        </section>
+
+        <section>
+          <mat-form-field class="mat-form-field">
+            <label id="lblEmail" class="mat-label other-label mandatory-field">Description</label>
+            <input matInput id="description" name="description" formControlName="description" />
+            <mat-error *ngIf="form.get('description').hasError('required') && form.get('description').touched">
+              Description is <strong>required</strong>
+            </mat-error>
+          </mat-form-field>  
+
+          <mat-form-field class="mat-form-field-right">
+            <label class="mat-label other-label mandatory-field">Is Pre Authorised</label>
+            <mat-select (selectionChange)="isPredAuthorisedChanged($event)" name="isPreAuthorised" id="isPreAuthorised" formControlName="isPreAuthorised">
+              <mat-option *ngFor="let option of yesNoOptions" [value]="option.value">
+                {{ option.label }}
+              </mat-option>
+            </mat-select>
+            <mat-error *ngIf="form.get('isPreAuthorised').hasError('required') && form.get('isPreAuthorised').touched">
+              Is Pre Authorised is <strong>required</strong>
+            </mat-error>
+          </mat-form-field>
+        </section>
+      </div>
+
+      <div class="form-group-button saveBtn">
+        <button (click)='onSubmit()' *ngIf="form.valid && !form.pristine && !(isSaving$ | async)" type="button"
+          class="button float-button">Submit</button>
+        <button (click)='onCancel()' type="button" class="button float-button">Close</button>
+      </div>
+    </form>
+
+    
+
+    <div *ngIf="(isSaving$ | async)">
+      <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+      <label class="mat-label other-label"><i>Saving details...please wait</i></label>
+    </div>
+  </mat-card-content>
+</mat-card>

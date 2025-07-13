@@ -1,0 +1,87 @@
+<span *ngIf="isConfigurationMode && !userHasPermission(configureReferralNatureOfQueryPermission)">
+    <access-denied></access-denied>
+</span>
+
+<span
+    [hidden]="!(!isConfigurationMode || (isConfigurationMode && userHasPermission(configureReferralNatureOfQueryPermission)))">
+    <mat-card>
+        <div class="menu-bar">
+            <span class="material-icons">
+                search
+            </span>
+            Referral Nature of Query<span *ngIf="targetModuleType"> ({{getModuleType(targetModuleType)}})</span>
+            <span *ngIf="!(dataSource.loading$ | async) && !(isLoading$ | async)" (click)="reset()"
+                class="material-icons pointer right" matTooltip="reset">
+                restart_alt
+            </span>
+        </div>
+
+        <form [formGroup]="form" class="mat-container details-form" novalidate>
+            <section>
+                <mat-form-field class="mat-form-field" [floatLabel]="'never'">
+                    <input matInput name="searchTerm" id="searchTerm" formControlName="searchTerm">
+                    <mat-placeholder class="placeholder">search referral nature of query by name...</mat-placeholder>
+                </mat-form-field>
+            </section>
+        </form>
+    </mat-card>
+
+    <mat-card *ngIf="(dataSource.loading$ | async) || (isLoading$ | async)">
+        <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+        <label class="mat-label other-label"><i>searching...please wait</i></label>
+    </mat-card>
+
+    <div [hidden]="(dataSource.loading$ | async) || (isLoading$ | async)">
+        <mat-card>
+            <div *ngIf="searchTerm">Search Results for <b>{{searchTerm}}</b></div>
+            <div [hidden]="!(dataSource.data && dataSource.data.data && dataSource.data.data.length > 0)">
+                <mat-table #table [dataSource]="dataSource" matSort id="tblData" (matSortChange)="getData()">
+
+                    <ng-container matColumnDef="name">
+                        <mat-header-cell *matHeaderCellDef mat-sort-header> Nature of Query </mat-header-cell>
+                        <mat-cell *matCellDef="let row"><b>{{ row.name }}</b></mat-cell>
+                    </ng-container>
+
+                    <ng-container matColumnDef="moduleTypeId">
+                        <mat-header-cell *matHeaderCellDef mat-sort-header> Target Module </mat-header-cell>
+                        <mat-cell *matCellDef="let row">{{row.moduleType ? getModuleType(row.moduleType) :
+                            'N/A'}}</mat-cell>
+                    </ng-container>
+
+                    <ng-container matColumnDef="roleId">
+                        <mat-header-cell *matHeaderCellDef mat-sort-header> Responsible Role </mat-header-cell>
+                        <mat-cell *matCellDef="let row"><role-display-name
+                                [roleId]="row.roleId"></role-display-name></mat-cell>
+                    </ng-container>
+
+                    <!-- Actions -->
+                    <ng-container matColumnDef="actions">
+                        <mat-header-cell *matHeaderCellDef>Actions</mat-header-cell>
+                        <mat-cell *matCellDef="let row">
+                            <span *ngIf="isConfigurationMode" (click)="openRoleSearchDialog(row)"
+                                class="material-icons icn pointer icn-button"
+                                matTooltip="configure responsible role">build</span>
+                            <span *ngIf="isConfigurationMode && row.roleId" (click)="openConfirmationDialog(row)"
+                                class="material-icons icn pointer icn-button"
+                                matTooltip="undo responsible role">undo</span>
+                            <span *ngIf="!isConfigurationMode" (click)="referralNatureOfQuerySelected(row)"
+                                class="material-icons icn pointer icn-button" matTooltip="select">check_circle</span>
+                        </mat-cell>
+                    </ng-container>
+
+                    <mat-header-row *matHeaderRowDef="getDisplayedColumns()"></mat-header-row>
+                    <mat-row *matRowDef="let row; columns: getDisplayedColumns();"></mat-row>
+                </mat-table>
+
+                <mat-paginator #paginator [pageIndex]="0" [pageSize]="5" [pageSizeOptions]="[5, 10, 25, 100]"
+                    [length]="this.dataSource.rowCount$ | async" (page)="getData()">
+                </mat-paginator>
+            </div>
+
+            <mat-card
+                *ngIf="!(dataSource.data && dataSource.data.data && dataSource.data.data.length > 0 || ((dataSource.loading$ | async) || (isLoading$ | async)))">
+                <label class="mat-label other-label"><i>no referral nature of query found...</i></label>
+            </mat-card>
+        </mat-card>
+    </div>
+</span>

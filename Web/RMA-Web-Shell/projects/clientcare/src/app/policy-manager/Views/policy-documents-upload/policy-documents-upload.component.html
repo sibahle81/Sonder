@@ -1,0 +1,70 @@
+﻿<div>
+    <div class="page-header">
+        <h1>Upload Policy documents</h1>
+    </div>
+
+    <span class="progress">
+        <mat-progress-bar *ngIf="isUploading" mode="indeterminate"></mat-progress-bar>
+    </span>
+
+    <mat-card class="upload-main-container">
+        <form [formGroup]="uploadFormGroup">
+
+            <div class="upload-main-container-row">
+                <!----------------drop-down container------------------->
+                <mat-card class="upload-main-container-column" style="width: 36% !important;">
+                    <mat-card class="upload-main-container">
+                        <div class="upload-main-container-row">
+                            <div class="upload-main-container-column">
+                                <mat-form-field>
+                                    <div class="progress" *ngIf="loading">
+                                        <mat-progress-bar mode="indeterminate" style="min-width: 200px !important;"></mat-progress-bar>
+                                    </div>
+
+                                    <mat-select id="requiredDocument" name="requiredDocument" formControlName="requiredDocument" placeholder="Document Type" required [value]="selectedRequiredDocument" (change)="onRequiredDocumentChanged($event)">
+                                        <mat-option *ngFor="let requiredDocument of requiredDocuments" [value]="requiredDocument">
+                                            {{requiredDocument.name}}
+                                        </mat-option>
+                                    </mat-select>
+                                </mat-form-field>
+                            </div>
+                        </div>
+                    </mat-card>
+                </mat-card>
+                <!--choose file to upload container-->
+                <mat-card class="upload-main-container-column" style="width: 45% !important;display: inline-flex;margin-top: 57px;">
+                    <div class="dropbox" id="dropbox" (dragenter)="dragenter($event)" (dragover)="dragover($event)" (drop)="drop($event)" (drageleave)="dragleave($event)">
+                        <span class="dropTitle"><a (click)="openUploadFile($event)">Choose files</a> or drag/drop files here!...........<i class="material-icons upload-icon"> backup</i></span>
+                    </div>
+                    <div class="upload-button">
+                        <button type="button" class="button float-button action-buttons" (click)="uploadFiles()">Upload</button>
+                    </div>
+                </mat-card>
+            </div>
+            <!--file ready to be uploaded-->
+            <div class="uploaded-document">
+                <mat-list dense class="file-list">
+                    <mat-list-item *ngFor="let file of uploadFileList">
+                        <mat-icon mat-list-icon>note</mat-icon>
+                        <h4 mat-line style="margin-top: -27px;z-index: 0;position: absolute;">
+                            <label *ngIf="file.isLoading">{{file.name}}</label>
+                            <a *ngIf="!file.isLoading" href="{{file.url}}" target="_blank">{{file.name}}</a>
+                        </h4>
+                        <p mat-line>{{file.size}}</p>
+                        <p mat-line><a (click)="remove(file)"><mat-icon class="close-icon">close</mat-icon></a></p>
+                    </mat-list-item>
+                </mat-list>
+            </div>
+        </form>
+    </mat-card>
+
+    <div>
+
+        <div (click)="back();" class="back-button">
+            <button type="button" class="button float-button action-buttons">Back</button>
+        </div>
+
+    </div>
+</div>
+<input type="file" multiple #fileInput name="{{label}}" id="fileUpload" accept="{{acceptedTypes}}"
+       (change)="onChange($event)" style="display:none;" />

@@ -1,0 +1,100 @@
+<mat-card>
+  <div class="expansionTitle">
+    <span class="material-icons">groups</span>Recipients Banking Details
+  </div>
+
+  <form [formGroup]="form" *ngIf="this.form" [hidden]="isLoading">
+    <section class="top-section">
+      <mat-form-field>
+        <label class="mat-label other-label mandatory-field">Bank</label>
+        <mat-select name="bankId" id="bankId" formControlName="bankId" (selectionChange)="loadBranches()">
+          <mat-option *ngFor="let bank of componentData.banks" [value]="bank.id">
+            {{bank.name}}
+          </mat-option>
+        </mat-select>
+        <mat-error *ngIf="form.get('bankId').hasError('min')">
+          Please select a bank
+        </mat-error>
+      </mat-form-field>
+
+      <mat-form-field class="mat-form-field-right">
+        <label class="mat-label other-label mandatory-field">Branch</label>
+        <mat-select name="bankBranchId" id="bankBranchId" formControlName="bankBranchId"
+          (selectionChange)="loadBranchCode()">
+          <mat-option *ngFor="let branch of filteredBranches" [value]="branch.id">
+            {{branch.name}}
+          </mat-option>
+        </mat-select>
+        <mat-error *ngIf="form.get('bankBranchId').hasError('min')">
+          Please select a bank branch
+        </mat-error>
+      </mat-form-field>
+    </section>
+
+    <section class="top-section">
+      <mat-form-field>
+        <label class="mat-label other-label mandatory-field">Account Type</label>
+        <mat-select formControlName="accountType" name="accountType" id="accountType">
+          <mat-option *ngFor="let type of componentData.bankAccountTypes" [value]="type.id">
+            {{type.name}}
+          </mat-option>
+        </mat-select>
+        <mat-error *ngIf="form.get('accountType').hasError('required')">
+          Id Type date is required
+        </mat-error>
+      </mat-form-field>
+
+      <mat-form-field class="mat-form-field-right">
+        <label class="mat-label other-label mandatory-field">Branch Code</label>
+        <input matInput (keyup)="removeNonIntegers($event)" maxlength="6" formControlName="branchCode" name="branchCode" type="text" />
+        <mat-error *ngIf="form.get('branchCode').hasError('required')">
+          Account Number is required
+        </mat-error>
+      </mat-form-field>
+    </section>
+
+    <section class="top-section">
+      <mat-form-field>
+        <label class="mat-label other-label mandatory-field">Account Holder</label>
+        <input matInput maxlength="50" name="accountHolder" formControlName="accountHolder"/>
+        <mat-error *ngIf="form.get('accountHolder').hasError('required')">
+          Account Holder is required
+        </mat-error>
+      </mat-form-field>
+    </section>
+
+    <section class="top-section">
+      <mat-form-field>
+        <label class="mat-label other-label mandatory-field">Account Number</label>
+        <input matInput maxlength="13" (keyup)="removeNonIntegers($event)" name="accountNumber" formControlName="accountNumber" type="text"/>
+        <mat-error *ngIf="form.get('accountNumber').hasError('required')">
+          Account Number is required
+        </mat-error>
+      </mat-form-field>
+
+      <mat-form-field class="mat-form-field-right">
+        <label class="mat-label other-label mandatory-field">Effective Date</label>
+        <input matInput formControlName="effectiveDate" id="effectiveDate" name="effectiveDate" date="true" readOnly [matDatepicker]="effectiveDate">
+        <mat-datepicker-toggle matSuffix class="mat-toggle-datepicker datePick" [for]="effectiveDate">
+        </mat-datepicker-toggle>
+        <mat-datepicker touchUi="true" #effectiveDate></mat-datepicker>
+      </mat-form-field>
+    </section>
+
+
+    <mat-card-actions>
+      <div class="left-margin actions-container">
+        <div>
+          <button *ngIf="form.valid && !componentData.viewMode" class="button submit-button" (click)="save()">Save</button>
+          <button class="button submit-button" (click)="cancel()">Cancel</button>
+        </div>
+      </div>
+    </mat-card-actions>
+  </form>
+
+  <span [hidden]="!isLoading">
+    <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+    <span class="grey site-font"><i>Verifying account information...please wait</i></span>
+  </span>
+</mat-card>
+

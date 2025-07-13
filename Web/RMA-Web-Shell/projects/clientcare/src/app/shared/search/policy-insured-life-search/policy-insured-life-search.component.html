@@ -1,0 +1,106 @@
+﻿<mat-card-header>
+  <mat-card-title class="wizard-font card-title grey">
+    <h1 style="padding: 0;">Find an insured life</h1>
+  </mat-card-title>
+  <mat-card-subtitle>
+    <span class="grey site-font"><i>Search for a insured life to begin.</i></span>
+  </mat-card-subtitle>
+</mat-card-header>
+<mat-card-content style="margin-left: 10px;">
+
+
+  <form [formGroup]="formSearch" class="mat-container" novalidate>
+
+    <!--Query-->
+    <mat-form-field style="width:100%">
+      <input matInput maxlength="50" formControlName="query" name="query" width="300" minLength="3"
+        style="height: 50px; border-radius: 22px !important;"
+        matTooltip="Search by insured life First Name, Last Name, Designation, Date of Birth"
+        matTooltipShowDelay="1000">
+      <mat-icon style="position: absolute; right: 16px; top: 7px; color: #33BFE6; cursor: pointer" (click)="search()" matSuffix>search</mat-icon>
+      <mat-error *ngIf="formSearch.get('query').hasError('required')">
+        Please enter a search term.
+      </mat-error>
+      <mat-error *ngIf="formSearch.get('query').hasError('minlength')">
+        Please enter a search term longer than <strong>3 characters</strong>
+      </mat-error>
+      <!-- button name="submitBtn" style="position: absolute; top: 3px" class="button submit-button" (click)="search()" matTooltip="Search by insured life First Name, Last Name, Designation, Date of Birth" matTooltipShowDelay="1000">Search</button -->
+      <button style="visibility: hidden;" class="button submit-button" (click)="search()"
+        matTooltip="Search by insured life First Name, Last Name, Designation, Date of Birth"
+        matTooltipShowDelay="1000">Search</button>
+    </mat-form-field>
+  </form>
+
+  <div *ngIf="dataSource.isLoading">
+    <mat-progress-bar mode="indeterminate"
+      [ngClass]="{ 'loading-main-double-menu-progress': doubleMenu, 'loading-main-single-menu-progress': !doubleMenu }">
+    </mat-progress-bar>
+    <p class="site-font grey">Searching...</p>
+  </div>
+
+  <div [hidden]="dataSource.data.length === 0 || dataSource.isLoading">
+    <mat-table #table [dataSource]="dataSource" matSort>
+
+      <!-- FirstName -->
+      <ng-container matColumnDef="firstName">
+        <mat-header-cell *matHeaderCellDef mat-sort-header> FirstName </mat-header-cell>
+        <mat-cell *matCellDef="let row"> {{row.name}} </mat-cell>
+      </ng-container>
+
+      <!-- Relationship -->
+      <ng-container matColumnDef="relationshipName">
+        <mat-header-cell *matHeaderCellDef mat-sort-header> Relationship </mat-header-cell>
+        <mat-cell *matCellDef="let row"> {{row.relationshipName}} </mat-cell>
+      </ng-container>
+
+      <!-- LastName -->
+      <ng-container matColumnDef="lastName">
+        <mat-header-cell *matHeaderCellDef mat-sort-header> Last Name </mat-header-cell>
+        <mat-cell *matCellDef="let row"> {{row.surname}} </mat-cell>
+      </ng-container>
+
+      <!-- Date of Birth -->
+      <ng-container matColumnDef="dateOfBirth">
+        <mat-header-cell *matHeaderCellDef mat-sort-header> Date of Birth </mat-header-cell>
+        <mat-cell *matCellDef="let row"> {{row.dateOfBirth | date:'mediumDate'}} </mat-cell>
+      </ng-container>
+
+      <!-- Reference Number -->
+      <ng-container matColumnDef="referenceNumber">
+        <mat-header-cell *matHeaderCellDef mat-sort-header> Reference Number </mat-header-cell>
+        <mat-cell *matCellDef="let row"> {{row.referenceNumber}} </mat-cell>
+      </ng-container>
+
+      <!-- Actions -->
+      <ng-container matColumnDef="actions">
+        <mat-header-cell *matHeaderCellDef mat-sort-header>Actions</mat-header-cell>
+        <mat-cell *matCellDef="let row">
+          <span *ngIf="row.canEdit"><a role="button" class="link-edit" (click)="onSelect(row)">View / Edit</a></span>
+          <span *ngIf="!row.canEdit"><a role="button" class="link-edit" (click)="onSelect(row)">View</a></span>
+        </mat-cell>
+      </ng-container>
+
+      <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
+      <mat-row *matRowDef="let row; columns: displayedColumns;"></mat-row>
+    </mat-table>
+
+    <mat-paginator #paginator [length]="dataSource.data.length" [pageIndex]="0" [pageSize]="5"
+      [pageSizeOptions]="[5, 10, 25, 100]">
+    </mat-paginator>
+  </div>
+
+  <div
+    [hidden]="dataSource.filteredData.length === 0  || dataSource.filteredData.length > 0 || dataSource.data && dataSource.data.length > 0"
+    class="no-search-results-add-button">
+    <div class="site-font grey">
+      <p class="grey">Your search - <strong>{{currentQuery}}</strong> - did not match any policies.</p>
+      <span>Suggestions: </span>
+      <ul>
+        <li>Make sure that all words are spelled correctly.</li>
+        <li>Try different keywords.</li>
+        <li>Try more general keywords.</li>
+        <li>Try fewer keywords.</li>
+      </ul>
+    </div>
+  </div>
+</mat-card-content>

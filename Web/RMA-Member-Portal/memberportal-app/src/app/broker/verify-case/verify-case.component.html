@@ -1,0 +1,33 @@
+<div class="page-header"></div>
+<div class="wizard-main-content">
+  <mat-card class="wizard-mat-card-content">
+    <mat-card-content class="mat-card-content">
+      <div>
+        <form [formGroup]="form" class="mat-container details-form" novalidate>
+          <section [hidden]="!showIntemediaries || !isWizard">
+            <mat-form-field class="mat-form-field">
+              <label class="mat-label other-label">Representative</label>
+              <input matInput formControlName="representativeName">
+            </mat-form-field>
+            <mat-form-field class="mat-form-field-right">
+              <label class="mat-label other-label">Brokerage</label>
+              <input matInput formControlName="brokerageName">
+            </mat-form-field>
+          </section>
+        </form>
+      </div>
+      <div *ngIf="documentSetId !== 0">
+        <policy-documents [documentSetId]="documentSetId" [keyName]="'CaseCode'" [keyValue]="docKey"></policy-documents>
+        <br />
+        <div *ngIf="showPolicyDocuments">
+          <policy-documents [documentSetId]="individualPolicyDocsDocSetId " [keyName]="'CaseCode'" [keyValue]="docKey">
+          </policy-documents>
+        </div>
+        <div *ngIf="showGroupPolicyDocuments">
+          <policy-documents [documentSetId]="groupPolicyDocsDocSetId " [keyName]="'CaseCode'" [keyValue]="docKey">
+          </policy-documents>
+        </div>
+      </div>
+    </mat-card-content>
+  </mat-card>
+</div>

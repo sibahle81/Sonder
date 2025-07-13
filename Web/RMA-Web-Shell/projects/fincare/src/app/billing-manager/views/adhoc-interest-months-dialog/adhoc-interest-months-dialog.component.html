@@ -1,0 +1,37 @@
+<app-dialog-header  [showSubmit] ="showSubmit" (closeHandler)="close()" (submitHandler)="submit()" titleIcon="payments" title="Adhoc Interest">
+</app-dialog-header> 
+<mat-card>
+<p class="labelParagraph">Dates Pending Interest</p>
+<div *ngIf="isLoading">
+  <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+  <label class="mat-label other-label"><i>Loading Pending Interest Dates...please wait</i></label>
+</div>
+<div [hidden]="datasource.data.length === 0" class="table-container">
+      <mat-table #table [dataSource]="datasource" matSort>
+          <ng-container matColumnDef="pendingDate">
+              <mat-header-cell *matHeaderCellDef mat-sort-header>Date</mat-header-cell>
+              <mat-cell *matCellDef="let row">{{row.pendingDate | date:'yyyy/MM/dd'}}</mat-cell>
+          </ng-container>  
+          <ng-container matColumnDef="actions">
+            <mat-header-cell *matHeaderCellDef>Select</mat-header-cell>
+            <mat-cell *matCellDef="let row; let i = index" class="tableActions">
+                <mat-checkbox [checked]="interestDateIds.indexOf(row.itemId) > -1"
+                  (change)="dateChecked($event,row)"
+                 >
+                </mat-checkbox>               
+              </mat-cell>
+          </ng-container>              
+          <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
+          <mat-row *matRowDef="let row; columns: displayedColumns;"></mat-row>
+      </mat-table>
+      <mat-paginator #paginator [pageIndex]="0" [pageSize]="5" [pageSizeOptions]="[5, 10, 25, 100]">
+      </mat-paginator>        
+  </div>   
+  <div>{{errorMessage}}</div>
+  <section>
+    <mat-checkbox *ngIf="interestDateIds.length > 0"
+      (change)="confirmChecked($event)" 
+     >Tick to confirm creation of adhoc interest for selected dates
+    </mat-checkbox> 
+  </section> 
+</mat-card>

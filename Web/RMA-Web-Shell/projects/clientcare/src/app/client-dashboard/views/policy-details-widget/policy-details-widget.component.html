@@ -1,0 +1,543 @@
+<div *ngIf="!isPolicyExist">
+  <label class="mat-label other-label"><i>no policies found for member...</i></label>
+</div>
+<div *ngIf="roleplayerPolicies && roleplayerPolicies.length > 0">
+  <div class="dashboard">
+    <div class="sub">
+      <br />
+
+      <!--CLIENT NAME-->
+      <mat-card *ngIf="clientName != '' && !(isLoadingPolicy$ | async)" class="matcard">
+        <mat-card-content>
+          <div class="clientTitle">
+              <mat-icon matTooltip="client name">account_circle</mat-icon> <b>{{clientName}}</b><br/>
+              <span class="industryClassTitle">Industry Class: <b>{{finPayeeClass}}</b></span>
+          </div>
+        </mat-card-content>
+      </mat-card>
+      <br />
+
+      <!--POLICIES LIST-->
+      <mat-card class="matcard">
+        <mat-card-content>
+          <h1>Policies</h1>
+          <br />
+          <div *ngIf="isLoadingPolicy$ | async">
+            <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+            <label class="mat-label other-label"><i>loading policies...please wait</i></label>
+          </div>
+
+          <div *ngIf="!policy &&  !(isLoadingPolicy$ | async)">
+            <i>no policies have been added</i>
+          </div>
+
+          <table *ngIf="!(isLoadingPolicies$ | async) && policy" class="altRowTable table">
+            <tr>
+              <th>Policy Number</th>
+              <th>Product Option</th>
+              <th>Status</th>
+              <th>Action</th>
+            </tr>
+            <tr *ngFor="let policy of roleplayerPolicies">
+              <td>{{policy.policyNumber}}</td>
+              <td>{{policy.productOption.code + "-" + policy.productOption.name}}</td>
+              <td *ngIf="greenPolicyStatus.includes(getStatus(policy.policyStatus))" align="center"><span
+                  class="material-icons lightGreen pointer"
+                  matTooltip="{{getStatus(policy.policyStatus)}}">play_circle_filled</span></td>
+              <td *ngIf="amberPolicyStatus.includes(getStatus(policy.policyStatus))" align="center"><span
+                  class="material-icons lightAmber pointer"
+                  matTooltip="{{getStatus(policy.policyStatus)}}">pause_circle_filled</span></td>
+              <td *ngIf="redPolicyStatus.includes(getStatus(policy.policyStatus))" align="center"><span
+                  class="material-icons lightRed pointer" matTooltip="{{getStatus(policy.policyStatus)}}">stop</span>
+              </td>
+              <td *ngIf="bluePolicyStatus.includes(getStatus(policy.policyStatus))" align="center"><span
+                  class="material-icons lightBlue pointer" matTooltip="{{getStatus(policy.policyStatus)}}">cached</span>
+              </td>
+              <td *ngIf="policyId != policy.policyId" align="center"><a role="button" class="link-edit"
+                  (click)="togglePolicy(policy.policyId)"><span class="material-icons"
+                    matTooltip="View this policy pointer">visibility</span></a></td>
+              <td *ngIf="policyId == policy.policyId" align="center">
+                <a role="button" class="link-edit pointer">
+                  <span class="material-icons" matTooltip="Currently being viewed">check_box</span></a>
+              </td>
+            </tr>
+          </table>
+        </mat-card-content>
+      </mat-card>
+
+      <br />
+
+      <!--INSURED LIVES-->
+      <mat-card class="matcard">
+        <mat-card-content>
+          <policy-member-widget [isChildPolicy]="isChildPolicy"></policy-member-widget>
+        </mat-card-content>
+      </mat-card>
+      <br />
+
+      <!--POLICY DOCUMENTS-->
+      <mat-card class="matcard">
+        <mat-card-content>
+          <h1>Documents</h1>
+          <br />
+
+          <div *ngIf="(isLoadingPolicy$ | async)">
+            <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+            <label class="mat-label other-label"><i>loading documents...please wait</i></label>
+          </div>
+
+          <form [formGroup]="form" class="mat-container details-form" novalidate>
+            <div *ngIf="!(isLoadingPolicy$ | async) && selectedDocumentSetId !== 0 && policy">
+              <mat-form-field class="mat-form-field-right matformfield">
+                <label class="mat-label other-label">Document Set</label>
+                <mat-select [(value)]='selectedDocumentSetId' name="documentSets" id="documentSets"
+                  formControlName="documentSets" (selectionChange)="documentSetChanged($event.value)">
+                  <mat-option [value]="12">Policy Case (Individual)</mat-option>
+                  <mat-option [value]="18">Policy Documents(individual)</mat-option>
+                  <mat-option [value]="13">Policy Case (Group)</mat-option>
+                  <mat-option [value]="19">Policy Documents(group)</mat-option>
+                  <mat-option [value]="14">Policy Maintanance</mat-option>
+                  <mat-option [value]="15">Policy Cancellation</mat-option>
+                  <mat-option [value]="21">Policy Reinstatement</mat-option>
+                  <mat-option [value]="22">Policy Continuation</mat-option>
+                  <mat-option [value]="16">Member Relations</mat-option>
+                  <mat-option [value]="29">Interbank Transfer</mat-option>
+                  <mat-option [value]="25">Reallocation</mat-option>
+                  <mat-option [value]="39">Coid Policy Cancellation</mat-option>
+                </mat-select>
+              </mat-form-field>
+            </div>
+          </form>
+
+          <div *ngIf="!(isLoadingPolicy$ | async) && policy">
+            <policy-documents [documentSetId]="selectedDocumentSetId" [keyName]="'CaseCode'" [keyValue]="policyNumber">
+            </policy-documents>
+          </div>
+
+          <div *ngIf="!(isLoadingPolicy$ | async) && selectedDocumentSetId <= 0 && policy">
+            <i>no document set has been selected</i>
+          </div>
+
+          <div *ngIf="!(isLoadingPolicy$ | async) && !policy">
+            <i>no documents have been loaded</i>
+          </div>
+
+        </mat-card-content>
+      </mat-card>
+
+      <br />
+
+      <!--ACCOUNT HISTORY-->
+      <mat-card class="matcard">
+        <mat-card-content>
+          <h1>Account History</h1>
+
+          <br />
+
+          <div *ngIf="isLoadingPolicy$ | async">
+            <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+            <label class="mat-label other-label"><i>loading transactions...please wait</i></label>
+          </div>
+
+          <div *ngIf="!(isLoadingPolicy$ | async) && !policy">
+            <i>no account history have been loaded</i>
+          </div>
+
+          <div *ngIf="!(isLoadingPolicy$ | async) && statements && statements.length <=0 ">
+            <i>No transactions were found</i>
+          </div>
+
+          <div [hidden]="statements">
+            <mat-table #table [dataSource]="datasource" matSort>
+              <ng-container matColumnDef="month" class="mat-column-claimNumber">
+                <mat-header-cell *matHeaderCellDef mat-sort-header> Month</mat-header-cell>
+                <mat-cell *matCellDef="let row"> {{row.transactionDate | date: 'yyyy/MM/dd'}} </mat-cell>
+              </ng-container>
+              <ng-container matColumnDef="description" class="mat-column-created">
+                <mat-header-cell *matHeaderCellDef mat-sort-header> Description </mat-header-cell>
+                <mat-cell *matCellDef="let row"> {{row.description}} </mat-cell>
+              </ng-container>
+              <ng-container matColumnDef="debit">
+                <mat-header-cell *matHeaderCellDef mat-sort-header> Debit </mat-header-cell>
+                <mat-cell *matCellDef="let row"> {{row.debitAmount | currency:'R'}} </mat-cell>
+              </ng-container>
+              <ng-container matColumnDef="credit" class="mat-column-created">
+                <mat-header-cell *matHeaderCellDef mat-sort-header> Credit </mat-header-cell>
+                <mat-cell *matCellDef="let row"> {{row.creditAmount | currency:'R'}} </mat-cell>
+              </ng-container>
+              <mat-header-row *matHeaderRowDef="displayedColumns;"></mat-header-row>
+              <mat-row *matRowDef="let row; columns: displayedColumns;"></mat-row>
+            </mat-table>
+            <mat-paginator #paginator [length]="rowCount" [pageIndex]="0" 
+            [pageSize]="5" [pageSizeOptions]="[5, 10, 25, 100]" (page)="handlePageEvent($event)">
+            </mat-paginator>
+          </div>
+        </mat-card-content>
+      </mat-card>
+    </div>
+
+    <div class="policyDetails">
+      <br />
+      <!--POLICY DETAILS-->
+      <mat-card>
+        <mat-card-content>
+          <h1>Policy Details</h1>
+          <span *ngIf="policy && policy.policyId > 0 && !(isLoadingPolicy$ | async)" (click)="openAuditDialog(policy)" class="material-icons pointer right"
+            matTooltip="View Audit details">
+            fingerprint
+          </span>
+          <br />
+
+          <div *ngIf="isLoadingPolicy$ | async">
+            <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+            <label class="mat-label other-label"><i>loading policy details...please wait</i></label>
+          </div>
+          <div *ngIf="!policy && !(isLoadingPolicy$ | async)">
+            <i>no policy details have been added</i>
+          </div>
+
+          <table *ngIf="policy && !(isLoadingPolicy$ | async)" class="altRowTable table">
+            <tr>
+              <td><b>Policy Number: </b></td>
+              <td>{{policy.policyNumber}}</td>
+            </tr>
+            <tr>
+              <td><b>Policy Status: </b></td>
+              <td>{{getStatus(policy.policyStatus)}}</td>
+            </tr>
+            <tr>
+              <td><b>Client Reference: </b></td>
+              <td>{{policy.clientReference}}</td>
+            </tr>
+            <tr>
+              <td><b>Client Name: </b></td>
+              <td>{{clientName}}</td>
+            </tr>
+            <tr>
+              <td><b>Inception Date: </b></td>
+              <td>{{policy.policyInceptionDate| date: 'yyyy/MM/dd' }}</td>
+            </tr>
+            <tr>
+              <td><b>Expiry Date: </b></td>
+              <td>{{policy.expiryDate| date: 'yyyy/MM/dd' }}</td>
+            </tr>
+            <tr>
+              <td><b>Cancellation Date: </b></td>
+              <td>{{policy.cancellationDate| date: 'yyyy/MM/dd' }}</td>
+            </tr>
+            <tr>
+              <td><b>First Installment Date: </b></td>
+              <td>{{policy.firstInstallmentDate| date: 'yyyy/MM/dd' }}</td>
+            </tr>
+            <tr>
+              <td><b>Last Installment Date: </b></td>
+              <td>{{policy.lastInstallmentDate| date: 'yyyy/MM/dd' }}</td>
+            </tr>
+            <tr>
+              <td><b>Last Lapsed Date: </b></td>
+              <td>{{policy.lastLapsedDate| date: 'yyyy/MM/dd' }}</td>
+            </tr>
+            <tr>
+              <td><b>Last Re-instate Date: </b></td>
+              <td>{{policy.lastReinstateDate| date: 'yyyy/MM/dd' }}</td>
+            </tr>
+            <tr>
+              <td><b>Regular Installment Day: </b></td>
+              <td>{{policy.regularInstallmentDayOfMonth}}</td>
+            </tr>
+            <tr>
+              <td><b>December Installment Day: </b></td>
+              <td>{{policy.decemberInstallmentDayOfMonth}}</td>
+            </tr>
+            <tr>
+              <td><b>Annual Premium: </b></td>
+              <td>{{annualPremium | currency: 'R'}}</td>
+            </tr>
+            <tr>
+              <td><b>Installment Premium: </b></td>
+              <td>{{monthlyPremium | currency: 'R'}}</td>
+            </tr>
+            <tr>
+              <td><b>Commission Fee (%): </b></td>
+              <td>{{ formatPercentage(policy.commissionPercentage) }}%</td>
+            </tr>
+            <tr>
+              <td><b>Intermediary Service Fee (%): </b></td>
+              <td>{{ formatPercentage(policy.adminPercentage) }}%</td>
+            </tr>
+            <tr>
+              <td><b>Binder Fee (%): </b></td>
+              <td>{{ formatPercentage(policy.binderFeePercentage) }}%</td>
+            </tr>
+            <tr>
+              <td><b>Premium Adjustment (%): </b></td>
+              <td>{{ formatPercentage(policy.premiumAdjustmentPercentage) }}%</td>
+            </tr>
+          </table>
+
+        </mat-card-content>
+      </mat-card>
+
+      <br />
+
+      <!--BANKING DETAILS-->
+      <mat-card>
+        <mat-card-content>
+
+          <h1>Banking Details</h1>
+          <br />
+
+          <div *ngIf="isLoadingPolicy$ | async">
+            <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+            <label class="mat-label other-label"><i>loading banking details...please wait</i></label>
+          </div>
+
+          <div *ngIf="!rolePlayerBankingDetail && hasPermission &&  !(isLoadingPolicy$ | async)">
+            <i>no banking details have been added</i>
+          </div>
+
+          <div *ngIf="rolePlayerBankingDetail && !hasPermission && !(isLoadingPolicy$ | async)">
+            <i>permission denied</i>
+          </div>
+
+          <div *ngIf="rolePlayerBankingDetail && hasPermission && !(isLoadingPolicy$ | async)">
+            <table class="altRowTable table">
+              <tr>
+                <td><b>Bank:</b></td>
+                <td>{{rolePlayerBankingDetail.bankName}}</td>
+              </tr>
+              <tr>
+                <td><b>Account Holder:</b></td>
+                <td>{{rolePlayerBankingDetail.accountHolderName}}</td>
+              </tr>
+              <tr>
+                <td><b>Account Number:</b></td>
+                <td>{{rolePlayerBankingDetail.accountNumber}}</td>
+              </tr>
+              <tr>
+                <td><b>Account Type:</b></td>
+                <td>{{getAccountType(rolePlayerBankingDetail.bankAccountType)}}</td>
+              </tr>
+              <tr>
+                <td><b>Branch</b></td>
+                <td>{{rolePlayerBankingDetail.branchCode}}</td>
+              </tr>
+              <tr>
+                <td><b>Purpose</b></td>
+                <td>{{getPurpose(rolePlayerBankingDetail.purposeId)}}</td>
+              </tr>
+            </table>
+          </div>
+        </mat-card-content>
+      </mat-card>
+
+      <br />
+
+      <!--BROKER DETAILS-->
+      <mat-card>
+        <mat-card-content>
+
+          <h1>Broker Details</h1>
+          <br />
+
+          <div *ngIf="isLoadingPolicy$ | async">
+            <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+            <label class="mat-label other-label"><i>loading broker details...please wait</i></label>
+          </div>
+
+          <div *ngIf="!broker &&  !(isLoadingPolicy$ | async)">
+            <i>no broker details have been added</i>
+          </div>
+
+          <div *ngIf="broker && !(isLoadingPolicy$ | async)">
+            <table class="altRowTable table">
+              <tr style="height: 30px;">
+                <td matTooltip="Code"><b>Code:</b></td>
+                <td>{{broker.code}}</td>
+              </tr>
+              <tr style="height: 30px;">
+                <td matTooltip="Broker name"><b>Name:</b></td>
+                <td>{{broker.name}}</td>
+              </tr>
+              <tr>
+                <mat-icon matTooltip="Contact name">account_circle</mat-icon>
+                <td>{{getBrokerageContactName}}</td>
+              </tr>
+              <tr>
+                <span class="material-icons" matTooltip="Phone number">call</span>
+                <td>{{getBrokarageTelephoneNumber}}</td>
+              </tr>
+              <tr>
+                <mat-icon matTooltip="Mobile phone number">phonelink_ring</mat-icon>
+                <td>{{getBrokerageMobileNumber}}</td>
+              </tr>
+              <tr>
+                <span class="material-icons" matTooltip="Email address">mail</span>
+                <td><a href="mailto:{{getBrokerageEmailAddress}}">{{getBrokerageEmailAddress}}</a></td>
+              </tr>
+            </table>
+            <br />
+            <button type="button" class="button submit-button" (click)="gotoBrokerManager()">Maintain Broker</button>
+          </div>
+        </mat-card-content>
+      </mat-card>
+
+      <br />
+
+      <!--CONTACT DETAILS-->
+      <mat-card>
+        <mat-card-content>
+
+          <h1>Contacts</h1>
+          <br />
+
+          <div *ngIf="isLoadingPolicy$ | async">
+            <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+            <label class="mat-label other-label"><i>loading contact details...please wait</i></label>
+          </div>
+
+          <div *ngIf="!MemberContact &&  !(isLoadingPolicy$ | async)">
+            <i>no primary contact details have been added</i>
+          </div>
+
+          <table *ngIf="MemberContact && !(isLoadingPolicy$ | async)" style="width:100%;" class="altRowTable table">
+            <tr>
+              <td>
+                <mat-icon matTooltip="Contact name">account_circle</mat-icon>
+              </td>
+              <td>{{MemberContact.firstname}} {{MemberContact.surname}}</td>
+            </tr>
+            <tr>
+              <td><span class="material-icons" matTooltip="Landline phone number">call</span></td>
+              <td>{{MemberContact.telephoneNumber}}</td>
+            </tr>
+            <tr>
+              <td>
+                <mat-icon matTooltip="Mobile phone number">phonelink_ring</mat-icon>
+              </td>
+              <td>{{MemberContact.contactNumber}}</td>
+            </tr>
+            <tr>
+              <td><span class="material-icons" matTooltip="Email address">mail</span></td>
+              <td><a href="mailto:{{MemberContact.emailAddress}}">{{MemberContact.emailAddress}}</a></td>
+            </tr>
+          </table>
+
+        </mat-card-content>
+      </mat-card>
+
+      <br />
+
+      <!--CLAIM HISTORY-->
+      <mat-card class="matcard">
+        <mat-card-content>
+          <h1>Claim History</h1>
+          <br />
+
+          <div *ngIf="(isLoadingPolicy$ | async)">
+            <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+            <label class="mat-label other-label"><i>loading claims...please wait</i></label>
+          </div>
+
+          <table *ngIf="!(isLoadingPolicies$ | async) && claims.length > 0" class="altRowTable table">
+            <tr>
+              <th>Claim Reference</th>
+              <th>Date Created</th>
+              <th>Status</th>
+            </tr>
+            <tr *ngFor="let claim of claims">
+              <td>{{claim.claimReferenceNumber}}</td>
+              <td>{{claim.createdDate| date: 'yyyy/MM/dd' }}</td>
+              <td>{{getClaimStatus(claim.claimStatus)}}</td>
+            </tr>
+          </table>
+
+
+          <div *ngIf="!(isLoadingPolicy$ | async) && claims.length <= 0">
+            <i>no claims found for selected policy</i>
+          </div>
+
+
+        </mat-card-content>
+      </mat-card>
+
+      <br />
+      <!--Collection Details-->
+      <mat-card>
+        <mat-card-content>
+          <h1>Collection Details</h1>
+          <div *ngIf="(isLoadingPolicy$ | async)">
+            <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+            <label class="mat-label other-label"><i>loading collection...please wait</i></label>
+          </div>
+          <div *ngIf="!policy &&  !(isLoadingPolicy$ | async)">
+            <i>no collection details added</i>
+          </div>
+          <div *ngIf="policy && !(isLoadingPolicy$ | async)">
+            <policy-collection-widget [policy]="policy"></policy-collection-widget>
+          </div>
+        </mat-card-content>
+      </mat-card>
+    </div>
+
+    <div style="clear: both;">
+      <br />
+      <!--NOTES-->
+      <mat-card *ngIf="isLoadingPolicy$ | async" class="CollectionDetails">
+        <h1>Notes</h1>
+        <mat-card-content>
+          <div>
+            <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+            <label class="mat-label other-label"><i>loading notes...please wait</i></label>
+          </div>
+        </mat-card-content>
+      </mat-card>
+
+      <div [hidden]="isLoadingPolicy$ | async">
+        <notes #notesComponent [title]="'Notes'"></notes>
+      </div>
+
+      <br />
+      <!--Claim Notes-->
+      <mat-card *ngIf="isClaimsView" class="CollectionDetails">
+        <h1>Claim Admin Notes</h1>
+        <mat-card-content>
+          <div *ngIf="(isLoadingPolicy$ | async)">
+            <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+            <label class="mat-label other-label"><i>loading claims admin notes...please wait</i></label>
+          </div>
+
+          <table *ngIf="!(isLoadingPolicies$ | async) && claimsNotes.length > 0" class="altRowTable table">
+            <tr>
+              <th>Reference No.</th>
+              <th>Date</th>
+              <th>Time</th>
+              <th>User</th>
+              <th>Notes</th>
+            </tr>
+            <tr *ngFor="let claimsNote of claimsNotes">
+              <td style="text-align: center;">{{claimsNote.personEventId != null? claimsNote.personEventId:
+                claimsNote.claimId }}</td>
+              <td style="text-align: center;">{{claimsNote.createdDate | date:'shortTime' }}</td>
+              <td style="text-align: center;">{{claimsNote.createdDate | date: 'yyyy/MM/dd' }}</td>
+              <td style="text-align: center;">{{claimsNote.createdBy}}</td>
+              <td>{{claimsNote.text}}</td>
+            </tr>
+          </table>
+
+          <div *ngIf="!(isLoadingPolicy$ | async) && claimsNotes.length <= 0">
+            <i>no claims admin notes found for selected policy</i>
+          </div>
+        </mat-card-content>
+      </mat-card>
+
+      <br />
+      <!--CURRENT TASKS/MAINTENANCE ON SELECTED POLICY-->
+      <div *ngIf="policyId && !(isLoadingPolicy$ | async)" class="form-group-button mat-form-button">
+        <lib-running-wizards [moduleName]="'clientcare'" [managerName]="'policy-manager'" [linkedItemId]="policyId"
+          [wizardTypeCSVs]="'manage-policy-individual,cancel-policy-individual,maintain-policy-members,update-banking-details,refund,continue-policy,create-banking-details,adhoc-collection'">
+        </lib-running-wizards>
+      </div>
+    </div>
+  </div>
+</div>

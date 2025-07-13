@@ -1,0 +1,18 @@
+<mat-card-content>
+    <div *ngIf="isLoading" class="menu-container" style="margin-top:12px">
+        <div style="margin-right: 15px;">
+          <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+          <i>loading vopd details...please wait</i>
+        </div>
+      </div>
+    <div [hidden]="isLoading">
+        <h4 class="card-title">VOPD Details</h4>
+        <p>VOPD response found the ID Number provided was: <strong>{{vopdResponse}}</strong></p>
+    
+    
+    <app-user-registration-documents #userRegistrationDocuments></app-user-registration-documents>
+    <div class="form-group-button mat-form-button">
+        <button [disabled]="disabledSubmit" (click)='Submit()' class="button float-button">Submit</button>
+    </div>
+    </div>    
+</mat-card-content>

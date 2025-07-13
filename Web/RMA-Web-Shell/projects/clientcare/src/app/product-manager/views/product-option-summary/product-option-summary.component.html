@@ -1,0 +1,93 @@
+<mat-card class="main-container">
+  <mat-card class="top-selector-container">
+    <mat-card class="summary-container">
+      <mat-card-header>
+        <mat-card-title>
+          <h1 class="wizard-font">Product Option</h1>
+        </mat-card-title>
+      </mat-card-header>
+      <mat-card-content class="content-container">
+        <div *ngFor="let item of productOptionSummary | keyvalue: asIsOrder; let i = index">
+          <div *ngIf="getObjectType(item.value) !== 'object' && !ignoredFields.includes(item.key)">
+            <div class="text-container" *ngIf="item.value !== 'null' && item.value != undefined && item.value !==''">
+              <div class="div-key"><b>{{formatCamelCase(item.key) | titlecase}}:</b></div>
+              <div class="div-value">{{item.value}}</div>
+            </div>
+          </div>
+        </div>
+        <div class="text-container" *ngFor="let item of paymentFrequencys | keyvalue">
+          <div class="div-key"><b>Payment Frequency:</b></div>
+          <div class="div-value">{{item.value}}</div>
+        </div>
+        <div *ngIf="coverTypes.length > 0">
+          <div class="text-container" *ngFor="let item of coverTypes | keyvalue">
+            <div class="div-key"><b>Cover Type</b></div>
+            <div class="div-value">{{item.value}}</div>
+          </div>
+        </div>
+      </mat-card-content>
+    </mat-card>
+
+    <span style="margin-left: 25px"></span>
+
+    <mat-card class="summary-container">
+      <mat-card-header>
+        <mat-card-title>
+          <h1 class="wizard-font">Benefits</h1>
+        </mat-card-title>
+      </mat-card-header>
+      <mat-card-content class="content-container">
+        <div *ngIf="benefitSummary.length > 0 else benefitWarning">
+          <div *ngFor="let benefit of benefitSummary ">
+            <div *ngFor="let item of benefit | keyvalue : asIsOrder;">
+              <div class="text-container" *ngIf="item.value !== 'null' && item.value != undefined && item.value !==''">
+                <div class="benefit-key"><b>{{formatCamelCase(item.key) | titlecase}}:</b></div>
+                <div class="benefit-value">{{item.value}}</div>
+              </div>
+            </div>
+            <mat-divider></mat-divider>
+          </div>
+        </div>
+        <ng-template #benefitWarning>&nbsp;&nbsp;&nbsp;&nbsp;No benefits have been added</ng-template>
+      </mat-card-content>
+    </mat-card>
+    <span style="margin-left: 25px"></span>
+
+    <mat-card class="summary-container">
+      <mat-card-header>
+        <mat-card-title>
+          <h1 class="wizard-font">Rules</h1>
+        </mat-card-title>
+      </mat-card-header>
+      <mat-card-content class="content-container">
+        <div *ngIf="ruleConfigurations.length > 0 else ruleWarning">
+          <div style="overflow-x:auto;" *ngFor="let ruleConfiguration of ruleConfigurations">
+            <div class="text-container " *ngFor="let configuration of ruleConfiguration | keyvalue">
+              <div class="rules-key"><b>{{formatCamelCase(configuration.key) | titlecase}}:</b></div>
+              <div class="rules-value">{{configuration.value}}</div>
+            </div>
+            <mat-divider></mat-divider>
+          </div>
+        </div>
+        <ng-template #ruleWarning>&nbsp;&nbsp;&nbsp;&nbsp;No rules have been added</ng-template>
+      </mat-card-content>
+    </mat-card>
+    <span style="margin-left: 25px"></span>
+    <mat-card class="summary-container">
+      <mat-card-header>
+        <mat-card-title>
+          <h1 class="wizard-font">Notes</h1>
+        </mat-card-title>
+      </mat-card-header>
+      <mat-card-content class="content-container">
+        <div *ngIf="notes.length > 0 else noteWarning">
+          <div class="text-container" *ngFor="let note of notes | keyvalue">
+            <p [innerHtml]="note.value"></p>
+            <mat-divider></mat-divider>
+          </div>
+        </div>
+        <ng-template #noteWarning>&nbsp;&nbsp;&nbsp;&nbsp;No notes have been added</ng-template>
+      </mat-card-content>
+    </mat-card>
+  </mat-card>
+</mat-card>

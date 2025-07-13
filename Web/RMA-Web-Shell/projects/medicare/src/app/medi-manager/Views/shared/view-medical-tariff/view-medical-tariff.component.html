@@ -1,0 +1,86 @@
+<div class="margine-space">
+    <div class="mat-header">
+        <h1>Tariff List</h1>
+    </div>
+    <a mat-flat-button (click)="onNavigateBack()">
+        <mat-icon>arrow_back</mat-icon>
+        Back
+    </a>
+
+    <mat-card class="matCard">
+        <div>
+            <div *ngIf="loading$ | async">
+                <mat-progress-bar mode="indeterminate"
+                    [ngClass]="{ 'loading-main-double-menu-progress': doubleMenu, 'loading-main-single-menu-progress': !doubleMenu }">
+                </mat-progress-bar>
+                <p class="site-font grey">Loading.....</p>
+            </div>
+            <div *ngIf="showDetails">
+            <div class="grid">
+                <div>
+                    <span class="title">Tariff Code</span>
+                    <span class="value"> {{tariffData.tariffCode}}</span>
+                </div>
+</div>
+<div class="grid"><div>
+    <span class="title">Description</span>
+    <span class="value"> {{tariffData.tariffDescription}}</span>
+</div></div>
+                
+                <div class="grid"><div>
+                    <span class="title">Valid From</span>
+                    <span class="value"> {{tariffData.validFrom}}</span>
+                </div></div>
+                
+                <div class="grid"><div>
+                    <span class="title">Valid To</span>
+                    <span class="value"> {{tariffData.validTo}}</span>
+                </div></div>
+                
+                <div class="grid"><div>
+                    <span class="title">Tariff Rate</span>
+                    <span class="value"> {{tariffData.itemCost}}</span>
+                </div></div>
+                
+                <div class="grid"> <div>
+                    <span class="title">For Quantity</span>
+                    <span class="value"> {{tariffData.defaultQuantity}}</span>
+                </div></div>
+               
+                <div class="grid"><div>
+                    <span class="title">Unit Price</span>
+                    <span class="value"> {{tariffData.basicUnitCost}}</span>
+                </div></div>
+                
+                <div class="grid"> <div>
+                    <span class="title">Unit Type</span>
+                    <span class="value"> {{tariffData.unitType}}</span>
+                </div></div>
+               
+                <div class="grid"><div>
+                    <span class="title">Base Unit cost Name</span>
+                    <span class="value"> {{tariffData.tariffDescription}}</span>
+                </div></div>
+                
+                <div class="grid"><div>
+                    <span class="title">Practice Type</span>
+                    <span class="value">{{getTariffName(tariffData.tariffTypeId)}}</span>
+                </div></div>
+                
+            </div>
+        </div>
+
+    </mat-card>
+ 
+    <div class="clear">&nbsp;</div>
+
+    <h1>Action</h1>
+    
+    <div class="form-buttons submit-button">
+        <button type="button" class="button float-button" (click)="onNavigateBack()">Close</button>
+    </div>
+
+    <div *ngIf="showSubmit" class="form-buttons submit-button">
+        <button type="button" class="button float-button" (click)="onTariffSubmit()">Submit</button>
+    </div>
+</div>

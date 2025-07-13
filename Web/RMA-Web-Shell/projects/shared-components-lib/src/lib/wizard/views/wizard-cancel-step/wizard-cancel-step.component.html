@@ -1,0 +1,47 @@
+﻿<div *ngIf="wizardContext" class="container-padding">
+    <div *ngIf="!isSubmitting">
+        <mat-card>
+            <mat-card-header>
+                <mat-card-title class="wizard-font card-title grey">        
+                    <h1>Are you sure you want to cancel?</h1>
+                </mat-card-title>
+            </mat-card-header>
+            <mat-card-content>
+                <div class="left-margin">
+                    <div class="wizard-font card-title grey">Reference: {{wizardContext.wizard.name}}</div>
+                    <div class="valid">In Progress - Step {{wizardContext.wizard.currentStep}} of {{wizardContext.stepComponents.length}}</div>
+                    
+                    <p class="wizard-font grey"><i>Once a wizard in cancelled it cannot be completed. Another wizard will have to be started.</i></p>
+                </div>
+            </mat-card-content>
+            <mat-card-actions>
+                <button class="button submit-button" (click)="yesCancel()">Yes, cancel</button>
+                <button class="button submit-button" (click)="dontCancel()">Don't cancel</button>
+            </mat-card-actions>
+        </mat-card>
+    </div>
+
+    <!--Cancel Progress-->
+    <div style="margin: 0 20px" *ngIf="isSubmitting && !isCancelled">
+        <h1 style="padding-left: 0;" class="wizard-font">Cancelling wizard</h1>
+        <p class="wizard-font grey">This shouldn't take long...</p>
+        <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+    </div>
+    
+    <!--Cancelled-->
+    <div *ngIf="isCancelled">
+        <h1 class="left-margin">This wizard has been cancelled</h1>
+        <mat-card>
+            <mat-card-header>
+                <mat-card-title class="wizard-font card-title grey">Reference: {{wizardContext.wizard.name}}</mat-card-title>
+                <mat-card-subtitle><span class="wizard-font invalid">Cancelled</span></mat-card-subtitle>
+            </mat-card-header>
+            <mat-card-content>
+                <span class="small-padding wizard-font grey"><i>This wizard has been cancelled.</i></span>
+            </mat-card-content>
+            <mat-card-actions>
+                <button class="button submit-button" (click)="back()">Go back</button>
+            </mat-card-actions>
+        </mat-card>
+    </div>
+</div>

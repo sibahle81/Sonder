@@ -1,0 +1,79 @@
+<mat-card>
+  <mat-card-content>
+    <h1 *ngIf="model && model.taxYear">{{model.action}} Tax Rates for Tax Year {{model.taxYear}}</h1>
+    <div class="add-tax-rate-button-container">
+      <div *ngIf="canEdit"
+        class="expansionTitle right"
+        [hidden]="viewTaxInformation">
+        Add tax rate
+
+        <a (click)="onAddTaxRate()"
+          class="material-icons pointer"
+          matTooltip="add tax rate">
+          add_circle_outline
+        </a>
+      </div>
+    </div>
+
+    <div *ngIf="taxRatesDataSource.length > 0 && !viewTaxInformation && displayedColumns">
+      <mat-table #table
+        [dataSource]="taxRatesDataSource" matSort>
+
+
+        <ng-container matColumnDef="fromIncome">
+          <mat-header-cell *matHeaderCellDef> From Income </mat-header-cell>
+          <mat-cell *matCellDef="let row"> {{row.fromIncome}} </mat-cell>
+        </ng-container>
+
+        <ng-container matColumnDef="toIncome">
+          <mat-header-cell *matHeaderCellDef> To Income </mat-header-cell>
+          <mat-cell *matCellDef="let row"> {{row.toIncome}} </mat-cell>
+        </ng-container>
+
+        <ng-container matColumnDef="standardTaxRate">
+          <mat-header-cell *matHeaderCellDef> Standard Tax Rate </mat-header-cell>
+          <mat-cell *matCellDef="let row"> {{row.standardTaxRate}}
+          </mat-cell>
+        </ng-container>
+
+        <ng-container matColumnDef="taxPercentageRate">
+          <mat-header-cell *matHeaderCellDef> Tax Rate Percentage </mat-header-cell>
+          <mat-cell *matCellDef="let row"> {{row.taxPercentageRate}}
+          </mat-cell>
+        </ng-container>
+
+
+
+        <!-- Actions Column -->
+        <ng-container matColumnDef="actions" *ngIf="canEdit">
+          <mat-header-cell *matHeaderCellDef> Actions </mat-header-cell>
+          <mat-cell *matCellDef="let row" [matMenuTriggerFor]="menu" (click)="filterMenu(row)">
+            <span class="material-icons pointer">more_vert</span>
+            <mat-menu #menu="matMenu">
+              <button disabled="{{menu.disable}}" mat-menu-item *ngFor="let menu of menus"
+                (click)="onMenuItemClick(row, menu)">{{menu.title}}</button>
+            </mat-menu>
+          </mat-cell>
+        </ng-container>
+
+        <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
+        <mat-row *matRowDef="let row; columns: displayedColumns;"></mat-row>
+      </mat-table>
+    </div>
+
+    <div class="tax-rates-list-warning" *ngIf="taxRatesDataSource.length == 0 && !viewTaxInformation && !isLoading">
+      <i>No tax rates have been loaded</i>
+    </div>
+
+    <span [style.visibility]="isLoading ? 'visible' : 'hidden'">
+      <mat-progress-bar class="loading-main-double-menu-progress" mode="indeterminate"></mat-progress-bar>
+      <span class="grey site-font"><i>Loading Tax Rates...please wait</i></span>
+    </span>
+
+    <app-tax-item *ngIf="viewTaxInformation"
+      [taxRatesDataSource]="taxRatesDataSource"
+      [modifiedData]="modifiedData"
+      (cancelButtonClicked)="onCancelButtonClicked()"
+      (saveButtonClicked)="onSaveButtonClicked($event)"></app-tax-item>
+  </mat-card-content>
+</mat-card>

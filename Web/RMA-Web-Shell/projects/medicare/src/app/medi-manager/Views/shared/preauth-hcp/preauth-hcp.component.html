@@ -1,0 +1,43 @@
+<form [formGroup]="form" name="form" class="mat-container details-form" novalidate>
+
+
+    <mat-card style="margin: 15px 30px 15px 30px">
+        <mat-card-content style="margin-left: 10px;">
+            <h1 class="wizard-font">Declaration</h1>
+            <div>
+                <section>
+                    <mat-checkbox id="isDeclarationAccepted" name="isDeclarationAccepted" formControlName="isDeclarationAccepted">
+                      <label class="mandatory-field">&nbsp;I declare that after my examination of the
+                        patient herein, I am satisfied that the injury is work-related and consistent with the injury sustained.</label>
+                    </mat-checkbox>
+                  </section>
+            </div>
+            <br>
+            <br>
+            <mat-form-field>
+                <label class="mat-label other-label">Select HealthCareProvider</label>
+                <!-- (selectionChange)="onSelectChanged($event)" -->
+                <mat-select name="userHealthCareProviders" id="userHealthCareProviders" (selectionChange)="onSelectChanged($event)" [(ngModel)]="userHealthCareProviders">
+                    <mat-option *ngFor="let userhealthCareProvider of userHealthCareProviders" [value]="userhealthCareProvider">
+                        {{ userhealthCareProvider.name}}
+                    </mat-option>
+                </mat-select>
+            </mat-form-field>
+        </mat-card-content>
+    </mat-card>
+    <div style="margin: 15px 30px 15px 40px">
+        <mat-form-field class="mat-form-field">
+            <label class="mat-label other-label">Practice number</label>
+            <input matInput id="healthcareProviderPracticeNumber" name="healthcareProviderPracticeNumber" 
+                [value]="form.controls.healthcareProviderPracticeNumber.value" disabled='true'>
+          </mat-form-field>
+          &nbsp;
+          <mat-form-field class="mat-form-field">
+            <label class="mat-label other-label">Practice name</label>
+            <input matInput id="healthcareProviderName" name="healthcareProviderName"
+              formControlName="healthcareProviderName" />
+          </mat-form-field>
+          <br />					
+    </div>
+</form>
+    

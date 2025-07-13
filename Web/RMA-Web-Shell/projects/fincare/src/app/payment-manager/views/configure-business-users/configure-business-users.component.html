@@ -1,0 +1,32 @@
+<div *ngIf="(isLoading$ | async)" class="loadingDiv">
+    <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+    <span class="site-font grey">Adding user...please wait</span>
+  </div>
+  
+  <div [hidden]="(isLoading$ | async)">
+    <mat-card>
+      <div class="menu-bar">
+        <span class="material-icons">
+          rule
+        </span>&nbsp;Finance Users
+        <span (click)="cancel()" class="material-icons pointer right" matTooltip="Close">
+          close
+        </span>
+        <span *ngIf="userSelectedId" (click)="setFinanceUserEmail()" class="material-icons blue pointer right pulse" matTooltip="save">
+          save
+        </span>
+      </div>
+      <form [formGroup]="form" novalidate>
+        <mat-form-field class="filterControl">
+            <label class="mat-label other-label">Select User</label>
+            <input type="text" #selectUser aria-label="Number" matInput [matAutocomplete]="auto" (input)="filterUsers($event.target.value)">
+            <mat-autocomplete #auto="matAutocomplete">
+              <mat-option *ngFor="let user of filteredUsers" [value]="user.id" (click)="userSelected(user)">
+                {{ user.displayName }}
+              </mat-option>
+            </mat-autocomplete>
+          </mat-form-field>
+      </form>
+    </mat-card>
+  </div>
+  

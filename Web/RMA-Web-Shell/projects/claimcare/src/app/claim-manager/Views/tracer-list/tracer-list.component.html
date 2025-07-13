@@ -1,0 +1,89 @@
+﻿<div *ngIf="claimId === 0" class="mainDiv">
+  <mat-card>
+    <div>
+      No claim id has been supplied.
+    </div>
+  </mat-card>
+</div>
+<mat-card>
+  <mat-card-header>
+    <mat-card-title class="wizard-font card-title grey">
+      <h1 style="padding: 0;">Tracer Details</h1>
+    </mat-card-title>
+    <mat-card-subtitle *ngIf="!claimStatus && tracerList.length === 0">
+      <span class="grey site-font">Currently no Tracer Details, Claim Status not in Tracing</span>
+    </mat-card-subtitle>
+    <mat-card-subtitle *ngIf="claimStatus">
+      <span class="grey site-font">Tracer Can now be Added</span>
+    </mat-card-subtitle>
+  </mat-card-header>
+  <mat-table #table [dataSource]="tracerList" matSort *ngIf="!(isLoading$ | async) && claimId !== 0 && tracerList && hasTracerWizard" class="addTracerBtn">
+    <ng-container matColumnDef="name">
+      <mat-header-cell *matHeaderCellDef mat-sort-header> First Name </mat-header-cell>
+      <mat-cell *matCellDef="let row"> {{row.rolePlayer.person.firstName}} </mat-cell>
+    </ng-container>
+    <ng-container matColumnDef="surname">
+      <mat-header-cell *matHeaderCellDef mat-sort-header> Surname </mat-header-cell>
+      <mat-cell *matCellDef="let row"> {{row.rolePlayer.person.surname}} </mat-cell>
+    </ng-container>
+    <ng-container matColumnDef="identificationNumber">
+      <mat-header-cell *matHeaderCellDef mat-sort-header> ID Number / Passport
+      </mat-header-cell>
+      <mat-cell *matCellDef="let row"> {{row.rolePlayer.person.idNumber}} </mat-cell>
+    </ng-container>
+    <ng-container matColumnDef="nameOfAccountHolder">
+      <mat-header-cell *matHeaderCellDef mat-sort-header> Account Holder
+      </mat-header-cell>
+      <mat-cell *matCellDef="let row"> {{row.rolePlayerBankingDetails.accountHolderName}}
+      </mat-cell>
+    </ng-container>
+    <ng-container matColumnDef="accountNumber">
+      <mat-header-cell *matHeaderCellDef mat-sort-header> Account Number </mat-header-cell>
+      <mat-cell *matCellDef="let row"> {{row.rolePlayerBankingDetails.accountNumber}}
+      </mat-cell>
+    </ng-container>
+    <ng-container matColumnDef="accountType">
+      <mat-header-cell *matHeaderCellDef mat-sort-header> Account Type
+      </mat-header-cell>
+      <mat-cell *matCellDef="let row"> {{bankAccountType[row.rolePlayerBankingDetails.bankAccountType]}}
+      </mat-cell>
+    </ng-container>
+    <ng-container matColumnDef="bankName">
+      <mat-header-cell *matHeaderCellDef mat-sort-header> Bank Name
+      </mat-header-cell>
+      <mat-cell *matCellDef="let row"> {{row.rolePlayerBankingDetails.bankName}}
+      </mat-cell>
+    </ng-container>
+    <ng-container matColumnDef="totalAmountPaid">
+      <mat-header-cell *matHeaderCellDef mat-sort-header> Total Paid Amount </mat-header-cell>
+      <mat-cell *matCellDef="let row"> {{row.totalAmountPaid}} </mat-cell>
+    </ng-container>
+    <ng-container matColumnDef="funeralTracingMaxAmount">
+      <mat-header-cell *matHeaderCellDef mat-sort-header> Max Amount </mat-header-cell>
+      <mat-cell *matCellDef="let row"> {{row.funeralTracingMaxAmount}} </mat-cell>
+    </ng-container>
+    <!-- Actions -->
+    <ng-container matColumnDef="actions">
+      <mat-header-cell *matHeaderCellDef mat-sort-header>Action</mat-header-cell>
+      <mat-cell *matCellDef="let row" [matMenuTriggerFor]="menu" (click)="filterMenu(row)">
+        <span class="material-icons pointer right">more_vert</span>
+        <mat-menu #menu="matMenu">
+          <div>
+            <button mat-menu-item *ngFor="let menu of menus"
+              (click)="onMenuSelect(row.rolePlayerBankingDetails.rolePlayerBankingId, row.rolePlayer.rolePlayerId, menu.title)">{{menu.title}}</button>
+          </div>
+        </mat-menu>
+      </mat-cell>
+    </ng-container>
+    <mat-header-row *matHeaderRowDef="displayTracerColumns;"></mat-header-row>
+    <mat-row *matRowDef="let row; columns: displayTracerColumns;"></mat-row>
+  </mat-table>
+  <div (click)="viewWizard()" class="addTracerBtn" [hidden]="isLoading$ | async">
+    <button type="button" class="button float-button" [disabled]="!claimStatus">Add Tracer</button>
+  </div>
+</mat-card>
+
+<mat-card *ngIf="isLoading$ | async" class="loadingBar">
+  <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+  <label class="mat-label other-label"><i>loading...please wait</i></label>
+</mat-card>

@@ -1,0 +1,119 @@
+<mat-card *ngIf="isLoading$ | async">
+    <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+    <label class="mat-label other-label"><i>loading lead details...please wait</i></label>
+</mat-card>
+
+<div *ngIf="!(isLoading$ | async)">
+    <mat-card>
+        <div class="menu-bar">
+            <span class="material-icons">
+                person
+            </span>
+            Details
+            <span *ngIf="lead && lead.leadId > 0" class="material-icons pointer right" matTooltip="audit"
+                (click)="openAuditDialog()">
+                fingerprint
+            </span>
+            <span *ngIf="isEdit" (click)="cancel()" class="material-icons pointer right" matTooltip="cancel">
+                close
+            </span>
+            <span
+                *ngIf="form.valid && !form.pristine && (userHasPermission(addPermission) || userHasPermission(editPermission))"
+                (click)="save()" class="material-icons pointer right pulseGreen" matTooltip="save">
+                save
+            </span>
+            <span
+                *ngIf="!isReadOnly && (form.pristine && lead && lead.leadId > 0 && !isEdit && userHasPermission(editPermission))"
+                (click)="edit()" class="material-icons pointer right" matTooltip="edit">
+                settings
+            </span>
+        </div>
+
+        <form [formGroup]="form" class="mat-container details-form" novalidate>
+            <section>
+                <mat-form-field class="mat-form-field">
+                    <label class="mat-label other-label mandatory-field">Display Name</label>
+                    <input matInput formControlName="displayName" name="displayName" id="displayName" />
+                    <mat-error *ngIf="form.get('displayName').hasError('required')">
+                        display name is <strong>required</strong>
+                    </mat-error>
+                </mat-form-field>
+                <mat-form-field class="mat-form-field-right">
+                    <label class="mat-label other-label">Assigned To</label>
+                    <input #assignedTo matInput formControlName="assignedTo" name="assignedTo" id="assignedTo" />
+                    <mat-icon *ngIf="isEdit || (!lead || lead.leadId <= 0)" matTooltip="search" (click)="openUserSearchDialog()" class="icn icn-button shift-icn-down"
+                        matSuffix [for]="assignedTo">search</mat-icon>
+                </mat-form-field>
+            </section>
+            <section>
+                <mat-form-field class="mat-form-field">
+                    <label class="mat-label other-label mandatory-field">Client Type</label>
+                    <mat-select name="clientType" id="clientType" formControlName="clientType">
+                        <mat-option *ngFor="let clientType of filteredClientTypes" [value]="clientType">
+                            {{formatLookup(clientType)}}
+                        </mat-option>
+                    </mat-select>
+                    <mat-error *ngIf="form.get('clientType').hasError('required')">
+                        client type is <strong>required</strong>
+                    </mat-error>
+                </mat-form-field>
+                <mat-form-field class="mat-form-field-right">
+                    <label class="mat-label other-label mandatory-field">Source</label>
+                    <mat-select name="leadSource" id="leadSource" formControlName="leadSource">
+                        <mat-option *ngFor="let leadSource of leadSources" [value]="leadSource">
+                            {{formatLookup(leadSource)}}
+                        </mat-option>
+                    </mat-select>
+                    <mat-error *ngIf="form.get('leadSource').hasError('required')">
+                        sources is <strong>required</strong>
+                    </mat-error>
+                </mat-form-field>
+            </section>
+            <section>
+                <mat-form-field class="mat-form-field">
+                    <label class="mat-label other-label">Status</label>
+                    <mat-select name="leadClientStatus" id="leadClientStatus" formControlName="leadClientStatus"
+                        (selectionChange)="statusChanged($event.value)">
+                        <mat-option *ngFor="let leadClientStatus of leadClientStatuses" [value]="leadClientStatus">
+                            {{formatLookup(leadClientStatus)}}
+                        </mat-option>
+                    </mat-select>
+                    <mat-error *ngIf="form.get('leadClientStatus').hasError('required')">
+                        status is <strong>required</strong>
+                    </mat-error>
+                </mat-form-field>
+                <mat-form-field *ngIf="selectedLeadClientStatus == declined" class="mat-form-field-right">
+                    <label class="mat-label other-label mandatory-field">Decline Reason</label>
+                    <textarea matTextareaAutosize matInput matAutosizeMinRows="5" matAutosizeMaxRows="3" maxlength="255"
+                        minlength="3" id="declineReason" name="declineReason"
+                        formControlName="declineReason"></textarea>
+                    <mat-error *ngIf="form.get('declineReason').hasError('required')">
+                        reason is <strong>required</strong>
+                    </mat-error>
+                    <mat-error *ngIf="form.get('declineReason').hasError('minlength')">
+                        reason must be at least <strong>3 characters</strong>
+                    </mat-error>
+                    <mat-error *ngIf="form.get('declineReason').hasError('maxlength')">
+                        reason must be at most <strong>255 characters</strong>
+                    </mat-error>
+                </mat-form-field>
+            </section>
+            <section>
+                <mat-form-field class="mat-form-field">
+                    <label class="mat-label other-label">Received Date</label>
+                    <input matInput formControlName="receivedDate" [matDatepicker]="receivedDate">
+                    <mat-datepicker-toggle matSuffix [for]="receivedDate">
+                    </mat-datepicker-toggle>
+                    <mat-datepicker touchUi="true" #receivedDate></mat-datepicker>
+                </mat-form-field>
+                <mat-form-field class="mat-form-field-right">
+                    <label class="mat-label other-label">Last Activity Date</label>
+                    <input matInput formControlName="lastActivityDate" [matDatepicker]="lastActivityDate">
+                    <mat-datepicker-toggle matSuffix [for]="lastActivityDate">
+                    </mat-datepicker-toggle>
+                    <mat-datepicker touchUi="true" #lastActivityDate></mat-datepicker>
+                </mat-form-field>
+            </section>
+        </form>
+    </mat-card>
+</div>

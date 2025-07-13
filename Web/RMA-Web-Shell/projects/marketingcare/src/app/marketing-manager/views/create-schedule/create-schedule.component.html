@@ -1,0 +1,235 @@
+<section>
+  <div class="padding">
+    <div class="display-border-bottom">
+      <div class="recovery-btn  padding-width">
+        <button mat-button class="top-nav-detail-tab">Schedule Campaign</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="padding" [ngClass]="isSpinner ? 'on-disabled' : 'on-enabled' "
+    [ngStyle]=" campaignAudience == 'contacts' ? {'height': '75vh' ,'overflow-y': 'auto'} : {}">
+
+    <div *ngIf="approvedCampaignCount == 0">
+      <h2 class="approved-camp-text">No approved campaigns are available</h2>
+    </div>
+
+    <div [ngClass]="approvedCampaignCount == 0 ? 'on-disabled' : 'on-enabled' ">
+    <form [formGroup]="createScheduleForm" [ngClass]="isSpinner ? 'on-disabled' : 'on-enabled' ">
+      <div class="marketing-form-field" class="borderCss  display-flex">
+        <div class="width-margin">
+          <p class="form-lable-text  font-family">Select Campaign</p>
+          <mat-form-field class="status-update-mff  width-50" appearance="outline"
+            [ngClass]="{
+            'has-error':isFormSubmitted && createScheduleForm.get('selectCampaign').hasError('required') && createScheduleForm.get('selectCampaign').invalid}">
+            <mat-select class="border-none-imp" placeholder="Select" formControlName="selectCampaign">
+              <div class="custom-input">
+                <input matInput [formControl]="searchTermControlFinalApprover" placeholder="Type to search"
+                  (input)="onSearchCampaignType($event.target.value)" />
+              </div>
+              <ng-container *ngFor="let option of campaignList;let i=index">
+                <mat-option *ngIf="option.status == 'Approved'" [value]="option.id">
+                  {{option.name}}
+                 </mat-option>
+              </ng-container>
+              
+            </mat-select>
+          </mat-form-field>
+          <div class="text-danger"
+            *ngIf="isFormSubmitted && createScheduleForm.get('selectCampaign').hasError('required')">
+            <span class="color-red">Select Campaign is required</span>
+          </div>
+        </div>
+
+        <div class="legal-date-picker legal-add-payment-date-picker legal-add-payment-field width-margin">
+          <p class="form-lable-text  font-family">Date</p>
+          <mat-form-field appearance="outline" class="date-picker-field"
+            [ngClass]="{
+            'has-error':isFormSubmitted && createScheduleForm.get('date').hasError('required')  && createScheduleForm.get('date').invalid}">
+            <input matInput [min]="minDate" [(ngModel)]="campaignSchedule.date" formControlName="date"
+              [matDatepicker]="picker" class="cursor " readonly (click)="picker.open()">
+            <mat-datepicker-toggle matIconSuffix [for]="picker"></mat-datepicker-toggle>
+            <mat-datepicker #picker></mat-datepicker>
+          </mat-form-field>
+          <div class="text-danger" *ngIf="isFormSubmitted && createScheduleForm.get('date').hasError('required')">
+            <span class="color-red">Date is required</span>
+          </div>
+        </div>
+      </div>
+      <div class="display-padding">
+        <div class="width-padding">
+          <p class="form-lable-text">Campaign Audience</p>
+        </div>
+        <div class="radio-btn  radio-btn-style">
+          <span>
+            <input type="radio" id="No" value="groups" formControlName="campaignAudience"
+            [ngClass]=" isSpinner ? 'on-disabled' : 'on-enabled' "
+              (change)="selectCampaignAudience(campaignSchedule.isGroup, 'groups')" class="radio-btn-input">
+          </span>
+          <span class="padding-left">
+            <label for="No" class="radio-label  form-lable-text">Groups</label>
+          </span>
+        </div>
+        <div class="radio-btn  radio-btn-style">
+          <span>
+            <input type="radio" id="Yes" value="contacts" formControlName="campaignAudience"
+            [ngClass]=" isSpinner ? 'on-disabled' : 'on-enabled' "
+              (change)="selectCampaignAudience(campaignSchedule.isContacts, 'contacts')" class="radio-btn-input">
+          </span>
+          <span class="padding-left">
+            <label for="Yes" class="radio-label form-lable-text">Contacts</label>
+          </span>
+        </div> <br>
+      </div>
+      <div class="text-danger  margin-top-padding"
+        *ngIf="isFormSubmitted && createScheduleForm.get('campaignAudience').hasError('required')">
+        <span class="color-red">Campaign Audience is required</span>
+      </div>
+      <div *ngIf="campaignType" class="width-95">
+        <div class="padding-div">
+          <div class="recovery-btn  recovery-btn-style">
+            <div class="width-80">
+              <button mat-button class="top-nav-detail-tab" *ngIf="campaignType == 'groups'">Add Groups</button>
+              <button mat-button class="top-nav-detail-tab" *ngIf="campaignType == 'contacts'" (click)="clearSearchFinalApprover()">Contacts</button>
+            </div>
+            <div class="create-template-div" *ngIf="campaignType == 'groups'">
+              <button class="create-template" (click)="createGroup()">
+                <mat-icon>add</mat-icon>
+                <span class="create-template-text">Create Group</span>
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="question-div question-div-legal  display width-100">
+      </div>
+      <div *ngIf="campaignType" class="marketing-form-field">
+        <div class="margin-padding-div">
+
+          <div class="legal-mat-chips width-100 schedule-option-selection">
+
+            <mat-form-field *ngIf="campaignType == 'groups'" appearance="outline"
+              [class.has-selected-items]="selectedItems?.length > 0" class="form-field  width-100-imp">
+              <div class="selected-items">
+                <div class="selected-item" *ngFor="let item of selectedItems">
+                  {{ item.groupName }}
+                  <span (click)="removeSelectedItem(item)"><mat-icon>close</mat-icon></span>
+                </div>
+              
+              <input class="width-auto  width-border" type="text" matInput name="approvers"
+                (blur)="addEmailToSelectedItems(approvers)" (keyup.enter)="addEmailToSelectedItems(approvers)"
+                formControlName="approvers" #approversInput  (input)="onSearchChange($event?.target?.value)">
+                </div>
+            </mat-form-field>
+            <mat-form-field *ngIf="campaignType == 'contacts'" appearance="outline"
+              [class.has-selected-items]="selectedItems?.length > 0" class="form-field width-100-imp">
+              <div class="selected-items">
+                <div class="selected-item" *ngFor="let selectedContact of selectedContacts">
+                      {{ selectedContact.contactName }}
+                      <span (click)="removeSelectedItemContacts(selectedContact)" class="close-icon"><mat-icon>close</mat-icon></span>
+                </div>
+                <input class="width-auto  width-border" type="text" matInput name="approvers"
+                       (blur)="addEmailToSelectedItems(approvers)" (keyup.enter)="addEmailToSelectedItems(approvers)"
+                       formControlName="approvers" (input)="onSearchChange($event?.target?.value)"  #approversInputCotact />
+              </div>            
+            </mat-form-field>
+            <div class="dropdown schedule-option-selection-tabel" *ngIf="campaignType != 'contacts' && searchResults?.length > 0">
+              <div class="option" *ngFor="let item of searchResults" (click)="addSelectedItem(item)">
+                {{ item.groupName }}
+              </div>
+            </div>
+            <div>
+              <span *ngIf="isRecordNotFound">No records found with your input text</span>
+            </div>
+
+
+            <span *ngIf="createScheduleForm.get('approvers').hasError('required') && isFormSubmitted"
+              class="color-red">Please add approver</span>
+            <div *ngIf="campaignAudience == 'contacts' || campaignType == 'contacts' && searchResults?.length > 0" class="schedule-option-selection-tabel">
+              <div class="padding-height-width">
+                <div class="padding2">
+                  <div>
+                    <table>
+                      <tr>
+                        <th class="contacts-header"></th>
+                        <th class="contacts-header">Member Number</th>
+                        <th class="contacts-header">Contact Name</th>
+                        <th class="contacts-header">Contact Number</th>
+                        <th class="contacts-header">Designation</th>
+                        <th class="contacts-header">Company Name</th>
+                        <th class="contacts-header">Company No.</th>
+                        <th class="contacts-header">Category</th>
+                        <th class="contacts-header">Type</th>
+                      </tr>
+                      <ng-container *ngFor="let item of searchResults">
+                        <tr class="table-data-list">
+                          <td>
+                            <span><input type="checkbox" (change)="toggleContactSelection(item)" [checked]="isSelected(item)" /></span>
+                          </td>
+                          <td class="contacts-content"> <span>{{item?.memberNumber}}</span></td>
+                          <td class="contacts-content  width"> <span>{{item?.contactName}}</span></td>
+                          <td class="contacts-content"> <span>
+                              {{item?.contactNumber}}
+                            </span></td>
+                          <td class="contacts-content"> <span class="custom-span">
+                              {{item?.designation}}
+                            </span></td>
+                          <td class="contacts-content  width"> <span>
+                              {{item?.companyName}}
+                            </span></td>
+                          <td class="contacts-content"> <span>
+                              {{item?.companyNumber}}
+                            </span></td>
+                          <td class="contacts-content"> <span>
+                              {{item?.category}}
+                            </span></td>
+                          <td class="contacts-content"> <span>
+                              {{item?.type}}
+                            </span></td>
+                        </tr>
+                      </ng-container>
+                    </table>
+                    <mat-paginator #paginator
+                    class="demo-paginator padding-tp"
+                    (page)="handlePaginatorEventContact($event)"
+                    [length]="totalItems"
+                    [pageIndex]="page - 1"
+                    [pageSize]="pageSize"
+                    [pageSizeOptions]="pageSizeOptions"
+                    [showFirstLastButtons]="false"
+                    [hidePageSize]="false">
+                  </mat-paginator>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </form>
+    </div>
+
+
+  </div>
+
+  <div class="bottom-btn  bottom-btn-padding">
+    <button mat-stroked-button id="back-btn" (click)="goBack()">
+      <mat-icon>arrow_back</mat-icon>
+      <span class="padding-left">
+        Back</span>
+    </button>
+
+    <button *ngIf="approvedCampaignCount != 0" mat-stroked-button id="save-btn" class="save-btn" (click)="onSaveMarketingSchedule()">Schedule</button>
+  </div>
+
+  <div [hidden]="!isCommonLoading" [ngClass]="isCommonLoading ? 'progress-bar-container' : '' ">
+    <mat-progress-bar *ngIf="isCommonLoading" mode="indeterminate"></mat-progress-bar>
+  </div>
+
+
+  <div [hidden]="!isSpinner" class="spinner-view">
+    <mat-spinner *ngIf="isSpinner"></mat-spinner>
+  </div>
+</section>

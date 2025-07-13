@@ -1,0 +1,180 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - Rand Mutual Assurance Single Sign On</title>
+
+    <environment include="Development">
+        <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.css" />
+    </environment>
+    <environment exclude="Development">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.1.3/css/bootstrap.min.css"
+              asp-fallback-href="~/lib/bootstrap/dist/css/bootstrap.min.css"
+              asp-fallback-test-class="sr-only" asp-fallback-test-property="position" asp-fallback-test-value="absolute"
+              crossorigin="anonymous"
+              integrity="sha256-eSi1q2PG6J7g7ib17yAaWMcrr5GrtohYChqibrV7PBE=" />
+    </environment>
+    <link rel="stylesheet" href="~/css/site.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.13.0/css/all.min.css">
+    <script type="text/javascript">
+        var totalCount = 11;
+
+        function ChangeBackgroundImage() {
+            var num = Math.ceil(Math.random() * totalCount);
+            document.body.background = 'Images/landingpage' + num + '.jpg';
+        }
+
+    </script>
+    <style type="text/css">
+        body {
+            width: 100%;
+            height: 100vh;
+            background-size: cover;
+            background-repeat: no-repeat;
+            background-position: center;
+            overflow-y: scroll;
+        }
+
+        .header-container {
+            text-align: center;
+            margin-bottom: 50px;
+        }
+
+        .header-text {
+            color: #00BCE7 !important;
+            padding-top: 20px;
+            font-weight: 400;
+            font-size: 25px !important;
+        }
+
+        h1 {
+            font-size: 15pt !important;
+        }
+
+        .login-button {
+            background-color: #11455D !important;
+            width: 92%;
+            margin-left: 4%;
+            margin-top: 7%;
+            height: 50px;
+            padding: 0px;
+            color: white;
+            font-size: 23px;
+        }
+
+        .visibility-icon {
+            cursor: pointer;
+            position: absolute;
+            right: 9px;
+            font-size: 17px;
+            top: 3px;
+        }
+
+        .mat-form-field {
+            width: 100%;
+            font-size: 17px;
+        }
+
+        .image-container img {
+            position: fixed;
+            bottom: 75px;
+            right: 75px;
+            height: 88px;
+            width: 184px;
+        }
+
+        .content-container {
+            width: 35%;
+            border: 10px solid #F2F6F8;
+            height: auto;
+            padding: 1%;
+            top: 17%;
+            background-color: #FFFFFF;
+            position: relative;
+            margin: -160px 0px 0px 0px;
+        }
+
+            .content-container p {
+                padding-left: 20px;
+                font-size: 14px;
+            }
+
+        .logo-container {
+            width: 50%;
+            padding-top: 50px;
+            padding-left: 50px;
+        }
+
+        .form-container {
+            padding-left: 20px;
+            font-size: 18px;
+        }
+
+            .form-container p {
+                font-size: 18px;
+                color: darkgrey;
+            }
+
+        .image-container-mobile {
+            display: none;
+        }
+
+        .forgetPassword {
+            float: right;
+            font-size: 10px;
+            margin-top: -20px;
+            text-decoration-line: underline;
+            color: #919091;
+        }
+    </style>
+</head>
+<body class="backgroundImage">
+    @*<header>
+            <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3">
+                <div class="container">
+                    <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index">Rand Mutual Assurance Single Sign-On</a>
+                    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target=".navbar-collapse" aria-controls="navbarSupportedContent"
+                            aria-expanded="false" aria-label="Toggle navigation">
+                        <span class="navbar-toggler-icon"></span>
+                    </button>
+                </div>
+            </nav>
+        </header>*@
+    <div class="container loginAlignment">
+        <main role="main" class="pb-3">
+            @RenderBody()
+        </main>
+    </div>
+
+    <footer class="border-top footer text-muted">
+        <div class="container footerText">
+            &copy; 2019 - Rand Mutual Assurance
+        </div>
+    </footer>
+
+    <environment include="Development">
+        <script src="~/lib/jquery/dist/jquery.js"></script>
+        <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.js"></script>
+    </environment>
+<script src="~/js/site.js" asp-append-version="true"></script>
+
+    @RenderSection("Scripts", required: false)
+</body>
+
+<script type="text/javascript">
+    ChangeBackgroundImage();
+
+    const  togglePassword = document.querySelector('#togglePassword');
+    const password = document.querySelector('#password');
+
+    togglePassword.addEventListener('click', function (e) {
+        // toggle the type attribute
+        const type = password.getAttribute('type') === 'password' ? 'text' : 'password';
+        password.setAttribute('type', type);
+        // toggle the eye slash icon
+        this.classList.toggle('fa-eye-slash');
+    });
+
+</script>
+</html>

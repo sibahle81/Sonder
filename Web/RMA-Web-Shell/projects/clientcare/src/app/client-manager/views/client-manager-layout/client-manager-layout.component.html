@@ -1,0 +1,42 @@
+﻿<div>
+    <div>
+        <nav class="innertop-nav">
+            <button mat-button [matMenuTriggerFor]="menu" class='Activebutton'>Client</button>
+            <mat-menu #menu="matMenu" [overlapTrigger]="false">
+                <button mat-menu-item [routerLink]="['find-client']">Find a Client</button>
+            </mat-menu>
+            <button mat-button [matMenuTriggerFor]="menu2" class='Activebutton'>Groups</button>
+            <mat-menu #menu2="matMenu" [overlapTrigger]="false">
+                <button mat-menu-item [routerLink]="['group-details']">Create a Group</button>
+                <button mat-menu-item [routerLink]="['find-group']">Find a Group</button>
+            </mat-menu>
+            <button mat-button [matMenuTriggerFor]="menu3" class='Activebutton'>Intermediary</button>
+            <mat-menu #menu3="matMenu" [overlapTrigger]="false">
+                <button mat-menu-item [matMenuTriggerFor]="brokerage">Create Intermediary</button>
+                <button mat-menu-item [routerLink]="['brokerage-list']">Find Intermediary</button>
+            </mat-menu>
+            <mat-menu #brokerage="matMenu">
+                <button mat-menu-item [routerLink]="['broker-house-details']">Broker House</button>
+                <button mat-menu-item [routerLink]="['franchise-house-details']">Franchise House</button>
+              </mat-menu>
+            <button mat-button [matMenuTriggerFor]="menu4" class='Activebutton'>Broker</button>
+            <mat-menu #menu4="matMenu" [overlapTrigger]="false">
+                <button mat-menu-item [routerLink]="['broker-details']">Create a Broker</button>
+                <button mat-menu-item [routerLink]="['broker-list']">Find a Broker</button>
+            </mat-menu>
+            <button mat-button [matMenuTriggerFor]="menu5" class='Activebutton'>Commission</button>
+            <mat-menu #menu5="matMenu" [overlapTrigger]="false">
+                <button mat-menu-item [routerLink]="['broker-commission-list']">Commission Run</button>
+                <button mat-menu-item [routerLink]="['commission-list']">View Commission</button>
+                <button mat-menu-item [routerLink]="['commission-withholding-balance']">View Commission Retained Balances</button>
+            </mat-menu>
+            <button mat-button [matMenuTriggerFor]="menu6" class='Activebutton'>Approvals</button>
+            <mat-menu #menu6="matMenu" [overlapTrigger]="false">
+                <button mat-menu-item [routerLink]="['bank-account-approval-list']">Approve Bank Accounts</button>
+            </mat-menu>
+        </nav>
+    </div>
+    <div [hidden]="loadingMessage != null || error != null" class="container-padding">
+        <router-outlet></router-outlet>
+    </div>
+</div>

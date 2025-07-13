@@ -1,0 +1,137 @@
+<mat-card>
+  <div class="menu-bar">
+    <span class="material-icons">
+      calendar_month
+    </span>
+    Month End Dates
+    <span class="material-icons pointer right" matTooltip="Add Month End Date" (click)="onAdd()">
+      add_circle
+    </span>
+  </div>
+  <div class="menu-bar">
+    <span class="material-icons">
+      search
+    </span>
+    Filters
+    <span class="material-icons pointer right" matTooltip="reset" (click)="clearFilters()">
+      restart_alt
+    </span>
+  </div>
+  <form [formGroup]="filterForm" class="mat-container details-form" novalidate>
+    <section>
+      <mat-form-field class="mat-form-field controlSize">
+        <label class="mat-label other-label">Run Year </label>
+        <mat-select name="runYearId" id="runYearId" formControlName="runYearId"
+                    (selectionChange)="runYearFilterChanged($event.value)">
+          <mat-option *ngFor="let runYear of runYearList" [value]="runYear">
+            {{runYear}}
+          </mat-option>
+        </mat-select>
+      </mat-form-field>
+      <mat-form-field class="mat-form-field-right controlSize">
+        <label class="mat-label other-label">Run Month </label>
+        <mat-select name="runMonthId" id="runMonthId" formControlName="runMonthId"
+                    (selectionChange)="runMonthFilterChanged($event.value)">
+          <mat-option *ngFor="let runMonth of runMonthList" [value]="runMonth">
+            {{formatLookup(runMonth)}}
+          </mat-option>
+        </mat-select>
+      </mat-form-field>
+    </section>
+    <section>
+      <mat-form-field class="mat-form-field controlSize">
+        <label class="mat-label other-label">Run Status </label>
+        <mat-select name="runStatusId" id="runStatusId" formControlName="runStatusId"
+                    (selectionChange)="runStatusFilterChanged($event.value)">
+          <mat-option *ngFor="let runStatus of runStatuses" [value]="runStatus">
+            {{formatLookup(runStatus)}}
+          </mat-option>
+        </mat-select>
+      </mat-form-field>
+    </section>
+  </form>
+</mat-card>
+<mat-card>
+  <div class="margin-bottom" *ngIf="(dataSource.loading$ | async)">
+    <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+    <label class="mat-label other-label"><i>loading ..please wait</i></label>
+  </div>
+  <div [hidden]="(dataSource.loading$ | async)">
+    <mat-table #table [dataSource]="dataSource" matSort id="tblData" (matSortChange)="getMonthEndDates()">
+      <ng-container matColumnDef="year">
+        <mat-header-cell *matHeaderCellDef mat-sort-header> Year </mat-header-cell>
+        <mat-cell *matCellDef="let row">
+          {{row.year}}
+        </mat-cell>
+      </ng-container>
+      <ng-container matColumnDef="month">
+        <mat-header-cell *matHeaderCellDef mat-sort-header> Month </mat-header-cell>
+        <mat-cell *matCellDef="let row">
+          {{getRunMonth(row.month)}}
+        </mat-cell>
+      </ng-container>
+      <ng-container matColumnDef="monthEndRunStatus">
+        <mat-header-cell *matHeaderCellDef mat-sort-header> Status </mat-header-cell>
+        <mat-cell *matCellDef="let row">
+          {{getRunStatus(row.monthEndRunStatus)}}
+        </mat-cell>
+      </ng-container>
+      <ng-container matColumnDef="authorizationCloseOfDate">
+        <mat-header-cell *matHeaderCellDef mat-sort-header> Authorization Close Of Month </mat-header-cell>
+        <mat-cell *matCellDef="let row">
+          {{(row.authorizationCloseOfDate | date: "yyyy-MM-dd")}}
+        </mat-cell>
+      </ng-container>
+      <ng-container matColumnDef="monthEndCloseOfDate">
+        <mat-header-cell *matHeaderCellDef mat-sort-header> Month End Close Of Month </mat-header-cell>
+        <mat-cell *matCellDef="let row">
+          {{(row.monthEndCloseOfDate | date: "yyyy-MM-dd")}}
+        </mat-cell>
+      </ng-container>
+      <ng-container matColumnDef="paymentDate">
+        <mat-header-cell *matHeaderCellDef mat-sort-header> Payment Date </mat-header-cell>
+        <mat-cell *matCellDef="let row">
+          {{(row.paymentDate | date: "yyyy-MM-dd")}}
+        </mat-cell>
+      </ng-container>
+      <ng-container matColumnDef="monthEndBalanceAndReleaseDate">
+        <mat-header-cell *matHeaderCellDef mat-sort-header> Month End Balance Date </mat-header-cell>
+        <mat-cell *matCellDef="let row">
+          {{(row.monthEndBalanceAndReleaseDate | date: "yyyy-MM-dd")}}
+        </mat-cell>
+      </ng-container>
+      <ng-container matColumnDef="pacsCreateDate">
+        <mat-header-cell *matHeaderCellDef mat-sort-header> PACS Create Date </mat-header-cell>
+        <mat-cell *matCellDef="let row">
+          {{(row.pacsCreateDate | date: "yyyy-MM-dd")}}
+        </mat-cell>
+      </ng-container>
+      <ng-container matColumnDef="pacsStrikeDate">
+        <mat-header-cell *matHeaderCellDef mat-sort-header> PACS Strike Date </mat-header-cell>
+        <mat-cell *matCellDef="let row">
+          {{(row.pacsStrikeDate | date: "yyyy-MM-dd")}}
+        </mat-cell>
+      </ng-container>
+      <ng-container matColumnDef="actions">
+        <mat-header-cell *matHeaderCellDef>Actions</mat-header-cell>
+        <mat-cell *matCellDef="let row" [matMenuTriggerFor]="menu" (click)="filterMenu(row)">
+          <span class="material-icons pointer right">more_vert</span>
+          <mat-menu #menu="matMenu">
+            <button mat-menu-item *ngFor="let menu of menus" (click)="onMenuItemClick(row, menu.action)"
+                    disabled={{menu.disable}}>
+              {{menu.title}}
+            </button>
+          </mat-menu>
+        </mat-cell>
+      </ng-container>
+
+
+      <mat-header-row *matHeaderRowDef="getDisplayedColumns()"></mat-header-row>
+      <mat-row *matRowDef="let row; columns: getDisplayedColumns();"></mat-row>
+    </mat-table>
+    <mat-paginator #paginator [pageIndex]="0" [pageSize]="12" [pageSizeOptions]="[12, 24, 36, 100]"
+                   [length]="this.dataSource.rowCount$ | async" (page)="getMonthEndDates()">
+    </mat-paginator>
+  </div>
+
+</mat-card>

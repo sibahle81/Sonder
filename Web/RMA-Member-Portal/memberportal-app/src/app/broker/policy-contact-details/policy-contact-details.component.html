@@ -1,0 +1,80 @@
+<div class="page-header"></div>
+<div *ngIf="!canAdd">
+  <div class="wizard-permissions-error">
+    You do not have sufficient permissions to add policy contact details.
+  </div>
+</div>
+<div class="wizard-main-content">
+  <div class="contactDetailsDiv">
+    <h2 class="Arabic">Contact Details</h2>
+  </div>
+  <mat-card class="wizard-mat-card">
+    <div>
+      <mat-card-content class="wizard-mat-card-content">
+        <form [formGroup]="form" class="mat-container details-form" novalidate>
+          <section>
+            <mat-form-field class="mat-form-field">
+              <label class="mat-label other-label"> Telephone Number</label>
+              <input matInput type="tel" minlength="10" NumberOnly maxlength="10" id="tellNumber" name="tellNumber"
+                formControlName="tellNumber">
+              <mat-error *ngIf="form.get('tellNumber').hasError('minlength')">
+                Telephone number must be at least <strong>10 digits</strong>
+              </mat-error>
+            </mat-form-field>
+            <mat-form-field class="mat-form-field-right">
+              <label class="mat-label other-label mandatory-field"> Mobile Number</label>
+              <input matInput type="tel" minlength="10" NumberOnly maxlength="10" id="cellNumber" name="cellNumber"
+                formControlName="cellNumber">
+              <mat-error *ngIf="form.get('cellNumber').hasError('required')">
+                Mobile number is <strong>required</strong>
+              </mat-error>
+              <mat-error *ngIf="form.get('cellNumber').hasError('minlength')">
+                Mobile number must be at least <strong>10 digits</strong>
+              </mat-error>
+            </mat-form-field>
+          </section>
+          <section>
+            <!--Email Address-->
+            <mat-form-field>
+              <label class="mat-label other-label mandatory">Email address</label>
+              <input matInput maxlength="50" id="emailAddress" name="emailAddress" formControlName="emailAddress" />
+              <mat-error *ngIf="form.get('emailAddress').hasError('email')">
+                A <strong>valid</strong> email address required
+              </mat-error>
+              <mat-error *ngIf="form.get('emailAddress').hasError('required')">
+                Email address<strong> is required</strong>
+              </mat-error>
+            </mat-form-field>
+            <mat-form-field class="mat-form-field-right">
+              <label class="mat-label other-label mandatory-field">Preferred Communication</label>
+              <div>
+                <mat-select formControlName="commPreference" id="commPreference" name="commPreference"
+                  (selectionChange)="commPreferenceChange($event)">
+                  <mat-option *ngFor="let preference of commPreferences" [value]="preference.id">{{preference.name}}
+                  </mat-option>
+                </mat-select>
+                <mat-error *ngIf="form.get('commPreference').hasError('min')">
+                  Communication preference is required
+                </mat-error>
+              </div>
+            </mat-form-field>
+          </section>
+          <section>
+            <mat-checkbox [checked]="sedToBroker" formControlName="sendPolicyDocsToBroker">Send Policy Docs to Broker
+            </mat-checkbox>
+          </section>
+        </form>
+      </mat-card-content>
+    </div>
+  </mat-card>
+</div>
+
+<div class="wizard-main-content policyAddressDiv">
+  <div *ngIf="policyAddressDetailComponent && !policyAddressDetailComponent.hasAddress">
+    <p class="address-error">Business address and postal address are required</p>
+  </div>
+  <div *ngIf="policyAddressDetailComponent && policyAddressDetailComponent.hasAddress">
+    <h2 class="Arabic">Address Details</h2>
+  </div>
+  <policy-address-details></policy-address-details>
+</div>

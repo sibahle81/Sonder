@@ -1,0 +1,72 @@
+<mat-card>
+  <mat-card-content>
+    <h1>Additional Tax Form</h1>
+    <div>
+      <form [formGroup]="form" *ngIf="form">
+        <div>
+          <section class="top-section">
+            <mat-form-field >
+              <label class="mat-label other-label mandatory-field">Initiated by</label>
+              <mat-select formControlName="additionalTaxType" name="additionalTaxType" id="additionalTaxType">
+                <mat-option *ngFor="let type of additionalTaxTypes" [value]="type.id">
+                  {{type.name}}
+                </mat-option>
+              </mat-select>
+              <mat-error *ngIf="form.get('additionalTaxType').hasError('required')">
+                Initiated by is required
+              </mat-error>
+            </mat-form-field>
+
+            <mat-form-field class="mat-form-field-right" *ngIf="form.controls.additionalTaxType.value == additionalTaxTypesEnum?.Individual">
+              <label class="mat-label other-label mandatory-field">Individual Amount</label>
+              <input matInput maxlength="50" formControlName="individualAmount" name="individualAmount" id="individualAmount" DecimalNumber />
+              <mat-error *ngIf="form.get('individualAmount').hasError('required') && form.get('individualAmount').touched">
+                Individual Amount is required
+              </mat-error>
+            </mat-form-field>
+
+            <mat-form-field class="mat-form-field-right" *ngIf="form.controls.additionalTaxType.value == additionalTaxTypesEnum?.StopOrder">
+              <label class="mat-label other-label mandatory-field">Stop Order Amount</label>
+              <input matInput maxlength="50" formControlName="stopOrderAmount" name="stopOrderAmount" id="stopOrderAmount" DecimalNumber/>
+              <mat-error *ngIf="form.get('stopOrderAmount').hasError('required') && form.get('stopOrderAmount').touched">
+                Stop Order Amount is required
+              </mat-error>
+            </mat-form-field>
+
+            <mat-form-field class="mat-form-field-right" *ngIf="form.controls.additionalTaxType.value == additionalTaxTypesEnum?.Both">
+              <label class="mat-label other-label mandatory-field">Amount</label>
+              <input matInput maxlength="50" formControlName="bothAmount" name="bothAmount" id="bothAmount" DecimalNumber/>
+              <mat-error *ngIf="form.get('bothAmount').hasError('required') && form.get('bothAmount').touched">
+                 Amount is required
+              </mat-error>
+            </mat-form-field>
+          </section>
+
+          <section>
+            <mat-form-field>
+              <label class="mat-label other-label mandatory-field">Start Date</label>
+              <input matInput formControlName="startDate" id="startDate" name="startDate" date="true" readonly [matDatepicker]="startDate">
+              <mat-datepicker-toggle matSuffix class="mat-toggle-datepicker datePick" [for]="startDate">
+              </mat-datepicker-toggle>
+              <mat-datepicker touchUi="true" #startDate></mat-datepicker>
+              <mat-error *ngIf="form.get('startDate').hasError('required')">
+                Start Date is required
+              </mat-error>
+            </mat-form-field>
+
+            <mat-form-field class="mat-form-field-right">
+              <label class="mat-label other-label mandatory-field">End Date</label>
+              <input matInput formControlName="endDate" id="endDate" name="endDate" date="true" readonly [matDatepicker]="endDate">
+              <mat-datepicker-toggle matSuffix class="mat-toggle-datepicker datePick" [for]="endDate">
+              </mat-datepicker-toggle>
+              <mat-datepicker touchUi="true" #endDate></mat-datepicker>
+              <mat-error *ngIf="form.get('endDate').hasError('required')">
+                End Date is required
+              </mat-error>
+            </mat-form-field>
+          </section>
+        </div>
+      </form>
+    </div>
+  </mat-card-content>
+</mat-card>

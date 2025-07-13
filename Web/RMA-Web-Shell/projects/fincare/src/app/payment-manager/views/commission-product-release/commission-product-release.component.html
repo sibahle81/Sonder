@@ -1,0 +1,38 @@
+<section style="width: 50%;">
+  <div *ngFor="let item of products; let itemsCount = index" [ngClass]="{'clear-div-both': (itemsCount) % 2 === 0}" style="border: 1px solid #d5d5d5;margin-bottom: 10px;"> 
+    <div>
+      <div style="text-align: center; font-variant:small-caps; word-wrap: break-word; ">{{item.productName}}</div>
+      <div style="border: 1px solid #d5d5d5;">
+        <div style="font-size: small; padding: 2px; ">
+          <span>Fit &amp; Proper</span>&nbsp;
+          <img *ngIf="!item.isFitAndProper && !item.fitAndProperCheckDate" src="/assets/images/pause-icon.png"
+            width="16" height="16" /><img *ngIf="item.isFitAndProper" src="/assets/images/checked-icon.png" width="16"
+            height="16" /><img *ngIf="!item.isFitAndProper  && item.fitAndProperCheckDate"
+            src="/assets/images/not_checked-icon.png" width="16" height="16" />
+        </div>
+        <div style="font-size: small; padding: 2px;display: inline-block;">
+          <span>Date</span>&nbsp;
+          <span>{{item.fitAndProperCheckDate | date:'yyyy-MM-dd'}}</span>
+        </div>
+      </div>
+      <div style="margin-top: 5px;">
+        <div
+          style="display:inline-block;font-size: small; text-align: center;border-right: 1px solid #d5d5d5; padding: 3px; width: 40%;">
+          <p>Release</p>
+          <p>
+            <mat-checkbox [value]="item.id" (change)="onSelectRelease($event)"
+              [checked]="selectedApprovedPaymentIds.indexOf(item.productId) > -1" [disabled]="!item.isFitAndProper">
+            </mat-checkbox>
+          </p>
+        </div>
+        <div style="display:inline-block;font-size: small; text-align: center; padding: 3px; width: 40%;">
+          <p>Hold</p>
+          <p>
+            <mat-checkbox [value]="item.id" (change)="onSelectRelease($event)"
+              [checked]="selectedApprovedPaymentIds.indexOf(item.productId) > -1"></mat-checkbox>
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>

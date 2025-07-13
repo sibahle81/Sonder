@@ -1,0 +1,103 @@
+<mat-card>
+  <mat-card-content>
+    <h1>Pension ledgers <span *ngIf="model && model.pensionLedger && model.pensionLedger.length > 0">- {{model.pensionLedger[0].pensionCaseNumber}}</span></h1>
+
+    <div *ngIf="!isLoading">
+      <h2 *ngIf="!showTable">
+        <div (click)="onViewTable()" class="form-buttons submit-button">
+          <button type="button" class="button">View Table</button>
+        </div>
+      </h2>
+      <div *ngIf="dataSource && dataSource.length > 0 && showTable">
+        <mat-table #table
+          [dataSource]="dataSource" matSort>
+          <!-- Beneficiary Column -->
+          <ng-container matColumnDef="beneficiary">
+            <mat-header-cell *matHeaderCellDef> Beneficiary </mat-header-cell>
+            <mat-cell *matCellDef="let row"> {{row.beneficiaryFirstName}}  {{row.beneficiarySurname}}</mat-cell>
+          </ng-container>
+
+          <!-- Recipient Column -->
+          <ng-container matColumnDef="recipient">
+            <mat-header-cell *matHeaderCellDef> Recipient </mat-header-cell>
+            <mat-cell *matCellDef="let row"> {{row.recipientFirstName}}  {{row.recipientSurname}}</mat-cell>
+          </ng-container>
+
+            <!-- Date Of stabilisation Column -->
+            <ng-container matColumnDef="dateOfStabilisation">
+              <mat-header-cell *matHeaderCellDef> Date Of Stabilisation </mat-header-cell>
+              <mat-cell *matCellDef="let row"> {{row.dateOfStabilisation}} </mat-cell>
+            </ng-container>
+
+          <!-- Claim number -->
+          <ng-container matColumnDef="claimReferenceNumber">
+            <mat-header-cell *matHeaderCellDef> claim No. </mat-header-cell>
+            <mat-cell *matCellDef="let row" class="claim-reference-number-cell"> {{row.claimReferenceNumber}}</mat-cell>
+          </ng-container>
+
+          <!-- Benefit Column -->
+          <ng-container matColumnDef="benefit">
+            <mat-header-cell *matHeaderCellDef> Benefit </mat-header-cell>
+            <mat-cell *matCellDef="let row"> {{row.benefitCode}}</mat-cell>
+          </ng-container>
+
+          <!-- Policy Column -->
+          <ng-container matColumnDef="policy">
+            <mat-header-cell *matHeaderCellDef> Policy </mat-header-cell>
+            <mat-cell *matCellDef="let row">{{row.productOptionName}}</mat-cell>
+          </ng-container>
+
+          <!-- Status Column -->
+          <ng-container matColumnDef="status">
+            <mat-header-cell *matHeaderCellDef> Status </mat-header-cell>
+            <mat-cell *matCellDef="let row"> {{row.statusName}}</mat-cell>
+          </ng-container>
+
+          <!-- Normal Monthly Pension Column -->
+          <ng-container matColumnDef="normalMonthlyPension">
+            <mat-header-cell *matHeaderCellDef> Normal Monthly Pension </mat-header-cell>
+            <mat-cell *matCellDef="let row"> {{row.normalMonthlyPension | currency:'R '}}</mat-cell>
+          </ng-container>
+
+          <!-- Current Monthly Pension Column -->
+          <ng-container matColumnDef="currentMonthlyPension">
+            <mat-header-cell *matHeaderCellDef> Current Monthly Pension </mat-header-cell>
+            <mat-cell *matCellDef="let row"> {{row.currentMonthlyPension | currency:'R '}}</mat-cell>
+          </ng-container>
+
+          <!-- Actions Column -->
+          <ng-container matColumnDef="actions">
+            <mat-header-cell *matHeaderCellDef> Actions </mat-header-cell>
+            <mat-cell *matCellDef="let row" [matMenuTriggerFor]="menu" (click)="filterMenu(row)">
+              <span class="material-icons pointer">more_vert</span>
+              <mat-menu #menu="matMenu">
+                <ng-container *ngFor="let menu of menus">
+                  <button *ngIf="!menu.disable" mat-menu-item
+                    (click)="onMenuItemClick(row, menu)">{{menu.title}}</button>
+                </ng-container>
+              </mat-menu></mat-cell>
+          </ng-container>
+
+          <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
+          <mat-row *matRowDef="let row; columns: displayedColumns;"></mat-row>
+        </mat-table>
+      </div>
+      <div *ngIf="dataSource && dataSource.length > 0 && !showTable && !showCommutations">
+        <app-pension-ledger-details [componentData]="{
+          pensionLedger: selectedPensionLedger,
+          pensionCaseContext: pensionCaseContext
+        }"></app-pension-ledger-details>
+      </div>
+      <div *ngIf="showCommutations && !showTable">
+        <app-commutation-entry-list [componentInputData]="{
+          pensionLedger: selectedPensionLedger,
+          pensionCaseContext: pensionCaseContext,
+          id: selectedPensionLedger.pensionLedgerId
+        }"></app-commutation-entry-list>
+      </div>
+    </div>
+
+
+
+  </mat-card-content>
+</mat-card>

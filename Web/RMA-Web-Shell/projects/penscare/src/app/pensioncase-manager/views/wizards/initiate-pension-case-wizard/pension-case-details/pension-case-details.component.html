@@ -1,0 +1,84 @@
+<mat-card *ngIf="lookupsCacheLoaded && form">
+    <mat-card-content>
+        <h1>Pension Case Information </h1>
+        <form [formGroup]="form">
+          <section>
+            <mat-form-field>
+              <label class="mat-label other-label mandatory-field">Pension Case Number</label>
+              <input matInput id="pensionCaseNumber" name="pensionCaseNumber" formControlName="pensionCaseNumber">
+              <mat-error *ngIf="form.get('pensionCaseNumber').hasError('required')">
+                Pension Case Number is required
+              </mat-error>
+            </mat-form-field>
+
+            <mat-form-field class="mat-form-field-right">
+              <label class="mat-label other-label mandatory-field">{{this.form.controls['idType'].value === 1 ? 'Identification Number' : 'Passport Number' }}</label>
+              <input matInput maxlength="50" formControlName="idNumber" name="idNumber" id="idNumber" />
+              <mat-error *ngIf="form.get('idNumber').hasError('required')">
+                {{this.form.controls['idType'].value === 1 ? 'Identification Number' : 'Passport Number' }} is required
+              </mat-error>
+              <mat-error *ngIf="form.get('idNumber').hasError('idNumber')">
+                A valid identification number is required
+              </mat-error>
+            </mat-form-field>
+          </section>
+
+          <section>
+            <mat-form-field>
+              <label class="mat-label other-label">PD Percentage</label>
+              <input matInput id="pdPercentage" name="pdPercentage" formControlName="pdPercentage" readonly>
+            </mat-form-field>
+
+            <mat-form-field class="mat-form-field-right">
+              <label class="mat-label other-label">First Name</label>
+              <input matInput id="firstName" name="firstName" formControlName="firstName" readonly>
+              <mat-error *ngIf="form.get('firstName').hasError('required')">
+                First Name is required
+              </mat-error>
+            </mat-form-field>
+
+          </section>
+
+          <section>
+            <mat-form-field>
+              <label class="mat-label other-label mandatory-field">Last Name</label>
+              <input matInput id="surname" name="surname" formControlName="surname" readonly>
+              <mat-error *ngIf="form.get('surname').hasError('required')">
+                Last Name is required
+              </mat-error>
+            </mat-form-field>
+
+            <mat-form-field class="mat-form-field-right" *ngIf="genders.length !== 0">
+              <label class="mat-label other-label mandatory-field">Gender</label>
+              <mat-select id="gender" name="gender" formControlName="gender">
+                <mat-option *ngFor="let gender of genders" [value]="gender.id">
+                  {{gender.name}}
+                </mat-option>
+              </mat-select>
+              <mat-error *ngIf="form.get('gender').hasError('required')">
+                Gender is required
+              </mat-error>
+            </mat-form-field>
+          </section>
+
+          <section>
+            <mat-form-field *ngIf="benefitTypes.length !== 0">
+              <label class="mat-label other-label mandatory-field">Pension Type</label>
+              <mat-select formControlName="benefitType" name="benefitType" id="benefitType">
+                <mat-option *ngFor="let type of benefitTypes" [value]="type.id">
+                  {{type.name}}
+                </mat-option>
+              </mat-select>
+              <mat-error *ngIf="form.get('benefitType').hasError('required')">
+                Pension Type is required
+              </mat-error>
+            </mat-form-field>
+          </section>
+        </form>
+    </mat-card-content>
+</mat-card>
+
+
+<div *ngIf="!lookupsCacheLoaded">
+  <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+</div>

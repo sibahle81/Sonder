@@ -1,0 +1,16 @@
+<div class="menu-bar">
+  <span class="material-icons">flag_circle</span>
+  System Message
+  <span (click)="close()" class="material-icons pointer right" matTooltip="close">
+    close
+  </span>
+  <span (click)="submit()" class="material-icons pointer right pulseGreen" matTooltip="submit">
+    save
+  </span>
+</div>
+
+<mat-card *ngIf="data && data.reasons && data.reasons.length > 0">
+  <span *ngFor="let reason of data.reasons">
+    {{reason}}<br />
+  </span>
+</mat-card>

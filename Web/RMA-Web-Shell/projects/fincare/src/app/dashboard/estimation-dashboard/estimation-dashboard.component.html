@@ -1,0 +1,27 @@
+<div>
+    <span [style.visibility]="isLoading ? 'visible' : 'hidden'">
+      <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+      <span class="grey site-font"><i>Loading Options...please wait</i></span>
+  </span>
+    <mat-card class="main-container">
+      <mat-card class="top-selector-container">
+        <mat-card class="document-container margin-top-0 margin-left-5" *ngFor="let chartData of allChartsData"  >
+          <mat-card-header>
+            <mat-card-title>
+              <h1 class="wizard-font">{{chartData.industryName}} Payment Estimates</h1>
+            </mat-card-title>
+          </mat-card-header>
+          <mat-card-content>
+            <div class="estimateDiv">
+              <canvas id="chart1" baseChart
+              [datasets]="chartData.chartDataset"
+              [labels]="chartData.chartLabels"
+              [options]="barChartOptions"
+              [chartType]="barChartType"
+             ></canvas>
+            </div>
+          </mat-card-content>
+        </mat-card>
+      </mat-card>
+    </mat-card>
+  </div>

@@ -1,0 +1,319 @@
+<mat-card *ngIf="(isLoading$ | async)">
+    <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+    <label class="mat-label other-label"><i>{{loadingMessage$ | async}}</i></label>
+</mat-card>
+
+<div *ngIf="!(isLoading$ | async)">
+    <div *ngIf="policy.rolePlayerPolicyDeclarations && policy.rolePlayerPolicyDeclarations.length > 0">
+        <mat-card>
+            <div class="menu-bar">
+                {{getProductOptionName()}} ({{policy.policyNumber}})
+            </div>
+
+            <mat-accordion multi="false">
+                <mat-expansion-panel [ngClass]="{'opacity': !(isWithinPolicyCover(rolePlayerPolicyDeclaration))}"
+                    *ngFor="let rolePlayerPolicyDeclaration of policy.rolePlayerPolicyDeclarations"
+                    [expanded]="policy.rolePlayerPolicyDeclarations.length == 1"
+                    [disabled]="policy.rolePlayerPolicyDeclarations.length == 1" (closed)="reset()">
+                    <mat-expansion-panel-header>
+                        <mat-panel-title class="title">
+                            <span
+                                [ngClass]="{'amber': (isWithinPolicyCover(rolePlayerPolicyDeclaration)) && rolePlayerPolicyDeclaration.variancePercentage && rolePlayerPolicyDeclaration.variancePercentage != 0, 'green': (isWithinPolicyCover(rolePlayerPolicyDeclaration)) && validateAllRolePlayerPolicyDeclarationDetailsSupplied(rolePlayerPolicyDeclaration) && !(rolePlayerPolicyDeclaration.variancePercentage && rolePlayerPolicyDeclaration.variancePercentage != 0), 'red': (isWithinPolicyCover(rolePlayerPolicyDeclaration)) && !validateAllRolePlayerPolicyDeclarationDetailsSupplied(rolePlayerPolicyDeclaration) && !isReadOnly, 'gray': (!isWithinPolicyCover(rolePlayerPolicyDeclaration)) || !validateAllRolePlayerPolicyDeclarationDetailsSupplied(rolePlayerPolicyDeclaration) && isReadOnly}">
+                                <b>{{rolePlayerPolicyDeclaration.declarationYear}}:
+                                    {{getRolePlayerPolicyDeclarationType(rolePlayerPolicyDeclaration.rolePlayerPolicyDeclarationType)}}
+                                </b>
+                            </span>
+                            <span
+                                *ngIf="policy.policyStatus != cancelled && isWithinPolicyCover(rolePlayerPolicyDeclaration)">
+                                <label class="mat-label other-label">&nbsp;&nbsp;<i>({{getCoverPeriod(rolePlayerPolicyDeclaration)}})
+                                        ({{rolePlayerPolicyDeclaration.prorataDays}} /
+                                        {{rolePlayerPolicyDeclaration.fullYearDays}})</i></label>
+                            </span>
+                            <span *ngIf="!isWithinPolicyCover(rolePlayerPolicyDeclaration)">
+                                <label class="mat-label other-label">&nbsp;&nbsp;<i>(declaration falls outside of this
+                                        policies over all cover)</i></label>
+                            </span>
+                        </mat-panel-title>
+                        <mat-panel-description>
+                            <div
+                                *ngIf="validateAllRolePlayerPolicyDeclarationDetailsSupplied(rolePlayerPolicyDeclaration)">
+                                <span
+                                    *ngIf="rolePlayerPolicyDeclaration.originalTotalPremium && rolePlayerPolicyDeclaration.originalTotalPremium > 0"
+                                    class="blue"
+                                    matTooltip="premium for {{rolePlayerPolicyDeclaration.declarationYear}}">
+                                    premium:
+                                    {{rolePlayerPolicyDeclaration.originalTotalPremium ?
+                                    formatMoney(rolePlayerPolicyDeclaration.originalTotalPremium.toFixed(2)) : '0.00'}}
+                                </span>
+
+                                <span class="margin-left"
+                                    *ngIf="(!rolePlayerPolicyDeclaration.rolePlayerPolicyDeclarationId || rolePlayerPolicyDeclaration.rolePlayerPolicyDeclarationId <= 0) && (!rolePlayerPolicyDeclaration.adjustmentAmount || rolePlayerPolicyDeclaration.adjustmentAmount.toFixed(2) == 0)">
+                                    <span class="gray"
+                                        *ngIf="rolePlayerPolicyDeclaration.rolePlayerPolicyDeclarationStatus != current && (rolePlayerPolicyDeclaration.adjustmentAmount && rolePlayerPolicyDeclaration.adjustmentAmount.toFixed(2) != 0)">adjustment:
+                                    </span>
+                                    <span class="gray">no adjustment</span>
+                                </span>
+
+                                <span class="margin-left"
+                                    *ngIf="rolePlayerPolicyDeclaration.adjustmentAmount && rolePlayerPolicyDeclaration.adjustmentAmount.toFixed(2) != 0"
+                                    [ngClass]="{'green': rolePlayerPolicyDeclaration.adjustmentAmount > 0, 'red': rolePlayerPolicyDeclaration.adjustmentAmount < 0}">
+                                    <span
+                                        *ngIf="rolePlayerPolicyDeclaration.rolePlayerPolicyDeclarationStatus != current">adjustment:
+                                    </span>
+                                    <span
+                                        *ngIf="rolePlayerPolicyDeclaration.rolePlayerPolicyDeclarationStatus == current">
+                                        premium: </span> {{rolePlayerPolicyDeclaration.adjustmentAmount ?
+                                    formatMoney(rolePlayerPolicyDeclaration.adjustmentAmount.toFixed(2)) : '0.00'}}
+                                </span>
+
+                                <span
+                                    *ngIf="rolePlayerPolicyDeclaration.originalTotalPremium && rolePlayerPolicyDeclaration.invoiceAmount && (rolePlayerPolicyDeclaration.originalTotalPremium.toFixed(2) != rolePlayerPolicyDeclaration.invoiceAmount.toFixed(2))"
+                                    class="margin-left gray"
+                                    matTooltip="re-calculated annual premium for {{rolePlayerPolicyDeclaration.declarationYear}}">re-calculated
+                                    premium:
+                                    {{rolePlayerPolicyDeclaration.invoiceAmount ?
+                                    formatMoney(rolePlayerPolicyDeclaration.invoiceAmount.toFixed(2)) : '0.00'}}
+                                </span>
+                            </div>
+                            <div
+                                *ngIf="!validateAllRolePlayerPolicyDeclarationDetailsSupplied(rolePlayerPolicyDeclaration) && !isReadOnly">
+                                <span class="red">declaration required</span>
+                            </div>
+                        </mat-panel-description>
+                    </mat-expansion-panel-header>
+                    <div *ngIf="!(isLoading$ | async) && !selectedRolePlayerPolicyDeclarationDetail">
+                        <mat-card class="margins">
+                            <div class="scrollTable">
+                                <table class="altRowTable">
+                                    <tr>
+                                        <th>Declaration Period</th>
+                                        <th>Product</th>
+                                        <th>Product Option</th>
+                                        <th>Status</th>
+                                        <th>Type</th>
+                                        <th>Total Premium</th>
+                                        <th
+                                            *ngIf="rolePlayerPolicyDeclaration.variancePercentage && rolePlayerPolicyDeclaration.variancePercentage != 0">
+                                            Variance %
+                                        </th>
+                                        <th
+                                            *ngIf="(rolePlayerPolicyDeclaration.variancePercentage && mathAbs(rolePlayerPolicyDeclaration.variancePercentage) >= industryClassDeclarationConfiguration.varianceThreshold) || (userHasPermission(viewAuditPermission) && rolePlayerPolicyDeclaration.rolePlayerPolicyDeclarationId && rolePlayerPolicyDeclarationId > 0)">
+                                            Action
+                                        </th>
+                                    </tr>
+                                    <tr
+                                        [ngClass]="{'amber': rolePlayerPolicyDeclaration.variancePercentage && rolePlayerPolicyDeclaration.variancePercentage != 0, 'green': validateAllRolePlayerPolicyDeclarationDetailsSupplied(rolePlayerPolicyDeclaration) && !(rolePlayerPolicyDeclaration.variancePercentage && rolePlayerPolicyDeclaration.variancePercentage != 0), 'red': !validateAllRolePlayerPolicyDeclarationDetailsSupplied(rolePlayerPolicyDeclaration) && !isReadOnly, 'gray': !validateAllRolePlayerPolicyDeclarationDetailsSupplied(rolePlayerPolicyDeclaration) && isReadOnly}">
+                                        <td>{{rolePlayerPolicyDeclaration.declarationYear}}</td>
+                                        <td>{{getProductName()}}</td>
+                                        <td>{{getProductOptionName()}}</td>
+                                        <td>{{getRolePlayerPolicyDeclarationStatus(rolePlayerPolicyDeclaration.rolePlayerPolicyDeclarationStatus)}}
+                                        </td>
+                                        <td>{{getRolePlayerPolicyDeclarationType(rolePlayerPolicyDeclaration.rolePlayerPolicyDeclarationType)}}
+                                        </td>
+                                        <td><b>{{rolePlayerPolicyDeclaration.totalPremium ?
+                                                formatMoney(rolePlayerPolicyDeclaration.totalPremium.toFixed(2)) :
+                                                '0.00'}}</b></td>
+                                        <td
+                                            *ngIf="rolePlayerPolicyDeclaration.variancePercentage && rolePlayerPolicyDeclaration.variancePercentage != 0">
+                                            <b>{{rolePlayerPolicyDeclaration.variancePercentage.toFixed(2)}}%</b>
+                                        </td>
+                                        <td
+                                            *ngIf="(rolePlayerPolicyDeclaration.variancePercentage && mathAbs(rolePlayerPolicyDeclaration.variancePercentage) >= industryClassDeclarationConfiguration.varianceThreshold) || (userHasPermission(viewAuditPermission) && rolePlayerPolicyDeclaration.rolePlayerPolicyDeclarationId && rolePlayerPolicyDeclarationId > 0)">
+                                            <span
+                                                *ngIf="rolePlayerPolicyDeclaration.variancePercentage && rolePlayerPolicyDeclaration.variancePercentage != 0"
+                                                class="material-icons pointer" matTooltip="supporting information"
+                                                (click)="openVarianceDialog(rolePlayerPolicyDeclaration)"
+                                                [ngClass]="{'greenfont': (!isReadOnly && !isWizard && rolePlayerPolicyDeclaration.varianceReason) || (isWizard && rolePlayerPolicyDeclaration.varianceReason && rolePlayerPolicyDeclaration.allRequiredDocumentsUploaded), 'redfont pulse': !isReadOnly && ((!isWizard && !rolePlayerPolicyDeclaration.varianceReason) || (isWizard && !rolePlayerPolicyDeclaration.varianceReason || !rolePlayerPolicyDeclaration.allRequiredDocumentsUploaded))}">
+                                                settings
+                                            </span>
+
+                                            <span
+                                                *ngIf="userHasPermission(viewAuditPermission) && rolePlayerPolicyDeclaration.rolePlayerPolicyDeclarationId > 0"
+                                                class="material-icons pointer" matTooltip="audit"
+                                                (click)="openRolePlayerPolicyDeclarationAuditDialog(rolePlayerPolicyDeclaration)">
+                                                fingerprint
+                                            </span>
+                                        </td>
+                                    </tr>
+                                </table>
+                            </div>
+                        </mat-card>
+
+                        <mat-card class="margins">
+                            <div class="scrollTable">
+                                <table class="altRowTable">
+                                    <tr>
+                                        <th>Category Insured</th>
+                                        <th>Effective From <i>(incl.)</i></th>
+                                        <th>Effective To <i>(excl.)</i></th>
+                                        <th>Rate %</th>
+                                        <th>Average Number of Employees</th>
+                                        <th>Total Employee Earnings</th>
+                                        <th *ngIf="isMining">Live In Allowance</th>
+                                        <th
+                                            *ngIf="rolePlayerPolicyDeclaration.penaltyPercentage && rolePlayerPolicyDeclaration.penaltyPercentage > 0">
+                                            Penalty %</th>
+                                        <th>Amount</th>
+                                        <th *ngIf="!isReadOnly || userHasPermission(viewAuditPermission)">Action</th>
+                                    </tr>
+                                    <tr *ngFor="let rolePlayerPolicyDeclarationDetail of rolePlayerPolicyDeclaration.rolePlayerPolicyDeclarationDetails"
+                                        [ngClass]="{'excluded': isExcluded(rolePlayerPolicyDeclarationDetail)}">
+                                        <td>{{getCategoryInsuredName(rolePlayerPolicyDeclarationDetail.categoryInsured)}}
+                                            <label class="mat-label other-label"><i>
+                                                    ({{calculateDays(rolePlayerPolicyDeclarationDetail.effectiveFrom,
+                                                    rolePlayerPolicyDeclarationDetail.effectiveTo)}} /
+                                                    {{rolePlayerPolicyDeclaration.prorataDays}})</i></label>
+                                        </td>
+                                        <td>{{rolePlayerPolicyDeclarationDetail.effectiveFrom | date: 'yyyy-MM-dd'}}
+                                        </td>
+                                        <td>{{rolePlayerPolicyDeclarationDetail.effectiveTo | date: 'yyyy-MM-dd'}}</td>
+                                        <td>{{rolePlayerPolicyDeclarationDetail.rate}}</td>
+                                        <td>{{rolePlayerPolicyDeclarationDetail.averageNumberOfEmployees ?
+                                            rolePlayerPolicyDeclarationDetail.averageNumberOfEmployees : 0}}</td>
+                                        <td>{{rolePlayerPolicyDeclarationDetail.averageEmployeeEarnings ?
+                                            formatMoney(rolePlayerPolicyDeclarationDetail.averageEmployeeEarnings.toFixed(2))
+                                            : '0.00'}}
+                                        </td>
+                                        <td *ngIf="isMining">{{rolePlayerPolicyDeclarationDetail.liveInAllowance ?
+                                            rolePlayerPolicyDeclarationDetail.liveInAllowance
+                                            : 'N/A'}}</td>
+                                        <td
+                                            *ngIf="rolePlayerPolicyDeclaration.penaltyPercentage && rolePlayerPolicyDeclaration.penaltyPercentage > 0">
+                                            {{rolePlayerPolicyDeclaration.penaltyPercentage}}
+                                        </td>
+                                        <td>{{rolePlayerPolicyDeclarationDetail.premium ?
+                                            formatMoney(rolePlayerPolicyDeclarationDetail.premium.toFixed(2)) : '0.00'}}
+                                        </td>
+                                        <td *ngIf="!isReadOnly || userHasPermission(viewAuditPermission)">
+                                            <span *ngIf="!isReadOnly">
+                                                <span *ngIf="!rolePlayerPolicyDeclarationDetail.isDeleted"
+                                                    class="material-icons pointer" matTooltip="edit"
+                                                    (click)="rolePlayerPolicyDeclarationDetailSelected(rolePlayerPolicyDeclarationDetail)"
+                                                    [ngClass]="{'greenfont': (rolePlayerPolicyDeclarationDetail.premium && rolePlayerPolicyDeclarationDetail.premium > 0), 'redfont pulse': (!rolePlayerPolicyDeclarationDetail.premium || rolePlayerPolicyDeclarationDetail.premium <= 0)}">
+                                                    settings
+                                                </span>
+
+                                                <a *ngIf="rolePlayerPolicyDeclarationDetail.isDeleted" role="button"
+                                                    class="link-edit pointer" matTooltip="include"
+                                                    (click)="exclude(rolePlayerPolicyDeclaration, rolePlayerPolicyDeclarationDetail)">
+                                                    <span class="material-icons pointer">
+                                                        add_circle
+                                                    </span></a>
+                                                <a *ngIf="!rolePlayerPolicyDeclarationDetail.isDeleted" role="button"
+                                                    class="link-edit pointer" matTooltip="exclude"
+                                                    (click)="exclude(rolePlayerPolicyDeclaration, rolePlayerPolicyDeclarationDetail)">
+                                                    <span class="material-icons pointer">
+                                                        do_disturb_on
+                                                    </span></a>
+                                            </span>
+
+                                            <a *ngIf="userHasPermission(viewAuditPermission) && rolePlayerPolicyDeclarationDetail.rolePlayerPolicyDeclarationDetailId > 0"
+                                                (click)="openRolePlayerPolicyDeclarationDetailAuditDialog(rolePlayerPolicyDeclaration, rolePlayerPolicyDeclarationDetail)"
+                                                role="button" class="link-edit">
+                                                <span matTooltip="audit" class="material-icons icn pointer">
+                                                    fingerprint
+                                                </span>
+                                            </a>
+                                        </td>
+                                    </tr>
+                                </table>
+                            </div>
+                        </mat-card>
+                    </div>
+
+                    <div *ngIf="selectedRolePlayerPolicyDeclarationDetail">
+                        <mat-card>
+                            <div class="menu-bar">
+                                <span class="material-icons">
+                                    engineering
+                                </span>
+                                Declaration Detail
+                                <span (click)="reset()" class="material-icons pointer right" matTooltip="cancel">
+                                    close
+                                </span>
+                                <span *ngIf="form.valid && !form.pristine" (click)="save()"
+                                    class="material-icons pointer right pulse greenfont" matTooltip="save">
+                                    save
+                                </span>
+                            </div>
+                            <form [formGroup]="form" class="mat-container details-form" novalidate>
+                                <section>
+                                    <mat-form-field class="mat-form-field">
+                                        <label class="mat-label other-label">Product Option</label>
+                                        <input matInput formControlName="productOption" name="productOption"
+                                            id="productOption" />
+                                    </mat-form-field>
+                                    <mat-form-field class="mat-form-field-right">
+                                        <label class="mat-label other-label">Category Insured</label>
+                                        <input matInput formControlName="categoryInsured" name="categoryInsured"
+                                            id="categoryInsured" />
+                                    </mat-form-field>
+                                </section>
+                                <section>
+                                    <mat-form-field class="mat-form-field">
+                                        <label class="mat-label other-label">Rate</label>
+                                        <input matInput formControlName="rate" name="rate" id="rate" />
+                                    </mat-form-field>
+                                    <mat-form-field
+                                        *ngIf="isMining && selectedRolePlayerPolicyDeclarationDetail.categoryInsured == unSkilled"
+                                        class="mat-form-field-right">
+                                        <label class="mat-label other-label">Number of Employees Receiving Live In
+                                            Allowance<i> (LIA for
+                                                {{selectedRolePlayerPolicyDeclaration.declarationYear}}:
+                                                {{formatMoney(getLiveInAllowanceForCoverPeriod(selectedRolePlayerPolicyDeclaration).toFixed(2))}})</i></label>
+                                        <input (input)="validate()" matInput NumberOnly
+                                            formControlName="liveInAllowance" name="liveInAllowance"
+                                            id="liveInAllowance" />
+                                        <mat-error *ngIf="form.get('liveInAllowance').hasError('min')">
+                                            minimum allowable number of employees receiving LIA
+                                            <strong>exceeded</strong> (minimum
+                                            allowable: 0)
+                                        </mat-error>
+                                        <mat-error *ngIf="form.get('liveInAllowance').hasError('max')">
+                                            maximum allowable number of employees receiving LIA
+                                            <strong>exceeded</strong> (maximum
+                                            allowable: {{form.get('averageNumberOfEmployees').value ?
+                                            form.get('averageNumberOfEmployees').value : 0}})
+                                        </mat-error>
+                                    </mat-form-field>
+                                </section>
+                                <section>
+                                    <mat-form-field class="mat-form-field">
+                                        <label class="mat-label other-label">Average Number of Employees</label>
+                                        <input (input)="validate()" matInput NumberOnly
+                                            formControlName="averageNumberOfEmployees" name="averageNumberOfEmployees"
+                                            id="averageNumberOfEmployees" />
+                                        <mat-error *ngIf="form.get('averageNumberOfEmployees').hasError('required')">
+                                            average number of employees is <strong>required</strong>
+                                        </mat-error>
+                                    </mat-form-field>
+                                    <mat-form-field class="mat-form-field-right">
+                                        <label class="mat-label other-label">Total Employee Earnings</label>
+                                        <input (input)="validate()" matInput DecimalNumber
+                                            formControlName="averageEmployeeEarnings" name="averageEmployeeEarnings"
+                                            id="averageEmployeeEarnings" />
+                                        <mat-error *ngIf="form.get('averageEmployeeEarnings').hasError('required')">
+                                            total employee earnings is <strong>required</strong>
+                                        </mat-error>
+                                        <mat-error *ngIf="form.get('averageEmployeeEarnings').hasError('min')">
+                                            minimum allowable earnigs per employee is too <strong>low</strong> (minimum
+                                            allowable: {{configuredMaximum && minimumAllowableEarningsPerEmployee > 0 ?
+                                            formatMoney(minimumAllowableEarningsPerEmployee.toFixed(2)) : 'not
+                                            configured'}})
+                                        </mat-error>
+                                        <mat-error *ngIf="form.get('averageEmployeeEarnings').hasError('max')">
+                                            maximum allowable earnigs per employee <strong>exceeded</strong> (maximum
+                                            allowable: {{configuredMaximum && maximumAllowableEarningsPerEmployee > 0 ?
+                                            formatMoney(maximumAllowableEarningsPerEmployee.toFixed(2)) : 'not
+                                            configured'}})
+                                        </mat-error>
+                                    </mat-form-field>
+                                </section>
+                            </form>
+                        </mat-card>
+                    </div>
+                </mat-expansion-panel>
+            </mat-accordion>
+        </mat-card>
+    </div>
+</div>

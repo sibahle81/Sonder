@@ -1,0 +1,99 @@
+<div *ngIf="isAuthorized; else notAuthorized">
+    <table style="display:inline-block;">
+        <tr>
+            <td>NAME</td>
+            <td>{{accountName}}</td>
+        </tr>
+        <tr>
+            <td>CODE</td>
+            <td>{{accountCode}}</td>
+        </tr>
+        <tr>
+            <td>TOTAL DUE</td>
+            <td>{{totalDueAmount|number:'1.2-2'}}</td>
+        </tr>
+        <tr>
+            <td>TOTAL CLAWBACK</td>
+            <td>{{totalClawBackAmount|number:'1.2-2'}}</td>
+        </tr>
+        <tr>
+            <td>TOTAL {{getHearderName()}}</td>
+            <td>{{totalReleasedAmount|number:'1.2-2'}}</td>
+        </tr>
+    </table>
+    <div *ngIf="isLoading">
+        <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+        <label class="mat-label other-label"><i>Loading hearder summary...please wait</i></label>
+    </div>
+    <div [hidden]="datasource.data.length === 0">
+        <mat-table #table [dataSource]="datasource" matSort>
+            <ng-container matColumnDef="periodYear">
+                <mat-header-cell *matHeaderCellDef mat-sort-header>Period Year</mat-header-cell>
+                <mat-cell *matCellDef="let row"> {{row.periodYear}} </mat-cell>
+            </ng-container>
+            <ng-container matColumnDef="periodMonth">
+                <mat-header-cell *matHeaderCellDef mat-sort-header>Period Month</mat-header-cell>
+                <mat-cell *matCellDef="let row"> {{getMonthName(row.periodMonth)}} </mat-cell>
+            </ng-container>
+            <ng-container matColumnDef="totalHeaderAmount">
+                <mat-header-cell *matHeaderCellDef class="amount-header">Amount</mat-header-cell>
+                <mat-cell *matCellDef="let row"><a role="button" (click)="getCommissionDetailByHeader(row)" class="link-edit">{{row.totalHeaderAmount|number:'1.2-2'}}</a></mat-cell>
+            </ng-container>
+            <ng-container matColumnDef="breakdown">
+                <mat-header-cell *matHeaderCellDef>Breakdown</mat-header-cell>
+                <mat-cell *matCellDef="let row" ><a role="button" (click)="viewBreakDown(row)" class="link-edit">view</a></mat-cell>
+            </ng-container>
+            <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
+            <mat-row *matRowDef="let row; columns: displayedColumns;"></mat-row>
+        </mat-table>
+        <mat-paginator #paginator
+            [pageSize]="10"
+            [pageSizeOptions]="[5, 10, 25, 100]"
+            [showFirstLastButtons]="true">
+        </mat-paginator>
+    </div>
+    <div *ngIf="isReleaseDetails || isRejectedDetails" style="margin-top: 20px;">
+        <div style="color:#09b9e6; font-weight: bold;">{{breakdownHeading | uppercase}} BREAKDOWN</div>
+        <div [hidden]="releaseDetailsDatasource.data.length === 0">
+            <mat-table #table [dataSource]="releaseDetailsDatasource">
+                <ng-container matColumnDef="paymentType">
+                    <mat-header-cell *matHeaderCellDef>Type</mat-header-cell>
+                    <mat-cell *matCellDef="let row">{{getPayTypeText(row.commissionPaymentType)}}</mat-cell>
+                </ng-container>
+                <ng-container matColumnDef="paymentDate">
+                    <mat-header-cell *matHeaderCellDef>Payment Date</mat-header-cell>
+                    <mat-cell *matCellDef="let row" class="right-aligned-amounts">{{row.createdDate | date:'yyyy-MM-dd hh:mm'}}</mat-cell>
+                </ng-container>
+                <ng-container matColumnDef="amount">
+                    <mat-header-cell *matHeaderCellDef>Amount</mat-header-cell>
+                    <mat-cell *matCellDef="let row" class="right-aligned-amounts">{{row.amount |number:'1.2-2'}}</mat-cell>
+                </ng-container>
+                <ng-container matColumnDef="status">
+                    <mat-header-cell *matHeaderCellDef>Status</mat-header-cell>
+                    <mat-cell *matCellDef="let row" [ngStyle]="{'background-color':getColor(row.status)}">{{getStatusText(row.status)}}</mat-cell>
+                </ng-container>
+                <ng-container matColumnDef="comment">
+                    <mat-header-cell *matHeaderCellDef>Comment</mat-header-cell>
+                    <mat-cell *matCellDef="let row; let i = index;">
+                        <mat-form-field class="mat-form-field" floatLabel="never" *ngIf="isRejectedDetails">
+                            <textarea matInput rows="4" cols="10" wrap="physical" style="height: 80px; min-width: 250px;" disabled>{{row.results}}</textarea>
+                        </mat-form-field>
+                    </mat-cell>
+                </ng-container>
+                <mat-header-row *matHeaderRowDef="releasedDisplayedColumns"></mat-header-row>
+                <mat-row *matRowDef="let row; columns: releasedDisplayedColumns;"></mat-row>
+            </mat-table>
+        </div>
+    </div>
+    <div class="form-buttons" (click)="navigateBack()" style="margin-left: 10px">
+        <button class="button float-button submit-button">Back</button>
+    </div>
+</div>
+<ng-template #notAuthorized>
+    <div>
+        <div class="wizard-permissions-error">You do not have sufficient permissions to view account summaries.</div>
+        <div (click)="navigateBack()" class="form-buttons submit-button">
+            <button type="button" class="button float-button">Back</button>
+        </div>
+    </div>
+</ng-template>

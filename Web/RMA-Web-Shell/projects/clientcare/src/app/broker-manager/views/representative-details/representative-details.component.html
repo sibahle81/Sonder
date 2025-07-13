@@ -1,0 +1,67 @@
+<mat-card class="container-margin">
+  <mat-card-content style="margin-left: 10px;">
+    <form [formGroup]="form" class="mat-container details-form" novalidate>
+      <section>
+        <mat-form-field class="mat-form-field">
+          <label class="mat-label other-label ">Code</label>
+          <input matInput id="code" formControlName="code" name="code" />
+        </mat-form-field>
+        <mat-form-field class="mat-form-field-right">
+          <label class="mat-label other-label ">Name</label>
+          <input matInput id="name" formControlName="name" name="name" />
+        </mat-form-field>
+      </section>
+      <section>
+        <mat-form-field class="mat-form-field">
+          <label class="mat-label other-label ">ID Type</label>
+          <mat-select formControlName="idType">
+            <mat-option *ngFor="let type of idTypes" [value]="type.id">
+              {{type.name}}
+            </mat-option>
+          </mat-select>
+        </mat-form-field>
+        <mat-form-field class="mat-form-field-right">
+          <label class="mat-label other-label ">ID Number</label>
+          <input matInput id="idNumber" formControlName="idNumber" name="idNumber" />
+        </mat-form-field>
+      </section>
+      <section>
+        <mat-form-field class="mat-form-field">
+          <label class="mat-label other-label ">Representative Type</label>
+          <mat-select formControlName="repType">
+            <mat-option *ngFor="let type of repTypes" [value]="type.id">
+              {{type.name}}
+            </mat-option>
+          </mat-select>
+        </mat-form-field>
+        <mat-form-field class="mat-form-field-right">
+          <label class="mat-label other-label ">Date of Birth</label>
+          <input matInput id="birthDate" [matDatepicker]="birthDate" formControlName="dateOfBirth" name="dateOfBirth" />
+          <mat-datepicker #birthDate></mat-datepicker>
+        </mat-form-field>
+      </section>
+      <section>
+        <mat-form-field class="mat-form-field">
+          <label class="mat-label other-label ">Contact Number</label>
+          <input matInput id="contactNumber" formControlName="contactNumber" name="contactNumber" />
+        </mat-form-field>
+        <mat-form-field class="mat-form-field-right">
+          <label class="mat-label other-label ">Email</label>
+          <input matInput id="email" formControlName="email" name="email" />
+        </mat-form-field>
+      </section>
+      <section>
+        <mat-form-field class="mat-form-field">
+          <label class="mat-label other-label ">Medical Accreditation No</label>
+          <input matInput id="medicalAccreditationNo" formControlName="medicalAccreditationNo"
+            name="medicalAccreditationNo" />
+        </mat-form-field>
+        <mat-form-field class="mat-form-field-right">
+          <label class="mat-label other-label ">Country of Registration</label>
+          <input matInput id="countryOfRegistration" formControlName="countryOfRegistration"
+            name="countryOfRegistration" />
+        </mat-form-field>
+      </section>
+    </form>
+  </mat-card-content>
+</mat-card>

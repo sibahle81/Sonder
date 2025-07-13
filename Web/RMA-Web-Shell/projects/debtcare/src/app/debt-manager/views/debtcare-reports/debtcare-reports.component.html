@@ -1,0 +1,140 @@
+<div class="debtcare-report">
+  <div class="report" [ngClass]="isSpinner ? 'on-diable-field' : '' ">
+    <div class="align-center field-row">
+      <div class="formViewInside">
+        <h1>Reports</h1>
+      </div>
+    </div>
+    <form [formGroup]="reportForm">
+      <div class="align-center">
+        <div class="flex-view formViewInside">
+          <div class="reportFormView">
+            <mat-label class="labelTextCssSubject">Report Type</mat-label>
+            <mat-form-field class="form-field" appearance="outline">
+              <mat-select formControlName="reportType" placeholder="Select"
+                (selectionChange)="onSelectReportType($event)" class="dropdown-list" [panelClass]="'custom-dropdown'">
+                <ng-container *ngFor="let option of reportListValues">
+                  <mat-option [value]="option">
+                    {{option}}
+                  </mat-option>
+                </ng-container>
+              </mat-select>
+            </mat-form-field>
+          </div>
+        </div>
+      </div>
+
+      <div class="align-center">
+        <div class="flex-view formViewInside">
+          <div class="reportFormView">
+            <mat-label class="labelTextCssSubject">From</mat-label>
+            <div
+              class="date-picker-upadte-status status-update-mff legal-add-payment-field question-div question-div-legal">
+              <mat-form-field appearance="outline" class="form-field">
+                <input matInput [matDatepicker]="pickerFrom" formControlName="fromDate" readonly
+                  (click)="pickerFrom.open()" class="date-picker-input">
+                <mat-datepicker-toggle matIconSuffix [for]="pickerFrom" class="icon-css"></mat-datepicker-toggle>
+                <mat-datepicker #pickerFrom></mat-datepicker>
+              </mat-form-field>
+            </div>
+          </div>
+          <div class="reportFormView">
+            <mat-label class="labelTextCssSubject">To</mat-label>
+            <div
+              class="date-picker-upadte-status status-update-mff legal-add-payment-field question-div question-div-legal">
+              <mat-form-field appearance="outline" class="form-field">
+                <input matInput [matDatepicker]="pickerTo" formControlName="toDate" readonly (click)="pickerTo.open()"
+                  class="date-picker-input">
+                <mat-datepicker-toggle matIconSuffix [for]="pickerTo" class="icon-css"></mat-datepicker-toggle>
+                <mat-datepicker #pickerTo></mat-datepicker>
+              </mat-form-field>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="align-center field-row-last">
+        <div class="flex-view formViewInside">
+          <div class="reportFormView" *ngIf="!isStatusClassHide">
+            <mat-label class="labelTextCssSubject">Book Class</mat-label>
+            <mat-form-field class="form-field" appearance="outline">
+              <mat-select formControlName="bookClass" placeholder="Select" (selectionChange)="onSelectBookClass($event)"
+                class="dropdown-list" [panelClass]="'custom-dropdown'">
+                <ng-container *ngFor="let option of classListValues">
+                  <mat-option [value]="option">
+                    {{option}}
+                  </mat-option>
+                </ng-container>
+              </mat-select>
+            </mat-form-field>
+          </div>
+
+          <div class="reportFormView" *ngIf="!isStatusClassHide">
+            <div class="question-div question-div-legal">
+              <div class="legal-add-payment-field flex-align">
+                <mat-label class="labelTextCssSubject">Status</mat-label>
+                <mat-form-field appearance="outline" class="multi-agent-list-dropdown mat-field-width formViewInside">
+                  <input #updateStatus matInput [matAutocomplete]="auto" (input)="searchValueStatus(updateStatus.value)"
+                    formControlName="status" class="search-input border-none-imp search-input-agent"
+                    (click)="enableDropdownOptions()">
+                  <mat-autocomplete #auto="matAutocomplete" class="update-status-field"
+                    (optionSelected)="onSelectStatus($event)">
+                    <mat-option *ngFor="let item of selectedStatusoption || []" [value]="item?.statusCategoryName">
+                      {{item.statusCategoryName}}</mat-option>
+                  </mat-autocomplete>
+                  <button mat-button matSuffix mat-icon-button aria-label="Toggle dropdown"
+                    (click)="enableDropdownOptions()">
+                    <mat-icon>arrow_drop_down</mat-icon>
+                  </button>
+                </mat-form-field>
+                <mat-error class="error-text-color"
+                  *ngIf="formSubmitted && (reportForm.get('status').hasError('required') ||  reportForm.get('status').invalid)">Please
+                  select collection status</mat-error>
+              </div>
+            </div>
+          </div>
+
+          <div class="reportFormView" *ngIf="!isCollectionAgentClassHide">
+            <div class="question-div question-div-legal">
+              <div class="legal-add-payment-field flex-align">
+                <mat-label class="labelTextCssSubject">Collection Agents</mat-label>
+                <mat-form-field appearance="outline" class="multi-agent-list-dropdown mat-field-width formViewInside">
+                  <input #updateStatus matInput [matAutocomplete]="auto" (input)="searchValueCollectionAgent(updateStatus.value)" [value]="getCollectionAgentDisplayName()"
+                    formControlName="collection_agent_id" class="search-input border-none-imp search-input-agent"
+                    (click)="enableDropdownOptions()">
+                  <mat-autocomplete #auto="matAutocomplete" class="update-status-field"
+                    (optionSelected)="onSelectCollectionAgent($event)">
+                    <mat-option *ngFor="let item of selectedCollectionAgentOption || []" [value]="item?.id">
+                      {{item.displayName}}</mat-option>
+                  </mat-autocomplete>
+                  <button mat-button matSuffix mat-icon-button aria-label="Toggle dropdown"
+                    (click)="enableDropdownOptions()">
+                    <mat-icon>arrow_drop_down</mat-icon>
+                  </button>
+                </mat-form-field>
+                <mat-error class="error-text-color"
+                  *ngIf="formSubmitted && (reportForm.get('collection_agent').hasError('required') ||  reportForm.get('collection_agent').invalid)">Please
+                  select collection agent</mat-error>
+              </div>
+            </div>
+          </div>
+
+          <div class="reportFormView" style="display: none;">
+            <mat-label class="labelTextCssSubject">Search Text</mat-label>
+            <mat-form-field class="form-field">
+              <input type="text" formControlName="search" matInput placeholder="" class="input-field">
+            </mat-form-field>
+          </div>
+        </div>
+      </div>
+
+      <div class="align-center field-row">
+        <button mat-button class="button-action" (click)="exportDebtcareReport(false)">Export to Excel</button>
+      </div>      
+    </form>
+  </div>
+
+  <div [hidden]="!isSpinner" class="spinner-view">
+    <mat-spinner *ngIf="isSpinner"></mat-spinner>
+  </div>
+</div>

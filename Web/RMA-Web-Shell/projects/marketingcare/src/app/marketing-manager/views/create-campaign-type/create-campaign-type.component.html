@@ -1,0 +1,230 @@
+<section class="createTypeContainer">
+  <div [ngClass]="isSpinner ? 'on-disabled' : 'on-enabled' ">
+    <div>
+      <div class="headerBottomCss">
+        <div class="recovery-btn">
+          <button mat-button class="btnClassCss">
+            {{ groupUpdateData ? 'Edit Campaign Type' : 'Create Campaign Type' }}
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <form *ngIf="!isEditMode" [formGroup]="createCampaignTypeForm" (ngSubmit)="saveCampaignType()">
+      <div class="formContainer">
+        <div>
+          <p class="form-label-text">Campaign Type</p>
+          <div class="borderCss">
+            <mat-form-field class="status-update-mff" appearance="outline" [ngClass]="{
+              'has-error': formSubmitted && isControlInvalidType('campaignType')}">
+              <input matInput placeholder="" name="campaignType" formControlName="campaignType" class="border-none-imp">
+            </mat-form-field>
+          </div>
+        </div>
+        <div *ngIf="isControlInvalidType('campaignType') && formSubmitted">
+          <p class="color-red">{{ getErrorMessage('campaignType') }}</p>
+        </div>
+        <div class="recovery-btn approverBtnClass">
+          <div>
+            <button mat-button class="btnClassCss">
+              Approvers
+            </button>
+          </div>
+          <div class="create-template-div">
+            <button class="create-grp-btn" mat-button type="button" (click)="canAddInput() && addInputField()">
+              <mat-icon>add</mat-icon>
+              <span class="create-template-text">Add Approver</span>
+            </button>
+            <div *ngIf="!canAddInput()" class="max-input-message">
+              Maximum number of inputs reached (5).
+            </div>
+          </div>
+        </div>
+        <div>
+          <div
+            *ngIf="createCampaignTypeForm.get('inputFields') && createCampaignTypeForm.get('inputFields').controls.length > 0">
+            <div class="marketing-form-field" formArrayName="inputFields">
+              <div *ngFor="let field of inputFieldsArray?.controls; let i = index" class="borderCss"
+                [formGroupName]="i">
+                <p class="form-label-text">Approver {{ i + 1 }}</p>
+                <div class="display-flex">
+
+                <mat-form-field appearance="outline" [ngClass]="{
+                'has-error': formSubmitted && isControlInvalidType('inputFields.' + i + '.approvers', createCampaignTypeForm)
+              }">
+                  <input matInput #input class="border-none-imp" [matAutocomplete]="auto" formControlName="approvers"
+                    (input)="filterApproverOptions($event.target.value, i)"
+                    (optionSelected)="onApproverSelected($event)" (focus)="handleApproverInputFocus(i)">
+                  <mat-autocomplete #auto="matAutocomplete">
+                    <ng-container *ngIf="productList$[i] ">
+                      <mat-option *ngFor="let state of filteredApprovers[i]" [value]="state.userName">
+                        <span>{{state.userName}}</span>
+                      </mat-option>
+                      <mat-option *ngIf="!filteredApprovers[i]?.length && field.get('approvers').value"
+                        class="text-danger">
+                        Such approver does not exist
+                      </mat-option>
+                    </ng-container>
+                  </mat-autocomplete>
+
+                </mat-form-field>
+                <button mat-icon-button (click)="removeInput(i)" *ngIf="inputFields.length > 1"
+                  class="example-icon favorite-icon">
+                  <mat-icon class="color-red">remove_circle_outline</mat-icon>
+                </button>
+                </div>
+                <div
+                  *ngIf="isControlInvalidType('inputFields.' + i + '.approvers', createCampaignTypeForm) && formSubmitted">
+                  <p class="color-red">{{ getErrorMessage('inputFields.' + i + '.approvers') }}</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="recovery-btn display-flex-padding">
+          <div class="example-full-width">
+            <button mat-button class="top-nav-detail-tab  border-radius-background-font">
+              Final Approvers
+            </button>
+          </div>
+        </div>
+
+        <div class="marketing-form-field" class="borderCss">
+          <p class="form-label-text font-family">Final Approver</p>
+          <div class="display-flex-width">
+            <mat-form-field appearance="outline" [ngClass]="{
+              'has-error': formSubmitted && isControlInvalidType('finalapprover')}">
+              <input #selectUserFinalApprover type="text" matInput formControlName="finalapprover"
+                [matAutocomplete]="auto" (ngModelChange)="searchValueFinalApprover($event)"
+                class="search-input border-none-imp">
+              <mat-autocomplete #auto="matAutocomplete">
+                <mat-option *ngFor="let approver of approverOptionsFilteredFinalApprover" [value]="approver.userName"
+                  (click)="onApproverSelected(approver.id,false,1)"> {{
+                  approver.userName}}</mat-option></mat-autocomplete>
+            </mat-form-field>
+          </div>
+
+        </div>
+        <div *ngIf="isControlInvalidType('finalapprover') &&  formSubmitted">
+          <p class="color-red">{{ getErrorMessage('finalapprover') }}</p>
+        </div>
+      </div>
+      <div *ngIf="createCampaignTypeForm.hasError('duplicateApprovers')" class="padding">
+        <p class="color-red">Duplicate approver names are not allowed.</p>
+      </div>
+      <div class="bottom-btn  padding-btn">
+        <button (click)="goBack()"  mat-stroked-button type="button" id="back-btn">
+          <mat-icon>keyboard_backspace</mat-icon>&nbsp;&nbsp;
+          <span>BACK</span>
+        </button>
+        <button mat-stroked-button id="save-btn" type="submit">
+          {{ groupUpdateData ? 'Update' : 'Save' }}
+        </button>
+      </div>
+    </form>
+    <form *ngIf="isEditMode" [formGroup]="editCampaignTypeForm" (ngSubmit)="updateCampaignType()" class="padding-btn">
+      <div class="padding">
+        <div class="margin">
+          <p class="form-label-text  font-family">Campaign Type</p>
+          <div class="display-flex">
+            <mat-form-field class="status-update-mff" appearance="outline" [ngClass]="{
+              'has-error': formSubmitted && isControlInvalidType('campaignType')}">
+              <input matInput placeholder="" name="campaignType" formControlName="campaignType" class="border-none-imp">
+            </mat-form-field>
+          </div>
+        </div>
+
+        <div class="recovery-btn  display-flex-padding  justify-content">
+          <div>
+            <button mat-button class="top-nav-detail-tab  border-radius-background-font">
+              Approvers
+            </button>
+          </div>
+          <div class="create-template-div  padding-right">
+            <button class="create-grp-btn" mat-button type="button" (click)="canAddInputEdit() && addInputFieldEdit($event)">
+              <mat-icon>add</mat-icon>
+              <span class="create-template-text">Add Approver</span>
+            </button>
+            <div *ngIf="!canAddInputEdit()" class="max-input-message">
+              Maximum number of inputs reached (5).
+            </div>
+          </div>
+        </div>
+
+        <div class="marketing-form-field  display-flex-direction" formArrayName="inputFields">
+          <div *ngFor="let field of editCampaignTypeForm.get('inputFields').controls; let i = index"
+            class="width-margin" [formGroupName]="i">
+            <p class="form-label-text  font-family">Approver {{ i + 1 }}</p>
+            <div class="display-flex">
+              <mat-form-field appearance="outline" [ngClass]="{
+                  'has-error': formSubmitted && isControlInvalidType('approvers')}">
+                <input matInput #input class="border-none-imp" [matAutocomplete]="auto" formControlName="approvers"
+                  (input)="filterApproversInEditForm($event.target.value, i)" (focus)="handleApproverInputFocus(i)">
+                <mat-autocomplete #auto="matAutocomplete">
+                  <ng-container *ngIf="filteredApprovers[i]">
+                    <mat-option *ngFor="let approver of filteredApprovers[i]" [value]="approver.userName">
+                      {{ approver.userName }}
+                    </mat-option>
+                  </ng-container>
+                </mat-autocomplete>
+              </mat-form-field>
+              <button mat-icon-button (click)="removeInputFieldAtIndex(i,$event)"
+                *ngIf="editCampaignTypeForm.get('inputFields').controls.length > 1" class="example-icon favorite-icon">
+                <mat-icon class="color-red">remove_circle_outline</mat-icon>
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <div class="recovery-btn  display-flex-padding">
+          <div class="example-full-width">
+            <button mat-button class="top-nav-detail-tab  border-radius-background-font">
+              Final Approvers
+            </button>
+          </div>
+        </div>
+
+        <div class="marketing-form-field  display-flex-direction  example-full-width">
+          <p class="form-label-text  font-family">Final Approver</p>
+          <div class="display-flex  example-full-width">
+            <mat-form-field appearance="outline" [ngClass]="{
+                  'has-error': formSubmitted && isControlInvalidType('finalapprover')}">
+              <input #selectUserFinalApprover type="text" matInput formControlName="finalapprover"
+                [matAutocomplete]="autoFinalApprover" (ngModelChange)="searchValueFinalApprover($event)"
+                (focus)="handleFinalApproverInputFocus()" class="search-input border-none-imp">
+              <mat-autocomplete #autoFinalApprover="matAutocomplete">
+                <mat-option *ngFor="let approver of finalApproverOptionsFiltered" [value]="approver.userName"
+                  (click)="onApproverSelected(approver.id, false, 1)">
+                  {{ approver.userName }}
+                </mat-option>
+              </mat-autocomplete>
+            </mat-form-field>
+          </div>
+          <div *ngIf="editCampaignTypeForm.get('finalapprover').hasError('required') && formSubmitted">
+            <p class="color-red">Final Approver is required.</p>
+          </div>
+        </div>
+
+
+        <div *ngIf="editCampaignTypeForm.hasError('duplicateApprovers')">
+          <p class="color-red">Duplicate approver names are not allowed.</p>
+        </div>
+        <div class="bottom-btn  padding-btn">
+          <button (click)="goBack()" mat-stroked-button id="back-btn">
+            <mat-icon>keyboard_backspace</mat-icon>&nbsp;&nbsp;
+            <span >BACK</span>
+          </button>
+          <button mat-stroked-button id="save-btn" type="submit"
+            [ngStyle]="isSpinner ? { 'pointer-events': 'none', 'opacity': '0.5' } : { 'pointer-events': 'auto','opacity': '1' }">
+            {{ groupUpdateData ? 'Update' : 'Save' }}
+          </button>
+        </div>
+      </div>
+    </form>
+
+  </div>
+
+  <div [hidden]="!isSpinner" class="spinner-view  position-absolute">
+    <mat-spinner *ngIf="isSpinner"></mat-spinner>
+  </div>
+</section>

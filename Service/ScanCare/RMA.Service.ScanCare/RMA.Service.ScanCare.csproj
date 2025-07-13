@@ -1,0 +1,276 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="14.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">x64</Platform>
+    <ProjectGuid>{A6DCCFB5-826D-4DBF-9877-C0433D9EE943}</ProjectGuid>
+    <OutputType>Exe</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>RMA.Service.ScanCare</RootNamespace>
+    <AssemblyName>RMA.Service.ScanCare</AssemblyName>
+    <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
+    <NuGetPackageImportStamp>
+    </NuGetPackageImportStamp>
+    <IsWebBootstrapper>false</IsWebBootstrapper>
+    <PublishUrl>publish\</PublishUrl>
+    <Install>true</Install>
+    <InstallFrom>Disk</InstallFrom>
+    <UpdateEnabled>false</UpdateEnabled>
+    <UpdateMode>Foreground</UpdateMode>
+    <UpdateInterval>7</UpdateInterval>
+    <UpdateIntervalUnits>Days</UpdateIntervalUnits>
+    <UpdatePeriodically>false</UpdatePeriodically>
+    <UpdateRequired>false</UpdateRequired>
+    <MapFileExtensions>true</MapFileExtensions>
+    <ApplicationRevision>0</ApplicationRevision>
+    <ApplicationVersion>1.0.0.%2a</ApplicationVersion>
+    <UseApplicationTrust>false</UseApplicationTrust>
+    <BootstrapperEnabled>true</BootstrapperEnabled>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|x64' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\x64\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <PlatformTarget>x64</PlatformTarget>
+    <CodeAnalysisRuleSet>..\..\..\Solution Items\RMA.ruleset</CodeAnalysisRuleSet>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|x64' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\x64\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <PlatformTarget>x64</PlatformTarget>
+    <CodeAnalysisRuleSet>..\..\..\Solution Items\RMA.ruleset</CodeAnalysisRuleSet>
+  </PropertyGroup>
+  <PropertyGroup>
+    <AdditionalFileItemNames>$(AdditionalFileItemNames);None</AdditionalFileItemNames>
+  </PropertyGroup>
+  <PropertyGroup>
+    <IsServiceFabricServiceProject>true</IsServiceFabricServiceProject>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|AnyCPU'">
+    <DebugSymbols>true</DebugSymbols>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <DebugType>full</DebugType>
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>..\..\..\Solution Items\RMA.ruleset</CodeAnalysisRuleSet>
+    <Prefer32Bit>true</Prefer32Bit>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|AnyCPU'">
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <Optimize>true</Optimize>
+    <DebugType>pdbonly</DebugType>
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>..\..\..\Solution Items\RMA.ruleset</CodeAnalysisRuleSet>
+    <Prefer32Bit>true</Prefer32Bit>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="AutoMapperConfiguration.cs" />
+    <Compile Include="ContainerConfiguration.cs" />
+    <Compile Include="ContainerConfiguration1.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>ContainerConfiguration.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Mappers\ScanCareMappingProfile.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Services\Document\AutoProcessing\DocumentAutoIndexListener.cs" />
+    <Compile Include="Services\Document\AutoProcessing\DocumentClassifierService.cs" />
+    <Compile Include="Services\Document\AutoProcessing\DocumentDownloadListener.cs" />
+    <Compile Include="Services\Document\AutoProcessing\DocumentAutoProcessingService.cs" />
+    <Compile Include="Services\Document\AutoProcessing\DocumentSplitterService.cs" />
+    <Compile Include="Services\Document\AutoProcessing\ManualDocumentIndexListener.cs" />
+    <Compile Include="Services\Document\DocumentIndexFacade.cs" />
+    <Compile Include="Program.cs" />
+    <Compile Include="Services\Document\AutoProcessing\DocumentSaveListener.cs" />
+    <Compile Include="Services\Document\AutoProcessing\MailboxConfigurationFacade.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <AdditionalFiles Include="..\..\..\Solution Items\RMA.DependencyValidation\ServicePlatform.layerdiagram">
+      <Link>ServicePlatform.layerdiagram</Link>
+      <Visible>False</Visible>
+    </AdditionalFiles>
+    <None Include="PackageRoot\Config\Settings.xml" />
+    <None Include="PackageRoot\ServiceManifest.xml" />
+    <None Include="App.config" />
+    <None Include="tessdata\eng.traineddata" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\Common\RMA.Common.Database\RMA.Common.Database.csproj">
+      <Project>{5a742fb8-0332-42de-9d56-07315b898b32}</Project>
+      <Name>RMA.Common.Database</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\..\Common\RMA.Common.Service\RMA.Common.Service.csproj">
+      <Project>{4aa3772e-d3d5-458c-bc16-99d93df9185a}</Project>
+      <Name>RMA.Common.Service</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\..\Common\RMA.Common\RMA.Common.csproj">
+      <Project>{c30fb382-556d-41e4-b987-dea4f962059a}</Project>
+      <Name>RMA.Common</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\Admin\RMA.Service.Admin.CampaignManager.Contracts\RMA.Service.Admin.CampaignManager.Contracts.csproj">
+      <Project>{D530D89B-C158-40DB-8999-2D476155A8B2}</Project>
+      <Name>RMA.Service.Admin.CampaignManager.Contracts</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\Admin\RMA.Service.Admin.MasterDataManager.Contracts\RMA.Service.Admin.MasterDataManager.Contracts.csproj">
+      <Project>{81ABD00C-262F-48DF-A933-63E3730F0245}</Project>
+      <Name>RMA.Service.Admin.MasterDataManager.Contracts</Name>
+      <Private>True</Private>
+    </ProjectReference>
+    <ProjectReference Include="..\..\Admin\RMA.Service.Admin.SecurityManager.Contracts\RMA.Service.Admin.SecurityManager.Contracts.csproj">
+      <Project>{05202D9C-BE63-4105-8CE4-A9BFA19413D8}</Project>
+      <Name>RMA.Service.Admin.SecurityManager.Contracts</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\Admin\RMA.Service.Admin.SecurityManager.Database\RMA.Service.Admin.SecurityManager.Database.csproj">
+      <Project>{84A59EFF-02A5-4F43-AFED-AAD04411157B}</Project>
+      <Name>RMA.Service.Admin.SecurityManager.Database</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\ClaimCare\RMA.Service.ClaimCare.Contracts\RMA.Service.ClaimCare.Contracts.csproj">
+      <Project>{1CB03DED-41D2-40F8-960D-60B78D6E0EE1}</Project>
+      <Name>RMA.Service.ClaimCare.Contracts</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\ClientCare\RMA.Service.ClientCare.Contracts\RMA.Service.ClientCare.Contracts.csproj">
+      <Project>{AEAB775A-A0FE-497B-8947-14FE5AC961D1}</Project>
+      <Name>RMA.Service.ClientCare.Contracts</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\ClientCare\RMA.Service.ClientCare\RMA.Service.ClientCare.csproj">
+      <Project>{1f759a08-7763-4fff-aec4-4a1c33dd11f4}</Project>
+      <Name>RMA.Service.ClientCare</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\Integrations\RMA.Service.Integrations.Contracts\RMA.Service.Integrations.Contracts.csproj">
+      <Project>{66928FA0-0AA5-4E2A-842C-61A1EC14960C}</Project>
+      <Name>RMA.Service.Integrations.Contracts</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\MediCare\RMA.Service.MediCare.Contracts\RMA.Service.MediCare.Contracts.csproj">
+      <Project>{540E9736-429E-45D6-B0B3-703D40CEC04A}</Project>
+      <Name>RMA.Service.MediCare.Contracts</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\RMA.Service.ScanCare.Contracts\RMA.Service.ScanCare.Contracts.csproj">
+      <Project>{42AFAB1F-7719-4AFC-9DD4-76AD32A045A5}</Project>
+      <Name>RMA.Service.ScanCare.Contracts</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\RMA.Service.ScanCare.Database\RMA.Service.ScanCare.Database.csproj">
+      <Project>{E2895A75-7C7D-4B85-93CF-9990514D9F38}</Project>
+      <Name>RMA.Service.ScanCare.Database</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <WCFMetadata Include="Connected Services\" />
+  </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="Autofac">
+      <Version>4.9.4</Version>
+    </PackageReference>
+    <PackageReference Include="AutoMapper">
+      <Version>8.0.0</Version>
+    </PackageReference>
+    <PackageReference Include="Azure.Identity">
+      <Version>1.13.2</Version>
+    </PackageReference>
+    <PackageReference Include="BitMiracle.LibTiff.NET">
+      <Version>2.4.660</Version>
+    </PackageReference>
+    <PackageReference Include="CommonServiceLocator">
+      <Version>2.0.7</Version>
+    </PackageReference>
+    <PackageReference Include="EntityFramework">
+      <Version>6.4.4</Version>
+    </PackageReference>
+    <PackageReference Include="iTextSharp">
+      <Version>5.5.13.4</Version>
+    </PackageReference>
+    <PackageReference Include="Microsoft.CodeAnalysis.FxCopAnalyzers">
+      <Version>3.3.2</Version>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+      <PrivateAssets>all</PrivateAssets>
+    </PackageReference>
+    <PackageReference Include="Microsoft.CodeAnalysis.VersionCheckAnalyzer">
+      <Version>3.3.2</Version>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+      <PrivateAssets>all</PrivateAssets>
+    </PackageReference>
+    <PackageReference Include="Microsoft.CodeQuality.Analyzers">
+      <Version>3.3.2</Version>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+      <PrivateAssets>all</PrivateAssets>
+    </PackageReference>
+    <PackageReference Include="Microsoft.DependencyValidation.Analyzers">
+      <Version>0.11.0</Version>
+    </PackageReference>
+    <PackageReference Include="Microsoft.Graph">
+      <Version>5.70.0</Version>
+    </PackageReference>
+    <PackageReference Include="Microsoft.NetFramework.Analyzers">
+      <Version>3.3.2</Version>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+      <PrivateAssets>all</PrivateAssets>
+    </PackageReference>
+    <PackageReference Include="Microsoft.ServiceFabric.Actors">
+      <Version>3.4.664</Version>
+    </PackageReference>
+    <PackageReference Include="Microsoft.VisualStudio.Threading.Analyzers">
+      <Version>16.3.52</Version>
+    </PackageReference>
+    <PackageReference Include="Roslynator.Analyzers">
+      <Version>2.1.0</Version>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+      <PrivateAssets>all</PrivateAssets>
+    </PackageReference>
+    <PackageReference Include="Tesseract">
+      <Version>5.2.0</Version>
+    </PackageReference>
+    <PackageReference Include="ZXing.Net">
+      <Version>0.16.10</Version>
+    </PackageReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="ContainerConfiguration.tt">
+      <Generator>TextTemplatingFileGenerator</Generator>
+      <LastGenOutput>ContainerConfiguration1.cs</LastGenOutput>
+    </Content>
+  </ItemGroup>
+  <ItemGroup>
+    <Service Include="{508349B6-6B84-4DF5-91F0-309BEEBAD82D}" />
+  </ItemGroup>
+  <ItemGroup>
+    <BootstrapperPackage Include=".NETFramework,Version=v4.7.2">
+      <Visible>False</Visible>
+      <ProductName>Microsoft .NET Framework 4.7.2 %28x86 and x64%29</ProductName>
+      <Install>true</Install>
+    </BootstrapperPackage>
+    <BootstrapperPackage Include="Microsoft.Net.Framework.3.5.SP1">
+      <Visible>False</Visible>
+      <ProductName>.NET Framework 3.5 SP1</ProductName>
+      <Install>false</Install>
+    </BootstrapperPackage>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="tessdata\**\*">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+  <ItemGroup />
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>

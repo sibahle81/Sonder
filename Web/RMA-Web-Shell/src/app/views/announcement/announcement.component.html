@@ -1,0 +1,18 @@
+<div class="announcements">
+    <div class="announcements-header">
+        <div class="image-container">
+          <img src="/assets/images/rmalogo.png" alt="" />
+        </div>
+       
+      </div>
+    <div class="content">
+        <div [innerHTML]="currentAnnouncement?.html | sanatise: 'html'" class="content-result"></div>
+    </div>
+    <div class="footer">
+        <button mat-button (click)="onAcceptChange()" class="button" type="button">
+            {{currentAnnouncement?.isMandatory  ? 'Accept' : 'Continue'}}
+        </button>
+    </div>
+</div>
+
+<div id="cover-spin" *ngIf="loading"></div>

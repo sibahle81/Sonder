@@ -1,0 +1,51 @@
+<br />
+<div id="content">
+  <div class="divs">
+    <mat-card>
+      <label class="mat-label other-label"><b>Total Monthly Refunds</b></label>
+      <br/><br/>
+      <div *ngIf="isLoading$ | async">
+        <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+        <label class="mat-label other-label"><i>loading...please wait</i></label>
+      </div>
+
+      <div *ngIf="!(isLoading$ | async)">
+        <div *ngIf="refundSummary.length <= 0">
+          <label class="mat-label other-label">No refund data available</label>
+        </div>
+
+        <div *ngIf="refundSummary.length > 0">
+          <canvas baseChart [legend]="false" [data]="data" [labels]="lables" [colors]="chartColors"
+            [chartType]="'line'" [options]="options"> <!-- horizontalBar -->
+          </canvas>
+        </div>
+      </div>
+
+    </mat-card>
+  </div>
+
+  <div class="divs">
+
+    <div *ngIf="isLoading$ | async">
+      <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+      <label class="mat-label other-label"><i>loading...please wait</i></label>
+    </div>
+
+    <mat-card>
+      <table *ngIf="!(isLoading$ | async)" class="altRowTable" style="width:100%;">
+        <tr>
+          <th><b>Month</b></th>
+          <th><b>Amount</b></th>
+        </tr>
+        <tr *ngFor="let summary of refundSummary">
+          <td>
+            {{months[summary.month]}} {{summary.year}}
+          </td>
+          <td style="float: right;">
+            {{summary.amount | number: '1.2-2'}}
+          </td>
+        </tr>
+      </table>
+    </mat-card>
+  </div>
+</div>

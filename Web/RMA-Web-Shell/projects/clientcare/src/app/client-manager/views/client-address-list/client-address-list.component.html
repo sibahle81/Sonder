@@ -1,0 +1,163 @@
+﻿<mat-card style="margin: 15px 30px 15px 30px">
+    <mat-card-header>
+        <mat-card-title class="wizard-font card-title grey">
+            <h1 style="padding: 0;">Address List</h1>
+        </mat-card-title>
+    </mat-card-header>
+    <mat-card-content style="margin-left: 10px;">
+        <span *ngIf="!hasBranchesAndDepartments && !isNotCompany && !isLoading" class="grey site-font">
+            <i>Cannot add an address until branches or departments are added.</i>
+        </span>
+        <span *ngIf="allBranchesAndDepartmentsAdded && !isLoading" class="grey site-font">
+            <i>All branches and departments have addresses added.</i>
+        </span>
+        <span *ngIf="isNotCompany && !isLoading" class="grey site-font">
+            <i>Only one address can be added for an individual or affinity.</i>
+        </span>
+        <div [hidden]="isModifyAddress || isUnlink">
+            <div>
+                <mat-progress-bar *ngIf="isLoading" mode="indeterminate"></mat-progress-bar>
+                <div [hidden]="isLoading">
+                    <div class="mat-container mat-elevation-z8">
+
+                        <div [hidden]="dataSource.data.length === 0">
+                            <mat-table #table [dataSource]="dataSource" matSort>
+
+                                <!--All standard columns-->
+                                <ng-container *ngFor="let column of columns" [matColumnDef]="column.columnDefinition">
+                                    <mat-header-cell *matHeaderCellDef class="mat-header-cell ng-tns-c10-2 cdk-column-Name mat-column-Name">{{ column.header }}</mat-header-cell>
+                                    <mat-cell *matCellDef="let row" class="mat-cell cdk-column-Name mat-column-Name">{{ column.cell(row) }}</mat-cell>
+                                </ng-container>
+
+                                <!-- Actions -->
+                                <ng-container matColumnDef="actions">
+                                    <mat-header-cell *matHeaderCellDef mat-sort-header>Actions</mat-header-cell>
+                                    <mat-cell *matCellDef="let row">
+                                        <a role="button" (click)="onViewClick(row)" class="link-edit">View/Edit</a>
+                                        <span *ngIf="row.linkedType === 'Branch' || row.linkedType === 'Department'" >
+                                            <span style="margin: 0 5px 0 5px;">|</span>
+                                        <a role="button" (click)="onUnlinkClick(row)" class="link-edit">Unlink</a>
+                                        </span>
+                                    </mat-cell>
+                                </ng-container>
+
+                                <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
+                                <mat-row *matRowDef="let row; columns: displayedColumns;"></mat-row>
+                            </mat-table>
+
+                            <mat-paginator #paginator
+                                           [length]="dataSource.data.length"
+                                           [pageIndex]="0"
+                                           [pageSize]="5"
+                                           [pageSizeOptions]="[5, 10, 25, 100]">
+                            </mat-paginator>
+                        </div>
+
+                        <div [hidden]="dataSource.data.length > 0" style="margin-left: 20px;">
+                            <span class="grey site-font">No {{itemsName}} have been added for this {{filterName}}.</span>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+            <div [hidden]="isLoading || !canAdd" class="form-group-button-lookup mat-form-button" style="margin: 15px 0 0 15px;">
+                <div class="form-buttons" (click)="showModifyAddress('add')">
+                    <button class="button float-button submit-button" [disabled]="!hasBranchesAndDepartments || allBranchesAndDepartmentsAdded">Add address</button>
+                </div>
+                <div class="form-buttons" (click)="showModifyAddress('link')">
+                    <button class="button float-button submit-button" [disabled]="!hasBranchesAndDepartments">Link address</button>
+                </div>
+            </div>
+        </div>
+        
+        <!--Unlink address-->
+        <div [hidden]="!isUnlink" *ngIf="selectedAddress">
+            <h1>Unlink address confirmation</h1>
+            <p class="grey site-font">Are you sure you want to unlink {{unlinkName}} from address {{selectedAddress.addressLine1}}?</p>
+
+            <div class="form-group-button mat-form-button" style="margin: 15px 0 20px 15px; padding-bottom: 20px;">
+                <div class="form-buttons" (click)="unlinkAddress()">
+                    <button class="button float-button submit-button">Yes, Unlink address</button>
+                </div>
+                <div class="form-buttons" (click)="cancelUnlinkAddress();">
+                    <button class="button float-button submit-button">No, don't unlink</button>
+                </div>
+            </div>
+        </div>
+
+        <!--Modify address-->
+        <div [hidden]="!isModifyAddress" *ngIf="branchesWithoutAddresses">
+
+            <div style="margin-left: -20px;">
+                <div>
+                    
+                    <div [hidden]="modificationType === 'add'">
+                        <mat-form-field >
+                            <label class="form-label other-label" style="padding-left: 0 !important;">Select an address to link</label>
+                            <mat-select name="addressSelector" id="addressSelector" [(ngModel)]="selectedAddress">
+                                <mat-option *ngFor="let address of addresses"
+                                            [value]="address">{{address.addressLine1}}</mat-option>
+                            </mat-select>
+                        </mat-form-field>
+                    </div>
+
+                    <div>
+                        <mat-form-field>
+                            <label *ngIf="modificationType === 'add'" class="form-label other-label" style="padding-left: 0 !important;">Add address to a</label>
+                            <label *ngIf="modificationType === 'link'" class="form-label other-label" style="padding-left: 0 !important;">Link address to a</label>
+                            <mat-select name="selector" id="selector" [(ngModel)]="addressOption" (change)="selectionChange()">
+                                <mat-option value="branch">Branch</mat-option>
+                                <mat-option value="department">Department</mat-option>
+                            </mat-select>
+                        </mat-form-field>
+                    </div>
+                </div>
+
+                <!--Branches select-->
+                <div [hidden]="addressOption === 'department'">
+                    <div>
+                        <mat-form-field>
+                            <label class="form-label mat-label" style="padding-left: 0 !important;">Branches without addresses</label>
+                            <mat-select name="branchControl" id="branchControl" [(ngModel)]="selectedBranch">
+                                <mat-option *ngFor="let branch of branchesWithoutAddresses"
+                                            [value]="branch">{{branch.name}}</mat-option>
+                            </mat-select>
+                        </mat-form-field>
+                    </div>
+                    <div style="margin: -10px 0 0 30px">
+                        <span *ngIf="!canModifyAddress && branches.length > 0" class="grey site-font"><i>All branches have addresses.</i></span>
+                        <span *ngIf="!canModifyAddress && branches.length === 0" class="grey site-font"><i>There are no branches to add address for.</i></span>
+                    </div>
+                </div>
+
+                <!--Departments select-->
+                <div [hidden]="addressOption === 'branch'">
+                    <div>
+                        <mat-form-field>
+                            <label class="form-label other-label" style="padding-left: 0 !important;">Departments without addresses</label>
+                            <mat-select name="branchDepartment" id="branchDepartment" [(ngModel)]="selectedDepartment"
+                                        [disabled]="!canModifyAddress">
+                                <mat-option *ngFor="let department of departmentsWithoutAddresses"
+                                            [value]="department">{{department.name}}</mat-option>
+                            </mat-select>
+                        </mat-form-field>
+                    </div>
+                    <div style="margin: -10px 0 0 30px">
+                        <span *ngIf="!canModifyAddress && departments.length > 0" class="grey site-font"><i>All departments have addresses.</i></span>
+                        <span *ngIf="!canModifyAddress && departments.length === 0" class="grey site-font"><i>There are no departments to add address for.</i></span>
+                    </div>
+                </div>
+
+                <div class="form-group-button mat-form-button" style="margin: 0 0 20px 15px;">
+                    <div class="form-buttons form-group-button-lookup" (click)="modifyAddress()">
+                        <button *ngIf="modificationType === 'add'" class="button float-button submit-button" [disabled]="!canModifyAddress">Add address</button>
+                        <button *ngIf="modificationType === 'link'" class="button float-button submit-button" [disabled]="!canModifyAddress">Link address</button>
+                    </div>
+                    <div class="form-buttons" (click)="cancelModifyAddress();">
+                        <button class="button float-button submit-button">Cancel</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </mat-card-content>
+</mat-card>

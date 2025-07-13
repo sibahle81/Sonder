@@ -1,0 +1,45 @@
+<nav class="navbar navbar-expand-lg navbar-light bg-light">
+    <a href="/">
+        <span>
+            <img src="/assets/images/RMA_Logo_New.png" alt="RandMutual" title="title" class="rma-logo">
+        </span>
+    </a>
+
+    <!-- <div fxHide.gt-xs>
+        <button mat-icon-button (click)="onToggleSidenav()">
+            <mat-icon>menu</mat-icon>
+        </button>
+    </div> -->
+
+
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNavAltMarkup"
+        aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
+        <div class="navbar-nav ml-auto">
+            <div *ngIf="!isLoggedIn" class="mobileNav">
+                <a class="nav-link" mat-button (click)="onLogin()">Login</a>
+            </div>
+            <!-- <div *ngIf="!isLoggedIn" class="mobileNav">
+                <a class="nav-link" mat-button [routerLink]="['user-registration']">Register</a>
+            </div> -->
+            <br />
+            <div *ngIf="isLoggedIn" class="cursorStyle mobileNav">
+                <mat-icon class="nav-link" matTooltip="My Notifications" matBadge="{{numberOfNotifications}}"
+                    matBadgePosition="after" matBadgeColor="accent" (click)="notificationDialog()"
+                    aria-label="Message_toolTip">message
+                </mat-icon>
+                &nbsp;&nbsp;
+                <!-- Please it this commented, we might need it later -->
+                <!-- <mat-icon class="nav-link" matBadge="{{numberOfTasks}}" matBadgeColor="warn" matTooltip="My Tasks"
+                    (click)="taskDialog()" aria-label="Notification_toolTip">notification_important</mat-icon>
+                &nbsp;&nbsp; -->
+                <mat-icon class="nav-link" matTooltip="Logout" matBadgePosition="warn" matBadgeColor="accent"
+                    (click)="onLogout()" aria-label="Notification_toolTip">person
+                </mat-icon>
+            </div>
+        </div>
+
+    </div>
+</nav>

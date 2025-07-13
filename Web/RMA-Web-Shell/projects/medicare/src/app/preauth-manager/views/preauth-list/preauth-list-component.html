@@ -1,0 +1,149 @@
+<mat-card class="matcard">
+  <mat-card-content class="matcard content">
+    <div *ngIf="dataSource.loading$ | async">
+      <mat-progress-bar mode="indeterminate"
+        [ngClass]="{ 'loading-main-double-menu-progress': doubleMenu, 'loading-main-single-menu-progress': !doubleMenu }">
+      </mat-progress-bar>
+      <p class="site-font grey">Loading PreAuthorisations...</p>
+    </div>
+    <div class="mat-header">
+      <h1>{{header}}</h1><br />
+    </div>
+
+    <mat-card>
+      <label class="mat-label other-label" [hidden]="dataSource?.data?.data?.length > 0 || (dataSource.loading$ | async) == true"><i>No PreAuth found...</i></label>
+      <hr>
+      <div class="border pointer" (click)="addPreAuthWizard(null)">
+        <label class="mat-label other-label pointer"><span class="material-icons">
+            add_circle</span>Capture New PreAuth</label>
+      </div>
+    </mat-card>
+    
+      <mat-table #table [dataSource]="dataSource" matSort matSortActive="preAuthId" matSortDirection="desc"
+        matSortDisableClear>
+        <ng-container matColumnDef="personEventId">
+          <mat-header-cell *matHeaderCellDef mat-sort-header>Claim Ref Number</mat-header-cell>
+          <mat-cell *matCellDef="let preAuthorisation" matTooltip="{{preAuthorisation.claimReferenceNumber}}">
+            <span class="truncate-text" *ngIf="preAuthorisation.isDeleted === false; else isDeletedPreauth">
+               {{ preAuthorisation.claimReferenceNumber}} 
+            </span>
+            <ng-template #isDeletedPreauth>
+              <span style="color:red" class="truncate-text"> {{ preAuthorisation.claimReferenceNumber}} </span>  
+            </ng-template>
+          </mat-cell>
+        </ng-container>
+
+        <ng-container matColumnDef="preAuthNumber">
+          <mat-header-cell *matHeaderCellDef mat-sort-header> PreAuth Number </mat-header-cell>
+          <mat-cell *matCellDef="let preAuthorisation" matTooltip="{{preAuthorisation.preAuthNumber}}">
+            <span class="truncate-text" *ngIf="preAuthorisation.isDeleted === false; else isDeletedPreauth">
+               {{ preAuthorisation.preAuthNumber}} 
+            </span>
+            <ng-template #isDeletedPreauth>
+              <span style="color:red" class="truncate-text"> {{ preAuthorisation.preAuthNumber}} </span>  
+            </ng-template>
+          </mat-cell>
+        </ng-container>
+        <ng-container matColumnDef="healthCareProviderName">
+          <mat-header-cell *matHeaderCellDef mat-sort-header> HealthCareProvider</mat-header-cell>
+          <mat-cell *matCellDef="let preAuthorisation" matTooltip="{{preAuthorisation.healthCareProviderName}}">
+            <span class="truncate-text" *ngIf="preAuthorisation.isDeleted === false; else isDeletedPreauth">
+               {{ preAuthorisation.healthCareProviderName}} 
+            </span>
+            <ng-template #isDeletedPreauth>
+              <span style="color:red" class="truncate-text"> {{ preAuthorisation.healthCareProviderName}} </span>  
+            </ng-template>  
+          </mat-cell>
+        </ng-container>
+        <ng-container matColumnDef="practiceNumber">
+          <mat-header-cell *matHeaderCellDef mat-sort-header> Practice Number </mat-header-cell>
+          <mat-cell *matCellDef="let preAuthorisation" matTooltip="{{preAuthorisation.practiceNumber}}">
+            <span class="truncate-text" *ngIf="preAuthorisation.isDeleted === false; else isDeletedPreauth">
+              {{ preAuthorisation.practiceNumber}}
+              </span>
+              <ng-template #isDeletedPreauth>
+                <span style="color:red" class="truncate-text"> {{ preAuthorisation.practiceNumber}} </span>  
+              </ng-template>                                                      
+        </mat-cell>
+        </ng-container>
+
+        <ng-container matColumnDef="dateAuthorisedFrom">
+          <mat-header-cell *matHeaderCellDef mat-sort-header> Authorised From </mat-header-cell>
+          <mat-cell *matCellDef="let preAuthorisation" matTooltip="{{preAuthorisation.dateAuthorisedFrom}}">
+            <span class="truncate-text" *ngIf="preAuthorisation.isDeleted === false; else isDeletedPreauth">
+              {{ preAuthorisation.dateAuthorisedFrom | date:'yyyy-MM-dd HH:MM:SS' }} 
+              </span>
+             <ng-template #isDeletedPreauth>
+               <span style="color:red" class="truncate-text"> {{ preAuthorisation.dateAuthorisedFrom | date:'yyyy-MM-dd HH:MM:SS' }}  </span>  
+            </ng-template> 
+          </mat-cell>    
+        </ng-container>
+
+        <ng-container matColumnDef="dateAuthorisedTo">
+          <mat-header-cell *matHeaderCellDef mat-sort-header> Authorised To </mat-header-cell>
+          <mat-cell *matCellDef="let preAuthorisation" matTooltip="{{preAuthorisation.dateAuthorisedTo}}">
+            <span class="truncate-text" *ngIf="preAuthorisation.isDeleted === false; else isDeletedPreauth">
+              {{ preAuthorisation.dateAuthorisedTo | date:'yyyy-MM-dd HH:MM:SS' }} 
+              </span>
+             <ng-template #isDeletedPreauth>
+               <span style="color:red" class="truncate-text"> {{ preAuthorisation.dateAuthorisedTo | date:'yyyy-MM-dd HH:MM:SS' }}  </span>  
+            </ng-template> 
+          </mat-cell>
+        </ng-container>
+        
+        <ng-container matColumnDef="dateAuthorised">
+          <mat-header-cell *matHeaderCellDef mat-sort-header> Date Authorised </mat-header-cell>
+          <mat-cell *matCellDef="let preAuthorisation" matTooltip="{{preAuthorisation.dateAuthorised}}">
+            <span class="truncate-text" *ngIf="preAuthorisation.isDeleted === false; else isDeletedPreauth">
+              {{ preAuthorisation.dateAuthorised | date:'yyyy-MM-dd HH:MM:SS' }} 
+              </span>
+             <ng-template #isDeletedPreauth>
+               <span style="color:red" class="truncate-text"> {{ preAuthorisation.dateAuthorised | date:'yyyy-MM-dd HH:MM:SS' }}  </span>  
+            </ng-template> 
+          </mat-cell>
+        </ng-container>
+
+        <ng-container matColumnDef="requestComments">
+          <mat-header-cell *matHeaderCellDef mat-sort-header> Request Comments </mat-header-cell>
+          <mat-cell *matCellDef="let preAuthorisation" matTooltip="{{preAuthorisation.requestComments}}">
+            <span class="truncate-text" *ngIf="preAuthorisation.isDeleted === false; else isDeletedPreauth">
+              {{ preAuthorisation.requestComments }} 
+              </span>
+             <ng-template #isDeletedPreauth>
+               <span style="color:red" class="truncate-text"> {{ preAuthorisation.requestComments }}  </span>  
+            </ng-template> 
+          </mat-cell>
+        </ng-container>
+        
+        <ng-container matColumnDef="preAuthStatus">
+          <mat-header-cell *matHeaderCellDef mat-sort-header> PreAuth Status </mat-header-cell>
+          <mat-cell *matCellDef="let preAuthorisation" matTooltip="{{preAuthorisation.preAuthStatus}}">
+            <span class="truncate-text" *ngIf="preAuthorisation.isDeleted === false; else isDeletedPreauth">
+              {{getPreauthStatus(preAuthorisation.preAuthStatus)}} 
+              </span>
+             <ng-template #isDeletedPreauth>
+               <span style="color:red" class="truncate-text"> {{ getPreauthStatus(preAuthorisation.preAuthStatus) }}  </span>  
+            </ng-template>
+          </mat-cell>
+        </ng-container>
+         <!-- Actions Column -->
+         <ng-container matColumnDef="actions">
+          <mat-header-cell *matHeaderCellDef> Actions </mat-header-cell>
+          <mat-cell *matCellDef="let preAuthorisation" [matMenuTriggerFor]="menu" (click)="filterMenu(preAuthorisation)">
+            <span class="material-icons pointer">more_vert</span>
+            <mat-menu #menu="matMenu">
+              <button disabled="{{menu.disable}}" mat-menu-item *ngFor="let menu of menus"
+                (click)="onMenuItemClick(preAuthorisation, menu)">{{menu.title}}</button>
+            </mat-menu>
+          </mat-cell>
+        </ng-container>
+        <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
+        <mat-row *matRowDef="let row; columns: displayedColumns;" 
+        class="element-row" (click)="highlightSelectedRecord(row)" 
+        [ngClass]="{'highlightSelectedRecordColor': (selectedPreAuthId == row.preAuthId)}"></mat-row>
+      </mat-table>
+      <mat-paginator #paginator [length]="dataSource.rowCount$" [pageIndex]="0" [pageSize]="5"
+        [pageSizeOptions]="[5, 10, 25, 100]">
+      </mat-paginator>
+  </mat-card-content>
+</mat-card>

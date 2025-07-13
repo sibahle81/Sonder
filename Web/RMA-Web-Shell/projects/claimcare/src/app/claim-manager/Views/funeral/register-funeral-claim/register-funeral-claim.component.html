@@ -1,0 +1,583 @@
+<mat-tab-group [(selectedIndex)]="selectedIndex" (selectedTabChange)="tabChanged($event)"
+    class="mat-tab-group mat-primary">
+    <mat-tab label="Deceased Information">
+        <mat-card style="margin: 15px 30px 15px 30px">
+            <mat-card-header>
+                <mat-card-title class="wizard-font card-title grey">
+                </mat-card-title>
+            </mat-card-header>
+            <mat-card-content style="margin-left: 10px;">
+                <div *ngIf="insuredLive == 0">
+                    <claim-search-policy (resultEmit)="deceasedChangeHandler($event)" [title]="'Search Insured Life'">
+                    </claim-search-policy>
+                </div>
+                <div *ngIf="insuredLive==1" class="deceased">
+                    <mat-card class="main-container">
+                        <mat-card class="top-selector-container">
+                            <mat-card class="summary-container" style="width: 450px">
+                                <mat-card-header>
+                                    <mat-card-title>
+                                        <h1 class="wizard-font">Deceased Details</h1>
+                                    </mat-card-title>
+                                </mat-card-header>
+                                <mat-card-content class="content-container">
+                                    <div *ngFor="let item of insuredLives | keyvalue: asIsOrder; let i = index">
+                                        <div *ngIf="getObjectType(item.value) !== 'object'">
+                                            <div class="text-container"
+                                                *ngIf="item.value !== 'null' && item.value != undefined && item.value !==''">
+                                                <div *ngIf="item.key != 'idNumber'" class="product-key">
+                                                    <b>{{formatCamelCase(item.key) | titlecase}}:</b></div>
+                                                <div *ngIf="item.key == 'idNumber'" class="product-key"><b>{{idType}}:</b></div>
+                                                <div class="product-value">{{item.value}}</div>
+                                                
+                                   
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div *ngIf="isInValidIDNumber" class="product-value">
+                                        <label style="color: red">{{errorMessageIDNumber}}</label>
+                                    </div>
+                                </mat-card-content>
+                            </mat-card>
+                            <span style="margin-left: 25px"></span>
+
+                            <mat-card class="summary-container" style="width: 450px">
+                                <mat-card-header>
+                                    <mat-card-title>
+                                        <h1 class="wizard-font">Policy Details</h1>
+                                    </mat-card-title>
+                                </mat-card-header>
+                                <mat-card-content class="content-container">
+                                    <div class="text-container" *ngIf="policies != null else policyWarning">
+                                        <table id="brokers">
+                                            <thead>
+                                                <tr>
+                                                    <th><b>Policy</b></th>
+                                                    <th><b>Policy Number</b></th>
+                                                </tr>
+                                            </thead>
+
+                                            <tbody>
+                                                <tr *ngFor="let row of policies;let i = index;">
+                                                    <td>
+                                                        {{row.policy}}
+                                                    </td>
+                                                    <td>
+                                                        {{row.policynumber}}
+                                                    </td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                    <ng-template #policyWarning>&nbsp;&nbsp;&nbsp;&nbsp;No policies have been found
+                                    </ng-template>
+                                </mat-card-content>
+                            </mat-card>
+                        </mat-card>
+                    </mat-card>
+                    <form [formGroup]="deceasedForm" (ngSubmit)="save()" class="mat-container" novalidate>
+
+                        <div class="deathDetails">
+                            <!-- Line 1 -->
+                            <section>
+                                <!--Type of death-->
+                                <mat-form-field>
+                                    <label class="mat-label other-label">Type of death</label>
+                                    <mat-select name="filter" id="filter" formControlName="typeOfDeath"
+                                        (selectionChange)="typeOfDeathChanged($event)">
+                                        <mat-option [value]="1">Natural</mat-option>
+                                        <mat-option [value]="2">Unnatural</mat-option>
+                                        <mat-option [value]="4">Suicide</mat-option>                                       
+                                        <mat-option [value]="6">Under Investigation</mat-option>
+                                    </mat-select>
+                                    <mat-error *ngIf="deceasedForm.get('typeOfDeath').hasError('required')">
+                                        Type of death is <strong>required</strong>
+                                    </mat-error>
+                                </mat-form-field>
+
+                                <!-- Date notified -->
+                                <mat-form-field class="mat-form-field-right">
+                                    <label class="mat-label other-label">Date Notified</label>
+                                    <input readonly matInput [max]="minDate" date="true" time="false"
+                                        formControlName="dateNotified" (ngModelChange)="getDateNotified($event)"
+                                        [matDatepicker]="dateNotified" id="dateNotified" name="dateNotified" />
+                                    <mat-datepicker-toggle matSuffix style="position: absolute;right: 0;top: 13px;"
+                                        [for]="dateNotified"></mat-datepicker-toggle>
+                                    <mat-datepicker touchUi="true" #dateNotified
+                                        ng-model-options="{ timezone: 'sast' }"></mat-datepicker>
+                                    <mat-error *ngIf="deceasedForm.get('dateNotified').hasError('required')">
+                                        Date notified is <strong>required</strong>
+                                    </mat-error>
+                                </mat-form-field>
+                            </section>
+                            <!-- Line 2 - Natural/ Unnatural -->
+                            <div *ngIf="validateDate==1" class="text-danger">
+                                <label style="color: red">{{errorMessage}}</label>
+                            </div>
+                            <section>
+                                <!-- Date of Death -->
+                                <mat-form-field>
+                                    <label class="mat-label other-label">Date of Death</label>
+                                    <input readonly matInput [max]="minDate" date="true" time="false"
+                                        (ngModelChange)="getDateOfDeath($event)" formControlName="dateOfDeath"
+                                        [matDatepicker]="dateOfDeath" id="dateOfDeath" name="dateOfDeath" />
+                                    <mat-datepicker-toggle matSuffix style="position: absolute;right: 0;top: 13px;"
+                                        [for]="dateOfDeath"></mat-datepicker-toggle>
+                                    <mat-datepicker touchUi="true" #dateOfDeath></mat-datepicker>
+                                    <mat-error *ngIf="deceasedForm.get('dateOfDeath').hasError('required')">
+                                        Date of death is <strong>required</strong>
+                                    </mat-error>
+                                </mat-form-field>
+
+                                <mat-form-field class="mat-form-field-right">
+                                    <label>First Name</label>
+                                    <input matInput maxlength="50" formControlName="firstName" name="firstName"
+                                        id="firstName">
+                                </mat-form-field>
+                            </section>
+                            <section>
+
+                                <mat-form-field>
+                                    <label>Last Name</label>
+                                    <input matInput maxlength="50" formControlName="lastName" name="lastName"
+                                        id="lastName" disabled=true>
+                                </mat-form-field>
+                            </section>
+                            <br>
+
+                        </div>
+
+                    </form>
+                </div>
+                <div class="form-group-button mat-form-button btn">
+                    <div class="form-buttons" matTooltip="Go to next tab">
+                        <button class="button float-button" (click)="nextStep()"
+                            [disabled]="validateDate == 1 || !deceasedForm.valid || isInValidIDNumber == 1" >Next</button>
+                    </div>
+                    <div (click)="addMember()" class="form-group-button mat-form-button">
+                        <button type="button" class="button float-button">Add Member</button>
+                    </div>
+                    <div (click)="addStillBorn()" style="    margin: -16px 0px 0px 0px;"
+                        class="form-group-button mat-form-button">
+                        <button type="button" class="button float-button">Register Stillborn Claim</button>
+                    </div>
+                    <div (click)="cancel()" style="margin: -28px 0px 0px 0px;"
+                        class="form-group-button mat-form-button">
+                        <button type="button" class="button float-button">Cancel</button>
+                    </div>
+                </div>
+            </mat-card-content>
+        </mat-card>
+    </mat-tab>
+
+    <mat-tab label="Notifier Information" [disabled]="!deceasedForm.valid || !isNextClicked">
+        <mat-card>
+            <mat-card-header>
+                <mat-card-title class="wizard-font card-title grey">
+                    <div class="notifierHeading">
+                        <h1 class="wizard-font" style="padding: 0;">Notifier Information</h1>
+                    </div>
+                </mat-card-title>
+            </mat-card-header>
+            <mat-card-content>
+                <div *ngIf="claimants == 0 && addClaimant == 0">
+                    <search-claimant-policy (resultEmit)="claimantChangeHandler($event)" [title]="'Search Notifier'">
+                    </search-claimant-policy>
+                </div>
+                <!-- <div *ngIf="addClaimant == 0 && claimants == 0">
+            <div class="form-buttons" matTooltip="Go to previous tab">
+                <button class="button float-button" (click)="addNewClaimant()">Register Claimant</button>
+            </div>
+        </div> -->
+                <div *ngIf="isValidClaimant==1" class="text-danger">
+                    <label style="color: red">{{errMessage}}</label>
+                </div>
+                <div *ngIf="addClaimant == 1">
+                    <add-claimant-details #registerClaimant [strMeesage]="currentAction"></add-claimant-details>
+                    <div>
+                        <mat-card class="main-container">
+                            <mat-card class="top-selector-container">
+                                <mat-card class="summary-container" style="width: 1000px;">
+                                    <mat-card-header>
+                                        <mat-card-title>
+                                            <h1 class="wizard-font">Broker Details</h1>
+                                        </mat-card-title>
+                                    </mat-card-header>
+                                    <mat-card-content class="content-container">
+                                        <div *ngIf="isLoadingBrokerage === 0 && !hideBrokerage" class="menu-container">
+                                            <div style="margin-right: 15px;">
+                                                <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+                                            </div>
+                                            <label class="mat-label other-label"><i>loading brokerage
+                                                    details...</i></label>
+                                        </div>
+                                        <div *ngIf="isLoadingBrokerage === 0 && hideBrokerage" class="menu-container">
+                                            <label class="mat-label other-label"><i>broker not found.</i></label>
+                                        </div>
+                                        <div *ngIf="isLoadingBrokerage === 1 && !hideBrokerage">
+                                            <div class="text-container" *ngIf="brokerage != null else brokerWarning">
+                                                <table id="brokers">
+                                                    <thead>
+                                                        <tr>
+                                                            <th><b>Brokerage</b></th>
+                                                            <th><b>Contact Name</b></th>
+                                                            <th><b>Email</b></th>
+                                                            <th><b>Contact Number</b></th>
+                                                        </tr>
+                                                    </thead>
+
+                                                    <tbody>
+                                                        <tr *ngFor="let row of brokerage.contacts;let i = index;">
+                                                            <td>
+                                                                {{brokerage.name}}
+                                                            </td>
+                                                            <td>
+                                                                {{row.firstName}}&nbsp;{{row.lastName}}
+                                                            </td>
+                                                            <td>
+                                                                {{row.email}}
+                                                            </td>
+                                                            <td>
+                                                                {{row.telephoneNumber}}
+                                                            </td>
+                                                        </tr>
+                                                    </tbody>
+                                                </table>
+                                            </div>
+                                            <ng-template #brokerWarning>&nbsp;&nbsp;&nbsp;&nbsp;No brokers have been
+                                                found</ng-template>
+                                        </div>
+                                    </mat-card-content>
+                                </mat-card>
+                            </mat-card>
+                        </mat-card>
+                    </div>
+                    <div class="form-group-button mat-form-button claimantBtns">
+                        <div class="form-buttons" matTooltip="No changes have been made" (click)="addClaimantInfo()">
+                            <button class="button float-button" [disabled]="deactivateRegister">Register</button>
+                        </div>
+                        <div (click)="cancel()" class="form-group-button mat-form-button">
+                            <button type="button" class="button float-button">Cancel</button>
+                        </div>
+                    </div>
+                </div>
+                <div *ngIf="claimants == 1 && isValidClaimant==0 && addClaimant == 0" >
+                    <form [formGroup]="claimantForm" (ngSubmit)="save()" class="mat-container" novalidate>
+                        <section class="notifier">
+                            <div *ngIf="!readOnly">
+                                <!-- Claimant First Name -->
+                                <mat-form-field class="mat-form-field-right">
+                                    <label>Name</label>
+                                    <input matInput maxlength="50" formControlName="claimantFirstName"
+                                        name="claimantFirstName" id="claimantFirstName" type="text">
+                                    <mat-error *ngIf="claimantForm.get('claimantFirstName').hasError('required')">
+                                        First name is <strong>required</strong>
+                                    </mat-error>
+                                    <mat-error *ngIf="claimantForm.get('claimantFirstName').hasError('pattern')">
+                                        First name cannot be <strong>numeric</strong>
+                                    </mat-error>
+                                </mat-form-field>
+                                <!-- Claimant Last Name -->
+                                <mat-form-field class="mat-form-field-right">
+                                    <label>Surname</label>
+                                    <input matInput maxlength="50" formControlName="claimantLastName"
+                                        name="claimantLastName" id="claimantLastName" type="text">
+                                    <mat-error *ngIf="claimantForm.get('claimantLastName').hasError('required')">
+                                        Last name is <strong>required</strong>
+                                    </mat-error>
+                                    <mat-error *ngIf="claimantForm.get('claimantLastName').hasError('pattern')">
+                                        Last name cannot be <strong>numberic</strong>
+                                    </mat-error>
+                                </mat-form-field>
+                            </div>
+                        </section>
+                        <section class="notifier">
+                            <div *ngIf="!readOnly">
+                                <!-- Identity Number -->
+                                <mat-form-field class="mat-form-field-right">
+                                    <label>ID/Passport Number</label>
+                                    <input matInput maxlength="13" formControlName="claimantIdentityNumber"
+                                        name="claimantIdentityNumber" id="claimantIdentityNumber">
+                                    <mat-error *ngIf="claimantForm.get('claimantIdentityNumber').hasError('required')">
+                                        ID number is <strong>required</strong>
+                                    </mat-error>
+                                    <!-- <mat-error *ngIf="claimantForm.get('claimantIdentityNumber').hasError('pattern')">
+                                ID number must be <strong>numeric</strong>
+                            </mat-error> -->
+                                </mat-form-field>
+                                <!-- Passport Number -->
+
+                                <mat-form-field class="mat-form-field-right">
+                                    <label>Date of Birth </label>
+                                    <input readonly matInput [max]="maxDate" date="true" time="false"
+                                        formControlName="claimantDOB" [matDatepicker]="claimantDOB" id="claimantDOB"
+                                        name="claimantDOB" required />
+                                    <mat-datepicker-toggle matSuffix style="position: absolute;right: 0;top: 13px;"
+                                        [for]="claimantDOB"></mat-datepicker-toggle>
+                                    <mat-datepicker touchUi="true" #claimantDOB></mat-datepicker>
+
+                                    <mat-error *ngIf="claimantForm.get('claimantDOB').hasError('required')">
+                                        Date of birth is <strong>required</strong>
+                                    </mat-error>
+                                </mat-form-field>
+
+                            </div>
+                        </section>
+                        <section class="notifier">
+                            <div *ngIf="!readOnly" >
+                                <!-- Relation To The Deceased -->
+                                <mat-form-field class="mat-form-field-right">
+                                    <label>Relation To The Deceased</label>
+                                    <mat-select id="claimantRelation" name="claimantRelation" matInput
+                                        [(ngModel)]="selectedClaimantRelation" #relationSelect
+                                        [value]="selectedClaimantRelation"
+                                        (ngModelChange)="onSelectClaimantRelation(selectedClaimantRelation)"
+                                        formControlName="claimantRelation">
+                                        <mat-option *ngFor="let rolePlayerType of rolePlayerTypes"
+                                            [value]="rolePlayerType">
+                                            {{rolePlayerType.name}}
+                                        </mat-option>
+                                    </mat-select>
+
+                                    <mat-error
+                                        *ngIf="relationSelect.errorState && claimantForm.get('claimantRelation').hasError('required')">
+                                        Relation is <strong>required</strong>
+                                    </mat-error>
+                                </mat-form-field>
+
+                                <mat-form-field class="mat-form-field-right">
+                                    <label class="mat-label other-label">Preffered Method Of Contact</label>
+                                    <mat-select name="filter" id="filter" formControlName="communicationType"
+                                        #communicationSelect (selectionChange)="communicationTypeChanged($event)">
+                                        <mat-option [value]="1">Email</mat-option>
+                                        <mat-option [value]="2">Phone</mat-option>
+                                        <mat-option [value]="3">SMS</mat-option>
+                                        <mat-option [value]="4">Post</mat-option>
+                                    </mat-select>
+                                    <mat-error
+                                        *ngIf="communicationSelect.errorState && claimantForm.get('communicationType').hasError('required')">
+                                        Preferred method of communication is <strong>required</strong>
+                                    </mat-error>
+                                </mat-form-field>
+
+                            </div>
+                        </section>
+                        <section class="notifier">
+                            <div *ngIf="!readOnly">
+                                <!-- Email -->
+                                <mat-form-field class="mat-form-field-right">
+                                    <label class="mat-label other-label">Email</label>
+                                    <input matInput maxlength="50" type="email" name="claimantEmail" id="claimantEmail"
+                                        formControlName="claimantEmail">
+                                    <mat-error *ngIf="claimantForm.get('claimantEmail').hasError('required')">
+                                        Email is <strong>required</strong>
+                                    </mat-error>
+                                    <mat-error *ngIf="claimantForm.get('claimantEmail').hasError('email')">
+                                        Email must be a <strong>valid email address</strong>
+                                    </mat-error>
+                                </mat-form-field>
+                                <!-- Contact Number -->
+                                <mat-form-field class="mat-form-field-right">
+                                    <label>Contact Number</label>
+                                    <input matInput minlength="3" maxlength="10" formControlName="claimantMobileNumber"
+                                        name="claimantMobileNumber" id="claimantMobileNumber" NumberOnly>
+                                    <mat-error *ngIf="claimantForm.get('claimantMobileNumber').hasError('required')">
+                                        Contact number is <strong>required</strong>
+                                    </mat-error>
+                                    <mat-error *ngIf="claimantForm.get('claimantMobileNumber').hasError('pattern')">
+                                        Contact number must be <strong>numeric</strong>
+                                    </mat-error>
+                                </mat-form-field>
+
+                            </div>
+                        </section>
+                        <section class="notifier">
+                            <div class="emailCheckBox">
+                                <mat-checkbox id="emailBroker" name="emailBroker" formControlName="emailBroker"
+                                    (change)="emailBroker($event)">
+                                    <label class="mat-label other-label">Email Broker</label>
+                                </mat-checkbox>
+                            </div>
+                        </section>
+                    </form>
+                    <mat-card class="main-container">
+                        <mat-card class="top-selector-container">
+                            <mat-card class="summary-container" style="width: 1000px;">
+                                <mat-card-header>
+                                    <mat-card-title>
+                                        <h1 class="wizard-font">Broker Details</h1>
+                                    </mat-card-title>
+                                </mat-card-header>
+                                <mat-card-content class="content-container">
+                                    <div *ngIf="isLoadingBrokerage === 0 && !hideBrokerage" class="menu-container">
+                                        <div style="margin-right: 15px;">
+                                            <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+                                        </div>
+                                        <label class="mat-label other-label"><i>loading brokerage details...</i></label>
+                                    </div>
+                                    <div *ngIf="isLoadingBrokerage === 0 && hideBrokerage" class="menu-container">
+                                        <label class="mat-label other-label"><i>Brokage not found.</i></label>
+                                    </div>
+                                    <div *ngIf="isLoadingBrokerage === 1 && !hideBrokerage">
+                                        <div class="text-container" *ngIf="brokerage != null else brokerWarning">
+                                            <table id="brokers">
+                                                <thead>
+                                                    <tr>
+                                                        <th><b>Brokerage</b></th>
+                                                        <th><b>Contact Name</b></th>
+                                                        <th><b>Email</b></th>
+                                                        <th><b>Contact Number</b></th>
+                                                    </tr>
+                                                </thead>
+
+                                                <tbody>
+                                                    <tr *ngFor="let row of brokerage.contacts;let i = index;">
+                                                        <td>
+                                                            {{brokerage.name}}
+                                                        </td>
+                                                        <td>
+                                                            {{row.firstName}}&nbsp;{{row.lastName}}
+                                                        </td>
+                                                        <td>
+                                                            {{row.email}}
+                                                        </td>
+                                                        <td>
+                                                            {{row.telephoneNumber}}
+                                                        </td>
+                                                    </tr>
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                        <ng-template #brokerWarning>&nbsp;&nbsp;&nbsp;&nbsp;No broker have been found
+                                        </ng-template>
+                                    </div>
+                                </mat-card-content>
+                            </mat-card>
+                        </mat-card>
+                    </mat-card>
+                </div>
+                <br />
+
+                <div style="margin: 16px 0px 0px 0px;" *ngIf="addClaimant == 0">
+                    <div class="form-group-button mat-form-button btn">
+                        <div *ngIf="addClaimant == 0 && claimants == 0" class="form-buttons"
+                            matTooltip="Go to previous tab">
+                            <button class="button float-button" (click)="addNewClaimant()">Register Notifier</button>
+                        </div>
+                        <div class="form-buttons" matTooltip="Go to previous tab" style="margin:0px 0px 0px;">
+                            <button class="button float-button" (click)="previousStep()">Previous</button>
+                        </div>
+                        <div [hidden]="claimantId == 0" class="form-buttons" matTooltip="No changes have been made"
+                            (click)="addDeceasedInfo()" style="margin:0px 0px 0px;">
+                            <button class="button float-button" [disabled]="currentAction != ''">Register</button>
+
+                        </div>
+                        <div (click)="cancel()" class="form-group-button mat-form-button"
+                            style="margin: -32px 0px 0px 0px;">
+                            <button type="button" class="button float-button">Cancel</button>
+                        </div>
+                    </div>
+                </div>
+                <span [style.visibility]="isLoading ? 'visible' : 'hidden'">
+                    <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+                    <span class="grey site-font"><i>{{currentAction}}</i></span>
+                </span>
+            </mat-card-content>
+        </mat-card>
+    </mat-tab>
+
+
+    <div style="margin: 0px 0px 0px 22px;">
+        <mat-tab label="Confirmation" [disabled]="!isConfirmedTab">
+            <div [hidden]="!isConfirmed">
+                <mat-card class="main-container">
+                    <mat-card class="top-selector-container">
+                        <mat-card class="summary-container" style="width: 750px">
+                            <mat-card-header>
+                                <mat-card-title>
+                                    <h1 class="wizard-font">Deceased Details</h1>
+                                </mat-card-title>
+                            </mat-card-header>
+                            <mat-card-content class="content-container">
+                                <div class="text-container" *ngIf="deathDetails != null">
+                                    <table id="brokers">
+                                        <thead>
+                                            <tr>
+                                                <th><b>Name and Surname</b></th>
+                                                <th><b>ID/Passport</b></th>
+                                                <th><b>Role</b></th>
+                                                <th><b>Claim Number</b></th>
+                                                <th><b>Date Created</b></th>
+                                            </tr>
+                                        </thead>
+
+                                        <tbody>
+                                            <tr *ngFor="let row of deathDetails;let i = index;">
+                                                <td>
+                                                    {{row.nameSurname}}
+                                                </td>
+                                                <td>
+                                                    {{row.idNumber}}
+                                                </td>
+                                                <td>
+                                                    {{row.role}}
+                                                </td>
+                                                <td>
+                                                    {{row.claimNumber}}
+                                                </td>
+                                                <td>
+                                                    {{row.dateCreated}}
+                                                </td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </mat-card-content>
+                            <div class="form-group-button mat-form-button">
+                                <div (click)="confirm()" class="form-group-button mat-form-button">
+                                    <button type="button" class="button float-button">Done</button>
+                                </div>
+                            </div>
+                        </mat-card>
+                        <span style="margin-left: 25px"></span>
+                        <mat-card class="summary-container" style="width: 450px">
+                            <mat-card-header>
+                                <mat-card-title>
+                                    <h1 class="wizard-font">Policies Linked To Deceased</h1>
+                                </mat-card-title>
+                            </mat-card-header>
+                            <mat-card-content class="content-container">
+                                <div class="text-container">
+                                    <table id="brokers">
+                                        <thead>
+                                            <tr>
+                                                <th><b>Policy</b></th>
+                                                <th><b>Policy Number</b></th>
+                                            </tr>
+                                        </thead>
+
+                                        <tbody>
+                                            <tr *ngFor="let row of policies;let i = index;">
+                                                <td>
+                                                    {{row.policy}}
+                                                </td>
+                                                <td>
+                                                    {{row.policynumber}}
+                                                </td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </mat-card-content>
+                        </mat-card>
+                    </mat-card>
+                </mat-card>
+            </div>
+        </mat-tab>
+    </div>
+
+    <!--Notes-->
+    <!--<mat-tab label="Notes" [disabled]="!canAdd || !readOnly">
+        <notes></notes>
+    </mat-tab>-->
+</mat-tab-group>

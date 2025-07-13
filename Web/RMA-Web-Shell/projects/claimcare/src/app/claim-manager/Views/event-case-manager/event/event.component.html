@@ -1,0 +1,90 @@
+<div class="wizard-main-content">
+  <mat-card class="wizard-mat-card-content">
+    <mat-card-content class="mat-card-content">
+      <form [formGroup]="form" class="mat-container details-form" novalidate>
+        <section>
+
+            <mat-form-field class="mat-form-field-right">
+                <label class="mat-label other-label"> Event Type</label>
+                <mat-select name="eventType" id="eventType" formControlName="eventType"
+                    (selectionChange)="eventTypeChanged($event)">
+                    <mat-option [value]="1">Accident</mat-option>
+                    <mat-option [value]="2">Disease</mat-option>
+                    <mat-option [value]="3">Other</mat-option>
+                </mat-select>
+                <mat-error *ngIf="form.get('eventType').hasError('required')">
+                    Type of event is <strong>required</strong>
+                </mat-error>
+            </mat-form-field>
+
+            <mat-form-field class="mat-form-field-right">
+              <label class="mat-label other-label"> Communication Type</label>
+              <mat-select name="communicationType" id="communicationType" formControlName="communicationType"
+                  (selectionChange)="communicationTypeChanged($event)">
+                  <mat-option [value]="1">Email</mat-option>
+                  <mat-option [value]="2">Phone</mat-option>
+                  <mat-option [value]="3">SMS</mat-option>
+              </mat-select>
+              <mat-error *ngIf="form.get('communicationType').hasError('required')">
+                  Type of communication is <strong>required</strong>
+              </mat-error>
+          </mat-form-field>
+        </section>
+        <section>
+        <mat-form-field class="mat-form-field-right">
+          <label>Date Advised</label>
+          <input matInput [matDatepicker]="dateAdvisedPicker" [min]="minDate" date="true" time="false" formControlName="dateAdvised" name="dateAdvised" id="dateAdvised" readonly>
+          <mat-datepicker-toggle matSuffix class="picker-toggle" [for]="dateAdvisedPicker"></mat-datepicker-toggle>
+          <mat-datepicker #dateAdvisedPicker touchUi="true" ng-model-options="{ timezone: 'sast' }"></mat-datepicker>
+          <mat-error *ngIf="form.get('dateAdvised').hasError('required')">
+            Date advised is <strong>required</strong>
+          </mat-error>
+        </mat-form-field>
+
+        <mat-form-field class="mat-form-field-right">
+          <label>Event Date</label>
+          <input matInput [matDatepicker]="eventDatePicker" [min]="minDate" date="true" time="false" formControlName="eventDate" name="eventDate" id="eventDate" readonly>
+          <mat-datepicker-toggle matSuffix class="picker-toggle" [for]="eventDatePicker"></mat-datepicker-toggle>
+          <mat-datepicker #eventDatePicker touchUi="true" ng-model-options="{ timezone: 'sast' }"></mat-datepicker>
+          <mat-error *ngIf="form.get('eventDate').hasError('required')">
+            Event date is <strong>required</strong>
+          </mat-error>
+        </mat-form-field>
+        </section>
+        <section>
+          <mat-form-field class="mat-form-field-right">
+            <label class="mat-label other-label ">Number Of People Involved</label>
+            <input matInput maxlength="50" id="numberOfPeopleInvolved" name="numberOfPeopleInvolved"
+              formControlName="numberOfPeopleInvolved" />
+          </mat-form-field>
+        </section>
+        <section>
+
+            <mat-form-field class="mat-form-field-right">
+                <label class="mat-label other-label ">What Happened(Event Description)</label>
+                <textarea matInput maxlength="500" id="description" name="description"
+                formControlName="description" style="height: 140px;"></textarea>
+                <mat-error *ngIf="form.get('description').hasError('required')">
+                    Description is <strong>required</strong>
+                  </mat-error>
+              </mat-form-field>
+        </section>
+      </form>
+    </mat-card-content>
+  </mat-card>
+</div>
+
+<style>
+
+  .mat-datepicker-content-touch .mat-calendar {
+    max-height: 312px !important;
+    max-width: 250px !important;
+  }
+
+  .mat-datepicker { width: 375px !important; }
+
+  .picker-toggle {
+    margin: 15px 0px 20px -38px;
+    position: absolute;
+  }
+</style>

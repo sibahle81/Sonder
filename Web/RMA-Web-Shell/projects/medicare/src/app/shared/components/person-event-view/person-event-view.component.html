@@ -1,0 +1,115 @@
+
+<div *ngIf="selectedPersonEvent">
+    <div class="menu-bar">
+        <span class="material-icons">
+          person
+        </span>&nbsp;Person Event: ({{selectedPersonEvent.personEventReferenceNumber}})
+    </div> 
+<mat-tab-group animationDuration="500ms">
+    <mat-tab *ngIf="selectedPersonEvent"
+      label="Claim">     
+      <mat-card *ngIf="selectedClaim">
+        <div class="menu-bar">
+          <span class="material-icons">
+            monitor_heart
+          </span>&nbsp;Claim: ({{selectedClaim.claimReferenceNumber}})          
+        </div>       
+          <holistic-claim-details *ngIf="selectedPersonEvent" [showPDColumns]="true" [personEvent]="selectedPersonEvent" [isReadOnly]="true"
+              [isWizard]="true"></holistic-claim-details>      
+        <mat-tab-group  animationDuration="500ms">
+          <mat-tab label="Estimates">
+            <holistic-claim-estimates  [event]="event" [personEvent]="selectedPersonEvent" 
+              [claim]="selectedClaim"></holistic-claim-estimates>
+          </mat-tab>
+          <mat-tab 
+            label="Disability">
+            <claim-disability-container [personEvent]="selectedPersonEvent" 
+              [claim]="selectedClaim"></claim-disability-container>
+          </mat-tab>
+          <mat-tab 
+            label="Invoices">
+            <claim-invoice-container [personEvent]="selectedPersonEvent"  
+              [claim]="selectedClaim"></claim-invoice-container>
+          </mat-tab>
+          <mat-tab 
+            label="Payments">
+            <claim-payment-container [personEvent]="selectedPersonEvent"  ></claim-payment-container>
+          </mat-tab>
+        </mat-tab-group>
+      </mat-card>
+    </mat-tab>
+
+    <mat-tab label="Employee">
+      <holistic-person-details *ngIf="selectedPersonEvent && selectedPersonEvent.rolePlayer"  [isReadOnly] ="'true'"
+        [personEvent]="selectedPersonEvent"  [mode]="mode"></holistic-person-details>
+    </mat-tab>
+
+    <mat-tab label="Injury">
+      <holistic-injury-details [personEvent]="selectedPersonEvent" [isReadOnly]="true" [eventType]="event.eventType"
+        [selectedTab]="selectedTab"></holistic-injury-details>
+    </mat-tab>
+
+    <mat-tab label="Employment">
+      <holistic-employment-details [personEvent]="selectedPersonEvent"  [isReadOnly] ="true"></holistic-employment-details>
+    </mat-tab>
+
+    <mat-tab label="Earnings">
+      <app-list-earnings [personEvent]="selectedPersonEvent"   [isWizard] ="true"
+        ></app-list-earnings>
+    </mat-tab>    
+
+    <mat-tab label="Medical Reports">
+      <holistic-medical-report-container [event]="event" [personEvent]="selectedPersonEvent"></holistic-medical-report-container>
+    </mat-tab>
+
+    <mat-tab label="Documents">
+      <document [systemName]="documentSystemName" [keyName]="'PersonEventId'" [keyValue]="selectedPersonEvent.personEventId" >
+    </document>
+    </mat-tab>
+
+    <mat-tab label="Beneficiaries">
+      <beneficiary-list [personEvent]="selectedPersonEvent"   [isReadOnly] ="true"></beneficiary-list>
+    </mat-tab>
+
+    <mat-tab label="Referrals">
+      <referral-view [targetModuleType]="targetModuleType" [referralItemType]="referralItemType" [itemId]="selectedPersonEvent.personEventId" [referralItemTypeReference]="referralItemTypeReference"></referral-view>
+    </mat-tab>
+
+    <mat-tab label="Notes" >
+      <common-notes [moduleType]="moduleType"  [isReadOnly] ="'true'" [noteItemType]="noteItemType" [itemId]="selectedPersonEvent.personEventId"></common-notes>
+    </mat-tab>
+
+    <mat-tab label="SLA" >
+      <mat-tab-group *ngIf="selectedPersonEvent" animationDuration="500ms">
+        <mat-tab label="Acknowledgment">
+          <paged-sla-status-change-audits [slaItemType]="acknowlegmentSLA"
+            [currentQuery]="selectedPersonEvent.personEventId"></paged-sla-status-change-audits>
+        </mat-tab>
+        <mat-tab label="Liability Decision">
+          <mat-tab-group animationDuration="500ms">
+            <mat-tab label="COID"><paged-sla-status-change-audits [slaItemType]="coidLiabilitySLA"
+                [currentQuery]="selectedPersonEvent.personEventId"></paged-sla-status-change-audits></mat-tab>
+            <mat-tab label="Non-COID"><paged-sla-status-change-audits [slaItemType]="nonCoidLiabilitySLA"
+                [currentQuery]="selectedPersonEvent.personEventId"></paged-sla-status-change-audits></mat-tab>
+          </mat-tab-group>
+        </mat-tab>
+        <mat-tab label="Estimate Verification">
+          <paged-sla-status-change-audits [slaItemType]="estimatesSLA"
+            [currentQuery]="selectedPersonEvent.personEventId"></paged-sla-status-change-audits>
+        </mat-tab>
+        <mat-tab label="PD">
+          <mat-tab-group animationDuration="500ms">
+            <mat-tab label="Non-Zero PD">
+              <paged-sla-status-change-audits [slaItemType]="nonZeroPdSLA"
+                [currentQuery]="selectedPersonEvent.personEventId"></paged-sla-status-change-audits>
+            </mat-tab>
+            <mat-tab label="Zero PD">
+              <paged-sla-status-change-audits [slaItemType]="zeroPdSLA"
+                [currentQuery]="selectedPersonEvent.personEventId"></paged-sla-status-change-audits>
+            </mat-tab>
+          </mat-tab-group>
+        </mat-tab>
+      </mat-tab-group>
+    </mat-tab>
+  </mat-tab-group>
+</div>

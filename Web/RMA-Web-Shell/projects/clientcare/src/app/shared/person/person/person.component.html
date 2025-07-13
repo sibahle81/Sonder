@@ -1,0 +1,237 @@
+<div class="menu-bar">
+  <span class="material-icons" matTooltip="Person">account_circle</span>
+  &nbsp;{{title}}
+  <span *ngIf="isEdit" (click)="cancel()" class="material-icons pointer right" matTooltip="cancel">
+    close
+  </span>
+  <span *ngIf="!isReadOnly && !isEdit && rolePlayer.memberStatus != _new && !(isLoading$ | async)" (click)="edit()"
+    class="material-icons pointer right" matTooltip="edit">
+    settings
+  </span>
+  <span *ngIf="form.valid && !form.pristine && requiredDocumentsUploaded" (click)="save()"
+    class="material-icons pointer right" matTooltip="save">
+    save
+  </span>
+</div>
+
+<mat-card class="margin-bottom" *ngIf="isLoading$ | async">
+  <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+  <label class="mat-label other-label"><i>loading person...please wait</i></label>
+</mat-card>
+
+<mat-card class="margin-bottom" *ngIf="isCheckingPersonExists$ | async">
+  <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+  <label class="mat-label other-label"><i>duplicate check...please wait</i></label>
+</mat-card>
+
+<span *ngIf="!(isLoading$ | async) && !(isCheckingPersonExists$ | async)">
+  <mat-card *ngIf="rolePlayer && rolePlayer.person">
+    <form [formGroup]="form" class="mat-container details-form" novalidate>
+      <section>
+        <mat-form-field class="mat-form-field">
+          <label class="mat-label other-label mandatory-field">Identity Type</label>
+          <mat-select (selectionChange)="idTypeChanged()" name="idType" id="idType" formControlName="idType">
+            <mat-option *ngFor="let idType of supportedIdTypes" [value]="idType">
+              {{getIdType(idType)}}
+            </mat-option>
+          </mat-select>
+          <mat-error *ngIf="form.get('idType').hasError('required')">
+            identity type is <strong>required</strong>
+          </mat-error>
+        </mat-form-field>
+        <mat-form-field class="mat-form-field-right">
+          <label class="mat-label other-label mandatory-field">Identity Number</label>
+          <input (blur)="checkPersonExists()" matInput formControlName="idNumber" name="idNumber" id="idNumber" />
+          <mat-error *ngIf="form.get('idNumber').hasError('required')">
+            identity number is <strong>required</strong>
+          </mat-error>
+          <mat-error *ngIf="form.get('idNumber').hasError('idNumber')">
+            <strong>Invalid</strong> Identification number
+          </mat-error>
+          <mat-error *ngIf="form.get('idNumber').hasError('minLength')">
+            Identification number must be at least 3 characters
+          </mat-error>
+        </mat-form-field>
+      </section>
+
+      <section>
+        <mat-form-field class="mat-form-field">
+          <label class="mat-label other-label mandatory-field">Title</label>
+          <mat-select name="title" id="title" formControlName="title">
+            <mat-option *ngFor="let title of titles" [value]="title">
+              {{title}}
+            </mat-option>
+          </mat-select>
+          <mat-error *ngIf="form.get('title').hasError('required')">
+            title is <strong>required</strong>
+          </mat-error>
+        </mat-form-field>
+        <mat-form-field class="mat-form-field-right">
+          <label class="mat-label other-label mandatory-field">Gender</label>
+          <mat-select name="gender" id="gender" formControlName="gender">
+            <mat-option *ngFor="let gender of genders" [value]="gender">
+              {{formatText(gender)}}
+            </mat-option>
+          </mat-select>
+          <mat-error *ngIf="form.get('gender').hasError('required')">
+            gender is <strong>required</strong>
+          </mat-error>
+        </mat-form-field>
+      </section>
+
+      <section>
+        <mat-form-field class="mat-form-field">
+          <label class="mat-label other-label mandatory-field">First Name</label>
+          <input matInput formControlName="firstName" name="firstName" id="firstName" />
+          <mat-error *ngIf="form.get('firstName').hasError('required')">
+            first name is <strong>required</strong>
+          </mat-error>
+        </mat-form-field>
+        <mat-form-field class="mat-form-field-right">
+          <label class="mat-label other-label mandatory-field">Last Name</label>
+          <input matInput formControlName="surname" name="surname" id="surname" />
+          <mat-error *ngIf="form.get('surname').hasError('required')">
+            last name is <strong>required</strong>
+          </mat-error>
+        </mat-form-field>
+      </section>
+
+      <section>
+        <mat-form-field class="mat-form-field">
+          <label class="mat-label other-label mandatory-field">Date of Birth</label>
+          <input matInput formControlName="dateOfBirth" [matDatepicker]="dateOfBirth" id="dateOfBirth"
+            name="dateOfBirth" (dateChange)="dateOfBirthChange($event.value)">
+          <mat-datepicker-toggle matSuffix [for]="dateOfBirth"></mat-datepicker-toggle>
+          <mat-datepicker touchUi="true" #dateOfBirth></mat-datepicker> <mat-error
+            *ngIf="form.get('dateOfBirth').hasError('required')">
+            date of birth is <strong>required</strong>
+          </mat-error>
+        </mat-form-field>
+        <mat-form-field class="mat-form-field-right">
+          <label class="mat-label other-label mandatory-field">Age<span> 
+            <i *ngIf="!isAlive && rolePlayer.person.dateOfDeath"> (at date of death)</i></span></label>
+          <input matInput formControlName="age" name="age" id="age" />
+          <mat-error *ngIf="form.get('age').hasError('required')">
+            age is <strong>required</strong>
+          </mat-error>
+        </mat-form-field>
+      </section>
+
+      <section>
+        <mat-form-field *ngIf="filteredNationalities" class="mat-form-field">
+          <label class="mat-label other-label mandatory-field">Nationality</label>
+          <mat-select name="nationality" id="nationality" formControlName="nationality">
+            <input matInput (keyup)="onNationalityKey($event.target.value)">
+            <mat-option *ngFor="let nationality of filteredNationalities" [value]="nationality.id">
+              {{nationality.name}}
+            </mat-option>
+          </mat-select>
+          <mat-error *ngIf="form.get('nationality').hasError('required')">
+            nationality is required
+          </mat-error>
+        </mat-form-field>
+
+        <mat-form-field *ngIf="filteredCountries" class="mat-form-field-right">
+          <label class="mat-label other-label mandatory-field">Country of Origin</label>
+          <mat-select name="countryOrigin" id="countryOrigin" formControlName="countryOrigin">
+            <input matInput (keyup)="onCountryKey($event.target.value)">
+            <mat-option *ngFor="let country of filteredCountries" [value]="country.id">
+              {{country.name}}
+            </mat-option>
+          </mat-select>
+
+          <mat-error *ngIf="form.get('countryOrigin').hasError('required')">
+            country of origin is required
+          </mat-error>
+        </mat-form-field>
+      </section>
+
+      <section>
+        <mat-form-field class="mat-form-field">
+          <label class="mat-label other-label mandatory-field">Marital Status</label>
+          <mat-select name="maritalStatus" id="maritalStatus" formControlName="maritalStatus"
+            (selectionChange)="maritalStatusChanged($event.value)">
+            <mat-option *ngFor="let maritalStatus of maritalStatuses" [value]="maritalStatus">
+              {{formatText(maritalStatus)}}
+            </mat-option>
+          </mat-select>
+          <mat-error *ngIf="form.get('maritalStatus').hasError('required')">
+            marital status is <strong>required</strong>
+          </mat-error>
+        </mat-form-field>
+      </section>
+
+      <section *ngIf="selectedMaritalStatus && selectedMaritalStatus == married">
+        <mat-card>
+          <mat-form-field class="mat-form-field">
+            <label class="mat-label other-label mandatory-field">Marriage Type</label>
+            <mat-select id="marriageType" name="marriageType" formControlName="marriageType">
+              <mat-option *ngFor="let marriageType of marriageTypes" [value]="marriageType">
+                {{formatText(marriageType)}}
+              </mat-option>
+            </mat-select>
+            <mat-error *ngIf="form.get('marriageType').hasError('required')">
+              marriage type is <strong>required</strong>
+            </mat-error>
+          </mat-form-field>
+
+          <mat-form-field class="mat-form-field-right">
+            <label class="mat-label other-label mandatory-field">Marriage Date</label>
+            <input matInput formControlName="marriageDate" [matDatepicker]="marriageDate" id="marriageDate"
+              name="marriageDate">
+            <mat-datepicker-toggle matSuffix [for]="marriageDate"></mat-datepicker-toggle>
+            <mat-datepicker touchUi="true" #marriageDate></mat-datepicker>
+            <mat-error *ngIf="form.get('marriageDate').hasError('required')">
+              marriage date is <strong>required</strong>
+            </mat-error>
+          </mat-form-field>
+        </mat-card>
+        <br />
+      </section>
+
+      <section>
+        <mat-checkbox (change)="isAliveChanged($event.checked)" class="mat-form-field" name="isAlive" id="isAlive"
+          formControlName="isAlive" [disabled]="isReadOnly">
+          <label class="mat-label other-label mandatory-field">Is Alive ?</label>
+        </mat-checkbox>
+      </section>
+
+      <section *ngIf="!selectedIsAlive">
+        <mat-card>
+          <mat-form-field class="mat-form-field">
+            <label class="mat-label other-label mandatory-field">Death Certificate Number</label>
+            <input matInput formControlName="deathCertificateNumber" name="deathCertificateNumber"
+              id="deathCertificateNumber" [disabled]="selectedIsAlive" />
+            <mat-error *ngIf="form.get('deathCertificateNumber').hasError('required')">
+              death certificate number is <strong>required</strong>
+            </mat-error>
+          </mat-form-field>
+
+          <mat-form-field class="mat-form-field-right">
+            <label class="mat-label other-label mandatory-field">Date of Death</label>
+            <input matInput formControlName="dateOfDeath" [matDatepicker]="dateOfDeath" id="dateOfDeath"
+              name="dateOfDeath" [disabled]="selectedIsAlive">
+            <mat-datepicker-toggle matSuffix [for]="dateOfDeath"></mat-datepicker-toggle>
+            <mat-datepicker touchUi="true" #dateOfDeath></mat-datepicker>
+            <mat-error *ngIf="form.get('dateOfDeath').hasError('required')">
+              date of death is <strong>required</strong>
+            </mat-error>
+          </mat-form-field>
+        </mat-card>
+      </section>
+    </form>
+  </mat-card>
+
+  <document-uploader *ngIf="documentTypeFilter && rolePlayer.person && rolePlayer.person.idType && showDocuments"
+    [documentSet]="documentSet" [systemName]="documentSystemName" [keyName]="'RolePlayerId'"
+    [keyValue]="rolePlayer.rolePlayerId" [documentTypeFilter]="documentTypeFilter"
+    [forceRequiredDocumentTypeFilter]="forceRequiredDocumentTypeFilter"
+    (requiredDocumentsUploadedEmit)="setRequiredDocumentsUploaded($event);"
+    [canDelete]="!userHasPermission(member_agent_permission)" 
+    [triggerReset]="triggerReset"
+    [isReadOnly]="isReadOnly"></document-uploader>
+
+  <div *ngIf="!rolePlayer || !rolePlayer.person">
+    <label class="mat-label other-label"><i>No person found...</i></label>
+  </div>
+</span>

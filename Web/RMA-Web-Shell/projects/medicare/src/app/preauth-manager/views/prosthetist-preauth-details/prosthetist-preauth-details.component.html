@@ -1,0 +1,58 @@
+<div class="mat-header">
+  <h1>Prosthetic PreAuthorisation Details</h1>
+  <br />
+</div>
+
+<div *ngIf="loading$ | async">
+  <mat-progress-bar mode="indeterminate"
+      [ngClass]="{ 'loading-main-double-menu-progress': doubleMenu, 'loading-main-single-menu-progress': !doubleMenu }">
+  </mat-progress-bar>
+  <p class="site-font grey">Loading ...</p>
+</div>
+
+<div *ngIf="preAuthView$ | async as auth">
+  <mat-expansion-panel [expanded]="true">
+    <mat-expansion-panel-header>
+      <mat-panel-title>
+        <div>Prosthetic PreAuth Details {{auth.preAuthNumber}}</div>
+      </mat-panel-title>
+    </mat-expansion-panel-header>
+    <hr>
+    <div *ngIf="auth.preAuthId > 0;else documents_not_uploaded">
+      <app-prosthetic-quotation-type 
+        [hideQuotationTypeDropdown]="false" 
+        [disableQuotationTypeForProstheticView]="true"
+        [claimId]="auth.claimId"
+        [preAuthId]="auth.preAuthId"
+        [quotationTypeDocsType]="auth?.prostheticQuotationType"></app-prosthetic-quotation-type>
+    </div>
+    <ng-template #documents_not_uploaded><span class="authorised">Prosthetic Documents not uploaded, please liaise with
+        Healthcare
+        Provider...</span></ng-template>
+    <hr>
+    <div class="clear">&nbsp;</div>
+    <div class="form-buttons submit-button" *ngIf="!this.isExternalUser && isQuotationLinked == null">
+      <button type="button" class="button quotation-linking-button" (click)="linkProstheticAuthToQuotation()">Capture
+        Prosthetic
+        Quotation For this Auth(linking)</button>
+    </div>
+    <div class="clear">&nbsp;</div>
+    <hr>
+    <div *ngIf="isQuotationLinked != null">
+      <div>Quotation linked with PreAuthorisation.</div>
+      <app-prosthetist-quote-list [isCaptureMode]="false"
+        (isProstheticQuoteLinkedEvent)="getIsProstheticQuoteLinkedValue($event)"
+        [PreAuthIdLinkedToQuote]="auth.preAuthId"></app-prosthetist-quote-list>
+    </div>
+    <hr>
+    <preauth-details [auth]="auth" [isInternalUser]="isInternalUser" [bodySides]="bodySides$ | async"></preauth-details>
+    </mat-expansion-panel>
+
+  <mat-expansion-panel>
+    <mat-expansion-panel-header>
+      <mat-panel-title>PreAuth Activity</mat-panel-title>
+    </mat-expansion-panel-header>
+    <hr>
+    <preauth-activity [auth]="auth?.preAuthActivities"></preauth-activity>
+  </mat-expansion-panel>
+</div>

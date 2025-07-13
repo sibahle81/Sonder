@@ -1,0 +1,10 @@
+<mat-card>
+  <mat-card-content>
+    <h1>Bonus Payments</h1>
+    <app-table [hidden]="creatingWizard" [dataSource]="dataSource" [pageMetaData]="metaData" [buttonTitle]="'New Bonus Payment'" (buttonClick)="newApplication()"></app-table>
+    <div *ngIf="creatingWizard">
+      <mat-progress-bar mode="indeterminate" [ngClass]="{ 'loading-main-double-menu-progress': doubleMenu, 'loading-main-single-menu-progress': !doubleMenu }"></mat-progress-bar>
+      <p class="site-font grey">Creating Wizard...</p>
+    </div>
+  </mat-card-content>
+</mat-card>

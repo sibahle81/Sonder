@@ -1,0 +1,68 @@
+<div>
+    <div *ngIf="dataSource.data">
+        <div class="mat-container mat-elevation-z8" #TABLE>
+            <div class="mat-header">
+                <h1 class="Arabic">Premium Listing Files Uploaded</h1><br />
+
+            </div>
+            <div *ngIf="hasData">
+                <app-search-input (searchcriteria)="searchData($event)" (emptyData)="fillTable($event)"
+                    [placeHolder]="placeHolder"></app-search-input>
+            </div>
+
+            <div *ngIf="searchContainsNothing">
+                <label class="noSearchDataHeading">No Premium Listing Files Available</label>
+            </div>
+            <div *ngIf="!searchContainsNothing">
+                <mat-table #table [dataSource]="dataSource" matSort>
+
+                    <ng-container matColumnDef="fileName">
+                        <mat-header-cell *matHeaderCellDef mat-sort-header (click)="sortData(dataSource.data)">File Name</mat-header-cell>
+                        <mat-cell *matCellDef="let row">
+                            <span class="mobile-label">File Name:</span>
+                            {{row.fileName}}
+                        </mat-cell>
+                    </ng-container>
+                    <ng-container matColumnDef="status">
+                        <mat-header-cell *matHeaderCellDef mat-sort-header (click)="sortData(dataSource.data)">Status</mat-header-cell>
+                        <mat-cell *matCellDef="let row">
+                            <span class="mobile-label">Status:</span>
+                            {{row.premiumListingStatusName}}
+                        </mat-cell>
+                    </ng-container>
+                    <ng-container matColumnDef="createdDate">
+                        <mat-header-cell *matHeaderCellDef mat-sort-header (click)="sortData(dataSource.data)">Upload Date</mat-header-cell>
+                        <mat-cell *matCellDef="let row">
+                            <span class="mobile-label">Upload Date:</span>
+                            {{row.createdDate | date:'dd/MM/yyyy'}}
+                        </mat-cell>
+                    </ng-container>
+
+                    <ng-container matColumnDef="createdBy">
+                        <mat-header-cell *matHeaderCellDef mat-sort-header (click)="sortData(dataSource.data)">Uploaded By</mat-header-cell>
+                        <mat-cell *matCellDef="let row">
+                            <span class="mobile-label">Uploaded By:</span>
+                            {{row.createdBy}}
+                        </mat-cell>
+                    </ng-container>
+                    <ng-container matColumnDef="Actions">
+                        <mat-header-cell *matHeaderCellDef mat-sort-header>Actions</mat-header-cell>
+                        <mat-cell *matCellDef="let row">
+                            <span class="mobile-label">Actions:</span>
+                            <button [disabled]="getStatus(row.premiumListingStatus) !== 'Failed'"
+                                class="button float-button submit-button" (click)="onViewDetails(row)">View Error Log
+                            </button>
+                        </mat-cell>
+                    </ng-container>
+                    <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
+                    <mat-row *matRowDef="let row; columns: displayedColumns;"></mat-row>
+                </mat-table>
+            </div>
+            <div [hidden]="hidePaginator" class="paginator">
+                <mat-paginator #paginator [length]="dataSource.data.length" [pageIndex]="0" [pageSize]="5"
+                    [pageSizeOptions]="[5, 10, 25, 100]">
+                </mat-paginator>
+            </div>
+        </div>
+    </div>
+</div>

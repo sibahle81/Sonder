@@ -1,0 +1,85 @@
+<div class="menu-bar">
+  <span class="material-icons">phone_iphone</span>
+  SMS Communications Audit
+  <span *ngIf="showCloseButton" (click)="closeDialog()" class="material-icons pointer right" matTooltip="close">
+    close
+  </span>
+  <span *ngIf="!(dataSource.loading$ | async) && !(isSending$ | async)" (click)="reset()"
+    class="material-icons pointer right" matTooltip="refresh">
+    restart_alt
+  </span>
+  <span *ngIf="_rolePlayerContactOptions" (click)="openRolePlayerContactOptionsDialog(null)"
+    class="material-icons pointer right" matTooltip="compose new sms">
+    contact_phone
+  </span>
+</div>
+<mat-card>
+  <div *ngIf="(isSending$ | async)">
+    <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+    <label class="mat-label other-label"><i>sending...please wait</i></label>
+  </div>
+  <div [hidden]="paginator.length === 0 || (dataSource.loading$ | async) || (isSending$ | async)">
+    <mat-table #table [dataSource]="dataSource" matSort>
+      <!-- isSuccess Column -->
+      <ng-container matColumnDef="isSuccess">
+        <mat-header-cell *matHeaderCellDef mat-sort-header>Successful?</mat-header-cell>
+        <mat-cell *matCellDef="let row">
+          <span *ngIf="row.isSuccess === true" class="material-icons greenFont">
+            verified
+          </span>
+          <span *ngIf="row.isSuccess === false">
+            <span class="material-icons amberFont">warning</span>
+            &nbsp;&nbsp;
+            <span (click)="viewFailureReason(row)" matTooltip="failed to send: click to see why"
+              class="material-icons icn icn-button pointer">
+              info
+            </span>
+          </span>
+          <span *ngIf="!row.isSuccess && row.isSuccess !== false" class="material-icons blueFont">
+            help
+          </span>
+        </mat-cell>
+      </ng-container>
+      <ng-container matColumnDef="message">
+        <mat-header-cell *matHeaderCellDef mat-sort-header> Message </mat-header-cell>
+        <mat-cell *matCellDef="let row"> {{row.message}} </mat-cell>
+      </ng-container>
+      <ng-container matColumnDef="smsNumbers">
+        <mat-header-cell *matHeaderCellDef mat-sort-header> Recipient(s) </mat-header-cell>
+        <mat-cell *matCellDef="let row"> {{row.smsNumbers}} </mat-cell>
+      </ng-container>
+      <ng-container matColumnDef="createdDate">
+        <mat-header-cell *matHeaderCellDef mat-sort-header> Sent Date </mat-header-cell>
+        <mat-cell *matCellDef="let row"> {{row.createdDate | date:'yyyy-MM-dd HH:mm:ss'}} </mat-cell>
+      </ng-container>
+      <ng-container matColumnDef="createdBy">
+        <mat-header-cell *matHeaderCellDef mat-sort-header> Sent By </mat-header-cell>
+        <mat-cell *matCellDef="let row"><user-display-name [userName]="row.createdBy"></user-display-name></mat-cell>
+      </ng-container>
+      <ng-container matColumnDef="actions">
+        <mat-header-cell *matHeaderCellDef>Actions</mat-header-cell>
+        <mat-cell *matCellDef="let row">
+          <span class="material-icons pointer" (click)="openConfirmationDialog(row)" matTooltip="resend">
+            send
+          </span>
+          <span *ngIf="_rolePlayerContactOptions?.length > 0" class="material-icons pointer"
+            (click)="openRolePlayerContactOptionsDialog(row)" matTooltip="manage recipients">
+            add
+          </span>
+        </mat-cell>
+      </ng-container>
+      <mat-header-row *matHeaderRowDef="getDisplayedColumns(); sticky: true"></mat-header-row>
+      <mat-row *matRowDef="let row; columns: getDisplayedColumns();"></mat-row>
+    </mat-table>
+    <mat-paginator #paginator [pageIndex]="0" [pageSize]="5" [pageSizeOptions]="[5, 10, 25, 100]"
+      [length]="dataSource.rowCount$ | async" (page)="getData()">
+    </mat-paginator>
+  </div>
+  <div [hidden]="paginator.length > 0 || (dataSource.loading$ | async) || (isSending$ | async)" class="msg-check">
+    <span class="grey site-font">No sms audits found...</span>
+  </div>
+  <span *ngIf="dataSource.loading$ | async">
+    <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+    <span class="grey site-font"><i>loading sms audit...please wait</i></span>
+  </span>
+</mat-card>

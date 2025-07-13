@@ -1,0 +1,81 @@
+<mat-card *ngIf="isLoading$ | async">
+    <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+    <label class="mat-label other-label"><i>loading...please wait</i></label>
+</mat-card>
+
+<div *ngIf="!(isLoading$ | async)">
+    <div class="menu-bar">
+        <span class="material-icons">
+            person
+        </span>
+        Details
+        <span *ngIf="member && member.rolePlayerId > 0 && userHasPermission(viewAuditPermission)"
+            class="material-icons pointer right" matTooltip="audit" (click)="openAuditDialog()">
+            fingerprint
+        </span>
+        <span *ngIf="isEdit" (click)="cancel()" class="material-icons pointer right" matTooltip="cancel">
+            close
+        </span>
+        <span
+            *ngIf="form.valid && !form.pristine && (userHasPermission(addPermission) || userHasPermission(editPermission))"
+            (click)="checkKYC()" class="material-icons pointer right pulse greenFont" matTooltip="save">
+            save
+        </span>
+        <span
+            *ngIf="!isReadOnly && (form.pristine && member && member.rolePlayerId > 0 && !isEdit && userHasPermission(editPermission))"
+            (click)="edit()" class="material-icons pointer right" matTooltip="edit">
+            settings
+        </span>
+    </div>
+
+    <form [formGroup]="form" class="mat-container details-form" novalidate>
+        <section>
+            <mat-form-field class="mat-form-field">
+                <label class="mat-label other-label">Member Number</label>
+                <input matInput formControlName="memberNumber" name="memberNumber" id="memberNumber" />
+            </mat-form-field>
+            <mat-form-field class="mat-form-field-right">
+                <label class="mat-label other-label">Status</label>
+                <input matInput formControlName="memberStatus" name="memberStatus" id="memberStatus" />
+            </mat-form-field>
+        </section>
+        <section>
+            <mat-form-field class="mat-form-field">
+                <label class="mat-label other-label">Member Name</label>
+                <input matInput formControlName="displayName" name="displayName" id="displayName" />
+            </mat-form-field>
+            <mat-form-field class="mat-form-field-right">
+                <label class="mat-label other-label">Join Date</label>
+                <input matInput formControlName="joinDate" [matDatepicker]="joinDate">
+                <mat-datepicker-toggle matSuffix [for]="joinDate">
+                </mat-datepicker-toggle>
+                <mat-datepicker touchUi="true" #joinDate></mat-datepicker>
+            </mat-form-field>
+        </section>
+
+        <section>
+            <mat-form-field class="mat-form-field">
+                <label class="mat-label other-label">Client Type</label>
+                <mat-select name="clientType" id="clientType" formControlName="clientType">
+                    <mat-option *ngFor="let clientType of filteredClientTypes" [value]="clientType">
+                        {{formatLookup(clientType)}}
+                    </mat-option>
+                </mat-select>
+                <mat-error *ngIf="form.get('clientType').hasError('required')">
+                    client type is <strong>required</strong>
+                </mat-error>
+            </mat-form-field>
+
+            <mat-form-field class="mat-form-field-right">
+                <label class="mat-label other-label">Medical Benefit Waiting Period</label>
+                <mat-select name="rolePlayerBenefitWaitingPeriod" id="rolePlayerBenefitWaitingPeriod"
+                    formControlName="rolePlayerBenefitWaitingPeriod">
+                    <mat-option *ngFor="let rolePlayerBenefitWaitingPeriod of rolePlayerBenefitWaitingPeriods"
+                        [value]="rolePlayerBenefitWaitingPeriod">
+                        {{formatLookup(rolePlayerBenefitWaitingPeriod)}}
+                    </mat-option>
+                </mat-select>
+            </mat-form-field>
+        </section>
+    </form>
+</div>

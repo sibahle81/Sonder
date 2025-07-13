@@ -1,0 +1,113 @@
+<mat-card style="margin: 15px 30px 15px 30px">
+  <mat-card-content style="margin-left: 10px;">
+    <div [hidden]="editPensionCaseMode">
+      <form [formGroup]="form" class="mat-container" novalidate>
+        <!--Query-->
+        <div class="page-header">
+          <h1 style="margin-bottom: 15px;">Find a Pension Case</h1>
+        </div>
+        <mat-form-field floatLabel="never">
+            <input #searchField matInput maxlength="50" formControlName="query" name="query" width="300" minLength="3">
+            <mat-placeholder class="placeholder">Search by Pension Case Number, Pension Case Type, Individual Type, Beneficiary Name, Beneficiary Surname or Industry Number</mat-placeholder>
+            <mat-icon class="search-icon" (click)="search()" matSuffix>search</mat-icon>
+            <mat-error *ngIf="form.get('query').hasError('minlength')">
+                Please enter a search term longer than <strong>3 characters</strong>
+            </mat-error>
+        </mat-form-field>
+      </form>
+
+      <div *ngIf="dataSource.isLoading">
+          <mat-progress-bar mode="indeterminate" [ngClass]="{ 'loading-main-double-menu-progress': doubleMenu, 'loading-main-single-menu-progress': !doubleMenu }"></mat-progress-bar>
+          <p class="site-font grey">Searching...</p>
+      </div>
+
+      <div [hidden]="dataSource.isLoading || (dataSource.data && dataSource.data.data && dataSource.data.data.length === 0)">
+          <mat-table #table [dataSource]="dataSource" matSort>
+              <ng-container matColumnDef="pensionCaseNumber">
+                  <mat-header-cell *matHeaderCellDef mat-sort-header> Pension Number </mat-header-cell>
+                  <mat-cell *matCellDef="let row"> {{row.pensionCaseNumber}} </mat-cell>
+              </ng-container>
+
+              <ng-container matColumnDef="pensionType">
+                  <mat-header-cell *matHeaderCellDef mat-sort-header> PensionType </mat-header-cell>
+                  <mat-cell *matCellDef="let row"> {{pensionType[row.pensionType]}} </mat-cell>
+              </ng-container>
+
+              <ng-container matColumnDef="modifiedDate">
+                  <mat-header-cell *matHeaderCellDef mat-sort-header> Added/Modified Date </mat-header-cell>
+                  <mat-cell *matCellDef="let row"> {{row.modifiedDate | date: 'yyyy/MM/dd'}} </mat-cell>
+              </ng-container>
+
+              <ng-container matColumnDef="StatusDescription">
+                  <mat-header-cell *matHeaderCellDef mat-sort-header> Status </mat-header-cell>
+                  <mat-cell *matCellDef="let row">{{ pensionCaseStatus[row.pensionCaseStatus] }}</mat-cell>
+              </ng-container>
+
+              <ng-container matColumnDef="pensionerName">
+                <mat-header-cell *matHeaderCellDef mat-sort-header> Name and Surname  </mat-header-cell>
+                <mat-cell *matCellDef="let row">{{row.pensionerName}}</mat-cell>
+              </ng-container>
+              
+
+              <!-- Actions -->
+
+
+              <!-- Actions Column -->
+              <ng-container matColumnDef="actions">
+                <mat-header-cell *matHeaderCellDef> Actions </mat-header-cell>
+                <mat-cell *matCellDef="let row" [matMenuTriggerFor]="menu" (click)="filterMenu(row)">
+                  <span class="material-icons pointer">more_vert</span>
+                  <mat-menu #menu="matMenu">
+                    <ng-container *ngFor="let menu of menus">
+                      <button *ngIf="!menu.disable" mat-menu-item
+                        (click)="onMenuItemClick(row, menu)">{{menu.title}}</button>
+                    </ng-container>
+                  </mat-menu>
+                </mat-cell>
+              </ng-container>
+
+              <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
+              <mat-row *matRowDef="let row; columns: displayedColumns;"></mat-row>
+          </mat-table>
+
+          <mat-paginator #paginator [length]="dataSource.rowCount$" [pageIndex]="0" [pageSize]="5"
+            [pageSizeOptions]="[5, 10, 25, 100]"></mat-paginator>
+      </div>
+
+      <div [hidden]="(dataSource.data && dataSource.data.data && dataSource.data.data.length > 0) || !currentQuery || currentQuery == ''" class="no-search-results-add-button">
+          <div class="site-font grey">
+              <p class="grey">Your search - <strong>{{currentQuery}}</strong> - did not match any pension cases.</p>
+              <span>Suggestions: </span>
+              <ul>
+                  <li>Make sure that all words are spelled correctly.</li>
+                  <li>Try different keywords.</li>
+                  <li>Try more general keywords.</li>
+                  <li>Try fewer keywords.</li>
+              </ul>
+          </div>
+      </div>
+    </div>
+
+    <!--TODO: This should be a dropdown-->
+    <div [hidden]="!editPensionCaseMode">
+      <section>
+        <mat-form-field name="editTypeInput" #editTypeInput class="edit-pension-case-input">
+          <label class="mat-label other-label mandatory-field">What would you like to edit?</label>
+          <mat-select id="communicationType" name="communicationType">
+            <mat-option [value]="1">
+              Corrective Entry
+            </mat-option>
+            <mat-option [value]="2">
+              Beneficiary details
+            </mat-option>
+            <mat-option [value]="3">
+              Recipient detals
+            </mat-option>
+          </mat-select>
+        </mat-form-field>
+      </section>
+      <button class="button" (click)="onBackToSearch()">Back to search</button>
+    </div>
+
+  </mat-card-content>
+</mat-card>

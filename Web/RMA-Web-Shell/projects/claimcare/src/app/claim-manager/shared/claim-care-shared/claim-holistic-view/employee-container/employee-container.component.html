@@ -1,0 +1,28 @@
+<div *ngIf="personEvent">
+    <div class="menu-bar">
+        <span class="material-icons">groups</span>&nbsp;
+        <b>Employee Details</b> ({{personEvent.rolePlayer && personEvent.rolePlayer.displayName ? personEvent.rolePlayer.displayName : 'Unknown'}})
+        <span (click)="close()" class="material-icons pointer right" matTooltip="Close">
+            close
+        </span>
+    </div>
+    <mat-tab-group animationDuration="500ms" [(selectedIndex)]="selectedTab">
+        <mat-tab>
+            <ng-template mat-tab-label>
+                <span [ngClass]="{'greenLabel': isEmployee , 'outstanding': !isEmployee}">Employee Details</span>
+            </ng-template>
+            <holistic-person-details [event]="event" [personEvent]="personEvent" [isReadOnly]="isReadOnly" [isWizard]="true"
+                [mode]="mode" [filteredInformationTypes]="filteredInformationTypes"
+                [filteredDesignationTypes]="filteredDesignationTypes"
+                (createNewPersonEvent)="createNewPersonEvent($event)"></holistic-person-details>
+        </mat-tab>
+
+        <mat-tab *ngIf="personEvent.rolePlayer && personEvent.rolePlayer.person">
+            <ng-template mat-tab-label>
+                <span [ngClass]="{'greenLabel': isEmployment , 'outstanding': !isEmployment}">Person Employment Details</span>
+            </ng-template>
+            <holistic-employment-details [personEvent]="personEvent" [isReadOnly]="isReadOnly" [isWizard]="true"
+                [mode]="mode" (emitPersonEmployment)="close()"></holistic-employment-details>
+        </mat-tab>
+    </mat-tab-group>
+</div>

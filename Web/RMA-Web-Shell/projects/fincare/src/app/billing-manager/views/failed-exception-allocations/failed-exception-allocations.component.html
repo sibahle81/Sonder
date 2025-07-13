@@ -1,0 +1,29 @@
+<div>
+  <br>
+  <h1>Failed Exception Allocations</h1>
+  <br>
+</div>
+<div>
+  <div>
+    <upload-control #uploadControl [acceptedTypes]="'.csv'" [isSingleInput]="false" [allowDelete]="true"
+      [isReadOnly]="false">
+    </upload-control>
+  </div>
+  <div class="left-padding" *ngIf="uploadControlComponent.uploadFileList.length > 0">
+    <div>Uploading exception failed large files may take several minutes. Please be patient.</div>
+  </div>
+  <div *ngIf="(doneUploading$ | async)">
+    Failed Files contents uploaded and queued for allocation.
+  </div>
+  <br />
+  <div [hidden]="!hasErrors" class="error-message">
+    <ng-container *ngFor="let msg of errors">
+      {{msg}}<br />
+    </ng-container>
+  </div>
+  <br />
+  <div class="form-buttons" (click)="save()">
+    <button class="button float-button submit-button" [disabled]="uploadControlComponent.isUploading || uploadControlComponent.uploadFileList.length=== 0">Upload
+      File</button>
+  </div>
+</div>

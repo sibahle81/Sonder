@@ -1,0 +1,47 @@
+<mat-card class="card">
+
+  <mat-card-header>
+    <mat-card-title class="wizard-font card-title grey">
+      <h1 class="wizard-font" style="padding: 0;">Notification</h1>
+    </mat-card-title>
+  </mat-card-header>
+
+  <mat-card-content class="content">
+    <form [formGroup]="form" class="mat-container details-form" novalidate>
+
+      <section>
+        <mat-form-field class="mat-form-field-left inputControl">
+          <label class="mat-label other-label">Title</label>
+          <input matInput id="title" name="title" formControlName="title">
+        </mat-form-field>
+      </section>
+
+      <section [hidden]="!hasActionLink">
+        <mat-form-field class="mat-form-field-left inputControl">
+          <label class="mat-label other-label">Action/Link</label>
+          <input matInput id="actionLink" name="actionLink" formControlName="actionLink">
+          <a href="{{actionLink}}"><i>(navigate to action/link)</i></a>
+        </mat-form-field>
+      </section>
+
+      <section>
+        <mat-form-field class="mat-form-field-left inputControl">
+          <label class="mat-label other-label inputControl">Message <i>(*max length 255
+              characters)</i></label>
+          <textarea matTextareaAutosize matAutosizeMinRows="5" matAutosizeMaxRows="3" maxlength="255" matInput
+            minlength="3" id="message" name="message" formControlName="message"></textarea>
+        </mat-form-field>
+      </section>
+
+      <section>
+        <mat-checkbox id="hasBeenReadAndUnderstood" name="hasBeenReadAndUnderstood"
+          formControlName="hasBeenReadAndUnderstood"><span class="inputControl">
+            <strong>I have read and understood this notification</strong><i> (completing this notification will remove
+              it
+              from all task lists)</i></span>
+        </mat-checkbox>
+      </section>
+
+    </form>
+  </mat-card-content>
+</mat-card>

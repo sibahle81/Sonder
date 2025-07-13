@@ -1,0 +1,70 @@
+<mat-card>
+  <mat-card-content>
+    <form [formGroup]="form" *ngIf="this.form">
+
+      <mat-label class="other-label mandatory-field">Is the patient unfit for work?</mat-label>
+      <br>
+      <mat-radio-group aria-label="Is the patient unfit for work?" formControlName="isUnfitForWork" id="isUnfitForWork">
+        <mat-radio-button value="Yes">Yes</mat-radio-button>&nbsp;
+        <mat-radio-button value="No">No</mat-radio-button>
+      </mat-radio-group>
+      <br>
+      <ng-container *ngIf="form.value.isUnfitForWork == 'Yes'">
+        <br>
+        <mat-label class="other-label mandatory-field">Unfit Start Date</mat-label>
+        <br />
+        <mat-form-field>
+          <input matInput [matDatepicker]="unfitStartPicker" formControlName="unfitStartDate" id="unfitStartDate">
+          <mat-datepicker-toggle matSuffix [for]="unfitStartPicker"></mat-datepicker-toggle>
+          <mat-datepicker #unfitStartPicker></mat-datepicker>
+        </mat-form-field>
+        <br>
+        <mat-label class="other-label mandatory-field">Unfit End Date</mat-label>
+        <br />
+        <mat-form-field>
+          <input matInput [matDatepicker]="unfitEndPicker" formControlName="unfitEndDate" id="unfitEndDate">
+          <mat-datepicker-toggle matSuffix [for]="unfitEndPicker"></mat-datepicker-toggle>
+          <mat-datepicker #unfitEndPicker></mat-datepicker>
+        </mat-form-field>
+      </ng-container>
+      <br>
+      <mat-label class="other-label mandatory-field">Mechanism of injury</mat-label>
+      <br />
+      <mat-form-field appearance="standard">
+        <textarea matInput cdkTextareaAutosize cdkAutosizeMinRows="3" cdkAutosizeMaxRows="5" id="injuryMechanism"
+          formControlName="injuryMechanism" class="mat-input-element" maxlength="1000"></textarea>
+      </mat-form-field>
+      <br>
+      <mat-label class="other-label mandatory-field">Is the injury consistent with the mechanism of injury?</mat-label>
+      <br>
+      <mat-radio-group aria-label="Is the injury consistent with the mechanism of injury?"
+        formControlName="isInjuryMechanismConsistent" id="isInjuryMechanismConsistent">
+        <mat-radio-button value="Yes">Yes</mat-radio-button>&nbsp;
+        <mat-radio-button value="No">No</mat-radio-button>
+      </mat-radio-group>
+      <br><br>
+      <mat-label class="other-label mandatory-field">Clinical description</mat-label><br />
+      <mat-form-field appearance="standard">
+        <textarea matInput cdkTextareaAutosize cdkAutosizeMinRows="3" cdkAutosizeMaxRows="5" id="clinicalDescription"
+          formControlName="clinicalDescription" class="mat-input-element" maxlength="1000"></textarea>
+      </mat-form-field>
+      <br>
+      <mat-label>Are there any pre-existing conditions?</mat-label>
+      <br>
+      <mat-radio-group aria-label="Are there any pre-existing conditions?" formControlName="isPreExistingConditions" id="isPreExistingConditions">
+        <mat-radio-button value="Yes">Yes</mat-radio-button>&nbsp;
+        <mat-radio-button value="No">No</mat-radio-button>
+      </mat-radio-group>
+      <br><br>
+      <ng-container *ngIf="form.value.isPreExistingConditions == 'Yes'">
+        <mat-label>Specify pre-existing conditions</mat-label>
+        <br />
+        <mat-form-field appearance="standard">
+          <textarea matInput cdkTextareaAutosize cdkAutosizeMinRows="3" cdkAutosizeMaxRows="5" id="preExistingConditions"
+            formControlName="preExistingConditions" class="mat-input-element" maxlength="1000"></textarea>
+        </mat-form-field>
+      </ng-container>
+      <br>
+    </form>
+  </mat-card-content>
+</mat-card>

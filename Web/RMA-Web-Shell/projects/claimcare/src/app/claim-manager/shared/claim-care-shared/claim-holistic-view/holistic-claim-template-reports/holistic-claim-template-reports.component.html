@@ -1,0 +1,23 @@
+<mat-card>
+  <div class="menu-bar">
+    <span>
+      <span class="material-icons">
+        event_note
+      </span>&nbsp;
+      Letters & Templates
+
+      <span *ngIf="selectedReport" class="material-icons pointer right" matTooltip="open template"
+        (click)="openReportViewerDialog()">
+        find_in_page
+      </span>
+    </span>
+  </div>
+
+  <label class="mat-label other-label">Select a letter template</label>
+  <br />
+  <mat-select class="control" (selectionChange)="reportSelected($event.value)">
+    <mat-option *ngFor="let report of reports" [value]="report">
+      {{report.key}}
+    </mat-option>
+  </mat-select>
+</mat-card>

@@ -1,0 +1,42 @@
+<mat-card *ngIf="isLoading$ | async">
+    <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+    <label class="mat-label other-label"><i>loading injury details...please wait</i></label>
+</mat-card>
+
+<div *ngIf="!(isLoading$ | async)">
+    <mat-card-content>
+        <mat-tab-group animationDuration="500ms" [(selectedIndex)]="selectedTab">
+            <mat-tab label="Check List" *ngIf="personEvent && eventType == accident" class="tabs">
+                <holistic-accident-checks [selectedPersonEvent]="personEvent" [isWizard]="isWizard"
+                    [isReadOnly]="isReadOnly" (refreshPage)="refreshPage($event)"></holistic-accident-checks>
+            </mat-tab>
+
+            <mat-tab label="Injury Details" *ngIf="personEvent && eventType == accident">
+                <holistic-accident-details [selectedPersonEvent]="personEvent" [isWizard]="isWizard"
+                    [isReadOnly]="isReadOnly" [eventType]="eventType"
+                    [icd10List]="icd10List"></holistic-accident-details>
+            </mat-tab>
+
+            <mat-tab label="Road Accident" *ngIf="isRoadAccident">
+                <holistic-road-accident-details [selectedPersonEvent]="personEvent" [isWizard]="isWizard"
+                    [isReadOnly]="isReadOnly"></holistic-road-accident-details>
+            </mat-tab>
+
+            <mat-tab label="Disease Details" *ngIf="personEvent && eventType == disease">
+                <holistic-disease-details [selectedPersonEvent]="personEvent" [isWizard]="isWizard"
+                    [isReadOnly]="isReadOnly" [eventType]="eventType"
+                    [icd10List]="icd10List"></holistic-disease-details>
+            </mat-tab>
+
+            <mat-tab *ngIf="ledToDeath">
+                <ng-template mat-tab-label>
+                    <span
+                        [ngClass]="{'natural': ledToDeath && isDeathDate ,'outstanding': ledToDeath && !isDeathDate}">Death
+                        Details</span>
+                </ng-template>
+                <holistic-death-details [selectedPersonEvent]="personEvent" [isWizard]="isWizard"
+                    [isReadOnly]="isReadOnly"></holistic-death-details>
+            </mat-tab>
+        </mat-tab-group>
+    </mat-card-content>
+</div>

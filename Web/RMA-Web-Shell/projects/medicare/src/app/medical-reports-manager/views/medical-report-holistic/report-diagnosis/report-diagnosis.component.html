@@ -1,0 +1,42 @@
+<mat-card>
+  <div class="menu-bar">
+    <span class="material-icons">
+        content_paste
+    </span>
+        Diagnosis
+    <span
+        *ngIf="form && form.valid && !isReadOnly && isIcd10CodeSelected()"
+        (click)="save()" class="material-icons pointer right pulseGreen" matTooltip="save">
+        save
+    </span>
+  </div>
+
+  <br />
+
+  <form [formGroup]="form" *ngIf="this.form">
+    <div class="autoResize" id="icd10CodeDiaglog">
+      <i class="pointer" (click)="isReadOnly? false : onShowDialogClick()">Add ICD10 codes</i>
+      <i class="material-icons icon" (click)="isReadOnly? false : onShowDialogClick()">add</i>
+    </div>
+
+    <div class="autoResize">
+      <ul class="noStyle">
+        <li class="lineHeight" *ngFor="let x of icd10Codes">
+          <div class="icd10LineItemPadding">
+          <div class="icd10LineItem"><span class="listitem-hover">{{x.displayValue}} </span><span class="emphasise">|
+              Body side affected : {{ isModernization ? getBodySideAffectedType(x.bodySideAffected) : x.bodySideAffected }} {{x.bodySideComment}} | Severity : {{isModernization ?  getInjurySeverityType(x.severity): x.severity }}</span>
+          </div>
+          <div class="clear"><i class="material-icons icon" (click)="onItemRemoved(x)"
+              matTooltip="Delete ICD10 Code">clear</i></div>
+          
+        </div>
+        </li>
+      </ul>
+    </div>
+    <input type="hidden" formControlName="icd10Codes" ng-model="icd10Codes" ng-required="true">
+
+    <span class="emphasise">{{ matchDescription }}</span>
+    </form>
+
+    <br />
+</mat-card>

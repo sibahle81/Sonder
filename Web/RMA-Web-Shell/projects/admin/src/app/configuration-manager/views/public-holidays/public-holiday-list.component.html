@@ -1,0 +1,40 @@
+﻿<div class="page-header">
+
+</div>
+<!-- <loading *ngIf="isLoading"></loading> -->
+
+<!-- <div [hidden]="isLoading"></div> -->
+
+<div class="mat-container mat-elevation-z8">
+    <div class="mat-header">
+        <h1>Public Holiday List</h1><br />
+        <div class="list-document-search search-container-right">
+            <input type="text" name="search" (keyup)="applyFilter($event.target.value)" placeholder="search holidays...">
+        </div>
+    </div>
+
+    <mat-table #table [dataSource]="dataSource" matSort>
+        <!-- Name Column -->
+        <ng-container matColumnDef="Name">
+            <mat-header-cell *matHeaderCellDef mat-sort-header> NAME</mat-header-cell>
+            <mat-cell *matCellDef="let row"> {{row.name}} </mat-cell>
+        </ng-container>
+        <!-- Name Column -->
+        <ng-container matColumnDef="HolidayDate">
+            <mat-header-cell *matHeaderCellDef mat-sort-header> HOLIDAY DATE </mat-header-cell>
+            <mat-cell *matCellDef="let row"> {{row.holidayDate | date:'dd-MM-y'}} </mat-cell>
+        </ng-container>
+        <ng-container matColumnDef="Actions">
+            <mat-header-cell *matHeaderCellDef mat-sort-header> ACTIONS </mat-header-cell>
+            <mat-cell *matCellDef="let row">
+                <a role="button" (click)="onSelect(row)" class="link-edit">Edit</a>
+                <a role="button" (click)="onDelete(row)" class="link-edit">Delete</a>
+            </mat-cell>
+        </ng-container>
+        <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
+        <mat-row *matRowDef="let row; columns: displayedColumns;"></mat-row>
+    </mat-table>
+
+    <mat-paginator #paginator [length]="dataSource.data.length" [pageIndex]="0" [pageSize]="10" [pageSizeOptions]="[5, 10, 25, 100]">
+    </mat-paginator>
+</div>

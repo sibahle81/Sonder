@@ -1,0 +1,39 @@
+<div>
+  <h3 mat-dialog-title>Add New Forecast Rate</h3>
+
+  <form [formGroup]="form" (ngSubmit)="submit" class="mat-container details-form" novalidate>
+    <section>
+        <mat-form-field class="mat-form-field-left">
+            <label>Start Date</label>
+            <input matInput [matDatepicker]="startDatePicker" date="true" time="false" (ngModelChange)="startDateChange($event)" formControlName="startDate" readonly>
+            <mat-datepicker-toggle style="position: absolute; top:0px;right:0px;" matSuffix class="picker-toggle" [for]="startDatePicker"></mat-datepicker-toggle>
+            <mat-datepicker #startDatePicker touchUi="true" ng-model-options="{ timezone: 'useUtc' }"></mat-datepicker>
+            <mat-error [hidden]="form.get('startDate').hasError('required')">
+                Start date is <strong>required</strong>
+            </mat-error>
+            </mat-form-field>
+              <!--Product-->
+              <mat-form-field>
+                <label class="mat-label other-label mandatory-field">Product</label>
+                <mat-select #product formControlName="productId">
+                  <mat-option *ngFor="let product of selectProducts" [value]="product.id">{{product.name}}</mat-option>
+                </mat-select>
+                <mat-error
+                  *ngIf="product.errorState && (form.get('productId').hasError('required') || form.get('productId').hasError('min'))">
+                  Product is required
+                </mat-error>
+              </mat-form-field>
+        <mat-form-field class="mat-form-field-right">
+          <label>Forecast Rate</label>
+          <input matInput id="forecastRate" name="forecastRate" formControlName="forecastRate"  DecimalNumber required>
+          <mat-error *ngIf="form.get('forecastRate').hasError('required') || form.get('forecastRate').hasError('min') || form.get('forecastRate').hasError('max')">
+              Forecast Rate is <strong>required</strong>
+          </mat-error>
+      </mat-form-field>
+    </section>
+    <div mat-dialog-actions>
+      <button mat-button [type]="submit" class="button float-button" [disabled]="!form.valid" [mat-dialog-close]="1" (click)="confirmAdd()">Save</button>
+      <button mat-button (click)="onNoClick()" class="button float-button" tabindex="-1">Cancel</button>
+    </div>
+  </form>
+</div>

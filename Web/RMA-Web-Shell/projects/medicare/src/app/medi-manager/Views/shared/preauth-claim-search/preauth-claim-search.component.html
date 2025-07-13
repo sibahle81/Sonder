@@ -1,0 +1,154 @@
+<form [formGroup]="form" name="form" class="mat-container details-form" novalidate>
+
+  <div *ngIf="showSearchProgress">
+    <mat-progress-bar mode="indeterminate"
+      [ngClass]="{ 'loading-main-double-menu-progress': doubleMenu, 'loading-main-single-menu-progress': !doubleMenu }">
+    </mat-progress-bar>
+    <p class="site-font grey">Searching for claimant details, please wait till form details for claimant are populated
+      before proceeding to the next step.</p>
+  </div>
+
+  <div class="mat-header">
+    <h1>Capture Claim details</h1><br />
+  </div>
+
+  <mat-card>
+    <mat-card-content>
+      <section>
+      <div>
+        <mat-form-field class="mat-form-field">
+          <label class="mat-label other-label mandatory-field">Full Claim Number</label>
+          <input matInput id="fullClaimNumber" name="fullClaimNumber" formControlName="fullClaimNumber"
+            (change)="search($event.target.value)" />
+          <div class="claimNumberError" *ngIf="claimNumberErrorMessage">
+            {{claimNumberErrorMessage}}
+          </div>
+          <input matInput formControlName="personEventId" class="hidden" />
+          <input matInput formControlName="eventTypeId" class="hidden" />
+          <input matInput formControlName="claimId" class="hidden" />
+          <mat-error *ngIf="form.get('fullClaimNumber').hasError('required')">
+            Claim number is <strong>required</strong>
+          </mat-error>
+          <mat-error *ngIf="form.get('fullClaimNumber').hasError('minlength')">
+            Claim number must be at least <strong>seven characters</strong>
+          </mat-error>
+        </mat-form-field>
+      </div>
+      </section>
+
+      <section>
+        <!--Claim Number-->
+        <div class="field-container" [hidden]="claimSearchShowOnlySearchField">
+          <div><label class="mat-label other-label">Claim Number</label></div>
+          <mat-form-field>
+            <input matInput formControlName="claimNumber" id="claimNumber" name="claimNumber">
+          </mat-form-field>
+        </div>
+        <!--Claim Liability Status-->
+        <div class="field-container-right" [hidden]="claimSearchShowOnlySearchField">
+          <div><label class="mat-label other-label">Claim Liability Status</label></div>
+          <mat-form-field>
+            <input matInput formControlName="claimLiabilityStatus" id="claimLiabilityStatus"
+              name="claimLiabilityStatus">
+          </mat-form-field>
+        </div>
+        </section>
+        <section>
+        <!--Pension Case-->
+        <div class="field-container" [hidden]="claimSearchShowOnlySearchField">
+          <div><label class="mat-label other-label">Is Pension Case?</label></div>
+          <mat-form-field>
+            <input matInput formControlName="isPensionCase" id="isPensionCase" name="isPensionCase">
+          </mat-form-field>
+        </div>
+        <!--Pension Case Number-->
+        <div class="field-container-right" [hidden]="claimSearchShowOnlySearchField">
+          <div><label class="mat-label other-label">Pension Case Number</label></div>
+          <mat-form-field>
+            <input matInput formControlName="pensionCaseNumber" id="pensionCaseNumber" name="pensionCaseNumber">
+          </mat-form-field>
+        </div>
+      </section>
+
+      <section>
+        <!--Person Name-->
+        <div class="field-container" [hidden]="claimSearchShowOnlySearchField">
+          <div><label class="mat-label other-label">Person Name</label></div>
+          <mat-form-field>
+            <input matInput formControlName="personName" id="personName" name="personName">
+          </mat-form-field>
+        </div>
+        <!--Date of Birth-->
+        <div class="field-container-right" [hidden]="claimSearchShowOnlySearchField">
+          <mat-form-field>
+            <label class="mat-label other-label">Date of Birth</label>
+            <input matInput formControlName="dateOfBirth" [matDatepicker]="dateOfBirth" id="dateOfBirth"
+              name="dateOfBirth">
+            <mat-datepicker-toggle matSuffix [for]="dateOfBirth" [disabled]="true"></mat-datepicker-toggle>
+            <mat-datepicker touchUi="true" #dateOfBirth></mat-datepicker>
+          </mat-form-field>
+        </div>
+        </section>
+        <section>
+        <!--ID Number-->
+        <div class="field-container" [hidden]="claimSearchShowOnlySearchField">
+          <div><label class="mat-label other-label">ID Number</label></div>
+          <mat-form-field>
+            <input matInput formControlName="idNumber" id="idNumber" name="idNumber">
+          </mat-form-field>
+        </div>
+        <!--Passport Number-->
+        <div class="field-container-right" [hidden]="claimSearchShowOnlySearchField">
+          <div><label class="mat-label other-label">Passport Number</label></div>
+          <mat-form-field>
+            <input matInput formControlName="passportNumber" id="passportNumber" name="passportNumber">
+          </mat-form-field>
+        </div>
+      </section>
+
+      <section>
+        <!--Employer Name-->
+        <div class="field-container" [hidden]="claimSearchShowOnlySearchField">
+          <div><label class="mat-label other-label">Employer Name</label></div>
+          <mat-form-field>
+            <input matInput formControlName="employerName" id="employerName" name="employerName">
+          </mat-form-field>
+        </div>
+        <!--Industry Number-->
+        <div class="field-container-right" [hidden]="claimSearchShowOnlySearchField">
+          <div><label class="mat-label other-label">Industry Number</label></div>
+          <mat-form-field>
+            <input matInput formControlName="industryNumber" id="industryNumber" name="industryNumber">
+          </mat-form-field>
+        </div>
+        </section>
+        <section>
+        <!--Claim Contact No-->
+        <div class="field-container" [hidden]="claimSearchShowOnlySearchField">
+          <div><label class="mat-label other-label">Claim Contact No</label></div>
+          <mat-form-field>
+            <input matInput formControlName="claimContactNo" id="claimContactNo" name="claimContactNo">
+          </mat-form-field>
+        </div>
+        <!--PreAuth Contact No-->
+        <div class="field-container-right" [hidden]="claimSearchShowOnlySearchField">
+          <div><label class="mat-label other-label">PreAuth Contact No</label></div>
+          <mat-form-field>
+            <input matInput (keypress)="onKeypressEvent($event)" formControlName="preAuthContactNo"
+              id="preAuthContactNo" name="preAuthContactNo" maxlength="12">
+          </mat-form-field>
+        </div>
+      </section>
+
+      <br />
+      <div class="field-container" *ngIf="isInternalUser">
+        <mat-checkbox formControlName="isPatientVerified">
+          <label class="mat-label other-label mandatory-field">Is Patient Verified?</label>
+        </mat-checkbox>
+      </div>
+    </mat-card-content>
+  </mat-card>
+  <br />
+  <br />
+
+</form>

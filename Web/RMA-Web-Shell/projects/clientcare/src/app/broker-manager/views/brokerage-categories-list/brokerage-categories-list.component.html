@@ -1,0 +1,57 @@
+<div class="page-header">
+</div>
+<div *ngIf="!canAdd">
+    <div class="wizard-permissions-error">
+        You do not have sufficient permissions to add categories.</div>
+    <div (click)="back()" class="form-buttons submit-button">
+        <button type="button" class="button float-button">Back</button>
+    </div>
+</div>
+<div>
+    <div class="wizard-main-content">
+        <h4>Categories</h4>
+        <mat-card class="wizard-mat-card">
+            <mat-card-content class="wizard-mat-card-content">
+                <div class="Categories-container">
+                    <mat-table #table [dataSource]="dataSource" matSort>
+                        <ng-container matColumnDef="description">
+                            <mat-header-cell *matHeaderCellDef mat-sort-header> Description </mat-header-cell>
+                            <mat-cell *matCellDef="let BrokerageFscaLicenseCategory"> {{BrokerageFscaLicenseCategory.description || '---'}} </mat-cell>
+                        </ng-container>
+                        <ng-container matColumnDef="categoryNo">
+                            <mat-header-cell *matHeaderCellDef mat-sort-header> Category No. </mat-header-cell>
+                            <mat-cell *matCellDef="let BrokerageFscaLicenseCategory"> {{BrokerageFscaLicenseCategory.categoryNo || '---'}} </mat-cell>
+                        </ng-container>
+                        <ng-container matColumnDef="subCategoryNo">
+                            <mat-header-cell *matHeaderCellDef mat-sort-header> Sub Category No. </mat-header-cell>
+                            <mat-cell *matCellDef="let BrokerageFscaLicenseCategory"> {{BrokerageFscaLicenseCategory.subCategoryNo || '---'}} </mat-cell>
+                        </ng-container>
+                        <ng-container matColumnDef="productClassText">
+                            <mat-header-cell *matHeaderCellDef mat-sort-header> Product Class </mat-header-cell>
+                            <mat-cell *matCellDef="let BrokerageFscaLicenseCategory"> {{BrokerageFscaLicenseCategory.productClassText || '---'}} </mat-cell>
+                        </ng-container>
+                        <ng-container matColumnDef="adviceDateActive">
+                            <mat-header-cell *matHeaderCellDef mat-sort-header> Advice Active Date </mat-header-cell>
+                            <mat-cell *matCellDef="let BrokerageFscaLicenseCategory"> {{BrokerageFscaLicenseCategory.adviceDateActive ? (BrokerageFscaLicenseCategory.adviceDateActive | date:'yyyy/MM/dd') : '---'}} </mat-cell>
+                        </ng-container>
+                        <ng-container matColumnDef="intermediaryDateActive">
+                            <mat-header-cell *matHeaderCellDef mat-sort-header> Intermediary Active Date </mat-header-cell>
+                            <mat-cell *matCellDef="let BrokerageFscaLicenseCategory"> {{BrokerageFscaLicenseCategory.intermediaryDateActive ? (BrokerageFscaLicenseCategory.intermediaryDateActive | date:'yyyy/MM/dd') : '---'}} </mat-cell>
+                        </ng-container>
+                        <ng-container matColumnDef="actions">
+                            <mat-header-cell *matHeaderCellDef>Actions</mat-header-cell>
+                            <mat-cell *matCellDef="let row; let i = index;">
+                                <a *ngIf="row.id > 0" (click)="openAuditDialog(row)" role="button" class="link-edit">
+                                    <span matTooltip="audit" class="material-icons icn pointer">
+                                        fingerprint
+                                    </span>
+                                </a>
+                            </mat-cell>
+                        </ng-container>
+                        <mat-header-row *matHeaderRowDef="displayedColumns; sticky: true"></mat-header-row>
+                        <mat-row *matRowDef="let row; columns: displayedColumns;"></mat-row>
+                    </mat-table>
+                </div>
+            </mat-card-content>
+        </mat-card>
+    </div>

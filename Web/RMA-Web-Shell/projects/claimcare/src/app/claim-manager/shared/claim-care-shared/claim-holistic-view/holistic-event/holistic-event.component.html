@@ -1,0 +1,81 @@
+<mat-card *ngIf="isLoading$ | async">
+    <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+    <label class="mat-label other-label"><i>{{loadingMessage$ | async}}</i></label>
+</mat-card>
+
+
+<mat-card *ngIf="!(isLoading$ | async) && !isEdit">
+    <div class="menu-bar">
+        <span *ngIf="currentUser?.isInternalUser && event && !isNotSTP && !hasRunningWizard" (click)="openStartEditWizardConfirmationDialog()" class="material-icons pointer right" matTooltip="edit">
+            settings
+        </span>
+        <span class="material-icons">crisis_alert</span>&nbsp;Event Details:&nbsp;<span
+            *ngIf="event">{{getEventType(event.eventType)}}&nbsp;({{event.eventReferenceNumber}}) &nbsp;</span>
+    </div>
+    <mat-tab-group animationDuration="500ms" [(selectedIndex)]="selectedTab">
+        <mat-tab label="Event" *ngIf="!isWizard">
+                <mat-card *ngIf="event && !(isLoading$ | async)">
+                    <div class="flex-parent-element">
+                      <div class="flex-child-element" *ngIf="event.eventType == accident">
+                        <table class="altRowTable">
+                            <tr>
+                                <td><b>Event Number: </b></td>
+                                <td>{{event.eventReferenceNumber}}</td>
+                            </tr>
+                            <tr>
+                                <td><b>Event Description: </b></td>
+                                <td>{{event.description}}</td>
+                            </tr>
+                            <tr>
+                                <td><b>Event Date: </b></td>
+                                <td>{{event.eventDate | date:'yyyy-MM-dd'}}</td>
+                            </tr>
+                            <tr>
+                                <td><b>Event Time: </b></td>
+                                <td>{{event.eventDate | date:'hh:mm a'}}</td>
+                            </tr>
+                        </table>
+                      </div>
+                      <div class="flex-child-element" *ngIf="event.eventType == accident">
+                        <table class="altRowTable">
+                            <tr>
+                                <td><b>Location Category: </b></td>
+                                <td>{{getLocationCategory(event.locationCategory)}}</td>
+                            </tr>
+                            <tr>
+                                <td><b>Number Of Deceased Employees: </b></td>
+                                <td>{{event.numberOfDeceasedEmployees}}</td>
+                            </tr>
+                            <tr>
+                                <td><b>Number Of Injured Employees: </b></td>
+                                <td>{{event.numberOfInjuredEmployees}}</td>
+                            </tr>
+                        </table>
+                      </div>
+                      <div class="flex-child-element" *ngIf="event.eventType != accident">
+                        <table class="altRowTable">
+                            <tr>
+                                <td><b>Event Number: </b></td>
+                                <td>{{event.eventReferenceNumber}}</td>
+                            </tr>
+            
+                            <tr>
+                                <td><b>Event Description: </b></td>
+                                <td>{{event.description}}</td>
+                            </tr>
+                        </table>
+                      </div>
+                    </div>
+                </mat-card>
+        </mat-tab>
+        <mat-tab label="Active Workflows ({{activeWizards && activeWizards.length ? activeWizards.length : '0' }})" *ngIf="!isWizard && userHasPermission(hasEditPermissions) && currentUser?.isInternalUser">
+            <lib-running-wizards [moduleName]="'claimcare'" [managerName]="'claim-manager'"
+                [linkedItemId]="eventId"
+                [wizardTypeCSVs]="'accident-claim,disease-claim'"
+                [triggerRefresh]="refresh"
+                (hasWizardsEmit)="setRunningWizards($event)"
+                (activeWizardsEmit)="setActiveWizards($event)">
+            </lib-running-wizards>
+        </mat-tab>
+    </mat-tab-group>
+</mat-card>

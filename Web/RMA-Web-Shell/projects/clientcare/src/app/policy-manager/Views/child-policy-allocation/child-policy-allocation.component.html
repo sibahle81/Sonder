@@ -1,0 +1,214 @@
+<div>
+  <h3>Child Policies Allocation</h3>
+  <br>
+</div>
+
+<form [formGroup]="form" novalidate>
+  <div class="div_main">
+    <section>     
+      <div (click)="back()" class="form-buttons submit-button">
+        <button type="button" class="button float-button">Back</button>
+      </div>
+    </section>
+    <div>
+      <h4 *ngIf="fileName" class="file-name">{{fileName}}</h4></div>
+    <section>
+      <p *ngIf="isLoadingTransactions$ | async">
+        <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+        <label class="mat-label other-label"><i>loading transactions...please wait</i></label>
+      </p>
+    </section>
+    <section *ngIf="searchFailedMessage.length > 0">
+      <p class="noTransactions"><i>{{searchFailedMessage}}</i>
+      </p>
+    </section>
+    <section *ngIf="showTransactionsSearch || showDebtorSearch">
+      <div style="margin-bottom: 15px;">
+        <mat-form-field class="mat-form-field">
+          <label class="mat-label other-label">Start Date</label>
+          <input matInput [matDatepicker]="startDatePicker" date="true" time="false" formControlName="startDate"
+            [max]="startMaxDate" readonly (ngModelChange)="startDateChange()">
+          <mat-datepicker-toggle matSuffix class="picker-toggle" [for]="startDatePicker"></mat-datepicker-toggle>
+          <mat-datepicker #startDatePicker touchUi="true" ng-model-options="{ timezone: 'useUtc' }">
+          </mat-datepicker>
+        </mat-form-field>
+        <mat-form-field class="mat-form-field-right">
+          <label class="mat-label other-label">End Date</label>
+          <input matInput [matDatepicker]="endDatePicker" date="true" time="false" formControlName="endDate"
+            [max]="endMaxDate" [min]="endMinDate" readonly (ngModelChange)="endDateChange()">
+          <mat-datepicker-toggle matSuffix class="picker-toggle" [for]="endDatePicker"></mat-datepicker-toggle>
+          <mat-datepicker #endDatePicker touchUi="true" ng-model-options="{ timezone: 'sast' }"></mat-datepicker>
+        </mat-form-field>
+      </div>
+    </section>
+    <section *ngIf="showLinkTransactionDetails" class="boldText">
+      <mat-card>
+        <div class="grid-inputs">
+          <!-- <h4 *ngIf="fileName">File Name:</h4>
+          <h4 *ngIf="fileName">{{fileName}}</h4> -->
+          <h4 *ngIf="debtorName">Debtor:</h4>
+          <h4 *ngIf="debtorName">{{debtorName | uppercase}}</h4>
+          <h4 *ngIf="allocateToDebtorName">Debtor Name:</h4>
+          <h4 *ngIf="allocateToDebtorName">{{allocateToDebtorName | uppercase }}</h4>
+          <h4>Statement/Rma Reference:</h4>
+          <h4>{{selectedBankReference}}</h4>
+          <h4>Original Amount:</h4>
+          <h4>{{originalTransactionAmount}}</h4>
+          <h4>{{allocationAmountLabel}}:</h4>
+          <mat-form-field class="mat-form-field">           
+              <input [(ngModel)]="transactionAmount" matInput formControlName="transactionAmount"
+                name="transactionAmount" id="transactionAmount" DecimalNumber="true" type="number" />
+              <mat-error *ngIf="form.get('transactionAmount').hasError('required')">
+                Allocation amount is <strong>required</strong>
+              </mat-error>
+              <mat-error *ngIf="form.get('transactionAmount').hasError('maxAmountExeeded')">
+                Allocation amount cannot exceed balace of <strong>{{maxAllocatableAmount}}</strong>
+              </mat-error>
+              <mat-error *ngIf="form.get('transactionAmount').hasError('maxAmountLessZero')">
+                Allocation amount less than or equal to 0
+              </mat-error>
+          </mat-form-field>
+        </div>
+      </mat-card>
+    </section>    
+    <section *ngIf="showDebtorSearch  && !transactionSelected  && !showLinkTransactionDetails">
+      <lib-search-debtor (itemSelected)="onAccountSelected($event)"></lib-search-debtor>
+    </section>
+    <section *ngIf="showParentAccountSearch">
+      <h4>Parent Account (To Allocate To)</h4>
+      <lib-search-debtor (itemSelected)="onAllocateToDebtorSelected($event)"></lib-search-debtor>
+    </section>
+    <section [hidden]="!showPeriodSearch">
+      <lib-concurrent-period (periodSelected)="concurrentPeriodSelected($event)"
+        (isValid)="isValidPeriodSelected($event)" [validationDate]="transactionDate"></lib-concurrent-period>
+    </section>
+
+    <div [hidden]="datasource.data.length === 0  || showLinkTransactionDetails">
+      <mat-table #table [dataSource]="datasource" matSort>
+        <ng-container matColumnDef="bankReference" class="mat-column-claimNumber">
+          <mat-header-cell *matHeaderCellDef mat-sort-header> Reference</mat-header-cell>
+          <mat-cell *matCellDef="let row"> {{row.rmaReference}} </mat-cell>
+        </ng-container>
+        <ng-container matColumnDef="amount" class="mat-column-created">
+          <mat-header-cell *matHeaderCellDef mat-sort-header> Amount </mat-header-cell>
+          <mat-cell *matCellDef="let row"> {{row.amount}} </mat-cell>
+        </ng-container>
+        <ng-container matColumnDef="transactionDate">
+          <mat-header-cell *matHeaderCellDef mat-sort-header> Document Date </mat-header-cell>
+          <mat-cell *matCellDef="let row"> {{row.transactionDate | date: 'yyyy/MM/dd' }} </mat-cell>
+        </ng-container>
+        <ng-container matColumnDef="unallocatedAmount" class="mat-column-created">
+          <mat-header-cell *matHeaderCellDef mat-sort-header> Unallocated Balance</mat-header-cell>
+          <mat-cell *matCellDef="let row"> {{row.balance}} </mat-cell>
+        </ng-container>
+        <ng-container matColumnDef="balance" class="mat-column-created">
+          <mat-header-cell *matHeaderCellDef mat-sort-header> Allocated Amount</mat-header-cell>
+          <mat-cell *matCellDef="let row"> {{getAllocatedAmount(row.amount,row.balance) }} </mat-cell>
+        </ng-container>
+        <ng-container matColumnDef="actions" class="mat-column-action">
+          <mat-header-cell *matHeaderCellDef class="Action">Action
+          </mat-header-cell>
+          <mat-cell *matCellDef="let row">
+            <div *ngIf="row.balance > 0">
+              <a role="button" (click)="onDebtorTransactionSelect(row)" class="link-edit">Select</a>
+            </div>
+            <div *ngIf="row.balance == 0">
+              <i>Fully allocated</i>
+            </div>
+          </mat-cell>
+        </ng-container>
+        <mat-header-row *matHeaderRowDef="displayedColumns;"></mat-header-row>
+        <mat-row *matRowDef="let row; columns: displayedColumns;"></mat-row>
+      </mat-table>
+      <mat-paginator #paginator [length]="datasource.data ? datasource.data.length : 0" [pageIndex]="0" [pageSize]="5"
+        [pageSizeOptions]="[5, 10, 25, 100]">
+      </mat-paginator>
+    </div>
+    <div [hidden]="payments.data.length === 0  || showLinkTransactionDetails">
+      <mat-table #table [dataSource]="payments.data" matSort (matSortChange)="handleSortEvent($event)">
+        <ng-container matColumnDef="bankAccountNumber">
+          <mat-header-cell *matHeaderCellDef mat-sort-header>Bank Account Number</mat-header-cell>
+          <mat-cell *matCellDef="let row"> {{row.bankAccountNumber}} </mat-cell>
+        </ng-container>
+        <ng-container matColumnDef="statementReference">
+          <mat-header-cell *matHeaderCellDef mat-sort-header>RMA Reference</mat-header-cell>
+          <mat-cell *matCellDef="let row"> {{row.statementReference}} </mat-cell>
+        </ng-container>
+        <ng-container matColumnDef="userReference">
+          <mat-header-cell *matHeaderCellDef mat-sort-header>Description</mat-header-cell>
+          <mat-cell *matCellDef="let row"> {{row.userReference}} </mat-cell>
+        </ng-container>
+        <ng-container matColumnDef="userReference2">
+          <mat-header-cell *matHeaderCellDef mat-sort-header>User Reference2</mat-header-cell>
+          <mat-cell *matCellDef="let row"> {{row.userReference2}} </mat-cell>
+        </ng-container>
+        <ng-container matColumnDef="transactionDate">
+          <mat-header-cell *matHeaderCellDef mat-sort-header>Transaction Date</mat-header-cell>
+          <mat-cell *matCellDef="let row"> {{row.transactionDate | date:'yyyy/MM/dd'}} </mat-cell>
+        </ng-container>
+        <ng-container matColumnDef="hyphenDateProcessed">
+          <mat-header-cell *matHeaderCellDef mat-sort-header>Hyphen Date Processed</mat-header-cell>
+          <mat-cell *matCellDef="let row"> {{row.hyphenDateProcessed | date:'yyyy/MM/dd'}} </mat-cell>
+        </ng-container>
+        <ng-container matColumnDef="hyphenDateReceived">
+          <mat-header-cell *matHeaderCellDef mat-sort-header>Hyphen Date Received</mat-header-cell>
+          <mat-cell *matCellDef="let row"> {{row.hyphenDateReceived | date:'yyyy/MM/dd'}} </mat-cell>
+        </ng-container>
+        <ng-container matColumnDef="amount">
+          <mat-header-cell *matHeaderCellDef mat-sort-header>Amount</mat-header-cell>
+          <mat-cell *matCellDef="let row"> {{row.amount | currency:'ZAR':'' | replace:',':' ' }} </mat-cell>
+        </ng-container>
+        <ng-container matColumnDef="action">
+          <mat-header-cell *matHeaderCellDef mat-sort-header>Action</mat-header-cell>
+          <mat-cell *matCellDef="let row"><a role="button" class="link-edit"
+              (click)="onUnallocatedSelect(row)">Select</a>
+          </mat-cell>
+        </ng-container>
+        <mat-header-row *matHeaderRowDef="displayedColumnsUnallocated"></mat-header-row>
+        <mat-row *matRowDef="let row; columns: displayedColumnsUnallocated;"></mat-row>
+      </mat-table>
+      <mat-paginator #paginator [length]="payments.rowCount" [pageIndex]="payments.page-1"
+        [pageSize]="payments.pageSize" [pageSizeOptions]="[5, 10, 25, 100]" (page)="handlePageEvent($event)">
+      </mat-paginator>
+    </div>
+    <div>
+      <div  [hidden]="uploadHidden">
+        <upload-control #uploadControl [acceptedTypes]="'.xlsx'" [isSingleInput]="false" [allowDelete]="true"
+          [isReadOnly]="false">
+        </upload-control>
+      </div>
+      <!-- <div class="left-padding" *ngIf="uploadControlComponent.uploadFileList.length > 0">
+        <div>Uploading large files may take several minutes. Please be patient.</div>
+        <br>
+      </div> -->
+      <section>
+        <p *ngIf="isLoadingSubmittingAllocations$ | async">
+          <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+          <label class="mat-label other-label"><i>loading submitting allocations...please wait</i></label>
+        </p>
+      </section>
+      <br />
+      <br />
+      <div class="form-buttons" (click)="allocatePremiums()">
+        <button class="button float-button submit-button"   [disabled]="!canAllocate"
+          >Allocate
+          </button>
+      </div>
+      <div class="form-buttons" (click)="reverse()">
+        <button class="button float-button submit-button" [disabled]="!canReverse">Reverse Allocation
+        </button>
+      </div>
+      <div class="form-buttons" >
+        <button class="button float-button submit-button"  (click)="reports()"  [disabled]="!canViewReports">Reports
+        </button>
+      </div>
+    </div>
+  </div>
+</form>
+<div [hidden]="!hasErrors" class="error-message">  
+  <br />
+  <ng-container *ngFor="let msg of errors">
+    {{msg}}<br />
+  </ng-container>
+
+</div>

@@ -1,0 +1,35 @@
+<span class="margin-right">
+    <span *ngIf="isLoading$ | async" class="material-icons rotating" matTooltip="loading compliance status">
+        loop
+    </span>
+
+    <span *ngIf="!(isLoading$ | async) && complianceResult">
+        <span *ngIf="!(complianceResult.isApplicable)" matTooltip="not applicable to this product">N/A</span>
+        <span *ngIf="complianceResult.isApplicable">
+            <span class="pointer" *ngIf="isBillingCompliant() && isDeclarationCompliant()" matTooltip="compliant"
+                (click)="openReasonDialog()">
+                <span class="material-icons green"
+                    [ngClass]="{'blue': (!complianceResult.isBillingCompliant && complianceResult.debtorStatus && complianceResult.debtorStatus == termsArrangement)}">
+                    local_police
+                </span>
+            </span>
+
+            <span class="pointer"
+                *ngIf="(!isBillingCompliant() && isDeclarationCompliant()) || (isBillingCompliant() && !isDeclarationCompliant())"
+                matTooltip="partially compliant: click to see why" (click)="openReasonDialog()">
+                <span class="material-icons amber"
+                    [ngClass]="{'blue': (!complianceResult.isBillingCompliant && complianceResult.debtorStatus && complianceResult.debtorStatus == termsArrangement)}">
+                    gpp_maybe
+                </span>
+            </span>
+
+            <span class="pointer" *ngIf="!isBillingCompliant() && !isDeclarationCompliant()"
+                matTooltip="not compliant: click to see why" (click)="openReasonDialog()">
+                <span class="material-icons red"
+                    [ngClass]="{'blue': (!complianceResult.isBillingCompliant && complianceResult.debtorStatus && complianceResult.debtorStatus == termsArrangement)}">
+                    gpp_bad
+                </span>
+            </span>
+        </span>
+    </span>
+</span>

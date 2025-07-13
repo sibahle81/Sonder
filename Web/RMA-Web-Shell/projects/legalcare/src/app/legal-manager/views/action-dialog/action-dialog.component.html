@@ -1,0 +1,21 @@
+<div *ngIf="data.action == 'delete'" class="action">
+    <div [ngClass]=" isSpinner ? 'disabled-view' : 'enabled-view' ">
+        <h2 class="action-name">Delete</h2>
+        <p class="ack-que">Do you want to delete {{data.entity}} ?</p>
+        <div class="action-div">
+            <span class="select-action action-btns" (click)="deleteAction()">
+                <mat-icon class="action-icons">check</mat-icon>
+                <span class="option">YES CONFIRM</span>
+            </span>
+            <span class="select-action action-btns" (click)="closeDialog()">
+                <mat-icon class="action-icons">close</mat-icon>
+                <span class="option">NO THANKS</span>
+            </span>
+        </div>
+    </div>
+
+    <div [hidden]="!isSpinner" class="spinner-view">
+        <mat-spinner *ngIf="isSpinner"></mat-spinner>
+    </div>
+
+</div>

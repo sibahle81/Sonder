@@ -1,0 +1,25 @@
+<div class="menu-bar">
+  Contacts <span *ngIf="rolePlayer">({{rolePlayer.displayName}})</span>
+  <span (click)="cancel()" class="material-icons pointer right" matTooltip="close">
+    cancel
+  </span>
+  <span *ngIf="selectedContacts && selectedContacts.length > 0" (click)="save()" class="material-icons pointer right pulse" matTooltip="send communication">
+    send
+  </span>
+</div>
+
+<mat-card *ngIf="(isLoading$ | async)">
+  <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+  <label class="mat-label other-label"><i>loading...please wait</i></label>
+</mat-card>
+
+<div *ngIf="!(isLoading$ | async) && rolePlayer">
+  <mat-card>
+    <member-contacts 
+    [member]="rolePlayer" 
+    [isSelectionMode]="true" 
+    [supportedPreferredCommunicationTypes]="supportedPreferredCommunicationTypes" 
+    [filteredInformationTypes]="filteredInformationTypes"
+    (selectedContactsEmit)="contactSelected($event)"></member-contacts>
+  </mat-card>
+</div>

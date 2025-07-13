@@ -1,0 +1,96 @@
+<div class="menu-bar">
+    <span>
+        <span class="material-icons">
+            beach_access
+        </span>
+        Cover
+    </span>
+</div>
+
+<mat-card *ngIf="(dataSource.loading$ | async)">
+    <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+    <label class="mat-label other-label"><i>searching...please wait</i></label>
+</mat-card>
+
+<div
+    [hidden]="(!(dataSource.data && dataSource.data.data && dataSource.data.data?.length > 0) || (dataSource.loading$ | async))">
+    <mat-card>
+        <mat-table #table [dataSource]="dataSource" matSort id="tblData" (matSortChange)="getData()">
+            <ng-container matColumnDef="effectiveFrom">
+                <mat-header-cell *matHeaderCellDef mat-sort-header> Effective From </mat-header-cell>
+                <mat-cell *matCellDef="let row"><span class="material-icons">
+                        play_arrow
+                    </span>{{row.effectiveFrom | date: 'yyyy/MM/dd'}}</mat-cell>
+            </ng-container>
+
+            <ng-container matColumnDef="effectiveTo">
+                <mat-header-cell *matHeaderCellDef mat-sort-header> Effective To </mat-header-cell>
+                <mat-cell *matCellDef="let row">
+                    <span *ngIf="row.effectiveTo">
+                        <span class="material-icons">stop</span>{{row.effectiveTo | date: 'yyyy/MM/dd'}}</span>
+                    <span *ngIf="!row.effectiveTo" class="material-icons">all_inclusive</span>
+                </mat-cell>
+            </ng-container>
+
+            <ng-container matColumnDef="createdBy">
+                <mat-header-cell *matHeaderCellDef> Created By </mat-header-cell>
+                <mat-cell *matCellDef="let row">
+                    {{row.createdBy}}
+                </mat-cell>
+            </ng-container>
+            <ng-container matColumnDef="createdByConverted">
+                <mat-header-cell *matHeaderCellDef> *Created By </mat-header-cell>
+                <mat-cell *matCellDef="let row">
+                    <user-display-name [userName]="row.createdBy"></user-display-name>
+                </mat-cell>
+            </ng-container>
+            <ng-container matColumnDef="createdDate">
+                <mat-header-cell *matHeaderCellDef mat-sort-header> Created Date </mat-header-cell>
+                <mat-cell *matCellDef="let row">
+                    {{row.createdDate | date: "yyyy/MM/dd"}}
+                </mat-cell>
+            </ng-container>
+            <ng-container matColumnDef="modifiedBy">
+                <mat-header-cell *matHeaderCellDef> Modified By </mat-header-cell>
+                <mat-cell *matCellDef="let row">
+                    {{row.modifiedBy}}
+                </mat-cell>
+            </ng-container>
+            <ng-container matColumnDef="modifiedByConverted">
+                <mat-header-cell *matHeaderCellDef> *Modified By </mat-header-cell>
+                <mat-cell *matCellDef="let row">
+                    <user-display-name [userName]="row.modifiedBy"></user-display-name>
+                </mat-cell>
+            </ng-container>
+            <ng-container matColumnDef="modifiedDate">
+                <mat-header-cell *matHeaderCellDef mat-sort-header> Modified Date </mat-header-cell>
+                <mat-cell *matCellDef="let row">
+                    {{row.modifiedDate | date: "yyyy/MM/dd H:mm:ss"}}
+                </mat-cell>
+            </ng-container>
+            <ng-container matColumnDef="actions">
+                <mat-header-cell *matHeaderCellDef> Actions </mat-header-cell>
+                <mat-cell *matCellDef="let row">
+                    <a *ngIf="userHasPermission(viewAuditPermission)" (click)="openAuditDialog(row)" role="button"
+                        class="link-edit">
+                        <span matTooltip="audit" class="material-icons icn pointer">
+                            fingerprint
+                        </span>
+                    </a>
+                </mat-cell>
+            </ng-container>
+
+            <mat-header-row *matHeaderRowDef="getDisplayedColumns()"></mat-header-row>
+            <mat-row *matRowDef="let row; columns: getDisplayedColumns();"></mat-row>
+        </mat-table>
+
+        <mat-paginator #paginator [pageIndex]="0" [pageSize]="5" [pageSizeOptions]="[5, 10, 25, 100]"
+            [length]="this.dataSource.rowCount$ | async" (page)="getData()">
+        </mat-paginator>
+    </mat-card>
+</div>
+
+<mat-card
+    *ngIf="(!(dataSource.data && dataSource.data.data && dataSource.data.data?.length > 0) && !(dataSource.loading$ | async))">
+    <label class="mat-label other-label"><i>No cover found...</i></label>
+</mat-card>

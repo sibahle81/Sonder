@@ -1,0 +1,33 @@
+<div *ngIf="(isLoading$ | async)">
+    <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+    <span class="site-font">loading disability types...please wait</span>
+</div>
+
+<mat-card>
+    <div class="menu-bar">
+        <span class="material-icons">
+            accessible
+        </span>&nbsp;
+        Disability
+        <span *ngIf="addDisabilityPermission && userHasPermission('Add Disability')" class="material-icons pointer right"
+            matTooltip="add disability" (click)="openDisabilityDialog()">
+            post_add
+        </span>
+        &nbsp;
+        <span *ngIf="activatePensionInterview" class="material-icons pointer right"
+            matTooltip="pension interview" (click)="openPensionInterviewForm()">
+            quiz
+        </span>
+    </div>
+    <form [formGroup]="form" novalidate>
+        <mat-form-field class="mat-form-field-left">
+            <label class="mat-label other-label">Disability Type</label>
+            <mat-select name="disabilityTypeFilter" id="disabilityTypeFilter" formControlName="disabilityTypeFilter"
+                (selectionChange)="disabilityTypeChanged($event.value)">
+                <mat-option *ngFor="let DisabilityType of DisabilityTypes" [value]="DisabilityType">
+                    {{formatLookup(DisabilityType)}}
+                </mat-option>
+            </mat-select>
+        </mat-form-field>
+    </form>
+</mat-card>

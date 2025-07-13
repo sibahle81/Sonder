@@ -1,0 +1,96 @@
+<div *ngIf="(isLoading$ | async)">
+  <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+  <label class="mat-label other-label"><i>loading...please wait</i></label>
+</div>
+
+<div *ngIf="!(isLoading$ | async)" mat-dialog-content>
+  <div class="menu-bar">
+    <span class="material-icons">
+      insert_comment
+    </span>
+    My Notifications
+    <span (click)="cancel()" class="material-icons pointer right" matTooltip="close">
+      cancel
+    </span>
+    <span *ngIf="!showForm && !showView" (click)="toggleForm()" class="material-icons pointer right pulse" matTooltip="add">
+      add_circle
+    </span>
+    <span
+      *ngIf="((form.valid && !form.pristine) && selectedUserReminderType != message) 
+      || ((form.valid && !form.pristine) && selectedUserReminderType == message && selectedUsers && selectedUsers.length > 0)"
+      (click)="save()" class="material-icons pointer right pulse greenFont" matTooltip="save">
+      save
+    </span>
+  </div>
+
+  <mat-card *ngIf="!showForm && !showView">
+    <paged-user-reminders [userId]="userId"
+      (selectedUserReminderEmit)="viewUserReminder($event)"></paged-user-reminders>
+  </mat-card>
+
+  <div *ngIf="showForm">
+    <form [formGroup]="form" class="mat-container details-form" novalidate>
+      <section>
+        <mat-form-field class="mat-form-field">
+          <label class="mat-label other-label">Notification Type</label>
+          <mat-select name="userReminderType" id="userReminderType" formControlName="userReminderType"
+            (selectionChange)="userReminderTypeChanged($event.value)">
+            <mat-option *ngFor="let userReminderType of supportedUserReminderTypes" [value]="userReminderType">
+              {{getUserReminderType(userReminderType)}}
+            </mat-option>
+          </mat-select>
+          <mat-error *ngIf="form.get('userReminderType').hasError('required')">
+            notification type is <strong>required</strong>
+          </mat-error>
+        </mat-form-field>
+        <mat-form-field *ngIf="selectedUserReminderType" class="mat-form-field-right">
+          <label class="mat-label other-label">Text</label>
+          <textarea matInput maxlength="250" minlength="3" id="text" name="text" formControlName="text"></textarea>
+          <mat-error *ngIf="form.get('text').hasError('required')">
+            text is <strong>required</strong>
+          </mat-error>
+          <mat-error *ngIf="form.get('text').hasError('minlength')">
+            text must be at least <strong>3 characters</strong>
+          </mat-error>
+          <mat-error *ngIf="form.get('text').hasError('maxlength')">
+            text must be at most <strong>250 characters</strong>
+          </mat-error>
+        </mat-form-field>
+      </section>
+
+      <section>
+        <mat-form-field *ngIf="selectedUserReminderType == reminder" class="mat-form-field">
+          <label class="mat-label other-label">Reminder Date/Time</label>
+          <input matInput id="alertDateTime" name="alertDateTime" formControlName="alertDateTime" type="datetime-local">
+          <mat-error *ngIf="form.get('alertDateTime').hasError('required')">
+            reminder date/time is <strong>required</strong>
+          </mat-error>
+        </mat-form-field>
+      </section>
+    </form>
+  </div>
+
+  <div *ngIf="showSearch">
+    <user-search-V2 [title]="'Search Recipient(s)'" [allowMultiple]="true" [userType]="userType"
+      (usersSelectedEmit)="usersSelected($event)"></user-search-V2>
+  </div>
+
+  <mat-card *ngIf="showView">
+    <div>
+      {{selectedUserReminder.text}}
+      <br /><br />
+      <div *ngIf="selectedUserReminder.linkUrl && selectedUserReminder.linkUrl != ''">
+        <a href="{{selectedUserReminder.linkUrl}}"><span class="material-icons">
+            saved_search
+          </span>Click <b>HERE</b> to navigate to the
+          {{getUserReminderItemType(selectedUserReminder.userReminderItemType)}}</a>
+      </div>
+      <br />
+      <div class="menu-bar">
+        <label class="mat-label other-label"><i>
+          <user-display-name [userName]="selectedUserReminder.createdBy"></user-display-name> {{selectedUserReminder.modifiedDate | date: "yyyy-MM-dd h:mm:ss"}}
+        </i></label>
+      </div>
+    </div>
+  </mat-card>
+</div>

@@ -1,0 +1,62 @@
+<div class="vopd-content">
+    <div class="load-progress" *ngIf="isLoading$.value">
+        <div><mat-progress-bar mode="indeterminate"></mat-progress-bar></div>
+        <div>Loading VOPD results</div>
+    </div>
+    <div class="pad-bottom" [hidden]="isLoading$.value">
+        <mat-table #table [dataSource]="dataSource">
+            <ng-container matColumnDef="memberType">
+                <mat-header-cell *matHeaderCellDef> Member Type </mat-header-cell>
+                <mat-cell *matCellDef="let row"> {{row.memberType}} </mat-cell>
+            </ng-container>
+            <ng-container matColumnDef="memberName">
+                <mat-header-cell *matHeaderCellDef> Member Name </mat-header-cell>
+                <mat-cell *matCellDef="let row"> {{row.memberName}} </mat-cell>
+            </ng-container>
+            <ng-container matColumnDef="idNumber">
+                <mat-header-cell *matHeaderCellDef> ID Number </mat-header-cell>
+                <mat-cell *matCellDef="let row"> {{row.idNumber}} </mat-cell>
+            </ng-container>
+            <ng-container matColumnDef="dateOfBirth">
+                <mat-header-cell *matHeaderCellDef> Date of Birth </mat-header-cell>
+                <mat-cell *matCellDef="let row"> {{row.dateOfBirth | date:'yyyy-MM-dd'}} </mat-cell>
+            </ng-container>
+            <ng-container matColumnDef="age">
+                <mat-header-cell *matHeaderCellDef> Age </mat-header-cell>
+                <mat-cell *matCellDef="let row"> {{row.age}} </mat-cell>
+            </ng-container>
+            <ng-container matColumnDef="joinDate">
+                <mat-header-cell *matHeaderCellDef> Inception Date </mat-header-cell>
+                <mat-cell *matCellDef="let row"> {{row.joinDate | date:'yyyy-MM-dd'}} </mat-cell>
+            </ng-container>
+            <ng-container matColumnDef="vopdProcessStatus">
+                <mat-header-cell *matHeaderCellDef> VOPD Process Status </mat-header-cell>
+                <mat-cell *matCellDef="let row"> {{row.vopdProcessStatus}} </mat-cell>
+            </ng-container>
+            <ng-container matColumnDef="vopdStatus">
+                <mat-header-cell *matHeaderCellDef> VOPD Status </mat-header-cell>
+                <mat-cell *matCellDef="let row"> {{row.vopdStatus}} </mat-cell>
+            </ng-container>
+            <ng-container matColumnDef="dateVerified">
+                <mat-header-cell *matHeaderCellDef> Date Verified </mat-header-cell>
+                <mat-cell *matCellDef="let row"> {{row.dateVerified | date:'yyyy-MM-dd'}} </mat-cell>
+            </ng-container>
+            <!-- Actions -->
+            <ng-container matColumnDef="actions">
+                <mat-header-cell *matHeaderCellDef></mat-header-cell>
+                <mat-cell *matCellDef="let row" [matMenuTriggerFor]="menu">
+                    <section [hidden]="!editableMemberMembers.includes(row.memberType) || (editableMemberMembers.includes(row.memberType) && row.idNumber.length !== 13)">
+                        <span class="material-icons pointer right">more_vert</span>
+                        <mat-menu #menu="matMenu">
+                            <button mat-menu-item *ngFor="let menu of menus"
+                                (click)="onMenuItemClick(row, menu)">{{menu.title}}
+                            </button>
+                        </mat-menu>
+                    </section>
+                </mat-cell>
+            </ng-container>
+            <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
+            <mat-row *matRowDef="let row; columns: displayedColumns;"></mat-row>
+        </mat-table>
+    </div>
+</div>

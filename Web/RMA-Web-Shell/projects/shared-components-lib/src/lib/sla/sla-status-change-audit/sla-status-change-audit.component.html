@@ -1,0 +1,41 @@
+<span *ngIf="isLoading$ | async" class="material-icons rotating" matTooltip="calculating">
+    loop
+</span>
+
+<div
+    *ngIf="!(isLoading$ | async) && slaItemTypeConfiguration && slaStatusChangeAudits && slaStatusChangeAudits.length > 0">
+    <div class="limit"
+        *ngIf="slaItemTypeConfiguration.numberOfDaysAmberSla && slaItemTypeConfiguration.numberOfDaysAmberSla && isSlaRunning()"
+        [ngClass]="{ 'green': ((days$ | async) < slaItemTypeConfiguration.numberOfDaysRedSla), 'amber': ((days$ | async) >= slaItemTypeConfiguration.numberOfDaysAmberSla && (days$ | async) < slaItemTypeConfiguration.numberOfDaysRedSla), 'purple': ((days$ | async) >= slaItemTypeConfiguration.numberOfDaysRedSla)}">
+        {{calculatedSla$ | async}}
+        <span class="material-icons pointer" matTooltip="view Active SLA history"
+            (click)="openSLAStatusChangeAuditListDialog()">
+            help
+        </span>
+    </div>
+
+    <div *ngIf="!slaItemTypeConfiguration.numberOfDaysAmberSla && !slaItemTypeConfiguration.numberOfDaysRedSla && isSlaRunning()"
+        class="blue">
+        {{calculatedSla$ | async}}
+        <span class="material-icons pointer" matTooltip="view Active SLA history: no escalation"
+            (click)="openSLAStatusChangeAuditListDialog()">
+            help
+        </span>
+    </div>
+
+    <div *ngIf="!isSlaRunning()" class="gray">
+        {{calculatedSla$ | async}}
+        <span class="material-icons pointer" matTooltip="view Stopped SLA history"
+            (click)="openSLAStatusChangeAuditListDialog()">
+            help
+        </span>
+    </div>
+</div>
+
+<div *ngIf="!(isLoading$ | async) && (!slaStatusChangeAudits || slaStatusChangeAudits.length <= 0 )">
+    <i>N/A</i>
+</div>
+
+<div *ngIf="!(isLoading$ | async) && (!slaItemTypeConfiguration)">
+    no configuration found
+</div>

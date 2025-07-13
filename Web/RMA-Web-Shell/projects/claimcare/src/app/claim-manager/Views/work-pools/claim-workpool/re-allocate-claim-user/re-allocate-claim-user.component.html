@@ -1,0 +1,27 @@
+<h1 mat-dialog-title style="width:450px;background-color:#2DAAE1;padding-left:10px;padding-top:10px;padding-bottom:10px;color:white">Re-Allocate to Users</h1>
+<div mat-dialog-content style="width:450px;text-align:center;padding-bottom:70px;">
+    <form [formGroup]="form" class="mat-container" style="display:contents;" novalidate>
+        <mat-form-field style="width:80%;text-align:center;">
+            <!--select input field-->
+            <label class="mat-label other-label">Select User</label>
+            <mat-select id="filter" name="filter" matInput [(ngModel)]="filter" formControlName="filter"  >
+                <mat-option *ngFor="let workPool of usersToReAcclocate" [value]="workPool.userId">
+                    {{workPool.userName}}
+                </mat-option>
+            </mat-select>
+        </mat-form-field>
+        
+        <table border="0" style="width:90%;text-align:center;padding-left:10%">
+            <tr>
+                <td>
+                    <button type="button" class="button float-button" (click)="reAllocateUserToClaim('ReAllocate')" >Re-Allocate</button>
+                    <button type="button" class="button float-button" (click)="onNoClick('Cancel')">Cancel</button>
+                </td>
+            </tr>
+        </table>
+        
+    </form>
+
+    
+    
+</div>

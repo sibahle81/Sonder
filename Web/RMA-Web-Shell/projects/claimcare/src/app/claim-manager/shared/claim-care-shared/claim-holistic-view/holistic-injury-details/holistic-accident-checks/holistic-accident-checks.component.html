@@ -1,0 +1,72 @@
+<mat-card *ngIf="isLoading$ | async">
+    <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+    <label class="mat-label other-label"><i>loading accident details...please wait</i></label>
+</mat-card>
+
+<div [hidden]="(isLoading$ | async)">
+    <div class="menu-bar">
+        <span class="material-icons">
+            fact_check
+        </span>&nbsp;Check List
+        <span *ngIf="!isReadOnly && isWizard" (click)="editForm()" class="material-icons pointer right"
+            matTooltip="edit">
+            settings
+        </span>
+        <span *ngIf="hasAuditPermission && !isWizard" (click)="openAuditDialog(selectedPersonEvent)" matTooltip="audit"
+            class="material-icons pointer right">
+            fingerprint
+        </span>
+    </div>
+    <mat-card>
+        <form [formGroup]="form" class="mat-container details-form" novalidate>
+
+            <section>
+                <mat-checkbox id="isAssault" name="isAssault" formControlName="isAssault"
+                    class="example-margin left-control">
+                    Is Assault:</mat-checkbox>
+
+                <mat-checkbox id="atWorkPlace" name="atWorkPlace" formControlName="atWorkPlace"
+                    class="example-margin right-controls">Occurred At Normal Workplace:</mat-checkbox>
+            </section>
+            <section>
+                <mat-checkbox id="dentures" name="dentures" formControlName="dentures"
+                    class="example-margin left-control">Is
+                    Dentures:</mat-checkbox>
+
+                <mat-checkbox id="isStp" name="isStp" formControlName="isStp" class="example-margin right-controls">Is
+                    Straight
+                    Through Process:</mat-checkbox>
+            </section>
+            <section>
+                <mat-checkbox id="roadAccident" name="roadAccident" formControlName="roadAccident"
+                    class="example-margin left-control" (change)="isRoadAccidentChange($event)">
+                    Is road accident?
+                </mat-checkbox>
+
+                <mat-checkbox id="inScopeOfDuty" name="" formControlName="inScopeOfDuty"
+                    class="example-margin right-controls">
+                    Occurred Performing Scope of Duty:</mat-checkbox>
+            </section>
+
+            <section>
+                <mat-checkbox id="ledToDeath" name="ledToDeath" formControlName="ledToDeath"
+                    class="example-margin left-control" (change)="leadToDeathChange($event)">Did
+                    accident lead to death of a person?</mat-checkbox>
+            </section>
+            <section>
+                <mat-checkbox id="isHijack" name="isHijack" formControlName="isHijack"
+                    class="example-margin left-control">
+                    Is Hijack :</mat-checkbox>
+            </section>
+        </form>
+        <br />
+        <div *ngIf="!isReadOnly">
+            <span *ngIf="form.valid && !form.pristine" class="mat-label other-label pointer" (click)="save()"><span
+                    class="material-icons valid">check_circle</span></span>
+            <span *ngIf="!form.valid || form.pristine" class="mat-label other-label pointer"><span
+                    class="material-icons" class="material-icons inValid">check_circle</span></span>
+            <span class="mat-label other-label pointer" (click)="cancel()"><span
+                    class="material-icons">cancel</span></span>
+        </div>
+    </mat-card>
+</div>

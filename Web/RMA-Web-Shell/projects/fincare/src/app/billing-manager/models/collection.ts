@@ -1,0 +1,48 @@
+import { AdhocPaymentInstruction } from './adhoc-payment-instruction';
+import { Invoice } from './invoice';
+import { TermArrangementSchedule } from './term-arrangement-schedule';
+
+export class Collection {
+    collectionsId: number;
+    invoiceId: number;
+    bankReference: string;
+    collectionType: number;
+    amount: number;
+    collectionStatus: number;
+    rolePlayerBankingId: number;
+    accountNo: string;
+    bank: string;
+    bankBranch: string;
+    createdBy: string;
+    modifiedBy: string;
+    createdDate: Date;
+    modifiedDate: Date;
+    isActive: boolean;
+    isDeleted: boolean;
+    errorCode: string;
+    maxSubmissionCount: number;
+    submissionCount: number;
+    bankAccountType: number;
+    collectionTypeDesc: string;
+    collectionStatusDesc: string;
+    errorDescription: string;
+    accountTypeDesc: string;
+    submissionDate: Date;
+    collectionConfirmationDate: Date;
+    rejectionDate: Date;
+    reconciliationDate: Date;
+    dialogQuestion: string;
+    dialogView: string;
+    invoice: Invoice;
+    canResubmit: boolean;
+    batchReference: string;
+    debtor: string;
+    facsTransactionResults: [any];
+    collection: any;
+    reversalDate: Date;
+    debitOrderDate: Date;
+    termArrangementScheduleId: number;
+    termArrangementSchedule: TermArrangementSchedule;
+    adhocPaymentInstruction: AdhocPaymentInstruction;
+    adhocPaymentInstructionId: number;
+  }

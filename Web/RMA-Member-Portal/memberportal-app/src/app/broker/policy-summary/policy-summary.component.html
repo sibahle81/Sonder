@@ -1,0 +1,118 @@
+<div class="page-header"></div>
+<div class="wizard-main-content">
+  <mat-card class="wizard-mat-card">
+    <form [formGroup]="form" class="mat-container details-form" novalidate>
+      <mat-card-header>
+        <mat-card-title>
+          <h1 class="wizard-font">Fee Details</h1>
+        </mat-card-title>
+      </mat-card-header>
+      <mat-card-content class="wizard-mat-card-content">
+        <section>
+          <mat-form-field>
+            <label class="mat-label other-label mandatory-field">Commission Fee Percentage</label>
+            <input matInput (ngModelChange)="validateCommissionFee($event)" Percentage name="commissionFee"
+              id="commissionFee" formControlName="commissionFee" />
+            <mat-error *ngIf="form.get('commissionFee').hasError('required')">
+              Commission fee percentage is <strong>required</strong>
+            </mat-error>
+            <mat-error *ngIf="form.get('commissionFee').hasError('max')">
+              The commission fee percentage limit is <strong>{{productOption.maxCommissionFeePercentage |
+                percent:'1.0-2' }}</strong>
+            </mat-error>
+          </mat-form-field>
+          <mat-form-field class="mat-form-field-right">
+            <label class="mat-label other-label mandatory-field">Intermediary Service Fee Percentage</label>
+            <input matInput (ngModelChange)="validateAdminFee($event)" Percentage name="adminFee" id="adminFee"
+              formControlName="adminFee" />
+            <mat-error *ngIf="form.get('adminFee').hasError('required')">
+              Commission fee percentage is <strong>required</strong>
+            </mat-error>
+            <mat-error *ngIf="form.get('adminFee').hasError('max')">
+              The intermediary service fee percentage limit is <strong>{{productOption.maxAdminFeePercentage |
+                percent:'1.0-2' }}</strong>
+            </mat-error>
+          </mat-form-field>
+        </section>
+      </mat-card-content>
+      <mat-card-header>
+        <mat-card-title>
+          <h1 class="wizard-font">Benefit Details</h1>
+        </mat-card-title>
+      </mat-card-header>
+      <mat-card-content class="wizard-mat-card-content">
+        <div class="benefit-container">
+          <div *ngIf="dataSource.data.length === 0 && !(isLoading$ | async)">
+            <span class="red site-font" style="font-size: smaller;">No benefits added</span>
+          </div>
+          <div *ngIf="(isLoading$ | async)">
+            <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+            <label class="mat-label other-label"><i>loading benefits...please wait</i></label>
+          </div>
+          <div [hidden]="!(dataSource && dataSource.data && dataSource.data.length > 0)">
+            <mat-table #table [dataSource]="dataSource" matSort>
+              <ng-container matColumnDef="rolePlayerName">
+                <mat-header-cell *matHeaderCellDef mat-sort-header>Member</mat-header-cell>
+                <mat-cell *matCellDef="let row"> {{row.rolePlayerName}} </mat-cell>
+              </ng-container>
+              <ng-container matColumnDef="productOptionName">
+                <mat-header-cell *matHeaderCellDef mat-sort-header>Product Option</mat-header-cell>
+                <mat-cell *matCellDef="let row"> {{productOption ? productOption.description : ''}} </mat-cell>
+              </ng-container>
+              <ng-container matColumnDef="benefitName">
+                <mat-header-cell *matHeaderCellDef mat-sort-header>Benefit</mat-header-cell>
+                <mat-cell *matCellDef="let row"> {{row.benefitName}} </mat-cell>
+              </ng-container>
+              <ng-container matColumnDef="benefitRateLatest">
+                <mat-header-cell *matHeaderCellDef mat-sort-header style="justify-content: flex-end;">Benefit Amount
+                </mat-header-cell>
+                <mat-cell *matCellDef="let row" style="justify-content: flex-end;">
+                  {{row.benefitRateLatest|number:'1.2-2'}} </mat-cell>
+              </ng-container>
+              <ng-container matColumnDef="benefitBaseRateLatest">
+                <mat-header-cell *matHeaderCellDef mat-sort-header style="justify-content: flex-end;">Base Premium
+                </mat-header-cell>
+                <mat-cell *matCellDef="let row" style="justify-content: flex-end;">
+                  {{row.benefitBaseRateLatest|number:'1.2-2'}} </mat-cell>
+              </ng-container>
+              <mat-header-row *matHeaderRowDef="displayedColumns; sticky: true"></mat-header-row>
+              <mat-row *matRowDef="let row; columns: displayedColumns;"></mat-row>
+            </mat-table>
+            <mat-paginator #paginator [length]="dataSource.data ? dataSource.data.length : 0" [pageIndex]="0"
+              [pageSize]="10" [pageSizeOptions]="[5, 10, 15, 20]">
+            </mat-paginator>
+          </div>
+        </div>
+        <br />
+        <section>
+          <mat-form-field>
+            <label class="mat-label other-label mandatory-field">Payment Frequency</label>
+            <mat-progress-bar *ngIf="loadingPaymentFrequencies" mode="indeterminate"></mat-progress-bar>
+            <div [hidden]="loadingPaymentFrequencies">
+              <mat-select formControlName="paymentFrequency" name="paymentFrequency" id="paymentFrequency"
+                (selectionChange)="onPaymentFrequencyChange()">
+                <mat-option *ngFor="let frequency of paymentFrequencies" [value]="frequency.id">{{frequency.name}}
+                </mat-option>
+              </mat-select>
+              <mat-error *ngIf="form.get('paymentFrequency').hasError('min')">
+                Payment frequency is required
+              </mat-error>
+            </div>
+          </mat-form-field>
+        </section>
+        <section>
+          <mat-form-field>
+            <label class="mat-label other-label">Total Base Premium</label>
+            <input readonly matInput DecimalNumber name="totalBasePremium" id="totalBasePremium"
+              formControlName="totalBasePremium" />
+          </mat-form-field>
+          <mat-form-field class="mat-form-field-right">
+            <label class="mat-label other-label">Total Office Premium</label>
+            <input readonly matInput DecimalNumber name="totalOfficePremium" id="totalOfficePremium"
+              formControlName="totalOfficePremium" />
+          </mat-form-field>
+        </section>
+      </mat-card-content>
+    </form>
+  </mat-card>
+</div>

@@ -1,0 +1,114 @@
+﻿<div class="page-header"></div>
+<div *ngIf="!canAdd">
+    <h1>Subsidiary Details</h1>
+    <div style="padding-bottom: 15px; color: orange; font-family: 'Oswald', sans-serif;">You do not have sufficient permissions to add a new subsidiary.</div>
+    <div (click)="back()" class="form-buttons submit-button">
+        <button type="button" class="button float-button">Back</button>
+    </div>
+</div>
+
+<mat-card style="margin: 15px 30px 15px 30px">
+    <mat-card-header>
+        <mat-card-title class="wizard-font card-title grey">
+            <h1 [hidden]="isAdd" *ngIf="client">Add subsidiary for client: {{client.name}}</h1>
+            <h1 [hidden]="isAdd" *ngIf="!client">Loading client...</h1>
+            <h1 [hidden]="!isAdd" class="wizard-font" style="padding: 0;">Add Subsidiary Confirmation</h1>
+        </mat-card-title>
+    </mat-card-header>
+
+    <mat-card-content style="margin-left: 10px;">
+
+        <div [hidden]="isAdd">
+
+            <div class="mat-container mat-elevation-z8">
+
+                <div [hidden]="dataSource.data.length === 0">
+
+                    <div class="mat-header">
+                        <div class="search-container search-container-right">
+                            <input type="text" name="search" (keyup)="applyFilter($event.target.value)" placeholder="search {{titlePlural | lowercase}}..." #filter>
+                        </div>
+                    </div>
+
+                    <mat-table #table [dataSource]="dataSource" matSort>
+
+                        <!--All standard columns-->
+                        <ng-container *ngFor="let column of columns" [matColumnDef]="column.columnDefinition">
+                            <mat-header-cell *matHeaderCellDef mat-sort-header class="mat-header-cell ng-tns-c10-2 cdk-column-Name mat-column-Name">{{ column.header }}</mat-header-cell>
+                            <mat-cell *matCellDef="let row" class="mat-cell cdk-column-Name mat-column-Name">{{ column.cell(row) }}</mat-cell>
+                        </ng-container>
+
+                        <!-- Actions -->
+                        <ng-container matColumnDef="actions">
+                            <mat-header-cell *matHeaderCellDef mat-sort-header>Actions</mat-header-cell>
+                            <mat-cell *matCellDef="let row"><a role="button" class="link-edit" (click)="onSelect(row)">Add as subsidiary</a></mat-cell>
+                        </ng-container>
+
+                        <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
+                        <mat-row *matRowDef="let row; columns: displayedColumns;"></mat-row>
+                    </mat-table>
+
+                    <mat-paginator #paginator
+                                   [length]="dataSource.data.length"
+                                   [pageIndex]="0"
+                                   [pageSize]="5"
+                                   [pageSizeOptions]="[5, 10, 25, 100]">
+                    </mat-paginator>
+                </div>
+
+                <div [hidden]="dataSource.data.length > 0" style="margin-left: 20px;">
+                    <div>
+                        <span class="grey site-font">There are no available companies to add subsidiaries.</span>
+                    </div>
+                    <div class="form-buttons" (click)="back()" style="padding-top:20px;">
+                        <button class="button float-button submit-button">Back</button>
+                    </div>
+                </div>
+
+
+                <div [hidden]="dataSource.filteredData.length > 0 || dataSource.data.length === 0" class="no-search-results-add-button">
+                    <div class="site-font grey">
+                        <p class="grey">
+                            Your search - <strong>{{filter.value}}</strong> - did not match any {{titlePlural | lowercase}}.
+                        </p>
+                        <span>Suggestions: </span>
+                        <ul>
+                            <li>Make sure that all words are spelled correctly.</li>
+                            <li>Try different keywords.</li>
+                            <li>Try more general keywords.</li>
+                            <li>Try fewer keywords.</li>
+                        </ul>
+                    </div>
+                    <div class="new-button" (click)="filter.value='';clearFilter()">
+                        <button class="button float-button">Clear search</button>
+                    </div>
+                </div>
+
+
+
+                <div [hidden]="dataSource.data.length === 0" style="margin-left: 20px;">
+                    <div class="form-buttons" (click)="back()" style="padding-top:20px;">
+                        <button class="button float-button submit-button">Back</button>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+        <div [hidden]="!isAdd" *ngIf="selectedClient && client">
+            <p class="grey site-font">Are you sure you want to add {{selectedClient.name}} as a subsidiary of {{client.name}}?</p>
+
+            <div class="form-group-button mat-form-button" style="margin: 15px 0 0 15px;">
+                <div class="form-buttons" (click)="addSubsidiary()">
+                    <button class="button float-button submit-button">Yes</button>
+                </div>
+                <div class="form-buttons" (click)="cancel()">
+                    <button class="button float-button submit-button">Cancel</button>
+                </div>
+            </div>
+        </div>
+
+
+    </mat-card-content>
+
+</mat-card>

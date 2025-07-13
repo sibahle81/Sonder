@@ -1,0 +1,80 @@
+<div *ngIf="data.action == 'delete_action'">
+  <h2 mat-dialog-title>Delete</h2>
+    <p  class="ack-que"> Are you sure you want to delete {{data.entity}} ? </p>
+    <div class="action-div">
+      <span class="select-action option-yes" (click)="onConfirm()"> <mat-icon class="btn-style action-icon">check</mat-icon> <span
+          class="option">YES CONFIRM</span> </span>
+      <span class="select-action option-no" (click)="closeDialogue()"> <mat-icon class="btn-style action-icon">close</mat-icon>
+        <span class="option">CANCEL</span> </span>
+    </div>
+</div>
+
+<div *ngIf="data.action == 'approve_reject_action'">
+  <div>
+    <div class="align-center">
+      <span class="padding"> Reason for Rejection </span>
+      <textarea name="" id="" cols="90" rows="10" [(ngModel)]="reasonText" class="max-width"></textarea>
+      <p *ngIf="isRequired" class="required-message-text">Please add Comments</p>
+    </div>
+    <div>
+      <div class="action-div  justify-cont">
+        <div class="select-action option-no" (click)="closeDialogue()"> <mat-icon class="btn-style">close</mat-icon>
+          <span class="option">CANCEL</span>
+        </div>
+        <div>
+          <button class="action-btns" (click)="onSubmitAction()">SUBMIT</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div *ngIf="data.action == 'add_template_message'">
+  <div mat-dialog-content>
+    <span>Template has been created successfully. Do you want to create another template ? </span>
+  </div>
+  <div>
+    <div class="action-div">
+      <span class="select-action option-yes" (click)="onAdd()"> <mat-icon class="btn-style">check</mat-icon> <span
+          class="option">YES</span> </span>
+      <span class="select-action option-no" (click)="onCancel()"> <mat-icon class="btn-style">close</mat-icon> <span
+          class="option">NO</span> </span>
+    </div>
+  </div>
+</div>
+
+<div *ngIf="actionStatus[actionStatus.Approved] && data.data?.length > 0" class="available-record-box">
+  <h1>Scheduled Contact and Group Details</h1>
+    <div class="available-record-inside">
+      <table class="available-list-table">
+        <tr class="record-heading-row">
+          <th *ngIf="isContactNumber"class="contacts-header">Member Number</th>
+          <th  class="contacts-header">{{ isContactNumber ? 'Contact Number' : 'Group Name' }}</th>
+          <th *ngIf="isContactNumber" class="contacts-header">Company Name</th>
+          <th *ngIf="isContactNumber" class="contacts-header">Category Name</th>
+          <th class="contacts-header">Campaign Name</th>
+          <th class="contacts-header">Schedule Date</th>
+        </tr>
+        <ng-container *ngFor="let item of data.data">
+          <tr class="table-data-list">
+            <td *ngIf="isContactNumber" class="contacts-content">{{item?.memberNumber}}</td>
+            <td *ngIf="item && item?.groupName && !isContactNumber" class="contacts-content">{{item?.groupName}}</td>
+            <td *ngIf="item && item?.contactNumber && isContactNumber" class="contacts-content">{{item?.contactNumber}}</td>
+            <td *ngIf="item && item?.companyName && isContactNumber" class="contacts-content">{{item?.companyName}}</td>
+            <td *ngIf="item && isContactNumber" class="contacts-content">{{item?.category != null ? item?.category : '-'}}</td>
+            <td *ngIf="item" class="contacts-content">{{item?.campaignName != null ? item?.campaignName : '-'}}</td>
+            <td *ngIf="item" class="contacts-content">{{item?.scheduleDate | date: 'yyyy-MM-dd'}}</td>
+          </tr>
+        </ng-container>
+      </table>
+    </div>
+    <p class="confirm-text">Do you want to schedule with these Ids ?</p>
+    <div class="record-action align-right">
+      <span class="select-action action-cancel" (click)="closeDialogue()">
+        <mat-icon class="action-icon">close</mat-icon> <span>CANCEL</span> 
+      </span>
+      <button class="select-action action-submit" (click)="onProceed()">PROCEED</button>
+    </div>
+</div>
+
+

@@ -1,0 +1,22 @@
+﻿namespace RMA.Service.Billing.Contracts.Entities
+{
+    public class AbilityCollectionsAudit
+    {
+        public int Id { get; set; } // Id (Primary key)
+        public string Reference { get; set; } // Reference (length: 50)
+        public int? InvoiceId { get; set; } // InvoiceId
+        public bool IsActive { get; set; } // IsActive
+        public bool IsDeleted { get; set; } // IsDeleted
+        public string CreatedBy { get; set; } // CreatedBy (length: 50)
+        public System.DateTime CreatedDate { get; set; } // CreatedDate
+        public string ModifiedBy { get; set; } // ModifiedBy (length: 50)
+        public System.DateTime ModifiedDate { get; set; } // ModifiedDate
+        public string BatchReference { get; set; } // BatchReference (length: 100)
+        public decimal? Amount { get; set; } // Amount
+        public string OnwerDetails { get; set; } // OnwerDetails (length: 100)
+        public string Bank { get; set; } // Bank (length: 100)
+        public string BankBranch { get; set; } // BankBranch (length: 100)
+        public string AccountDetails { get; set; } // AccountDetails (length: 100)
+        public bool? IsProcessed { get; set; } // IsProcessed
+    }
+}

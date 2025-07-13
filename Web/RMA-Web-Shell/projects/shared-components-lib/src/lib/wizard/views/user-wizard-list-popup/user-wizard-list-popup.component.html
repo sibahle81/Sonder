@@ -1,0 +1,29 @@
+<h1 mat-dialog-title style="width:450px;background-color:#2DAAE1;padding-left:10px;padding-top:10px;padding-bottom:10px;color:white">Unlock / Reassign</h1>
+<div mat-dialog-content style="width:450px;text-align:center;padding-bottom:70px;">
+    <form [formGroup]="form" class="mat-container" style="display:contents;" novalidate>
+        
+        <mat-form-field >
+             
+             <input type="text" #filter aria-label="Number" matInput [formControl]="userInput"   width="300" minLength="2"  isOpen="true">  
+           
+              <mat-option class="userListClass" *ngFor="let option of usersToReAssignFilter" [value]="option.displayName" (click)="selection(option.displayName)">
+                {{option.displayName}}
+              </mat-option>
+           
+            <mat-placeholder class="placeholder">Select a user ...
+            </mat-placeholder>
+
+            <mat-icon class="user-icon"  matSuffix>how_to_reg</mat-icon>
+          </mat-form-field>
+           
+        <table border="0" class="userListClass">
+            <tr>
+                <td>
+                    <button type="button" class="button float-button" (click)="reassignUserToCase('Reassign')" >Unlock / Reassign</button>
+                    <button type="button" class="button float-button" (click)="onNoClick('Cancel')">Cancel</button>
+                </td>
+            </tr>
+        </table>
+        
+    </form>
+</div>

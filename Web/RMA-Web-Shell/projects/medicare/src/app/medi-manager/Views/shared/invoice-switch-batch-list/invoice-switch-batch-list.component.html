@@ -1,0 +1,85 @@
+<div class="container-tables">
+  <div class="items-heading heading-left">
+    <h1>{{(switchBatchType == switchBatchTypeEnum.MedEDI) ? "Medical Batches List" :"Teba Batches List"}} </h1>
+  </div>
+  <mat-card>
+    <div class="items-heading-center">
+      <h1>{{(switchBatchType == switchBatchTypeEnum.MedEDI) ? "Electronic Medical Invoice Batches" :"Electronic Teba Invoice Batches"}} </h1>
+    </div>
+
+    <div *ngIf="loading$ | async">
+      <mat-progress-bar mode="indeterminate"
+        [ngClass]="{ 'loading-main-double-menu-progress': doubleMenu, 'loading-main-single-menu-progress': !doubleMenu }">
+      </mat-progress-bar>
+      <p class="site-font grey">Loading...</p>
+    </div>
+
+    <div class="items-list-table">
+      <mat-table [dataSource]="dataSourceSwitchBatchSearchList" matSort class="mat-elevation-z8">
+
+        <ng-container matColumnDef="description">
+          <mat-header-cell *matHeaderCellDef mat-sort-header> Switch Name </mat-header-cell>
+          <mat-cell *matCellDef="let element" matTooltip="{{element.description}}"> {{element.description}} </mat-cell>
+        </ng-container>
+        <!-- switchBatchNumber Column -->
+        <ng-container matColumnDef="switchBatchNumber">
+          <mat-header-cell *matHeaderCellDef mat-sort-header> Switch BatchNumber </mat-header-cell>
+          <mat-cell *matCellDef="let element" matTooltip="{{element.switchBatchNumber}}"> {{element.switchBatchNumber}} </mat-cell>
+        </ng-container>
+        <!-- dateSubmitted Column -->
+        <ng-container matColumnDef="dateSubmitted">
+          <mat-header-cell *matHeaderCellDef mat-sort-header> Date Submitted </mat-header-cell>
+          <mat-cell *matCellDef="let element"> {{element.dateSubmitted | date:'yyyy-MM-dd'}}
+          </mat-cell>
+        </ng-container>
+        <!-- dateReceived Column -->
+        <ng-container matColumnDef="dateReceived">
+          <mat-header-cell *matHeaderCellDef mat-sort-header> Date Received </mat-header-cell>
+          <mat-cell *matCellDef="let element"> {{element.dateReceived | date:'yyyy-MM-dd'}} </mat-cell>
+        </ng-container>
+        <!-- dateCompleted Column -->
+        <ng-container matColumnDef="dateCompleted">
+          <mat-header-cell *matHeaderCellDef mat-sort-header> Date Completed </mat-header-cell>
+          <mat-cell *matCellDef="let element"> {{element.dateCompleted | date:'yyyy-MM-dd'}} </mat-cell>
+        </ng-container>
+        <!-- invoicesCounted Column -->
+        <ng-container matColumnDef="invoicesCounted">
+          <mat-header-cell *matHeaderCellDef mat-sort-header> Invoices Counted </mat-header-cell>
+          <mat-cell *matCellDef="let element"> {{element.invoicesCounted }} </mat-cell>
+        </ng-container>
+        <!-- invoicesProcessed Column -->
+        <ng-container matColumnDef="invoicesProcessed">
+          <mat-header-cell *matHeaderCellDef mat-sort-header> Invoices Processed </mat-header-cell>
+          <mat-cell *matCellDef="let element"> {{element.invoicesProcessed }} </mat-cell>
+        </ng-container>
+        <!-- amountCountedInclusive Column -->
+        <ng-container matColumnDef="amountCountedInclusive">
+          <mat-header-cell *matHeaderCellDef mat-sort-header> Amount Counted Inclusive </mat-header-cell>
+          <mat-cell *matCellDef="let element"> R{{ element.amountCountedInclusive | currency:'ZAR':'' | replace:',':' ' }} </mat-cell>
+          
+        </ng-container>
+        <!-- assignedUserId Column -->
+        <ng-container matColumnDef="assignedUser">
+          <mat-header-cell *matHeaderCellDef mat-sort-header> Assigned User </mat-header-cell>
+          <mat-cell *matCellDef="let element" matTooltip="{{element.assignedUser}}"> {{element.assignedUser}} </mat-cell>
+          <mat-footer-cell *matFooterCellDef> </mat-footer-cell>
+        </ng-container>
+        <!-- switchFileName Column -->
+        <ng-container matColumnDef="switchFileName">
+          <mat-header-cell *matHeaderCellDef mat-sort-header> Switch File Name </mat-header-cell>
+          <mat-cell *matCellDef="let element" matTooltip="{{element.switchFileName}}"> {{element.switchFileName}} </mat-cell>
+        </ng-container>
+        <!-- View Column -->
+        <ng-container matColumnDef="viewInvoice">
+          <mat-header-cell *matHeaderCellDef> View Invoice </mat-header-cell>
+          <mat-cell *matCellDef="let element">
+            <a role="button" class="link-edit" (click)="onClickView(element.switchBatchId)">View</a>
+          </mat-cell>
+        </ng-container>
+        <mat-header-row *matHeaderRowDef="displayedColumnsSwitchBatchSearchList"></mat-header-row>
+        <mat-row *matRowDef="let row; columns: displayedColumnsSwitchBatchSearchList;" class="element-row"></mat-row>
+      </mat-table>
+      <mat-paginator [pageSize]="10" [pageSizeOptions]="[5, 10, 25, 100]"></mat-paginator>
+    </div>
+  </mat-card>
+</div>

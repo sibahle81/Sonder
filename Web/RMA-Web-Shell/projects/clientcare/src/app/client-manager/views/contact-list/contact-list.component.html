@@ -1,0 +1,123 @@
+﻿<mat-card style="margin: 15px 30px 15px 30px">
+    <mat-card-header>
+        <mat-card-title class="wizard-font card-title grey">
+            <h1 style="padding: 0;">Contact List</h1>
+        </mat-card-title>
+    </mat-card-header>
+    <mat-card-content style="margin-left: 10px;">
+        <div *ngIf="isLoading">
+            <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+            <span *ngIf="isLoading" class="site-font grey" style="margin-top: 15px;"><i>Loading Contacts...</i></span>
+        </div>
+        <div [hidden]="dataSource.data.length === 0">
+            <div class="mat-container mat-elevation-z8" [hidden]="isLoading">
+                <div [hidden]="dataSource.data.length === 0">
+                    <mat-table #table [dataSource]="dataSource" matSort>
+
+                        <!--All standard columns-->
+                        <ng-container *ngFor="let column of columns" [matColumnDef]="column.columnDefinition">
+                            <mat-header-cell *matHeaderCellDef class="mat-header-cell ng-tns-c10-2 cdk-column-Name mat-column-Name">{{ column.header }}</mat-header-cell>
+                            <mat-cell *matCellDef="let row" class="mat-cell cdk-column-Name mat-column-Name">{{ column.cell(row) }}</mat-cell>
+                        </ng-container>
+
+                        <!-- Actions -->
+                        <ng-container matColumnDef="actions">
+                            <mat-header-cell *matHeaderCellDef mat-sort-header>Actions</mat-header-cell>
+                            <mat-cell *matCellDef="let row">
+                                <a role="button" class="link-edit" (click)="onSelect(row)">{{actionsLinkText}}</a>
+                            </mat-cell>
+                        </ng-container>
+
+                        <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
+                        <mat-row *matRowDef="let row; columns: displayedColumns;"></mat-row>
+                    </mat-table>
+
+                    <mat-paginator #paginator
+                                   [length]="dataSource.data.length"
+                                   [pageIndex]="0"
+                                   [pageSize]="5"
+                                   [pageSizeOptions]="[5, 10, 25, 100]">
+                    </mat-paginator>
+                </div>
+            </div>
+
+        </div>
+
+        <div [hidden]="dataSource.data.length > 0 || isLoading" style="margin-left: 20px;">
+            <span class="grey site-font">No contacts have been added for this client.</span>
+        </div>
+
+        <div class="form-group-button mat-form-button" style="margin: 15px 0 20px 15px; padding-bottom: 20px;" *ngIf="!isUnlink" [hidden]="isModifyContactDetail">
+            <div class="form-buttons">
+                <button  *ngIf="(dataSource.data.length < 1 && clientTypeId == 1  )  || clientTypeId != 1 " (click)="addContactDetail()" class="button float-button submit-button">Add contact</button>
+            </div>
+        </div>
+
+        <form #contactsForm="ngForm">
+            <div [hidden]="!isModifyContactDetail" *ngIf="branchesWithoutContactDetails">
+                <div>
+                    <div *ngIf="contactDetailOption =='link'">
+                        <mat-form-field>
+                            <label class="form-label mat-label" style="padding-left: 0 !important;">Select contact detail to link</label>
+                            <mat-select name="contactSelector" id="contactSelector" #select [(ngModel)]="selectedContactdetail" #selectedContact="ngModel" (change)="selectionContactChange($event)" required>
+                                <mat-option *ngFor="let contact of contactdetails" [value]="contact">{{contact.name}}</mat-option>
+                            </mat-select>
+                            <mat-error *ngIf="select.errorState && selectedContact.errors && (selectedContact.dirty || selectedContact.touched)">
+                                Contact Detail <strong> is required</strong>
+                            </mat-error>
+                        </mat-form-field>
+                    </div>
+                </div>
+
+                <mat-form-field *ngIf="!confirmUnlink">
+                    <label class="form-label other-label" style="padding-left: 0 !important;">Add contact detail to a</label>
+                    <mat-select name="linkType" id="linkType" #lnk [(ngModel)]="linkType" #link="ngModel">
+                        <mat-option value="Branch">Branch</mat-option>
+                        <mat-option value="Department">Department</mat-option>
+                    </mat-select>
+
+                </mat-form-field>
+
+                <div *ngIf="linkType === 'Branch'" [hidden]="!isModifyContactDetail">
+                    <div>
+                        <mat-form-field>
+                            <label class="form-label mat-label" style="padding-left: 0 !important;">Branches without contact details</label>
+                            <mat-select name="branchControl" id="branchControl" #brc [(ngModel)]="selectedBranch" #branches="ngModel" required>
+                                <mat-option *ngFor="let branch of branchesWithoutContactdetails" [value]="branch">{{branch.name}}</mat-option>
+                            </mat-select>
+
+                        </mat-form-field>
+
+                    </div>
+                    <div style="margin: -10px 0 0 30px">
+                        <span *ngIf="branchesWithoutContactDetails.length === 0" class="grey site-font"><i>All branches have contact details.</i></span>
+                    </div>
+                </div>
+
+                <div *ngIf="linkType === 'Department'" [hidden]="!isModifyContactDetail">
+                    <div>
+                        <mat-form-field>
+                            <label class="form-label other-label" style="padding-left: 0 !important;">Departments without contact details</label>
+                            <mat-select name="branchDepartment" id="branchDepartment" #dpt [(ngModel)]="selectedDepartment" #depart="ngModel" required>
+                                <mat-option *ngFor="let department of departmentsWithoutContactDetails" [value]="department">{{department.name}}</mat-option>
+                            </mat-select>
+
+                        </mat-form-field>
+                    </div>
+                    <div style="margin: -10px 0 0 30px">
+                        <span *ngIf="departmentsWithoutContactDetails.length === 0 " class="grey site-font"><i>All departments have contact details.</i></span>
+                    </div>
+                </div>
+
+                <div class="form-group-button mat-form-button" style="margin: 15px 0 20px 15px; padding-bottom: 20px;">
+                    <div class="form-buttons">
+                        <button *ngIf="contactDetailOption === 'add'" class="button float-button submit-button" [disabled]="!enableSave || !accountForm.form.valid" (click)="modifyBankAccount()">Add contact detail</button>
+                    </div>
+                    <div *ngIf="contactDetailOption === 'link' || contactDetailOption === 'add'">
+                        <button (click)="cancellinkcontactDetail()" class="button float-button submit-button">Cancel</button>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </mat-card-content>
+</mat-card>

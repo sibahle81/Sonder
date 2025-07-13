@@ -1,0 +1,45 @@
+<div>
+    <h3 mat-dialog-title>Add Commission Period</h3>
+  
+    <form class="mat-dialog-content" (ngSubmit)="submit" #formControl="ngForm">
+      <section>
+        <mat-form-field>
+            <label>YYYY</label>
+            <input matInput id="yyyy" name="yyyy" [(ngModel)]="data.yyyy" required>
+            <mat-error *ngIf="formControl.invalid">{{getErrorMessage()}}</mat-error>
+        </mat-form-field>
+  
+        <mat-form-field class="mat-form-field-right">
+            <label>MM</label>
+            <input matInput id="mm" name="mm" [(ngModel)]="data.mm" required>
+            <mat-error *ngIf="formControl.invalid">{{getErrorMessage()}}</mat-error>
+        </mat-form-field>
+    </section>
+  
+    <section>
+        <mat-form-field class="mat-form-field inputDate">
+            <label class="other-label">Start Date</label>
+            <input readonly matInput date="true" time="false" required
+            [(ngModel)]="data.startDate" [matDatepicker]="startDate" id="startDate" name="startDate" />
+            <mat-datepicker-toggle class="date-icon" matSuffix [for]="startDate"></mat-datepicker-toggle>
+            <mat-datepicker touchUi="true" #startDate></mat-datepicker>
+            <mat-error *ngIf="formControl.invalid">{{getErrorMessage()}}</mat-error>
+          </mat-form-field>&nbsp;
+          <mat-form-field class="mat-form-field inputDate">
+            <label class="other-label">End Date</label>
+            <input readonly matInput date="true" time="false" [(ngModel)]="data.endDate"
+              [matDatepicker]="endDate" id="endDate" name="endDate" required />
+            <mat-datepicker-toggle class="date-icon" matSuffix [for]="endDate">
+            </mat-datepicker-toggle>
+            <mat-datepicker touchUi="true" #endDate></mat-datepicker>
+            <mat-error *ngIf="formControl.invalid">{{getErrorMessage()}}</mat-error>
+          </mat-form-field>
+    </section>
+  
+      <div mat-dialog-actions>
+        <button mat-button [type]="submit" class="button float-button" [disabled]="!formControl.valid" [mat-dialog-close]="1" (click)="confirmAdd()">Save</button>
+        <button mat-button (click)="onNoClick()" class="button float-button" tabindex="-1">Cancel</button>
+      </div>
+    </form>
+  </div>
+  

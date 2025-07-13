@@ -1,0 +1,93 @@
+<mat-card>
+  <mat-card-content>
+    <h1>Search Gazette annual increases </h1>
+    <div *ngIf="isLoadingPensionGazette$ | async">
+      <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+      <label class="mat-label other-label"><i>loading pension increases...please wait</i></label>
+    </div>
+
+    <br/>
+    <form [formGroup]="form" class="mat-container details-form"   novalidate>
+
+      <mat-form-field class="mat-form-field inputDate">
+        <label class="other-label">Effective Date</label>
+        <input matInput  formControlName="effectiveDate" [matDatepicker]="effectiveDate" (dateChange)="newEffectiveDateChanged($event)">
+        <mat-datepicker-toggle matSuffix [for]="effectiveDate" [disabled]="form.disabled"></mat-datepicker-toggle>
+        <mat-datepicker touchUi="true" #effectiveDate></mat-datepicker>
+        <mat-error *ngIf="form.get('effectiveDate').hasError('required') && (form.get('effectiveDate').touched ||form.get('effectiveDate').dirty )">
+          Effective date is <strong>required</strong>
+        </mat-error>
+      </mat-form-field>
+
+        <br />
+
+    </form>
+    <div style="padding-bottom: 20px" >
+      <button class="button submit-button"  (click)="searchPensionIncreaseGazette()" >Search Gazette</button>
+
+    </div>
+  </mat-card-content>
+  <mat-card-footer>
+
+    <div class="gazette-details"  *ngIf=" this.annualIncreaseNotifications.length >0">
+
+      <table mat-table [dataSource]="dataSource" class="mat-elevation-z8">
+
+        <ng-container matColumnDef="increaseType">
+          <th mat-header-cell *matHeaderCellDef> Increase Type </th>
+          <td mat-cell *matCellDef="let element"> {{formatLookup(IncreaseTypeEnum[element.increaseType])}} </td>
+        </ng-container>
+
+
+        <ng-container matColumnDef="percentage">
+          <th mat-header-cell *matHeaderCellDef> Percentage </th>
+          <td mat-cell *matCellDef="let element"> {{element.percentage | number:'1.2-2'}} </td>
+        </ng-container>
+
+        <ng-container matColumnDef="amount">
+          <th mat-header-cell *matHeaderCellDef> Amount </th>
+          <td mat-cell *matCellDef="let element"> {{element.amount | number:'1.2-2'}} </td>
+        </ng-container>
+
+        <ng-container matColumnDef="fromAccidentDate">
+          <th mat-header-cell *matHeaderCellDef> From Accident Date </th>
+          <td mat-cell *matCellDef="let element"> {{element.fromAccidentDate ? (element.fromAccidentDate | date: 'yyyy-MM-dd') : ''}} </td>
+        </ng-container>
+
+        <ng-container matColumnDef="toAccidentDate">
+          <th mat-header-cell *matHeaderCellDef> To Accident Date </th>
+          <td mat-cell *matCellDef="let element"> {{element.toAccidentDate ? (element.toAccidentDate | date: 'yyyy-MM-dd') : ''}} </td>
+        </ng-container>
+
+        <ng-container matColumnDef="effectiveDate">
+          <th mat-header-cell *matHeaderCellDef> Effective Date </th>
+          <td mat-cell *matCellDef="let element"> {{element.effectiveDate ? (element.effectiveDate | date: 'yyyy-MM-dd') : ''}}  </td>
+        </ng-container>
+
+
+        <ng-container matColumnDef="actions">
+          <th mat-header-cell *matHeaderCellDef>Actions</th>
+          <td mat-cell *matCellDef="let row; let i = index">
+              <span  > <a role="button" class="link-edit action-link" (click)="initiatePensionIncreaseCaseWizard(row)">Create Pension Increase Workflow</a></span>
+          </td>
+        </ng-container>
+
+        <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+        <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+      </table>
+      <mat-paginator #paginator [length]="dataSource.data.length" [pageIndex]="0" [pageSize]="5"
+                     [pageSizeOptions]="[5, 10,100]">
+      </mat-paginator>
+      <br />
+      <div *ngIf="annualIncreaseNotifications.length == 0 ">
+        <label class="no-benefit-rate">No gazetted pension increases  have been loaded.</label>
+      </div>
+      <br/>
+      <div *ngIf="isCreatingPensionGazetteWizard$ | async">
+        <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+        <label class="mat-label other-label"><i>creating pension increases workflow...please wait</i></label>
+      </div>
+    </div>
+  </mat-card-footer>
+
+</mat-card>

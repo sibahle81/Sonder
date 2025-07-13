@@ -1,0 +1,44 @@
+﻿<error *ngIf="isError"></error>
+
+<mat-progress-bar *ngIf="isLoading" mode="indeterminate"></mat-progress-bar>
+<span *ngIf="isLoading" class="site-font grey" style="margin-top: 15px;"><i>Loading {{itemsName}}...</i></span>
+
+<div [hidden]="isLoading || isError">
+    <div class="mat-container mat-elevation-z8">
+
+        <div [hidden]="dataSource.data.length === 0">
+            <mat-table #table [dataSource]="dataSource" matSort>
+
+                <!--All standard columns-->
+                <ng-container *ngFor="let column of columns" [matColumnDef]="column.columnDefinition">
+                    <mat-header-cell mat-sort-header *matHeaderCellDef class="mat-header-cell ng-tns-c10-2 cdk-column-Name mat-column-Name">{{ column.header }}</mat-header-cell>
+                    <mat-cell *matCellDef="let row" class="mat-cell cdk-column-Name mat-column-Name">{{ column.cell(row) }}</mat-cell>
+                </ng-container>
+
+                <!-- Actions -->
+                <ng-container matColumnDef="actions">
+                    <mat-header-cell *matHeaderCellDef mat-sort-header>Actions</mat-header-cell>
+	                <mat-cell *matCellDef="let row">
+		                <span *ngIf="row.canEdit"><a role="button" class="link-edit" (click)="onSelect(row)">View / Edit</a></span>
+		                <span *ngIf="!row.canEdit"><a role="button" class="link-edit" (click)="onSelect(row)">View</a></span>
+	                </mat-cell>
+                </ng-container>
+
+                <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
+                <mat-row *matRowDef="let row; columns: displayedColumns;"></mat-row>
+            </mat-table>
+
+            <mat-paginator #paginator
+                           [length]="dataSource.data.length"
+                           [pageIndex]="0"
+                           [pageSize]="5"
+                           [pageSizeOptions]="[5, 10, 25, 100]">
+            </mat-paginator>
+        </div>
+
+        <div [hidden]="dataSource.data.length > 0">
+            <span class="grey site-font">No {{itemsName}} have been added for {{filterName}}</span>
+        </div>
+
+    </div>
+</div>

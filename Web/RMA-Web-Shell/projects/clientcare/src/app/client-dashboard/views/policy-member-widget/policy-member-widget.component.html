@@ -1,0 +1,79 @@
+<h1>Insured Lives</h1>
+<br />
+<div *ngIf="(isLoading$ | async)">
+  <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+  <span class="grey"><i>Loading policy members...</i></span>
+</div>
+<div [hidden]="(isLoading$ | async) ">
+  <div *ngIf="paginator.length === 0">
+    <span class="grey"><i>No policy members found</i></span>
+  </div>
+  <div [hidden]="paginator.length === 0">
+    <mat-table #table [dataSource]="dataSource" matSort matSortActive="RolePlayerTypeId" matSortDirection="asc"
+      matSortDisableClear>
+      <ng-container matColumnDef="rolePlayerType">
+        <mat-header-cell *matHeaderCellDef>Relation</mat-header-cell>
+        <mat-cell *matCellDef="let row">{{row.rolePlayerType}}</mat-cell>
+      </ng-container>
+      <ng-container matColumnDef="memberName">
+        <mat-header-cell *matHeaderCellDef>Member</mat-header-cell>
+        <mat-cell *matCellDef="let row" matTooltip="Navigate to policy {{row.policyNumber}}">
+          <a href="clientcare/policy-manager/view-policy/{{row.policyId}}">{{row.memberName}}</a>
+        </mat-cell>
+      </ng-container>
+      <ng-container matColumnDef="dob">
+        <mat-header-cell *matHeaderCellDef>DOB</mat-header-cell>
+        <mat-cell *matCellDef="let row">{{row.dateOfBirth | date:'yyyy/MM/dd'}}</mat-cell>
+      </ng-container>
+      <ng-container matColumnDef="dateOfDeath">
+        <mat-header-cell *matHeaderCellDef>DOD</mat-header-cell>
+        <mat-cell *matCellDef="let row">
+          <span *ngIf="row.dateOfDeath" class="dead" matTooltip="{{row.memberName}} is deceased">
+            <span class="material-icons">sentiment_very_dissatisfied</span>
+            <span>&nbsp;{{row.dateOfDeath | date:'yyyy/MM/dd'}}</span>
+          </span>
+          <span *ngIf="!row.dateOfDeath"></span>
+        </mat-cell>
+      </ng-container>
+      <ng-container matColumnDef="age">
+        <mat-header-cell *matHeaderCellDef>Age</mat-header-cell>
+        <mat-cell *matCellDef="let row">{{row.age}}</mat-cell>
+      </ng-container>
+      <ng-container matColumnDef="startDate">
+        <mat-header-cell *matHeaderCellDef>Start Date</mat-header-cell>
+        <mat-cell *matCellDef="let row">{{row.startDate | date:'yyyy/MM/dd'}}</mat-cell>
+      </ng-container>
+      <ng-container matColumnDef="insuredLifeStatus">
+        <mat-header-cell *matHeaderCellDef>Status</mat-header-cell>
+        <mat-cell *matCellDef="let row">
+          <span matTooltip="{{getInsuredLifeStatus(row.insuredLifeStatus)}}">
+            <span *ngIf="greenPolicyStatus.includes(getInsuredLifeStatus(row.insuredLifeStatus))">
+              <span class="material-icons lightGreen">play_circle_filled</span>
+            </span>
+            <span *ngIf="amberPolicyStatus.includes(getInsuredLifeStatus(row.insuredLifeStatus))">
+              <span class="material-icons lightAmber">pause_circle_filled</span>
+            </span>
+            <span *ngIf="redPolicyStatus.includes(getInsuredLifeStatus(row.insuredLifeStatus))">
+              <span class="material-icons lightRed">stop</span>
+            </span>
+            <span *ngIf="bluePolicyStatus.includes(getInsuredLifeStatus(row.insuredLifeStatus))">
+              <span class="material-icons lightGreen">pan_tool</span>
+            </span>
+          </span>
+        </mat-cell>
+      </ng-container>
+      <ng-container matColumnDef="actions">
+        <mat-header-cell *matHeaderCellDef>Action</mat-header-cell>
+        <mat-cell *matCellDef="let row"><a (click)="openAuditDialog(row)" role="button" class="link-edit">
+            <span matTooltip="view audit" class="material-icons icn pointer">
+              fingerprint
+            </span></a>
+        </mat-cell>
+      </ng-container>
+      <mat-header-row *matHeaderRowDef="memberColumns"></mat-header-row>
+      <mat-row *matRowDef="let row; columns: memberColumns;"></mat-row>
+    </mat-table>
+    <mat-paginator #paginator [length]="dataSource.rowCount$" [pageSize]="5" [pageSizeOptions]="[5, 10, 25, 100]">
+    </mat-paginator>
+  </div>
+</div>

@@ -1,0 +1,38 @@
+<mat-dialog-content class="mat-elevation-z0">
+
+  <div class="mat-datepicker-content time-picker"  [@transformPanel]="'enter'" [@fadeInCalendar]="'enter'">
+    <div class="time-picker-wrapper">
+      <div>
+        <mat-calendar [selected]="date" (selectedChange)="onSelect($event)"></mat-calendar>
+      </div>
+      <div class="picker">
+        <div class="hours">
+          <button mat-icon-button (click)="modifyHours()">
+            <mat-icon>keyboard_arrow_up</mat-icon>
+          </button>
+          <input name="hours" type="number" min="0" max="23" [value]="hours" class="input" (change)="keyUpHours($event)"/>
+          <button mat-icon-button (click)="modifyHours(true)">
+            <mat-icon>keyboard_arrow_down</mat-icon>
+          </button>
+        </div>
+        <div class="separator">:</div>
+        <div class="minutes">
+          <button mat-icon-button (click)="modifyMinutes()">
+            <mat-icon>keyboard_arrow_up</mat-icon>
+          </button>
+          <input
+          name="minutes" type="number" [value]="minutes" min="0" max="59" class="input" (change)="keyUpMinutes($event)"/>
+          <button mat-icon-button (click)="modifyMinutes(true)">
+            <mat-icon>keyboard_arrow_down</mat-icon>
+          </button>
+        </div>
+      </div>
+      
+    </div>
+  </div>
+</mat-dialog-content>
+<mat-dialog-actions>
+  <div class="action">
+    <button mat-raised-button (click)="saveDateTime()">Save</button>
+  </div>
+</mat-dialog-actions> 

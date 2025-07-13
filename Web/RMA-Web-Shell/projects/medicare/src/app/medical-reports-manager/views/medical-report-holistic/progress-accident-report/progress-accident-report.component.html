@@ -1,0 +1,290 @@
+<mat-card>
+<div class="menu-bar">
+    <span class="material-icons">
+        assignment
+    </span>
+    Progress Medical Report
+    <span *ngIf="form && form.valid" (click)="save()" class="material-icons pointer right pulseGreen" matTooltip="save">
+        save
+    </span>
+</div>
+<br />
+<form [formGroup]="form" *ngIf="this.form">
+    <!-- <mat-label class="other-label mandatory-field">Is the patient unfit for work?</mat-label>
+    <br>
+    <mat-radio-group aria-label="Is the patient unfit for work?" formControlName="isUnfitForWork" id="isUnfitForWork">
+        <mat-radio-button value="Yes">Yes</mat-radio-button>&nbsp;
+        <mat-radio-button value="No">No</mat-radio-button>
+    </mat-radio-group>
+    <br>  
+    <ng-container *ngIf="form.value.isUnfitForWork == 'Yes'">
+        <br>
+        <mat-label class="other-label mandatory-field">Unfit Start Date</mat-label>
+        <br />
+        <mat-form-field>
+        <input matInput [matDatepicker]="unfitStartPicker" formControlName="unfitStartDate" id="unfitStartDate">
+        <mat-datepicker-toggle matSuffix [for]="unfitStartPicker"></mat-datepicker-toggle>
+        <mat-datepicker #unfitStartPicker></mat-datepicker>
+        </mat-form-field>
+        <br>
+        <mat-label class="other-label mandatory-field">Unfit End Date</mat-label>
+        <br />
+        <mat-form-field>
+        <input matInput [matDatepicker]="unfitEndPicker" formControlName="unfitEndDate" id="unfitEndDate">
+        <mat-datepicker-toggle matSuffix [for]="unfitEndPicker"></mat-datepicker-toggle>
+        <mat-datepicker #unfitEndPicker></mat-datepicker>
+        </mat-form-field>
+    </ng-container>
+    <br> -->
+
+    <section>
+        <mat-form-field class="mat-form-field" color="accent">
+            <label class="mat-label other-label">Is the patient unfit for work?</label>&nbsp;
+            <input [hidden]="true" matInput formControlName="isUnfitForWork"/>
+            <mat-radio-group (change)="isUnfitForWorkChanged($event.value)" formControlName="isUnfitForWork" id="isUnfitForWork">
+                <mat-radio-button value='true'>Yes</mat-radio-button>&nbsp;
+                <mat-radio-button value='false'>No</mat-radio-button>
+            </mat-radio-group>
+        </mat-form-field>
+    </section>
+    <section *ngIf="form.value.isUnfitForWork == 'true'">
+        <mat-form-field class="mat-form-field">
+            <label class="mat-label other-label mandatory-field">Unfit Start Date</label>
+            <input matInput [matDatepicker]="unfitStartPicker" formControlName="unfitStartDate" id="unfitStartDate">
+            <mat-datepicker-toggle matSuffix [for]="unfitStartPicker"></mat-datepicker-toggle>
+            <mat-datepicker #unfitStartPicker></mat-datepicker>
+        </mat-form-field>
+        <br />
+        <mat-form-field class="mat-form-field">
+            <label class="mat-label other-label mandatory-field">Unfit End Date</label>
+            <input matInput [matDatepicker]="unfitEndPicker" formControlName="unfitEndDate" id="unfitEndDate">
+            <mat-datepicker-toggle matSuffix [for]="unfitEndPicker"></mat-datepicker-toggle>
+            <mat-datepicker #unfitEndPicker></mat-datepicker>
+        </mat-form-field>
+    </section>
+
+
+    <!-- <mat-label class="other-label mandatory-field">Has the patient stabilised? </mat-label><br>
+    <mat-radio-group aria-label="Has the patient stabilised?" formControlName="radioStabilisedDetails" id="radioStabilisedDetails">
+        <mat-radio-button value="Yes">Yes</mat-radio-button>&nbsp;
+        <mat-radio-button value="No">No</mat-radio-button>
+    </mat-radio-group>
+    <br>
+    <br>
+    <ng-container *ngIf="form.value.radioStabilisedDetails == 'No'">
+        <mat-label class="other-label">&nbsp;If the injury has not yet stabilised, briefly state why:</mat-label><br>
+        <mat-form-field appearance="standard">
+        <textarea matInput cdkTextareaAutosize cdkAutosizeMinRows="3" cdkAutosizeMaxRows="5" id="ctlNotStabilisedReason"
+            formControlName="ctlNotStabilisedReason" class="mat-input-element" maxlength="1000"></textarea>
+        </mat-form-field>
+    </ng-container>
+    <br> -->
+
+    <section>
+        <mat-form-field class="mat-form-field" color="accent">
+            <label class="mat-label other-label">Has the patient stabilised?</label>&nbsp;
+            <input [hidden]="true" matInput formControlName="radioStabilisedDetails"/>
+            <mat-radio-group (change)="radioStabilisedDetailsChanged($event.value)" formControlName="radioStabilisedDetails" id="radioStabilisedDetails">
+                <mat-radio-button value='true'>Yes</mat-radio-button>&nbsp;
+                <mat-radio-button value='false'>No</mat-radio-button>
+            </mat-radio-group>
+        </mat-form-field>
+    </section>
+    <section *ngIf="form.value.radioStabilisedDetails == 'false'">
+        <mat-form-field class="mat-form-field">
+            <label class="mat-label other-label mandatory-field">If the injury has not yet stabilised, briefly state why</label>
+            <textarea matInput cdkTextareaAutosize cdkAutosizeMinRows="3" cdkAutosizeMaxRows="5" id="ctlNotStabilisedReason"
+            formControlName="ctlNotStabilisedReason" class="mat-input-element" maxlength="1000"></textarea>
+        </mat-form-field>
+    </section>
+
+
+    <!-- <mat-label class="other-label mandatory-field">Does the patient require further treatment?</mat-label><br>
+    <mat-radio-group aria-label="Does the patient require further treatment? "
+        formControlName="radioAdditionalTreatment" id="radioAdditionalTreatment">
+        <mat-radio-button value="Yes">Yes</mat-radio-button>&nbsp;
+        <mat-radio-button value="No">No</mat-radio-button>
+    </mat-radio-group>
+    <br>
+    <br> 
+    <ng-container *ngIf="form.value.radioAdditionalTreatment == 'Yes'">
+        <mat-label class="other-label">&nbsp;Provide details of additional treatment required:</mat-label><br>
+        <mat-form-field appearance="standard">
+        <textarea matInput cdkTextareaAutosize cdkAutosizeMinRows="3" cdkAutosizeMaxRows="5" id="ctlTreatmentDetails"
+            formControlName="ctlTreatmentDetails" maxlength="1000"></textarea>
+        </mat-form-field>
+    </ng-container>
+    <br> -->
+
+    <section>
+        <mat-form-field class="mat-form-field" color="accent">
+            <label class="mat-label other-label">Does the patient require further treatment?</label>&nbsp;
+            <input [hidden]="true" matInput formControlName="radioAdditionalTreatment"/>
+            <mat-radio-group (change)="radioAdditionalTreatmentChanged($event.value)" formControlName="radioAdditionalTreatment" id="radioAdditionalTreatment">
+                <mat-radio-button value='true'>Yes</mat-radio-button>&nbsp;
+                <mat-radio-button value='false'>No</mat-radio-button>
+            </mat-radio-group>
+        </mat-form-field>
+    </section>
+    <section *ngIf="form.value.radioAdditionalTreatment == 'true'">
+        <mat-form-field class="mat-form-field">
+            <label class="mat-label other-label mandatory-field">Provide details of additional treatment required</label>
+            <textarea matInput cdkTextareaAutosize cdkAutosizeMinRows="3" cdkAutosizeMaxRows="5" id="ctlTreatmentDetails"
+                formControlName="ctlTreatmentDetails" class="mat-input-element" maxlength="1000"></textarea>
+        </mat-form-field>
+    </section>
+
+
+    <!-- <mat-label class="other-label mandatory-field">Has the patient been referred to a specialist?</mat-label><br>
+    <mat-radio-group aria-label="Has the patient been referred to a specialist? "
+        formControlName="radioSpecialistDetails" id="radioSpecialistDetails">
+        <mat-radio-button value="Yes">Yes</mat-radio-button>&nbsp;
+        <mat-radio-button value="No">No</mat-radio-button>
+    </mat-radio-group>
+    <br>
+    <br>        
+    <ng-container *ngIf="form.value.radioSpecialistDetails == 'Yes'">
+        <br>
+        <mat-label class="other-label">&nbsp;Provide specialist name, date and outcome</mat-label>
+        <br>
+        <mat-form-field appearance="standard">
+        <textarea matInput cdkTextareaAutosize cdkAutosizeMinRows="3" cdkAutosizeMaxRows="5" id="ctlSpecialistReferralDetails"
+            formControlName="ctlSpecialistReferralDetails" maxlength="1000"></textarea>
+        </mat-form-field>
+    </ng-container>
+    <br> -->
+
+    <section>
+        <mat-form-field class="mat-form-field" color="accent">
+            <label class="mat-label other-label">Has the patient been referred to a specialist?</label>&nbsp;
+            <input [hidden]="true" matInput formControlName="radioSpecialistDetails"/>
+            <mat-radio-group (change)="radioSpecialistDetailsChanged($event.value)" formControlName="radioSpecialistDetails" id="radioSpecialistDetails">
+                <mat-radio-button value='true'>Yes</mat-radio-button>&nbsp;
+                <mat-radio-button value='false'>No</mat-radio-button>
+            </mat-radio-group>
+        </mat-form-field>
+    </section>
+    <section *ngIf="form.value.radioSpecialistDetails == 'true'">
+        <mat-form-field class="mat-form-field">
+            <label class="mat-label other-label mandatory-field">Provide specialist name, date and outcome</label>
+            <textarea matInput cdkTextareaAutosize cdkAutosizeMinRows="3" cdkAutosizeMaxRows="5" id="ctlSpecialistReferralDetails"
+                formControlName="ctlSpecialistReferralDetails" class="mat-input-element" maxlength="1000"></textarea>
+        </mat-form-field>
+    </section>
+
+
+    <!-- <mat-label class="other-label mandatory-field">&nbsp;Has the patient been referred for radiological examinations?
+    </mat-label><br>
+    <mat-radio-group aria-label="Has the patient been referred for radiological examinations? "
+        formControlName="radioRadiologyDetails" id="radioRadiologyDetails">
+        <mat-radio-button value="Yes">Yes</mat-radio-button>&nbsp;
+        <mat-radio-button value="No">No</mat-radio-button>
+    </mat-radio-group>
+    <br>
+    <br>
+    <ng-container *ngIf="form.value.radioRadiologyDetails == 'Yes'">
+        <mat-label class="other-label">&nbsp;Supply details of radiological examinations:</mat-label><br>
+        <mat-form-field appearance="standard">
+        <textarea matInput cdkTextareaAutosize cdkAutosizeMinRows="3" cdkAutosizeMaxRows="5" id="ctlRadiologyFindings"
+            formControlName="ctlRadiologyFindings" maxlength="1000"></textarea>
+        </mat-form-field>
+    </ng-container>
+    <br> -->
+
+    <section>
+        <mat-form-field class="mat-form-field" color="accent">
+            <label class="mat-label other-label">Has the patient been referred for radiological examinations?</label>&nbsp;
+            <input [hidden]="true" matInput formControlName="radioRadiologyDetails"/>
+            <mat-radio-group (change)="radioRadiologyDetailsChanged($event.value)" formControlName="radioRadiologyDetails" id="radioRadiologyDetails">
+                <mat-radio-button value='true'>Yes</mat-radio-button>&nbsp;
+                <mat-radio-button value='false'>No</mat-radio-button>
+            </mat-radio-group>
+        </mat-form-field>
+    </section>
+    <section *ngIf="form.value.radioRadiologyDetails == 'true'">
+        <mat-form-field class="mat-form-field">
+            <label class="mat-label other-label mandatory-field">Supply details of radiological examinations</label>
+            <textarea matInput cdkTextareaAutosize cdkAutosizeMinRows="3" cdkAutosizeMaxRows="5" id="ctlRadiologyFindings"
+                formControlName="ctlRadiologyFindings" class="mat-input-element" maxlength="1000"></textarea>
+        </mat-form-field>
+    </section>
+
+
+    <!-- <mat-label class="other-label mandatory-field">&nbsp;Has the patient undergone further operations/procedures/
+        anaesthetic since the
+        first medical report?</mat-label><br>
+    <mat-radio-group
+        aria-label="Has the patient undergone further operations/procedures/ anaesthetic since the first medical report? "
+        formControlName="radioAdditionalOperationsProcedures" id="radioAdditionalOperationsProcedures">
+        <mat-radio-button value="Yes">Yes</mat-radio-button>&nbsp;
+        <mat-radio-button value="No">No</mat-radio-button>
+    </mat-radio-group>
+    <br>
+    <br>
+    <ng-container *ngIf="form.value.radioAdditionalOperationsProcedures == 'Yes'">
+        <mat-label class="other-label">&nbsp;Provide details</mat-label><br>
+        <mat-form-field appearance="standard">
+        <textarea matInput cdkTextareaAutosize cdkAutosizeMinRows="3" cdkAutosizeMaxRows="5" id="ctlOperationsProcedures"
+            formControlName="ctlOperationsProcedures" maxlength="1000"></textarea>
+        </mat-form-field>
+    </ng-container>
+    <br> -->
+
+    <section>
+        <mat-form-field class="mat-form-field" color="accent">
+            <label class="mat-label other-label">Has the patient undergone further operations/procedures/anaesthetic since the first medical report?</label>&nbsp;
+            <input [hidden]="true" matInput formControlName="radioAdditionalOperationsProcedures"/>
+            <mat-radio-group (change)="radioAdditionalOperationsProceduresChanged($event.value)" formControlName="radioAdditionalOperationsProcedures" id="radioAdditionalOperationsProcedures">
+                <mat-radio-button value='true'>Yes</mat-radio-button>&nbsp;
+                <mat-radio-button value='false'>No</mat-radio-button>
+            </mat-radio-group>
+        </mat-form-field>
+    </section>
+    <section *ngIf="form.value.radioAdditionalOperationsProcedures == 'true'">
+        <mat-form-field class="mat-form-field">
+            <label class="mat-label other-label mandatory-field">Provide details</label>
+            <textarea matInput cdkTextareaAutosize cdkAutosizeMinRows="3" cdkAutosizeMaxRows="5" id="ctlOperationsProcedures"
+                formControlName="ctlOperationsProcedures" class="mat-input-element" maxlength="1000"></textarea>
+        </mat-form-field>
+    </section>
+
+
+    <!-- <mat-label class="other-label mandatory-field">&nbsp;Has the patient received further physiotherapy treatment
+        since the
+        first medical report? </mat-label><br>
+    <br>
+    <mat-radio-group id="radioAdditionalPhysiotherapy"
+        aria-label="Has the patient received further physiotherapy treatment since the first medical report? "
+        formControlName="radioAdditionalPhysiotherapy">
+        <mat-radio-button value="Yes">Yes</mat-radio-button>&nbsp;
+        <mat-radio-button value="No">No</mat-radio-button>
+    </mat-radio-group>
+    <br>
+    <br>
+    <ng-container *ngIf="form.value.radioAdditionalPhysiotherapy == 'Yes'">
+        <mat-label class="other-label">&nbsp;Provide details</mat-label><br>
+        <mat-form-field appearance="standard">
+        <textarea matInput cdkTextareaAutosize cdkAutosizeMinRows="3" cdkAutosizeMaxRows="5" id="ctlPhysiotherapy"
+            formControlName="ctlPhysiotherapy" maxlength="1000"></textarea>
+        </mat-form-field>
+    </ng-container> -->
+
+    <section>
+        <mat-form-field class="mat-form-field" color="accent">
+            <label class="mat-label other-label">as the patient received further physiotherapy treatment since the first medical report?</label>&nbsp;
+            <input [hidden]="true" matInput formControlName="radioAdditionalPhysiotherapy"/>
+            <mat-radio-group (change)="radioAdditionalPhysiotherapyChanged($event.value)" formControlName="radioAdditionalPhysiotherapy" id="radioAdditionalPhysiotherapy">
+                <mat-radio-button value='true'>Yes</mat-radio-button>&nbsp;
+                <mat-radio-button value='false'>No</mat-radio-button>
+        </mat-radio-group>
+        </mat-form-field>
+    </section>
+    <section *ngIf="form.value.radioAdditionalPhysiotherapy == 'true'">
+        <mat-form-field class="mat-form-field">
+            <label class="mat-label other-label mandatory-field">Provide details</label>
+            <textarea matInput cdkTextareaAutosize cdkAutosizeMinRows="3" cdkAutosizeMaxRows="5" id="ctlPhysiotherapy"
+                formControlName="ctlPhysiotherapy" class="mat-input-element" maxlength="1000"></textarea>
+        </mat-form-field>
+    </section>
+</form>
+</mat-card>

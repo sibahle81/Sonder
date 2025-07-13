@@ -1,0 +1,34 @@
+<div class="items-heading heading-left">
+    <h1>Query Response History</h1>
+</div>
+
+<div [hidden]="this.dataSource.data.length === 0">
+    <mat-card>
+        <mat-table [dataSource]="dataSource" class="mat-elevation-z8">
+
+            <ng-container matColumnDef="queryResponse">
+                <mat-header-cell *matHeaderCellDef> Query Response </mat-header-cell>
+                <mat-cell *matCellDef="let row">{{row.queryResponse}}</mat-cell>
+            </ng-container>            
+
+            <ng-container matColumnDef="createdBy">
+                <mat-header-cell *matHeaderCellDef> Created By </mat-header-cell>
+                <mat-cell *matCellDef="let row">{{row.createdBy}}</mat-cell>
+            </ng-container>
+
+            <ng-container matColumnDef="createdDate">
+                <mat-header-cell *matHeaderCellDef> Created Date </mat-header-cell>
+                <mat-cell *matCellDef="let row">{{row.createdDate | date:'yyyy-MM-dd'}}</mat-cell>
+            </ng-container>
+
+            <mat-header-row *matHeaderRowDef="getDisplayColumns()"></mat-header-row>
+            <mat-row *matRowDef="let row; columns: getDisplayColumns();"></mat-row>            
+        </mat-table>
+    </mat-card>
+</div>
+
+<br/>
+<div
+    *ngIf="this.dataSource.data.length === 0">
+    <label class="mat-label other-label"><i>No response found...</i></label>
+</div>

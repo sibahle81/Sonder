@@ -1,0 +1,52 @@
+<div class="load-progress" *ngIf="isLoading">
+  <div><mat-progress-bar mode="indeterminate"></mat-progress-bar></div>
+  <div>{{this.pollingMessage}}</div>
+</div>
+<div class="pad-bottom" [hidden]="isLoading">
+  <form [formGroup]="form" class="mat-container details-form" novalidate>
+    <section>
+      <mat-form-field class="mat-form-field">
+        <label class="mat-label other-label">Company</label>
+        <input matInput formControlName="company">
+      </mat-form-field>
+      <mat-form-field class="mat-form-field-right">
+        <label class="mat-label other-label">File Identifier</label>
+        <input matInput formControlName="fileIdentifier">
+      </mat-form-field>
+    </section>
+    <section>
+      <div class="field-container">
+        <mat-form-field>
+          <label class="mat-label other-label">File Date</label>
+          <input matInput formControlName="date" [matDatepicker]="fileDate" disabled>
+          <mat-datepicker-toggle matSuffix [for]="fileDate" disabled></mat-datepicker-toggle>
+          <mat-datepicker touchUi="true" #fileDate></mat-datepicker>
+        </mat-form-field>
+      </div>
+    </section>
+    <section>
+      <mat-table #table [dataSource]="datasource" matSort>
+        <ng-container matColumnDef="description">
+          <mat-header-cell *matHeaderCellDef mat-sort-header> Description </mat-header-cell>
+          <mat-cell *matCellDef="let row"> {{row.description}} </mat-cell>
+        </ng-container>
+        <ng-container matColumnDef="count">
+          <mat-header-cell *matHeaderCellDef mat-sort-header> Count </mat-header-cell>
+          <mat-cell *matCellDef="let row"> {{row.count | number:'1.0'}} </mat-cell>
+        </ng-container>
+        <ng-container matColumnDef="amount">
+          <mat-header-cell *matHeaderCellDef mat-sort-header> Amount </mat-header-cell>
+          <mat-cell *matCellDef="let row"> {{row.amount | number:'1.2-2'}} </mat-cell>
+        </ng-container>
+        <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
+        <mat-row *matRowDef="let row; columns: displayedColumns;"></mat-row>
+      </mat-table>
+    </section>
+
+    <div class="error-list" *ngIf="errors.length > 0">
+      <mat-error *ngFor="let error of errors">
+        {{error}}
+      </mat-error>
+    </div>
+  </form>
+</div>

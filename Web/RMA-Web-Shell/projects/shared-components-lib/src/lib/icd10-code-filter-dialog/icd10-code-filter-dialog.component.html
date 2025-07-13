@@ -1,0 +1,82 @@
+<div class="row">
+  <div class="col-md-12">
+    <div class="card icd10Card">
+      <div class="card-header card-header-icon card-header-info">
+        <h4 class="card-title">ICD10-Code search</h4>
+      </div>
+      <div class="card-body">
+
+        <div class="container-fluid">
+          <div class="row fullheight">
+            <div class="col-md-12">
+
+              <div>
+                <mat-form-field class="fullWidthLeftAligned">
+                  <input matInput placeholder=" Search by ICD10 code or description" aria-label="state"
+                    [matAutocomplete]="auto" [formControl]="filterRecordsCtrl" (keyup.enter)="onEnterKey()" id="icd10Control">
+                  <mat-autocomplete #auto="matAutocomplete" (optionSelected)="onSelectChanged($event.option.viewValue)">
+                    <mat-option *ngIf="isLoading" class="loader">Loading...</mat-option>
+                    <ng-container *ngIf="!isLoading">
+                      <mat-option *ngFor="let x of filteredRecords" [value]="x.displayValue">
+
+                        <div class="form-group has-default">
+                          <div class="input-group">
+                            <div class="input-group-prepend">
+                              <span class="input-group-text text-info">
+                                <i class="material-icons">location_searching</i>
+                              </span>
+                              <b>{{x.displayValue }}</b>
+                            </div>
+                          </div>
+                          <mat-divider></mat-divider>
+                        </div>
+                        <mat-divider></mat-divider>
+                      </mat-option>
+                    </ng-container>
+                  </mat-autocomplete>
+                </mat-form-field>
+              </div>
+              <div *ngIf="data.resultItems.length > 0">
+                <!-- -------- body side -------- -->
+
+                <mat-form-field class="inputsLeftAligned">
+                  <label class="mandatory-field">Body side affected</label>
+                  <mat-select id="bodySideAffected" class="fullWidth"
+                    (selectionChange)="onBodySideChanged($event)">
+                    <mat-option *ngFor="let bodySide of (bodySides$ | async)" [value]="bodySide.name">
+                      {{ bodySide.name }}</mat-option>
+                  </mat-select>
+                </mat-form-field>&nbsp;&nbsp;
+                <mat-form-field *ngIf="commentRequired" class="fullWidthLeftAligned">
+                  <label class="mandatory-field">Comment</label>
+                  <input id="comment" matInput aria-label="state" (change)="onCommentChanged($event)"
+                    [formControl]="bodySideDetailsCtl">
+                </mat-form-field><br />
+                <!-- ------ injury type -------- -->
+                <mat-form-field class="inputsLeftAligned  ">
+                  <label class="mandatory-field">Severity</label>
+                  <mat-select id="injurySeverity" class="fullWidth"
+                    (selectionChange)="onInjurySeverityChanged($event)">
+                    <mat-option *ngFor="let severity of (severityList$ | async)" [value]="severity.name">
+                      {{ severity.name }}</mat-option>
+                  </mat-select>
+                </mat-form-field>
+
+              </div>
+            </div>
+
+          </div>
+        </div>
+
+
+      </div>
+      <div class="card-footer blockDisplay">
+        <button style="float: right;" mat-button (click)="onCancelClick()"
+          class="mat-raised-button mat-button-base btn btn-fill btn-info">Cancel</button>
+        <button id="btn-OK" *ngIf="showOk" mat-button [mat-dialog-close]="data" cdkFocusInitial
+          class="mat-raised-button button btn btn-fill btn-info okButton">Ok</button>
+
+      </div>
+    </div>
+  </div>
+</div>

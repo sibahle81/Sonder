@@ -1,0 +1,58 @@
+<mat-card class="main-container">
+  <mat-card class="top-selector-container">
+      <mat-card class="summary-container">
+          <mat-card-header>
+              <mat-card-title>
+                  <h1 class="wizard-font">Event Details</h1>
+              </mat-card-title>
+          </mat-card-header>
+          <mat-card-content class="content-container">
+              <div *ngFor="let item of eventSummary | keyvalue: asIsOrder; let i = index">
+                  <div *ngIf="getObjectType(item.value) !== 'object' && !ignoredFields.includes(item.key)">
+                      <div class="text-container" *ngIf="item.value !== 'null' && item.value != undefined && item.value !==''">
+                          <div class="product-key"><b>{{formatCamelCase(item.key) | titlecase}}:</b></div>
+                          <div class="product-value">{{item.value}}</div>
+                      </div>
+                  </div>
+              </div>
+          </mat-card-content>
+      </mat-card>
+
+      <span style="margin-left: 25px"></span>
+
+      <mat-card class="summary-container">
+          <mat-card-header>
+              <mat-card-title>
+                  <h1 class="wizard-font">Person Details</h1>
+              </mat-card-title>
+          </mat-card-header>
+          <mat-card-content class="content-container">
+            <div *ngFor="let item of personEventSummary | keyvalue: asIsOrder; let i = index">
+                <div *ngIf="getObjectType(item.value) !== 'object' && !ignoredFields.includes(item.key)">
+                    <div class="text-container" *ngIf="item.value !== 'null' && item.value != undefined && item.value !==''">
+                        <div class="product-key"><b>{{formatCamelCase(item.key) | titlecase}}:</b></div>
+                        <div class="product-value">{{item.value}}</div>
+                    </div>
+                </div>
+            </div>
+          </mat-card-content>
+      </mat-card>
+      <span style="margin-left: 25px"></span>
+      <mat-card class="summary-container">
+          <mat-card-header>
+              <mat-card-title>
+                  <h1 class="wizard-font">Notes</h1>
+              </mat-card-title>
+          </mat-card-header>
+          <mat-card-content class="content-container">
+              <div *ngIf="notes.length > 0 else noteWarning">
+                  <div class="text-container" *ngFor="let note of notes | keyvalue">
+                      <p [innerHtml]="note.value"></p>
+                      <mat-divider></mat-divider>
+                  </div>
+              </div>
+              <ng-template #noteWarning>&nbsp;&nbsp;&nbsp;&nbsp;No notes have been added</ng-template>
+          </mat-card-content>
+      </mat-card>
+  </mat-card>
+</mat-card>

@@ -1,0 +1,212 @@
+<form class="container-fluid" [formGroup]="form">
+    <div [hidden]="!isLoading">
+      <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+      Loading...
+    </div>  
+    <br>
+    <fieldset>
+      <legend>PreAuth Details</legend>
+        <div class="grid">
+          <div>
+            <span class="title">Health Care Provider</span>
+            <span class="value">{{ preAuthDetails.healthCareProviderName }} </span>
+          </div>
+          <div>
+            <span class="title">Practice Number</span>
+            <span class="value">{{ preAuthDetails.practiceNumber }}</span>
+          </div>
+        </div>
+  
+        <div class="grid">
+          <div>
+            <span class="title">Authorised</span>
+            <span class="value">{{ getPreauthStatus(preAuthDetails.preAuthStatus) }} </span>
+          </div>
+        </div>
+  
+        <div class="grid">
+          <div>
+            <span class="title">Medical Service PAC No</span>
+            <span class="value"> {{ preAuthDetails.preAuthNumber }}</span>
+          </div>
+        </div>
+  
+        <div class="grid">
+          <div>
+            <span class="title">Auth Date From</span>
+            <span class="value">{{ preAuthDetails.dateAuthorisedFrom | date: "d MMM y" }}
+            </span>
+          </div>
+  
+          <div>
+            <span class="title">Auth Date To</span>
+            <span class="value">{{ preAuthDetails.dateAuthorisedTo | date: "d MMM y" }} </span>
+          </div>
+        </div>
+      <!-- </mat-expansion-panel> -->
+    </fieldset>
+    <br>
+    <fieldset>
+      <legend>Client Details</legend>
+      <div class="grid">
+        <div>
+          <span class="title">Full Name</span>
+          <span class="value">{{ preAuthClaimDetail?.personName }}</span>
+        </div>
+        <div>
+          <span class="title">Cell/Tell Number</span>
+          <span class="value">{{ preAuthClaimDetail?.claimContactNo }}</span>
+        </div>
+      </div>
+      <div class="grid">
+        <div>
+          <span class="title">Physical Address</span>
+          <span class="value"></span>
+        </div>
+      </div>
+      <div class="grid">
+        <div>
+          <span class="title">Date Of Injury</span>
+          <span class="value">{{ preAuthClaimDetail?.eventDate }}</span>
+        </div>
+        <div>
+          <span class="title">Claim/Pension No.</span>
+          <span class="value">{{ preAuthClaimDetail?.claimReferenceNumber }}</span>
+        </div>
+      </div>
+      <div class="grid">
+        <div>
+          <span class="title">Industry No.</span>
+          <span class="value">{{ preAuthClaimDetail?.industryNumber }}</span>
+        </div>
+        <div>
+          <span class="title">Company No.</span>
+          <span class="value">{{ preAuthClaimDetail?.employerName }}</span>
+        </div>
+      </div>
+      <div class="grid">
+        <div>
+          <span class="title">Id No.</span>
+          <span class="value">{{ preAuthClaimDetail?.idNumber }}</span>
+        </div>
+        <div>
+          <span class="title">Passport Number.</span>
+          <span class="value">{{ preAuthClaimDetail?.passportNumber }}</span>
+        </div>
+      </div>
+      <!-- </div> -->
+    </fieldset>
+    <br>
+    <fieldset>
+      <legend>Hospital Visit Report Details</legend>
+      <br>
+      <div class="grid">
+        <div>
+          <span class="title">Treatment Plan</span>
+          <span *ngFor="let plan of clinicalUpdateTreatmentPlans; let i=index">
+           <span *ngIf="i <= clinicalUpdateTreatmentPlans.length">{{ plan.treatmentPlanDescription }}</span>
+           <span class="list-format" *ngIf="i!=clinicalUpdateTreatmentPlans.length-1">&#44;&nbsp;</span>    
+         </span>   
+        </div>
+        <div>
+          <span class="title"></span>
+          <span class="value"></span>
+        </div>
+      </div>
+      <br>
+      <div class="grid">
+        <div>
+          <span class="title">Treatment Protocol</span>       
+          <span *ngFor="let protocolItem of protocolList; let i=index">
+            <span *ngIf="i <= protocolList.length">{{ protocolItem.treatmentProtocolDescription }}</span>
+            <span class="list-format" *ngIf="i!=protocolList.length-1">&#44;&nbsp;</span>  
+          </span>             
+        </div>
+        <div>
+          <span class="title"></span>
+          <span class="value"></span>
+        </div>
+      </div>
+      <br>
+      <div class="grid">
+        <div>
+          <span class="title">Subsequent Care</span>
+          <br>
+           <mat-select class="inputvalue" formControlName="subsequentCare">
+            <mat-option [value]="true">Yes</mat-option>
+            <mat-option [value]="false">No</mat-option>
+          </mat-select>
+          <mat-error *ngIf="form.get('subsequentCare').hasError('required')">
+            Subsequent Care is <strong>required</strong>
+          </mat-error>
+        </div>
+      </div>
+      <br>
+      <div class="grid">
+        <div>
+          <span class="title">Discharge Date</span>
+          <br>
+          <input class="inputvalue" matInput [matDatepicker]="dischargeDate" formControlName="dischargeDate">
+          <mat-datepicker-toggle style="padding-right: 48%;" matSuffix [for]="dischargeDate"></mat-datepicker-toggle>
+          <mat-datepicker #dischargeDate></mat-datepicker>
+        </div>
+      </div>
+      <br>
+      <div class="grid">
+        <div>
+          <span class="title">Interim Account Balance</span>
+          <br>
+          <input type="number" class="inputvalue" matInput id="filter" name="filter" formControlName="interimAccountBalance" />
+          <mat-error *ngIf="form.get('interimAccountBalance').hasError('required')">
+            Interim Account Balance is <strong>required</strong>
+          </mat-error>
+        </div>
+      </div>
+      <br>
+      <div class="grid">
+        <div>
+          <span class="title">Comments</span>
+          <br>
+          <input matInput class="inputvalue" id="comments" name="comments" formControlName="comments" />  
+        </div>
+      </div>
+      <br>
+      <div class="grid">
+        <div>
+          <span class="title">Diagnosis</span>
+          <br> 
+          <input matInput class="inputvalue" id="diagnosis" name="diagnosis" formControlName="diagnosis" />       
+        </div>
+      </div>
+      <br>
+      <div class="grid">
+        <div>
+          <span class="title">Medication</span>
+          <br>
+          <input matInput class="inputvalue" id="medication" name="medication" formControlName="medication" />
+        </div>
+      </div>
+      <br>
+    </fieldset>
+    <br>
+    <fieldset>
+      <legend>Line Items</legend>
+      <br>
+      <preauth-breakdown #preAuthBreakdown [isClinicalUpdate]="true" [expandNewLineItemControl]="true" 
+      [personEventId]="personEventId" [showResetButton]="false" [authControlMode]="false" 
+      preAuthBreakdownType="ClinicalUpdate" (onPreAuthorisationBreakdownChange)="getPreauthorisationBreakDown($event)"></preauth-breakdown>
+    </fieldset>
+    <br>
+    <fieldset>
+      <legend>ICD10Codes</legend>
+      <br>
+      <preauth-diagnosis #preAuthDiagnosis [showTreamentBaskets]="true"></preauth-diagnosis>
+    </fieldset>
+    <br>
+    <div>
+      <button type="button" class="button" [disabled]="isSubmitted" (click)="submitEdit()">Submit</button>        
+      <button type="button" class="button" mat-flat-button (click)="onCancel()" >cancel</button>
+    </div>
+    <br>
+    <br>
+  </form>

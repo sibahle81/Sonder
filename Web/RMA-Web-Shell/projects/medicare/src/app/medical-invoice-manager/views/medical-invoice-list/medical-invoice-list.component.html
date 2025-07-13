@@ -1,0 +1,212 @@
+<div>
+  <app-medicare-search-menus></app-medicare-search-menus>
+</div>
+
+<div class="container-tables">
+  <div class="items-heading heading-left">
+    <h1>{{switchBatchType == switchBatchTypeEnum.MedEDI ? 'Medical Invoice List':'Teba Invoice List'}}</h1>
+  </div>
+
+  <div *ngIf="!searchByHealthCareProvider">
+    <a mat-flat-button (click)="refreshList()">
+      <mat-icon>refresh</mat-icon>
+      Refresh List
+    </a>
+  
+    <div>
+      <div>
+        <nav>
+          <button mat-button [routerLink]="['/medicare/medicare-notifications']">Home</button>
+          <button mat-button [routerLink]="['/medicare/medical-invoice-list']">Invoice List</button>
+          <button mat-button [routerLink]="['/medicare/medical-invoice-search']">Filter Medical Invoice Details</button>
+        </nav>
+      </div>
+    </div>
+  
+  </div>
+
+  <div *ngIf="navigating">
+    <mat-progress-bar mode="indeterminate"
+        [ngClass]="{ 'loading-main-double-menu-progress': doubleMenu, 'loading-main-single-menu-progress': !doubleMenu }">
+    </mat-progress-bar>
+    <p class="site-font grey">Loading.....</p>
+  </div>
+  <br/>
+  <div *ngIf="(isLoadingPayment$ | async)">
+    <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+    <span class="site-font">loading medical invoice payment details...please wait</span>
+  </div>
+  <div *ngIf="(isReversingPayment$ | async)">
+    <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+    <span class="site-font">processing payment reversal...please wait</span>
+  </div>
+  <mat-card>
+    <div class="items-heading-center">
+      <h1>{{switchBatchType == switchBatchTypeEnum.MedEDI ? 'Medical Invoice Details':'Teba Invoice Details'}}</h1>
+    </div>
+
+    <div *ngIf="dataSource.loading$ | async">
+      <mat-progress-bar mode="indeterminate"
+          [ngClass]="{ 'loading-main-double-menu-progress': doubleMenu, 'loading-main-single-menu-progress': !doubleMenu }">
+      </mat-progress-bar>
+      <p class="site-font grey">Loading.....</p>
+  </div>
+
+    <div class="items-list-table">
+      <mat-table [dataSource]="dataSource" matSort class="mat-elevation-z8">
+        <!-- Checkbox Column -->
+        <ng-container matColumnDef="select">
+          <mat-header-cell *matHeaderCellDef>select</mat-header-cell>
+          <mat-cell *matCellDef="let row">
+            <mat-checkbox (click)="$event.stopPropagation()" (change)="selectHandler(row)"
+              [checked]="selection.isSelected(row)">
+            </mat-checkbox>
+          </mat-cell>
+          <mat-footer-cell *matFooterCellDef> </mat-footer-cell>
+        </ng-container>
+        <!--  claimReferenceNumber  Column -->
+        <ng-container matColumnDef="claimReferenceNumber">
+          <mat-header-cell *matHeaderCellDef mat-sort-header> Claim Number </mat-header-cell>
+          <mat-cell *matCellDef="let element" matTooltip="{{element.claimReferenceNumber}}"> {{element.claimReferenceNumber}} </mat-cell>
+        </ng-container>
+        <!-- HCPInvoiceNumber Column -->
+        <ng-container matColumnDef="hcpInvoiceNumber">
+          <mat-header-cell *matHeaderCellDef mat-sort-header> HCP Invoice No. </mat-header-cell>
+          <mat-cell *matCellDef="let element" matTooltip="{{element.hcpInvoiceNumber}}"> {{element.hcpInvoiceNumber}} </mat-cell>
+        </ng-container>
+        <!-- RMA MediCareInvoiceNumber  Auto Generated Column -->
+        <ng-container matColumnDef="invoiceNumber">
+          <mat-header-cell *matHeaderCellDef mat-sort-header> RMA Invoice No. </mat-header-cell>
+          <mat-cell *matCellDef="let element" matTooltip="{{element.invoiceNumber}}"> {{element.invoiceNumber}} </mat-cell>
+        </ng-container>
+        <!-- Status Column -->
+        <ng-container matColumnDef="invoiceStatus">
+          <mat-header-cell *matHeaderCellDef mat-sort-header> Status </mat-header-cell>
+          <mat-cell *matCellDef="let element" [style.background]="element.invoiceStatus | invoiceStatusColor" matTooltip="{{invoiceStatusEnum[element.invoiceStatus]}}"> {{invoiceStatusEnum[element.invoiceStatus]}} </mat-cell>
+        </ng-container>
+        <!-- MSP Column -->
+        <ng-container matColumnDef="healthCareProviderName">
+          <mat-header-cell *matHeaderCellDef mat-sort-header> MSP / Provider </mat-header-cell>
+          <mat-cell *matCellDef="let element" matTooltip="{{element.healthCareProviderName +' - '+ element.practiceNumber}}"> {{element.healthCareProviderName +" - "+ element.practiceNumber}}
+          </mat-cell>
+        </ng-container>
+        <!-- Account No -->
+        <ng-container matColumnDef="hcpAccountNumber">
+          <mat-header-cell *matHeaderCellDef mat-sort-header> Account No </mat-header-cell>
+          <mat-cell *matCellDef="let element" matTooltip="{{element.hcpAccountNumber}}"> {{element.hcpAccountNumber}} </mat-cell>
+        </ng-container>
+        <!-- SvcData Column -->
+        <ng-container matColumnDef="dateAdmitted">
+          <mat-header-cell *matHeaderCellDef mat-sort-header> Svc Data / Date Admitted </mat-header-cell>
+          <mat-cell *matCellDef="let element" matTooltip="{{element.dateAdmitted | date:'yyyy-MM-dd'}}"> {{element.dateAdmitted | date:'yyyy-MM-dd'}} </mat-cell>
+        </ng-container>
+        <!-- InvDate Column -->
+        <ng-container matColumnDef="invoiceDate">
+          <mat-header-cell *matHeaderCellDef mat-sort-header> Invoice Date </mat-header-cell>
+          <mat-cell *matCellDef="let element" matTooltip="{{element.invoiceDate | date:'yyyy-MM-dd'}}"> {{element.invoiceDate | date:'yyyy-MM-dd'}} </mat-cell>
+          <mat-footer-cell *matFooterCellDef> </mat-footer-cell>
+        </ng-container>
+         <!-- PaymentConfirmationDate Column -->
+         <ng-container matColumnDef="paymentConfirmationDate">
+          <mat-header-cell *matHeaderCellDef mat-sort-header> Payment Confirmation Date </mat-header-cell>
+          <mat-cell *matCellDef="let element" matTooltip="{{element.paymentConfirmationDate | date:'yyyy-MM-dd'}}"> {{element.paymentConfirmationDate | date:'yyyy-MM-dd'}} </mat-cell>
+          <mat-footer-cell *matFooterCellDef> </mat-footer-cell>
+          </ng-container>
+          <!-- InvTotalInc Column -->
+          <ng-container matColumnDef="invoiceTotalInclusive">
+            <mat-header-cell *matHeaderCellDef mat-sort-header> Invoice Total(Inc) </mat-header-cell>
+            <mat-cell *matCellDef="let element" matTooltip="{{element.invoiceTotalInclusive}}"> {{element.invoiceTotalInclusive |
+              currency:"R":"symbol":'1.0-2'}} </mat-cell>
+          </ng-container>
+          <!-- AuthTotalInc Column -->
+          <ng-container matColumnDef="authorisedTotalInclusive">
+            <mat-header-cell *matHeaderCellDef mat-sort-header> Auth Total Inc </mat-header-cell>
+            <mat-cell *matCellDef="let element" matTooltip="{{element.authorisedTotalInclusive}}"> {{element.authorisedTotalInclusive |
+              currency:"R":"symbol":'1.0-2'}} </mat-cell>
+            <mat-footer-cell *matFooterCellDef> </mat-footer-cell>
+          </ng-container>
+          <!-- S/Care Column -->
+          <ng-container matColumnDef="SCare">
+            <mat-header-cell *matHeaderCellDef > S/Care </mat-header-cell>
+            <mat-cell *matCellDef="let element"> {{false}} </mat-cell>
+          </ng-container>
+        <!-- Pre Auth Nos Column -->
+        <ng-container matColumnDef="preAuthNumber">
+          <mat-header-cell *matHeaderCellDef mat-sort-header> Pre Auth Nos </mat-header-cell>
+          <mat-cell *matCellDef="let element" matTooltip="{{element.preAuthNumber}}"> {{element.preAuthNumber}} </mat-cell>
+        </ng-container>
+
+         <!-- Actions Column -->
+        <ng-container matColumnDef="actions">
+          <mat-header-cell *matHeaderCellDef> Actions </mat-header-cell>
+          <mat-cell *matCellDef="let invoice" [matMenuTriggerFor]="menu" (click)="filterMenu(invoice)">
+            <span class="material-icons pointer">more_vert</span>
+            <mat-menu #menu="matMenu">
+              <button disabled="{{menu.disable}}" mat-menu-item *ngFor="let menu of menus"
+                (click)="onMenuItemClick(invoice, menu)">{{menu.title}}</button>
+            </mat-menu>
+          </mat-cell>
+        </ng-container>
+
+        <mat-header-row *matHeaderRowDef="displayedColumnsInvoiceDetails"></mat-header-row>
+        <mat-row *matRowDef="let row; columns: displayedColumnsInvoiceDetails;" class="element-row"
+          (click)="selectHandler(row)"></mat-row>
+      </mat-table>
+
+      <mat-paginator #paginator [length]="paginator.length" [pageIndex]="0" [pageSize]="5"
+      [pageSizeOptions]="[5, 10, 25, 100]">
+    </mat-paginator>
+
+    </div>
+
+  </mat-card>
+
+    <app-medical-invoice-breakdown-details [dataSource]="dataSourceInvoiceBreakdown" [showEditOptions]="false"
+      [invoiceData]="selectedInvoice" [switchBatchType]="switchBatchType"></app-medical-invoice-breakdown-details>
+</div>
+
+<app-under-assess-reasons-viewer [invoiceUnderAssessReasons]="selectedInvoice[0]">
+</app-under-assess-reasons-viewer>
+
+<div *ngIf="processing$ | async">
+  <br>
+  <mat-progress-bar mode="indeterminate"
+    [ngClass]="{ 'loading-main-double-menu-progress': doubleMenu, 'loading-main-single-menu-progress': !doubleMenu }">
+  </mat-progress-bar>
+  <p class="site-font grey">Processing...</p>
+  <br>
+</div>
+<div class="items-buttons-container">
+  <div class="form-buttons submit-button" *ngIf="canAdd && !this.isExternalUser">
+    <button type="button" class="button float-button"
+    (click)="onCaptureNewInvoice()">New Invoice</button>
+  </div>
+  <div class="form-buttons submit-button" *ngIf="canDeleteInvoiceAllocation && this.selectedInvoice.length > 0 && this.invoiceStatusEnum[this.selectedInvoice[0].invoiceStatus] == this.invoiceStatusEnum[8]" >
+    <button type="button" class="button float-button"
+    (click)="onDeleteAllocatedInvoice()">Delete Allocated Invoice</button>
+  </div>
+  <div class="form-buttons submit-button" *ngIf="this.selectedInvoice.length > 0 && this.invoiceStatusEnum[this.selectedInvoice[0].invoiceStatus] == this.invoiceStatusEnum[5]" >
+    <button type="button" class="button float-button"
+    (click)="onValidateInvoice()">Validate</button>
+  </div>
+  <div class="form-buttons submit-button" *ngIf="canAssess && this.selectedInvoice.length > 0 && this.invoiceStatusEnum[this.selectedInvoice[0].invoiceStatus] == this.invoiceStatusEnum[6]" >
+    <button type="button" class="button float-button"
+    (click)="onAssesInvoice()">Assess Invoice</button>
+  </div>
+  <div class="form-buttons submit-button" *ngIf="this.selectedInvoice.length > 0 && this.invoiceStatusEnum[this.selectedInvoice[0].invoiceStatus] == this.invoiceStatusEnum[8] && !this.isExternalUser" >
+    <button type="button" class="button float-button"
+    (click)="onPaymentRequestInvoice()">Payment Request</button>
+  </div>
+  <div class="form-buttons submit-button" *ngIf="canAutoPay && !this.isExternalUser && this.selectedInvoice.length > 0 && (this.invoiceStatusEnum[this.selectedInvoice[0].invoiceStatus] == this.invoiceStatusEnum[5] 
+  || this.invoiceStatusEnum[this.selectedInvoice[0].invoiceStatus] == this.invoiceStatusEnum[6] 
+  || this.invoiceStatusEnum[this.selectedInvoice[0].invoiceStatus] == this.invoiceStatusEnum[8])">
+    <button type="button" class="button float-button"
+    (click)="onAutoPayInvoice()">AutoPay</button>
+  </div>
+  <div class="form-buttons submit-button" *ngIf="canReinstate && this.selectedInvoice.length > 0 && (this.invoiceStatusEnum[this.selectedInvoice[0].invoiceStatus] == this.invoiceStatusEnum[3] 
+    || this.invoiceStatusEnum[this.selectedInvoice[0].invoiceStatus] == this.invoiceStatusEnum[10])">
+      <button type="button" class="button float-button"
+      (click)="onReinstateInvoice()">Reinstate</button>
+    </div>
+</div>
+<br>

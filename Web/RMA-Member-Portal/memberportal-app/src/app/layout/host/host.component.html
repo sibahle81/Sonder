@@ -1,0 +1,29 @@
+<app-left-menu></app-left-menu>
+<div class="main" class="nav-open-main">
+    <app-top-menu></app-top-menu>
+    <div class="page-content">
+        <div class="container">
+            <div class="page-content-clear">
+                <!--Loading Component-->
+                <div *ngIf="loadingMessage !== null" class="loading-container">
+                    <mat-progress-bar mode="indeterminate" class="loading-main-single-menu-progress"></mat-progress-bar>
+                    <h1 class="loading-main-single-menu-title">{{loadingMessage}}</h1>
+                </div>
+
+                <div *ngIf="loadingModule && loaded">
+                    <mat-progress-bar mode="indeterminate" class="loading-main-single-menu-progress"></mat-progress-bar>
+                    <h1 class="loading-main-single-menu-title">Loading module...</h1>
+                </div>
+
+                <!--Error Component-->
+                <div [hidden]="error == null" error="error">
+                    <error></error>
+                </div>
+
+                <div [hidden]="loadingModule || loadingMessage || error">
+                    <router-outlet></router-outlet>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

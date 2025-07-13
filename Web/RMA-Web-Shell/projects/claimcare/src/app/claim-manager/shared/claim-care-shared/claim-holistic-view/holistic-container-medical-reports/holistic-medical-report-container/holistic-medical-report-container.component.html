@@ -1,0 +1,42 @@
+<mat-card *ngIf="(isLoading$ | async)">
+    <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+    <label class="mat-label other-label"><i>loading medical reports...please wait</i></label>
+</mat-card>
+
+<div *ngIf="!(isLoading$ | async)">
+    <div class="menu-bar" *ngIf="!isWizard">
+        <span class="material-icons">
+            file_copy
+        </span>&nbsp;Medical Reports
+        <span class="material-icons pointer-right" matTooltip="Send For Capturing"
+            [disabled]="isDisabled || !canCaptureFirstMedicalReport"
+            *ngIf="isReadOnly && !personEvent.isStraigthThroughProcess" (click)="sendForCapturing()">
+            add
+        </span>
+    </div>
+
+    <mat-tab-group animationDuration="500ms" (selectedTabChange)="onTabChange($event)">
+        <mat-tab label="First Medical Reports">
+            <holistic-first-medical-reports #firstMedicalComponent [personEvent]="personEvent" [isReadOnly]="isReadOnly"
+                [event]="event" (isDisabled)="setIsDisabled($event)"
+                (canCaptureFirstMedicalReport)="setCanCapture($event)" (refreshClaimEmit)="refreshEmit($event)"
+                [isWizard]="isWizard" [triggerRefresh]="triggerRefresh" [triggerSelectedTab]="triggerSelectedTab"></holistic-first-medical-reports>
+        </mat-tab>
+
+        <mat-tab label="Progress Medical Reports" *ngIf="personEvent.firstMedicalReport && !isWizard">
+            <holistic-progress-medical-reports #progressMedicalComponent [personEvent]="personEvent"
+                [isReadOnly]="isReadOnly" [event]="event" [isWizard]="isWizard"></holistic-progress-medical-reports>
+        </mat-tab>
+
+        <mat-tab label="Final Medical Reports" *ngIf="personEvent.firstMedicalReport && !isWizard">
+            <holistic-final-medical-reports #finalMedicalComponent [personEvent]="personEvent" [isReadOnly]="isReadOnly"
+                [event]="event" (refreshClaimEmit)="refreshEmit($event)"
+                [isWizard]="isWizard"></holistic-final-medical-reports>
+        </mat-tab>
+
+        <mat-tab label="Sick Note Medical Reports" *ngIf="personEvent.firstMedicalReport && !isWizard">
+            <holistic-sicknote-medical-reports #sickNoteMedicalComponent [personEvent]="personEvent" [isReadOnly]="isReadOnly"
+                [event]="event" [isWizard]="isWizard" (refreshClaimEmit)="refreshEmit($event)" [triggerRefresh]="triggerRefresh" [triggerSelectedTab]="triggerSelectedTab"></holistic-sicknote-medical-reports>
+        </mat-tab>
+    </mat-tab-group>
+</div>

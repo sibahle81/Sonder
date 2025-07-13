@@ -1,0 +1,9 @@
+
+<mat-card *ngIf="isLoading$ | async">
+    <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+    <label class="mat-label other-label"><i>starting {{getEventTypeName()}} notification wizard...please wait</i></label>
+</mat-card>
+
+<div *ngIf="!(isLoading$ | async)">
+    <member-search-V2 [title]="title" [basicMode]="false" (memberSelectedEmit)="memberSelected($event)"></member-search-V2>
+</div>

@@ -1,0 +1,29 @@
+<mat-card>
+    <div class="menu-bar">
+        <span class="material-icons">
+            description
+        </span>&nbsp;
+        <label>Capture notes</label>
+        <span (click)="cancel(true)" class="material-icons pointer right"
+            matTooltip="close">
+            close
+        </span>
+        <span *ngIf="form.valid && !form.pristine" (click)="save()" class="material-icons pointer right pulseGreen"
+            matTooltip="save">
+            save
+        </span>
+    </div>
+
+    <form [formGroup]="form" class="mat-container details-form" novalidate>
+        <section>
+            <mat-form-field class="mat-form-field">
+                <label class="mat-label other-label">Note</label>
+                <textarea matTextareaAutosize matAutosizeMinRows="5" matAutosizeMaxRows="3" maxlength="255"
+                    matInput minlength="3" id="note" name="note" formControlName="note"></textarea>
+                <mat-error *ngIf="form.get('note').hasError('required')">
+                    note is <strong>required</strong>
+                </mat-error>
+            </mat-form-field>
+        </section>
+    </form>
+</mat-card>

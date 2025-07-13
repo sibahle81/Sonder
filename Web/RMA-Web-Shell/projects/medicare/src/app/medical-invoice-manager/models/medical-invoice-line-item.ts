@@ -1,0 +1,45 @@
+import { VatCodeEnum } from 'projects/medicare/src/app/medical-invoice-manager/enums/vat-code.enum';
+import { BaseClass } from 'projects/shared-models-lib/src/lib/common/base-class';
+import { InvoiceLineUnderAssessReason } from 'projects/medicare/src/app/medical-invoice-manager/models/invoice-line-under-assess-reason';
+
+export class MedicalInvoiceLineItem extends BaseClass {
+  invoiceLineId: number;
+  invoiceId: number;
+  serviceDate: string;
+  serviceTimeStart: string;
+  serviceTimeEnd: string;
+  requestedQuantity: number | null;
+  authorisedQuantity: number;
+  requestedAmount: number;
+  requestedVat: number | null;
+  requestedAmountInclusive: number | null;
+  authorisedAmount: number | null;
+  authorisedVat: number | null;
+  authorisedAmountInclusive: number | null;
+  totalTariffAmount: number;
+  totalTariffVat: number | null;
+  totalTariffAmountInclusive: number | null;
+  tariffAmount: number;
+  creditAmount: number| null;
+  vatCode: VatCodeEnum;
+  vatPercentage: number | null;
+  tariffId: number;
+  treatmentCodeId: number;
+  medicalItemId: number;
+  hcpTariffCode: string;
+  tariffBaseUnitCostTypeId: number | null;
+  description: string;
+  summaryInvoiceLineId: number | null;
+  isPerDiemCharge: boolean;
+  isDuplicate: boolean;
+  duplicateInvoiceLineId: number;
+  calculateOperands: string;
+  icd10Code: string;
+  invoiceLineUnderAssessReasons: InvoiceLineUnderAssessReason[];
+  quantity: number | null;
+  totalInvoiceLineCost: number | null;
+  totalInvoiceLineVat: number;
+  totalInvoiceLineCostInclusive: number;
+  isModifier: boolean | null;
+  publicationId: number;
+}

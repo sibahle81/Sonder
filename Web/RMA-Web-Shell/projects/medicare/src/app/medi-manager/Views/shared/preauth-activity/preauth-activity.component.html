@@ -1,0 +1,45 @@
+<mat-card class="matcard">
+    <mat-card-content class="matcard content">        
+        <div class="menu-bar">
+            <span class="material-icons">
+                apps
+            </span>&nbsp;PreAuth Activity
+          </div>
+        <mat-table #table [dataSource]="authActivities">
+            <ng-container matColumnDef="preAuthActivityType">
+                <mat-header-cell *matHeaderCellDef >Activity</mat-header-cell>
+                <mat-cell *matCellDef="let preauthactivity">
+                    <span class="truncate-text"> {{ getPreAuthActivityType(preauthactivity.preAuthActivityType)}} </span>
+                </mat-cell>
+            </ng-container>
+
+            <ng-container matColumnDef="preAuthStatus">
+                <mat-header-cell *matHeaderCellDef> Status </mat-header-cell>
+                <mat-cell *matCellDef="let preauthactivity">
+                    <span class="truncate-text"> {{ getPreauthStatus(preauthactivity.preAuthStatus) }} </span>
+                </mat-cell>
+            </ng-container>
+            <ng-container matColumnDef="comment">
+                <mat-header-cell *matHeaderCellDef > Comment </mat-header-cell>
+                <mat-cell *matCellDef="let preauthactivity" matTooltip="{{preauthactivity.comment}}">
+                    <span class="truncate-text"> {{ preauthactivity.comment}} </span>
+                </mat-cell>
+            </ng-container>
+            <ng-container matColumnDef="createdBy">
+                <mat-header-cell *matHeaderCellDef > CapturedBy </mat-header-cell>
+                <mat-cell *matCellDef="let preauthactivity" matTooltip="{{preauthactivity.createdBy}}">
+                    <span class="truncate-text"> {{ preauthactivity.createdBy}} </span>
+                </mat-cell>
+            </ng-container>
+            <ng-container matColumnDef="createdDate">
+                <mat-header-cell *matHeaderCellDef > CapturedDate </mat-header-cell>
+                <mat-cell *matCellDef="let preauthactivity" matTooltip="{{preauthactivity.createdDate}}">
+                    <span class="truncate-text"> {{ preauthactivity.createdDate | date:'yyyy-MM-dd HH:MM:SS' }} </span>
+                </mat-cell>
+            </ng-container>
+            <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
+            <mat-row *matRowDef="let row; columns: displayedColumns;"></mat-row>
+        </mat-table>
+
+    </mat-card-content>
+</mat-card>

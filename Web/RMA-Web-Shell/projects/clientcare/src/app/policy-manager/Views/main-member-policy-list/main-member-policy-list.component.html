@@ -1,0 +1,83 @@
+<div class="accordion-container">
+  <div *ngIf="isLoading">
+    <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+  </div>
+  <div *ngIf="!isLoading && policies.length === 0">
+    <span class="grey"><i>The member has no registered policies</i></span>
+  </div>
+  <div *ngIf="!isLoading && policies.length > 0">
+    <mat-accordion>
+      <ng-container *ngFor="let policy of policies; let i = index">
+        <mat-expansion-panel>
+          <mat-expansion-panel-header>
+            <mat-panel-title>
+              <h4>Policy: {{policy.policyNumber}}</h4>
+            </mat-panel-title>
+          </mat-expansion-panel-header>
+          <table style="width:100%;" border="0">
+            <tr>
+              <td class="member-cell">
+                <label>Commission Percentage</label><br />
+                <input style="text-align:right" matInput
+                  value="{{ (policy.commissionPercentage ? policy.commissionPercentage * 100.0 : 0.00) | number: '1.2-2' }}" disabled>
+              </td>
+              <td class="member-cell">
+                <label>Admin Percentage</label><br />
+                <input style="text-align:right" matInput
+                  value="{{ (policy.adminPercentage ? policy.adminPercentage * 100.0 : 0.00) | number: '1.2-2'}}" disabled>
+              </td>
+              <td class="member-cell">&nbsp;</td>
+              <td class="member-cell">&nbsp;</td>
+              <td class="member-cell">&nbsp;</td>
+            </tr>
+            <tr>
+              <td colspan="5">
+                <mat-table [dataSource]="getBenefits(policy.policyId)" matSort style="width:100% !important">
+                  <ng-container matColumnDef="memberName">
+                    <mat-header-cell *matHeaderCellDef mat-sort-header>Member Name</mat-header-cell>
+                    <mat-cell *matCellDef="let row"> {{row.memberName}} </mat-cell>
+                  </ng-container>
+                  <ng-container matColumnDef="productOption">
+                    <mat-header-cell *matHeaderCellDef mat-sort-header>Product Option</mat-header-cell>
+                    <mat-cell *matCellDef="let row"> {{row.productOption}} </mat-cell>
+                  </ng-container>
+                  <ng-container matColumnDef="benefitName">
+                    <mat-header-cell *matHeaderCellDef mat-sort-header>Benefit</mat-header-cell>
+                    <mat-cell *matCellDef="let row"> {{row.benefitName}} </mat-cell>
+                  </ng-container>
+                  <ng-container matColumnDef="benefitAmount">
+                    <mat-header-cell *matHeaderCellDef mat-sort-header>Benefit Amount</mat-header-cell>
+                    <mat-cell class="number-cell" *matCellDef="let row"> {{row.benefitAmount | number: '1.2-2'}} </mat-cell>
+                  </ng-container>
+                  <ng-container matColumnDef="basePremium">
+                    <mat-header-cell *matHeaderCellDef mat-sort-header>Base Premium</mat-header-cell>
+                    <mat-cell class="number-cell" *matCellDef="let row"> {{row.basePremium | number: '1.2-2'}} </mat-cell>
+                  </ng-container>
+                  <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
+                  <mat-row *matRowDef="let row; columns: displayedColumns;"></mat-row>
+                </mat-table>
+              </td>
+            </tr>
+            <tr>
+              <td colspan="3">&nbsp;</td>
+              <td style="text-align:right">Total Base Premium:</td>
+              <td><input class="total-cell" matInput value="{{getBasePremium(policy) | number: '1.2-2'}}" disabled></td>
+            </tr>
+            <tr>
+              <td class="member-cell">
+                <label>Payment Frequency</label><br />
+                <input matInput value="{{getPaymentFrequency(policy.paymentFrequency)}}" disabled>
+              </td>
+              <td colspan="2">&nbsp;</td>
+              <td style="text-align:right">Total Office Premium:</td>
+              <td>
+                <input class="total-cell" matInput value="{{getInstallmentPremium(policy) | number: '1.2-2'}}" disabled>
+              </td>
+            </tr>
+          </table>
+        </mat-expansion-panel>
+      </ng-container>
+    </mat-accordion>
+  </div>
+
+</div>

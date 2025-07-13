@@ -1,0 +1,75 @@
+<div>
+    <h1>Bulk Send Policy Schedules</h1>
+</div>
+<form *ngIf="form" [formGroup]="form" class="mat-container details-form" novalidate>
+    <section>
+        <mat-form-field class="mat-form-field">
+            <label class="mat-label other-label">Group Policy Number</label>
+            <div *ngIf="loadingPolicyNumber">
+                <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+            </div>
+            <input matInput [hidden]="loadingPolicyNumber" id="policyNumber" name="policyNumber"
+                formControlName="policyNumber" (blur)="findPolicyBlur($event)" (keyup)="findPolicyKeyup($event)" />
+            <mat-error *ngIf="form.get('policyNumber').hasError('required')">
+                Policy number is required
+            </mat-error>
+        </mat-form-field>
+        <mat-form-field class="mat-form-field-right">
+            <label class="mat-label other-label">Group Scheme Name</label>
+            <input readonly class="read-only" matInput id="schemeName" name="schemeName" formControlName="schemeName" />
+            <mat-error *ngIf="form.get('schemeName').hasError('required')">
+                Valid group scheme policy number is required
+            </mat-error>
+        </mat-form-field>
+    </section>
+    <section>
+        <div class="field-container">
+            <mat-form-field class="mat-form-field">
+                <label class="mat-label other-label">Recipients</label>
+                <input matInput id="recipient" name="recipient" formControlName="recipient" />
+                <mat-error
+                    *ngIf="form.get('recipient').hasError('required') || form.get('recipient').hasError('email')">
+                    Valid recipient email address is required
+                </mat-error>
+            </mat-form-field>
+        </div>
+        <div class="field-container-right shift-down" (click)="addRecipient()">
+            <span class="material-icons">add_circle_outline</span><span>&nbsp;Add recipients</span>
+        </div>
+    </section>
+    <section>
+        <div class="field-container" [hidden]="hideRecipient(1)">
+            <mat-form-field>
+                <input matInput id="recipient1" name="recipient1" formControlName="recipient1" />
+                <mat-error *ngIf="form.get('recipient1').hasError('email')">
+                    Valid recipient email address is required
+                </mat-error>
+            </mat-form-field>
+        </div>
+    </section>
+    <section>
+        <div class="field-container" [hidden]="hideRecipient(2)">
+            <mat-form-field class="mat-form-field">
+                <input matInput id="recipient2" name="recipient2" formControlName="recipient2" />
+                <mat-error *ngIf="form.get('recipient2').hasError('email')">
+                    Valid recipient email address is required
+                </mat-error>
+            </mat-form-field>
+        </div>
+    </section>
+    <section>
+        <div class="field-container" [hidden]="hideRecipient(3)">
+            <mat-form-field class="mat-form-field">
+                <input matInput id="recipient3" name="recipient3" formControlName="recipient3" />
+                <mat-error *ngIf="form.get('recipient3').hasError('email')">
+                    Valid recipient email address is required
+                </mat-error>
+            </mat-form-field>
+        </div>
+    </section>
+</form>
+<div class="form-group-button mat-form-button">
+    <div class="form-buttons">
+        <button (click)='sendPolicySchedules()' class="button float-button">Send</button>
+    </div>
+</div>

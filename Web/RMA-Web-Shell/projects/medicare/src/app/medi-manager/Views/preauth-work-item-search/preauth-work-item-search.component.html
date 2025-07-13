@@ -1,0 +1,81 @@
+<mat-card class="matCard">
+  <mat-card-content class="matCardContent">
+    <div class="page-header">
+      <h2>Find a work item</h2>
+    </div>
+    <mat-form-field [floatLabel]="'never'">
+      <input matInput maxlength="50" name="filter" #filter width="300" minLength="3" matTooltip="Search by Report category, Report type, Claim number, Patient name, ICD10 code(s), HCP practice no, HCP name, Consulation date, Report submission date"
+        matTooltipShowDelay="1000" id="txtSearch">
+      <mat-placeholder class="placeholder">Search by Report category, Report type, Claim number, Patient name, ICD10 code(s), HCP practice no, HCP name, Consulation date, Report submission date</mat-placeholder>
+      <mat-icon class="search-icon" (click)="search()" matSuffix>search</mat-icon>
+      <button class="hidden;" class="button submit-button" (click)="search()" matTooltip="Search by Report category, Report type, Claim number, Patient name, ICD10 code(s), HCP practice no, HCP name, Consulation date, Report submission date"
+        matTooltipShowDelay="1000" id="btnSearch">Search</button>
+    </mat-form-field>
+
+    <div *ngIf="dataSource.loading$ | async">
+      <mat-progress-bar mode="indeterminate"
+        [ngClass]="{ 'loading-main-double-menu-progress': doubleMenu, 'loading-main-single-menu-progress': !doubleMenu }">
+      </mat-progress-bar>
+      <p class="site-font grey">Searching...</p>
+    </div>
+
+    <div [hidden]="paginator.length == 0">
+      <mat-table #table [dataSource]="dataSource" matSort matSort matSortActive="modifiedDate" matSortDirection="desc"
+        matSortDisableClear>
+
+        <ng-container matColumnDef="description">
+          <mat-header-cell *matHeaderCellDef mat-sort-header> Description </mat-header-cell>
+          <mat-cell *matCellDef="let workItem"> {{workItem.workItemName}} </mat-cell>
+        </ng-container>
+
+        <ng-container matColumnDef="workItemState">
+          <mat-header-cell *matHeaderCellDef mat-sort-header> Status </mat-header-cell>
+          <mat-cell *matCellDef="let workItem"> {{this.getWorkItemStateFriendlyName(workItem.workItemState)}}
+          </mat-cell>
+        </ng-container>
+
+        <ng-container matColumnDef="createdBy">
+          <mat-header-cell *matHeaderCellDef> Creator </mat-header-cell>
+          <mat-cell *matCellDef="let workItem"> {{workItem.createdBy}} </mat-cell>
+        </ng-container>
+
+        <ng-container matColumnDef="additionalInformation">
+          <mat-header-cell *matHeaderCellDef> Additional information </mat-header-cell>
+          <mat-cell *matCellDef="let workItem"> {{workItem.additionalInformation}} </mat-cell>
+        </ng-container>
+
+        <ng-container matColumnDef="modifiedDate">
+          <mat-header-cell *matHeaderCellDef mat-sort-header> Modified Date </mat-header-cell>
+          <mat-cell *matCellDef="let workItem"> {{workItem.modifiedDate | date:'dd-MM-y'}} </mat-cell>
+        </ng-container>
+
+        <ng-container matColumnDef="workItemIForWizard">
+          <mat-header-cell *matHeaderCellDef> Resume wizard </mat-header-cell>
+          <mat-cell *matCellDef="let workItem">
+            <a class="cursorPointer" role="button" class="link-edit" (click)="onSelect(workItem)">Open</a>
+          </mat-cell>
+        </ng-container>
+        <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
+        <mat-row *matRowDef="let row; columns: displayedColumns;"></mat-row>
+      </mat-table>
+
+      <mat-paginator #paginator [length]="dataSource.rowCount$" [pageIndex]="0" [pageSize]="5"
+        [pageSizeOptions]="[5, 10, 25, 100]">
+      </mat-paginator>
+    </div>
+
+    <div [hidden]="paginator.length > 0 || !currentQuery || currentQuery == ''" class="no-search-results-add-button">
+      <div class="site-font grey">
+        <p class="grey">Your search - <strong>{{currentQuery}}</strong> - did not match any work item.</p>
+        <span>Suggestions: </span>
+        <ul>
+          <li>Make sure that all words are spelled correctly.</li>
+          <li>Try different keywords.</li>
+          <li>Try more general keywords.</li>
+          <li>Try fewer keywords.</li>
+        </ul>
+      </div>
+    </div>
+
+  </mat-card-content>
+</mat-card>

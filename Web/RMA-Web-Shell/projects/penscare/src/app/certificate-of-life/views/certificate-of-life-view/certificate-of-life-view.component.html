@@ -1,0 +1,24 @@
+
+<div [hidden]="isLoading" class="menu-container">
+  <nav mat-tab-nav-bar>
+<!--    <a mat-tab-link (click)="loadCerticateOfLifeList()"> Proof Of Life </a>
+    <a mat-tab-link (click)="loadTebaFiles()"> TEBA Files </a>-->
+    <a mat-tab-link (click)="loadTebaSftpFileRequestList()"> TEBA  Sftp Files </a>
+
+  </nav>
+  <div>
+      <div *ngIf="loadedTab === null">
+        <div style="margin-right: 15px;">
+          <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+        </div>
+        <span style="color: grey">Loading...</span>
+      </div>
+
+    <!--  <app-certificate-of-life-list *ngIf="loadedTab ==='certificate-of-life-list'"></app-certificate-of-life-list>
+      <app-certicate-of-life-vendor-documents *ngIf="loadedTab ==='certificate-of-life-vendor-documents'"></app-certicate-of-life-vendor-documents>-->
+     <app-teba-sftp-file-request-list *ngIf="loadedTab ==='teba-sftp-file-request-list'"></app-teba-sftp-file-request-list>
+</div>
+
+
+
+

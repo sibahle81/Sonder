@@ -1,0 +1,45 @@
+<div class="page-header"></div>
+<div class="wizard-main-content">
+    <mat-card class="wizard-mat-card">
+        <div class="menu-bar">            
+            <span class="material-icons pointer right" matTooltip="audit"
+                (click)="openAuditDialog()">
+                fingerprint
+            </span>
+        </div>
+        <mat-card-content class="wizard-mat-card-content">
+            <form [formGroup]="form" class="mat-container details-form" novalidate>
+                <mat-table #table [dataSource]="datasourceConsultants" matSort matSortActive="Id" matSortDirection="asc">
+                    <ng-container matColumnDef="select">
+                        <mat-header-cell *matHeaderCellDef class="check-box-row"></mat-header-cell>
+                        <mat-cell *matCellDef="let consultant" class="check-box-row">
+                            <mat-checkbox [checked]="selectedConsultantIds.indexOf(consultant.id) > -1" [hidden]="isDisabled" (change)="addConsultant($event, consultant)" sytle="width:15px"></mat-checkbox>
+                        </mat-cell>
+                    </ng-container>
+                    <ng-container matColumnDef="displayName">
+                        <mat-header-cell *matHeaderCellDef mat-sort-header> Name </mat-header-cell>
+                        <mat-cell *matCellDef="let consultant"> {{consultant.displayName}} </mat-cell>
+                    </ng-container>
+                    <ng-container matColumnDef="email">
+                        <mat-header-cell *matHeaderCellDef mat-sort-header> Email </mat-header-cell>
+                        <mat-cell *matCellDef="let consultant"> {{consultant.email}} </mat-cell>
+                    </ng-container>
+                    <ng-container matColumnDef="isActive">
+                        <mat-header-cell *matHeaderCellDef mat-sort-header> Status </mat-header-cell>
+                        <td mat-cell *matCellDef="let consultant" class="mat-column-isActive">
+                            <span [ngClass]="{ 'statuscell-active': consultant.isActive , 'statuscell-notactive': !consultant.isActive }" class="statuscell"> 
+                                {{consultant.isActive ? 'ACTIVE' : 'INACTIVE'}} 
+                            </span>
+                        </td>
+                    </ng-container>
+                    <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
+                    <mat-row *matRowDef="let row; columns: displayedColumns;"></mat-row>
+                </mat-table>
+                <div [hidden]="isDisabled">
+                    <mat-paginator #paginator [length]="rowCount" [pageSize]="5" [pageSizeOptions]="[5, 10, 25, 100]" (page)="onPaginateChange()">
+                    </mat-paginator>
+                </div>
+            </form>
+        </mat-card-content>
+    </mat-card>
+</div>

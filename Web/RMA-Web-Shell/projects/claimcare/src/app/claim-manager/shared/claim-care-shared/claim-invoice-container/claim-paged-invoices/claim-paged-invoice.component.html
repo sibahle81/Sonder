@@ -1,0 +1,180 @@
+<mat-card>
+    <div *ngIf="(dataSource?.loading$ | async) || (isLoading$ | async)">
+        <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+        <label class="mat-label other-label"><i>{{ loadingMessage$ | async }}</i></label>
+    </div>
+
+    <div [hidden]="(dataSource?.loading$ | async) ||  (isLoading$ | async)
+            || (dataSource && dataSource.data && dataSource.data.data && dataSource.data.data.length <= 0) 
+            || (paginator && paginator.length === 0 && !(dataSource?.loading$ | async))">
+        <mat-table #table [dataSource]="dataSource" matSort id="tblData" (matSortChange)="getData()">
+
+            <ng-container matColumnDef="select">
+                <mat-header-cell *matHeaderCellDef>
+                    <span class="material-icons noHover">
+                        security_update_good
+                    </span>
+                </mat-header-cell>
+                <mat-cell *matCellDef="let row">
+                    <mat-checkbox [disabled]="row.claimInvoiceStatusId == deleted" id="chk_{{row.claimInvoiceId}}"
+                        (change)="addCheckedItems($event, row)">
+                    </mat-checkbox>
+                </mat-cell>
+            </ng-container>
+
+            <ng-container matColumnDef="payee">
+                <mat-header-cell *matHeaderCellDef> Recipient (Payee)
+                </mat-header-cell>
+                <mat-cell *matCellDef="let row">
+                    <role-player-display-name *ngIf="row.payeeRolePlayerId"
+                        [rolePlayerId]="row.payeeRolePlayerId"></role-player-display-name>
+                    <span *ngIf="!row.payeeRolePlayerId && row.payee">{{row.payee}}</span>
+                    <span *ngIf="!row.payeeRolePlayerId && !row.payee"><i>N/A</i></span>
+                </mat-cell>
+            </ng-container>
+
+            <ng-container matColumnDef="claimInvoiceType">
+                <mat-header-cell *matHeaderCellDef> Invoice Type
+                </mat-header-cell>
+                <mat-cell *matCellDef="let row">
+                    {{getClaimInvoiceType(row.claimInvoiceType)}} </mat-cell>
+            </ng-container>
+
+            <ng-container matColumnDef="claimInvoiceStatus">
+                <mat-header-cell *matHeaderCellDef> Status </mat-header-cell>
+                <mat-cell *matCellDef="let row">
+                    {{getClaimInvoiceStatus(row.claimInvoiceStatusId)}}
+                </mat-cell>
+            </ng-container>
+
+            <ng-container matColumnDef="invoiceDate">
+                <mat-header-cell *matHeaderCellDef> Date Captured
+                </mat-header-cell>
+                <mat-cell *matCellDef="let row"> {{row.createdDate | date}}
+                </mat-cell>
+            </ng-container>
+
+            <ng-container matColumnDef="invoiceAmount">
+                <mat-header-cell *matHeaderCellDef> Amount </mat-header-cell>
+                <mat-cell *matCellDef="let row"> {{'R' + formatMoney(row.invoiceAmount.toFixed(2)) }}
+                </mat-cell>
+            </ng-container>
+
+            <ng-container matColumnDef="createdBy">
+                <mat-header-cell *matHeaderCellDef> Captured By </mat-header-cell>
+                <mat-cell *matCellDef="let row">
+                    <user-display-name [userName]="row.createdBy"></user-display-name>
+                </mat-cell>
+            </ng-container>
+
+            <ng-container matColumnDef="daysOffFrom">
+                <mat-header-cell *matHeaderCellDef> Days Off From
+                </mat-header-cell>
+                <mat-cell *matCellDef="let row"> {{row.daysOffFrom | date}}
+                </mat-cell>
+            </ng-container>
+
+            <ng-container matColumnDef="daysOffTo">
+                <mat-header-cell *matHeaderCellDef> Days Off To
+                </mat-header-cell>
+                <mat-cell *matCellDef="let row"> {{row.daysOffTo | date}}
+                </mat-cell>
+            </ng-container>
+
+            <ng-container matColumnDef="totalDays">
+                <mat-header-cell *matHeaderCellDef> Total Days
+                </mat-header-cell>
+                <mat-cell *matCellDef="let row"> {{row.totalDaysOff}}
+                </mat-cell>
+            </ng-container>
+
+            <ng-container matColumnDef="sla">
+                <mat-header-cell *matHeaderCellDef> SLA </mat-header-cell>
+                <mat-cell *matCellDef="let row">
+                    <sla-status-change-audit [slaItemType]="slaItemType"
+                        [itemId]="row.claimInvoiceId"></sla-status-change-audit>
+                </mat-cell>
+            </ng-container>
+
+            <ng-container matColumnDef="actions">
+                <mat-header-cell *matHeaderCellDef>
+                    <span class="material-icons noHover">
+                        more_vert
+                    </span>
+                </mat-header-cell>
+                <mat-cell *matCellDef="let row" [matMenuTriggerFor]="menu">
+                    <a *ngIf="disableView(row)" (click)="showDetail(row, 'view')"
+                        role="button" class="link-edit">
+                        <span matTooltip="view" class="material-icons icn pointer">
+                            visibility
+                        </span>
+                    </a>
+                    <div *ngIf="user?.isInternalUser && !hideActionsBasedOnStatus(row.claimInvoiceStatusId)">
+                        <a (click)="showDetail(row, 'repay')" role="button" class="link-edit greenLabel"
+                            *ngIf="row.claimInvoiceStatusId != deleted && isRejectedOrReversed(row.claimInvoiceStatusId) && !isDuplicateInvoicePresent(row)">
+                            <span matTooltip="repay" class="material-icons icn pointer">
+                                payment
+                            </span>
+                        </a>
+                    </div>
+                    <div *ngIf="user?.isInternalUser && !hideActionsBasedOnStatus(row.claimInvoiceStatusId)">
+                        <a (click)="onMenuSelect(row, 'pay')" role="button" class="link-edit greenLabel"
+                            *ngIf="row.claimInvoiceStatusId != deleted && userHasAuthorityLimit(row) && disablePay(row.claimInvoiceStatusId) && !isRejectedOrReversed(row.claimInvoiceStatusId)">
+                            <span matTooltip="pay" class="material-icons icn pointer">
+                                local_atm
+                            </span>
+                        </a>
+                    </div>
+                    <a (click)="onNotificationSend(row)" role="button" class="link-edit"
+                        *ngIf="user?.isInternalUser && row.claimInvoiceStatusId != deleted && !userHasAuthorityLimit(row) && disableApproval(row.claimInvoiceStatusId)">
+                        <span matTooltip="send transaction approval" class="material-icons icn pointer">
+                            dns
+                        </span>
+                    </a>
+                    <a (click)="showDetail(row, 'edit')" role="button" class="link-edit"
+                        *ngIf="user?.isInternalUser && (row.claimInvoiceStatusId != deleted && disableAllocated(row.claimInvoiceStatusId)) && !hideActionsBasedOnStatus(row.claimInvoiceStatusId) && 
+                        !isRejectedOrReversed(row.claimInvoiceStatusId) && disableEdit(row)">
+                        <span matTooltip="edit" class="material-icons icn pointer">
+                            settings
+                        </span>
+                    </a>
+                    <a (click)="openDeleteConfirmationDialog(row)" role="button" class="link-edit"
+                        *ngIf="user?.isInternalUser && (row.claimInvoiceStatusId != deleted && disableAllocated(row.claimInvoiceStatusId))">
+                        <span matTooltip="delete" class="material-icons icn pointer">
+                            delete
+                        </span>
+                    </a>
+                    <a (click)="openReinstateConfirmationDialog(row)" role="button" class="link-edit"
+                        *ngIf="canReInstate(row)">
+                        <span matTooltip="reinstate" class="material-icons icn pointer">
+                            undo
+                        </span>
+                    </a>
+                </mat-cell>
+            </ng-container>
+            <mat-header-row *matHeaderRowDef="getDisplayedColumns()"></mat-header-row>
+            <mat-row *matRowDef="let row; columns: getDisplayedColumns();" [ngClass]="{
+                    'excluded': row.claimInvoiceStatusId == deleted || excludeRow(row.claimInvoiceStatusId),
+                    'red': isRejectedOrReversed(row.claimInvoiceStatusId)
+                }">
+            </mat-row>
+        </mat-table>
+
+        <mat-paginator #paginator [pageIndex]="0" [pageSize]="5" [pageSizeOptions]="[5, 10, 25, 100]"
+            [length]="this.dataSource?.rowCount$ | async" (page)="getData()">
+        </mat-paginator>
+    </div>
+
+    <div *ngIf="paginator.length === 0 && !(dataSource?.loading$ | async)">
+        <i>No invoices found...</i>
+    </div>
+
+    <div
+        *ngIf="showPayMultiple && (dataSource && dataSource.data && dataSource.data.data && dataSource.data.data.length > 1) && !((dataSource?.loading$ | async) || (isLoading$ | async))">
+        <button [disabled]="selectedInvoiceIds?.length <= 0" type="button" class="button invoice-payment"
+            (click)="payMultiple()">
+            <span *ngIf="selectedInvoiceIds?.length == 1">Pay</span>
+            <span *ngIf="selectedInvoiceIds?.length > 1">Pay Multiple</span>
+        </button>
+    </div>
+</mat-card>

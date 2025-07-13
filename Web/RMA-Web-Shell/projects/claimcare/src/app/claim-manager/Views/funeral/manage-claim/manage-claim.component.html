@@ -1,0 +1,100 @@
+<mat-card style="margin: 15px 30px 15px 30px">
+    <mat-card-header>
+        <mat-card-title class="wizard-font card-title grey">
+            <h1 class="wizard-font" style="padding: 0;">Manage Claim</h1>
+        </mat-card-title>
+    </mat-card-header>
+    <mat-card-content style="margin-left: 10px;">
+        <form [formGroup]="form" class="mat-container" novalidate>
+            <section>
+                <!-- policy number -->
+                <mat-form-field>
+                    <label>Policy number</label>
+                    <input matInput maxlength="50" formControlName="policyNumber" name="policyNumer">
+                </mat-form-field>
+                <!-- Claim ref -->
+                <mat-form-field class="mat-form-field-right">
+                    <label>Claim Ref</label>
+                    <input matInput maxlength="50" formControlName="claimRefNumber" name="claimRefNumber">
+                </mat-form-field>
+            </section>
+            <section>
+                <!-- First Name -->
+                <mat-form-field>
+                    <label>First Name</label>
+                    <input matInput maxlength="50" formControlName="firstName" name="firstName">
+                </mat-form-field>
+                <!-- Last Name -->
+                <mat-form-field class="mat-form-field-right">
+                    <label>Last Name</label>
+                    <input matInput maxlength="50" formControlName="lastName" name="lastName">
+                </mat-form-field>
+            </section>
+            <section>
+                <div>
+                    <!-- Identity Number -->
+                    <mat-form-field>
+                        <label>Identity Number</label>
+                        <input matInput maxlength="13" formControlName="identityNumber" name="identityNumber">
+                    </mat-form-field>
+                    <!-- Date of birth -->
+                    <mat-form-field class="mat-form-field-right">
+                        <label class="mat-label other-label">Date of Birth</label>
+                        <input readonly matInput formControlName="dateOfBirth" [matDatepicker]="dateOfBirth" id="dateOfBirth" />
+                        <mat-datepicker-toggle matSuffix style="position: absolute;right: 0;top: 13px;" [for]="dateOfBirth"></mat-datepicker-toggle>
+                        <mat-datepicker touchUi="true" #dateOfBirth></mat-datepicker>
+                        <!-- <mat-error *ngIf="form.get('dateOfDeath').hasError('min')">
+                                    Future date of death is <strong>not valid</strong>
+                                </mat-error> -->
+                    </mat-form-field>
+                </div>
+            </section>
+
+            <section>
+                <!--Type of death-->
+                <mat-form-field>
+                    <label class="mat-label other-label">Type of death</label>
+                    <input matInput name="typeOfDeath" id="typeOfDeath" formControlName="typeOfDeath">
+                    <!-- <mat-error *ngIf="form.get('typeOfDeath').hasError('required')">
+                                Type of death is <strong>required</strong>
+                            </mat-error> -->
+                </mat-form-field>
+                <!-- cause of Death -->
+                <mat-form-field class="mat-form-field-right">
+                    <label class="mat-label other-label">Cause of Death</label>
+                    <input readonly matInput formControlName="causeOfDeath" id="causeOfDeath" />
+
+                    <!-- <mat-error *ngIf="form.get('dateOfDeath').hasError('min')">
+                                Future date of death is <strong>not valid</strong>
+                            </mat-error> -->
+                </mat-form-field>
+            </section>
+
+            <section>
+                <mat-form-field>
+                    <label class="mat-label other-label">Date of Death</label>
+                    <input readonly matInput formControlName="dateOfDeath" [matDatepicker]="dateOfDeath" id="dateOfDeath" />
+                    <mat-datepicker-toggle matSuffix style="position: absolute;right: 0;top: 13px;" [for]="dateOfDeath"></mat-datepicker-toggle>
+                    <mat-datepicker touchUi="true" #dateOfDeath></mat-datepicker>
+                    <!-- <mat-error *ngIf="form.get('dateOfDeath').hasError('min')">
+                                Future date of death is <strong>not valid</strong>
+                            </mat-error> -->
+                </mat-form-field>
+            </section>
+            <!-- <div class="form-group-button mat-form-button">
+                  <div class="form-buttons" matTooltip="No changes have been made">
+                      <button class="button float-button"
+                          [disabled]="form.pristine || isSaving || isInsuredLivesLoading || isPolicyLoading || !insuredLifeSelected || !enableRegister">Register</button>
+                  </div>
+                  <div (click)="cancel()" class="form-group-button mat-form-button">
+                      <button type="button" class="button float-button" [disabled]="isSaving">Cancel</button>
+                  </div>
+                  <div *ngIf="showWizardButton" (click)="redirectToWizard()"
+                      class="form-group-button mat-form-button" style="margin-top: -15px;">
+                      <button type="button" class="button float-button" [disabled]="isLoading">Continue
+                          Wizard</button>
+                  </div>
+              </div> -->
+        </form>
+    </mat-card-content>
+</mat-card>

@@ -1,0 +1,143 @@
+﻿<div class="page-header"></div>
+
+<div style="padding-top: 15px;">
+
+    <mat-tab-group>
+        <mat-tab label="Client Details">
+
+            <mat-card style="margin: 15px 30px 15px 30px">
+                <mat-card-header>
+                    <mat-card-title class="wizard-font card-title grey">
+                        <h1 class="wizard-font" style="padding: 0;">Client Details</h1>
+                        <!--<mat-slide-toggle (change)="onPinClientToggle($event)" [checked]="isDefaultClient" color="primary">
+                            Pinned
+                        </mat-slide-toggle> -->
+                    </mat-card-title>
+                    <mat-card-subtitle>
+                        <span class="grey site-font"><i>{{parentClientName}}</i></span>
+                    </mat-card-subtitle>
+                </mat-card-header>
+
+                <mat-card-content style="margin-left: 10px;">
+
+                    <!--Individual Type-->
+                    <div [hidden]="selected !== 1">
+                        <client-individual></client-individual>
+                    </div>
+
+                    <!--Affinity Type-->
+                    <div [hidden]="selected !== 2">
+                        <client-affinity></client-affinity>
+                    </div>
+
+                    <!--Company Type-->
+                    <div [hidden]="selected !== 3">
+                        <client-company></client-company>
+                    </div>
+                    
+                    <!--Group Individual Type-->
+                    <div [hidden]="selected !== 4">
+                        <client-group-individual></client-group-individual>
+                    </div>
+
+                    <last-modified-by type="Client"></last-modified-by>
+
+                    <div *ngIf="showButtons" class="form-group-button mat-form-button" style="margin-bottom: 40px;">
+
+                        <div *ngIf="showSaveButton" class="form-buttons" matTooltip="No changes have been made" [matTooltipDisabled]="!pristine" (click)="save()">
+                            <button [disabled]="pristine || disableSaveButton" class="button float-button submit-button">{{disableSaveButton ? 'Validating...' : 'Save'}}</button>
+                        </div>
+
+                        <div *ngIf="showEditButton" (click)="edit()" class="form-buttons submit-button">
+                            <button type="button" class="button float-button">Edit</button>
+                        </div>
+
+                        <div (click)="back()" class="form-buttons submit-button">
+                            <button type="button" class="button float-button">Back</button>
+                        </div>
+                    </div>
+
+                </mat-card-content>
+
+            </mat-card>
+
+        </mat-tab>
+
+        <mat-tab label="Address List">
+
+            <client-address-list></client-address-list>
+
+        </mat-tab>
+
+        <!--<mat-tab label="Branches">
+
+            <mat-card style="margin: 15px 30px 15px 30px">
+                <mat-card-header>
+                    <mat-card-title class="wizard-font card-title grey">
+                        <h1 style="padding: 0;">Branches</h1>
+                    </mat-card-title>
+                    <mat-card-subtitle>
+                        <span *ngIf="!isCompanyOrAffinity" class="grey site-font"><i>Branches can only be added to companies or affinities.</i></span>
+                    </mat-card-subtitle>
+                </mat-card-header>
+                <mat-card-content style="margin-left: 10px;">
+                    <div [hidden]="!isCompanyOrAffinity">
+                        <client-branches></client-branches>
+                    </div>
+                    <div [hidden]="!isCompanyOrAffinity || clientBranchListComponent.isLoading || !canAddBranch" class="form-group-button mat-form-button" style="margin: 15px 0 20px 0;">
+                        <div class="form-buttons" (click)="addBranch()">
+                            <button class="button float-button submit-button">Add branch</button>
+                        </div>
+                    </div>
+                </mat-card-content>
+            </mat-card>
+
+        </mat-tab>
+
+        <mat-tab label="Departments">
+
+            <mat-card style="margin: 15px 30px 15px 30px">
+                <mat-card-header>
+                    <mat-card-title class="wizard-font card-title grey">
+                        <h1 style="padding: 0;">Departments</h1>
+                    </mat-card-title>
+                    <mat-card-subtitle>
+                        <span *ngIf="isNotCompany" class="grey site-font"><i>Departments can only be added to companies.</i></span>
+                    </mat-card-subtitle>
+                </mat-card-header>
+                <mat-card-content style="margin-left: 10px;">
+                    <div [hidden]="isNotCompany">
+                        <client-departments></client-departments>
+                    </div>
+                    <div [hidden]="isNotCompany || clientDepartmentListComponent.isLoading || !canAddDepartment" class="form-group-button mat-form-button" style="margin: 15px 0 20px 0;">
+                        <div class="form-buttons" (click)="addDepartment()">
+                            <button class="button float-button submit-button">Add department</button>
+                        </div>
+                    </div>
+                </mat-card-content>
+            </mat-card>
+
+        </mat-tab>-->
+
+        <mat-tab label="Bank Accounts">
+            <bank-account-list [itemType]="'Client'" [itemId]="clientId"></bank-account-list>
+        </mat-tab>
+
+        <mat-tab label="Contact List">
+            <contact-details-list></contact-details-list>
+        </mat-tab>
+
+        <mat-tab label="Subsidiaries">
+            <client-subsidiary-list></client-subsidiary-list>
+        </mat-tab>
+
+        <mat-tab label="Notes">
+            <notes name="client"></notes>
+        </mat-tab>
+
+        <mat-tab label="Audit Log">
+            <audit-log name="client"></audit-log>
+        </mat-tab>
+
+    </mat-tab-group>
+</div>

@@ -1,0 +1,57 @@
+<mat-card>
+  <mat-card-content>
+    <h1 class="form-header">Start Month End</h1>
+    <form [formGroup]="form" *ngIf="this.form">
+      <div>
+        <section class="top-section">
+          <mat-form-field>
+            <label class="mat-label other-label  mandatory-field">
+              Request By
+            </label>
+            <input matInput maxlength="50" formControlName="requestBy" name="requestBy" id="requestBy" />
+            <mat-error *ngIf="form.get('requestBy').hasError('required')">
+              Request By is required
+            </mat-error>
+          </mat-form-field>
+        </section>
+
+        <section>
+          <mat-form-field *ngIf="timeOptions">
+            <label class="mat-label other-label mandatory-field">Schedule Run Time</label>
+            <mat-select id="scheduleRunTime" name="scheduleRunTime" formControlName="scheduleRunTime">
+              <mat-option *ngFor="let timeOption of timeOptions" [value]="timeOption.key">
+                {{timeOption.key}}
+              </mat-option>
+            </mat-select>
+            <mat-error *ngIf="form.get('scheduleRunTime').hasError('required') && form.get('scheduleRunTime').touched">
+              Schedule Time is required
+            </mat-error>
+          </mat-form-field>
+
+          <mat-form-field class="mat-form-field-right">
+            <label class="mat-label other-label mandatory-field">Schedule Run Date</label>
+            <input matInput formControlName="scheduleRunDate" id="scheduleRunDate" name="scheduleRunDate" [max]="today" date="true" readonly [matDatepicker]="scheduleRunDate">
+            <mat-datepicker-toggle matSuffix class="mat-toggle-datepicker datePick" [for]="scheduleRunDate">
+            </mat-datepicker-toggle>
+            <mat-datepicker touchUi="true" #scheduleRunDate></mat-datepicker>
+            <mat-error *ngIf="form.get('scheduleRunDate').hasError('required')">
+              Schedule Date is required
+            </mat-error>
+          </mat-form-field>
+        </section>
+      </div>
+      <mat-card-actions>
+        <div class="left-margin actions-container">
+          <div>
+            <button class="button submit-button" (click)="startMonthEnd()">Start Month End</button>
+          </div>
+        </div>
+      </mat-card-actions>
+    </form>
+    <div *ngIf="loading">
+      <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+      <p class="site-font grey">Loading...</p>
+   </div>
+  </mat-card-content>
+</mat-card>
+

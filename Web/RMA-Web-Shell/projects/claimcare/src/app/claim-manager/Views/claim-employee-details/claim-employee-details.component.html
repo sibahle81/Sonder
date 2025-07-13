@@ -1,0 +1,524 @@
+<div [hidden]="!isViewMode">
+
+  <mat-card>
+    <div class="expansionTitle"><span class="material-icons">groups</span>Employee Details<span
+        *ngIf="(!isWizard && viewClaimantDetails)|| (isReadOnly && viewClaimantDetails)" (click)="view()"
+        class="material-icons pointer right" matTooltip="Close Employee Details">
+        close
+      </span>
+
+      <span *ngIf="!(isSaving$ | async) && !viewClaimantDetails && (!isReadOnly) && !(isLoading$ | async)"
+        (click)="add()" class="material-icons pointer right" matTooltip="add Insured Life">
+        add_circle_outline
+      </span>
+
+      <span *ngIf="!isWizard && !viewClaimantDetails" (click)="expand()" class="material-icons pointer right"
+        matTooltip="Close Employee Details">
+        cancel
+      </span>
+    </div>
+    <div [hidden]="!viewClaimantDetails">
+      <div>
+        <form [formGroup]="form" class="mat-container details-form" novalidate>
+          <mat-card>
+            <span class="material-icons pointer right" (click)="cancel()" matTooltip="Close Person Details">close</span>
+            <section>
+
+              <mat-form-field class="mat-form-field">
+                <label class="mat-label other-label mandatory-field">ID Type</label>
+                <mat-select id="idType" name="idType" (selectionChange)="idTypeChanged($event)"
+                  formControlName="idType">
+                  <mat-option *ngFor="let idType of idTypes" [value]="idType.id">
+                    {{idType.name}}
+                  </mat-option>
+                </mat-select>
+                <mat-error *ngIf="form.get('idType').hasError('required') && form.get('idType').touched">
+                  ID type is required
+                </mat-error>
+              </mat-form-field>
+
+              <mat-form-field class="mat-form-field-right">
+                <label class="mat-label other-label mandatory-field">Id/ Passport number</label>
+                <input max="13" id="idNumber" name="idNumber" matInput formControlName="idNumber" (blur)="search()" />
+                <div [hidden]="!(isIdLoading$ | async)">
+                  <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+                  <label class="mat-label other-label"><i>Loading employee details...please wait</i></label>
+                </div>
+                <mat-error *ngIf="form.get('idNumber').hasError('idNumber') && form.get('idNumber').touched">
+                  <strong>Invalid</strong> id number
+                </mat-error>
+                <mat-error *ngIf="form.get('idNumber').hasError('required') && form.get('idNumber').touched">
+                  Identification number is <strong>required</strong>
+                </mat-error>
+                <mat-error *ngIf="form.get('idNumber').hasError('minlength') && form.get('idNumber').touched">
+                  Identification number must be at least 3 characters
+                </mat-error>
+              </mat-form-field>
+
+            </section>
+            <section>
+              <mat-form-field class="mat-form-field">
+                <label class="mat-label other-label mandatory-field">Date of Birth</label>
+                <input matInput formControlName="dateOfBirth" [matDatepicker]="dateOfBirth" id="dateOfBirth" readonly
+                  name="dateOfBirth" [max]="maxDate" (dateChange)="dobChange()">
+                <label *ngIf="isSAIdentity" class="lbl-confirm">(Verify that Date of birth matches the one on ID Document)</label>
+                <mat-datepicker-toggle matSuffix [for]="dateOfBirth"></mat-datepicker-toggle>
+                <mat-datepicker touchUi="true" #dateOfBirth></mat-datepicker>
+              </mat-form-field>
+
+              <mat-form-field class="mat-form-field-right">
+                <label class="mat-label other-label mandatory-field">Gender</label>
+                <mat-select id="gender" name="gender" formControlName="gender">
+                  <mat-option *ngFor="let gender of genders" [value]="gender.id">
+                    {{gender.name}}
+                  </mat-option>
+                </mat-select>
+                <mat-error *ngIf="form.get('gender').hasError('required') && form.get('gender').touched">
+                  Gender is required
+                </mat-error>
+              </mat-form-field>
+            </section>
+
+            <section>
+              <mat-form-field class="mat-form-field">
+                <label class="mat-label other-label mandatory-field">Nationality</label>
+                <input matInput #nationalityElement aria-label="nationality" [matAutocomplete]="nationalityTypesAuto"
+                  id="nationality" name="nationality" formControlName="nationality">
+                <mat-icon class="icon">keyboard_arrow_down</mat-icon>
+                <mat-autocomplete #nationalityTypesAuto="matAutocomplete" [displayWith]="getNationalityName.bind(this)" id="nationality">
+                  <mat-option [value]="'All'">All</mat-option>
+                  <mat-option *ngFor="let type of nationalitiesFilter" [value]="type.id">
+                    {{type.name}}
+                  </mat-option>
+                </mat-autocomplete>
+                <mat-error *ngIf="form.get('nationality').hasError('required') && form.get('nationality').touched">
+                  Nationality is required
+                </mat-error>
+              </mat-form-field>
+
+              <mat-form-field class="mat-form-field-right">
+                <label class="mat-label other-label mandatory-field">Marital Status</label>
+                <mat-select id="maritalStatus" name="maritalStatus" formControlName="maritalStatus">
+                  <mat-option *ngFor="let maritalStatus of maritalStatuses" [value]="maritalStatus.id">
+                    {{maritalStatus.name}}
+                  </mat-option>
+                </mat-select>
+                <mat-error *ngIf="form.get('maritalStatus').hasError('required') && form.get('maritalStatus').touched">
+                  Marital status is required
+                </mat-error>
+              </mat-form-field>
+            </section>
+
+            <section>
+              <mat-form-field class="mat-form-field">
+                <label class="mat-label other-label mandatory-field">Title</label>
+                <mat-select id="title" name="title" formControlName="title">
+                  <mat-option *ngFor="let title of titles" [value]="title.id">
+                    {{title.name}}
+                  </mat-option>
+                </mat-select>
+                <mat-error *ngIf="form.get('title').hasError('required') && form.get('title').touched">
+                  Title is required
+                </mat-error>
+              </mat-form-field>
+
+              <mat-form-field class="mat-form-field-right">
+                <label class="mat-label other-label mandatory-field">First Name</label>
+                <input id="firstName" name="firstName" matInput formControlName="firstName" />
+                <label *ngIf="isSAIdentity" class="lbl-confirm">(Capture first name as it appear on ID Document)</label>
+                <mat-error *ngIf="form.get('firstName').hasError('required') && form.get('firstName').touched">
+                  First name is required
+                </mat-error>
+              </mat-form-field>
+            </section>
+
+            <section>
+              <mat-form-field class="mat-form-field">
+                <label class="mat-label other-label mandatory-field">Surname</label>
+                <input id="surname" name="surname" matInput formControlName="surname" />
+                <label *ngIf="isSAIdentity" class="lbl-confirm">(Capture surname as it appear on ID Document)</label>
+                <mat-error *ngIf="form.get('surname').hasError('required') && form.get('surname').touched">
+                  Surname is required
+                </mat-error>
+              </mat-form-field>
+
+              <mat-form-field class="mat-form-field-right">
+                <label class="mat-label other-label mandatory-field">Preferred Communication Type</label>
+                <mat-select id="communicationType" (selectionChange)="communictionTypeChanged($event)"
+                  name="communicationType" formControlName="communicationType">
+                  <mat-option *ngFor="let communicationType of communicationTypes" [value]="communicationType.id">
+                    {{communicationType.name}}
+                  </mat-option>
+                </mat-select>
+                <mat-error
+                  *ngIf="form.get('communicationType').hasError('required') && form.get('communicationType').touched">
+                  Preferred Communication Type is required
+                </mat-error>
+              </mat-form-field>
+            </section>
+            <section>
+              <mat-form-field class="mat-form-field">
+                <label id="lblEmail" class="mat-label other-label">Email</label>
+                <input id="email" name="email" matInput formControlName="email" />
+                <mat-error *ngIf="form.get('email').hasError('required') && form.get('email').touched">
+                  Email is required
+                </mat-error>
+                <mat-error *ngIf="form.get('email').hasError('email') && form.get('email').touched">
+                  Please enter a valid<strong> email address </strong>
+                </mat-error>
+              </mat-form-field>
+
+              <mat-form-field class="mat-form-field-right">
+                <label id="lblCellNumber" class="mat-label other-label mandatory-field">Cell number</label>
+                <input id="cellNumber" name="cellNumber" matInput onKeyPress="if(this.value.length==10) return false;"
+                  formControlName="cellNumber" NumberOnly />
+                <mat-error *ngIf="form.get('cellNumber').hasError('required') && form.get('cellNumber').touched">
+                  Cell number is <strong>required</strong>
+                </mat-error>
+                <mat-error *ngIf="form.get('cellNumber').hasError('phoneNumber') && form.get('cellNumber').touched">
+                  Cell number must be<strong> ten digits</strong>
+                </mat-error>
+              </mat-form-field>
+            </section>
+
+            <section>
+              <mat-form-field class="mat-form-field">
+                <label id="lblTelNumber" class="mat-label other-label">Tel number</label>
+                <input id="telNumber" name="telNumber" (focus)="enableTellValidation()" matInput
+                  formControlName="telNumber" NumberOnly onKeyPress="if(this.value.length==10) return false;" />
+                <mat-error *ngIf="form.get('telNumber').hasError('required')">
+                  Telephone number is <strong>required</strong>
+                </mat-error>
+                <mat-error *ngIf="form.get('telNumber').hasError('phoneNumber')">
+                  Telephone number must be<strong> ten digits</strong>
+                </mat-error>
+              </mat-form-field>
+
+              <mat-form-field class="mat-form-field-right">
+                <label class="mat-label other-label mandatory-field">Country</label>
+                <input matInput #countriesElement aria-label="country" [matAutocomplete]="countryTypesAuto" id="country"
+                  name="country" formControlName="country">
+                <mat-icon class="icon">keyboard_arrow_down</mat-icon>
+                <mat-autocomplete #countryTypesAuto="matAutocomplete" [displayWith]="getCountryName.bind(this)" id="country">
+                  <mat-option *ngFor="let type of countriesFilter" [value]="type.id">
+                    {{type.name}}
+                  </mat-option>
+                </mat-autocomplete>
+                <mat-error *ngIf="form.get('country').hasError('required') && form.get('country').touched">
+                  Country is required
+                </mat-error>
+              </mat-form-field>
+            </section>
+
+            <section>
+              <fieldset class="vopd-field" *ngIf="!isWizard">
+                <legend><label class="mat-label other-label">
+                    VOPD Result</label></legend>
+                <label *ngIf="vopdStatus !==''">VOPD Status: &nbsp; <b>{{vopdStatus}}</b></label>
+                <br />
+                <label *ngIf="deadAlive !==''">Dead/Alive: &nbsp;&nbsp; <b>{{deadAlive}}</b></label>
+                <br />
+                <label *ngIf="deadAlive !==''">Surname Match: &nbsp; <b>{{clientVopdResponse.identity
+                    ==
+                    false ? 'No' : 'Yes'}}</b></label>
+                <br />
+                <label *ngIf="deadAlive !==''">Date Verified: &nbsp; <b>{{clientVopdResponse.dateVerified
+                    |
+                    date}}</b></label>
+                <br />
+                <label *ngIf="reason !==''">VOPD Names: &nbsp; <b>{{clientVopdResponse.firstName}}
+                    {{clientVopdResponse.surname}}</b></label>
+                <br />
+              </fieldset>
+            </section>
+          </mat-card>
+          <br />
+          <mat-card>
+            <div class="expansionTitle"><span class="material-icons">group</span>&nbsp;&nbsp;Employer Details<span
+                *ngIf="!isWizard" (click)="view()" class="material-icons pointer right"
+                matTooltip="Close Incident Details">
+                close
+              </span>
+            </div>
+
+            <section>
+              <!--is Skilled-->
+              <fieldset class="radio-field">
+                <legend><label id="lblSkilled" class="mat-label other-label mandatory-field">
+                    Skilled/Unskilled</label></legend>
+                <p>
+                  <input title="Skilled"  type="radio" value="true" formControlName="skilled"
+                    (change)="skilledChange()"><label>Skilled</label>
+                  <input title="Trainee/Learner/" type="radio" value="false" formControlName="skilled"
+                    (change)="skilledChange()"><label>Unskilled</label>
+                </p>
+              </fieldset>
+            </section>
+            <br />
+            <section>
+              <!--is Trainee/Learner/Apprentice-->
+              <fieldset class="radio-field">
+                <label id="lblTrainee" class="mat-label other-label mandatory-field">
+                  Trainee/Learner/Apprentice?</label>
+                <p>
+                  <input title="Trainee/Learner/" type="radio" value="true" formControlName="trainee"
+                    (change)="traineeChange()"><label>Yes</label>
+                  <input title="Skilled" type="radio" value="false" formControlName="trainee"
+                    (change)="traineeChange()"><label>No</label>
+                </p>
+              </fieldset>
+            </section>
+            <br />
+            <section>
+              <mat-form-field class="mat-form-field">
+                <label class="mat-label other-label mandatory-field">Start Date With Employer</label>
+                <input matInput formControlName="employmentDate" (dateChange)="validateEmploymentDate($event)"
+                  [matDatepicker]="employmentDate" matTooltip="Date of accident cannot be before employment start date"
+                  id="employmentDate" readonly name="employmentDate" [max]="maxDate">
+                <mat-datepicker-toggle matSuffix matTooltip="Date of accident cannot be before employment start date"
+                  [for]="employmentDate"></mat-datepicker-toggle>
+                <mat-datepicker touchUi="true" #employmentDate></mat-datepicker>
+                <mat-error
+                  *ngIf="form.get('employmentDate').hasError('required') && form.get('employmentDate').touched">
+                  Start Date With Employer is <strong>required</strong>
+                </mat-error>
+              </mat-form-field>
+
+              <mat-form-field class="mat-form-field-right">
+                <label class="mat-label other-label mandatory-field">Years In Occupation</label>
+                <input id="yearsOccupation" name="yearsOccupation" matInput NumberOnly (blur)="yearsValidation()"
+                  formControlName="yearsOccupation" />
+                <mat-error
+                  *ngIf="form.get('yearsOccupation').hasError('required') && form.get('yearsOccupation').touched">
+                  Years in occupation is <strong>required</strong>
+                </mat-error>
+                <div *ngIf="monthsInOccupation > 0">
+                  <label>({{monthsInOccupation}} months in occupation)</label>
+                </div>
+                <div *ngIf="daysInOccupation > 0">
+                  <label>({{daysInOccupation}} days in occupation)</label>
+                </div>
+              </mat-form-field>
+            </section>
+
+            <section>
+              <mat-form-field class="mat-form-field">
+                <label class="mat-label other-label mandatory-field">Years In Industry</label>
+                <input id="yearsInIndustry" name="yearsInIndustry" matInput formControlName="yearsInIndustry" NumberOnly
+                  type="number" [min]="1" />
+                <mat-error
+                  *ngIf="form.get('yearsInIndustry').hasError('required') && form.get('yearsInIndustry').touched">
+                  Years in industry is <strong>required</strong>
+                </mat-error>
+              </mat-form-field>
+
+              <mat-form-field class="mat-form-field-right">
+                <label class="mat-label other-label mandatory-field">Paterson Grading</label>
+                <mat-select id="petersonGrading" name="petersonGrading" formControlName="petersonGrading"
+                  (selectionChange)="petersonGradingChanged($event)">
+                  <mat-option *ngFor="let patersonGrading of patersonGradings"
+                    [value]="patersonGrading.patersonGradingId">
+                    {{patersonGrading.description}}
+                  </mat-option>
+                </mat-select>
+                <mat-error
+                  *ngIf="form.get('petersonGrading').hasError('required') && form.get('petersonGrading').touched">
+                  Paterson grading is <strong>required</strong>
+                </mat-error>
+              </mat-form-field>
+            </section>
+
+            <section>
+              <mat-form-field class="mat-form-field">
+                <label class="mat-label other-label">RMA Employee Ref Number</label>
+                <input id="rmaEmployeeNumber" name="rmaEmployeeNumber" matInput formControlName="rmaEmployeeNumber"
+                  (keypress)="keyPressAlphanumeric($event)" />
+                <mat-error
+                  *ngIf="form.get('rmaEmployeeNumber').hasError('minlength') && form.get('rmaEmployeeNumber').touched">
+                  RMA Employee Ref Number is to <strong>short</strong>
+                </mat-error>
+              </mat-form-field>
+
+              <mat-form-field class="mat-form-field-right">
+                <label class="mat-label other-label mandatory-field">Employee Number</label>
+                <input id="employeeNumber" name="employeeNumber" matInput formControlName="employeeNumber" />
+                <mat-error
+                  *ngIf="form.get('employeeNumber').hasError('required') && form.get('employeeNumber').touched">
+                  Employee number is <strong>required</strong>
+                </mat-error>
+              </mat-form-field>
+            </section>
+            <section>
+              <mat-form-field class="mat-form-field">
+                <label id="lblIndustry" class="mat-label other-label">Employee Industry
+                  Number</label>
+                <input id="industryNumber" name="industryNumber" matInput formControlName="industryNumber"
+                  (blur)="validateIndustryNumber()" (keypress)="omitSpecialChar($event)" />
+                <div [hidden]="!(isIndustryNumberLoading$ | async)">
+                  <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+                  <label class="mat-label other-label"><i>Industry number duplicate check...please wait</i></label>
+                </div>
+                <mat-error
+                  *ngIf="form.get('industryNumber').hasError('required') && form.get('industryNumber').touched">
+                  Employee industry number is <strong>required</strong>
+                </mat-error>
+                <mat-error
+                  *ngIf="form.get('industryNumber').hasError('isIndustryNumberUnique') && form.get('industryNumber').touched">
+                  Employee industry number already <strong>exists</strong> for another employee
+                </mat-error>
+              </mat-form-field>
+
+              <mat-form-field class="mat-form-field-right">
+                <label class="mat-label other-label mandatory-field">Occupation</label>
+                <mat-select id="occupationId" name="occupationId" formControlName="occupationId"
+                  (selectionChange)="occupationChanged($event)">
+                  <mat-option *ngFor="let item of designationTypes"
+                    [value]="item.designationTypeId">
+                    {{item.name}}
+                  </mat-option>
+                </mat-select>
+                <mat-error
+                  *ngIf="form.get('occupation').hasError('required') && form.get('occupation').touched">
+                  Paterson grading is <strong>required</strong>
+                </mat-error>
+              </mat-form-field>
+            </section>
+
+            <div class="form-group-button mat-form-button">
+              <button *ngIf="showQuestionnaireButton" class="button submit-button"
+                (click)="openQuestionnaireDialog()">Open Questionnaire</button>
+            </div>
+          </mat-card>
+        </form>
+      </div>
+      <br />
+      <div *ngIf="hasData">
+        <div class="expansionTitle"><span class="material-icons">
+            source
+          </span>&nbsp; Questionnaire
+        </div>
+        <mat-table #table [dataSource]="questionnaireDataSource" matSort>
+
+          <!-- Name Column -->
+          <ng-container matColumnDef="employeeNumber">
+            <mat-header-cell *matHeaderCellDef> Employee Number </mat-header-cell>
+            <mat-cell *matCellDef="let row"> {{row.employeeNumber ? row.employeeNumber : row.secondEmployeeNumber}}
+            </mat-cell>
+          </ng-container>
+
+          <!-- Surname Column -->
+          <ng-container matColumnDef="averageEarnings">
+            <mat-header-cell *matHeaderCellDef> Average Earnings </mat-header-cell>
+            <mat-cell *matCellDef="let row"> {{row.averageEarnings ? row.averageEarnings : row.employeeAverageEarnings}}
+            </mat-cell>
+          </ng-container>
+
+          <!-- idPassportNumber Column -->
+          <ng-container matColumnDef="annualBonus">
+            <mat-header-cell *matHeaderCellDef> Annual Bonus </mat-header-cell>
+            <mat-cell *matCellDef="let row"> {{row.annualBonus ? row.annualBonus : row.employeeAnnualBonus}}
+            </mat-cell>
+          </ng-container>
+
+          <!-- Actions Column -->
+          <ng-container matColumnDef="actions">
+            <mat-header-cell *matHeaderCellDef> Actions </mat-header-cell>
+            <mat-cell *matCellDef="let row" [matMenuTriggerFor]="menu" (click)="filterQuestionnaireMenu(row)"
+              class="material-icons pointer">
+              <span class="material-icons pointer right">more_vert</span>
+              <mat-menu #menu="matMenu">
+                <button disabled="{{menu.disable}}" mat-menu-item *ngFor="let menu of menus"
+                  (click)="onQuestionnaireMenuItemClick(row, menu)">{{menu.title}}</button>
+              </mat-menu>
+            </mat-cell>
+          </ng-container>
+
+          <mat-header-row *matHeaderRowDef="displayedColumnsQuestionnaire"></mat-header-row>
+          <mat-row *matRowDef="let row; columns: displayedColumnsQuestionnaire;"></mat-row>
+        </mat-table>
+      </div>
+      <br /><br />
+      <div *ngIf="isEditMode || isAddMode">
+        <span *ngIf="form.valid" class="mat-label other-label pointer" (click)="save()"><span
+            class="material-icons valid">check_circle</span></span>
+        <span *ngIf="!form.valid" class="mat-label other-label pointer"><span class="material-icons"
+            class="material-icons inValid">check_circle</span></span>
+        <span class="mat-label other-label pointer" (click)="cancel()"><span class="material-icons">cancel</span></span>
+      </div>
+
+      <div *ngIf="(isSaving$ | async)">
+        <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+        <label class="mat-label other-label"><i>Saving employee details...please wait</i></label>
+      </div>
+
+    </div>
+
+    <div *ngIf="(isLoading$ | async) && !showTable && !viewClaimantDetails">
+      <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+      <label class="mat-label other-label"><i>loading employee details...please wait</i></label>
+    </div>
+
+    <div *ngIf="!(isLoading$ | async) && !showTable && !viewClaimantDetails">
+      <label class="mat-label other-label"><i>No employee details have been added...</i></label><br />
+    </div>
+
+    <div *ngIf="!(isLoading$ | async) && showTable && !viewClaimantDetails">
+      <mat-table #table [dataSource]="dataSource" matSort>
+
+        <!-- Name Column -->
+        <ng-container matColumnDef="name">
+          <mat-header-cell *matHeaderCellDef> Name </mat-header-cell>
+          <mat-cell *matCellDef="let row"> {{row.rolePlayer.person.firstName}} </mat-cell>
+        </ng-container>
+
+        <!-- Surname Column -->
+        <ng-container matColumnDef="surname">
+          <mat-header-cell *matHeaderCellDef> Surname </mat-header-cell>
+          <mat-cell *matCellDef="let row"> {{row.rolePlayer.person.surname}} </mat-cell>
+        </ng-container>
+
+        <!-- idPassportNumber Column -->
+        <ng-container matColumnDef="idPassportNumber">
+          <mat-header-cell *matHeaderCellDef> Id/Passport Number </mat-header-cell>
+          <mat-cell *matCellDef="let row"> {{row.rolePlayer.person.idNumber ? row.rolePlayer.person.idNumber:
+            row.rolePlayer.person.passportNumber}}
+          </mat-cell>
+        </ng-container>
+
+        <ng-container matColumnDef="isVopdVerified">
+          <mat-header-cell *matHeaderCellDef> Is VOPD Verfied </mat-header-cell>
+          <mat-cell *matCellDef="let row"> {{row.rolePlayer.person.isVopdVerified}}
+          </mat-cell>
+        </ng-container>
+
+        <!-- Actions Column -->
+        <ng-container matColumnDef="actions">
+          <mat-header-cell *matHeaderCellDef> Actions </mat-header-cell>
+          <mat-cell *matCellDef="let row" [matMenuTriggerFor]="menu" (click)="filterMenu(row)">
+            <span class="material-icons pointer right">more_vert</span>
+            <mat-menu #menu="matMenu">
+              <button disabled="{{menu.disable}}" mat-menu-item *ngFor="let menu of menus"
+                (click)="onMenuItemClick(row, menu)">{{menu.title}}</button>
+            </mat-menu>
+          </mat-cell>
+        </ng-container>
+
+        <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
+        <mat-row *matRowDef="let row; columns: displayedColumns;"></mat-row>
+      </mat-table>
+      <mat-paginator #paginator [length]="dataSource.data ? dataSource.data.length : 0" [pageIndex]="0" [pageSize]="5"
+        [pageSizeOptions]="[5, 10, 25, 100]">
+      </mat-paginator>
+    </div>
+
+  </mat-card>
+</div>
+<div [hidden]="isViewMode">
+  <mat-card>
+    <div class="expansionTitle"><span class="material-icons">groups</span>Employee Details<span (click)="expand()"
+        class="material-icons pointer right" matTooltip="View Employee Details">
+        expand_more
+      </span></div>
+  </mat-card>
+</div>
+<br />

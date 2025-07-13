@@ -1,0 +1,15 @@
+<div class="menu-bar">
+  <span class="material-icons">mail</span>
+  {{title}}
+  <span (click)="cancel()" class="material-icons pointer right" matTooltip="close">
+    close
+  </span>
+  <span (click)="resend()" class="material-icons pointer right pulse" matTooltip="resend">
+    send
+  </span>
+</div>
+
+<mat-card *ngIf="data && data.html">
+  <div *ngIf="data.isHtml"><html-viewer [html]="data.html"></html-viewer></div>
+  <div *ngIf="!data.isHtml">{{data.html}}</div>
+</mat-card>

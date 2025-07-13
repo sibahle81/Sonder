@@ -1,0 +1,90 @@
+<mat-card class="pad" *ngIf="(dataSource.loading$ | async)">
+  <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+  <label class="mat-label other-label"><i>loading child policies...please wait</i></label>
+</mat-card>
+
+<div class="pad" [hidden]="(dataSource.loading$ | async)">
+  <div [hidden]="showDetail">
+    <div [hidden]="!(dataSource.data && dataSource.data.data)">
+      <mat-form-field [floatLabel]="'never'">
+        <input matInput class="search-policies" minlength="3" maxlength="100" name="filter" #filter>
+        <mat-placeholder class="placeholder">Search child policies</mat-placeholder>
+        <mat-icon class="search-icon" (click)="search()" matSuffix matTooltip="Search">search</mat-icon>
+      </mat-form-field>
+      <button class="clear-button" (click)="resetSearch()" matTooltip="Clear search text">
+        <mat-icon class="clear-icon" matSuffix>clear</mat-icon>
+      </button>
+    </div>
+
+    <div class="select-policies">
+      <form *ngIf="form" [formGroup]="form" class="mat-container details-form" novalidate>
+        <mat-form-field class="mat-form-field">
+          <input matInput formControlName="selectAllPolicies" [hidden]="true" />
+          <mat-checkbox formControlName="selectAllPolicies" (change)="setSelectAllPolicies($event)" [disabled]="isReadonly">
+            Select all policies
+          </mat-checkbox>
+        </mat-form-field>
+      </form>
+    </div>
+
+    <div [hidden]="!(dataSource.data && dataSource.data.data && dataSource.data.data.length > 0)">
+
+      <mat-table #table [dataSource]="dataSource" matSort id="tblData">
+
+        <ng-container matColumnDef="selected">
+          <mat-header-cell *matHeaderCellDef> &nbsp; </mat-header-cell>
+          <mat-cell *matCellDef="let row">
+            <mat-checkbox [checked]="policySelected(row.policyId)"
+              (change)="selectPolicy($event, row.policyId)"
+              [disabled]="isReadonly">
+            </mat-checkbox>
+          </mat-cell>
+        </ng-container>
+
+        <ng-container matColumnDef="policyNumber">
+          <mat-header-cell *matHeaderCellDef> Policy Number </mat-header-cell>
+          <mat-cell *matCellDef="let row">{{row.policyNumber ? row.policyNumber : 'N/A'}}</mat-cell>
+        </ng-container>
+
+        <ng-container matColumnDef="policyStatus">
+          <mat-header-cell *matHeaderCellDef> Policy Status </mat-header-cell>
+          <mat-cell *matCellDef="let row">{{getPolicyStatus(row.policyStatus)}}</mat-cell>
+        </ng-container>
+
+        <ng-container matColumnDef="memberName">
+          <mat-header-cell *matHeaderCellDef> Name </mat-header-cell>
+          <mat-cell *matCellDef="let row">{{row.memberName ? row.memberName : 'N/A'}}</mat-cell>
+        </ng-container>
+
+        <ng-container matColumnDef="idNumber">
+          <mat-header-cell *matHeaderCellDef> Id/Passport </mat-header-cell>
+          <mat-cell *matCellDef="let row">{{row.idNumber ? row.idNumber : 'N/A'}}</mat-cell>
+        </ng-container>
+
+        <ng-container matColumnDef="dateOfBirth">
+          <mat-header-cell *matHeaderCellDef> DOB </mat-header-cell>
+          <mat-cell *matCellDef="let row" [ngClass]="{ 'highlightDeath': row.dateOfDeath }">{{row.dateOfBirth ?
+            (row.dateOfBirth | date:'yyyy/MM/dd') : 'N/A'}}</mat-cell>
+        </ng-container>
+
+        <ng-container matColumnDef="policyJoinDate">
+          <mat-header-cell *matHeaderCellDef> Join Date </mat-header-cell>
+          <mat-cell *matCellDef="let row">{{row.policyJoinDate ? (row.policyJoinDate | date:'yyyy/MM/dd') :
+            'N/A'}}</mat-cell>
+        </ng-container>
+
+        <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
+        <mat-row *matRowDef="let row; columns: displayedColumns;"></mat-row>
+      </mat-table>
+
+      <mat-paginator #paginator [pageIndex]="0" [pageSize]="5" [pageSizeOptions]="[5, 10, 25, 100]"
+        [length]="this.dataSource.rowCount$ | async" (page)="getData()">
+      </mat-paginator>
+    </div>
+
+    <mat-card
+      *ngIf="!(dataSource.data && dataSource.data.data && dataSource.data.data.length > 0 || (dataSource.loading$ | async))">
+      <label class="mat-label other-label"><i>No child policies found...</i></label>
+    </mat-card>
+  </div>
+</div>

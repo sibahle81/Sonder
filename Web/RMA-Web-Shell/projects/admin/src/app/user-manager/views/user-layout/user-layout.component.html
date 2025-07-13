@@ -1,0 +1,18 @@
+﻿<div>
+    <nav class="innertop-nav">
+        <button mat-button [matMenuTriggerFor]="menu">Users</button>
+        <mat-menu #menu="matMenu" [overlapTrigger]="false">
+            <button mat-menu-item [routerLink]="['user-details']">Create a user</button>
+            <button mat-menu-item [routerLink]="['/user-manager']">Find a user</button>
+        </mat-menu>
+        <button mat-button [matMenuTriggerFor]="menu2">Roles</button>
+        <mat-menu #menu2="matMenu" [overlapTrigger]="false">
+            <button mat-menu-item [routerLink]="['role-details']">Create a role</button>
+            <button mat-menu-item [routerLink]="['role-list']">Find a role</button>
+        </mat-menu>
+    </nav>
+
+</div>
+<div [hidden]="loadingMessage != null || error != null" class="container-padding">
+    <router-outlet></router-outlet>
+</div>

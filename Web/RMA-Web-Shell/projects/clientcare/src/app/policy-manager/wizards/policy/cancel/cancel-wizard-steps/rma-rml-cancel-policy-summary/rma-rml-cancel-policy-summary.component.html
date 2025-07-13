@@ -1,0 +1,18 @@
+<div *ngIf="!model">
+  <mat-card class="margins">
+    <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+    <label class="mat-label other-label"><i>{{loadingMessage$ | async}}</i></label>
+  </mat-card>
+</div>
+
+<div *ngIf="model">
+  <roleplayer-policy-declaration [policy]="model.policy" [startDate]="getStartDate(model.policy, model.effectiveFrom)"
+    [endDate]="model.policy.expiryDate" [isReadOnly]="true"></roleplayer-policy-declaration>
+
+  <div *ngIf="model.vapsPolicies && model.vapsPolicies.length > 0">
+    <div *ngFor="let vapsPolicy of model.vapsPolicies">
+      <roleplayer-policy-declaration [policy]="vapsPolicy" [startDate]="getStartDate(vapsPolicy, model.effectiveFrom)"
+        [endDate]="vapsPolicy.expiryDate" [isReadOnly]="true"></roleplayer-policy-declaration>
+    </div>
+  </div>
+</div>

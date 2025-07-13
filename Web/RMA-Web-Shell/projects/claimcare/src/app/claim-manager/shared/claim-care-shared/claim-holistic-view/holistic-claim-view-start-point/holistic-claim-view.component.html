@@ -1,0 +1,14 @@
+<div *ngIf="selectedTab == 2">
+    <member-view *ngIf="rolePlayerId && currentUser?.isInternalUser" [rolePlayerId]="rolePlayerId" [selectedChildTab]="selectedTab"
+        [expanded]="false"></member-view>
+
+    <policy-list *ngIf="selectedEvent && selectedEvent.eventId && currentUser?.isInternalUser" [rolePlayerId]="rolePlayerId" 
+        [isReadOnly]="true"></policy-list>
+
+    <holistic-event [eventId]="eventId" [personEventId]="personEventId" (eventEmit)="setEvent($event)"></holistic-event>
+
+    <holistic-person-event-list *ngIf="selectedEvent && selectedEvent.eventId"
+        [event]="selectedEvent" [personEventId]="personEventId" [mode]="mode"
+        (emitPersonEvent)="setSelectedPersonEvent($event)" [selectedTab]="defaultPEVTabIndex"></holistic-person-event-list>
+
+</div>

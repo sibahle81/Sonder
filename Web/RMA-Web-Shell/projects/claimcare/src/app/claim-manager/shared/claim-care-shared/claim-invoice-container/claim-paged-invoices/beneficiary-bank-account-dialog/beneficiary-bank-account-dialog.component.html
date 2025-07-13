@@ -1,0 +1,13 @@
+<div class="menu-bar">
+  <span class="material-icons">contact_support</span>
+  <span  *ngIf="!selectedBeneficiary && data?.personEvent">Who would you like to pay?</span>
+  <span  *ngIf="selectedBeneficiary">Select a bank account</span>
+  <span (click)="cancel()" class="material-icons pointer right" matTooltip="close">
+    close
+  </span>
+</div>
+
+  <beneficiary-search-V2 *ngIf="!selectedBeneficiary && data?.personEvent" [title]="'Beneficiaries'" [personEvent]="data.personEvent" (beneficiarySelectedEmit)="beneficiarySelected($event)"></beneficiary-search-V2>
+  <span *ngIf="selectedBeneficiary"><span *ngIf="!selectedBeneficiary && data?.personEvent"><br/></span>
+    <role-player-banking-list [rolePlayer]="selectedBeneficiary" [isReadOnly]="true" [showSelectColumn]="true" (rolePlayerBankingSelectedEmit)="setBankAccount($event)"></role-player-banking-list>
+  </span>

@@ -1,0 +1,65 @@
+<body [style.backgroundImage]="'url(' + backgroundImage + ')'">
+    <div class="content-container">
+        <div class="header-container">
+            <h1 style="font-weight: lighter;">Membership Policy Documents Portal</h1>
+        </div>
+        <form [formGroup]="membershipDocsForm" class="login-form" novalidate>
+            <label class="form-label first-label mandatory-field">Enter Policy Number</label>
+            <mat-form-field>
+                <input value="" matInput id="policynumber" name="policynumber" formControlName="policynumber" type="text">
+                <mat-error *ngIf="membershipDocsForm.get('policynumber').hasError('required')">
+                    Policy number is required
+                </mat-error>
+                <mat-error *ngIf="membershipDocsForm.get('policynumber').hasError('policynumber')">
+                    Please enter a <strong>valid</strong> policy number.
+                </mat-error>
+            </mat-form-field>
+            <div *ngIf="policyDocuments === null">
+                <div *ngIf="membershipDocsForm.get('policynumber').value.length > 12">
+                    <div>
+                        <button class="button login-button" id="onetimepinBtn" name="onetimepinBtn" (click)="requestPin()">Request One Time Pin</button>
+                        <div *ngIf="isRequestingOTP">
+                            <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+                            <label class="mat-label other-label"><i>Requesting One Time Pin</i></label>
+                        </div>
+                    </div>
+                    <br>
+                    <label class="form-label first-label">Enter One Time Pin</label>
+                    <mat-form-field>
+                        <input matInput id="onetimepin" name="onetimepin" formControlName="onetimepin" type="number">
+                        <label *ngIf="otpStatus < 200 && otpMessage.length > 0 && membershipDocsForm.get('onetimepin').value < 11111" class="mat-label other-label red-text"><i>{{otpMessage}}</i></label>
+                        <label *ngIf="otpStatus == 200 && otpMessage.length > 0 && membershipDocsForm.get('onetimepin').value < 11111" class="mat-label other-label green-text"><i>{{otpMessage}}</i></label>
+                    </mat-form-field>
+                </div>
+                <div>
+                    <hr />
+                    <button class="button login-button" [disabled]="(membershipDocsForm.get('onetimepin').value < 11111)" (click)="fetchDocuments()">Fetch Documents</button>
+                    <hr />
+                </div>
+                <div *ngIf="isfetchingDocuments">
+                    <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+                    <label class="mat-label other-label"><i>Fetching Documents</i></label>
+                </div>
+                <div *ngIf="fetchMessageStatus === 0 && fetchMessage.length > 0">
+                    <label class="mat-label other-label red-text"><i>{{fetchMessage}}</i></label>
+                </div>
+            </div>
+            <div *ngIf="fetchMessageStatus === 200">
+                <label class="mat-label other-label green-text"><i>{{fetchMessage}}</i></label>
+            </div>
+        </form>
+        <div *ngIf="fetchMessageStatus === 200 && policyDocuments.length > 0">
+            <hr>
+            <div *ngFor="let attachment of policyDocuments">
+                ◎ <a class="mat-label other-label green-text" (click)="downloadAttachment(attachment)"><i><u>{{attachment.fileName}}</u></i></a>
+            </div>
+            <hr>
+            <div>
+                <label class="mat-label other-label red-text"><i>Password Hint: Use Your ID Number {{passwordHint}} to open the documents</i></label>
+            </div>
+        </div>
+    </div>
+    <div class="image-container">
+        <img src="/assets/images/rmalogo.png" alt="" />
+    </div>
+</body>

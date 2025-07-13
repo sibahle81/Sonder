@@ -1,0 +1,81 @@
+<mat-card>
+  <div class="expansionTitle">
+    <span class="material-icons">groups</span> Claim Information
+  </div>
+
+  <div *ngIf="showTable && !viewFormMode">
+    <div *ngIf="dataSource.length === 0">
+      No {{personType}} found
+    </div>
+
+
+
+    <div *ngIf="dataSource">
+      <mat-table #table
+        [dataSource]="dataSource" matSort>
+        <!-- Claim number Column -->
+        <ng-container matColumnDef="claimNumber">
+          <mat-header-cell *matHeaderCellDef> Claim No. </mat-header-cell>
+          <mat-cell *matCellDef="let row"> {{row.claimReferenceNumber}} </mat-cell>
+        </ng-container>
+
+        <!-- Surname Column -->
+        <ng-container matColumnDef="dateOfAccident">
+          <mat-header-cell *matHeaderCellDef> Date of Accident </mat-header-cell>
+          <mat-cell *matCellDef="let row"> {{row.dateOfAccident | date:'yyyy/MM/dd'}} </mat-cell>
+        </ng-container>
+
+        <!-- dateOfStabilisation Column -->
+        <ng-container matColumnDef="dateOfStabilisation">
+          <mat-header-cell *matHeaderCellDef> Date of Stabilisation </mat-header-cell>
+          <mat-cell *matCellDef="let row"> {{row.dateOfStabilisation | date:'yyyy/MM/dd'}}
+          </mat-cell>
+        </ng-container>
+
+        <!-- idPassportNumber Column -->
+        <ng-container matColumnDef="earnings">
+          <mat-header-cell *matHeaderCellDef>Earnings </mat-header-cell>
+          <mat-cell *matCellDef="let row"> {{row.earnings | currency: 'R'}}
+          </mat-cell>
+        </ng-container>
+
+        <!-- idPassportNumber Column -->
+        <ng-container matColumnDef="pensionLumpSum">
+          <mat-header-cell *matHeaderCellDef>Widow Lump Sum</mat-header-cell>
+          <mat-cell *matCellDef="let row"> {{row.pensionLumpSum | currency: 'R'}}
+          </mat-cell>
+        </ng-container>
+
+        <!-- idPassportNumber Column -->
+        <ng-container matColumnDef="estimatedCV">
+          <mat-header-cell *matHeaderCellDef>Estimated CV </mat-header-cell>
+          <mat-cell *matCellDef="let row"> {{row.estimatedCV | currency: 'R'}}
+          </mat-cell>
+        </ng-container>
+
+        <!-- Actions Column -->
+        <ng-container matColumnDef="actions">
+          <mat-header-cell *matHeaderCellDef> Actions </mat-header-cell>
+          <mat-cell *matCellDef="let row" [matMenuTriggerFor]="menu">
+            <span class="material-icons pointer">more_vert</span>
+            <mat-menu #menu="matMenu">
+              <ng-container *ngFor="let menu of menus">
+                <button *ngIf="!menu.disable" mat-menu-item
+                  (click)="onMenuItemClick(row, menu)">{{menu.title}}</button>
+              </ng-container>
+            </mat-menu>
+          </mat-cell>
+        </ng-container>
+
+        <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
+        <mat-row *matRowDef="let row; columns: displayedColumns;"></mat-row>
+      </mat-table>
+    </div>
+  </div>
+
+  <div *ngIf="viewFormMode">
+    <app-claim-information [selectedClaim]="selectedClaim" (onViewClaims)="onViewClaims()"></app-claim-information>
+  </div>
+</mat-card>
+
+

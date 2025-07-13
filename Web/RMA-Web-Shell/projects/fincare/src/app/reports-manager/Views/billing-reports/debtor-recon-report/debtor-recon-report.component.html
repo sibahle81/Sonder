@@ -1,0 +1,93 @@
+<h3>Policy Recon Report</h3>
+<form [formGroup]="form" class="mat-container details-form" novalidate>
+    <section>
+        <mat-form-field class="mat-form-field">
+            <label class="mat-label other-label">Start Date</label>
+            <input readonly matInput date="true" time="false" [max]="maxDate" [matDatepicker]="startDate" id="startDate"
+                formControlName="startDate" />
+            <mat-datepicker-toggle matSuffix [for]="startDate">
+            </mat-datepicker-toggle>
+            <mat-datepicker touchUi="true" #startDate ng-model-options="{ timezone: 'sast' }"></mat-datepicker>
+        </mat-form-field>
+
+        <mat-form-field class="mat-form-field-right">
+            <label class="mat-label other-label">End Date</label>
+            <input readonly matInput date="true" time="false" [max]="maxDate" [matDatepicker]="endDate" id="endDate"
+                formControlName="endDate" />
+            <mat-datepicker-toggle matSuffix [for]="endDate">
+            </mat-datepicker-toggle>
+            <mat-datepicker touchUi="true" #endDate ng-model-options="{ timezone: 'sast' }"></mat-datepicker>
+        </mat-form-field>
+    </section>
+    <section>
+        <mat-form-field class="mat-form-field">
+            <label class="mat-label other-label mandatory-field">Company</label>
+            <mat-select formControlName="company" (selectionChange)="companyChanged($event)">
+                <mat-option *ngFor="for let company of companies" [value]="company.id">{{company.name}}</mat-option>
+            </mat-select>
+        </mat-form-field>
+        <mat-form-field class="mat-form-field-right">
+            <label class="mat-label other-label mandatory-field">Branch</label>
+            <mat-select formControlName="branch" (selectionChange)="branchChanged($event)">
+                <mat-option *ngFor="for let branch of branches" [value]="branch.id">{{branch.name}}</mat-option>
+            </mat-select>
+        </mat-form-field>
+    </section> 
+    <section>
+        <p *ngIf="isLoadingDebtors$ | async">
+            <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+            <label class="mat-label other-label"><i>loading debtors...please wait</i></label>
+          </p>
+          <div *ngIf="isDownLoadingReport$ | async">
+            <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+            <label class="mat-label other-label">downloading...please wait</label>
+        </div>
+        <div class="margin-top" [hidden]="datasource.data.length === 0">
+            <mat-table #table [dataSource]="datasource" matSort #sort class="debtor-container">
+                <ng-container matColumnDef="finPayeNumber">
+                    <mat-header-cell *matHeaderCellDef mat-sort-header>Debtor Number</mat-header-cell>>
+                    <mat-cell *matCellDef="let row">{{row.finPayeNumber}}</mat-cell>
+                </ng-container>
+                <ng-container matColumnDef="displayName">
+                    <mat-header-cell *matHeaderCellDef mat-sort-header>Name</mat-header-cell>>
+                    <mat-cell *matCellDef="let row">{{row.displayName}}</mat-cell>
+                </ng-container>
+                <ng-container matColumnDef="action">
+                    <mat-header-cell *matHeaderCellDef>
+                    </mat-header-cell>
+                    <mat-cell *matCellDef="let row">
+                        <mat-checkbox [checked]="selectedRoleplayerIds.indexOf(row.roleplayerId) > -1"
+                            (change)="debtorChecked($event,row.roleplayerId)">
+                        </mat-checkbox>
+                    </mat-cell>
+                </ng-container>
+                <mat-header-row *matHeaderRowDef="displayedColumns;"></mat-header-row>
+                <mat-row *matRowDef="let row; columns: displayedColumns;"></mat-row>
+            </mat-table>
+            <mat-paginator #paginator [length]="datasource.data ? datasource.data.length : 0" [pageIndex]="0"
+            [pageSize]="5" [pageSizeOptions]="[5, 10, 25, 100]">
+            </mat-paginator>
+        </div>
+    </section>
+  
+    <br />
+    <div class="form-group-button-lookup mat-form-button">
+        <div class="form-buttons" (click)="loadReport()">
+            <button class="button submit-button" [disabled]="isDownLoadingReport$ | async">View</button>
+        </div>   
+        <div class="form-buttons" (click)="downloadReport()">
+            <button class="button submit-button" [disabled]="isDownLoadingReport$ | async">Download</button>
+        </div>
+        <div class="form-buttons" (click)="refresh()">
+            <button class="button submit-button" [disabled]="isDownLoadingReport$ | async">Refresh</button>
+        </div>
+    </div>
+</form>
+
+<div [hidden]="!showReport" class="report-container" id="trialBalanceRecon">
+    <ssrs-reportviewer [reportserver]="reportServerAudit" [reporturl]="reportUrlAudit"
+        [showparameters]="showParametersAudit" [parameters]="parametersAudit" [language]="languageAudit"
+        [width]="widthAudit" [height]="heightAudit" [toolbar]="toolbarAudit" [format]="format"
+        (downloadComplete)="completeDownload($event)">
+    </ssrs-reportviewer>
+</div>

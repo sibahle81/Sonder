@@ -1,0 +1,92 @@
+<mat-card *ngIf="isLoading">
+    <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+    <label class="mat-label other-label"><i>Loading</i></label>
+</mat-card>
+
+<div *ngIf="!(dataSource.data && dataSource.data.length > 0 )">
+    <label class="mat-label other-label"><i>No records found...</i></label>
+</div>
+
+<mat-table #table [dataSource]="dataSource" matSort id="tblData">
+
+    <ng-container matColumnDef="referringMcaId">
+        <mat-header-cell *matHeaderCellDef> Referring PMCA </mat-header-cell>
+        <mat-cell *matCellDef="let row">{{getUserNameById(row.referringMcaId)}}</mat-cell>
+    </ng-container>
+
+    <ng-container matColumnDef="receivingMcaId">
+        <mat-header-cell *matHeaderCellDef> Receiving PMCA </mat-header-cell>
+        <mat-cell *matCellDef="let row">{{getUserNameById(row.receivingMcaId)}}</mat-cell>
+    </ng-container>
+
+    <ng-container matColumnDef="referringPaId">
+        <mat-header-cell *matHeaderCellDef> Referring PA </mat-header-cell>
+        <mat-cell *matCellDef="let row">{{getUserNameById(row.referringPaId)}}</mat-cell>
+    </ng-container>
+
+    <ng-container matColumnDef="receivingPaId">
+        <mat-header-cell *matHeaderCellDef> Receiving PA </mat-header-cell>
+        <mat-cell *matCellDef="let row">{{getUserNameById(row.receivingPaId)}}</mat-cell>
+    </ng-container>
+
+    <ng-container matColumnDef="referringPmpRegionId">
+        <mat-header-cell *matHeaderCellDef> Referring PMP Region </mat-header-cell>
+        <mat-cell *matCellDef="let row">{{getRegionNameById(row.referringPmpRegionId)}}</mat-cell>
+    </ng-container>
+
+    <ng-container matColumnDef="healthCareProviderId">
+        <mat-header-cell *matHeaderCellDef> HealthCare Provider</mat-header-cell>
+        <mat-cell *matCellDef="let row">{{row.healthCareProviderId}}</mat-cell>
+    </ng-container>
+
+
+    <ng-container matColumnDef="expDateOfArrival">
+        <mat-header-cell *matHeaderCellDef> Exp Date Of Arrival </mat-header-cell>
+        <mat-cell *matCellDef="let row">{{row.expDateOfArrival}}</mat-cell>
+    </ng-container>
+
+    <ng-container matColumnDef="createdDate">
+        <mat-header-cell *matHeaderCellDef> Created Date </mat-header-cell>
+        <mat-cell *matCellDef="let row">{{row.createdDate}}</mat-cell>
+    </ng-container>
+
+    <ng-container matColumnDef="createdBy">
+        <mat-header-cell *matHeaderCellDef mat-sort-header>Created By</mat-header-cell>
+        <mat-cell *matCellDef="let row"> {{ row.createdBy}} </mat-cell>
+    </ng-container>
+
+    <ng-container matColumnDef="modifiedDate">
+        <mat-header-cell *matHeaderCellDef mat-sort-header>Modified Date</mat-header-cell>
+        <mat-cell *matCellDef="let row"> {{ row.modifiedDate}} </mat-cell>
+    </ng-container>
+
+    <ng-container matColumnDef="modifiedBy">
+        <mat-header-cell *matHeaderCellDef mat-sort-header>Modified By</mat-header-cell>
+        <mat-cell *matCellDef="let row"> {{ row.modifiedBy}} </mat-cell>
+    </ng-container>
+
+    <ng-container matColumnDef="actions">
+        <mat-header-cell *matHeaderCellDef>Action</mat-header-cell>
+        <mat-cell *matCellDef="let row">
+            <a (click)="view(row)" role="button" class="link-edit">
+                <span matTooltip="view" class="material-icons icn pointer">
+                    visibility
+                </span>
+            </a>
+            <a (click)="edit(row)" role="button" class="link-edit">
+                <span matTooltip="edit" class="material-icons icn pointer">
+                    settings
+                </span>
+            </a>
+            <a  (click)="openAuditDialog(row)" role="button"
+                class="link-edit">
+                <span matTooltip="edit" class="material-icons icn pointer" matTooltip="audit">
+                    fingerprint
+                </span>
+            </a>
+        </mat-cell>
+    </ng-container>
+
+    <mat-header-row *matHeaderRowDef="getDisplayedColumns()"></mat-header-row>
+    <mat-row *matRowDef="let row; columns: getDisplayedColumns();"></mat-row>
+</mat-table>

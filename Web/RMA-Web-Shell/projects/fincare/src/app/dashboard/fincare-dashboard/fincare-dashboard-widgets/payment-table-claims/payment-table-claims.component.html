@@ -1,0 +1,45 @@
+<div [hidden]="!hasTablePayments">
+  <section>
+    <mat-card class="summary-container">
+      <mat-card-header>
+        <mat-card-title>
+          <h4>{{heading}}</h4>
+        </mat-card-title>
+      </mat-card-header>
+      <mat-card-content class="content-container">
+          <div [hidden]="!hasTablePayments">
+            <mat-table #table [dataSource]="dataSource" matSort>
+              <ng-container matColumnDef="claimReference" class="mat-column-claimNumber">
+                <mat-header-cell *matHeaderCellDef mat-sort-header> Claim No </mat-header-cell>
+                <mat-cell *matCellDef="let row"> {{row.claimReference}} </mat-cell>
+              </ng-container >
+              <ng-container matColumnDef="paymentStatus" >
+                <mat-header-cell *matHeaderCellDef mat-sort-header > Payment Status </mat-header-cell>
+                <mat-cell *matCellDef="let row" > {{getType(row.paymentStatus)}} </mat-cell>
+              </ng-container>
+              <ng-container matColumnDef="amount" class="mat-column-created">
+                <mat-header-cell *matHeaderCellDef mat-sort-header > Amount </mat-header-cell>
+                <mat-cell *matCellDef="let row"> {{row.amount}}  </mat-cell>
+              </ng-container>
+              <ng-container matColumnDef="action" class="mat-column-action" >
+                <mat-header-cell *matHeaderCellDef mat-sort-header class="Action">Action
+                </mat-header-cell>
+                <mat-cell *matCellDef="let row">
+                  <a role="button" (click)="onSelect(row)" class="link-edit">View</a>
+                </mat-cell>
+              </ng-container>
+              <mat-header-row *matHeaderRowDef="getDisplayedColumns();"></mat-header-row>
+              <mat-row *matRowDef="let row; columns: getDisplayedColumns();"></mat-row>
+            </mat-table>
+            <mat-paginator #paginator [length]="dataSource.data ? dataSource.data.length : 0" [pageIndex]="0" [pageSize]="5"
+              [pageSizeOptions]="[5, 10, 25, 100]">
+            </mat-paginator>
+          </div>
+      </mat-card-content>
+      <span [style.visibility]="isLoading ? 'visible' : 'hidden'">
+        <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+        <span class="grey site-font"><i>Loading Payments...please wait</i></span>
+      </span>
+    </mat-card>
+  </section>
+</div>

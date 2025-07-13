@@ -1,0 +1,100 @@
+<h1>Create Adhoc Debit Order</h1>
+<br />
+<div *ngIf="roleplayerId > 0" class="div_main">
+    <div> Client Name: <b>{{rolePlayerName}}</b></div>
+    <div>Account Number: <b>{{finPayeNumber}}</b></div>
+    <div>Industry Class: <b>{{industryClass}}</b></div>
+</div>
+<br />
+<mat-accordion>
+    <mat-expansion-panel [expanded]="panelOpenState$ | async" class="searchBgColor">
+        <mat-expansion-panel-header>
+            <mat-panel-title>
+                <span class="material-icons pointer">search</span>
+            </mat-panel-title>
+        </mat-expansion-panel-header>
+        <app-seach-debtor (itemSelected)="onAccountSelected($event)"></app-seach-debtor>
+    </mat-expansion-panel>
+</mat-accordion>
+<div>
+      <div *ngIf="isLoadingRolePlayer$ | async">
+        <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+        <label class="mat-label other-label"><i>Loading Roleplayer details...please wait</i></label>
+      </div>
+      <div *ngIf="isSubmitting$ | async">
+        <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+        <label class="mat-label other-label"><i>Submitting adhoc debit...please wait</i></label>
+      </div>
+<app-debtor-policies [roleplayerId]="roleplayerId" (policiesSelectedHandler)="policiesSelected($event)"
+    [multiselect]="true"></app-debtor-policies>
+</div>
+<div *ngIf="searchFailedMessage.length > 0"><br><span class="searchMessage" >{{searchFailedMessage}}</span></div>
+<form [formGroup]="form" class="mat-container details-form" novalidate>
+    <mat-card class="card">
+        <mat-card-content>
+            <section>
+                <div>
+                    <mat-form-field class="mat-form-field">
+                        <label class="mat-label other-label">Amount</label>
+                        <input matInput formControlName="amount" name="amount" id="amount" />
+                    </mat-form-field>
+                    <mat-error *ngIf="form.get('amount').hasError('required')">
+                        Amount is <strong>required</strong>
+                    </mat-error>
+                </div>
+            </section>
+            <section>
+                <section>
+                    <section>
+                        <mat-form-field class="mat-form-field">
+                            <label class="mat-label other-label">Debit Order Date</label>
+                            <input [matTooltip]="'Format: mm/dd/yyyy'" matInput formControlName="debitDate"
+                                [matDatepicker]="debitDate" id="debitDate" readonly [min]="minDate" name="debitDate"
+                                date="true" time="false">
+                            <mat-datepicker-toggle matSuffix [for]="debitDate"></mat-datepicker-toggle>
+                            <mat-datepicker touchUi="true" #debitDate class="picker-toggle"></mat-datepicker>
+                        </mat-form-field>
+                        <mat-error *ngIf="form.get('debitDate').hasError('required')">
+                            Debit order date is <strong>required</strong>
+                        </mat-error>
+                    </section>
+                </section>
+            </section>
+
+        <section *ngIf="rolePlayer">
+            <document-uploader  [documentSet]="adohcDebitOrderDocumentsDocSet" [systemName]="documentSystemName" [keyName]="'tempAdhocPaymentInstructionId'"
+            [keyValue]="tempDocumentKeyValue" [isReadOnly]="!rolePlayer" (requiredDocumentsUploadedEmit)="isRequiredDocumentsUploaded($event)"></document-uploader>             
+        </section>
+        <section>   
+            <mat-card *ngIf="rolePlayer">  
+                <div *ngIf="isLoadingTermArrangmentBankingDetails$ | async">
+                    <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+                    <label class="mat-label other-label"><i>Retrieving Term Arrangment Banking Details...please wait</i></label>
+                </div>     
+                <role-player-banking-list (rolePlayerBankingSelectedEmit)="setBankAccount($event)" [rolePlayer]="rolePlayer" [selectedRolePlayerBankingId] = 'preSelectRolePlayerBankingId' 
+                [isReadOnly]="bankAccountsReadOnly" [verifyAccount]="false" [showSelectColumn]="true">
+                </role-player-banking-list>
+            </mat-card>
+        </section> 
+        <br> 
+        <section>
+            <div *ngIf="roleplayerId > 0">                
+                <div>	
+                    <input *ngIf="selectedBankingDetails" type="checkbox" #cbk (change)="onSelectOverrideTermArrangementSchedules(cbk)" /><label>Target Term Arrangement Schedules Debit Orders</label>
+                </div>
+                <button type="button" *ngIf="targetedTermArrangementScheduleIds.length > 0" class="button submit-button" (click)="retrieveTermArrangementBankingDetails()" [disabled]="isLoadingTermArrangmentBankingDetails$ | async">Retrieve Terms Banking Details</button>
+                <div *ngIf="overrideTermArrangementSchedules">
+                    <app-term-schedule-list [rolePlayerId]='roleplayerId' [termArrangementScheduleStatus]='termArrangementScheduleStatus' [filterWithStatus]='true' (selectionChangeEmit)="handleSelectedTermSchedules($event)"  > </app-term-schedule-list>
+                </div>
+            </div>
+        </section>
+        </mat-card-content>     
+    </mat-card>    
+</form>
+
+<div class="errorMessage" *ngIf=" errorMessage.length > 0">{{errorMessage}}</div>
+<div class="infoMessage" *ngIf=" infoMessage.length > 0">{{errorMessage}}</div>
+<div>
+    <br/>
+    <button type="button" *ngIf="rolePlayer"  class="button submit-button" (click)="submitDebitOrder()" [disabled]="!selectedBankingDetails || !requiredDocumentsUploaded || (!this.form.valid) || (isSubmitting$ | async)">Submit</button>
+</div>

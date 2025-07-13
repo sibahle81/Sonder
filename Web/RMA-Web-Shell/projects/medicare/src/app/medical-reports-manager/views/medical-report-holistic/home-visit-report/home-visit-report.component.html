@@ -1,0 +1,385 @@
+<mat-card>
+    <div class="menu-bar">
+      <span class="material-icons">
+        assignment
+      </span>
+      Home Visit
+      <span *ngIf="form && form.valid" (click)="save()" class="material-icons pointer right pulseGreen" matTooltip="save">
+          save
+      </span>
+    </div>
+    <form [formGroup]="form" name="form" class="mat-container details-form" novalidate>
+        <div *ngIf="isLoadingCategories">
+            <mat-progress-bar mode="indeterminate" [ngClass]="{ 'loading-main-double-menu-progress': doubleMenu, 'loading-main-single-menu-progress': !doubleMenu }">
+            </mat-progress-bar>
+            <p class="site-font grey">Loading categories...</p>
+        </div>
+    
+        <section>
+            <mat-form-field class="mat-form-field" color="accent">                
+                <label class="mat-label other-label mandatory-field">Pain</label>
+                <input [hidden]="true" matInput formControlName="pain"/>
+                <mat-select formControlName="pain" id="pain" name="pain">
+                    <mat-option value="Yes">Yes</mat-option>
+                    <mat-option value="No">No</mat-option>
+                </mat-select>
+            </mat-form-field>
+            <mat-form-field class="mat-form-field-right" color="accent">                
+                <label class="mat-label other-label">If yes, describe location, frequency & type of pain</label>
+                <textarea matInput cdkTextareaAutosize cdkAutosizeMinRows="3" cdkAutosizeMaxRows="5" id="painDescription"
+                    formControlName="painDescription" class="mat-input-element" maxlength="1000"></textarea>
+            </mat-form-field>
+        </section>
+
+        <section>
+            <mat-form-field class="mat-form-field" color="accent">                
+                <label class="mat-label other-label mandatory-field">Skin blister or sore</label>
+                <input [hidden]="true" matInput formControlName="skinblister"/>
+                <mat-select formControlName="skinblister" id="skinblister" name="skinblister">
+                    <mat-option value="Yes">Yes</mat-option>
+                    <mat-option value="No">No</mat-option>
+                </mat-select>
+            </mat-form-field>
+            <mat-form-field class="mat-form-field-right" color="accent">                
+                <label class="mat-label other-label">Size of Blister</label>
+                <input [hidden]="true" matInput formControlName="sizeofBlister"/>
+                <mat-select formControlName="sizeofBlister" id="sizeofBlister" name="sizeofBlister">
+                    <mat-option value="1800">1 - 3 cm</mat-option>
+                    <mat-option value="1801">3 - 5 cm</mat-option>
+                    <mat-option value="1802">More than 5 cm</mat-option>
+                </mat-select>
+            </mat-form-field>
+        </section>
+
+        <section>
+            <mat-form-field class="mat-form-field" color="accent">                
+                <label class="mat-label other-label">If no blister, colour of skin</label>
+                <input [hidden]="true" matInput formControlName="colourofskin"/>
+                <mat-select formControlName="colourofskin" id="colourofskin" name="colourofskin">
+                    <mat-option value="Abnormal">Abnormal</mat-option>
+                    <mat-option value="Normal">Normal</mat-option>
+                </mat-select>
+            </mat-form-field>
+            <mat-form-field class="mat-form-field-right" color="accent">                
+                <label class="mat-label other-label">If other symptoms please describe</label>
+                <textarea matInput cdkTextareaAutosize cdkAutosizeMinRows="3" cdkAutosizeMaxRows="5" id="txtsOtherSymptoms"
+                    formControlName="txtsOtherSymptoms" class="mat-input-element" maxlength="1000"></textarea>
+            </mat-form-field>
+        </section>
+
+        <section>
+            <mat-form-field class="mat-form-field" color="accent">                
+                <label class="mat-label other-label">Height in meters</label>
+                <input matInput formControlName="heightinmeters" id="heightinmeters" name="heightinmeters">
+            </mat-form-field>
+            <mat-form-field class="mat-form-field-right" color="accent">                
+                <label class="mat-label other-label">Weight in kilograms</label>
+                <input matInput formControlName="weightinkilograms" id="weightinkilograms" name="weightinkilograms">
+            </mat-form-field>
+        </section>
+
+        <section>
+            <mat-form-field class="mat-form-field" color="accent">                
+                <label class="mat-label other-label">BMI</label>
+                <input matInput formControlName="bMI" id="bMI" name="bMI">
+            </mat-form-field>
+            <mat-form-field class="mat-form-field-right" color="accent">                
+                <label class="mat-label other-label">Waist circumference in cm's at level of umbilicus</label>
+                <input matInput formControlName="waistcircumference" id="waistcircumference" name="waistcircumference">
+            </mat-form-field>
+        </section>
+
+        <section>
+            <mat-form-field class="mat-form-field" color="accent">                
+                <label class="mat-label other-label mandatory-field">Pulse BPM</label>
+                <input matInput formControlName="pulseBPM" id="pulseBPM" name="pulseBPM">
+            </mat-form-field>
+            <mat-form-field class="mat-form-field-right" color="accent">                
+                <label class="mat-label other-label mandatory-field">Blood Pressure mm Hg</label>
+                <input matInput formControlName="bloodPressure" id="bloodPressure" name="bloodPressure">
+            </mat-form-field>
+        </section>
+
+        <section>
+            <mat-form-field class="mat-form-field" color="accent">                
+                <label class="mat-label other-label mandatory-field">Has Pressure Sores?</label>
+                <input [hidden]="true" matInput formControlName="hasPressureSores"/>
+                <mat-select formControlName="hasPressureSores" id="hasPressureSores" name="hasPressureSores">
+                    <mat-option value="Yes">Yes</mat-option>
+                    <mat-option value="No">No</mat-option>
+                </mat-select>
+            </mat-form-field>
+            <mat-form-field class="mat-form-field-right" color="accent">                
+                <label class="mat-label other-label mandatory-field">Pressure Sores Elbow Skin</label>
+                <input [hidden]="true" matInput formControlName="pressureSoresElbowSkin"/>
+                <mat-select formControlName="pressureSoresElbowSkin" id="pressureSoresElbowSkin" name="pressureSoresElbowSkin">
+                    <mat-option value="Yes">Yes</mat-option>
+                    <mat-option value="No">No</mat-option>
+                </mat-select>
+            </mat-form-field>
+        </section>
+
+        <section>
+            <mat-form-field class="mat-form-field" color="accent">                
+                <label class="mat-label other-label mandatory-field">Pressure Sores Knees Skin</label>
+                <input [hidden]="true" matInput formControlName="pressureSoresKneesSkin"/>
+                <mat-select formControlName="pressureSoresKneesSkin" id="pressureSoresKneesSkin" name="pressureSoresKneesSkin">
+                    <mat-option value="Yes">Yes</mat-option>
+                    <mat-option value="No">No</mat-option>
+                </mat-select>
+            </mat-form-field>
+            <mat-form-field class="mat-form-field-right" color="accent">                
+                <label class="mat-label other-label mandatory-field">Pressure Sores Back Skin</label>
+                <input [hidden]="true" matInput formControlName="pressureSoresBackSkin"/>
+                <mat-select formControlName="pressureSoresBackSkin" id="pressureSoresBackSkin" name="pressureSoresBackSkin">
+                    <mat-option value="Yes">Yes</mat-option>
+                    <mat-option value="No">No</mat-option>
+                </mat-select>
+            </mat-form-field>
+        </section>
+
+        <section>
+            <mat-form-field class="mat-form-field" color="accent">                
+                <label class="mat-label other-label mandatory-field">Pressure Sores Sacral Skin</label>
+                <input [hidden]="true" matInput formControlName="pressureSoresSacralSkin"/>
+                <mat-select formControlName="pressureSoresSacralSkin" id="pressureSoresSacralSkin" name="pressureSoresSacralSkin">
+                    <mat-option value="Yes">Yes</mat-option>
+                    <mat-option value="No">No</mat-option>
+                </mat-select>
+            </mat-form-field>
+            <mat-form-field class="mat-form-field-right" color="accent">                
+                <label class="mat-label other-label">Other Pressure Sores</label>
+                <input matInput formControlName="otherPressureSores" id="otherPressureSores" name="otherPressureSores">
+            </mat-form-field>
+        </section>
+
+        <section>
+            <mat-form-field class="mat-form-field" color="accent">                
+                <label class="mat-label other-label">Other Physical Features</label>
+                <textarea matInput cdkTextareaAutosize cdkAutosizeMinRows="3" cdkAutosizeMaxRows="5" id="otherPhysicalFeatures"
+                    formControlName="otherPhysicalFeatures" class="mat-input-element" maxlength="1000"></textarea>
+            </mat-form-field>
+            <mat-form-field class="mat-form-field-right" color="accent">                
+                <label class="mat-label other-label">Respiration in breath per minute</label>
+                <input matInput formControlName="respirationinbreathperminute" id="respirationinbreathperminute" name="respirationinbreathperminute">
+            </mat-form-field>
+        </section>
+
+        <section>
+            <mat-form-field class="mat-form-field" color="accent">                
+                <label class="mat-label other-label">Cynanosis (blueness)</label>
+                <input [hidden]="true" matInput formControlName="cynanosis"/>
+                <mat-select formControlName="cynanosis" id="cynanosis" name="cynanosis">
+                    <mat-option value="Yes">Yes</mat-option>
+                    <mat-option value="No">No</mat-option>
+                </mat-select>
+            </mat-form-field>
+            <mat-form-field class="mat-form-field-right" color="accent">                
+                <label class="mat-label other-label">If Cynanosis please describe</label>
+                <textarea matInput cdkTextareaAutosize cdkAutosizeMinRows="3" cdkAutosizeMaxRows="5" id="cynanosisDescription"
+                    formControlName="cynanosisDescription" class="mat-input-element" maxlength="1000"></textarea>
+            </mat-form-field>
+        </section>
+
+        <section>
+            <mat-form-field class="mat-form-field" color="accent">                
+                <label class="mat-label other-label">Clubbing of Fingers</label>
+                <input [hidden]="true" matInput formControlName="cyClubbingofFingersnanosis"/>
+                <mat-select formControlName="cyClubbingofFingersnanosis" id="cyClubbingofFingersnanosis" name="cyClubbingofFingersnanosis">
+                    <mat-option value="Yes">Yes</mat-option>
+                    <mat-option value="No">No</mat-option>
+                </mat-select>
+            </mat-form-field>
+            <mat-form-field class="mat-form-field-right" color="accent">                
+                <label class="mat-label other-label">If finger clubbing please describe</label>
+                <textarea matInput cdkTextareaAutosize cdkAutosizeMinRows="3" cdkAutosizeMaxRows="5" id="clubbingDescription"
+                    formControlName="clubbingDescription" class="mat-input-element" maxlength="1000"></textarea>
+            </mat-form-field>
+        </section>
+
+        <section>
+            <mat-form-field class="mat-form-field" color="accent">                
+                <label class="mat-label other-label">Auscultation of Chest</label>
+                <input [hidden]="true" matInput formControlName="auscultationofChest"/>
+                <mat-select formControlName="auscultationofChest" id="auscultationofChest" name="auscultationofChest">
+                    <mat-option value="Abnormal">Abnormal</mat-option>
+                    <mat-option value="Normal">Normal</mat-option>
+                </mat-select>
+            </mat-form-field>
+            <mat-form-field class="mat-form-field-right" color="accent">                
+                <label class="mat-label other-label">if auscultation of chest please describe</label>
+                <textarea matInput cdkTextareaAutosize cdkAutosizeMinRows="3" cdkAutosizeMaxRows="5" id="auscultationDescription"
+                    formControlName="auscultationDescription" class="mat-input-element" maxlength="1000"></textarea>
+            </mat-form-field>
+        </section>
+
+        <section>
+            <mat-form-field class="mat-form-field" color="accent">                
+                <label class="mat-label other-label">Are there any palpable masses or hernia' evident?</label>
+                <input [hidden]="true" matInput formControlName="cbobPalpableMassesOrHernia"/>
+                <mat-select formControlName="cbobPalpableMassesOrHernia" id="cbobPalpableMassesOrHernia" name="cbobPalpableMassesOrHernia">
+                    <mat-option value="Yes">Yes</mat-option>
+                    <mat-option value="No">No</mat-option>
+                </mat-select>
+            </mat-form-field>
+            <mat-form-field class="mat-form-field-right" color="accent">                
+                <label class="mat-label other-label">Any abdomen scars?</label>
+                <input [hidden]="true" matInput formControlName="anyabdomenscars"/>
+                <mat-select formControlName="anyabdomenscars" id="anyabdomenscars" name="anyabdomenscars">
+                    <mat-option value="Yes">Yes</mat-option>
+                    <mat-option value="No">No</mat-option>
+                </mat-select>
+            </mat-form-field>
+        </section>
+
+        <section>
+            <mat-form-field class="mat-form-field" color="accent">                
+                <label class="mat-label other-label">Where are the abdomen scars?</label>
+                <input matInput formControlName="abdomenScarsWhere" id="abdomenScarsWhere" name="abdomenScarsWhere">
+            </mat-form-field>
+            <mat-form-field class="mat-form-field-right" color="accent">                
+                <label class="mat-label other-label">Tone of abdomen</label>
+                <input [hidden]="true" matInput formControlName="toneofabdomen"/>
+                <mat-select formControlName="toneofabdomen" id="toneofabdomen" name="toneofabdomen">
+                    <mat-option value="Abnormal">Abnormal</mat-option>
+                    <mat-option value="Normal">Normal</mat-option>
+                </mat-select>
+            </mat-form-field>
+        </section>
+
+        <section>
+            <mat-form-field class="mat-form-field" color="accent">                
+                <label class="mat-label other-label">Tenderness of abdomen</label>
+                <input [hidden]="true" matInput formControlName="tendernessofabdomen"/>
+                <mat-select formControlName="tendernessofabdomen" id="tendernessofabdomen" name="tendernessofabdomen">
+                    <mat-option value="Yes">Yes</mat-option>
+                    <mat-option value="No">No</mat-option>
+                </mat-select>
+            </mat-form-field>
+            <mat-form-field class="mat-form-field-right" color="accent">                
+                <label class="mat-label other-label">If abdomen tenderness please describe</label>
+                <textarea matInput cdkTextareaAutosize cdkAutosizeMinRows="3" cdkAutosizeMaxRows="5" id="abdomenTendernessDescription"
+                    formControlName="abdomenTendernessDescription" class="mat-input-element" maxlength="1000"></textarea>
+            </mat-form-field>
+        </section>
+
+        <section>
+            <mat-form-field class="mat-form-field" color="accent">                
+                <label class="mat-label other-label">Is the scrotum normal</label>
+                <input [hidden]="true" matInput formControlName="isthescrotumnormal"/>
+                <mat-select formControlName="isthescrotumnormal" id="isthescrotumnormal" name="isthescrotumnormal">
+                    <mat-option value="Yes">Yes</mat-option>
+                    <mat-option value="No">No</mat-option>
+                </mat-select>
+            </mat-form-field>
+            <mat-form-field class="mat-form-field-right" color="accent">                
+                <label class="mat-label other-label">If scrotum is not normal please describe</label>
+                <textarea matInput cdkTextareaAutosize cdkAutosizeMinRows="3" cdkAutosizeMaxRows="5" id="scrotumNormalDescription"
+                    formControlName="scrotumNormalDescription" class="mat-input-element" maxlength="1000"></textarea>
+            </mat-form-field>
+        </section>
+
+        <section>
+            <mat-form-field class="mat-form-field" color="accent">                
+                <label class="mat-label other-label">Hydrocele of Scrotum</label>
+                <input [hidden]="true" matInput formControlName="hydroceleofScrotum"/>
+                <mat-select formControlName="hydroceleofScrotum" id="hydroceleofScrotum" name="hydroceleofScrotum">
+                    <mat-option value="Yes">Yes</mat-option>
+                    <mat-option value="No">No</mat-option>
+                </mat-select>
+            </mat-form-field>
+            <mat-form-field class="mat-form-field-right" color="accent">                
+                <label class="mat-label other-label">If hydrocele of scrotum please describe</label>
+                <textarea matInput cdkTextareaAutosize cdkAutosizeMinRows="3" cdkAutosizeMaxRows="5" id="genitalsScrotumHydroceleDescription"
+                    formControlName="genitalsScrotumHydroceleDescription" class="mat-input-element" maxlength="1000"></textarea>
+            </mat-form-field>
+        </section>
+
+        <section>
+            <mat-form-field class="mat-form-field" color="accent">                
+                <label class="mat-label other-label">Phimosis</label>
+                <input [hidden]="true" matInput formControlName="phimosis"/>
+                <mat-select formControlName="phimosis" id="phimosis" name="phimosis">
+                    <mat-option value="Yes">Yes</mat-option>
+                    <mat-option value="No">No</mat-option>
+                </mat-select>
+            </mat-form-field>
+            <mat-form-field class="mat-form-field-right" color="accent">                
+                <label class="mat-label other-label">If phimosis describe</label>
+                <textarea matInput cdkTextareaAutosize cdkAutosizeMinRows="3" cdkAutosizeMaxRows="5" id="phimosisDescription"
+                    formControlName="phimosisDescription" class="mat-input-element" maxlength="1000"></textarea>
+            </mat-form-field>
+        </section>
+
+        <section>
+            <mat-form-field class="mat-form-field" color="accent">                
+                <label class="mat-label other-label">Other genitals abnormalities</label>
+                <textarea matInput cdkTextareaAutosize cdkAutosizeMinRows="3" cdkAutosizeMaxRows="5" id="othersGenitalsOtherAbnomalities"
+                    formControlName="othersGenitalsOtherAbnomalities" class="mat-input-element" maxlength="1000"></textarea>
+            </mat-form-field>
+            <mat-form-field class="mat-form-field-right" color="accent">                
+                <label class="mat-label other-label">Urinary dipstix</label>
+                <input [hidden]="true" matInput formControlName="urinarydipstix"/>
+                <mat-select formControlName="urinarydipstix" id="urinarydipstix" name="urinarydipstix">
+                    <mat-option value="1711" title="Abnormal">Abnormal</mat-option>
+                    <mat-option value="1704" title="Blood">Blood</mat-option>
+                    <mat-option value="1701" title="Gilrrubin">Gilrrubin</mat-option>
+                    <mat-option value="1700" title="Glucose">Glucose</mat-option>
+                    <mat-option value="1702" title="Ketone">Ketone</mat-option>
+                    <mat-option value="1709" title="Leucocytes">Leucocytes</mat-option>
+                    <mat-option value="1708" title="Nitrate">Nitrate</mat-option>
+                    <mat-option value="1710" title="Normal">Normal</mat-option>
+                    <mat-option value="1705" title="PH">PH</mat-option>
+                    <mat-option value="1706" title="Protein">Protein</mat-option>
+                    <mat-option value="1703" title="Specific Gravity">Specific Gravity</mat-option>
+                    <mat-option value="1707" title="Urobilogen">Urobilogen</mat-option>
+                </mat-select>
+            </mat-form-field>
+        </section>
+
+        <section>
+            <mat-form-field class="mat-form-field" color="accent">                
+                <label class="mat-label other-label">Urine colour</label>
+                <input [hidden]="true" matInput formControlName="urinecolour"/>
+                <mat-select formControlName="urinecolour" id="urinecolour" name="urinecolour">
+                    <mat-option value="Abnormal">Abnormal</mat-option>
+                    <mat-option value="Normal">Normal</mat-option>
+                </mat-select>
+            </mat-form-field>
+            <mat-form-field class="mat-form-field-right" color="accent">                
+                <label class="mat-label other-label">Urine odour</label>
+                <input [hidden]="true" matInput formControlName="urineodour"/>
+                <mat-select formControlName="urineodour" id="urineodour" name="urineodour">
+                    <mat-option value="Abnormal">Abnormal</mat-option>
+                    <mat-option value="Normal">Normal</mat-option>
+                </mat-select>
+            </mat-form-field>
+        </section>
+
+        <section>
+            <mat-form-field class="mat-form-field" color="accent">                
+                <label class="mat-label other-label mandatory-field">General Comment</label>
+                <textarea matInput cdkTextareaAutosize cdkAutosizeMinRows="3" cdkAutosizeMaxRows="5" id="generalComment"
+                    formControlName="generalComment" class="mat-input-element" maxlength="1000"></textarea>
+            </mat-form-field>
+            <mat-form-field class="mat-form-field-right" color="accent">                
+                <label class="mat-label other-label mandatory-field">Action plan in response to comments made</label>
+                <textarea matInput cdkTextareaAutosize cdkAutosizeMinRows="3" cdkAutosizeMaxRows="5" id="actionplanresponse"
+                    formControlName="actionplanresponse" class="mat-input-element" maxlength="1000"></textarea>
+            </mat-form-field>
+        </section>
+
+        <section>
+            <mat-form-field class="mat-form-field" color="accent">                
+                <label class="mat-label other-label mandatory-field">Action taken in response to comments made</label>
+                <textarea matInput cdkTextareaAutosize cdkAutosizeMinRows="3" cdkAutosizeMaxRows="5" id="actiontakenresponse"
+                    formControlName="actiontakenresponse" class="mat-input-element" maxlength="1000"></textarea>
+            </mat-form-field>
+            <mat-form-field class="mat-form-field-right" color="accent">                
+                <label class="mat-label other-label">Reviewed By</label>
+                <input matInput formControlName="reviewedBy" id="reviewedBy" name="reviewedBy">
+            </mat-form-field>
+        </section>
+
+    </form>
+</mat-card>

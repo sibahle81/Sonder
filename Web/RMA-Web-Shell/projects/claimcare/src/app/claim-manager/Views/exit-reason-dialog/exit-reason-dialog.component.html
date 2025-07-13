@@ -1,0 +1,37 @@
+<mat-card>
+  <mat-card-title>
+    <h1>Exit Reason</h1>
+  </mat-card-title>
+
+<div *ngIf="isLoading$ | async" class="body">
+    <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+    <label class="mat-label other-label"><i>loading...please wait</i></label>
+  </div>
+
+  <section>
+    <div *ngIf="(personEventExitReason && personEventExitReason.length> 0)" class="scrollTable">
+        <table matSort class="altRowTable">
+          <tr>
+            <th>Name</th>
+            <th>Description</th>
+            <th>Date</th>
+          </tr>
+          <tr *ngFor="let exitReason of personEventExitReason">
+            <td>{{exitReason.exitReasonName ? getSTPExitReason(exitReason.stpExitReasonId) :""}}</td>
+            <td>{{exitReason.description}}</td>
+            <td>{{exitReason.createdDate | date:'yyyy/MM/dd HH:mm:ss'}}</td>
+          </tr>
+        </table>
+    </div>
+</section>
+
+  
+  <div [hidden]="isLoading$ | async" class="auditPopup">
+  
+    <mat-dialog-actions>
+      <div (click)="closeDialog()" class="form-buttons submit-button">
+        <button type="button" class="button float-button">Close</button>
+      </div>
+    </mat-dialog-actions>
+  </div>
+</mat-card>

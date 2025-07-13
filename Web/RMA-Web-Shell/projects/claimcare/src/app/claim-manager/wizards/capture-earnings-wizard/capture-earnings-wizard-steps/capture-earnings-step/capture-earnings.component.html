@@ -1,0 +1,44 @@
+<mat-card *ngIf="!model || (isLoading$ | async)">
+    <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+    <label class="mat-label other-label"><i>loading earnings...please wait</i></label>
+</mat-card>
+
+<span *ngIf="(isOverrideRequired$ | async) && !(isLoading$ | async)">
+    <mat-card>
+        <label class="mat-label other-label"><i>Override will be required:</i></label>
+        <ul *ngIf="overrideReasons?.length > 0">
+            <li *ngFor="let reason of overrideReasons">{{reason}}</li>
+        </ul>
+    </mat-card>
+    <br />
+</span>
+
+<div *ngIf="model && !(isLoading$ | async)">
+    <app-list-earnings *ngIf="model && earningType" [personEvent]="model" [isWizard]="isWizard" [earningType]="earningType" (earningsEmit)="setEarnings($event)"
+        (requiredDocumentsUploaded)="isRequiredDocumentsUploaded($event)"></app-list-earnings>
+    <br />
+    <mat-tab-group *ngIf="model" animationDuration="500ms">
+        <mat-tab
+            label="{{model.claims && model.claims.length > 0 ? 'Claims (' + model.claims.length + ')' : 'Claims(0)'}}">
+            <holistic-claim-details [personEvent]="model" [isReadOnly]="true"></holistic-claim-details>
+        </mat-tab>
+        <mat-tab label="Employee">
+            <person [rolePlayer]="model.rolePlayer" [title]="'Employee'" [isReadOnly]="true" [showDocuments]="false">
+            </person>
+        </mat-tab>
+        <mat-tab label="Employment">
+            <holistic-employment-details [personEvent]="model" [isReadOnly]="true"></holistic-employment-details>
+        </mat-tab>
+        <mat-tab label="Requirements">
+            <claim-requirements-v2 [personEvent]="model"></claim-requirements-v2>
+        </mat-tab>
+        <mat-tab label="Notes">
+            <common-notes [moduleType]="moduleType" [noteItemType]="noteItemType"
+                [itemId]="model.personEventId"></common-notes>
+        </mat-tab>
+        <mat-tab label="Communication">
+            <email-audit-search [itemType]="'PersonEvent'" [itemId]="model.personEventId"
+                [rolePlayerContactOptions]="rolePlayerContactOptions"></email-audit-search>
+        </mat-tab>
+    </mat-tab-group>
+</div>

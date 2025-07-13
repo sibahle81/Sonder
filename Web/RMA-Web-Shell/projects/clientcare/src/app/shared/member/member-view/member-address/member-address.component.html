@@ -1,0 +1,128 @@
+<mat-card class="card">
+  <div class="menu-bar">
+    <span class="material-icons">subject</span>&nbsp;<b>Address</b>
+    <span *ngIf="hideForm && !isReadOnly" (click)="toggle()" class="material-icons pointer right" matTooltip="add">
+      add_circle
+    </span>
+  </div>
+
+  <div *ngIf="!hideForm">
+    <form [formGroup]="form" class="mat-container details-form" novalidate>
+      <section>
+        <mat-form-field class="mat-form-field">
+          <label class="mat-label other-label mandatory-field">Address Type</label>
+          <mat-select name="addressType" id="addressType" formControlName="addressType">
+            <mat-option *ngFor="let addressType of addressTypes" [value]="addressType.id">{{addressType.name}}
+            </mat-option>
+          </mat-select>
+          <mat-error *ngIf="form.get('addressType').hasError('required')">
+            Address Type is <strong>required</strong>
+          </mat-error>
+        </mat-form-field>
+
+        <mat-form-field class="mat-form-field-right">
+          <label class="mat-label other-label mandatory-field">Address Line 1</label>
+          <input matInput name="addressLine1" id="addressLine1" formControlName="addressLine1">
+          <mat-error *ngIf="form.get('addressLine1').hasError('required')">
+            Address Line 1 is <strong>required</strong>
+          </mat-error>
+        </mat-form-field>
+      </section>
+
+      <section>
+        <mat-form-field class="mat-form-field">
+          <label class="mat-label other-label">Address Line 2</label>
+          <input matInput name="addressLine2" id="addressLine2" formControlName="addressLine2">
+        </mat-form-field>
+
+        <mat-form-field class="mat-form-field-right">
+          <label class="mat-label other-label mandatory-field">Postal Code</label>
+          <input NumberOnly matInput name="postalCode" id="postalCode" formControlName="postalCode">
+          <mat-error *ngIf="form.get('postalCode').hasError('required')">
+            Postal code is <strong>required</strong>
+          </mat-error>
+        </mat-form-field>
+      </section>
+
+      <section>
+        <mat-form-field class="mat-form-field">
+          <label class="mat-label other-label mandatory-field">Country</label>
+          <mat-select name="country" id="country" formControlName="country">
+            <mat-option *ngFor="let country of countries" [value]="country.id">{{country.name}}</mat-option>
+          </mat-select>
+          <mat-error *ngIf="form.get('country').hasError('required')">
+            Country is <strong>required</strong>
+          </mat-error>
+        </mat-form-field>
+
+        <mat-form-field class="mat-form-field-right">
+          <label class="mat-label other-label">Province</label>
+          <mat-select name="province" id="province" formControlName="province">
+            <mat-option *ngFor="let province of provinces" [value]="province.name">{{province.name}}</mat-option>
+          </mat-select>
+        </mat-form-field>
+      </section>
+
+      <section>
+        <mat-form-field class="mat-form-field">
+          <label class="mat-label other-label">City</label>
+          <mat-select name="city" id="city" formControlName="city">
+            <mat-option *ngFor="let city of cities" [value]="city.name">{{city.name}}</mat-option>
+          </mat-select>
+        </mat-form-field>
+      </section>
+    </form>
+
+    <span *ngIf="form.valid && !form.pristine" class="mat-label other-label pointer" style="margin-left: 10px;"
+      (click)="add()"><span class="material-icons" style="color: green;" matTooltip="save">check_circle</span></span>
+    <span *ngIf="!form.valid || form.pristine" class="mat-label other-label pointer" style="margin-left: 10px;"><span
+        class="material-icons" style="color: lightpink;">check_circle</span></span>
+    <span class="mat-label other-label pointer" matTooltip="cancel" (click)="cancel()"><span
+        class="material-icons">cancel</span></span>
+  </div>
+
+  <div *ngIf="addresses">
+
+    <div *ngIf="hideForm && addresses.length <= 0">
+      <label class="mat-label other-label"><i>No addresses have been added...</i></label><br />
+    </div>
+
+    <div *ngIf="addresses.length > 0 && hideForm">
+      <table class="altRowTable table">
+        <tr>
+          <th>Type</th>
+          <th>Line 1</th>
+          <th>Line 2</th>
+          <th>Postal Code</th>
+          <th>City</th>
+          <th>Province</th>
+          <th>Country</th>
+          <th>Action</th>
+        </tr>
+        <tr *ngFor="let address of addresses">
+          <td class="left">{{getAddressType(address.addressType)}}</td>
+          <td class="left">{{address.addressLine1}}</td>
+          <td class="left">{{address.addressLine2}}</td>
+          <td class="left">{{address.postalCode}}</td>
+          <td class="left">{{address.city}}</td>
+          <td class="left">{{address.province}}</td>
+          <td class="left">{{getCountryName(address.countryId ? address.countryId : this.selectedCountry.id)}}</td>
+          <td class="center">
+            <a role="button" class="link-edit pointer" (click)="toggleAddress(address)" matTooltip="edit"><span
+                class="material-icons icn">
+                settings
+              </span></a>
+            <a *ngIf="address.rolePlayerAddressId <= 0 && isWizard" role="button" class="link-edit pointer"
+              (click)="delete(address)" matTooltip="delete"><span class="material-icons icn">
+                delete
+              </span></a>
+          </td>
+        </tr>
+      </table>
+    </div>
+  </div>
+
+  <div *ngIf="!addresses && hideForm">
+    <label class="mat-label other-label"><i>No addresses have been added...</i></label><br />
+  </div>
+</mat-card>

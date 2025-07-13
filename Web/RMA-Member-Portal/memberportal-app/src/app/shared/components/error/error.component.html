@@ -1,0 +1,12 @@
+<div class="container4">
+    <div class="error-text">
+        <h1 class="site-font" style="font-size: 60px;color: #BB2D39;">Something went wrong :(</h1>
+        <p class="site-font grey" *ngIf="!error">Something has gone terribly wrong - don't worry RMA still has you covered. You might want to contact your administrator!</p>
+
+        <div *ngIf="error">
+            <p class="site-font grey" [hidden]="error.message == null">{{error.message}}</p>
+            <p class="site-font grey" [hidden]="error.corrolationId == null" style="font-size: 14px;">Corrolation id: {{error.corrolationId}}</p>
+            <p class="site-font grey" [hidden]="error.stackTrace == null" style="font-size: 14px;">Stack trace: {{error.stackTrace}}</p>
+        </div>
+    </div>
+</div>

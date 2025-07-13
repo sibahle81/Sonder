@@ -1,0 +1,176 @@
+﻿<div class="page-header"></div>
+<div [hidden]="!isLoading">
+  <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+</div>
+<div [hidden]="isLoading" style="margin-top: -28px;">
+  <mat-tab-group (selectedTabChange)="tabChanged($event)">
+    <mat-tab label="Campaign Details">
+      <mat-card style="margin: 15px 30px 15px 30px">
+        <mat-card-header>
+          <mat-card-title class="wizard-font card-title grey">
+            <h1 class="wizard-font" style="padding: 0;">Campaign Details</h1>
+          </mat-card-title>
+        </mat-card-header>
+        <mat-card-content style="margin-left:10px;">
+          <form [formGroup]="form" (ngSubmit)="save()" class="mat-container details-form" novalidate>
+            <section>
+              <!--Campaign name-->
+              <mat-form-field>
+                <label class="mat-label other-label mandatory-field">Campaign name</label>
+                <input matInput maxlength="100" formControlName="campaignName" />
+                <mat-error *ngIf="form.get('campaignName').hasError('required')">
+                  Campaign name is required
+                </mat-error>
+              </mat-form-field>
+              <!--Description-->
+              <mat-form-field class="mat-form-field-right">
+                <label class="mat-label other-label">Description (optional)</label>
+                <input matInput maxlength="255" formControlName="description" />
+              </mat-form-field>
+            </section>
+            <section>
+              <!-- Campaign category -->
+              <mat-form-field>
+                <label class="mat-label other-label mandatory-field">Campaign category</label>
+                <mat-select #campaignCategory formControlName="campaignCategoryId">
+                  <mat-option *ngFor="let category of campaignCategories" [value]="category.id">{{category.name}}
+                  </mat-option>
+                </mat-select>
+                <mat-error
+                  *ngIf="campaignCategory.errorState && (form.get('campaignCategoryId').hasError('required') || form.get('campaignCategoryId').hasError('min'))">
+                  Campaign category is required
+                </mat-error>
+              </mat-form-field>
+              <!--Campaign type-->
+              <mat-form-field class="mat-form-field-right">
+                <label class="mat-label other-label mandatory-field">Campaign type</label>
+                <mat-select #campaignType formControlName="campaignTypeId">
+                  <mat-option *ngFor="let campaignType of campaignTypes" [value]="campaignType.id">{{campaignType.name}}
+                  </mat-option>
+                </mat-select>
+                <mat-error
+                  *ngIf="campaignType.errorState && (form.get('campaignTypeId').hasError('required') || form.get('campaignTypeId').hasError('min'))">
+                  Campaign type is required
+                </mat-error>
+              </mat-form-field>
+            </section>
+            <section>
+              <!--Campaign owner type-->
+              <mat-form-field class="field-container">
+                <label class="mat-label other-label mandatory-field">Campaign owner type</label>
+                <mat-select #ownerTypeId formControlName="ownerTypeId" (selectionChange)="setOwnerValidators()">
+                  <mat-option *ngFor="let ownerType of ownerTypes" [value]="ownerType.id">{{ownerType.name}}
+                  </mat-option>
+                </mat-select>
+              </mat-form-field>
+              <div [hidden]="hideOwnerPerson" class="field-container-right">
+                <mat-form-field>
+                  <label class="mat-label other-label mandatory-field">Campaign owner</label>
+                  <mat-select #campaignOwner formControlName="campaignOwnerId">
+                    <mat-option *ngFor="let campaignOwner of campaignOwners" [value]="campaignOwner.id">
+                      {{campaignOwner.displayName}} ({{campaignOwner.email}})</mat-option>
+                  </mat-select>
+                  <mat-error
+                    *ngIf="campaignOwner.errorState && (form.get('campaignOwnerId').hasError('required') || form.get('campaignOwnerId').hasError('min'))">
+                    Campaign owner is required
+                  </mat-error>
+                </mat-form-field>
+              </div>
+              <div [hidden]="hideOwnerRole" class="field-container-right">
+                <mat-form-field>
+                  <label class="mat-label other-label mandatory-field">Owner role</label>
+                  <mat-select #campaignRole formControlName="campaignRoleId">
+                    <mat-option *ngFor="let role of roles" [value]="role.id">{{role.name}}</mat-option>
+                  </mat-select>
+                  <mat-error
+                    *ngIf="campaignRole.errorState && (form.get('campaignRoleId').hasError('required') || form.get('campaignRoleId').hasError('min'))">
+                    Campaign owner role is required
+                  </mat-error>
+                </mat-form-field>
+              </div>
+            </section>
+            <section>
+              <!--Product-->
+              <mat-form-field>
+                <label class="mat-label other-label mandatory-field">Product</label>
+                <mat-select #product formControlName="productId">
+                  <mat-option *ngFor="let product of selectProducts" [value]="product.id">{{product.name}}</mat-option>
+                </mat-select>
+                <mat-error
+                  *ngIf="product.errorState && (form.get('productId').hasError('required') || form.get('productId').hasError('min'))">
+                  Product is required
+                </mat-error>
+              </mat-form-field>
+            </section>
+            <section>
+              <!--Campaign start date-->
+              <div class="field-container">
+                <div><label class="mat-label other-label mandatory-field">Start date</label></div>
+                <mat-form-field>
+                  <input readonly matInput formControlName="startDate" [matDatepicker]="startDate" id="startDate" name="startDate" />
+                  <mat-datepicker-toggle matSuffix [for]="startDate" [disabled]="form.disabled"></mat-datepicker-toggle>
+                  <mat-datepicker touchUi="true" #startDate></mat-datepicker>
+                  <mat-error *ngIf="form.get('startDate').hasError('required')">
+                    Campaign start date is required
+                  </mat-error>
+                  <mat-error *ngIf="form.get('startDate').hasError('invalidStartDate')">
+                    Start date cannot be after end date
+                  </mat-error>
+                </mat-form-field>
+              </div>
+              <!--Campaign end date-->
+              <div class="field-container-right">
+                <div><label class="mat-label other-label">End date</label></div>
+                <mat-form-field>
+                  <input readonly matInput formControlName="endDate" [matDatepicker]="endDate" id="endDate" name="endDate" />
+                  <mat-datepicker-toggle matSuffix [for]="endDate" [disabled]="form.disabled"></mat-datepicker-toggle>
+                  <mat-datepicker touchUi="true" #endDate></mat-datepicker>
+                  <mat-error *ngIf="form.get('endDate').hasError('invalidEndDate')">
+                    End date cannot be before start date
+                  </mat-error>
+                </mat-form-field>
+              </div>
+            </section>
+            <last-modified-by type="Campaign"></last-modified-by>
+            <div *ngIf="showButtons" class="form-group-button">
+              <div *ngIf="showSaveButton" class="form-buttons" matTooltip="No changes have been made"
+                [matTooltipDisabled]="!form.pristine">
+                <button [disabled]="form.pristine" class="button float-button submit-button">Save</button>
+              </div>
+              <div *ngIf="showEditButton" (click)="edit()" class="form-buttons submit-button">
+                <button type="button" class="button float-button">Edit</button>
+              </div>
+              <div *ngIf="showPauseButton" (click)="pause(true)" class="form-buttons submit-button">
+                <button type="button" class="button float-button">Pause campaign</button>
+              </div>
+              <div *ngIf="showUnpauseButton" (click)="pause(false)" class="form-buttons submit-button">
+                <button type="button" class="button float-button">Continue campaign</button>
+              </div>
+              <div (click)="back()" class="form-buttons submit-button">
+                <button type="button" class="button float-button">Back</button>
+              </div>
+            </div>
+          </form>
+        </mat-card-content>
+      </mat-card>
+    </mat-tab>
+    <mat-tab label="Target Audience">
+      <target-audience></target-audience>
+    </mat-tab>
+    <mat-tab label="Template">
+      <campaign-template></campaign-template>
+    </mat-tab>
+    <mat-tab label="Reminder">
+      <campaign-reminder></campaign-reminder>
+    </mat-tab>
+    <mat-tab label="Review">
+      <campaign-review></campaign-review>
+    </mat-tab>
+    <mat-tab label="Notes">
+      <notes name="campaign"></notes>
+    </mat-tab>
+    <mat-tab label="Audit Log">
+      <audit-log name="campaign"></audit-log>
+    </mat-tab>
+  </mat-tab-group>
+</div>

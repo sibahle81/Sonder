@@ -1,0 +1,24 @@
+
+<claim-disability-filter [user]="currentUserLoggedIn" 
+    [personEvent]="personEvent" (disabilityTypeEmit)="disabilityTypeChange($event)"
+    (emitPensionerInterviewForm)="setPensionerInterview($event)"></claim-disability-filter>
+
+<div *ngIf="isDisabilityTypeSelected">
+    <claim-paged-disability [user]="currentUserLoggedIn" [query]="query" 
+        [personEvent]="personEvent" [selectedClaim]="claim" 
+        [selectedMedicalReport]="selectedMedicalReport"
+        [triggerRefresh]="triggerRefresh"
+        (emitPensionerInterviewForm)="setPensionerInterview($event)"></claim-paged-disability>
+</div>
+
+<div *ngIf="isHearingTypeSelected">
+    <claim-paged-hearing [user]="currentUserLoggedIn" [query]="query" 
+        [personEvent]="personEvent"></claim-paged-hearing>
+</div>
+
+<div *ngIf="isPdLumpSumAwardTypeSelected">
+    <claim-pdlumpsum-award [user]="currentUserLoggedIn" [query]="query" 
+        [personEvent]="personEvent"></claim-pdlumpsum-award>
+</div>
+
+

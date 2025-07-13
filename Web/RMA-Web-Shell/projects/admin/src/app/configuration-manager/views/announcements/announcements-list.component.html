@@ -1,0 +1,53 @@
+<div class="mat-container mat-elevation-z8">    
+  <mat-card style="margin: 15px 30px 15px 30px">
+    <div *ngIf="dataSource.loading$ | async">
+      <mat-progress-bar mode="indeterminate"
+          [ngClass]="{ 'loading-main-double-menu-progress': doubleMenu, 'loading-main-single-menu-progress': !doubleMenu }">
+      </mat-progress-bar>
+      <p class="site-font grey">Loading announcements...</p>
+    </div>
+    <div class="mat-header">
+      <h1>Announcements</h1>
+    </div>
+    <mat-card-content style="margin-left: 10px;">
+      <div [hidden]="paginator.length == 0">
+        <mat-table #table [dataSource]="dataSource" matSort matSort matSortActive="name" matSortDirection="asc" matSortDisableClear>
+            <ng-container matColumnDef="Name">
+                <mat-header-cell *matHeaderCellDef mat-sort-header> Name </mat-header-cell>
+                <mat-cell *matCellDef="let row"> {{row.name}} </mat-cell>
+            </ng-container>
+
+            <ng-container matColumnDef="IsMandatory">
+                <mat-header-cell *matHeaderCellDef mat-sort-header> Is Mandatory </mat-header-cell>
+                <mat-cell *matCellDef="let row"> {{row.isMandatory}} </mat-cell>
+            </ng-container>
+
+            <ng-container matColumnDef="IncludeAllRoles">
+              <mat-header-cell *matHeaderCellDef mat-sort-header> All Roles </mat-header-cell>
+              <mat-cell *matCellDef="let row"> {{row.includeAllRoles}} </mat-cell>
+            </ng-container>
+
+            <ng-container matColumnDef="StartDate">
+                <mat-header-cell *matHeaderCellDef mat-sort-header> Start Date </mat-header-cell>
+                <mat-cell *matCellDef="let row"> {{row.startDate | date:'dd-MM-y'}} </mat-cell>
+            </ng-container>
+            
+            <ng-container matColumnDef="EndDate">
+                <mat-header-cell *matHeaderCellDef mat-sort-header> End Date </mat-header-cell>
+                <mat-cell *matCellDef="let row"> {{row.endDate | date:'dd-MM-y'}} </mat-cell>
+            </ng-container>
+
+            <ng-container matColumnDef="Actions">
+                <mat-header-cell *matHeaderCellDef> ACTIONS </mat-header-cell>
+                <mat-cell *matCellDef="let row">
+                    <a role="button" (click)="onSelect(row)" class="link-edit">View/Edit</a>
+                </mat-cell>
+            </ng-container>
+            <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
+            <mat-row *matRowDef="let row; columns: displayedColumns;"></mat-row>
+        </mat-table>
+
+        <mat-paginator #paginator [length]="dataSource.rowCount$" [pageIndex]="0" [pageSize]="5" [pageSizeOptions]="[5, 10, 25, 100]">
+        </mat-paginator>
+</div>
+  

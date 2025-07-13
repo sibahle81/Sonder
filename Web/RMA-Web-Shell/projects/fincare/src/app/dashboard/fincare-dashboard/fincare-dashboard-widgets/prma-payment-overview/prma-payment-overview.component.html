@@ -1,0 +1,115 @@
+<form [formGroup]="form" class="mat-container details-form" novalidate>
+    <mat-expansion-panel (opened)="getCoverTypes()" (closed)="clearData()">
+        <mat-expansion-panel-header>
+            <mat-panel-title>
+                    <mat-icon *ngIf="product == 'PRMA'">corporate</mat-icon>
+                    &nbsp; {{product}} Claim Payments
+            </mat-panel-title>
+        </mat-expansion-panel-header>
+        <!-- Labels-->
+        <div *ngIf = "hasData && !isLoadingData">
+            <table class="altRowTable" style="width:50%;">
+                <tr>
+                    <td><b>Payment Filter:</b> &nbsp; All {{product}} Payments</td>
+                </tr>
+                <tr>
+                    <td><b>Total Payments:</b> &nbsp;
+                        {{totalCount}}
+                    </td>
+                </tr>
+                <tr>
+                    <td><b>Total {{product}} Amount:</b> &nbsp;
+                        {{totalAmount | currency:'R '}} 
+                    </td>
+                </tr>
+            </table>
+        </div>
+        <div class="resetBtn">
+            <button mat-mini-fab color="primary" (click)="resetData()">
+                <mat-icon matTooltip="Reset">autorenew</mat-icon>
+            </button>
+        </div>
+        <!--Message when no data is available-->
+        <div >
+            <label class="mat-label other-label" *ngIf = "!hasData && !isLoadingData">
+                <h3 class="font"><span class="material-icons lightRed">archive</span> &nbsp; No Data Available
+                </h3>
+            </label>
+            <span [style.visibility]="isLoadingData ? 'visible' : 'hidden'">
+                <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+                <span class="grey site-font"><i>Loading {{product}} Payments. Please wait...</i></span>
+            </span>
+        </div>
+        <br />
+        <!--Canvas-->
+        <div *ngIf = "hasData && !isLoadingData">
+            <canvas baseChart [data]="chartData" [labels]="chartLabels" [colors]="chartColors" [chartType]="chartType"  [plugins]="pieChartPlugins" [options]="pieChartOptions" [legend]="pieChartLegend">
+            </canvas>               
+        </div>
+        <section>
+            <div >
+                <!--Start Date-->
+                <mat-form-field class="mat-form-field inputDate">
+                    <label class="other-label">From Date</label>
+                    <input readonly matInput [max]="form.get('endDate').value" date="true" time="false" formControlName="startDate"
+                        [matDatepicker]="startDate" id="startDate" (dateChange) = "getData()"/>
+                    <mat-datepicker-toggle matSuffix [for]="startDate"></mat-datepicker-toggle>
+                    <mat-datepicker touchUi="true" #startDate></mat-datepicker>      
+                </mat-form-field>
+                <!--End Date-->
+                <mat-form-field class="mat-form-field inputDate m-l">
+                    <label class="other-label">End Date</label>
+                    <input readonly matInput [min] = "form.get('startDate').value" [max]="maxDate" date="true" time="false" formControlName="endDate"
+                        [matDatepicker]="endDate" id="endDate" (dateChange) = "getData()"/>
+                    <mat-datepicker-toggle matSuffix [for]="endDate">
+                    </mat-datepicker-toggle>
+                    <mat-datepicker touchUi="true" #endDate></mat-datepicker>
+                </mat-form-field>
+            </div>
+            <div>
+                <!--Group Type-->
+                <mat-form-field>
+                    <label class="mat-label other-label">Group Type</label>
+                    <mat-select name="searchBy" id="searchBy" formControlName="searchBy" (selectionChange)="onSearchByFilterSelect($event)">
+                        <mat-option [value]="0">[Default]</mat-option>
+                        <mat-option [value]="1">Brokerage</mat-option>
+                        <mat-option [value]="2">Scheme</mat-option>
+                        <mat-option [value]="3">PRMA</mat-option>
+                    </mat-select>
+                </mat-form-field>
+            </div>
+            <div *ngIf = "form.get('searchBy').value == 1">
+                <!--Group Brokerages-->
+                <mat-form-field >
+                    <label class="mat-label other-label">Select Brokerage</label>
+                    <mat-select name="brokerName" id="brokerName" formControlName="brokerName" (selectionChange)="getData()">
+                        <mat-option *ngFor="let brokerage of brokerages" [value]="brokerage.name">
+                            {{brokerage.name}}
+                        </mat-option>
+                    </mat-select>
+                    <span [style.visibility]="isLoadingFilter ? 'visible' : 'hidden'">
+                        <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+                        <span class="grey site-font"><i>Loading Brokers...please wait</i></span>
+                    </span>
+                </mat-form-field>
+            </div>
+            <div *ngIf = "form.get('searchBy').value == 2">
+                <!--Group Brokerages-->
+                <mat-form-field>
+                    <label class="mat-label other-label">Select Schemes</label>
+                    <mat-select name="schemeName" id="schemeName" formControlName="schemeName" (selectionChange)="getData()">
+                        <mat-option *ngFor="let scheme of schemes" [value]="scheme.name">
+                            {{scheme.name}}
+                        </mat-option>
+                    </mat-select>
+                    <span [style.visibility]="isLoadingFilter ? 'visible' : 'hidden'">
+                        <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+                        <span class="grey site-font"><i>Loading Schemes...please wait</i></span>
+                    </span>
+                </mat-form-field>
+            </div>
+
+        </section>
+    </mat-expansion-panel>
+
+</form>

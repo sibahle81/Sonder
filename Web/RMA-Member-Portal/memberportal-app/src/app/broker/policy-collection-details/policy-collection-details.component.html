@@ -1,0 +1,109 @@
+<div class="page-header"></div>
+<div *ngIf="!canAdd">
+  <div class="wizard-permissions-error">
+    You do not have sufficient permissions to add collection bank accounts.
+  </div>
+</div>
+<div class="wizard-main-content">
+  <mat-card class="wizard-mat-card">
+    <div>
+      <mat-card-content class="wizard-mat-card-content">
+        <form [formGroup]="form" class="mat-container details-form" novalidate>
+          <section>
+            <div [hidden]="isIndividualPolicy">
+              <mat-form-field class="mat-form-field">
+                <label class="mat-label other-label mandatory-field">Commission Fee Percentage</label>
+                <input matInput DecimalNumber formControlName="commissionPercentage" />
+                <mat-error *ngIf="form.get('commissionPercentage').hasError('required')">
+                  Commission fee percentage is required
+                </mat-error>
+                <mat-error *ngIf="form.get('commissionPercentage').hasError('max')">
+                  Maximum commission fee percentage of {{maxCommissionPercentage}}% exceeded
+                </mat-error>
+              </mat-form-field>
+              <mat-form-field class="mat-form-field-right">
+                <label class="mat-label other-label mandatory-field">Service Fee Percentage</label>
+                <input matInput DecimalNumber formControlName="adminPercentage" />
+                <mat-error *ngIf="form.get('adminPercentage').hasError('required')">
+                  Service fee percentage is required
+                </mat-error>
+                <mat-error *ngIf="form.get('adminPercentage').hasError('max')">
+                  Maximum service fee percentage of {{maxAdminPercentage}}% exceeded
+                </mat-error>
+              </mat-form-field>
+            </div>
+          </section>
+          <section>
+            <div [hidden]="isIndividualPolicy">
+              <mat-form-field class="mat-form-field">
+                <label class="mat-label other-label mandatory-field">Binder Fee Percentage</label>
+                <input matInput DecimalNumber formControlName="binderFeePercentage" />
+                <mat-error *ngIf="form.get('binderFeePercentage').hasError('required')">
+                  Binder fee percentage is required
+                </mat-error>
+                <mat-error *ngIf="form.get('binderFeePercentage').hasError('max')">
+                  Maximum binder fee percentage of {{maxBinderFeePercentage}}% exceeded
+                </mat-error>
+              </mat-form-field>
+            </div>
+          </section>
+          <section>
+            <mat-form-field>
+              <label class="mat-label other-label mandatory-field">Pay Date</label>
+              <div>
+                <mat-select formControlName="payDate" id="payDate" name="payDate">
+                  <mat-option *ngFor="let day of payDays" [value]="day">{{day}}</mat-option>
+                </mat-select>
+                <mat-error *ngIf="form.get('payDate').hasError('min')">
+                  Pay date is required
+                </mat-error>
+              </div>
+            </mat-form-field>
+            <mat-form-field class="mat-form-field-right">
+              <label class="mat-label other-label mandatory-field">December Pay Date</label>
+              <div>
+                <mat-select id="decemberPayDate" name="decemberPayDate" formControlName="decemberPayDate">
+                  <mat-option *ngFor="let day of payDays" [value]="day">{{day}}</mat-option>
+                </mat-select>
+                <mat-error *ngIf="form.get('decemberPayDate').hasError('min')">
+                  December pay date is required
+                </mat-error>
+              </div>
+            </mat-form-field>
+          </section>
+          <section>
+            <mat-form-field>
+              <label class="mat-label other-label mandatory-field">Payment Method</label>
+              <mat-progress-bar *ngIf="loadingPaymentMethods" mode="indeterminate"></mat-progress-bar>
+              <div [hidden]="loadingPaymentMethods">
+                <mat-select id="paymentMethod" name="paymentMethod" formControlName="paymentMethod">
+                  <mat-option *ngFor="let method of paymentMethods" [value]="method.id">{{method.name}}</mat-option>
+                </mat-select>
+                <mat-error *ngIf="form.get('paymentMethod').hasError('min')">
+                  Payment method is required
+                </mat-error>
+              </div>
+            </mat-form-field>
+            <mat-form-field class="mat-form-field-right">
+              <label class="mat-label other-label mandatory-field">Payment Frequency</label>
+              <mat-progress-bar *ngIf="loadingPaymentFrequencies" mode="indeterminate"></mat-progress-bar>
+              <div [hidden]="loadingPaymentFrequencies">
+                <mat-select id="paymentFrequency" name="paymentFrequency" formControlName="paymentFrequency">
+                  <mat-option *ngFor="let frequency of paymentFrequencies" [value]="frequency.id">{{frequency.name}}
+                  </mat-option>
+                </mat-select>
+                <mat-error
+                  *ngIf="form.get('paymentFrequency').hasError('required') || form.get('paymentFrequency').hasError('min')">
+                  Payment frequency is required
+                </mat-error>
+              </div>
+            </mat-form-field>
+          </section>
+          <label class="red site-font" style="font-size: smaller;" *ngIf="showDebitOrderValidation">At least one bank
+            account is required when chosen payment method is debit order</label>
+        </form>
+      </mat-card-content>
+    </div>
+  </mat-card>
+</div>
+<policy-banking-details></policy-banking-details>

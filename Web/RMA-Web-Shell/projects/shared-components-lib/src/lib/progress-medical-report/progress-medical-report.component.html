@@ -1,0 +1,350 @@
+<mat-dialog-content>
+  <mat-card>
+    <mat-card-header>
+      <mat-card-title class="wizard-font card-title grey">
+        <h1>Progress Medical Report Details</h1>
+      </mat-card-title>
+      <mat-card-subtitle>
+        <span class="grey site-font"><i>Capture Progress Medical Report Details</i></span>
+      </mat-card-subtitle>
+    </mat-card-header>
+    <mat-card-content>
+      <div *ngIf="!(isSaving$ | async)">
+        <form [formGroup]="form" class="mat-container details-form" novalidate>
+          <section>
+            <!--Medical ReportCategory-->
+            <mat-form-field class="mat-form-field">
+              <label class="mat-label other-label">Medical Report Category</label>
+              <mat-select name="medicalReportCategory" id="medicalReportCategory" formControlName="medicalReportCategory">
+                <mat-option *ngFor="let medicalReportCategory of medicalReportCategories"
+                  [value]="medicalReportCategory.id">
+                  {{medicalReportCategory.name}}
+                </mat-option>
+              </mat-select>
+              <mat-error
+                *ngIf="form.get('medicalReportCategory').hasError('required')  && form.get('medicalReportCategory').touched">
+                Medical Report Category is <strong>required</strong>
+              </mat-error>
+            </mat-form-field>
+
+            <!--Report Date-->
+            <mat-form-field class="mat-form-field-right">
+              <label class="mat-label other-label mandatory-field">Report Date</label>
+              <input matInput formControlName="reportDate" [matDatepicker]="reportDate" id="reportDate" name="reportDate">
+              <mat-datepicker-toggle matSuffix [for]="reportDate" [disabled]="false"></mat-datepicker-toggle>
+              <mat-datepicker startView="month" [startAt]="startDate" touchUi="true" #dateOfNextReview></mat-datepicker>
+            </mat-form-field>        
+          </section>
+
+          <section>
+            <mat-form-field class="mat-form-field">
+              <label class="mat-label other-label mandatory-field">Date Of Consultation</label>
+              <input matInput formControlName="dateOfConsultation" [matDatepicker]="dateOfConsultation"
+                id="dateOfConsultation" name="dateOfConsultation" [max]="maxDate" readonly>
+              <mat-datepicker-toggle matSuffix [for]="dateOfConsultation" [disabled]="false"></mat-datepicker-toggle>
+              <mat-datepicker startView="month" [startAt]="startDate" touchUi="true" #dateOfConsultation></mat-datepicker>
+              <mat-error
+                *ngIf="form.get('dateOfConsultation').hasError('required')  && form.get('dateOfConsultation').touched">
+                Date Of Consultation is <strong>required</strong>
+              </mat-error>
+              <mat-error *ngIf="form.get('dateOfConsultation').hasError('inValidDate')">
+                Date of Consultation must not be before date of accident
+              </mat-error>
+            </mat-form-field>
+          </section>
+    
+          <section>
+            <label class="other-label mandatory-field">Is the patient unfit for work?</label><br><br>
+            <mat-radio-group formControlName="isUnfitForWork" id="isUnfitForWork">
+              <mat-radio-button value="Yes">Yes</mat-radio-button>&nbsp;
+              <mat-radio-button value="No">No</mat-radio-button>
+            </mat-radio-group>
+            <br>
+            <div *ngIf="form.value.isUnfitForWork == 'Yes'">
+              <section>
+                <mat-form-field class="mat-form-field">
+                  <label class="other-label mandatory-field">Unfit Start Date</label>
+                  <input matInput [matDatepicker]="unfitStartPicker" formControlName="unfitStartDate" id="unfitStartDate" readonly>
+                  <mat-datepicker-toggle matSuffix [for]="unfitStartPicker"></mat-datepicker-toggle>
+                  <mat-datepicker #unfitStartPicker></mat-datepicker>
+                </mat-form-field>
+                
+                <mat-form-field  class="mat-form-field-right">
+                  <label class="other-label mandatory-field">Unfit End Date</label>
+                  <input matInput [matDatepicker]="unfitEndPicker" formControlName="unfitEndDate" id="unfitEndDate" readonly>
+                  <mat-datepicker-toggle matSuffix [for]="unfitEndPicker"></mat-datepicker-toggle>
+                  <mat-datepicker #unfitEndPicker></mat-datepicker>
+                  <mat-error *ngIf="form.get('unfitEndDate').hasError('invalidEndDate')">
+                    Unfit End Date cannot be before Unfit Start Date
+                  </mat-error>
+                </mat-form-field>
+              </section>
+            </div>
+          </section>
+          <br>
+          <section>
+            <label class="other-label mandatory-field">Has the patient stabilised? </label><br><br>
+            <mat-radio-group formControlName="radioStabilisedDetails" id="radioStabilisedDetails">
+              <mat-radio-button value="Yes">Yes</mat-radio-button>&nbsp;
+              <mat-radio-button value="No">No</mat-radio-button>
+            </mat-radio-group>
+            <br>
+            <section>
+              <div *ngIf="form.value.radioStabilisedDetails == 'No'">
+                <mat-form-field class="mat-form-field">
+                  <label class="other-label">&nbsp;If the injury has not yet stabilised, briefly state why:</label>
+                  <textarea matInput cdkTextareaAutosize cdkAutosizeMinRows="3" cdkAutosizeMaxRows="5" id="ctlNotStabilisedReason"
+                    formControlName="ctlNotStabilisedReason" class="mat-input-element" maxlength="1000"></textarea>
+                </mat-form-field>
+              </div>
+            </section>
+            
+          </section>
+          <br>
+          <section>
+            <label class="other-label mandatory-field">Does the patient require further treatment?</label><br><br>
+            <mat-radio-group
+              formControlName="radioAdditionalTreatment" id="radioAdditionalTreatment">
+              <mat-radio-button value="Yes">Yes</mat-radio-button>&nbsp;
+              <mat-radio-button value="No">No</mat-radio-button>
+            </mat-radio-group>
+            <br>
+            <div *ngIf="form.value.radioAdditionalTreatment == 'Yes'">
+              <mat-form-field class="mat-form-field">
+                <label class="other-label">&nbsp;Provide details of additional treatment required:</label>
+                <textarea matInput cdkTextareaAutosize cdkAutosizeMinRows="3" cdkAutosizeMaxRows="5" id="ctlTreatmentDetails"
+                  formControlName="ctlTreatmentDetails" maxlength="1000"></textarea>
+              </mat-form-field>
+            </div>
+          </section>
+          <br>
+          <section>
+            <label class="other-label mandatory-field">Has the patient been referred to a specialist?</label><br><br>
+            <mat-radio-group
+              formControlName="radioSpecialistDetails" id="radioSpecialistDetails">
+              <mat-radio-button value="Yes">Yes</mat-radio-button>&nbsp;
+              <mat-radio-button value="No">No</mat-radio-button>
+            </mat-radio-group>
+            <br>
+            <div *ngIf="form.value.radioSpecialistDetails == 'Yes'">
+              <mat-form-field class="mat-form-field">
+              <label class="other-label">&nbsp;Provide specialist name, date and outcome</label>
+              <textarea matInput cdkTextareaAutosize cdkAutosizeMinRows="3" cdkAutosizeMaxRows="5" id="ctlSpecialistReferralDetails"
+                  formControlName="ctlSpecialistReferralDetails" maxlength="1000"></textarea>
+              </mat-form-field>
+            </div>
+          </section>
+          <br>
+          <section>
+            <label class="other-label mandatory-field">&nbsp;Has the patient been referred for radiological examinations?
+            </label>
+            <mat-radio-group aria-label="Has the patient been referred for radiological examinations? "
+              formControlName="radioRadiologyDetails" id="radioRadiologyDetails">
+              <mat-radio-button value="Yes">Yes</mat-radio-button>&nbsp;
+              <mat-radio-button value="No">No</mat-radio-button>
+            </mat-radio-group>
+            <br>
+            <div *ngIf="form.value.radioRadiologyDetails == 'Yes'">
+              <mat-form-field class="mat-form-field">
+              <label class="other-label">&nbsp;Supply details of radiological examinations:</label>
+              <textarea matInput cdkTextareaAutosize cdkAutosizeMinRows="3" cdkAutosizeMaxRows="5" id="ctlRadiologyFindings"
+                  formControlName="ctlRadiologyFindings" maxlength="1000"></textarea>
+              </mat-form-field>
+            </div>
+          </section>
+          <br>
+          <section>
+            <label class="other-label mandatory-field">&nbsp;Has the patient undergone further operations/procedures/
+              anaesthetic since the
+              first medical report?</label>
+            <mat-radio-group
+              formControlName="radioAdditionalOperationsProcedures" id="radioAdditionalOperationsProcedures">
+              <mat-radio-button value="Yes">Yes</mat-radio-button>&nbsp;
+              <mat-radio-button value="No">No</mat-radio-button>
+            </mat-radio-group>
+            <br>
+            <div *ngIf="form.value.radioAdditionalOperationsProcedures == 'Yes'">
+              <mat-form-field class="mat-form-field">
+              <label class="other-label">&nbsp;Provide details</label>
+              <textarea matInput cdkTextareaAutosize cdkAutosizeMinRows="3" cdkAutosizeMaxRows="5" id="ctlOperationsProcedures"
+                  formControlName="ctlOperationsProcedures" maxlength="1000"></textarea>
+              </mat-form-field>
+            </div>
+          </section>
+          <br>
+          <section>
+            <label class="other-label mandatory-field">&nbsp;Has the patient received further physiotherapy treatment
+              since the
+              first medical report? </label><br><br>
+            <mat-radio-group id="radioAdditionalPhysiotherapy"
+              aria-label="Has the patient received further physiotherapy treatment since the first medical report? "
+              formControlName="radioAdditionalPhysiotherapy">
+              <mat-radio-button value="Yes">Yes</mat-radio-button>&nbsp;
+              <mat-radio-button value="No">No</mat-radio-button>
+            </mat-radio-group>
+            <br>
+            <div *ngIf="form.value.radioAdditionalPhysiotherapy == 'Yes'">
+              <mat-form-field class="mat-form-field">
+                <label class="other-label">&nbsp;Provide details</label>
+                <textarea matInput cdkTextareaAutosize cdkAutosizeMinRows="3" cdkAutosizeMaxRows="5" id="ctlPhysiotherapy"
+                  formControlName="ctlPhysiotherapy" maxlength="1000"></textarea>
+              </mat-form-field>
+            </div>
+          </section>
+          <br>
+          <section>
+            <!--Body Side-->
+            <mat-form-field class="mat-form-field">
+              <label class="mat-label other-label">Body Side</label>
+              <mat-select name="bodySide" id="bodySide" formControlName="bodySide">
+                <mat-option *ngFor="let bodySide of bodySides" [value]="bodySide.id">
+                  {{bodySide.name}}
+                </mat-option>
+              </mat-select>
+              <mat-error *ngIf="form.get('bodySide').hasError('required')  && form.get('bodySide').touched">
+                Body side is <strong>required</strong>
+              </mat-error>
+            </mat-form-field>
+    
+            <!--Severity-->
+            <mat-form-field class="mat-form-field-right">
+              <label class="mat-label other-label">Severity</label>
+              <mat-select name="severity" id="severity" formControlName="severity">
+                <mat-option *ngFor="let severity of severities" [value]="severity.id">
+                  {{severity.name}}
+                </mat-option>
+              </mat-select>
+              <mat-error *ngIf="form.get('severity').hasError('required')  && form.get('severity').touched">
+                Contact Designation Type is <strong>required</strong>
+              </mat-error>
+            </mat-form-field>
+    
+          </section>
+    
+          <section>
+            <div *ngIf="showHealthCareProviders">
+              <mat-form-field class="mat-form-field">
+                <label class="mat-label other-label mandatory-field">Healthcare Providers</label>
+                <mat-select (selectionChange)="healthCareProviderDetailsChange($event)" name="healthCareProvider"
+                  id="healthCareProvider" formControlName="healthCareProvider">
+                  <mat-option *ngFor="let userHealthCareProvider of userHealthCareProviders"
+                    [value]="userHealthCareProvider.healthCareProviderId">
+                    {{userHealthCareProvider.practiceNumber}} {{userHealthCareProvider.name}}
+                  </mat-option>
+                </mat-select>
+                <mat-error
+                  *ngIf="form.get('healthCareProvider').hasError('required') && form.get('healthCareProvider').touched">
+                  Healthcare Provider is <strong>required</strong>
+                </mat-error>
+              </mat-form-field>
+            </div>
+          </section>
+          <section>
+            <!--Healthcare Provider Practice Number-->
+            <mat-form-field class="mat-form-field">
+              <label class="mat-label other-label mandatory-field">Healthcare Provider Practice Number</label>
+              <input matInput id="healthcareProviderPracticeNumber" name="healthcareProviderPracticeNumber"
+                formControlName="healthcareProviderPracticeNumber" />
+            </mat-form-field>
+    
+            <!--Healthcare Provider Name-->
+            <mat-form-field class="mat-form-field-right">
+              <label class="mat-label other-label mandatory-field">Healthcare Provider Name</label>
+              <input matInput id="healthcareProviderName" name="healthcareProviderName"
+                formControlName="healthcareProviderName" />
+            </mat-form-field>
+          </section>
+    
+          <button class="addButton" (click)="openICD10CodeDialog()" [disabled]="disabled">
+            <p class="addText">Add ICD10 Codes<span class="material-icons add">add_circle_outline</span></p>
+          </button>
+    
+          <section>
+            <div *ngIf="(selectedicdCodes.length > 0) && !(isLoadingEstimates$ | async)">
+              <h3>Selected ICD10 Codes</h3>
+                    <mat-table #icd10CodeTable [dataSource]="selectedicdCodes" matSort>
+                      <!-- ICD10 Code Column -->
+                      <ng-container matColumnDef="icd10Code">
+                        <mat-header-cell *matHeaderCellDef>ICD10 Code </mat-header-cell>
+                        <mat-cell *matCellDef="let row"> {{row.icd10Code}} <span class="material-icons remove" matTooltip="Remove ICD10 Code" mat-list-icon (click)="removedSeletedICD10Code(row.icd10Code)">delete</span> </mat-cell>
+                      </ng-container>
+
+                      <ng-container matColumnDef="minEstimatedAmount">
+                        <mat-header-cell *matHeaderCellDef>Min EST</mat-header-cell>
+                        <mat-cell *matCellDef="let row"> {{formatMoney(getEstimatedAmount(row.icd10Code, minEstimate,
+                            medicalEstimateType))}} </mat-cell>
+                    </ng-container>
+    
+                    <ng-container matColumnDef="avgEstimatedAmount">
+                        <mat-header-cell *matHeaderCellDef>Avg EST</mat-header-cell>
+                        <mat-cell *matCellDef="let row"> {{formatMoney(getEstimatedAmount(row.icd10Code,
+                            averageEstimate, medicalEstimateType))}} </mat-cell>
+                    </ng-container>
+    
+                    <ng-container matColumnDef="maxEstimatedAmount">
+                        <mat-header-cell *matHeaderCellDef>Max EST</mat-header-cell>
+                        <mat-cell *matCellDef="let row"> {{formatMoney(getEstimatedAmount(row.icd10Code,
+                            maxEstimate,medicalEstimateType))}} </mat-cell>
+                    </ng-container>
+    
+                    <ng-container matColumnDef="minPDPercentage">
+                        <mat-header-cell *matHeaderCellDef>Min PD%</mat-header-cell>
+                        <mat-cell *matCellDef="let row"> {{getEstimatedAmount(row.icd10Code,
+                            minEstimate,pdEstimateType)}}%</mat-cell>
+                    </ng-container>
+    
+                    <ng-container matColumnDef="avgPDPercentage">
+                        <mat-header-cell *matHeaderCellDef>Avg PD%</mat-header-cell>
+                        <mat-cell *matCellDef="let row"> {{getEstimatedAmount(row.icd10Code,
+                            averageEstimate,pdEstimateType)}}%</mat-cell>
+                    </ng-container>
+    
+                    <ng-container matColumnDef="maxPDPercentage">
+                        <mat-header-cell *matHeaderCellDef>Max PD%</mat-header-cell>
+                        <mat-cell *matCellDef="let row"> {{getEstimatedAmount(row.icd10Code,
+                            maxEstimate,pdEstimateType)}}%</mat-cell>
+                    </ng-container>
+    
+                    <ng-container matColumnDef="minTTD">
+                        <mat-header-cell *matHeaderCellDef>Min TTD</mat-header-cell>
+                        <mat-cell *matCellDef="let row"> {{getEstimatedAmount(row.icd10Code,
+                            minEstimate,ttdEstimateType)}} day(s)</mat-cell>
+                    </ng-container>
+    
+                    <ng-container matColumnDef="avgTTD">
+                        <mat-header-cell *matHeaderCellDef>Avg TTD</mat-header-cell>
+                        <mat-cell *matCellDef="let row"> {{getEstimatedAmount(row.icd10Code,
+                            averageEstimate,ttdEstimateType)}} day(s)</mat-cell>
+                    </ng-container>
+    
+                    <ng-container matColumnDef="maxTTD">
+                        <mat-header-cell *matHeaderCellDef>Max TTD</mat-header-cell>
+                        <mat-cell *matCellDef="let row"> {{getEstimatedAmount(row.icd10Code,
+                            maxEstimate,ttdEstimateType)}} day(s)</mat-cell>
+                    </ng-container>
+
+                      <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
+                      <mat-row *matRowDef="let row; columns: displayedColumns;"></mat-row>
+                    </mat-table>
+            </div>
+
+            <div *ngIf="(isLoadingEstimates$ | async)" class="loadingDiv">
+              <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+              <label class="mat-label other-label"><i>getting estimates for selected icd10 codes...please wait</i></label>
+            </div>
+          </section>
+          <div class="form-group-button mat-form-button">
+            <button (click)='save()' [disabled]="!form.valid || form.pristine || selectedicdCodes.length == 0" type="button" class="button float-button">Submit</button>
+            <button (click)='cancel()' type="button" class="button float-button">Close</button>
+          </div>
+        </form>
+      </div>
+    
+      <div *ngIf="(isSaving$ | async)">
+        <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+        <label class="mat-label other-label"><i>Adding medical report details...please wait</i></label>
+      </div>
+    </mat-card-content>
+    
+  </mat-card>
+</mat-dialog-content>

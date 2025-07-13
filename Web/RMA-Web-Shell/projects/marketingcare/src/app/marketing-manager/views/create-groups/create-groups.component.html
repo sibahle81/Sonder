@@ -1,0 +1,79 @@
+<section class="createGroupContainer">
+  <div [ngClass]="isSpinner ? 'on-disabled' : 'on-enabled' ">
+    <div *ngIf="!isLoaderLoading" class="campaignHead"
+      [ngStyle]="isSpinner ? { 'opacity': '0.5' } : { 'opacity': '1' }">
+      <div class="headerBottomCss">
+        <div class="recovery-btn">
+          <button mat-button class="btnClassCss">
+            {{ groupUpdateData ? 'Edit Group' : 'Create Group' }}
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div [ngClass]="isSpinner ? 'on-disabled' : 'on-enabled' " class="borderCss">
+    <div class="input">
+      <form class="example-form" [formGroup]="createGroupForm">
+        <mat-label id="input-label" class="form-label-text">Group Name</mat-label>
+        <mat-form-field class="example-full-width" appearance="outline" [ngClass]="{
+        'has-error': getFormGroup()?.invalid && formSubmited}">
+          <input matInput class="input-field border-none-imp" placeholder="Enter Group Name" value=""
+            formControlName="groupName">
+        </mat-form-field>
+        <mat-error class="color-red" *ngIf="getFormGroup()?.invalid && formSubmited">Please add group name</mat-error>
+      </form>
+    </div>
+    <div class="padding">
+      <button mat-stroked-button class="btn">Condition</button>
+    </div>
+    <div class="form-fields">
+      <form [formGroup]="createGroupForm" action="">
+        <div formArrayName="groupList" class="select-options">
+          <div *ngFor="let group of createGroupForm?.get('groupList')?.controls; let i = index">
+            <div [formGroupName]="i" class="formFieldCss">
+              <app-condition [entityDropdownValue]="entityArr" 
+              [isFormSubmited]="formSubmited" [index]="i" [formBuilder]="fb"
+              [conditionOperatorValue]="patchValuesForConditions?.groupList[i]?.conditionOperator"
+              [isAgeSelected]="isAgeSelected"
+                (selectedValues)="addItem($event)" [patchValues]="patchValuesForConditions"  [operatorOptions]="operatorOptions"
+                class="width"></app-condition>
+              <div class="inline-flex">
+                <button mat-icon-button *ngIf="groupListArray().length>1" class="example-icon favorite-icon"
+                  class="add-btn" (click)="removeGroup(i)">
+                  <mat-icon class="color-red">remove_circle_outline</mat-icon>
+                </button>
+                <button mat-icon-button class="example-icon favorite-icon" class="add-btn" (click)="addGroup(i)">
+                  <mat-icon class="color-green">add_circle_outline</mat-icon>
+                </button>
+              </div>
+              <div class="width-padding">
+                <mat-form-field *ngIf="isOperatorVisible(i)" appearance="outline" class="side-select" [ngClass]="{
+                'has-error': isOperatorVisible(i) && getFormArrayStatus(i, 'operator')?.invalid && formSubmited}">
+                  <mat-select class="border-none-imp" placeholder="Operator" disableRipple formControlName="operator">
+                    <mat-option value="and">AND</mat-option>
+                    <mat-option value="or">OR</mat-option>
+                  </mat-select>
+                </mat-form-field>
+                <mat-error class="color-red" *ngIf="isOperatorVisible(i) && getFormArrayStatus(i, 'operator')?.invalid && formSubmited">
+                  Please select operator</mat-error>
+                </div>
+            </div>
+          </div>
+         
+          <div class="bottom-btn">
+            <button mat-stroked-button id="back-btn" (click)="goBack()">
+              <mat-icon>keyboard_backspace</mat-icon>&nbsp;&nbsp;
+              <span>BACK</span></button>
+            <button mat-stroked-button id="save-btn" (click)="submit()">SAVE</button>
+          
+          </div>
+        </div>
+      </form>
+    </div>
+  </div>
+  <div [hidden]="!isLoaderLoading" [ngClass]="isLoaderLoading ? 'progress-bar-container' : '' ">
+    <mat-progress-bar *ngIf="isLoaderLoading" mode="indeterminate"></mat-progress-bar>
+  </div>
+  <div [hidden]="!isSpinner" class="spinner-view">
+    <mat-spinner *ngIf="isSpinner"></mat-spinner>
+  </div>

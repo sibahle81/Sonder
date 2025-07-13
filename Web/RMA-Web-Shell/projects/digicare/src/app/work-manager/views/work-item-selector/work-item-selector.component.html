@@ -1,0 +1,36 @@
+<mat-card class="matCard">
+  <mat-card-content>
+    <h2>Create a work item</h2>
+  <form [formGroup]="form" class="mat-container details-form" novalidate>
+    <div *ngIf="loadingWorkItemTypesInProgress">
+      <mat-progress-bar mode="indeterminate"
+          [ngClass]="{ 'loading-main-double-menu-progress': doubleMenu, 'loading-main-single-menu-progress': !doubleMenu }">
+      </mat-progress-bar>
+      <p class="site-font grey">{{progressText}}</p>
+    </div>
+    <label class="mat-label other-label mandatory-field">Select an option below to start a new form to capture</label>
+    <mat-form-field appearance="standard">
+      <mat-select placeholder="Form types" formControlName="workItemTypeId"(selectionChange)="selected($event)" id="workItemTypeId">
+        <mat-option *ngFor="let workItemType of workItemTypes" [value]="workItemType">
+          {{ workItemType.workItemTypeName }}</mat-option>
+      </mat-select>
+      <mat-error *ngIf="form.get('workItemTypeId').hasError('required')">
+        Form Type is <strong>required</strong>
+      </mat-error>
+    </mat-form-field>
+    <label class="mat-label other-label mandatory-field">Medical Report Category</label>
+    <mat-form-field appearance="standard">
+      <div>
+          <mat-select formControlName="reportCategoryId" id="reportCategoryId" (selectionChange)="selectedReportCategory($event)" name="reportCategoryId">
+              <mat-option (change)="getCurrentReportCategory(medicalReportCategory)" *ngFor="let medicalReportCategory of medicalReportCategories" [value]="medicalReportCategory.id">
+                  {{ medicalReportCategory.name }}
+              </mat-option>
+          </mat-select>
+      </div>
+  </mat-form-field>
+    <div class="form-buttons submit-button">
+      <button id="btnSubmit" type="submit" (click)="save()" class="button float-button" [disabled]="disableSave">Submit</button>
+    </div>
+  </form>
+</mat-card-content>
+</mat-card>

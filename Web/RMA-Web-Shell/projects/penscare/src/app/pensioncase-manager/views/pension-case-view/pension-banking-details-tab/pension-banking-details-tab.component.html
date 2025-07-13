@@ -1,0 +1,24 @@
+<mat-card *ngIf="isLoading">
+    <mat-card-content>
+        <span [style.visibility]="isLoading ? 'visible' : 'hidden'">
+            <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+            <span class="grey site-font"><i>Loading Banks...please wait</i></span>
+        </span>
+    </mat-card-content>
+</mat-card>
+<ng-container *ngFor="let rolePlayer of rolePlayers">
+    <div class="flex-parent-element">
+        <div class="flex-child-element">
+          <table class="altRowTable">
+            <tr *ngIf="rolePlayer.displayName">
+              <td><b>Name: </b></td>
+              <td>{{rolePlayer.displayName}}</td>
+            </tr>
+          </table>
+        </div>
+      </div>
+    <div>
+        <role-player-banking-list [rolePlayer]="rolePlayer" [isWizard]="false" [isReadOnly]="false" [verifyAccount]="true"
+        [showSelectColumn]="false"></role-player-banking-list>
+    </div>
+</ng-container>

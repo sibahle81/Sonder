@@ -1,0 +1,105 @@
+﻿<mat-card style="margin: 15px 30px 15px 30px">
+    <mat-card-header>
+        <mat-card-title class="wizard-font card-title grey">
+            <h1 style="padding: 0;">Find a Benefit</h1>
+        </mat-card-title>
+    </mat-card-header>
+    <mat-card-content style="margin-left: 10px;">
+        <mat-form-field [floatLabel]="'never'">
+            <input matInput maxlength="50" name="filter" #filter width="300" minLength="3"
+                matTooltip="Search by name, code, or description" matTooltipShowDelay="1000">
+                <mat-placeholder class="placeholder">Search by Name, Code or Description</mat-placeholder>
+            <mat-icon class="search-icon" (click)="search()" matSuffix>search</mat-icon>
+
+        </mat-form-field>
+
+        <div *ngIf="dataSource.loading$ | async">
+            <mat-progress-bar mode="indeterminate"
+                [ngClass]="{ 'loading-main-double-menu-progress': doubleMenu, 'loading-main-single-menu-progress': !doubleMenu }">
+            </mat-progress-bar>
+            <p class="site-font grey">Searching...</p>
+        </div>
+
+        <div [hidden]="paginator.length == 0">
+            <mat-table #table [dataSource]="dataSource" matSort matSortActive="Name" matSortDirection="asc">
+                <!-- Name -->
+                <ng-container matColumnDef="name">
+                    <mat-header-cell *matHeaderCellDef mat-sort-header> Name </mat-header-cell>
+                    <mat-cell *matCellDef="let row"> {{row.name}} </mat-cell>
+                </ng-container>
+
+                <!-- Code -->
+                <ng-container matColumnDef="code">
+                    <mat-header-cell *matHeaderCellDef mat-sort-header> Code </mat-header-cell>
+                    <mat-cell *matCellDef="let row"> {{row.code}} </mat-cell>
+                </ng-container>
+
+                <!-- Modified By -->
+                <ng-container matColumnDef="modifiedBy">
+                    <mat-header-cell *matHeaderCellDef mat-sort-header> Added/Modified By </mat-header-cell>
+                    <mat-cell *matCellDef="let row"> {{row.modifiedBy}} </mat-cell>
+                </ng-container>
+
+                <!-- Modified By -->
+                <ng-container matColumnDef="modifiedDate">
+                    <mat-header-cell *matHeaderCellDef mat-sort-header> Added/Modified Date </mat-header-cell>
+                    <mat-cell *matCellDef="let row"> {{row.modifiedDate | date: 'yyyy/MM/dd'}} </mat-cell>
+                </ng-container>
+
+                <!-- Active -->
+                <ng-container matColumnDef="statusText">
+                    <mat-header-cell *matHeaderCellDef> Status </mat-header-cell>
+                    <mat-cell *matCellDef="let row"> {{row.statusText}} </mat-cell>
+                </ng-container>
+
+                <!-- Active -->
+                <ng-container matColumnDef="isActive">
+                    <mat-header-cell *matHeaderCellDef> Status </mat-header-cell>
+                    <mat-cell *matCellDef="let row">
+                        <span *ngIf="row.isActive">Active</span>
+                        <span *ngIf="!row.isActive">InActive</span>
+                    </mat-cell>
+                </ng-container>
+
+                <!-- Actions -->
+                <ng-container matColumnDef="actions">
+                    <mat-header-cell *matHeaderCellDef>Actions</mat-header-cell>
+                    <mat-cell *matCellDef="let row">
+                        <span *ngIf="row.canEdit"><a role="button" class="link-edit" (click)="onSelect(row)">View /
+                                Edit</a></span>
+                        <span *ngIf="!row.canEdit"><a role="button" class="link-edit"
+                                (click)="onSelect(row)">View</a></span>
+                    </mat-cell>
+                </ng-container>
+
+                <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
+                <mat-row *matRowDef="let row; columns: displayedColumns;"></mat-row>
+            </mat-table>
+
+            <mat-paginator #paginator [length]="dataSource.rowCount$" [pageIndex]="0" [pageSize]="5"
+                [pageSizeOptions]="[5, 10, 25, 100]">
+            </mat-paginator>
+        </div>
+
+        <div [hidden]="paginator.length > 0 || !currentQuery || currentQuery == ''"
+            class="no-search-results-add-button">
+            <div class="site-font grey">
+                <p class="grey">Your search - <strong>{{currentQuery}}</strong> - did not match any benefits.</p>
+                <span>Suggestions: </span>
+                <ul>
+                    <li>Make sure that all words are spelled correctly.</li>
+                    <li>Try different keywords.</li>
+                    <li>Try more general keywords.</li>
+                    <li>Try fewer keywords.</li>
+                </ul>
+            </div>
+        </div>
+
+        <mat-divider [inset]="true"></mat-divider>
+        <br>
+        <button class="addBenefitButton" (click)="addBenefit()">
+            <p class="addBenefitText">Add Benefit<span class="material-icons add">add_circle_outline</span></p>
+        </button>
+
+    </mat-card-content>
+</mat-card>

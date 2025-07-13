@@ -1,0 +1,73 @@
+<mat-card *ngIf="(dataSource.loading$ | async)">
+  <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+  <label class="mat-label other-label"><i>loading policy status changes...please wait</i></label>
+</mat-card>
+
+<div [hidden]="(dataSource.loading$ | async)">
+  <div [hidden]="showDetail">
+
+    <div class="menu-bar">
+      <span class="material-icons">
+        rule_folder
+      </span>
+      Status
+    </div>
+
+    <div [hidden]="!(dataSource.data && dataSource.data.data && dataSource.data.data?.length > 0)">
+      <mat-table #table [dataSource]="dataSource" matSort id="tblData">
+        <ng-container matColumnDef="policyStatus">
+          <mat-header-cell *matHeaderCellDef> Policy Status </mat-header-cell>
+          <mat-cell *matCellDef="let row">
+            <div [ngClass]="row.effectiveTo ? '' : 'green'">{{getPolicyStatus(row.policyStatus)}}</div>
+          </mat-cell>
+        </ng-container>
+
+        <ng-container matColumnDef="reason">
+          <mat-header-cell *matHeaderCellDef> Reason </mat-header-cell>
+          <mat-cell *matCellDef="let row">{{formatText(row.reason)}}</mat-cell>
+        </ng-container>
+
+        <ng-container matColumnDef="effectiveFrom">
+          <mat-header-cell *matHeaderCellDef> Effective From </mat-header-cell>
+          <mat-cell *matCellDef="let row">{{row.effectiveFrom | date:'yyyy/MM/dd'}}</mat-cell>
+        </ng-container>
+
+        <ng-container matColumnDef="effectiveTo">
+          <mat-header-cell *matHeaderCellDef> Effective To </mat-header-cell>
+          <mat-cell *matCellDef="let row">
+            <div [ngClass]="row.effectiveTo ? '' : 'green'">{{row.effectiveTo ?
+              (row.effectiveTo | date:'yyyy/MM/dd') :
+              'Current'}}</div>
+          </mat-cell>
+        </ng-container>
+
+        <ng-container matColumnDef="requestedBy">
+          <mat-header-cell *matHeaderCellDef> Requested By </mat-header-cell>
+          <mat-cell *matCellDef="let row">{{row.requestedBy}}</mat-cell>
+        </ng-container>
+
+        <ng-container matColumnDef="requestedByConverted">
+          <mat-header-cell *matHeaderCellDef> *Requested By </mat-header-cell>
+          <mat-cell *matCellDef="let row"><user-display-name [userName]="row.requestedBy"></user-display-name></mat-cell>
+        </ng-container>
+
+        <ng-container matColumnDef="requestedDate">
+          <mat-header-cell *matHeaderCellDef> Requested Date </mat-header-cell>
+          <mat-cell *matCellDef="let row">{{row.requestedDate | date:'yyyy/MM/dd'}}</mat-cell>
+        </ng-container>
+
+        <mat-header-row *matHeaderRowDef="getDisplayedColumns()"></mat-header-row>
+        <mat-row *matRowDef="let row; columns: getDisplayedColumns();"></mat-row>
+      </mat-table>
+
+      <mat-paginator #paginator [pageIndex]="0" [pageSize]="5" [pageSizeOptions]="[5, 10, 25, 100]"
+        [length]="this.dataSource.rowCount$ | async" (page)="getData()">
+      </mat-paginator>
+    </div>
+
+    <mat-card
+      *ngIf="!(dataSource.data && dataSource.data.data && dataSource.data.data?.length > 0 || (dataSource.loading$ | async))">
+      <label class="mat-label other-label"><i>No policy status changes found...</i></label>
+    </mat-card>
+  </div>
+</div>

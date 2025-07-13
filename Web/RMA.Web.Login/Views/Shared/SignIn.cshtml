@@ -1,0 +1,54 @@
+﻿@Html.ValidationSummary(true)
+<div class="content-container">
+    <form action="~/signin" method="post" class="login-form">
+        <script type="text/javascript">
+            function BindForgotPasswordUrl() {
+                @if (ViewBag.ReturnUrl != null)
+                {
+                    string returnUrl = Convert.ToString(ViewData["ReturnUrl"]);
+                    if (returnUrl.Contains("localhost"))
+                    {
+                        ViewBag.ForgotPasswordUrl = "http://localhost:4200/forgot-password";
+                    }
+                    else if (returnUrl.Contains("dev"))
+                    {
+                        ViewBag.ForgotPasswordUrl = "https://dev-memberportal.randmutual.co.za/forgot-password";
+                    }
+                    else if (returnUrl.Contains("stest"))
+                    {
+                        ViewBag.ForgotPasswordUrl = "https://stest-memberportal.randmutual.co.za/forgot-password";
+                    }
+                    else if (returnUrl.Contains("uat"))
+                    {
+                        ViewBag.ForgotPasswordUrl = "https://uat-memberportal.randmutual.co.za/forgot-password";
+                    }
+                    else if (returnUrl.Contains("prod"))
+                    {
+                        ViewBag.ForgotPasswordUrl = "https://memberportal.randmutual.co.za/forgot-password";
+                    }
+                }
+            }
+        </script>
+        <div class="header-container">
+            <h1 class="header-text">LOG INTO YOUR ACCOUNT</h1>
+        </div>
+        <input type="hidden" name="ReturnUrl" value="@ViewBag.ReturnUrl" />
+        <label class="form-label first-label mandatory-field">Email<span style="color:red;">&nbsp;*</span></label>
+        <div class="form-group">
+            <input type="text" required="required" name="Username" class="form-control" autofocus="autofocus" data-rule-required="true" data-msg-required="Please enter your username.">
+        </div>
+        <label class="form-label other-label mandatory-field">Password<span style="color:red;">&nbsp;*</span></label>
+        <div class="form-group">
+            <input type="password" required="required" id="password" name="password" class="form-control" data-rule-required="true" data-msg-required="Please enter your password.">
+            <span toggle="#password" class="fa fa-fw fa-eye field-icon" id="togglePassword"></span>
+        </div>
+        <div class="form-group">
+            @Html.Raw("<a href=\"" + ViewBag.ForgotPasswordUrl + "\">Forgot Password</a>")
+        </div>
+        <button class="login-button" type="submit">SIGN IN</button>
+
+    </form>
+</div>
+<div class="image-container">
+    <img src="Images/rmalogo.png" alt="" />
+</div>

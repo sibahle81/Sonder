@@ -1,0 +1,56 @@
+<div class="menu-bar">
+    <span (click)="cancel()" class="material-icons pointer right" matTooltip="close">
+        close
+    </span>
+</div>
+
+<invoice-sundry *ngIf="data.claimInvoiceType == sundry" [claimInvoice]="data.claimInvoice" [isReadOnly]="isReadOnly"
+    [personEvent]="data.personEvent" [claim]="data.claim" [isRepay]="data.invoiceAction === 'repay'"
+    [selectedRepayReason]="selectedRepayReason" (hideEmit)="hideRepayDropdown()"
+    (closeEmit)="cancel()"></invoice-sundry>
+
+<invoice-widow-lump-sum *ngIf="data.claimInvoiceType == widowLumpSum" [claimInvoice]="data.claimInvoice"
+    [isReadOnly]="isReadOnly" [personEvent]="data.personEvent" [claim]="data.claim"
+    [isRepay]="data.invoiceAction === 'repay'" [selectedRepayReason]="selectedRepayReason"
+    (hideEmit)="hideRepayDropdown()" (closeEmit)="cancel()"></invoice-widow-lump-sum>
+
+<invoice-travel-expense *ngIf="data.claimInvoiceType == travelExpense" [claimInvoice]="data.claimInvoice"
+    [isReadOnly]="isReadOnly" [personEvent]="data.personEvent" [claim]="data.claim"
+    (closeEmit)="cancel()"></invoice-travel-expense>
+
+<invoice-partial-dependency-lump-sum *ngIf="data.claimInvoiceType == travelExpense" [claimInvoice]="data.claimInvoice"
+    [isReadOnly]="isReadOnly" [personEvent]="data.personEvent" [claim]="data.claim"
+    [isRepay]="data.invoiceAction === 'repay'" [selectedRepayReason]="selectedRepayReason"
+    (hideEmit)="hideRepayDropdown()" (closeEmit)="cancel()"></invoice-partial-dependency-lump-sum>
+
+<invoice-funeral-expenses *ngIf="data.claimInvoiceType == funeralExpense" [claimInvoice]="data.claimInvoice"
+    [isReadOnly]="isReadOnly" [personEvent]="data.personEvent" [claim]="data.claim"
+    [isRepay]="data.invoiceAction === 'repay'" [selectedRepayReason]="selectedRepayReason"
+    (hideEmit)="hideRepayDropdown()" (closeEmit)="cancel()"></invoice-funeral-expenses>
+
+<total-temporary-disability *ngIf="data.claimInvoiceType == daysOffInvoice" [isReadOnly]="isReadOnly"
+    [personEvent]="data.personEvent" [claim]="data.claim" [totalTemporaryDisability]="data.claimInvoice"
+    [isRepay]="data.invoiceAction === 'repay'" [selectedRepayReason]="selectedRepayReason"
+    (hideEmit)="hideRepayDropdown()" (closeEmit)="cancel()"></total-temporary-disability>
+
+<invoice-partial-dependency-lump-sum *ngIf="data.claimInvoiceType == partialDependencyInvoice" [isReadOnly]="isReadOnly"
+    [personEvent]="data.personEvent" [claim]="data.claim" [claimInvoice]="data.claimInvoice"
+    [isRepay]="data.invoiceAction === 'repay'" [selectedRepayReason]="selectedRepayReason"
+    (hideEmit)="hideRepayDropdown()" (closeEmit)="cancel()"></invoice-partial-dependency-lump-sum>
+
+<invoice-fatal-lump-sum *ngIf="data.claimInvoiceType ==  fatalLumpSumInvoice" [isReadOnly]="isReadOnly"
+    [personEvent]="data.personEvent" [claimInvoice]="data.claimInvoice" (closeEmit)="cancel()"></invoice-fatal-lump-sum>
+
+<mat-card *ngIf="data.invoiceAction == 'repay' && !hideDropdown">
+    <section>
+        <div class="repay-resons-dropdown">
+            <label class="mat-label other-label">Please Select Repay Reason*</label>
+            <mat-select name="repayReasonFilter" id="repayReasonFilter"
+                (selectionChange)="repayReasonChanged($event.value)">
+                <mat-option *ngFor="let repayReason of repayReasons" [value]="repayReason">
+                    {{formatLookup(repayReason)}}
+                </mat-option>
+            </mat-select>
+        </div>
+    </section>
+</mat-card>

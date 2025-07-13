@@ -1,0 +1,15 @@
+<div>
+    <h1>upload</h1>
+  </div>
+  <div>
+    <upload-control #uploadControl [acceptedTypes]="'.xlsx'" [isSingleInput]="false" [allowDelete]="true"
+      [isReadOnly]="false"></upload-control>
+  </div>
+  <div class="left-padding" *ngIf="uploadControlComponent.uploadFileList.length > 0">
+      <div>Uploading large files may take several minutes. Please be patient.</div>
+      <div>The wizard task is created in the background, and should be available after a short time.</div>
+  </div>
+  <div class="form-buttons" (click)="save()">
+    <button class="button float-button submit-button" [disabled]="disabled">Upload File</button>
+  </div>
+  

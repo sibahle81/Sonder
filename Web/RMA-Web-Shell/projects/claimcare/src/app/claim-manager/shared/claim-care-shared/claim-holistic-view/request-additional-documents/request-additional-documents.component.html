@@ -1,0 +1,86 @@
+<mat-card *ngIf="isLoading$ | async">
+    <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+    <label class="mat-label other-label"><i>loading additional requirements...please wait</i></label>
+</mat-card>
+
+<div *ngIf="!(isLoading$ | async)">
+    <div class="menu-bar">
+        <span class="material-icons">engineering</span>&nbsp;Requesting Additional Documents
+        <span class="material-icons menu-button" matTooltip="Close" (click)='close()'>
+            close
+        </span>
+        <span class="material-icons menu-button pulse" matTooltip="Save" (click)='save()'
+            *ngIf="form.valid && !form.pristine">
+            save
+        </span>
+    </div>
+    <mat-card>
+        
+        <form [formGroup]="form" class="mat-container details-form" novalidate>
+            <section>
+                <mat-form-field >
+                    <label class="mat-label other-label mandatory-field">Requirement Category</label>
+                    <mat-select multiple formControlName="requirementCategoryId" name="requirementCategoryId" id="requirementCategoryId"
+                    (selectionChange)="onClaimRequirementCategoryChanged($event)">
+                    <input matInput (keyup)="onClaimRequirementCategoryKeyChange($event.target.value)">
+                    <mat-option *ngFor="let claimRequirementCategory of filteredClaimRequirementCategories" [value]="claimRequirementCategory">
+                        {{claimRequirementCategory.documentTypeName}}
+                    </mat-option>
+                </mat-select>
+                <mat-error *ngIf="form.get('requirementCategoryId').hasError('min')">
+                    Please select claim Requirement
+                </mat-error>
+                </mat-form-field>
+            </section>
+            <section>
+                <mat-form-field>
+                    <label class="mat-label other-label mandatory-field">Request</label>
+                    <textarea matTextareaAutosize matAutosizeMinRows="5" matAutosizeMaxRows="30" maxlength="255" matInput
+                        minlength="3" id="text" name="text" formControlName="text"></textarea>
+                    <mat-error *ngIf="form.get('text').hasError('required')">
+                        request is <strong>required</strong>
+                    </mat-error>
+                    <mat-error *ngIf="form.get('text').hasError('minlength')">
+                        request must be at least <strong>three characters</strong>
+                    </mat-error>
+                </mat-form-field>
+            </section>
+            <section>
+                <mat-form-field>
+                        <div class="field-container check-box">
+                            <label class="mat-label other-label">&nbsp;</label>
+                            <input [hidden]="true" matInput formControlName="visibleToMember" />
+                            <mat-checkbox formControlName="visibleToMember">
+                                <label class="mat-label other-label">Visible to member ?</label>
+                            </mat-checkbox>
+                        </div>
+                    </mat-form-field>
+            </section>
+            <section>
+                <mat-form-field>
+                        <div class="field-container check-box">
+                            <label class="mat-label other-label">&nbsp;</label>
+                            <input [hidden]="true" matInput formControlName="sendCommunication" />
+                            <mat-checkbox formControlName="sendCommunication">
+                                <label class="mat-label other-label">Send out Communication ?</label>
+                            </mat-checkbox>
+                        </div>
+                    </mat-form-field>
+            </section>
+            <br />
+            <label class="mat-label other-label labelHeading"><span class="material-icons">info</span>The
+                following request will be sent to the following
+                contacts:</label>
+        </form>
+    </mat-card>
+
+    <div *ngIf="mainMember && insuredLife">
+        <member-contacts [member]="mainMember" [filterContactsOnCommunicationTypes]="memberCommunicationTypes"
+            [filterContactsOnDesignationType]="memberDesignationTypes" [title]="'Member Contacts'"
+            (emitContacts)="sendCommunication($event)"></member-contacts>
+
+        <member-contacts [member]="insuredLife" [filterContactsOnCommunicationTypes]="insuredLifeCommunicationTypes"
+            [filterContactsOnDesignationType]="insuredLifeDesignationTypes" [title]="'Insured Life Contacts'"
+            (emitContacts)="sendCommunication($event)"></member-contacts>
+    </div>
+</div>

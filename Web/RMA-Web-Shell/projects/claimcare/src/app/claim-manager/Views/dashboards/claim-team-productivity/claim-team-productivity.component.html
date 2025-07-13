@@ -1,0 +1,74 @@
+﻿<form [formGroup]="form" class="mat-container details-form" novalidate>
+  <div style="display: block">
+    <mat-expansion-panel [expanded]="true" (closed)="ClearData()">
+      <mat-expansion-panel-header>
+        <mat-panel-title>
+          <span class="material-icons">sports_kabaddi</span>&nbsp;&nbsp;&nbsp;&nbsp;Assessor Claims
+        </mat-panel-title>
+        <mat-panel-description>
+        </mat-panel-description>
+      </mat-expansion-panel-header>
+      <div [hidden]="!hasData">
+        <table class="altRowTable" style="width:50%;">
+          <tr>
+            <td><b>Total Claims:</b> {{this.totalClaims}}</td>
+          </tr>
+        </table>
+      </div>
+      <div class="resetBtn">
+        <button mat-mini-fab color="primary" (click)="ClearData()">
+          <mat-icon matTooltip="Reset">autorenew</mat-icon>
+        </button>
+      </div>
+      <div [hidden]="hasData">
+        <label class="mat-label other-label">
+          <h3 class="font"><span class="material-icons lightRed">archive</span> &nbsp; {{noDataHeading}}
+          </h3>
+        </label>
+        <span [style.visibility]="isLoading ? 'visible' : 'hidden'">
+          <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+          <span class="grey site-font"><i>Loading Data...please wait</i></span>
+        </span>
+      </div>
+      <br />
+
+      <div [hidden]="!hasData">
+        <canvas baseChart [data]="data" [labels]="chartLabels" [colors]="chartColors" [plugins]="pieChartPlugins"
+          [options]="pieChartOptions" [legend]="pieChartLegend" [chartType]="chartType"
+          (chartHover)="chartHovered($event)" (chartClick)="chartClicked($event)">
+        </canvas>
+      </div>
+      <section>
+        <!--Type-->
+        <mat-form-field>
+          <label class="mat-label other-label">Select Assessor</label>
+          <mat-select name="Assessor" id="Assessor" formControlName="Assessor"
+            (selectionChange)="onAssessorSelect($event)"> 
+            <mat-option *ngFor="let assessor of assessors" [value]="assessor.id">
+              {{assessor.displayName}}
+            </mat-option>
+          </mat-select>
+        </mat-form-field>
+        <div [hidden]="!isAssessorSelected">
+          <!--Type Result-->
+          <mat-form-field>
+            <label class="mat-label other-label">Select Period</label>
+            <mat-select name="Period" id="Period" formControlName="Period" (selectionChange)="onPeriodFilter($event)">
+              <mat-option [value]="1">Daily</mat-option>
+              <mat-option [value]="2">Weekly</mat-option>
+              <mat-option [value]="3">Monthly</mat-option>
+              <mat-option [value]="4">YTD</mat-option>
+            </mat-select>
+            <span [style.visibility]="isLoading ? 'visible' : 'hidden'">
+              <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+              <span class="grey site-font"><i>Loading Options...please wait</i></span>
+            </span>
+          </mat-form-field>
+        </div>
+      </section>
+    </mat-expansion-panel>
+    <div>
+      <claim-table-productivity></claim-table-productivity>
+    </div>
+  </div>
+</form>

@@ -1,0 +1,33 @@
+<div mat-dialog-content>
+  <h1>This will remove Mapping with Person Event/Claim. Are you Sure?</h1><br />
+  <div *ngIf="loading$ | async">
+    <mat-progress-bar mode="indeterminate"
+      [ngClass]="{ 'loading-main-double-menu-progress': doubleMenu, 'loading-main-single-menu-progress': !doubleMenu }">
+    </mat-progress-bar>
+    <p class="site-font grey">Loading...</p>
+  </div>
+
+  <form [formGroup]="form" class="mat-container details-form" novalidate>
+    <section>
+      <!--Delete Reason-->
+      <mat-form-field>
+        <label class="mat-label other-label">Delete Reason</label>
+        <mat-select (selectionChange)="onDeleteReasonChange($event)" formControlName="deleteReason" id="deleteReason"
+          name="deleteReason">
+          <mat-option *ngFor="let deleteReason of deleteReasons" [value]="deleteReason.id">
+            {{deleteReason.name}}</mat-option>
+        </mat-select>
+      </mat-form-field>
+    </section>
+  </form>
+
+</div>
+
+<div class="items-buttons-container">
+  <div class="form-buttons submit-button" >
+    <button  class="button float-button cancel-btn" [mat-dialog-close]="false" >Cancel</button>
+  </div>
+  <div class="form-buttons submit-button" >
+    <button type="button" class="button float-button" [disabled]="form.pristine || deletedReason < 1" (click)="onDeleteBatchInvoice()">Delete</button>
+  </div>
+</div>

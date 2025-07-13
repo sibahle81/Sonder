@@ -1,0 +1,56 @@
+<div class="menu-bar">
+  <span class="material-icons">shield</span>
+  Compliance
+  <span (click)="close()" class="material-icons pointer right" matTooltip="close">
+    close
+  </span>
+</div>
+
+<div *ngIf="!showTermsApplication">
+  <div
+    *ngIf="data && data.complianceResult && data.complianceResult.debtorStatus == termsArrangement && !data.complianceResult.isBillingCompliant">
+    <label class="mat-label other-label">
+      <mat-card>
+        <span class="material-icons info">
+          info
+        </span>
+        <span>
+          {{getDebtorStatus(data.complianceResult.debtorStatus)}}</span>
+      </mat-card>
+    </label>
+  </div>
+
+  <div *ngIf="rolePlayerQualifiesForTermsArrangement()">
+    <label class="mat-label other-label">
+      <mat-card>
+        <span class="material-icons info">
+          info
+        </span>
+        <span>
+          You may qualify for a terms arrangement. Would you like to apply for a terms arrangement?</span>
+        <span (click)="toggleTermsArrangement()" class="material-icons pointer right pulse"
+          matTooltip="apply for terms arrangement">
+          health_and_safety
+        </span>
+      </mat-card>
+    </label>
+  </div>
+
+  <mat-card
+    *ngIf="data && data.complianceResult && data.complianceResult.reasons && data.complianceResult.reasons?.length > 0">
+    <span *ngFor="let reason of data.complianceResult.reasons">
+      {{reason}}<br />
+    </span>
+  </mat-card>
+
+  <mat-card
+    *ngIf="!data || !data.complianceResult || !data.complianceResult.reasons || (data.complianceResult.reasons && data.complianceResult.reasons?.length <= 0)">
+    Submissions are up to date
+    <br />
+    Collections are up to date
+  </mat-card>
+</div>
+
+<mat-card *ngIf="showTermsApplication">
+  Terms arrangement application form goes here...
+</mat-card>

@@ -1,0 +1,119 @@
+<mat-card>
+  <div class="expansionTitle">
+    <span class="material-icons">groups</span>Pension Ledger Details
+  </div>
+
+  <form [formGroup]="form" *ngIf="this.form" [hidden]="isLoading">
+    <section class="top-section">
+      <mat-form-field>
+        <label class="mat-label other-label">Beneficiary Name</label>
+        <input matInput id="beneficiaryName" name="beneficiaryName" formControlName="beneficiaryName" readonly>
+      </mat-form-field>
+      <mat-form-field class="mat-form-field-right">
+        <label class="mat-label other-label">Date of Stabilization</label>
+        <input matInput id="dateOfStabilisation" name="dateOfStabilisation" formControlName="dateOfStabilisation" readonly>
+      </mat-form-field>
+    </section>
+
+    <section>
+      <mat-form-field *ngIf="ledgerStatuses">
+        <label class="mat-label other-label">Status</label>
+        <mat-select id="status" name="status" formControlName="status">
+          <mat-option *ngFor="let ledgerStatus of ledgerStatuses" [value]="ledgerStatus.id">
+            {{ledgerStatus.name}}
+          </mat-option>
+        </mat-select>
+      </mat-form-field>
+
+      <mat-form-field class="mat-form-field-right"  *ngIf="ledgerStatusChangeReasons && componentData.pensionCaseContext != pensionCaseContext.LedgerCorrectiveEntries">
+        <label class="mat-label other-label">Status Reason</label>
+        <mat-select id="statusReason" name="statusReason" formControlName="statusReason">
+          <mat-option *ngFor="let ledgerStatusChangeReason of ledgerStatusChangeReasons" [value]="ledgerStatusChangeReason.id">
+            {{ledgerStatusChangeReason.name}}
+          </mat-option>
+        </mat-select>
+      </mat-form-field>
+    </section>
+
+    <section>
+      <mat-form-field>
+        <label class="mat-label other-label">Normal Monthly Pension (R)</label>
+        <input matInput id="normalMonthlyPension" name="normalMonthlyPension" formControlName="normalMonthlyPension" readonly>
+      </mat-form-field>
+      <mat-form-field class="mat-form-field-right">
+        <label class="mat-label other-label">Current Monthly Pension (R1)</label>
+        <input matInput id="currentMonthlyPension" name="currentMonthlyPension" formControlName="currentMonthlyPension" readonly>
+      </mat-form-field>
+    </section>
+
+    <section>
+      <mat-form-field>
+        <label class="mat-label other-label">Earnings (R)</label>
+        <input matInput id="earnings" name="earnings" formControlName="earnings" readonly>
+      </mat-form-field>
+      <mat-form-field class="mat-form-field-right">
+        <label class="mat-label other-label">Capital Value (R)</label>
+        <input matInput id="capitalValue" name="capitalValue" formControlName="capitalValue" readonly>
+      </mat-form-field>
+    </section>
+  </form>
+
+  <mat-accordion>
+    <ng-container>
+
+      <mat-expansion-panel [expanded]="step === 1" (opened)="calculateMonthlyTax()">
+        <mat-expansion-panel-header>
+          <mat-panel-title>
+            <h4>Monthly Tax</h4>
+          </mat-panel-title>
+        </mat-expansion-panel-header>
+        <div *ngIf="isCalculatingCurrentMonthlyTax || isCalculatingNormalMonthlyTax" class="loading-message-container">
+          <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+          <label class="mat-label other-label"><i>Calculating tax...</i></label>
+        </div>
+        <div *ngIf="creatingWizard">
+          <mat-progress-bar mode="indeterminate" [ngClass]="{ 'loading-main-double-menu-progress': doubleMenu, 'loading-main-single-menu-progress': !doubleMenu }"></mat-progress-bar>
+          <p class="site-font grey">Creating Wizard...</p>
+        </div>
+
+        <div [hidden]="!pensionCaseId">
+          <button class="addProductButton" (click)="addAdditionalTax()">
+            <p class="addProductText">Add Additional Tax<span class="material-icons add">add_circle_outline</span></p>
+          </button>
+        </div>
+
+        <table class="altRowTable" *ngIf="currentMonthlyTaxResponse && normalMonthlyTaxResponse">
+          <thead>
+            <tr>
+              <th></th>
+              <th>Excluding Tax</th>
+              <th>Interim Tax</th>
+              <th>Total</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Normal Monthly Pension</td>
+              <td>{{normalMonthlyTaxResponse.afterTaxAmount | currency : 'R '}}</td>
+              <td>{{normalMonthlyTaxResponse.monthlyTaxAmount | currency : 'R '}}</td>
+              <td>{{normalMonthlyTaxResponse.beforeTaxAmount | currency : 'R '}}</td>
+            </tr>
+            <tr>
+              <td>Current Monthly Pension</td>
+              <td>{{currentMonthlyTaxResponse.afterTaxAmount | currency : 'R '}}</td>
+              <td>{{currentMonthlyTaxResponse.monthlyTaxAmount | currency : 'R '}}</td>
+              <td>{{currentMonthlyTaxResponse.beforeTaxAmount | currency : 'R '}}</td>
+            </tr>
+          </tbody>
+        </table>
+      </mat-expansion-panel>
+    </ng-container>
+  </mat-accordion>
+  <mat-card-footer>
+    <br/>
+    <br/>
+    <button class="button submit-button add-corrective-entry-button" *ngIf="componentData.pensionCaseContext  === pensionCaseContext.Manage"
+            (click)="addCorrectiveEntry()">Add Corrective Entry</button>
+  </mat-card-footer>
+</mat-card>
+

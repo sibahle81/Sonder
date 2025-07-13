@@ -1,0 +1,16 @@
+export enum InvoiceStatusEnum {
+  Paid = 1,
+  Unpaid = 2,
+  Pending = 3,
+  Partially = 4,
+  Captured = 5,
+  Validated = 6,
+  Assessed = 7,
+  Allocated = 8,
+  PaymentRequested = 9,
+  Rejected = 10,
+  FinallyRejected = 11,
+  Deleted = 12,
+  RejectedThirdParty = 13,
+  Reinstated = 14,
+}

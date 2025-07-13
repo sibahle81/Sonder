@@ -1,0 +1,18 @@
+<div >
+    <div class="page-header">
+    </div>
+    <form [formGroup]="form" class="mat-container details-form" novalidate>
+        <mat-form-field>
+            <label class="mat-label other-label">Description</label>
+            <input matInput value="Policy Transfer" formControlName="description" readonly />
+        </mat-form-field>
+        <mat-form-field>
+            <label class="mat-label other-label">Comments</label>
+            <textarea matInput matTextareaAutosize matAutosizeMinRows="5"
+                      matAutosizeMaxRows="20" style="min-width:450px" maxlength="1000" formControlName="text" name="text"></textarea>
+            <mat-error *ngIf="form.get('text').hasError('required')">
+                A transfer note is <strong>required</strong>
+            </mat-error>
+        </mat-form-field>
+    </form>
+</div>

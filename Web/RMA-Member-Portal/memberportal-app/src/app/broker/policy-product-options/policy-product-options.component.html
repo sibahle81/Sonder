@@ -1,0 +1,33 @@
+<form [formGroup]="formProducts" class="mat-container details-form" novalidate>
+  <section>
+    <div class="field-container">
+      <mat-form-field>
+        <label class="mat-label other-label">Product</label>
+        <mat-select name="product" id="product" formControlName="product"
+          (selectionChange)="setSelectedProduct($event)">
+          <mat-option *ngFor="let item of products" [value]="item.id">{{item.name}} </mat-option>
+        </mat-select>
+      </mat-form-field>
+    </div>
+    <div class="field-container-right">
+      <mat-form-field>
+        <label class="mat-label other-label  mandatory-field">Product Option</label>
+        <mat-select name="productOption" id="productOption" formControlName="productOption"
+          (selectionChange)="setSelectedOption($event)">
+          <mat-option *ngFor="let item of productOptions" [value]="item.id">{{item.name}}</mat-option>
+        </mat-select>
+        <div *ngIf="productOptionsLoading && !isDisabled">
+          <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+          <label class="mat-label other-label"><i>loading product options...please wait</i></label>
+        </div>
+        <mat-error *ngIf="formProducts.get('productOption').hasError('required')">
+          Product Option is required
+        </mat-error>
+        <div style="font-size: 10.5px; font: Arial; color: red;"
+          *ngIf="productOptions.length === 0  && !productOptionsLoading">
+          No <b>product options</b> with applicable <b>cover types</b> found for selected product
+        </div>
+      </mat-form-field>
+    </div>
+  </section>
+</form>

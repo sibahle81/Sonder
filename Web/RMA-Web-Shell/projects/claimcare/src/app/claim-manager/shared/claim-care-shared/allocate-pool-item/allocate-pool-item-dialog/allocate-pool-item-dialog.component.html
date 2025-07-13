@@ -1,0 +1,31 @@
+<mat-card [hidden]="(isLoading$ | async)">
+  <div class="menu-bar">
+    <span class="material-icons">
+      rule
+    </span>&nbsp;Allocate User
+    <span *ngIf="!(isLoading$ | async)" (click)="cancel()" class="material-icons pointer right" matTooltip="close">
+      close
+    </span>
+    <span *ngIf="userSelectedId && !(isLoading$ | async)" (click)="allocateUser()"
+      class="material-icons pointer right pulse" matTooltip="save">
+      save
+    </span>
+  </div>
+  <form [formGroup]="form" novalidate>
+    <mat-form-field class="filterControl">
+      <label class="mat-label other-label">Select User</label>
+      <input type="text" #selectUser aria-label="Number" matInput [matAutocomplete]="auto" [disabled]="(isLoading$ | async)"
+        (input)="filterUsers($event.target.value)">
+      <mat-autocomplete #auto="matAutocomplete">
+        <mat-option *ngFor="let user of filteredUsers" [value]="user.id" (click)="userSelected(user)">
+          {{ user.displayName }}
+        </mat-option>
+      </mat-autocomplete>
+    </mat-form-field>
+  </form>
+</mat-card>
+
+<mat-card *ngIf="(isLoading$ | async)">
+  <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+  <span class="site-font grey">loading...please wait</span>
+</mat-card>

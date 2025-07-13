@@ -1,0 +1,96 @@
+<div class="mat-header">
+  <h1 class="mat-header-text">Claim Reopening Form</h1>
+  <button class="button submit-button" (click)="resetForm()">Reset</button>
+</div>
+<mat-card>
+  <mat-card-content>
+      <form [formGroup]="form" *ngIf="this.form">
+
+          <div *ngIf="isClaimReopeningRequest">
+            
+                  <label class="mat-label other-label mandatory-field">Re-opening of finalised claim application</label>
+              <br><br>
+                  <label class="mat-label other-label mandatory-field">
+                      NOTE:RMA liability can only be assessed in submission if a motivation for treatment,supported
+                      by a fully detailed medical report and any other results from medical investigations conducted.
+                  </label>
+              <br><br>
+              <mat-form-field class="mat-form-field-right">
+                  <label class="mat-label other-label mandatory-field">Current Complaints</label>
+                  <textarea matInput cdkTextareaAutosize cdkAutosizeMinRows="3" cdkAutosizeMaxRows="5"
+                      formControlName="currentComplaints" class="mat-input-element" minlength="10" maxlength="2000"></textarea>
+              </mat-form-field>
+              <br><br>
+              <mat-form-field class="mat-form-field-right">
+                  <label class="mat-label other-label mandatory-field">Casual relation between current complaint and original injury</label>
+                  <textarea matInput cdkTextareaAutosize cdkAutosizeMinRows="3" cdkAutosizeMaxRows="5"
+                      formControlName="casualRelation" class="mat-input-element" minlength="10" maxlength="2000"></textarea>
+              </mat-form-field>
+              <br><br>
+              <mat-form-field class="date-field mat-form-field-right" color="accent">
+                  <label class="mat-label other-label">Date Of Admission</label>
+                  <input matInput [matDatepicker]="pickerDateOfAdmission" name="dateOfAdmission" id="dateOfAdmission"
+                      formControlName="dateOfAdmission">
+                  <mat-datepicker-toggle
+                      style=" position: absolute !important;right: 0 !important;top: 18px  !important;" matSuffix
+                      [for]="pickerDateOfAdmission"></mat-datepicker-toggle>
+                  <mat-datepicker #pickerDateOfAdmission></mat-datepicker>
+              </mat-form-field>
+              <br><br>
+              <mat-form-field class="date-field mat-form-field-right" color="accent">
+                  <label class="mat-label other-label mandatory-field">Date Of Service/Procedure</label>
+                  <input matInput [matDatepicker]="pickerDateOfService" name="dateOfService" id="dateOfService"
+                      formControlName="dateOfService">
+                  <mat-datepicker-toggle
+                      style=" position: absolute !important;right: 0 !important;top: 18px  !important;" matSuffix
+                      [for]="pickerDateOfService"></mat-datepicker-toggle>
+                  <mat-datepicker #pickerDateOfService></mat-datepicker>
+              </mat-form-field>
+              <br><br>
+              <mat-form-field class="mat-form-field-right">
+                  <label class="mat-label other-label mandatory-field">Claim Re-opening Motivation</label>
+                  <textarea matInput cdkTextareaAutosize cdkAutosizeMinRows="3" cdkAutosizeMaxRows="5"
+                    formControlName="reopeningMotivation" class="mat-input-element" minlength="10" maxlength="2000"></textarea>
+                </mat-form-field>
+                <br><br>
+                <mat-form-field class="mat-form-field-right">
+                  <label class="mat-label other-label mandatory-field">Latest Investigations</label>
+                  <textarea matInput cdkTextareaAutosize cdkAutosizeMinRows="3" cdkAutosizeMaxRows="5"
+                    formControlName="latestInvestigations" class="mat-input-element" minlength="10" maxlength="2000"></textarea>
+              </mat-form-field>
+              <br><br>
+              <div>
+                <healthcareprovider-search #healthCareProviderSearchComponent  [showTelephoneNumber]="false" (healthCareProviderChanged)="onHealthCareProviderChanged($event)">
+                </healthcareprovider-search>
+              </div>
+              <div *ngIf="isEditView">
+                  <div class="mat-header">
+                    <h1>Healthcare Provider Details</h1>
+                  </div>
+                  <mat-card>
+                    <mat-card-content>
+                      <div class="grid">
+                        <div>
+                          <span class="title">Health Care Provider</span>
+                          <span class="value">{{ healthCareProvider?.name }} </span>
+                        </div>
+                        <div>
+                          <span class="title">Practice Number</span>
+                          <span class="value">{{ healthCareProvider?.practiceNumber }}</span>
+                        </div>
+                      </div>
+                    </mat-card-content>
+                  </mat-card>
+                </div>
+              <br><br>
+              <mat-form-field class="mat-form-field-right">
+                  <mat-checkbox formControlName="isPatientVerified">
+                      <label class="mat-label other-label mandatory-field">I certify that I have by examination, satisfied myself that the condition of the employee is the result of the occupational disease as described above.</label>
+                    </mat-checkbox>
+                  <input hidden="true" matInput>
+                  <br>
+              </mat-form-field>
+          </div>
+      </form>
+  </mat-card-content>
+</mat-card>

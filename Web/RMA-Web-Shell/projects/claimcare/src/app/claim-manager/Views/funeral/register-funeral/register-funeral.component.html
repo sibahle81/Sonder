@@ -1,0 +1,189 @@
+<mat-tab-group>
+    <mat-tab label="Register">
+        <mat-card style="margin: 15px 30px 15px 30px">
+            <mat-card-header>
+                <mat-card-title class="wizard-font card-title grey">
+                    <h1 class="wizard-font" style="padding: 0;">Deceased Information</h1>
+                </mat-card-title>
+            </mat-card-header>
+            <mat-card-content style="margin-left: 10px;">
+                <div *ngIf="!canAdd">
+                    <div style="padding: 15px 0; color: orange; font-family: 'Oswald', sans-serif;">You do not have
+                        sufficient permissions to register a funeral claim</div>
+                    <div (click)="back()" class="form-buttons submit-button" style="margin-top: 50px;">
+                        <button type="button" class="button float-button">Back</button>
+                    </div>
+                </div>
+
+                <div *ngIf="canAdd">
+                    <form [formGroup]="form" (ngSubmit)="save()" class="mat-container" novalidate>
+
+                        <div style="margin-top: 20px;">
+                            <!-- Line 1 -->
+                            <section>
+                                <!--Type of death-->
+                                <mat-form-field>
+                                    <label class="mat-label other-label">Type of death</label>
+                                    <mat-select name="filter" id="filter" formControlName="typeOfDeath"
+                                        (selectionChange)="typeOfDeathChanged($event)">
+                                        <mat-option [value]="1">Natural</mat-option>
+                                        <mat-option [value]="2">Unnatural</mat-option>
+                                        <mat-option [value]="3">Stillborn</mat-option>
+                                        <mat-option [value]="4">Suicide</mat-option>
+                                    </mat-select>
+                                    <mat-error *ngIf="form.get('typeOfDeath').hasError('required')">
+                                        Type of death is <strong>required</strong>
+                                    </mat-error>
+                                </mat-form-field>
+                                <!-- Policy Number -->
+                                <mat-form-field class="mat-form-field-right">
+                                    <label class="mat-label other-label" [hidden]="!isPolicyLoading">Loading...Please
+                                        wait</label>
+                                    <label class="mat-label other-label" [hidden]="isPolicyLoading">Policy
+                                        Number</label>
+                                    <input matInput maxlength="50" name="policyNumber" id="policyNumber"
+                                        formControlName="policyNumber">
+                                </mat-form-field>
+                            </section>
+                            <!-- Line 2 - Natural/ Unnatural -->
+                            <section>
+                                <!-- Date of Death -->
+                                <mat-form-field>
+                                    <label class="mat-label other-label">Date of Death</label>
+                                    <input readonly matInput (dateChange)="EnableRegister()" formControlName="dateOfDeath" 
+                                        [matDatepicker]="dateOfDeath" name="dateOfDeath" id="dateOfDeath" />
+                                    <mat-datepicker-toggle matSuffix style="position: absolute;right: 0;top: 13px;"
+                                        [for]="dateOfDeath"></mat-datepicker-toggle>
+                                    <mat-datepicker touchUi="true" #dateOfDeath></mat-datepicker>
+                                    <mat-error *ngIf="form.get('dateOfDeath').hasError('min')">
+                                        Future date of death is <strong>not valid</strong>
+                                    </mat-error>
+                                </mat-form-field>
+
+                                <!--Deceased-->
+                                <mat-form-field *ngIf="!isStillborn" class="mat-form-field-right">
+                                    <label class="mat-label other-label"
+                                        [hidden]="!isInsuredLivesLoading">Loading...Please
+                                        wait</label>
+                                    <label class="mat-label other-label"
+                                        [hidden]="isInsuredLivesLoading">Deceased</label>
+                                    <mat-select name="deceased" id="deceased" formControlName="deceased"
+                                        (selectionChange)="deceasedChanged($event)">
+                                        <mat-option *ngFor="let insuredLife of insuredLives" [value]="insuredLife.id">
+                                            {{insuredLife.name}} {{insuredLife.surname}}
+                                        </mat-option>
+                                    </mat-select>
+                                    <mat-error *ngIf="form.get('deceased').hasError('required')">
+                                        Deceased is <strong>required</strong>
+                                    </mat-error>
+                                </mat-form-field>
+                            </section>
+                            <section>
+                                <mat-form-field class="mat-label other-label">
+                                    <label>First Name</label>
+                                    <input matInput maxlength="50" formControlName="firstName" name="firstName" id="firstName">
+                                </mat-form-field>
+                                <mat-form-field class="mat-form-field-right">
+                                    <label>Last Name</label>
+                                    <input matInput maxlength="50" formControlName="lastName" name="lastName" id="lastName"
+                                        disabled=true>
+                                </mat-form-field>
+                            </section>
+                            <br>
+                            <div *ngIf="!readOnly">
+                                <mat-card-title class="wizard-font card-title grey">
+                                    <h1 class="wizard-font" style="padding: 0;">Notifier Information</h1>
+                                </mat-card-title>
+                            </div>
+                            <br>
+                            <section>
+                                <div *ngIf="!readOnly">
+                                    <!-- Claimant First Name -->
+                                    <mat-form-field class="mat-label other-label">
+                                        <label>First Name</label>
+                                        <input matInput maxlength="50" formControlName="claimantFirstName"
+                                            name="claimantFirstName" id="claimantFirstName">
+                                    </mat-form-field>
+                                    <!-- Claimant Last Name -->
+                                    <mat-form-field class="mat-form-field-right">
+                                        <label>Last Name</label>
+                                        <input matInput maxlength="50" formControlName="claimantLastName"
+                                            name="claimantLastName" id="claimantLastName">
+                                    </mat-form-field>
+                                </div>
+                            </section>
+                            <section>
+                                <div *ngIf="!readOnly">
+                                    <!-- Identity Number -->
+                                    <mat-form-field class="mat-label other-label">
+                                        <label>Identity Number</label>
+                                        <input matInput maxlength="13" formControlName="claimantIdentityNumber"
+                                            name="claimantIdentityNumber" id="claimantIdentityNumber">
+                                    </mat-form-field>
+                                    <!-- Passport Number -->
+                                    <mat-form-field class="mat-form-field-right">
+                                        <label>Passport Number</label>
+                                        <input matInput maxlength="16" formControlName="claimantPassport"
+                                            name="claimantPassport" id="claimantPassport">
+                                    </mat-form-field>
+                                </div>
+                            </section>
+                            <section>
+                                <div *ngIf="!readOnly">
+                                    <!-- Email -->
+                                    <mat-form-field>
+                                        <label class="mat-label other-label">Email</label>
+                                        <input matInput maxlength="50" name="email" id="email" formControlName="email">
+                                        <mat-error *ngIf="form.get('email').hasError('required')">
+                                            Email is <strong>required</strong>
+                                        </mat-error>
+                                        <mat-error *ngIf="form.get('email').hasError('email')">
+                                            Valid email is <strong>required</strong>
+                                        </mat-error>
+                                    </mat-form-field>
+                                    <!-- Mobile Number -->
+                                    <mat-form-field class="mat-form-field-right">
+                                        <label>Mobile Number</label>
+                                        <input matInput minlength="3" maxlength="10" formControlName="mobileNumber"
+                                            name="mobileNumber" id="mobileNumber">
+                                    </mat-form-field>
+                                    <mat-error *ngIf="form.get('mobileNumber').hasError('minlength')">
+                                        Contact number must be at least <strong>three digits</strong>
+                                    </mat-error>
+                                    <mat-error *ngIf="form.get('mobileNumber').hasError('maxlength')">
+                                        Contact number must be no more then <strong>ten digits</strong>
+                                    </mat-error>
+                                </div>
+                            </section>
+                        </div>
+                        <div *ngIf="isSaving" class="menu-container">
+                            <div style="margin-right: 15px;">
+                                <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+                            </div>
+                            <label class="mat-label other-label"><i>{{currentAction}}</i></label>
+                        </div>
+                        <div class="form-group-button mat-form-button">
+                            <div class="form-buttons" matTooltip="No changes have been made">
+                                <button class="button float-button"
+                                    [disabled]="form.pristine || isSaving || isInsuredLivesLoading || isPolicyLoading || !insuredLifeSelected || !enableRegister">Register</button>
+                            </div>
+                            <div (click)="cancel()" class="form-group-button mat-form-button">
+                                <button type="button" class="button float-button" [disabled]="isSaving">Cancel</button>
+                            </div>
+                            <div *ngIf="showWizardButton" (click)="redirectToWizard()"
+                                class="form-group-button mat-form-button" style="margin-top: -15px;">
+                                <button type="button" class="button float-button" [disabled]="isLoading">Continue
+                                    Wizard</button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </mat-card-content>
+        </mat-card>
+    </mat-tab>
+
+    <!--Notes-->
+    <mat-tab label="Notes" [disabled]="!canAdd || !readOnly">
+        <notes></notes>
+    </mat-tab>
+</mat-tab-group>

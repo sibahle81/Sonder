@@ -1,0 +1,26 @@
+<mat-card *ngIf="!model || (isLoading$ | async)">
+  <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+  <label class="mat-label other-label"><i>loading injury details...please wait</i></label>
+</mat-card>
+
+<div *ngIf="model && !(isLoading$ | async)">
+  <holistic-injury-details [personEvent]="selectedPersonEvent" [isReadOnly]="isReadOnly" [eventType]="model.event.eventType"
+    [selectedTab]="selectedTab"></holistic-injury-details>
+    
+  <mat-tab-group *ngIf="model" animationDuration="500ms">
+    <mat-tab label="{{model.claims && model.claims.length > 0 ? 'Claims (' + model.claims.length + ')' : 'Claims(0)'}}">
+      <holistic-claim-details [personEvent]="selectedPersonEvent" [isReadOnly]="isReadOnly"></holistic-claim-details>
+    </mat-tab>
+    <mat-tab label="Requirements">
+      <claim-requirements-v2 [personEvent]="selectedPersonEvent"></claim-requirements-v2>
+    </mat-tab>
+    <mat-tab label="Documents & Medical Reports">
+      <holistic-medical-report-container [event]="event" [personEvent]="selectedPersonEvent" 
+        [isReadOnly]="isReadOnly"></holistic-medical-report-container>
+    </mat-tab>
+    <mat-tab label="Notes">
+      <common-notes *ngIf="model" [moduleType]="moduleType" [noteItemType]="noteItemType"
+        [itemId]="model.personEventId"></common-notes>
+    </mat-tab>
+  </mat-tab-group>
+</div>

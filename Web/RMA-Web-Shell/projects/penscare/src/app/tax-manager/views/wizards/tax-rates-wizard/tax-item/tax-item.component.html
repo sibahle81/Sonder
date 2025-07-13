@@ -1,0 +1,71 @@
+<mat-card>
+  <div class="expansionTitle">
+    Tax rate details
+  </div>
+
+  <form [formGroup]="form" *ngIf="this.form" [hidden]="isLoading">
+    <section class="top-section">
+      <mat-form-field>
+        <label class="mat-label other-label mandatory-field">From Income</label>
+        <input matInput maxlength="50" name="fromIncome" type="number" formControlName="fromIncome"/>
+        <mat-error *ngIf="form.get('fromIncome').hasError('required')">
+          From Income is required
+        </mat-error>
+        <mat-error *ngIf="form.get('fromIncome').hasError('fromIncomeGreaterThanToIncome')">
+          From Income cannot be greater than or equal To Income
+        </mat-error>
+        <mat-error *ngIf="form.get('fromIncome').hasError('negativeAmount')">
+          From Income Amount cannot be negative
+        </mat-error>
+    </mat-form-field>
+
+      <mat-form-field class="mat-form-field-right">
+        <label class="mat-label other-label mandatory-field">To Income</label>
+        <input matInput maxlength="50" name="toIncome"  type="number" formControlName="toIncome"/>
+        <mat-error *ngIf="form.get('toIncome').hasError('fromIncomeGreaterThanToIncome')">
+          From Income cannot be greater than or equal To Income
+        </mat-error>
+
+        <mat-error *ngIf="form.get('toIncome').hasError('required')">
+          To Income is required
+        </mat-error>
+
+        <mat-error *ngIf="form.get('toIncome').hasError('negativeAmount')">
+          To Income Amount cannot be negative
+        </mat-error>
+      </mat-form-field>
+    </section>
+
+    <section>
+      <mat-form-field>
+        <label class="mat-label other-label mandatory-field">Standard Tax Rate</label>
+        <input matInput maxlength="50" type="number" name="standardTaxRate" formControlName="standardTaxRate"/>
+        <mat-error *ngIf="form.get('standardTaxRate').hasError('negativeAmount')">
+          Standard Tax Rate cannot be negative
+        </mat-error>
+      </mat-form-field>
+
+      <mat-form-field class="mat-form-field-right">
+        <label class="mat-label other-label mandatory-field">Tax Percentage Rate</label>
+        <input matInput maxlength="50"  type="number" name="taxPercentageRate" formControlName="taxPercentageRate"/>
+        <mat-error *ngIf="form.get('taxPercentageRate').hasError('required')">
+          Tax Percentage Rate is required
+        </mat-error>
+
+        <mat-error *ngIf="form.get('taxPercentageRate').hasError('negativeAmount')">
+          Tax Percentage Rate cannot be negative
+        </mat-error>
+      </mat-form-field>
+    </section>
+
+    <mat-card-actions>
+      <div class="left-margin actions-container">
+        <div>
+          <button class="button submit-button" (click)="save()">Save</button>
+          <button class="button submit-button" (click)="cancel()">Cancel</button>
+        </div>
+      </div>
+    </mat-card-actions>
+  </form>
+</mat-card>
+

@@ -1,0 +1,16 @@
+<mat-accordion>
+  <mat-expansion-panel [expanded]="panelOpenState$ | async" class="searchBgColor">
+    <mat-expansion-panel-header>
+      <mat-panel-title>
+        <span class="material-icons pointer">search</span>
+      </mat-panel-title>
+    </mat-expansion-panel-header>
+    <app-seach-debtor (itemSelected)="onAccountSelected($event)"></app-seach-debtor>
+  </mat-expansion-panel>
+</mat-accordion>
+<div [hidden]="rolePlayerId == 0">
+  <ssrs-reportviewer [reportserver]="reportServerAudit" [reporturl]="reportUrlAudit"
+    [showparameters]="showParametersAudit" [format]="formatAudit" [parameters]="parametersAudit"
+    [language]="languageAudit" [width]="widthAudit" [height]="heightAudit" [toolbar]="toolbarAudit">
+  </ssrs-reportviewer>
+</div>

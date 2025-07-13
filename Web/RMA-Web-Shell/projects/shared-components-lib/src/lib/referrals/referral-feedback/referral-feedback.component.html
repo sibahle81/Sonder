@@ -1,0 +1,46 @@
+<mat-card *ngIf="(isLoading$ | async)">
+  <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+  <label class="mat-label other-label"><i>{{loadingMessage$ | async}}</i></label>
+</mat-card>
+
+<mat-card *ngIf="!(isLoading$ | async)" class="feedback-background">
+  <div class="menu-bar">
+    <span class="material-icons">
+      message
+    </span>
+    Referral Feedback
+    <span *ngIf="toggle && !directCaptureMode" (click)="cancel()" class="material-icons pointer right" matTooltip="cancel">
+      close
+    </span>
+    <span *ngIf="!toggle && isAssignmentUser() && referral.referralStatus != closed && !isReadOnly" (click)="add()" class="material-icons pointer right" matTooltip="add feedback">
+      add_circle
+    </span>
+    <span *ngIf="form.valid && !form.pristine" (click)="confirmReferralOwnershipChange()" class="material-icons pointer right pulse"
+      matTooltip="save">
+      save
+    </span>
+  </div>
+
+  <div *ngIf="!toggle">
+    <ul *ngIf="referral?.referralFeedbacks?.length > 0">
+      <li *ngFor="let feedback of referral.referralFeedbacks"
+        [ngClass]="{'me': feedback.createdBy == currentUser.email, 'him': feedback.createdBy != currentUser.email}" [ngStyle]="{'background': getUserColor(feedback.createdBy)}">
+        {{feedback.comment}}<br/><span class="feedback-meta"><i>{{feedback.createdBy}} ({{feedback.createdDate | date: "yyyy-MM-dd HH:mm:ss"}})</i></span>
+      </li>
+    </ul>
+    <mat-card *ngIf="referral?.referralFeedbacks?.length <= 0"><i>no feedback received...</i></mat-card>
+  </div>
+
+  <form *ngIf="toggle" [formGroup]="form" class="mat-container details-form" novalidate>
+    <section>
+      <mat-form-field>
+        <label class="mat-label other-label mandatory-field">Feedback</label>
+        <textarea matInput maxlength="4000" name="comment" id="comment" formControlName="comment" cdkTextareaAutosize
+          cdkAutosizeMinRows="1" cdkAutosizeMaxRows="10"></textarea>
+        <mat-error *ngIf="form.get('comment').hasError('required')">
+          feedback is <strong>required</strong>
+        </mat-error>
+      </mat-form-field>
+    </section>
+  </form>
+</mat-card>

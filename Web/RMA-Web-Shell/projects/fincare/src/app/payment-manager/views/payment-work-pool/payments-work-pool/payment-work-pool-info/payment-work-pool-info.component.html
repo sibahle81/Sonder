@@ -1,0 +1,70 @@
+
+<div *ngIf=" (isLoading$ | async)" class="loadingDiv">
+    <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+    <span class="site-font grey">loading {{heading}}...please wait</span>
+</div>
+
+<div *ngIf="payment">
+<div class="menu-bar">
+    <span class="material-icons">
+      info
+    </span>
+    Payment Information ({{payment.reference}})
+    <span class="material-icons pointer right" matTooltip="close" (click)="cancel()">
+      cancel
+    </span>
+  </div>
+  
+  <mat-card>
+    <table>
+      <tr class="ChildData">
+        <td><b>Policy Numner: </b></td>
+        <td>{{payment.policyReference}}</td>
+      </tr>
+      <tr class="ChildData">
+        <td><b>Claim number: </b></td>
+        <td>{{payment.claimId}}</td>
+      </tr>
+      <tr class="ChildData">
+        <td><b>Member Name: </b></td>
+        <td>{{payment.memberName}}</td>
+      </tr>
+      <tr class="ChildData">
+        <td><b>Member Number: </b></td>
+        <td>{{payment.memberNumber}}</td>
+      </tr>
+      <tr class="ChildData">
+        <td><b>Company Number: </b></td>
+        <td>{{payment.company}}</td>
+      </tr>
+      <tr class="ChildData">
+        <td><b>Branch Number: </b></td>
+        <td>{{payment.branch}}</td>
+      </tr>
+      <tr *ngIf="isMedicalInvoice" class="ChildData">
+        <td><b>HCP Discount: </b></td>
+        <td>0.00</td>
+      </tr>
+      <tr *ngIf="isPension" class="ChildData">
+        <td><b>Pension Date Of Death: </b></td>
+        <td>None</td>
+      </tr>
+      <tr class="ChildData">
+        <td><b> Broker Details: </b></td>
+        <td>{{payment.brokerName}}</td>
+      </tr>
+      <tr class="ChildData">
+        <td><b>Strike Date: </b></td>
+        <td>{{payment.strikeDate}}</td>
+      </tr>
+      <tr class="ChildData">
+        <td><b>Scheme: </b></td>
+        <td>{{payment.scheme}}</td>
+      </tr>
+      <tr *ngIf="isRejected" class="ChildData">
+        <td><b>Rejection Reason: </b></td>
+        <td>{{payment.errorDescription}}</td>
+      </tr>
+    </table>
+  </mat-card>
+</div>

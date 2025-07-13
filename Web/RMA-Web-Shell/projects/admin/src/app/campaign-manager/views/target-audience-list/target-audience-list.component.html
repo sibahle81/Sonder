@@ -1,0 +1,226 @@
+﻿<mat-card style="margin: 15px 30px 15px 30px">
+    <mat-card-header>
+        <mat-card-title class="wizard-font card-title grey">
+            <h1 style="padding: 0;">{{titlePlural}}</h1>
+        </mat-card-title>
+    </mat-card-header>
+
+    <mat-card-content style="margin-left: 10px;">
+        <mat-progress-bar *ngIf="isLoading" mode="indeterminate"></mat-progress-bar>
+        <div [hidden]="showSection != 'list' || isLoading">
+            <div class="mat-container mat-elevation-z8">
+                <div *ngIf="!hasCampaign" style="margin-left: 20px;">
+                    <p class="grey"><i>{{titlePlural}} can be added after the campaign has been saved.</i></p>
+                </div>
+                <div *ngIf="hasCampaign && dataSource.data.length === 0" style="margin-left: 20px;">
+                    <p class="grey">You have not yet saved any {{titlePlural | lowercase}}.</p>
+                </div>
+                <div class="mat-header form-group-button">
+                    <!-- <div [hidden]="!canView || !hasCampaign" class="new-button new-button-left" (click)="viewAudience()">
+                        <button class="button">{{ title }} members</button>
+                    </div> -->
+                    <div [hidden]="!canAdd || !hasCampaign || hideAddButton" class="new-button new-button-left" (click)="newItem()">
+                        <button class="button">Add new {{ title | lowercase }}</button>
+                    </div>
+                    <div [hidden]="!canAdd || !hasCampaign || hideAddButton" class="new-button new-button-left" (click)="showImportFile()">
+                        <button class="button">Import {{ title | lowercase }}</button>
+                    </div>
+                    <div [hidden]="!hasCampaign || dataSource.data.length === 0" class="search-container search-container-right">
+                        <input type="text" name="search" placeholder="search {{titlePlural | lowercase}}..." (keyup)="filterData($event)" #filter>
+                    </div>
+                </div>
+                <div [hidden]="!hasCampaign || dataSource.data.length === 0">
+                    <mat-table #table [dataSource]="dataSource" matSort>
+                        <ng-container *ngFor="let column of columns" [matColumnDef]="column.columnDefinition">
+                            <mat-header-cell *matHeaderCellDef class="mat-header-cell">{{ column.header }}</mat-header-cell>
+                            <mat-cell *matCellDef="let row" class="mat-cell" [ngSwitch]="getColumnType(column.columnDefinition)">
+                                <span *ngSwitchCase="1">{{ column.cell(row) | audiencetype }}</span>
+                                <a *ngSwitchCase="2" class="link-edit" href="mailto:{{ column.cell(row) }}">{{ column.cell(row) }}</a>
+                                <a *ngSwitchCase="3" class="link-edit" href="tel:{{ column.cell(row) }}">{{ column.cell(row) }}</a>
+                                <span *ngSwitchDefault>{{ column.cell(row) }}</span>
+                            </mat-cell>
+                        </ng-container>
+                        <ng-container matColumnDef="actions">
+                            <mat-header-cell *matHeaderCellDef mat-sort-header>Actions</mat-header-cell>
+                            <mat-cell *matCellDef="let row">
+                                <a *ngIf="!canEdit" role="button" class="link-edit" (click)="selectAudience(row)">View</a>
+                                <a *ngIf="canEdit" role="button" class="link-edit" (click)="selectAudience(row)">View / Edit</a>
+
+                                <span *ngIf="!individualMember(row)">&nbsp;|&nbsp;<a role="button" class="link-edit" (click)="viewMembers(row)">Members</a></span>
+                                <span *ngIf="individualMember(row)">&nbsp;|&nbsp;<a role="button" class="disabled-link" disabled>Members</a></span>
+
+                                <span>&nbsp;|&nbsp;<a role="button" class="link-edit" (click)="addNote(row, false)">Notes</a></span>
+                                <span *ngIf="canRemove"><a role="button" class="link-edit delete-link" style="padding-left: 20px" (click)="confirmDeleteAudience(row)">Remove</a></span>
+                            </mat-cell>
+                        </ng-container>
+                        <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
+                        <mat-row *matRowDef="let row; columns: displayedColumns;"></mat-row>
+                    </mat-table>
+                    <mat-paginator #paginator
+                                   [length]="dataSource.data.length"
+                                   [pageIndex]="0"
+                                   [pageSize]="5"
+                                   [pageSizeOptions]="[5, 10, 25, 100]">
+                    </mat-paginator>
+                </div>
+                <div [hidden]="dataSource.filteredData.length > 0 || dataSource.data.length === 0" class="no-search-results-add-button">
+                    <div class="site-font grey">
+                        <p class="grey">
+                            Your search - <strong>{{filter.value}}</strong> - did not match any {{titlePlural | lowercase}}.
+                        </p>
+                        <span>Suggestions: </span>
+                        <ul>
+                            <li>Make sure that all words are spelled correctly.</li>
+                            <li>Try different keywords.</li>
+                            <li>Try more general keywords.</li>
+                            <li>Try fewer keywords.</li>
+                        </ul>
+                    </div>
+                    <div class="new-button" (click)="clearFilter()">
+                        <button class="button float-button">Clear search</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div [hidden]="showSection != 'addNote'">
+            <div *ngIf="audienceMember">
+                <p class="target-confirmation">Add a note to {{ audienceMember.name }}.</p>
+                <div class="form-group-button" style="margin: 15px 0 20px 15px; padding-bottom: 20px;">
+                    <div>
+                        <mat-progress-bar *ngIf="loadingNote" mode="indeterminate"></mat-progress-bar>
+                        <textarea *ngIf="!loadingNote"
+                                  class="note-text-control"
+                                  [formControl]="noteControl">
+                        </textarea>
+                        <mat-error *ngIf="!loadingNote && noteControl.dirty && noteControl.hasError('required')">Please enter a note</mat-error>
+                    </div>
+                    <div class="form-buttons">
+                        <button *ngIf="canEdit" [disabled]="noteControl.pristine || !noteControl.valid" (click)="editNote()" class="button float-button submit-button">Save Note</button>
+                        <button (click)="back()" class="button float-button submit-button">Cancel</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div [hidden]="showSection != 'delete'">
+            <div *ngIf="audienceMember">
+                <p class="target-confirmation">Are you sure you want to remove {{ audienceMember.name }} from the campaign?</p>
+                <div class="form-group-button" style="margin: 15px 0 20px 15px; padding-bottom: 20px;">
+                    <div class="form-buttons">
+                        <button (click)="deleteAudience()" class="button float-button submit-button">Yes, remove member</button>
+                        <button (click)="back()" class="button float-button submit-button">No, don't remove</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div [hidden]="showSection != 'detail'">
+            <div class="mat-container mat-elevation-z8">
+                <form [formGroup]="form" class="mat-container details-form" novalidate>
+                    <section>
+                        <mat-form-field>
+                            <label class="mat-label other-label">Audience type</label>
+                            <mat-select #audienceType formControlName="audienceTypeId" (selectionChange)="setupAudienceFields($event)">
+                                <mat-option *ngFor="let audienceType of showAudienceTypes" [value]="audienceType.id">{{ audienceType.name | audiencetype:['Lead'] }}</mat-option>
+                            </mat-select>
+                            <mat-error *ngIf="form.dirty && audienceType.errorState && (form.get('audienceTypeId').hasError('required') || form.get('audienceTypeId').hasError('min'))">
+                                Audience type is required
+                            </mat-error>
+                        </mat-form-field>
+                        <mat-form-field class="mat-form-field-right">
+                            <label class="mat-label other-label">&nbsp;</label>
+                            <div [hidden]="hideUnsubscribe" style="padding-top: 6px">
+                                <!--Unsubscribe from this campaign-->
+                                <input [hidden]="true" matInput formControlName="unsubscribed" />
+                                <mat-checkbox formControlName="unsubscribed">
+                                    <label class="mat-label other-label">Unsubscribe this campaign?</label>
+                                </mat-checkbox>
+                                <!--Unsubscribe from ALL campaign-->
+                                <input [hidden]="true" matInput formControlName="unsubscribedAll" />
+                                <mat-checkbox class="second-checkbox" formControlName="unsubscribedAll">
+                                    <label class="mat-label other-label">Unsubscribe all campaigns?</label>
+                                </mat-checkbox>
+                            </div>
+                        </mat-form-field>
+                    </section>
+                    <section [hidden]="showState < 10 || showState >= 20">
+                        <target-audience-client></target-audience-client>
+                    </section>
+                    <section [hidden]="showState < 40 || showState >= 50">
+                        <target-audience-lead></target-audience-lead>
+                    </section>
+                    <section [hidden]="showState < 20 || showState >= 40">
+                        <mat-form-field>
+                            <label class="mat-label other-label">Name</label>
+                            <input matInput maxlength="100" formControlName="memberName" />
+                            <mat-error *ngIf="form.dirty && form.get('memberName').hasError('required')">
+                                Name is required
+                            </mat-error>
+                        </mat-form-field>
+                        <mat-form-field class="mat-form-field-right">
+                            <div *ngIf="idNumberRequired">
+                                <label class="mat-label other-label">ID number</label>
+                                <input matInput maxlength="13" formControlName="memberNumber" NumberOnly="true" />
+                            </div>
+                            <div *ngIf="!idNumberRequired">
+                                <label class="mat-label other-label">Registration number</label>
+                                <input matInput maxlength="20" formControlName="memberNumber" />
+                            </div>
+                            <mat-error [hidden]="!idNumberError">
+                                ID number is invalid
+                            </mat-error>
+                        </mat-form-field>
+                    </section>
+                    <section [hidden]="showState < 20 || showState >= 40">
+                        <mat-form-field>
+                            <label class="mat-label other-label">Email address</label>
+                            <input matInput maxlength="50" formControlName="email" />
+                            <mat-error *ngIf="form.get('email').hasError('emailRequired')">
+                                Email address is required
+                            </mat-error>
+                            <mat-error *ngIf="form.get('email').hasError('emailInvalid')">
+                                Email address is invalid
+                            </mat-error>
+                        </mat-form-field>
+                        <mat-form-field class="mat-form-field-right">
+                            <label class="mat-label other-label">Mobile number</label>
+                            <input matInput maxlength="10" formControlName="mobileNumber" numbersOnly />
+                            <mat-error *ngIf="form.get('mobileNumber').hasError('phoneNoRequired')">
+                                Telephone number is required
+                            </mat-error>
+                            <mat-error *ngIf="form.get('mobileNumber').hasError('phoneNoInvalid')">
+                                Telephone number is invalid
+                            </mat-error>
+                            <mat-error *ngIf="form.get('mobileNumber').hasError('minLength')">
+                                Telephone number is invalid
+                            </mat-error>
+                        </mat-form-field>
+                    </section>
+                    <div class="form-group-button">
+                        <div *ngIf="showSaveButton" (click)="save()" class="form-buttons" matTooltip="No changes have been made" [matTooltipDisabled]="!form.pristine">
+                            <button [disabled]="!canSave" class="button float-button">Save</button>
+                        </div>
+                        <div *ngIf="showEditButton" (click)="edit()" class="form-buttons submit-button">
+                            <button type="button" class="button float-button">Edit</button>
+                        </div>
+                        <div (click)="back()" class="form-buttons submit-button">
+                            <button type="button" class="button float-button">Back</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+        <div [hidden]="showSection != 'import'">
+            <upload-control #uploadControl [acceptedTypes]="'.csv,.txt'" [isSingleInput]="true"></upload-control>
+            <div class="form-group-button" style="margin-bottom:20px">
+                <div (click)="importFile()" class="form-buttons submit-button">
+                    <button type="button" class="button float-button" [disabled]="!uploadComponent.isDocumentLoaded">Upload File</button>
+                </div>
+                <div (click)="back()" class="form-buttons submit-button">
+                    <button type="button" class="button float-button">Back</button>
+                </div>
+            </div>
+        </div>
+        <div [hidden]="showSection != 'members'">
+            <campaign-members [parent]="this"></campaign-members>
+        </div>
+    </mat-card-content>
+</mat-card>

@@ -1,0 +1,1281 @@
+<?xml version="1.0" encoding="utf-8"?>
+<wsdl:definitions xmlns:wsap="http://schemas.xmlsoap.org/ws/2004/08/addressing/policy" xmlns:wsa10="http://www.w3.org/2005/08/addressing" xmlns:tns="http://www.astutefse.com/schemas/fsb-register/1.0" xmlns:msc="http://schemas.microsoft.com/ws/2005/12/wsdl/contract" xmlns:soapenc="http://schemas.xmlsoap.org/soap/encoding/" xmlns:wsx="http://schemas.xmlsoap.org/ws/2004/09/mex" xmlns:wsp="http://schemas.xmlsoap.org/ws/2004/09/policy" xmlns:wsam="http://www.w3.org/2007/05/addressing/metadata" xmlns:wsa="http://schemas.xmlsoap.org/ws/2004/08/addressing" xmlns:soap12="http://schemas.xmlsoap.org/wsdl/soap12/" xmlns:wsaw="http://www.w3.org/2006/05/addressing/wsdl" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:wsu="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-utility-1.0.xsd" xmlns:xsd="http://www.w3.org/2001/XMLSchema" name="FspEnquiryServiceV2" targetNamespace="http://www.astutefse.com/schemas/fsb-register/1.0" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">
+  <wsp:Policy wsu:Id="WSHttpBinding_FSPEnquiry_policy">
+    <wsp:ExactlyOne>
+      <wsp:All>
+        <sp:TransportBinding xmlns:sp="http://schemas.xmlsoap.org/ws/2005/07/securitypolicy">
+          <wsp:Policy>
+            <sp:TransportToken>
+              <wsp:Policy>
+                <sp:HttpsToken RequireClientCertificate="false">
+                </sp:HttpsToken>
+              </wsp:Policy>
+            </sp:TransportToken>
+            <sp:AlgorithmSuite>
+              <wsp:Policy>
+                <sp:Basic256>
+                </sp:Basic256>
+              </wsp:Policy>
+            </sp:AlgorithmSuite>
+            <sp:Layout>
+              <wsp:Policy>
+                <sp:Strict>
+                </sp:Strict>
+              </wsp:Policy>
+            </sp:Layout>
+            <sp:IncludeTimestamp>
+            </sp:IncludeTimestamp>
+          </wsp:Policy>
+        </sp:TransportBinding>
+        <sp:SignedSupportingTokens xmlns:sp="http://schemas.xmlsoap.org/ws/2005/07/securitypolicy">
+          <wsp:Policy>
+            <sp:UsernameToken sp:IncludeToken="http://schemas.xmlsoap.org/ws/2005/07/securitypolicy/IncludeToken/AlwaysToRecipient">
+              <wsp:Policy>
+                <sp:WssUsernameToken10>
+                </sp:WssUsernameToken10>
+              </wsp:Policy>
+            </sp:UsernameToken>
+          </wsp:Policy>
+        </sp:SignedSupportingTokens>
+        <sp:Wss11 xmlns:sp="http://schemas.xmlsoap.org/ws/2005/07/securitypolicy">
+          <wsp:Policy>
+          </wsp:Policy>
+        </sp:Wss11>
+        <sp:Trust10 xmlns:sp="http://schemas.xmlsoap.org/ws/2005/07/securitypolicy">
+          <wsp:Policy>
+            <sp:MustSupportIssuedTokens>
+            </sp:MustSupportIssuedTokens>
+            <sp:RequireClientEntropy>
+            </sp:RequireClientEntropy>
+            <sp:RequireServerEntropy>
+            </sp:RequireServerEntropy>
+          </wsp:Policy>
+        </sp:Trust10>
+        <wsaw:UsingAddressing>
+        </wsaw:UsingAddressing>
+      </wsp:All>
+    </wsp:ExactlyOne>
+  </wsp:Policy>
+  <wsdl:types>
+    <xs:schema elementFormDefault="qualified" targetNamespace="http://www.astutefse.com/schemas/fsb-register/1.0" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+      <xs:element name="GetFSPNumbers">
+        <xs:complexType>
+          <xs:sequence>
+            <xs:element minOccurs="0" maxOccurs="1" name="request">
+              <xs:complexType>
+                <xs:sequence>
+                  <xs:element minOccurs="0" maxOccurs="1" name="CarrierCode" type="tns:CarrierCode" />
+                  <xs:element minOccurs="0" maxOccurs="1" name="BatchReference" type="tns:BatchReference" />
+                  <xs:element minOccurs="0" maxOccurs="1" name="Representatives" type="tns:RepQueryParameter" />
+                </xs:sequence>
+              </xs:complexType>
+            </xs:element>
+          </xs:sequence>
+        </xs:complexType>
+      </xs:element>
+      <xs:complexType name="CarrierCode">
+        <xs:simpleContent>
+          <xs:extension base="xs:string">
+            <xs:attribute name="Reference" type="xs:string" />
+          </xs:extension>
+        </xs:simpleContent>
+      </xs:complexType>
+      <xs:complexType name="BatchReference">
+        <xs:simpleContent>
+          <xs:extension base="xs:string">
+            <xs:attribute name="TotalBatches" type="xs:int" use="required" />
+            <xs:attribute name="BatchSeqNo" type="xs:int" use="required" />
+          </xs:extension>
+        </xs:simpleContent>
+      </xs:complexType>
+      <xs:complexType name="RepQueryParameter">
+        <xs:sequence>
+          <xs:element minOccurs="0" maxOccurs="unbounded" name="IDReferenceNo" type="tns:IDReferenceNo" />
+          <xs:element minOccurs="0" maxOccurs="1" name="Response" type="tns:Response" />
+        </xs:sequence>
+        <xs:attribute name="EnablePartialSAIDNumberSearch" type="tns:YesNoType" />
+      </xs:complexType>
+      <xs:complexType name="IDReferenceNo">
+        <xs:simpleContent>
+          <xs:extension base="xs:string">
+            <xs:attribute name="IDType" type="tns:IDType" use="required" />
+          </xs:extension>
+        </xs:simpleContent>
+      </xs:complexType>
+      <xs:simpleType name="IDType">
+        <xs:restriction base="xs:string">
+          <xs:enumeration value="ID" />
+          <xs:enumeration value="Passport" />
+          <xs:enumeration value="RegNo" />
+          <xs:enumeration value="Regno" />
+          <xs:enumeration value="regno" />
+          <xs:enumeration value="REGNO" />
+          <xs:enumeration value="Id" />
+          <xs:enumeration value="id" />
+          <xs:enumeration value="passport" />
+          <xs:enumeration value="PASSPORT" />
+          <xs:enumeration value="other" />
+          <xs:enumeration value="Other" />
+          <xs:enumeration value="OTHER" />
+        </xs:restriction>
+      </xs:simpleType>
+      <xs:complexType name="Response" mixed="true">
+        <xs:sequence>
+          <xs:element minOccurs="0" maxOccurs="1" name="ResultInfo" type="xs:string" />
+        </xs:sequence>
+        <xs:attribute name="ResultCode" type="xs:int" use="required" />
+      </xs:complexType>
+      <xs:simpleType name="YesNoType">
+        <xs:restriction base="xs:string">
+          <xs:enumeration value="Y" />
+          <xs:enumeration value="y" />
+          <xs:enumeration value="N" />
+          <xs:enumeration value="n" />
+          <xs:enumeration value="Yes" />
+          <xs:enumeration value="No" />
+        </xs:restriction>
+      </xs:simpleType>
+      <xs:element name="GetFSPNumbersResponse">
+        <xs:complexType>
+          <xs:sequence>
+            <xs:element minOccurs="0" maxOccurs="1" name="GetFSPNumbersResult">
+              <xs:complexType>
+                <xs:sequence>
+                  <xs:element minOccurs="0" maxOccurs="1" name="CarrierCode" type="tns:CarrierCode" />
+                  <xs:element minOccurs="0" maxOccurs="1" name="Response" type="tns:Response" />
+                  <xs:element minOccurs="0" maxOccurs="1" name="Representatives" type="tns:ArrayOfFSPNumbersLookupResponseRepEntity" />
+                  <xs:element minOccurs="0" maxOccurs="1" name="NotFound" type="tns:RepIdList" />
+                  <xs:element minOccurs="0" maxOccurs="1" name="Duplicates" type="tns:RepIdList" />
+                </xs:sequence>
+              </xs:complexType>
+            </xs:element>
+          </xs:sequence>
+        </xs:complexType>
+      </xs:element>
+      <xs:complexType name="ArrayOfFSPNumbersLookupResponseRepEntity">
+        <xs:sequence>
+          <xs:element minOccurs="0" maxOccurs="unbounded" name="RepEntity">
+            <xs:complexType>
+              <xs:sequence>
+                <xs:element minOccurs="0" maxOccurs="1" name="RepIDNumber" type="xs:string" />
+                <xs:element minOccurs="1" maxOccurs="1" name="RepIDType" type="tns:IDType" />
+                <xs:element minOccurs="0" maxOccurs="1" name="RepInitials" type="xs:string" />
+                <xs:element minOccurs="0" maxOccurs="1" name="RepFirstName" type="xs:string" />
+                <xs:element minOccurs="0" maxOccurs="1" name="RepSurname" type="xs:string" />
+                <xs:element minOccurs="0" maxOccurs="1" name="FSPs" type="tns:ArrayOfFSPNumbersLookupResponseRepEntityFSP" />
+              </xs:sequence>
+            </xs:complexType>
+          </xs:element>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="ArrayOfFSPNumbersLookupResponseRepEntityFSP">
+        <xs:sequence>
+          <xs:element minOccurs="0" maxOccurs="unbounded" name="FSP">
+            <xs:complexType>
+              <xs:sequence>
+                <xs:element minOccurs="0" maxOccurs="1" name="FSPName" type="xs:string" />
+                <xs:element minOccurs="0" maxOccurs="1" name="FSPno" type="xs:string" />
+                <xs:element minOccurs="0" maxOccurs="1" name="FSPDateStart" type="xs:string" />
+              </xs:sequence>
+            </xs:complexType>
+          </xs:element>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="RepIdList">
+        <xs:sequence>
+          <xs:element minOccurs="0" maxOccurs="1" name="Representatives" type="tns:ArrayOfIDReferenceNo" />
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="ArrayOfIDReferenceNo">
+        <xs:sequence>
+          <xs:element minOccurs="0" maxOccurs="unbounded" name="IDReferenceNo" type="tns:IDReferenceNo" />
+        </xs:sequence>
+      </xs:complexType>
+      <xs:element name="GetDebarredByRepresentative">
+        <xs:complexType>
+          <xs:sequence>
+            <xs:element minOccurs="0" maxOccurs="1" name="request">
+              <xs:complexType>
+                <xs:sequence>
+                  <xs:element minOccurs="0" maxOccurs="1" name="CarrierCode" type="tns:CarrierCode" />
+                  <xs:element minOccurs="0" maxOccurs="1" name="BatchReference" type="tns:BatchReference" />
+                  <xs:element minOccurs="0" maxOccurs="1" name="Representatives" type="tns:RepQueryParameter" />
+                </xs:sequence>
+              </xs:complexType>
+            </xs:element>
+          </xs:sequence>
+        </xs:complexType>
+      </xs:element>
+      <xs:element name="GetDebarredByRepresentativeResponse">
+        <xs:complexType>
+          <xs:sequence>
+            <xs:element minOccurs="0" maxOccurs="1" name="GetDebarredByRepresentativeResult">
+              <xs:complexType>
+                <xs:sequence>
+                  <xs:element minOccurs="0" maxOccurs="1" name="CarrierCode" type="tns:CarrierCode" />
+                  <xs:element minOccurs="0" maxOccurs="1" name="Response" type="tns:Response" />
+                  <xs:element minOccurs="0" maxOccurs="1" name="Representatives" type="tns:ArrayOfRepDebarredListLookupResponseRepEntity" />
+                  <xs:element minOccurs="0" maxOccurs="1" name="NotFound" type="tns:RepIdList" />
+                  <xs:element minOccurs="0" maxOccurs="1" name="Duplicates" type="tns:RepIdList" />
+                </xs:sequence>
+              </xs:complexType>
+            </xs:element>
+          </xs:sequence>
+        </xs:complexType>
+      </xs:element>
+      <xs:complexType name="ArrayOfRepDebarredListLookupResponseRepEntity">
+        <xs:sequence>
+          <xs:element minOccurs="0" maxOccurs="unbounded" name="RepEntity">
+            <xs:complexType>
+              <xs:sequence>
+                <xs:element minOccurs="0" maxOccurs="1" name="RepIDNumber" type="xs:string" />
+                <xs:element minOccurs="1" maxOccurs="1" name="RepIDType" type="tns:IDType" />
+                <xs:element minOccurs="0" maxOccurs="1" name="RepTitle" type="xs:string" />
+                <xs:element minOccurs="0" maxOccurs="1" name="RepInitials" type="xs:string" />
+                <xs:element minOccurs="0" maxOccurs="1" name="RepFirstName" type="xs:string" />
+                <xs:element minOccurs="0" maxOccurs="1" name="RepSurname_or_Company" type="xs:string" />
+                <xs:element minOccurs="0" maxOccurs="1" name="RepDebarredDate" type="xs:string" />
+                <xs:element minOccurs="0" maxOccurs="1" name="RepDebarredReason" type="xs:string" />
+              </xs:sequence>
+            </xs:complexType>
+          </xs:element>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:element name="GetRepresentativeReference">
+        <xs:complexType>
+          <xs:sequence>
+            <xs:element minOccurs="0" maxOccurs="1" name="request">
+              <xs:complexType>
+                <xs:sequence>
+                  <xs:element minOccurs="0" maxOccurs="1" name="CarrierCode" type="tns:CarrierCode" />
+                  <xs:element minOccurs="0" maxOccurs="1" name="BatchReference" type="tns:BatchReference" />
+                  <xs:element minOccurs="0" maxOccurs="1" name="Representatives" type="tns:RepQueryParameter" />
+                </xs:sequence>
+              </xs:complexType>
+            </xs:element>
+          </xs:sequence>
+        </xs:complexType>
+      </xs:element>
+      <xs:element name="GetRepresentativeReferenceResponse">
+        <xs:complexType>
+          <xs:sequence>
+            <xs:element minOccurs="0" maxOccurs="1" name="GetRepresentativeReferenceResult">
+              <xs:complexType>
+                <xs:sequence>
+                  <xs:element minOccurs="0" maxOccurs="1" name="CarrierCode" type="tns:CarrierCode" />
+                  <xs:element minOccurs="0" maxOccurs="1" name="Response" type="tns:Response" />
+                  <xs:element minOccurs="0" maxOccurs="1" name="Representatives" type="tns:ArrayOfRepReferencingLookupResponseRepEntity" />
+                  <xs:element minOccurs="0" maxOccurs="1" name="NotFound" type="tns:RepIdList" />
+                  <xs:element minOccurs="0" maxOccurs="1" name="Duplicates" type="tns:RepIdList" />
+                </xs:sequence>
+              </xs:complexType>
+            </xs:element>
+          </xs:sequence>
+        </xs:complexType>
+      </xs:element>
+      <xs:complexType name="ArrayOfRepReferencingLookupResponseRepEntity">
+        <xs:sequence>
+          <xs:element minOccurs="0" maxOccurs="unbounded" name="RepEntity">
+            <xs:complexType>
+              <xs:sequence>
+                <xs:element minOccurs="0" maxOccurs="1" name="RepIDNumber" type="xs:string" />
+                <xs:element minOccurs="1" maxOccurs="1" name="RepIDType" type="tns:IDType" />
+                <xs:element minOccurs="0" maxOccurs="1" name="RepInitials" type="xs:string" />
+                <xs:element minOccurs="0" maxOccurs="1" name="RepFirstName" type="xs:string" />
+                <xs:element minOccurs="0" maxOccurs="1" name="RepSurname" type="xs:string" />
+                <xs:element minOccurs="0" maxOccurs="1" name="FSPs" type="tns:ArrayOfRepReferencingLookupResponseRepEntityFSP" />
+              </xs:sequence>
+            </xs:complexType>
+          </xs:element>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="ArrayOfRepReferencingLookupResponseRepEntityFSP">
+        <xs:sequence>
+          <xs:element minOccurs="0" maxOccurs="unbounded" name="FSP">
+            <xs:complexType>
+              <xs:sequence>
+                <xs:element minOccurs="0" maxOccurs="1" name="FSPName" type="xs:string" />
+                <xs:element minOccurs="0" maxOccurs="1" name="DateNotified" type="xs:string" />
+                <xs:element minOccurs="0" maxOccurs="1" name="DateEnd" type="xs:string" />
+                <xs:element minOccurs="0" maxOccurs="1" name="RefType" type="xs:string" />
+              </xs:sequence>
+            </xs:complexType>
+          </xs:element>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:element name="GetRepresentativeCategory">
+        <xs:complexType>
+          <xs:sequence>
+            <xs:element minOccurs="0" maxOccurs="1" name="request">
+              <xs:complexType>
+                <xs:sequence>
+                  <xs:element minOccurs="0" maxOccurs="1" name="CarrierCode" type="tns:CarrierCode" />
+                  <xs:element minOccurs="0" maxOccurs="1" name="BatchReference" type="tns:BatchReference" />
+                  <xs:element minOccurs="0" maxOccurs="1" name="FSPs" type="tns:FspQueryParameter" />
+                </xs:sequence>
+              </xs:complexType>
+            </xs:element>
+          </xs:sequence>
+        </xs:complexType>
+      </xs:element>
+      <xs:complexType name="FspQueryParameter">
+        <xs:sequence>
+          <xs:element minOccurs="0" maxOccurs="unbounded" name="FSP">
+            <xs:complexType>
+              <xs:sequence>
+                <xs:element minOccurs="0" maxOccurs="1" name="Representatives" type="tns:ArrayOfIDReferenceNo" />
+              </xs:sequence>
+              <xs:attribute name="FSPReferenceNumber" type="xs:string" />
+            </xs:complexType>
+          </xs:element>
+        </xs:sequence>
+        <xs:attribute name="EnablePartialSAIDNumberSearch" type="tns:YesNoType" />
+      </xs:complexType>
+      <xs:element name="GetRepresentativeCategoryResponse">
+        <xs:complexType>
+          <xs:sequence>
+            <xs:element minOccurs="0" maxOccurs="1" name="GetRepresentativeCategoryResult">
+              <xs:complexType>
+                <xs:sequence>
+                  <xs:element minOccurs="0" maxOccurs="1" name="CarrierCode" type="tns:CarrierCode" />
+                  <xs:element minOccurs="0" maxOccurs="1" name="Response" type="tns:Response" />
+                  <xs:element minOccurs="0" maxOccurs="1" name="FSPs" type="tns:ArrayOfFSP_type" />
+                  <xs:element minOccurs="0" maxOccurs="1" name="NotFound">
+                    <xs:complexType>
+                      <xs:sequence>
+                        <xs:element minOccurs="0" maxOccurs="1" name="FSPs" type="tns:ArrayOfRepCategoryResponseNotFoundFSP" />
+                      </xs:sequence>
+                    </xs:complexType>
+                  </xs:element>
+                  <xs:element minOccurs="0" maxOccurs="1" name="Duplicates">
+                    <xs:complexType>
+                      <xs:sequence>
+                        <xs:element minOccurs="0" maxOccurs="1" name="FSPs" type="tns:ArrayOfRepCategoryResponseDuplicatesFSP" />
+                      </xs:sequence>
+                    </xs:complexType>
+                  </xs:element>
+                </xs:sequence>
+              </xs:complexType>
+            </xs:element>
+          </xs:sequence>
+        </xs:complexType>
+      </xs:element>
+      <xs:complexType name="ArrayOfFSP_type">
+        <xs:sequence>
+          <xs:element minOccurs="0" maxOccurs="unbounded" name="FSP" type="tns:FSP_type" />
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="FSP_type">
+        <xs:sequence>
+          <xs:element minOccurs="0" maxOccurs="1" name="FSPName" type="xs:string" />
+          <xs:element minOccurs="0" maxOccurs="1" name="FSPTradeName" type="xs:string" />
+          <xs:element minOccurs="0" maxOccurs="1" name="FSPLegalCapacity" type="xs:string" />
+          <xs:element minOccurs="0" maxOccurs="1" name="FSPRegNo" type="xs:string" />
+          <xs:element minOccurs="0" maxOccurs="1" name="FSPStatus" type="xs:string" />
+          <xs:element minOccurs="1" maxOccurs="1" name="FSPActive" type="tns:YesNoType" />
+          <xs:element minOccurs="0" maxOccurs="1" name="FSPCompanyType" type="xs:string" />
+          <xs:element minOccurs="0" maxOccurs="1" name="FSPContactPerson">
+            <xs:complexType>
+              <xs:sequence>
+                <xs:element minOccurs="0" maxOccurs="1" name="Title" type="xs:string" />
+                <xs:element minOccurs="0" maxOccurs="1" name="Initials" type="xs:string" />
+                <xs:element minOccurs="0" maxOccurs="1" name="Surname" type="xs:string" />
+                <xs:element minOccurs="0" maxOccurs="1" name="Email" type="xs:string" />
+              </xs:sequence>
+            </xs:complexType>
+          </xs:element>
+          <xs:element minOccurs="0" maxOccurs="1" name="FSPAddresses">
+            <xs:complexType>
+              <xs:sequence>
+                <xs:element minOccurs="0" maxOccurs="1" name="PhysicalAddress" type="tns:Address" />
+                <xs:element minOccurs="0" maxOccurs="1" name="PostalAddress" type="tns:Address" />
+              </xs:sequence>
+            </xs:complexType>
+          </xs:element>
+          <xs:element minOccurs="0" maxOccurs="1" name="FSPTelNoCode" type="xs:string" />
+          <xs:element minOccurs="0" maxOccurs="1" name="FSPTelNo" type="xs:string" />
+          <xs:element minOccurs="0" maxOccurs="1" name="FSPFaxNoCode" type="xs:string" />
+          <xs:element minOccurs="0" maxOccurs="1" name="FSPFaxNo" type="xs:string" />
+          <xs:element minOccurs="0" maxOccurs="1" name="FSPWebsite" type="xs:string" />
+          <xs:element minOccurs="0" maxOccurs="1" name="FSPFinYearEnd" type="xs:string" />
+          <xs:element minOccurs="0" maxOccurs="1" name="FSPComplianceOfficer">
+            <xs:complexType>
+              <xs:sequence>
+                <xs:element minOccurs="0" maxOccurs="1" name="COPracticeName" type="xs:string" />
+                <xs:element minOccurs="0" maxOccurs="1" name="COName" type="xs:string" />
+                <xs:element minOccurs="0" maxOccurs="1" name="CODateAppointed" type="xs:string" />
+                <xs:element minOccurs="0" maxOccurs="1" name="COTelNo" type="xs:string" />
+              </xs:sequence>
+            </xs:complexType>
+          </xs:element>
+          <xs:element minOccurs="0" maxOccurs="1" name="FSPMedicalAccreditationNo" type="xs:string" />
+          <xs:element minOccurs="0" maxOccurs="1" name="Categories" type="tns:ArrayOfFSP_typeCategory" />
+          <xs:element minOccurs="0" maxOccurs="1" name="Representatives" type="tns:ArrayOfRepEntity_Type" />
+          <xs:element minOccurs="0" maxOccurs="1" name="KeyIndividuals" type="tns:ArrayOfRepEntity_Type" />
+          <xs:element minOccurs="0" maxOccurs="1" name="SoleProprietors" type="tns:ArrayOfRepEntity_Type" />
+        </xs:sequence>
+        <xs:attribute name="FSPReferenceNumber" type="xs:string" />
+      </xs:complexType>
+      <xs:complexType name="Address">
+        <xs:sequence>
+          <xs:element minOccurs="0" maxOccurs="1" name="Line1" type="xs:string" />
+          <xs:element minOccurs="0" maxOccurs="1" name="Line2" type="xs:string" />
+          <xs:element minOccurs="0" maxOccurs="1" name="City" type="xs:string" />
+          <xs:element minOccurs="0" maxOccurs="1" name="Zip" type="xs:string" />
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="ArrayOfFSP_typeCategory">
+        <xs:sequence>
+          <xs:element minOccurs="0" maxOccurs="unbounded" name="Category">
+            <xs:complexType>
+              <xs:sequence>
+                <xs:element minOccurs="0" maxOccurs="1" name="AdviceDateActive" type="xs:string" />
+                <xs:element minOccurs="0" maxOccurs="1" name="IntermediaryDateActive" type="xs:string" />
+              </xs:sequence>
+              <xs:attribute name="CategoryNo" type="xs:int" use="required" />
+              <xs:attribute name="SubCategoryNo" type="xs:int" use="required" />
+            </xs:complexType>
+          </xs:element>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="ArrayOfRepEntity_Type">
+        <xs:sequence>
+          <xs:element minOccurs="0" maxOccurs="unbounded" name="RepEntity" type="tns:RepEntity_Type" />
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="RepEntity_Type">
+        <xs:sequence>
+          <xs:element minOccurs="0" maxOccurs="1" name="IDReferenceNo" type="tns:IDReferenceNo" />
+          <xs:element minOccurs="0" maxOccurs="1" name="Title" type="xs:string" />
+          <xs:element minOccurs="0" maxOccurs="1" name="Initials" type="xs:string" />
+          <xs:element minOccurs="0" maxOccurs="1" name="FirstName" type="xs:string" />
+          <xs:element minOccurs="0" maxOccurs="1" name="RepName" type="xs:string" />
+          <xs:element minOccurs="0" maxOccurs="1" name="DateOfBirth" type="xs:string" />
+          <xs:element minOccurs="0" maxOccurs="1" name="CountryOfRegistration" type="xs:string" />
+          <xs:element minOccurs="0" maxOccurs="1" name="PhysicalAddress" type="tns:Address" />
+          <xs:element minOccurs="0" maxOccurs="1" name="DateOfAppointment" type="xs:string" />
+          <xs:element minOccurs="0" maxOccurs="1" name="KeyIndividualOfRep">
+            <xs:complexType>
+              <xs:sequence>
+                <xs:element minOccurs="0" maxOccurs="1" name="IDReferenceNo" type="xs:string" />
+              </xs:sequence>
+            </xs:complexType>
+          </xs:element>
+          <xs:element minOccurs="0" maxOccurs="1" name="MedicalAccreditationNo" type="xs:string" />
+          <xs:element minOccurs="0" maxOccurs="1" name="Categories" type="tns:ArrayOfRepEntity_TypeCategory" />
+          <xs:element minOccurs="0" maxOccurs="1" name="Qualifications" type="tns:ArrayOfRepEntity_TypeQualification" />
+        </xs:sequence>
+        <xs:attribute name="RepType" type="tns:RepType" use="required" />
+        <xs:attribute name="Action" type="tns:Action" />
+      </xs:complexType>
+      <xs:complexType name="ArrayOfRepEntity_TypeCategory">
+        <xs:sequence>
+          <xs:element minOccurs="0" maxOccurs="unbounded" name="Category">
+            <xs:complexType>
+              <xs:sequence>
+                <xs:element minOccurs="0" maxOccurs="1" name="AdviceDateActive" type="xs:string" />
+                <xs:element minOccurs="0" maxOccurs="1" name="IntermediaryDateActive" type="xs:string" />
+                <xs:element minOccurs="0" maxOccurs="1" name="SusDateActive" type="xs:string" />
+              </xs:sequence>
+              <xs:attribute name="CategoryNo" type="xs:int" use="required" />
+              <xs:attribute name="SubCategoryNo" type="xs:int" use="required" />
+            </xs:complexType>
+          </xs:element>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="ArrayOfRepEntity_TypeQualification">
+        <xs:sequence>
+          <xs:element minOccurs="0" maxOccurs="unbounded" name="Qualification" nillable="true">
+            <xs:complexType>
+              <xs:simpleContent>
+                <xs:extension base="xs:string">
+                  <xs:attribute name="QualificationCode" type="xs:string" />
+                  <xs:attribute name="YearObtained" type="xs:int" use="required" />
+                </xs:extension>
+              </xs:simpleContent>
+            </xs:complexType>
+          </xs:element>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:simpleType name="RepType">
+        <xs:restriction base="xs:string">
+          <xs:enumeration value="N" />
+          <xs:enumeration value="J" />
+          <xs:enumeration value="n" />
+          <xs:enumeration value="j" />
+        </xs:restriction>
+      </xs:simpleType>
+      <xs:simpleType name="Action">
+        <xs:restriction base="xs:string">
+          <xs:enumeration value="Add" />
+          <xs:enumeration value="Update" />
+          <xs:enumeration value="Delete" />
+          <xs:enumeration value="Unchanged" />
+          <xs:enumeration value="ADD" />
+          <xs:enumeration value="DELETE" />
+          <xs:enumeration value="UPDATE" />
+          <xs:enumeration value="UNCHANGED" />
+          <xs:enumeration value="add" />
+          <xs:enumeration value="update" />
+          <xs:enumeration value="delete" />
+          <xs:enumeration value="unchanged" />
+        </xs:restriction>
+      </xs:simpleType>
+      <xs:complexType name="ArrayOfRepCategoryResponseNotFoundFSP">
+        <xs:sequence>
+          <xs:element minOccurs="0" maxOccurs="unbounded" name="FSP">
+            <xs:complexType>
+              <xs:sequence>
+                <xs:element minOccurs="0" maxOccurs="1" name="Representatives" type="tns:ArrayOfIDReferenceNo" />
+              </xs:sequence>
+              <xs:attribute name="FSPReferenceNumber" type="xs:string" />
+            </xs:complexType>
+          </xs:element>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="ArrayOfRepCategoryResponseDuplicatesFSP">
+        <xs:sequence>
+          <xs:element minOccurs="0" maxOccurs="unbounded" name="FSP">
+            <xs:complexType>
+              <xs:sequence>
+                <xs:element minOccurs="0" maxOccurs="1" name="Representatives" type="tns:ArrayOfIDReferenceNo" />
+              </xs:sequence>
+              <xs:attribute name="FSPReferenceNumber" type="xs:string" />
+            </xs:complexType>
+          </xs:element>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:element name="GetRepresentativeEmploymentHistory">
+        <xs:complexType>
+          <xs:sequence>
+            <xs:element minOccurs="0" maxOccurs="1" name="request">
+              <xs:complexType>
+                <xs:sequence>
+                  <xs:element minOccurs="0" maxOccurs="1" name="CarrierCode" type="tns:CarrierCode" />
+                  <xs:element minOccurs="0" maxOccurs="1" name="BatchReference" type="tns:BatchReference" />
+                  <xs:element minOccurs="0" maxOccurs="1" name="Representatives" type="tns:RepQueryParameter" />
+                </xs:sequence>
+              </xs:complexType>
+            </xs:element>
+          </xs:sequence>
+        </xs:complexType>
+      </xs:element>
+      <xs:element name="GetRepresentativeEmploymentHistoryResponse">
+        <xs:complexType>
+          <xs:sequence>
+            <xs:element minOccurs="0" maxOccurs="1" name="GetRepresentativeEmploymentHistoryResult">
+              <xs:complexType>
+                <xs:sequence>
+                  <xs:element minOccurs="0" maxOccurs="1" name="CarrierCode" type="tns:CarrierCode" />
+                  <xs:element minOccurs="0" maxOccurs="1" name="Response" type="tns:Response" />
+                  <xs:element minOccurs="0" maxOccurs="1" name="Representatives" type="tns:ArrayOfRepEmploymentLookupResponseRepEntity" />
+                  <xs:element minOccurs="0" maxOccurs="1" name="NotFound" type="tns:RepIdList" />
+                  <xs:element minOccurs="0" maxOccurs="1" name="Duplicates" type="tns:RepIdList" />
+                </xs:sequence>
+              </xs:complexType>
+            </xs:element>
+          </xs:sequence>
+        </xs:complexType>
+      </xs:element>
+      <xs:complexType name="ArrayOfRepEmploymentLookupResponseRepEntity">
+        <xs:sequence>
+          <xs:element minOccurs="0" maxOccurs="unbounded" name="RepEntity">
+            <xs:complexType>
+              <xs:sequence>
+                <xs:element minOccurs="0" maxOccurs="1" name="RepIDNumber" type="xs:string" />
+                <xs:element minOccurs="1" maxOccurs="1" name="RepIDType" type="tns:IDType" />
+                <xs:element minOccurs="0" maxOccurs="1" name="FSPs" type="tns:ArrayOfRepEmploymentLookupResponseRepEntityFSP" />
+              </xs:sequence>
+            </xs:complexType>
+          </xs:element>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="ArrayOfRepEmploymentLookupResponseRepEntityFSP">
+        <xs:sequence>
+          <xs:element minOccurs="0" maxOccurs="unbounded" name="FSP">
+            <xs:complexType>
+              <xs:sequence>
+                <xs:element minOccurs="0" maxOccurs="1" name="FSPName" type="xs:string" />
+                <xs:element minOccurs="0" maxOccurs="1" name="FSPReferenceNumber" type="xs:string" />
+                <xs:element minOccurs="0" maxOccurs="1" name="DateStart" type="xs:string" />
+                <xs:element minOccurs="0" maxOccurs="1" name="DateEnd" type="xs:string" />
+                <xs:element minOccurs="0" maxOccurs="1" name="BrokerageName" type="xs:string" />
+                <xs:element minOccurs="0" maxOccurs="1" name="DBType" type="xs:string" />
+              </xs:sequence>
+            </xs:complexType>
+          </xs:element>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:element name="RegisterRepresentatives">
+        <xs:complexType>
+          <xs:sequence>
+            <xs:element minOccurs="0" maxOccurs="1" name="registration">
+              <xs:complexType>
+                <xs:sequence>
+                  <xs:element minOccurs="0" maxOccurs="1" name="CarrierCode" type="tns:CarrierCode" />
+                  <xs:element minOccurs="0" maxOccurs="1" name="UpdateSubscriptionlist" type="tns:YesNoType" />
+                  <xs:element minOccurs="0" maxOccurs="1" name="Representatives">
+                    <xs:complexType>
+                      <xs:sequence>
+                        <xs:element minOccurs="0" maxOccurs="unbounded" name="Representative">
+                          <xs:complexType>
+                            <xs:sequence>
+                              <xs:element minOccurs="0" maxOccurs="1" name="IDReferenceNo" type="tns:IDReferenceNo" />
+                              <xs:element minOccurs="0" maxOccurs="1" name="Title" type="xs:string" />
+                              <xs:element minOccurs="0" maxOccurs="1" name="Initials" type="xs:string" />
+                              <xs:element minOccurs="0" maxOccurs="1" name="FirstName" type="xs:string" />
+                              <xs:element minOccurs="0" maxOccurs="1" name="RepName" type="xs:string" />
+                              <xs:element minOccurs="0" maxOccurs="1" name="DateOfBirth" type="xs:date" />
+                              <xs:element minOccurs="0" maxOccurs="1" name="CountryOfRegistration" type="xs:string" />
+                              <xs:element minOccurs="0" maxOccurs="1" name="PhysicalAddress">
+                                <xs:complexType>
+                                  <xs:sequence>
+                                    <xs:element minOccurs="0" maxOccurs="1" name="Line1" type="xs:string" />
+                                    <xs:element minOccurs="0" maxOccurs="1" name="Line2" type="xs:string" />
+                                    <xs:element minOccurs="0" maxOccurs="1" name="City" type="xs:string" />
+                                    <xs:element minOccurs="0" maxOccurs="1" name="Zip" type="xs:string" />
+                                  </xs:sequence>
+                                </xs:complexType>
+                              </xs:element>
+                              <xs:element minOccurs="1" maxOccurs="1" name="DateOfAppointment" type="xs:date" />
+                              <xs:element minOccurs="0" maxOccurs="1" name="KeyIndividualOfRep">
+                                <xs:complexType>
+                                  <xs:sequence>
+                                    <xs:element minOccurs="0" maxOccurs="1" name="IDReferenceNo" type="xs:string" />
+                                  </xs:sequence>
+                                </xs:complexType>
+                              </xs:element>
+                              <xs:element minOccurs="0" maxOccurs="1" name="MedicalAccreditationNo" type="xs:string" />
+                              <xs:element minOccurs="0" maxOccurs="1" name="Categories" type="tns:ArrayOfRegistrationRepresentativesRepresentativeCategory" />
+                              <xs:element minOccurs="1" maxOccurs="1" name="Qualifications" nillable="true" type="tns:ArrayOfRegistrationRepresentativesRepresentativeQualification" />
+                              <xs:element minOccurs="0" maxOccurs="1" name="DebarOrRemove">
+                                <xs:complexType>
+                                  <xs:sequence>
+                                    <xs:element minOccurs="1" maxOccurs="1" name="ActionDate" type="xs:date" />
+                                    <xs:element minOccurs="0" maxOccurs="1" name="Reason" type="xs:string" />
+                                  </xs:sequence>
+                                  <xs:attribute name="Debarred" type="tns:YesNoType" />
+                                </xs:complexType>
+                              </xs:element>
+                            </xs:sequence>
+                            <xs:attribute name="RepType" type="tns:RepType" use="required" />
+                            <xs:attribute name="Action" type="tns:Action" use="required" />
+                          </xs:complexType>
+                        </xs:element>
+                      </xs:sequence>
+                      <xs:attribute name="FSPReferenceNumber" type="xs:string" />
+                    </xs:complexType>
+                  </xs:element>
+                </xs:sequence>
+              </xs:complexType>
+            </xs:element>
+          </xs:sequence>
+        </xs:complexType>
+      </xs:element>
+      <xs:complexType name="ArrayOfRegistrationRepresentativesRepresentativeCategory">
+        <xs:sequence>
+          <xs:element minOccurs="0" maxOccurs="unbounded" name="Category">
+            <xs:complexType>
+              <xs:sequence>
+                <xs:element minOccurs="0" maxOccurs="1" name="AdviceDate" type="xs:date" />
+                <xs:element minOccurs="0" maxOccurs="1" name="IntermediaryDateActive" type="xs:date" />
+                <xs:element minOccurs="0" maxOccurs="1" name="SusDateActive" type="xs:date" />
+              </xs:sequence>
+              <xs:attribute name="CategoryNo" type="xs:string" />
+              <xs:attribute name="SubCategoryNo" type="xs:string" />
+            </xs:complexType>
+          </xs:element>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="ArrayOfRegistrationRepresentativesRepresentativeQualification">
+        <xs:sequence>
+          <xs:element minOccurs="0" maxOccurs="unbounded" name="Qualification" nillable="true">
+            <xs:complexType mixed="true">
+              <xs:attribute name="QualificationCode" type="xs:string" />
+              <xs:attribute name="YearObtained" type="xs:int" use="required" />
+            </xs:complexType>
+          </xs:element>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:element name="RegisterRepresentativesResponse">
+        <xs:complexType>
+          <xs:sequence>
+            <xs:element minOccurs="0" maxOccurs="1" name="RegisterRepresentativesResult">
+              <xs:complexType>
+                <xs:sequence>
+                  <xs:element minOccurs="0" maxOccurs="1" name="CarrierCode" type="tns:CarrierCode" />
+                  <xs:element minOccurs="0" maxOccurs="1" name="Response" type="tns:Response" />
+                  <xs:element minOccurs="0" maxOccurs="1" name="Representatives">
+                    <xs:complexType>
+                      <xs:sequence>
+                        <xs:element minOccurs="0" maxOccurs="unbounded" name="Representative">
+                          <xs:complexType>
+                            <xs:sequence>
+                              <xs:element minOccurs="0" maxOccurs="1" name="IDReferenceNo" type="tns:IDReferenceNo" />
+                              <xs:element minOccurs="0" maxOccurs="1" name="Response" type="tns:Response" />
+                            </xs:sequence>
+                            <xs:attribute name="RepType" type="xs:string" />
+                            <xs:attribute name="Action" type="tns:Action" use="required" />
+                          </xs:complexType>
+                        </xs:element>
+                      </xs:sequence>
+                      <xs:attribute name="FSPReferenceNumber" type="xs:string" />
+                    </xs:complexType>
+                  </xs:element>
+                </xs:sequence>
+              </xs:complexType>
+            </xs:element>
+          </xs:sequence>
+        </xs:complexType>
+      </xs:element>
+      <xs:element name="GetAllFromSubscriptionList">
+        <xs:complexType>
+          <xs:sequence>
+            <xs:element minOccurs="0" maxOccurs="1" name="request">
+              <xs:complexType>
+                <xs:sequence>
+                  <xs:element minOccurs="0" maxOccurs="1" name="Request">
+                    <xs:complexType>
+                      <xs:attribute name="CarrierCode" type="xs:string" />
+                      <xs:attribute name="Reference" type="xs:string" />
+                      <xs:attribute name="RequestData" type="xs:string" />
+                    </xs:complexType>
+                  </xs:element>
+                </xs:sequence>
+              </xs:complexType>
+            </xs:element>
+          </xs:sequence>
+        </xs:complexType>
+      </xs:element>
+      <xs:element name="GetAllFromSubscriptionListResponse">
+        <xs:complexType>
+          <xs:sequence>
+            <xs:element minOccurs="0" maxOccurs="1" name="GetAllFromSubscriptionListResult">
+              <xs:complexType>
+                <xs:sequence>
+                  <xs:element minOccurs="0" maxOccurs="1" name="PublicationReference" type="tns:BatchReference" />
+                  <xs:element minOccurs="0" maxOccurs="1" name="ExportDate" type="xs:string" />
+                  <xs:element minOccurs="0" maxOccurs="1" name="PublishDateTime" type="xs:string" />
+                  <xs:element minOccurs="0" maxOccurs="1" name="CarrierCode" type="tns:CarrierCode" />
+                  <xs:element minOccurs="0" maxOccurs="1" name="Response" type="tns:Response" />
+                  <xs:element minOccurs="0" maxOccurs="1" name="FSPs" type="tns:ArrayOfFSPREPPublicationResponseFSP" />
+                  <xs:element minOccurs="0" maxOccurs="1" name="NotFound">
+                    <xs:complexType>
+                      <xs:sequence>
+                        <xs:element minOccurs="0" maxOccurs="1" name="FSPNumbers">
+                          <xs:complexType>
+                            <xs:sequence>
+                              <xs:element minOccurs="0" maxOccurs="1" name="CarrierCode" type="tns:CarrierCode" />
+                              <xs:element minOccurs="0" maxOccurs="1" name="FSPs" type="tns:ArrayOfFSPREPPublicationResponseNotFoundFSPNumbersFSP" />
+                            </xs:sequence>
+                          </xs:complexType>
+                        </xs:element>
+                      </xs:sequence>
+                    </xs:complexType>
+                  </xs:element>
+                </xs:sequence>
+              </xs:complexType>
+            </xs:element>
+          </xs:sequence>
+        </xs:complexType>
+      </xs:element>
+      <xs:complexType name="ArrayOfFSPREPPublicationResponseFSP">
+        <xs:sequence>
+          <xs:element minOccurs="0" maxOccurs="unbounded" name="FSP">
+            <xs:complexType>
+              <xs:complexContent mixed="false">
+                <xs:extension base="tns:FSP_type">
+                  <xs:attribute name="FSPAction" type="tns:Action" use="required" />
+                  <xs:attribute name="RepsChanged" type="tns:YesNoType" use="required" />
+                </xs:extension>
+              </xs:complexContent>
+            </xs:complexType>
+          </xs:element>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="ArrayOfFSPREPPublicationResponseNotFoundFSPNumbersFSP">
+        <xs:sequence>
+          <xs:element minOccurs="0" maxOccurs="unbounded" name="FSP">
+            <xs:complexType>
+              <xs:sequence>
+                <xs:element minOccurs="0" maxOccurs="1" name="Representatives" type="tns:ArrayOfIDReferenceNo" />
+              </xs:sequence>
+              <xs:attribute name="FSPReferenceNumber" type="xs:string" />
+              <xs:attribute name="FSPInRegister" type="tns:YesNoType" use="required" />
+            </xs:complexType>
+          </xs:element>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:element name="GetLatestFromSubscriptionList">
+        <xs:complexType>
+          <xs:sequence>
+            <xs:element minOccurs="0" maxOccurs="1" name="request">
+              <xs:complexType>
+                <xs:sequence>
+                  <xs:element minOccurs="0" maxOccurs="1" name="Request">
+                    <xs:complexType>
+                      <xs:attribute name="CarrierCode" type="xs:string" />
+                      <xs:attribute name="Reference" type="xs:string" />
+                      <xs:attribute name="RequestData" type="xs:string" />
+                    </xs:complexType>
+                  </xs:element>
+                </xs:sequence>
+              </xs:complexType>
+            </xs:element>
+          </xs:sequence>
+        </xs:complexType>
+      </xs:element>
+      <xs:element name="GetLatestFromSubscriptionListResponse">
+        <xs:complexType>
+          <xs:sequence>
+            <xs:element minOccurs="0" maxOccurs="1" name="GetLatestFromSubscriptionListResult">
+              <xs:complexType>
+                <xs:sequence>
+                  <xs:element minOccurs="0" maxOccurs="1" name="PublicationReference" type="tns:BatchReference" />
+                  <xs:element minOccurs="0" maxOccurs="1" name="ExportDate" type="xs:string" />
+                  <xs:element minOccurs="0" maxOccurs="1" name="PublishDateTime" type="xs:string" />
+                  <xs:element minOccurs="0" maxOccurs="1" name="CarrierCode" type="tns:CarrierCode" />
+                  <xs:element minOccurs="0" maxOccurs="1" name="Response" type="tns:Response" />
+                  <xs:element minOccurs="0" maxOccurs="1" name="FSPs" type="tns:ArrayOfFSPREPPublicationResponseFSP" />
+                  <xs:element minOccurs="0" maxOccurs="1" name="NotFound">
+                    <xs:complexType>
+                      <xs:sequence>
+                        <xs:element minOccurs="0" maxOccurs="1" name="FSPNumbers">
+                          <xs:complexType>
+                            <xs:sequence>
+                              <xs:element minOccurs="0" maxOccurs="1" name="CarrierCode" type="tns:CarrierCode" />
+                              <xs:element minOccurs="0" maxOccurs="1" name="FSPs" type="tns:ArrayOfFSPREPPublicationResponseNotFoundFSPNumbersFSP" />
+                            </xs:sequence>
+                          </xs:complexType>
+                        </xs:element>
+                      </xs:sequence>
+                    </xs:complexType>
+                  </xs:element>
+                </xs:sequence>
+              </xs:complexType>
+            </xs:element>
+          </xs:sequence>
+        </xs:complexType>
+      </xs:element>
+      <xs:element name="SubmitSubscriptionList">
+        <xs:complexType>
+          <xs:sequence>
+            <xs:element minOccurs="0" maxOccurs="1" name="request">
+              <xs:complexType>
+                <xs:sequence>
+                  <xs:element minOccurs="0" maxOccurs="1" name="CarrierCode" type="tns:CarrierCode" />
+                  <xs:element minOccurs="0" maxOccurs="1" name="BatchReference" type="tns:BatchReference" />
+                  <xs:element minOccurs="0" maxOccurs="1" name="FSPs" type="tns:FspQueryParameter" />
+                </xs:sequence>
+              </xs:complexType>
+            </xs:element>
+          </xs:sequence>
+        </xs:complexType>
+      </xs:element>
+      <xs:element name="SubmitSubscriptionListResponse">
+        <xs:complexType>
+          <xs:sequence>
+            <xs:element minOccurs="0" maxOccurs="1" name="SubmitSubscriptionListResult">
+              <xs:complexType>
+                <xs:sequence>
+                  <xs:element minOccurs="0" maxOccurs="1" name="CarrierCode" type="tns:CarrierCode" />
+                  <xs:element minOccurs="0" maxOccurs="1" name="BatchReference" type="tns:BatchReference" />
+                  <xs:element minOccurs="0" maxOccurs="1" name="Response" type="tns:Response" />
+                </xs:sequence>
+              </xs:complexType>
+            </xs:element>
+          </xs:sequence>
+        </xs:complexType>
+      </xs:element>
+      <xs:element name="GetPersonFpDetails">
+        <xs:complexType>
+          <xs:sequence>
+            <xs:element minOccurs="0" maxOccurs="1" name="requestParameter">
+              <xs:complexType>
+                <xs:sequence>
+                  <xs:element minOccurs="0" maxOccurs="1" name="CarrierCode" type="tns:CarrierCode" />
+                  <xs:element minOccurs="0" maxOccurs="1" name="BatchReference" type="tns:BatchReference" />
+                  <xs:element minOccurs="0" maxOccurs="1" name="IdNumber" type="xs:string" />
+                  <xs:element minOccurs="0" maxOccurs="1" name="CellNumber" type="xs:string" />
+                  <xs:element minOccurs="0" maxOccurs="1" name="Email" type="xs:string" />
+                  <xs:element minOccurs="0" maxOccurs="1" name="Initials" type="xs:string" />
+                  <xs:element minOccurs="0" maxOccurs="1" name="Surname" type="xs:string" />
+                  <xs:element minOccurs="1" maxOccurs="1" name="RequestDigitalConsent" type="xs:boolean" />
+                </xs:sequence>
+              </xs:complexType>
+            </xs:element>
+          </xs:sequence>
+        </xs:complexType>
+      </xs:element>
+      <xs:element name="GetPersonFpDetailsResponse">
+        <xs:complexType>
+          <xs:sequence>
+            <xs:element minOccurs="0" maxOccurs="1" name="GetPersonFpDetailsResult">
+              <xs:complexType>
+                <xs:sequence>
+                  <xs:element minOccurs="0" maxOccurs="1" name="CarrierCode" type="tns:CarrierCode" />
+                  <xs:element minOccurs="0" maxOccurs="1" name="BatchReference" type="tns:BatchReference" />
+                  <xs:element minOccurs="0" maxOccurs="1" name="Response" type="tns:Response" />
+                  <xs:element minOccurs="0" maxOccurs="1" name="PersonDetail" type="tns:person" />
+                </xs:sequence>
+              </xs:complexType>
+            </xs:element>
+          </xs:sequence>
+        </xs:complexType>
+      </xs:element>
+      <xs:complexType name="person">
+        <xs:sequence>
+          <xs:element minOccurs="0" maxOccurs="1" name="id" type="xs:string" />
+          <xs:element minOccurs="0" maxOccurs="1" name="name" type="xs:string" />
+          <xs:element minOccurs="0" maxOccurs="1" name="surname" type="xs:string" />
+          <xs:element minOccurs="1" maxOccurs="1" name="debarredStatus" type="tns:YesNoType" />
+          <xs:element minOccurs="0" maxOccurs="1" name="qualifications" type="tns:ArrayOfPersonQualification" />
+          <xs:element minOccurs="0" maxOccurs="1" name="repDOFA" type="xs:string" />
+          <xs:element minOccurs="0" maxOccurs="1" name="kiDOFA" type="xs:string" />
+          <xs:element minOccurs="0" maxOccurs="1" name="rolesPerFSP" type="tns:ArrayOfPersonFsp" />
+          <xs:element minOccurs="0" maxOccurs="1" name="examsPassed" type="tns:ArrayOfPersonExam" />
+          <xs:element minOccurs="0" maxOccurs="1" name="historicProducts" type="tns:ArrayOfPersonFsp1" />
+          <xs:element minOccurs="0" maxOccurs="1" name="debarredDate" type="xs:string" />
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="ArrayOfPersonQualification">
+        <xs:sequence>
+          <xs:element minOccurs="0" maxOccurs="unbounded" name="qualification">
+            <xs:complexType>
+              <xs:sequence>
+                <xs:element minOccurs="1" maxOccurs="1" name="qualificationNo" type="xs:int" />
+                <xs:element minOccurs="0" maxOccurs="1" name="qualificationName" type="xs:string" />
+                <xs:element minOccurs="1" maxOccurs="1" name="institutionNo" type="xs:int" />
+                <xs:element minOccurs="0" maxOccurs="1" name="institutionName" type="xs:string" />
+                <xs:element minOccurs="1" maxOccurs="1" name="yearObtained" type="xs:int" />
+              </xs:sequence>
+            </xs:complexType>
+          </xs:element>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="ArrayOfPersonFsp">
+        <xs:sequence>
+          <xs:element minOccurs="0" maxOccurs="unbounded" name="fsp">
+            <xs:complexType>
+              <xs:sequence>
+                <xs:element minOccurs="0" maxOccurs="1" name="fspNo" type="xs:string" />
+                <xs:element minOccurs="0" maxOccurs="1" name="fspName" type="xs:string" />
+                <xs:element minOccurs="0" maxOccurs="1" name="fspStatus" type="xs:string" />
+                <xs:element minOccurs="0" maxOccurs="1" name="rep">
+                  <xs:complexType>
+                    <xs:sequence>
+                      <xs:element minOccurs="0" maxOccurs="1" name="dateAppointed" type="xs:string" />
+                      <xs:element minOccurs="0" maxOccurs="1" name="products" type="tns:ArrayOfPersonProduct" />
+                    </xs:sequence>
+                  </xs:complexType>
+                </xs:element>
+                <xs:element minOccurs="0" maxOccurs="1" name="ki">
+                  <xs:complexType>
+                    <xs:sequence>
+                      <xs:element minOccurs="0" maxOccurs="1" name="dateAppointed" type="xs:string" />
+                      <xs:element minOccurs="0" maxOccurs="1" name="products" type="tns:ArrayOfPersonProduct" />
+                    </xs:sequence>
+                  </xs:complexType>
+                </xs:element>
+                <xs:element minOccurs="0" maxOccurs="1" name="sp">
+                  <xs:complexType>
+                    <xs:sequence>
+                      <xs:element minOccurs="0" maxOccurs="1" name="dateAppointed" type="xs:string" />
+                      <xs:element minOccurs="0" maxOccurs="1" name="products" type="tns:ArrayOfPersonProduct" />
+                    </xs:sequence>
+                  </xs:complexType>
+                </xs:element>
+              </xs:sequence>
+            </xs:complexType>
+          </xs:element>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="ArrayOfPersonProduct">
+        <xs:sequence>
+          <xs:element minOccurs="0" maxOccurs="unbounded" name="product" type="tns:personProduct" />
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="personProduct">
+        <xs:sequence>
+          <xs:element minOccurs="1" maxOccurs="1" name="categoryNo" type="xs:int" />
+          <xs:element minOccurs="1" maxOccurs="1" name="subCategoryNo" type="xs:int" />
+          <xs:element minOccurs="0" maxOccurs="1" name="productDescription" type="xs:string" />
+          <xs:element minOccurs="1" maxOccurs="1" name="advice" type="tns:YesNoType" />
+          <xs:element minOccurs="0" maxOccurs="1" name="adviceFirstDate" type="xs:string" />
+          <xs:element minOccurs="1" maxOccurs="1" name="intermediary" type="tns:YesNoType" />
+          <xs:element minOccurs="0" maxOccurs="1" name="intermediaryFirstDate" type="xs:string" />
+          <xs:element minOccurs="1" maxOccurs="1" name="sus" type="tns:YesNoType" />
+          <xs:element minOccurs="0" maxOccurs="1" name="susFirstDate" type="xs:string" />
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="ArrayOfPersonExam">
+        <xs:sequence>
+          <xs:element minOccurs="0" maxOccurs="unbounded" name="exam">
+            <xs:complexType>
+              <xs:sequence>
+                <xs:element minOccurs="1" maxOccurs="1" name="examType" type="xs:int" />
+                <xs:element minOccurs="0" maxOccurs="1" name="examDate" type="xs:string" />
+                <xs:element minOccurs="0" maxOccurs="1" name="examDescription" type="xs:string" />
+              </xs:sequence>
+            </xs:complexType>
+          </xs:element>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="ArrayOfPersonFsp1">
+        <xs:sequence>
+          <xs:element minOccurs="0" maxOccurs="unbounded" name="fsp">
+            <xs:complexType>
+              <xs:sequence>
+                <xs:element minOccurs="0" maxOccurs="1" name="fspNo" type="xs:string" />
+                <xs:element minOccurs="0" maxOccurs="1" name="fspName" type="xs:string" />
+                <xs:element minOccurs="0" maxOccurs="1" name="fspStatus" type="xs:string" />
+                <xs:element minOccurs="0" maxOccurs="1" name="rep" type="tns:ArrayOfPersonProduct1" />
+                <xs:element minOccurs="0" maxOccurs="1" name="ki" type="tns:ArrayOfPersonProduct1" />
+                <xs:element minOccurs="0" maxOccurs="1" name="sp" type="tns:ArrayOfPersonProduct1" />
+              </xs:sequence>
+            </xs:complexType>
+          </xs:element>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="ArrayOfPersonProduct1">
+        <xs:sequence>
+          <xs:element minOccurs="0" maxOccurs="unbounded" name="historicProduct" type="tns:personProduct" />
+        </xs:sequence>
+      </xs:complexType>
+      <xs:element name="Ping">
+        <xs:complexType />
+      </xs:element>
+      <xs:element name="PingResponse">
+        <xs:complexType>
+          <xs:sequence>
+            <xs:element minOccurs="1" maxOccurs="1" name="PingResult" type="xs:dateTime" />
+          </xs:sequence>
+        </xs:complexType>
+      </xs:element>
+    </xs:schema>
+  </wsdl:types>
+  <wsdl:message name="FSPEnquiry_GetFSPNumbers_InputMessage">
+    <wsdl:part name="parameters" element="tns:GetFSPNumbers" />
+  </wsdl:message>
+  <wsdl:message name="FSPEnquiry_GetFSPNumbers_OutputMessage">
+    <wsdl:part name="parameters" element="tns:GetFSPNumbersResponse" />
+  </wsdl:message>
+  <wsdl:message name="FSPEnquiry_GetDebarredByRepresentative_InputMessage">
+    <wsdl:part name="parameters" element="tns:GetDebarredByRepresentative" />
+  </wsdl:message>
+  <wsdl:message name="FSPEnquiry_GetDebarredByRepresentative_OutputMessage">
+    <wsdl:part name="parameters" element="tns:GetDebarredByRepresentativeResponse" />
+  </wsdl:message>
+  <wsdl:message name="FSPEnquiry_GetRepresentativeReference_InputMessage">
+    <wsdl:part name="parameters" element="tns:GetRepresentativeReference" />
+  </wsdl:message>
+  <wsdl:message name="FSPEnquiry_GetRepresentativeReference_OutputMessage">
+    <wsdl:part name="parameters" element="tns:GetRepresentativeReferenceResponse" />
+  </wsdl:message>
+  <wsdl:message name="FSPEnquiry_GetRepresentativeCategory_InputMessage">
+    <wsdl:part name="parameters" element="tns:GetRepresentativeCategory" />
+  </wsdl:message>
+  <wsdl:message name="FSPEnquiry_GetRepresentativeCategory_OutputMessage">
+    <wsdl:part name="parameters" element="tns:GetRepresentativeCategoryResponse" />
+  </wsdl:message>
+  <wsdl:message name="FSPEnquiry_GetRepresentativeEmploymentHistory_InputMessage">
+    <wsdl:part name="parameters" element="tns:GetRepresentativeEmploymentHistory" />
+  </wsdl:message>
+  <wsdl:message name="FSPEnquiry_GetRepresentativeEmploymentHistory_OutputMessage">
+    <wsdl:part name="parameters" element="tns:GetRepresentativeEmploymentHistoryResponse" />
+  </wsdl:message>
+  <wsdl:message name="FSPEnquiry_RegisterRepresentatives_InputMessage">
+    <wsdl:part name="parameters" element="tns:RegisterRepresentatives" />
+  </wsdl:message>
+  <wsdl:message name="FSPEnquiry_RegisterRepresentatives_OutputMessage">
+    <wsdl:part name="parameters" element="tns:RegisterRepresentativesResponse" />
+  </wsdl:message>
+  <wsdl:message name="FSPEnquiry_GetAllFromSubscriptionList_InputMessage">
+    <wsdl:part name="parameters" element="tns:GetAllFromSubscriptionList" />
+  </wsdl:message>
+  <wsdl:message name="FSPEnquiry_GetAllFromSubscriptionList_OutputMessage">
+    <wsdl:part name="parameters" element="tns:GetAllFromSubscriptionListResponse" />
+  </wsdl:message>
+  <wsdl:message name="FSPEnquiry_GetLatestFromSubscriptionList_InputMessage">
+    <wsdl:part name="parameters" element="tns:GetLatestFromSubscriptionList" />
+  </wsdl:message>
+  <wsdl:message name="FSPEnquiry_GetLatestFromSubscriptionList_OutputMessage">
+    <wsdl:part name="parameters" element="tns:GetLatestFromSubscriptionListResponse" />
+  </wsdl:message>
+  <wsdl:message name="FSPEnquiry_SubmitSubscriptionList_InputMessage">
+    <wsdl:part name="parameters" element="tns:SubmitSubscriptionList" />
+  </wsdl:message>
+  <wsdl:message name="FSPEnquiry_SubmitSubscriptionList_OutputMessage">
+    <wsdl:part name="parameters" element="tns:SubmitSubscriptionListResponse" />
+  </wsdl:message>
+  <wsdl:message name="FSPEnquiry_GetPersonFpDetails_InputMessage">
+    <wsdl:part name="parameters" element="tns:GetPersonFpDetails" />
+  </wsdl:message>
+  <wsdl:message name="FSPEnquiry_GetPersonFpDetails_OutputMessage">
+    <wsdl:part name="parameters" element="tns:GetPersonFpDetailsResponse" />
+  </wsdl:message>
+  <wsdl:message name="FSPEnquiry_Ping_InputMessage">
+    <wsdl:part name="parameters" element="tns:Ping" />
+  </wsdl:message>
+  <wsdl:message name="FSPEnquiry_Ping_OutputMessage">
+    <wsdl:part name="parameters" element="tns:PingResponse" />
+  </wsdl:message>
+  <wsdl:portType name="FSPEnquiry">
+    <wsdl:operation name="GetFSPNumbers">
+      <wsdl:input wsaw:Action="http://www.astutefse.com/schemas/fsb-register/1.0/FSPEnquiry/GetFSPNumbers" message="tns:FSPEnquiry_GetFSPNumbers_InputMessage" />
+      <wsdl:output wsaw:Action="http://www.astutefse.com/schemas/fsb-register/1.0/FSPEnquiry/GetFSPNumbersResponse" message="tns:FSPEnquiry_GetFSPNumbers_OutputMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="GetDebarredByRepresentative">
+      <wsdl:input wsaw:Action="http://www.astutefse.com/schemas/fsb-register/1.0/FSPEnquiry/GetDebarredByRepresentative" message="tns:FSPEnquiry_GetDebarredByRepresentative_InputMessage" />
+      <wsdl:output wsaw:Action="http://www.astutefse.com/schemas/fsb-register/1.0/FSPEnquiry/GetDebarredByRepresentativeResponse" message="tns:FSPEnquiry_GetDebarredByRepresentative_OutputMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="GetRepresentativeReference">
+      <wsdl:input wsaw:Action="http://www.astutefse.com/schemas/fsb-register/1.0/FSPEnquiry/GetRepresentativeReference" message="tns:FSPEnquiry_GetRepresentativeReference_InputMessage" />
+      <wsdl:output wsaw:Action="http://www.astutefse.com/schemas/fsb-register/1.0/FSPEnquiry/GetRepresentativeReferenceResponse" message="tns:FSPEnquiry_GetRepresentativeReference_OutputMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="GetRepresentativeCategory">
+      <wsdl:input wsaw:Action="http://www.astutefse.com/schemas/fsb-register/1.0/FSPEnquiry/GetRepresentativeCategory" message="tns:FSPEnquiry_GetRepresentativeCategory_InputMessage" />
+      <wsdl:output wsaw:Action="http://www.astutefse.com/schemas/fsb-register/1.0/FSPEnquiry/GetRepresentativeCategoryResponse" message="tns:FSPEnquiry_GetRepresentativeCategory_OutputMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="GetRepresentativeEmploymentHistory">
+      <wsdl:input wsaw:Action="http://www.astutefse.com/schemas/fsb-register/1.0/FSPEnquiry/GetRepresentativeEmploymentHistory" message="tns:FSPEnquiry_GetRepresentativeEmploymentHistory_InputMessage" />
+      <wsdl:output wsaw:Action="http://www.astutefse.com/schemas/fsb-register/1.0/FSPEnquiry/GetRepresentativeEmploymentHistoryResponse" message="tns:FSPEnquiry_GetRepresentativeEmploymentHistory_OutputMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="RegisterRepresentatives">
+      <wsdl:input wsaw:Action="http://www.astutefse.com/schemas/fsb-register/1.0/FSPEnquiry/RegisterRepresentatives" message="tns:FSPEnquiry_RegisterRepresentatives_InputMessage" />
+      <wsdl:output wsaw:Action="http://www.astutefse.com/schemas/fsb-register/1.0/FSPEnquiry/RegisterRepresentativesResponse" message="tns:FSPEnquiry_RegisterRepresentatives_OutputMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="GetAllFromSubscriptionList">
+      <wsdl:input wsaw:Action="http://www.astutefse.com/schemas/fsb-register/1.0/FSPEnquiry/GetAllFromSubscriptionList" message="tns:FSPEnquiry_GetAllFromSubscriptionList_InputMessage" />
+      <wsdl:output wsaw:Action="http://www.astutefse.com/schemas/fsb-register/1.0/FSPEnquiry/GetAllFromSubscriptionListResponse" message="tns:FSPEnquiry_GetAllFromSubscriptionList_OutputMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="GetLatestFromSubscriptionList">
+      <wsdl:input wsaw:Action="http://www.astutefse.com/schemas/fsb-register/1.0/FSPEnquiry/GetLatestFromSubscriptionList" message="tns:FSPEnquiry_GetLatestFromSubscriptionList_InputMessage" />
+      <wsdl:output wsaw:Action="http://www.astutefse.com/schemas/fsb-register/1.0/FSPEnquiry/GetLatestFromSubscriptionListResponse" message="tns:FSPEnquiry_GetLatestFromSubscriptionList_OutputMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="SubmitSubscriptionList">
+      <wsdl:input wsaw:Action="http://www.astutefse.com/schemas/fsb-register/1.0/FSPEnquiry/SubmitSubscriptionList" message="tns:FSPEnquiry_SubmitSubscriptionList_InputMessage" />
+      <wsdl:output wsaw:Action="http://www.astutefse.com/schemas/fsb-register/1.0/FSPEnquiry/SubmitSubscriptionListResponse" message="tns:FSPEnquiry_SubmitSubscriptionList_OutputMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="GetPersonFpDetails">
+      <wsdl:input wsaw:Action="http://www.astutefse.com/schemas/fsb-register/1.0/FSPEnquiry/GetPersonFpDetails" message="tns:FSPEnquiry_GetPersonFpDetails_InputMessage" />
+      <wsdl:output wsaw:Action="http://www.astutefse.com/schemas/fsb-register/1.0/FSPEnquiry/GetPersonFpDetailsResponse" message="tns:FSPEnquiry_GetPersonFpDetails_OutputMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="Ping">
+      <wsdl:input wsaw:Action="http://www.astutefse.com/schemas/fsb-register/1.0/FSPEnquiry/Ping" message="tns:FSPEnquiry_Ping_InputMessage" />
+      <wsdl:output wsaw:Action="http://www.astutefse.com/schemas/fsb-register/1.0/FSPEnquiry/PingResponse" message="tns:FSPEnquiry_Ping_OutputMessage" />
+    </wsdl:operation>
+  </wsdl:portType>
+  <wsdl:binding name="WSHttpBinding_FSPEnquiry" type="tns:FSPEnquiry">
+    <wsp:PolicyReference URI="#WSHttpBinding_FSPEnquiry_policy">
+    </wsp:PolicyReference>
+    <soap12:binding transport="http://schemas.xmlsoap.org/soap/http" />
+    <wsdl:operation name="GetFSPNumbers">
+      <soap12:operation soapAction="http://www.astutefse.com/schemas/fsb-register/1.0/FSPEnquiry/GetFSPNumbers" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetDebarredByRepresentative">
+      <soap12:operation soapAction="http://www.astutefse.com/schemas/fsb-register/1.0/FSPEnquiry/GetDebarredByRepresentative" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetRepresentativeReference">
+      <soap12:operation soapAction="http://www.astutefse.com/schemas/fsb-register/1.0/FSPEnquiry/GetRepresentativeReference" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetRepresentativeCategory">
+      <soap12:operation soapAction="http://www.astutefse.com/schemas/fsb-register/1.0/FSPEnquiry/GetRepresentativeCategory" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetRepresentativeEmploymentHistory">
+      <soap12:operation soapAction="http://www.astutefse.com/schemas/fsb-register/1.0/FSPEnquiry/GetRepresentativeEmploymentHistory" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="RegisterRepresentatives">
+      <soap12:operation soapAction="http://www.astutefse.com/schemas/fsb-register/1.0/FSPEnquiry/RegisterRepresentatives" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetAllFromSubscriptionList">
+      <soap12:operation soapAction="http://www.astutefse.com/schemas/fsb-register/1.0/FSPEnquiry/GetAllFromSubscriptionList" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetLatestFromSubscriptionList">
+      <soap12:operation soapAction="http://www.astutefse.com/schemas/fsb-register/1.0/FSPEnquiry/GetLatestFromSubscriptionList" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="SubmitSubscriptionList">
+      <soap12:operation soapAction="http://www.astutefse.com/schemas/fsb-register/1.0/FSPEnquiry/SubmitSubscriptionList" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetPersonFpDetails">
+      <soap12:operation soapAction="http://www.astutefse.com/schemas/fsb-register/1.0/FSPEnquiry/GetPersonFpDetails" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="Ping">
+      <soap12:operation soapAction="http://www.astutefse.com/schemas/fsb-register/1.0/FSPEnquiry/Ping" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+  </wsdl:binding>
+  <wsdl:service name="FspEnquiryServiceV2">
+    <wsdl:port name="WSHttpBinding_FSPEnquiry" binding="tns:WSHttpBinding_FSPEnquiry">
+      <soap12:address location="https://test.astutefse.com/online/fspe_fspenquiryservicev2" />
+      <wsa10:EndpointReference>
+        <wsa10:Address>https://test.astutefse.com/online/fspe_fspenquiryservicev2</wsa10:Address>
+      </wsa10:EndpointReference>
+    </wsdl:port>
+  </wsdl:service>
+</wsdl:definitions>

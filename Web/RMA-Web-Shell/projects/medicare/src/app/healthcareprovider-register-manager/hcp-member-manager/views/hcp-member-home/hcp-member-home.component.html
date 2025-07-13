@@ -1,0 +1,42 @@
+<div>
+    Welcome to the Healthcare Provider <b>Profile</b>
+</div>
+
+<mat-card *ngIf="(isLoading$ | async)">
+    <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+    <label class="mat-label other-label"><i>loading...please wait</i></label>
+</mat-card>
+
+<div>
+    <div>
+        <lib-healthcareprovider-search (healthCareProviderSelectedEmit)="setHealthCareProviderId($event)"
+            (registerNewHealthCareProviderEmit)="createHCPWorkflowWizard($event)"></lib-healthcareprovider-search>
+    </div>
+
+    <mat-card *ngIf="selectedRolePlayer?.healthCareProvider?.rolePlayerId > 0">
+        <mat-tab-group animationDuration="500ms">
+            <mat-tab label="HealthCareProvider Details">
+                <mat-tab-group animationDuration="500ms">
+                    <mat-tab label="Practice Details">
+                        <app-capture-new-healthcare-provider-component [rolePlayer]="selectedRolePlayer"
+                            *ngIf="isReadOnly == false" [showActionBtn]="false"
+                            (actionPerformedOnHealthCareProviderEmit)="closeHCPForm($event)" [title]=""
+                            [isReadOnly]="isReadOnly"></app-capture-new-healthcare-provider-component>
+
+                        <lib-running-wizards [moduleName]="'medicare'" [managerName]="'hcp-member-manager'"
+                            *ngIf="isReadOnly == true" [linkedItemId]="selectedRolePlayer.rolePlayerId"
+                            [wizardTypeCSVs]="wizardTypeCSVs" [triggerRefresh]="refresh"
+                            (hasWizardsEmit)="setRunningWizards($event)" (activeWizardsEmit)="setActiveWizards($event)">
+                        </lib-running-wizards>
+
+                    </mat-tab>
+                    <mat-tab label="Communication">
+                        <email-audit-search [itemType]="'RolePlayer'" [itemId]="selectedRolePlayer.rolePlayerId"
+                            [rolePlayerContactOptions]="rolePlayerContactOptions"></email-audit-search>
+                    </mat-tab>
+                </mat-tab-group>
+            </mat-tab>
+        </mat-tab-group>
+    </mat-card>
+
+</div>

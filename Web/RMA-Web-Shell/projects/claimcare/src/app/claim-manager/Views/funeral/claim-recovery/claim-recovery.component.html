@@ -1,0 +1,193 @@
+<h1 class="page-header">Payment Details</h1>
+<mat-card style="margin: 15px 30px 15px 30px">
+  <div *ngIf="isLoading">
+    <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+    <span *ngIf="isLoading" class="site-font grey" style="margin-top: 15px;"><i>Processing, please wait...</i></span>
+  </div>
+<mat-horizontal-stepper>
+  <mat-step [stepControl]="beneficiaryDetailsFormGroup">
+    <form [formGroup]="beneficiaryDetailsFormGroup" (ngSubmit)="save()" class="mat-container" novalidate style="width:100%; padding-bottom:20px;">
+    <ng-template matStepLabel>Beneficiary Details</ng-template>
+    <div class="container" style="padding:0px">
+      <div class="card-left">
+        <mat-form-field>
+          <label class="mat-label other-label">Policy Number</label>
+          <input matInput id="txtPolicyNumber" name="txtPolicyNumber" formControlName="txtPolicyNumber" disabled readonly >
+        </mat-form-field>
+        <mat-form-field>
+          <label class="mat-label other-label">First Name</label>
+          <input matInput id="txtFirstName" name="txtFirstName" formControlName="txtFirstName" disabled readonly>
+        </mat-form-field>
+        <mat-form-field>
+          <label class="mat-label other-label">Identity Number</label>
+          <input matInput id="txtIdentityNumber" name="txtIdentityNumber" formControlName="txtIdentityNumber" disabled readonly>
+        </mat-form-field>
+        <mat-form-field>
+         <label class="mat-label other-label">Date of Birth</label>
+          <input matInput id="txtDateOfBirth" name="txtDateOfBirth" formControlName="txtDateOfBirth" disabled readonly>
+        </mat-form-field>
+        <mat-form-field>
+        <label class="mat-label other-label">Contact Number</label>
+        <input matInput id="txtContactNumber" name="txtContactNumber" formControlName="txtContactNumber" disabled readonly>
+        </mat-form-field>
+      </div>
+       <div class="card-right">
+
+        <mat-form-field>
+            <label class="mat-label other-label">Claim Number</label>
+            <input matInput id="txtClaimNumber" name="txtClaimNumber" formControlName="txtClaimNumber" disabled readonly>
+        </mat-form-field>
+        <mat-form-field >
+          <label class="mat-label other-label">Last Name</label>
+          <input matInput id="txtLastName" name="txtLastName" formControlName="txtLastName"  disabled readonly>
+        </mat-form-field>
+         <mat-form-field >
+          <label class="mat-label other-label">Passport Number (if foreigner)</label>
+          <input matInput id="txtPassportNumber" name="txtPassportNumber" formControlName="txtPassportNumber"  disabled readonly>
+        </mat-form-field>
+        <mat-form-field>
+          <label class="mat-label other-label">Relation to deceased</label>
+          <input matInput id="txtRelationToDeceased" name="txtRelationToDeceased" formControlName="txtRelationToDeceased"  disabled readonly>
+        </mat-form-field>
+        <mat-form-field>
+          <label class="mat-label other-label">Email</label>
+          <input matInput id="txtEmail" name="txtEmail" formControlName="txtEmail"  disabled readonly>
+        </mat-form-field>
+      </div>
+    </div>
+    <div style="padding-left:30px;">
+      <button matStepperPrevious class="button submit-button ng-star-inserted" (click)="back()">Back</button>
+      <button matStepperNext class="button submit-button ng-star-inserted">Next</button>
+    </div>
+  </form>
+  </mat-step>
+  <mat-step [stepControl]="bankingDetailsFormGroup">
+    <form [formGroup]="bankingDetailsFormGroup" (ngSubmit)="save()" class="mat-container" novalidate style="width:100%; padding-bottom:20px;">
+    <ng-template matStepLabel>Banking Details</ng-template>
+    <div class="container" style="padding:0px">
+      <div class="card-left">
+        <mat-form-field>
+          <label class="mat-label other-label">Name of account holder</label>
+          <input matInput id="txtNameOfAccountHolder" name="txtNameOfAccountHolder" formControlName="txtNameOfAccountHolder" disabled readonly>
+        </mat-form-field>
+        <mat-form-field>
+          <label class="mat-label other-label">Name of bank</label>
+          <input matInput id="txtNameOfBank" name="txtNameOfBank" formControlName="txtNameOfBank" disabled readonly>
+        </mat-form-field>
+        <mat-form-field>
+          <label class="mat-label other-label">Account Number</label>
+          <input matInput id="txtAccountNumber" name="txtAccountNumber" formControlName="txtAccountNumber" disabled readonly>
+        </mat-form-field>
+      </div>
+      <div class="card-right">
+        <mat-form-field>
+          <label class="mat-label other-label">Account Type</label>
+          <input matInput id="txtAccountType" name="txtAccountType" formControlName="txtAccountType" disabled readonly>
+        </mat-form-field>
+        <mat-form-field>
+          <label class="mat-label other-label">Branch Code</label>
+          <input matInput id="txtBranchCode" name="txtBranchCode" formControlName="txtBranchCode" disabled readonly>
+        </mat-form-field>
+
+      </div>
+    </div>
+    <div style="padding-left:30px;">
+      <button matStepperPrevious class="button submit-button ng-star-inserted">Back</button>
+      <button matStepperNext class="button submit-button ng-star-inserted">Next</button>
+    </div>
+  </form>
+  </mat-step>
+   <mat-step [stepControl]="paymentDetailsFormGroup">
+    <form [formGroup]="paymentDetailsFormGroup" (ngSubmit)="save()" class="mat-container" novalidate style="width:100%; padding-bottom:20px;">
+    <ng-template matStepLabel>Payment Details</ng-template>
+    <div class="container" style="padding:0px">
+      <div class="card-left">
+        <mat-form-field>
+          <label class="mat-label other-label">Benefit Cover Amount</label>
+          <input matInput id="txtBenefitCoverAmount" name="txtBenefitCoverAmount" formControlName="txtBenefitCoverAmount" [attr.disabled]="disableBeneficiaryCoverAmount || null">
+        </mat-form-field>
+        <mat-form-field>
+          <label class="mat-label other-label">Refund</label>
+          <input matInput id="txtRefund" name="txtRefund" formControlName="txtRefund" [attr.disabled]="disableAmounts || null">
+        </mat-form-field>
+        <mat-form-field>
+          <label class="mat-label other-label">Unclaimed Interest Amount</label>
+          <input matInput id="txtUnclaimedAmount"  NumberOnly="true" name="txtUnclaimedAmount" formControlName="txtUnclaimedAmount"  (focusout)="onInterestChange($event)" [attr.disabled]="disableUnclaimedInterestAmount || null">
+        </mat-form-field>
+        <mat-form-field>
+          <label class="mat-label other-label">Total Claim Amount</label>
+          <input matInput id="txtTotalClaim" name="txtTotalClaim" formControlName="txtTotalClaim" [attr.disabled]="disableAmounts || null">
+          <label class="mat-label other-label" style="color: rgb(190, 17, 17);" *ngIf="claimPaymentDetail && isMessageText">{{claimPaymentDetail.messageText}}</label>
+        </mat-form-field>
+      </div>
+      <div class="card-right">
+        <mat-form-field>
+          <label class="mat-label other-label">Allocation %</label>
+          <input matInput id="txtAllocationPercentage" name="txtAllocationPercentage" formControlName="txtAllocationPercentage" disabled readonly  [attr.disabled]="true">
+        </mat-form-field>
+        <mat-form-field>
+          <label class="mat-label other-label">Outstanding Premiums</label>
+         <input matInput id="txtOutstandingPremiums" name="txtOutstandingPremiums" formControlName="txtOutstandingPremiums" [attr.disabled]="disableAmounts || null">
+          <input type="hidden" id="hdnBeneficiaryId" name="hdnBeneficiaryId" formControlName="hdnBeneficiaryId">
+          <input type="hidden" id="hdnClaimPaymentId" name="hdnClaimPaymentId" formControlName="hdnClaimPaymentId">
+          <input type="hidden" id="hdnPolicyId" name="hdnPolicyId" formControlName="hdnPolicyId">
+          <input type="hidden" id="hdnProductId" name="hdnProductId" formControlName="hdnProductId">
+      </mat-form-field>
+      <mat-form-field>
+        <label class="mat-label other-label">Tracing Fee</label>
+        <input matInput id="txtTracingFee"  NumberOnly="true" name="txtTracingFee"  formControlName="txtTracingFee"  (focusout)="onTraceFeeChanged($event)" [attr.disabled]="disableTracingFee || null">
+    </mat-form-field>
+      </div>
+    </div>
+    <div style="padding-left:30px;">
+      <button matStepperPrevious class="button submit-button ng-star-inserted">Back</button>
+      <button matStepperNext class="button submit-button ng-star-inserted">Next</button>
+    </div>
+  </form>
+  </mat-step>
+  <mat-step [stepControl]="decisionFormGroup">
+    <form [formGroup]="decisionFormGroup" (ngSubmit)="save()" class="mat-container" novalidate style="width:100%;padding-bottom:20px;">
+    <ng-template matStepLabel>Payment Details</ng-template>
+    <div class="container" style="padding:0px">
+      <div class="card-left">
+       <mat-form-field>
+        <label class="mat-label other-label">Reason</label>
+            <mat-select id="reason" 
+                        [disabled]="disableReason" 
+                        name="reason" 
+                        matInput formControlName="reason" 
+                        formControlName="reason" 
+                        [style.display]="showDecisionReason ? 'block' : 'none'">
+                      <mat-option *ngFor="let reason of reasons;" [value]="reason.id">
+                          {{reason.reason}}
+                      </mat-option>
+            </mat-select>
+        </mat-form-field>
+
+        <mat-form-field>
+            <label class="mat-form-field-right">Note</label>
+            <textarea matTextareaAutosize matAutosizeMinRows="4" matAutosizeMaxRows="5" maxlength="400" matInput
+            minlength="3" id="code" name="noteText" formControlName="noteText" [attr.disabled]="disableNoteText?'':null"></textarea>
+            <mat-error *ngIf="decisionFormGroup.get('noteText').hasError('required')">
+            Note is <strong>required</strong> if claim decision is Re-Assess
+            </mat-error>
+            <mat-error *ngIf="decisionFormGroup.get('noteText').hasError('minlength')">
+            Note must be at least <strong>three characters</strong>
+            </mat-error>
+        </mat-form-field>
+      </div>
+      <div class="card-right">
+        
+      
+    </div>
+  </div>
+    <div style="padding-left:30px;">
+      <button matStepperPrevious class="button submit-button ng-star-inserted">Back</button>
+      <button class="button submit-button ng-star-inserted" (click)="addClaimPayment()" >Save</button>
+      <button class="button submit-button ng-star-inserted" (click)="emailBeneficiary()" >Email Beneficiary</button>
+      <button class="button submit-button ng-star-inserted" (click)="smsBeneficiary()" >SMS Beneficiary</button>
+    </div>
+  </form>
+  </mat-step>
+</mat-horizontal-stepper>
+</mat-card>

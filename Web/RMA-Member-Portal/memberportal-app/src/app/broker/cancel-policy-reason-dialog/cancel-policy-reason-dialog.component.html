@@ -1,0 +1,38 @@
+<h2 mat-dialog-title>Cancel Reason</h2>
+<div mat-dialog-content>
+  <div *ngIf="loadingReasons">
+    <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+  </div>
+  <form [formGroup]="form" class="mat-container details-form" novalidate>
+    <section>
+      <mat-form-field>
+        <label class="mat-label other-label  mandatory-field">Reason</label>
+        <mat-select name="reason" formControlName="reason" (selectionChange) ="setSelectedReason($event)">
+          <mat-option *ngFor="let item of reasons" [value]="item.id">{{item.name}}</mat-option>
+        </mat-select>
+        <mat-error *ngIf="form.get('reason').hasError('required')">
+          Reason is required
+        </mat-error>
+      </mat-form-field>
+    </section>
+    <section>
+      <div class="field-container">
+        <div><label class="mat-label other-label mandatory-field">Effective Date</label></div>
+        <mat-form-field class="mat-form-field">
+          <input matInput formControlName="effectiveDate" [matDatepicker]="effectiveDate" required
+            name="effectiveDate" readonly [matDatepickerFilter]="isLastDay">
+          <mat-datepicker-toggle matSuffix [for]="effectiveDate"></mat-datepicker-toggle>
+          <mat-datepicker touchUi="true" #effectiveDate  ></mat-datepicker>
+          <mat-error *ngIf="form.get('effectiveDate').hasError('required')">
+            Effective date is required
+          </mat-error>
+        </mat-form-field>
+      </div>      
+    </section>  
+  </form>
+ 
+</div>
+<div mat-dialog-actions>
+  <button mat-button (click)="closeDialog()">Close</button>
+  <button *ngIf="canAddEdit" mat-button cdkFocusInitial (click)="saveRemovalReason()">Save</button>
+</div>

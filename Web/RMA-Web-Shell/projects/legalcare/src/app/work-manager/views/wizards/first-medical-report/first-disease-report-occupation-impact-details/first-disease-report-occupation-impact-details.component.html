@@ -1,0 +1,49 @@
+<mat-card>
+  <mat-card-content>
+    <form [formGroup]="form" *ngIf="this.form">
+      <ng-container>
+        <mat-label class="other-label mandatory-field">Have colleagues performing a similar job complained of similar
+          symptoms?</mat-label>&nbsp;&nbsp;
+        <mat-radio-group formControlName="radioOthersAffected" id="radioOthersAffected">
+          <mat-radio-button value="Yes">Yes</mat-radio-button>&nbsp;
+          <mat-radio-button value="No">No</mat-radio-button>
+        </mat-radio-group>
+      </ng-container>
+      <br />
+      <br />
+      <ng-container>
+        <mat-label class="other-label mandatory-field">Explain how this condition was managed before the specific diagnosis, in terms of the Person
+          <br /><br /> a) Medically &nbsp;&nbsp; b) Functionally:</mat-label><br />
+        <mat-form-field appearance="standard">
+          <textarea matInput cdkTextareaAutosize cdkAutosizeMinRows="3" cdkAutosizeMaxRows="5" id="ctlPriorCareManagement"
+            formControlName="ctlPriorCareManagement" maxlength="1000"></textarea>
+        </mat-form-field>
+      </ng-container>
+      <br />
+      <br />
+      <ng-container>
+        <mat-label class="other-label mandatory-field">Explain how this condition was managed before the specific diagnosis, in terms of the Job
+          <br /><br /> a) Task application and &nbsp;&nbsp; b) Equipment adaptation:</mat-label><br />
+        <mat-form-field appearance="standard">
+          <textarea matInput cdkTextareaAutosize cdkAutosizeMinRows="3" cdkAutosizeMaxRows="5" id="ctlPriorWorkManagement"
+            formControlName="ctlPriorWorkManagement" maxlength="1000"></textarea>
+        </mat-form-field>
+      </ng-container>
+      <br />
+      <br />
+      <mat-label class="other-label mandatory-field">Is the patient currently fit for work?</mat-label>&nbsp;&nbsp;
+      <mat-radio-group formControlName="radioWorkOption" id="radioWorkOption">
+        <mat-radio-button *ngFor="let workOption of (workOptions$ | async)" [value]="workOption.name">
+          {{workOption.name}} &nbsp;&nbsp;
+        </mat-radio-button>
+      </mat-radio-group>
+      <br />
+      <br />
+      <mat-label class="other-label mandatory-field">Is alternate / adapted work?</mat-label>&nbsp;&nbsp;
+      <mat-radio-group formControlName="radioIsAdaptedWorkArrangementTemporary" id="radioIsAdaptedWorkArrangementTemporary">
+        <mat-radio-button value="Temporary">Temporary</mat-radio-button>&nbsp;
+        <mat-radio-button value="Permanent">Permanent</mat-radio-button>
+      </mat-radio-group>
+    </form>
+  </mat-card-content>
+</mat-card>

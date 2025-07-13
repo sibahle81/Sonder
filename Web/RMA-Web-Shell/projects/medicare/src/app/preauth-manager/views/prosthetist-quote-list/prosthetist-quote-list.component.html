@@ -1,0 +1,136 @@
+<app-medicare-search-menus></app-medicare-search-menus>
+<div class="container-tables">
+    <div *ngIf="!isCaptureMode">
+        <a mat-flat-button (click)="refreshList()">
+            <mat-icon>refresh</mat-icon>
+            Refresh List
+        </a>
+    </div>
+    <div class="items-heading heading-left">
+        <h1>Prosthetist Quotes List</h1>
+    </div>
+
+    <div *ngIf="navigating">
+        <mat-progress-bar mode="indeterminate"
+            [ngClass]="{ 'loading-main-double-menu-progress': doubleMenu, 'loading-main-single-menu-progress': !doubleMenu }">
+        </mat-progress-bar>
+        <p class="site-font grey">Loading.....</p>
+    </div>
+
+    <mat-card>
+
+        <div *ngIf="dataSource.loading$ | async">
+            <mat-progress-bar mode="indeterminate"
+                [ngClass]="{ 'loading-main-double-menu-progress': doubleMenu, 'loading-main-single-menu-progress': !doubleMenu }">
+            </mat-progress-bar>
+            <p class="site-font grey">Loading.....</p>
+        </div>
+
+        <div class="items-list-table">
+            <mat-table [dataSource]="dataSource" matSort class="mat-elevation-z8">
+                <!-- Radio Select Column -->
+                <ng-container matColumnDef="select">
+                    <mat-header-cell *matHeaderCellDef>Select</mat-header-cell>
+                    <mat-cell *matCellDef="let row">
+                        <mat-radio-button color="primary" (click)="$event.stopPropagation()" (change)="selectItem(row)"
+                            [checked]="selection.isSelected(row)" [aria-label]="radioLabel(row)"></mat-radio-button>
+                    </mat-cell>
+                    <mat-footer-cell *matFooterCellDef> </mat-footer-cell>
+                </ng-container>
+                <!--  preauthNumber  Column -->
+                <ng-container matColumnDef="preauthNumber">
+                    <mat-header-cell *matHeaderCellDef mat-sort-header> Preauth Number </mat-header-cell>
+                    <mat-cell *matCellDef="let element" matTooltip="{{element.preauthNumber}}">
+                        {{element.preauthNumber}} </mat-cell>
+                </ng-container>
+                <!-- healthCareProviderName Column -->
+                <ng-container matColumnDef="healthCareProviderName">
+                    <mat-header-cell *matHeaderCellDef mat-sort-header> Service Provider Name </mat-header-cell>
+                    <mat-cell *matCellDef="let element" matTooltip="{{element.healthCareProviderName}}">
+                        {{element.healthCareProviderName}}
+                    </mat-cell>
+                </ng-container>
+                <!-- quotationAmount Column -->
+                <ng-container matColumnDef="quotationAmount">
+                    <mat-header-cell *matHeaderCellDef mat-sort-header> Quotation Amount </mat-header-cell>
+                    <mat-cell *matCellDef="let element"
+                        matTooltip="{{element.quotationAmount| currency:'R':'symbol':'1.0-2'}}">
+                        {{element.quotationAmount | currency:'R':'symbol':'1.0-2'}} </mat-cell>
+                </ng-container>
+                <!-- prostheticType-->
+                <ng-container matColumnDef="prostheticType">
+                    <mat-header-cell *matHeaderCellDef mat-sort-header> Prosthetic Type </mat-header-cell>
+                    <mat-cell *matCellDef="let element" matTooltip="{{element.prostheticType}}">
+                        {{prostheticTypeEnum[element.prostheticType]}} </mat-cell>
+                </ng-container>
+                <!-- reviewedDateTime Column -->
+                <ng-container matColumnDef="reviewedDateTime">
+                    <mat-header-cell *matHeaderCellDef mat-sort-header> Reviewed Date </mat-header-cell>
+                    <mat-cell *matCellDef="let element" matTooltip="{{element.reviewedDateTime | date:'yyyy-MM-dd'}}">
+                        {{element.reviewedDateTime | date:'yyyy-MM-dd'}} </mat-cell>
+                </ng-container>
+                <!-- signedBy Column -->
+                <ng-container matColumnDef="signedBy">
+                    <mat-header-cell *matHeaderCellDef mat-sort-header> Signed By </mat-header-cell>
+                    <mat-cell *matCellDef="let element" matTooltip="{{element.signedBy}}">
+                        {{element.signedBy}} </mat-cell>
+                </ng-container>
+                <!-- isApproved Column -->
+                <ng-container matColumnDef="isApproved">
+                    <mat-header-cell *matHeaderCellDef mat-sort-header> Is Approved </mat-header-cell>
+                    <mat-cell *matCellDef="let element" matTooltip="{{element.isApproved}}">
+                        {{(element.isApproved == true)? "Yes":"No"}} </mat-cell>
+                </ng-container>
+                <!-- isSentForReview Column -->
+                <ng-container matColumnDef="isSentForReview">
+                    <mat-header-cell *matHeaderCellDef mat-sort-header> Is Sent For Review </mat-header-cell>
+                    <mat-cell *matCellDef="let element" matTooltip="{{element.isSentForReview }}">
+                        {{(element.isSentForReview == true)? "Yes":"No" }} </mat-cell>
+                    <mat-footer-cell *matFooterCellDef> </mat-footer-cell>
+                </ng-container>
+                <!-- isRejected Column -->
+                <ng-container matColumnDef="isRejected">
+                    <mat-header-cell *matHeaderCellDef mat-sort-header> Is Rejected </mat-header-cell>
+                    <mat-cell *matCellDef="let element" matTooltip="{{element.isRejected }}">
+                        {{(element.isRejected == true)? "Yes":"No" }} </mat-cell>
+                    <mat-footer-cell *matFooterCellDef> </mat-footer-cell>
+                </ng-container>
+                <!-- isRequestInfo Column -->
+                <ng-container matColumnDef="isRequestInfo">
+                    <mat-header-cell *matHeaderCellDef mat-sort-header> Is RequestInfo </mat-header-cell>
+                    <mat-cell *matCellDef="let element" matTooltip="{{element.isRequestInfo}}">
+                        {{(element.isRequestInfo == true)? "Yes":"No"}} </mat-cell>
+                    <mat-footer-cell *matFooterCellDef> </mat-footer-cell>
+                </ng-container>
+                <!-- quotationStatus Column -->
+                <ng-container matColumnDef="quotationStatus">
+                    <mat-header-cell *matHeaderCellDef mat-sort-header> Quotation Status </mat-header-cell>
+                    <mat-cell *matCellDef="let element" [style.background]="element.ProsthetistQuoteStatus"
+                        matTooltip="{{prostheticQuoteStatusEnum[element.prostheticQuoteStatus]}}">
+                        {{prostheticQuoteStatusEnum[element.prostheticQuoteStatus]}} </mat-cell>
+                </ng-container>
+                <!-- Actions Column -->
+                <ng-container matColumnDef="actions">
+                    <mat-header-cell *matHeaderCellDef> Actions </mat-header-cell>
+                    <mat-cell *matCellDef="let element" [matMenuTriggerFor]="menu" (click)="filterMenu(element)">
+                        <span class="material-icons pointer">more_vert</span>
+                        <mat-menu #menu="matMenu">
+                            <button disabled="{{menu.disable}}" mat-menu-item *ngFor="let menu of menus"
+                                (click)="onMenuItemClick(element, menu)">{{menu.title}}</button>
+                        </mat-menu>
+                    </mat-cell>
+                </ng-container>
+
+                <mat-header-row *matHeaderRowDef="getDisplayedColumns()">
+                </mat-header-row>
+                <mat-row *matRowDef="let row; columns: getDisplayedColumns()"></mat-row>
+            </mat-table>
+            
+               <mat-paginator #paginator [length]="paginator.length" [pageIndex]="0" [pageSize]="1"
+                [pageSizeOptions]="[1,2,5, 10, 25, 100]" [hidePageSize]="isCaptureMode" [disabled]="isCaptureMode">
+               </mat-paginator>
+        </div>
+
+    </mat-card>
+
+</div>

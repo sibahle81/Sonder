@@ -1,0 +1,187 @@
+<section class="create-campaign">
+
+    <div *ngIf="!isLoading" [ngClass]="isSpinner ? 'on-disabled' : 'on-enabled' ">
+        <div class="padding-width">
+            <div class="padding-display-flex">
+                <div class="recovery-btn  width-padding">
+                    <button mat-button class="top-nav-detail-tab"> <span>{{campDetails?.action == 'edit' ? 'Edit' :
+                            'Create'}}</span> Campaign</button>
+                </div>
+            </div>
+        </div>
+
+        <form [formGroup]="createCampaignForm">
+            <div class="marketing-form-field  padding-diasply">
+                <div class="width-padding-left">
+                    <div class="width-margin">
+                        <p class="form-lable-text  font-family">Campaign Name</p>
+                        <mat-form-field class="status-update-mff" appearance="outline">
+                            <input matInput placeholder="" [readonly]="!canEdit" name="campaignName"
+                                formControlName="campaignName" class="border-none-imp">
+                            <mat-error class="color-red"
+                                *ngIf="createCampaignForm.get('campaignName')?.touched && createCampaignForm.get('campaignName')?.invalid">
+                                Please add campaign name</mat-error>
+                            <mat-error class="color-red"
+                                *ngIf="isNameLengthExceed">
+                                campaign name cannot be more than 250 Characters</mat-error>    
+                        </mat-form-field>
+                    </div>
+                </div>
+
+                <div class="width-padding-right">
+                    <div class="width-margin">
+                        <p class="form-lable-text  font-family">Campaign Type</p>
+                        <mat-form-field appearance="outline" class="status-update-mff">
+                            <input #selectUser type="text" matInput [formControl]="myControl" [matAutocomplete]="auto"
+                                (ngModelChange)="searchValue($event)" class="search-input">
+                            <mat-autocomplete #auto="matAutocomplete">
+                                <mat-option *ngFor="let option of filteredOptions" [value]="option.campaignName"
+                                    (click)="selectCampaignType(option.id,option.campaignName,false,1,0)">
+                                    <span>{{option.campaignName}}</span></mat-option>
+                            </mat-autocomplete>
+                        </mat-form-field>
+
+                    </div>
+                </div>
+            </div>
+        </form>
+
+
+        <div *ngIf="approverList?.length > 0 && !isApproverAvalable">
+            <div class="padding-width">
+                <div class="padding">
+                    <div class="recovery-btn padding width-80">
+                        <button mat-button class="top-nav-detail-tab">Approvers</button>
+                    </div>
+                    <div>
+                        <table>
+                            <tr>
+                                <th>Approver</th>
+                                <th>Role</th>
+                                <th>Approver Name</th>
+                                <th>Status</th>
+                            </tr>
+                            <ng-container *ngFor="let item of approverList; let i = index">
+                                <tr class="table-data-list">
+                                    <td> 
+                                        {{item.approverType == 'N' ? 'Approver' : 'Final Approver'}}
+                                        <span *ngIf="item.approverType == 'N'">{{i + 1}} </span>
+                                    </td>
+                                    <td> <span>{{item.roleName}}</span></td>
+                                    <td class="width-20 campaign-placeholder-value">
+                                        <div *ngIf="approverNameList[i]?.length > 0">
+                                            <mat-select class="border-none-imp" [placeholder]="((campDetails.action == 'edit' || campDetails.action == 'view') && typeChangedOnEdit == 'show_value') ? aaproverValues[i]?.userName 
+                                    : (campaignID != null) ? preSelectedApprovers[i]?.userName : typeChangedOnEdit == 'hide_value' ? 'Select' : 'Select' "
+                                    [ngStyle]="campDetails.action == 'view' ? { 'pointer-events': 'none' } : { 'pointer-events': 'auto' }">
+                                                <ng-container
+                                                    *ngFor="let option of approverNameList[i];let index = index">
+                                                    <mat-option [value]="option.roleId"                                 
+                                                        (click)="updateCampaignApprover(option,item,i)">
+                                                        {{option?.userName}}
+                                                    </mat-option>
+                                                </ng-container>
+                                            </mat-select>
+                                        </div>
+                                        <div *ngIf="approverNameList[i]?.length == 0">
+                                            <span class="NA-text">Not Available</span>
+                                        </div>
+                                    </td>
+                                    <td> <span>{{item.marketingApprovalStatusName}}</span></td>
+                                </tr>
+                            </ng-container>
+                        </table>
+                        <div class="select-approver-message">
+                            <span *ngIf="selectApproverMessage" class="color-red">Please Select Appover Before Creating Template</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div *ngIf="approverList?.length == 0 && isApproverAvalable" class="padding-20-34">
+            <div class="width-border-radius">
+                <h4 class="text-align">No data available</h4>
+            </div>
+        </div>
+        <div class="padding-width" *ngIf="campDetails?.action != 'view'">
+            <div class="padding-display-flex">
+                <div class="recovery-btn  padding  width-80">
+                    <button mat-button class="top-nav-detail-tab">Message Templates</button>
+                </div>
+                <div *ngIf="canEdit" class="create-template-div">
+                    <button [ngClass]="createCampaignForm.invalid || campaignTypeId == null ? 
+                    'on-disabled' : 'on-enabled'" 
+                    class="create-template" (click)="createTemplate()">
+                        <mat-icon>add</mat-icon>
+                        <span class="create-template-text">Create Template</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <div *ngIf="campDetails?.action != 'view'" class="create-campaign-form-field marketing-form-field  padding-div">
+            <div class="padding-bottom">
+                <div class="width98-margin">
+                    <div *ngIf="createdTemplateIds && createdTemplateIds?.length > 0" class="padding-border">
+                        <ng-container *ngFor="let item of createdTemplateIds; let i = index">
+                            <span *ngIf="canEdit" class="selected-items">{{item.name}}
+                                <mat-icon *ngIf="campDetails.action == 'edit' && !hideCreateTemplate" (click)="previewTemplate(item,'edit')" matTooltip="Edit">edit</mat-icon>
+                                <mat-icon (click)="removeTemplate(i)" matTooltip="Remove">close</mat-icon>
+                            </span>
+                            <span *ngIf="!canEdit && campDetails.action == 'view'" (click)="previewTemplate(item,'preview')" 
+                            class="selected-items preview-template-tab">{{item.name}}
+                            </span>
+                        </ng-container>
+                    </div>
+                </div>
+            </div>
+
+            <p *ngIf="createdTemplateIds && createdTemplateIds?.length == 0" class="padding-left">
+                No templates created to select
+            </p>
+        </div>
+
+        <div class="action-btn-div" [ngClass]="campDetails?.action == 'view' ? 'display-padding-1' : 'display-padding-2' ">
+            <div class="width-40">
+                <button class="back-btn" (click)="goBack()"> <mat-icon>arrow_back</mat-icon> <span
+                        class="back-btn-style"> Back</span></button>
+            </div>
+
+            <div *ngIf="canEdit && campDetails.action != 'view'" class="width-text-align">
+                    <span *ngIf="requiredTemplateMsg" class="color-red warning-template">At least one template required</span>    
+                <div>
+                <button class="save-btn" [ngStyle]="createCampaignForm.invalid ? 
+            { 'pointer-events': 'none','background': '#D4D4D5'} : 
+            { 'pointer-events': 'auto','background': 'linear-gradient(90deg, #008EB3 0%, #00BCE7 100%)'}"
+                    (click)="onSave(campDetails.action)">Save</button>
+                </div>    
+            </div>
+
+            <div *ngIf="enableApproverOption && campDetails.action == 'view'" class="flex-view  width-60">
+                <div class="btn-style">
+                    <button class="action-btns" (click)="onApproversAction('Reject','approve_reject_action','45vw')"
+                        [ngStyle]="{'background': '#DE7C6F','color': '#FFF'}">REJECT</button>
+                </div>
+
+                <div class="btn-style">
+                    <button class="action-btns" (click)="onApproversAction('Onhold','approve_reject_action','45vw')"
+                        [ngStyle]="{'background': '#D1E4F2', 'border': '1px solid #003343','color': '#000'}">ON
+                        HOLD</button>
+                </div>
+
+                <div class="btn-style">
+                    <button class="action-btns" (click)="onApproversAction('Approve','approve_reject_action','45vw')"
+                        [ngStyle]="{'background': '#003343','color': '#FFF'}">APPROVE</button>
+                </div>
+
+            </div>
+        </div>
+    </div>
+    <div [hidden]="!isLoading" [ngClass]="isLoading ? 'progress-bar-container' : '' " class="width-95">
+        <mat-progress-bar *ngIf="isLoading" mode="indeterminate"></mat-progress-bar>
+    </div>
+
+    <div [hidden]="!isSpinner" class="spinner-view">
+        <mat-spinner *ngIf="isSpinner"></mat-spinner>
+    </div>
+</section>

@@ -1,0 +1,187 @@
+<form [formGroup]="form" name="form" class="mat-container details-form" novalidate>
+
+    <div *ngIf="isLoadingCategories">
+        <mat-progress-bar mode="indeterminate" [ngClass]="{ 'loading-main-double-menu-progress': doubleMenu, 'loading-main-single-menu-progress': !doubleMenu }">
+        </mat-progress-bar>
+        <p class="site-font grey">Loading categories...</p>
+    </div>
+
+    <div class="field-container">
+        <mat-form-field>
+            <label class="mat-label other-label mandatory-field">Medical Report Category</label>
+            <div>
+                <mat-select formControlName="reportCategoryId" id="reportCategoryId" name="reportCategoryId">
+                    <mat-option *ngFor="let medicalReportCategory of medicalReportCategories" [value]="medicalReportCategory.id">
+                        {{ medicalReportCategory.name }}
+                    </mat-option>
+                </mat-select>
+            </div>
+        </mat-form-field>
+    </div>
+    <div *ngIf="showSearchProgress">
+        <mat-progress-bar mode="indeterminate" [ngClass]="{ 'loading-main-double-menu-progress': doubleMenu, 'loading-main-single-menu-progress': !doubleMenu }">
+        </mat-progress-bar>
+        <p class="site-font grey">Searching for claimant details, please wait till form details for claimant are populated before proceeding to the next step.</p>
+    </div>
+    <div class="field-container">
+        <div>
+            <mat-radio-group formControlName="medicalReportSystemSourceList" fxLayout="column" [formGroup]="form" [(ngModel)]="selectedItem" aria-labelledby="selectedreportformat-radio-group-label" class="selectedreporformat-radio-group">
+                <mat-radio-button *ngFor="let src of systemSourceList" [value]="src.id" name="medicalReportSystemSourceList">{{ src.name}} &nbsp;
+                </mat-radio-button>
+            </mat-radio-group>
+        </div>
+    </div>
+    <div><label class="mat-label other-label">&nbsp;</label></div>
+    <div class="field-container">
+        <mat-form-field class="mat-form-field">
+            <label class="mat-label other-label mandatory-field">Claim Number</label>
+            <input matInput id="claimNumber" name="claimNumber" formControlName="claimNumber" (change)="search()" />
+            <div class="claimNumberError" *ngIf="claimNumberErrorMessage">
+                {{claimNumberErrorMessage}}
+            </div>
+            <input matInput formControlName="personEventId" class="hidden" />
+            <input matInput formControlName="eventCategoryId" class="hidden" />
+            <input matInput formControlName="claimId" class="hidden" />
+            <mat-error *ngIf="form.get('claimNumber').hasError('required')">
+                Claim number is <strong>required</strong>
+            </mat-error>
+            <mat-error *ngIf="form.get('claimNumber').hasError('minlength')">
+                Claim number must be at least <strong>seven characters</strong>
+            </mat-error>
+        </mat-form-field>
+    </div>
+
+    <section>
+        <!--First Name-->
+        <div class="field-container">
+            <div><label class="mat-label other-label">First Name</label></div>
+            <mat-form-field>
+                <input matInput formControlName="firstName" id="firstName" name="firstName">
+            </mat-form-field>
+        </div>
+        <!--Last Name-->
+        <div class="field-container-right">
+            <div><label class="mat-label other-label">Last Name</label></div>
+            <mat-form-field>
+                <input matInput formControlName="lastName" id="lastName" name="lastName">
+            </mat-form-field>
+        </div>
+    </section>
+
+    <section>
+        <!--Date of Birth-->
+        <div class="field-container">
+            <div><label class="mat-label other-label">Date of Birth</label></div>
+            <mat-form-field>
+                <input matInput formControlName="dateOfBirth" [matDatepicker]="dateOfBirth" id="dateOfBirth" name="dateOfBirth">
+                <mat-datepicker-toggle matSuffix [for]="dateOfBirth" [disabled]="true"></mat-datepicker-toggle>
+                <mat-datepicker touchUi="true" #dateOfBirth></mat-datepicker>
+            </mat-form-field>
+        </div>
+
+        <!--File Ref Number-->
+        <div class="field-container-right">
+            <div><label class="mat-label other-label">File Ref Number</label></div>
+            <mat-form-field>
+                <input matInput formControlName="fileRefNumber" id="fileRefNumber" name="fileRefNumber">
+            </mat-form-field>
+
+        </div>
+    </section>
+    <section>
+        <!--Event Date-->
+        <div class="field-container">
+            <div><label class="mat-label other-label">Event Date</label></div>
+            <mat-form-field>
+                <input matInput formControlName="eventDate" [matDatepicker]="eventDate" id="eventDate" name="eventDate">
+                <mat-datepicker-toggle matSuffix [for]="eventDate" [disabled]="true"></mat-datepicker-toggle>
+                <mat-datepicker touchUi="true" #eventDate></mat-datepicker>
+            </mat-form-field>
+        </div>
+        <!--Employer Name-->
+        <div class="field-container-right">
+            <div><label class="mat-label other-label">Employer Name</label></div>
+            <mat-form-field>
+                <input matInput formControlName="employerName" id="employerName" name="employerName">
+            </mat-form-field>
+        </div>
+    </section>
+
+    <section>
+        <!--Industry Number-->
+        <div class="field-container">
+            <div><label class="mat-label other-label">Industry Number</label></div>
+            <mat-form-field>
+                <input matInput formControlName="industryNumber" id="industryNumber" name="industryNumber">
+            </mat-form-field>
+        </div>
+        <!--Occupation-->
+        <div class="field-container-right">
+            <div><label class="mat-label other-label">Occupation</label></div>
+            <mat-form-field>
+                <input matInput formControlName="occupation" id="occupation" name="occupation">
+            </mat-form-field>
+        </div>
+    </section>
+
+    <section>
+        <!--Gender-->
+        <div class="field-container">
+            <mat-form-field>
+                <label class="mat-label other-label mandatory-field">Gender</label>
+                <mat-select formControlName="gender" id="gender" name="gender">
+                    <mat-option value="Female">Female</mat-option>
+                    <mat-option value="Male">Male</mat-option>
+                    <mat-option value="Other">Other</mat-option>
+                    <mat-option value="Unspecified">Unspecified</mat-option>
+                </mat-select>
+            </mat-form-field>
+        </div>
+        <!--Cell Number-->
+        <div class="field-container-right">
+            <div><label class="mat-label other-label">Cell Number</label></div>
+            <mat-form-field>
+                <input matInput (keypress)="onKeypressEvent($event)" formControlName="cellNumber" id="cellNumber" name="cellNumber" maxlength="12">
+            </mat-form-field>
+        </div>
+    </section>
+    <section>
+        <div class="field-container">
+            <div><label class="mat-label other-label mandatory-field">Date Of Consultation</label></div>
+            <mat-form-field>
+                <input matInput formControlName="dateOfConsultation" [matDatepicker]="dateOfConsultation" id="dateOfConsultation" name="dateOfConsultation">
+                <mat-datepicker-toggle matSuffix [for]="dateOfConsultation"></mat-datepicker-toggle>
+                <mat-datepicker touchUi="true" #dateOfConsultation></mat-datepicker>
+                <mat-error *ngIf="form.get('dateOfConsultation').hasError('required')">
+                    Date of consultation is <strong>required</strong>
+                </mat-error>
+                <mat-error *ngIf="form.get('dateOfConsultation').hasError('invalid')">
+                    Invalid date format, use <strong>yyyy/mm/dd</strong>
+                </mat-error>
+                <mat-error *ngIf="form.get('dateOfConsultation').hasError('max')">
+                    Date of consultation cannot be in the <strong>future</strong>
+                </mat-error>
+            </mat-form-field>
+        </div>
+        <div class="field-container-right" *ngIf="showDateOfNextReview">
+            <div><label class="mat-label other-label">&nbsp;</label></div>
+            <mat-checkbox formControlName="chkNextReviewDateApplicable" id="chkNextReviewDateApplicable" name="chkNextReviewDateApplicable" [(ngModel)]="isNextReviewDateApplicable" (change)="checkNextReviewDateApplicable($event)">Next Review Date Applicable</mat-checkbox>
+        </div>
+    </section>
+    <section>
+        <div class="field-container" *ngIf="isNextReviewDateApplicable">
+            <div><label class="mat-label other-label mandatory-field">Date Of Next Review</label></div>
+            <mat-form-field>
+                <input matInput formControlName="dateOfNextReview" [matDatepicker]="dateOfNextReview" id="dateOfNextReview" name="dateOfNextReview">
+                <mat-datepicker-toggle matSuffix [for]="dateOfNextReview"></mat-datepicker-toggle>
+                <mat-datepicker touchUi="true" #dateOfNextReview></mat-datepicker>
+                <mat-error *ngIf="form.get('dateOfNextReview').hasError('required')">
+                    Next review date<strong>required</strong>
+                </mat-error>
+                <mat-error *ngIf="form.get('dateOfNextReview').hasError('invalid')">
+                    Invalid date format, use <strong>yyyy/mm/dd</strong>
+                </mat-error>
+            </mat-form-field>
+        </div>
+    </section>
+</form>

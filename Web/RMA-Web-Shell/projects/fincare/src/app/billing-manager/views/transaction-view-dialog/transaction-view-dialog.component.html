@@ -1,0 +1,198 @@
+<div mat-dialog-content>
+  <h3 class="wizard-font">{{this.getTransactionTypeDesc(data.transaction.transactionType)}} : {{data.transaction.documentNumber}} : R{{data.transaction.amount | number:'1.2-2'}}</h3>
+  <mat-card class="container" *ngIf="this.getTransactionTypeDesc(data.transaction.transactionType) === 'Invoice'">
+    <mat-card-content>
+    <div *ngIf="isLoading$ | async">
+        <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+        <label class="mat-label other-label"><i>loading ... please wait</i></label>
+    </div>
+    <div *ngIf="!data.transaction.invoiceAllocations || data.transaction.invoiceAllocations.length === 0">
+       <i>There were no allocations found for the invoice.</i> <br />
+    </div>
+    <div [hidden]="!data.transaction.invoiceAllocations || data.transaction.invoiceAllocations.length === 0">
+    <mat-table #table [dataSource]="invoiceAllocationsDataSource$">
+      <ng-container matColumnDef="transactionType">
+        <mat-header-cell *matHeaderCellDef> Transaction Type </mat-header-cell>
+        <mat-cell *matCellDef="let row"> {{this.getTransactionTypeDesc(row.transactionType)}} </mat-cell>
+      </ng-container>
+      <ng-container matColumnDef="documentNumber">
+        <mat-header-cell *matHeaderCellDef> Document Number </mat-header-cell>
+        <mat-cell *matCellDef="let row"> {{row.documentNumber}} </mat-cell>
+      </ng-container>
+      <ng-container matColumnDef="amount">
+        <mat-header-cell *matHeaderCellDef> Amount </mat-header-cell>
+        <mat-cell *matCellDef="let row"> {{row.amount | currency: 'R'}}  </mat-cell>
+      </ng-container>
+      <ng-container matColumnDef="createdDate">
+        <mat-header-cell *matHeaderCellDef> Allocation Date </mat-header-cell>
+        <mat-cell *matCellDef="let row"> {{row.createdDate | date: 'yyyy/MM/dd'}} </mat-cell>
+      </ng-container>
+      <ng-container matColumnDef="createdBy">
+        <mat-header-cell *matHeaderCellDef> Created By </mat-header-cell>
+        <mat-cell *matCellDef="let row"> {{row.createdBy}} </mat-cell>
+      </ng-container>
+      <ng-container matColumnDef="modifiedDate">
+        <mat-header-cell *matHeaderCellDef> Modified Date </mat-header-cell>
+        <mat-cell *matCellDef="let row"> {{row.modifiedDate | date: 'yyyy/MM/dd'}} </mat-cell>
+      </ng-container>
+      <ng-container matColumnDef="modifiedBy">
+        <mat-header-cell *matHeaderCellDef> Modified By </mat-header-cell>
+        <mat-cell *matCellDef="let row"> {{row.modifiedBy}} </mat-cell>
+      </ng-container>
+      <ng-container matColumnDef="isDeleted">
+        <mat-header-cell *matHeaderCellDef> Reversed </mat-header-cell>
+        <mat-cell *matCellDef="let row">
+          {{this.checkIfAllocationReversed(row.isDeleted)}}
+        </mat-cell>
+      </ng-container>
+      <ng-container matColumnDef="actions">
+        <mat-header-cell *matHeaderCellDef>Actions</mat-header-cell>
+        <mat-cell *matCellDef="let row">
+          <span><button [disabled]="row.isDeleted" (click)="reverseAllocation(row)">Reverse</button></span>
+        </mat-cell>
+      </ng-container>
+
+      <mat-header-row *matHeaderRowDef="invoiceAllocationDisplayColumns"></mat-header-row>
+      <mat-row *matRowDef="let row; columns: invoiceAllocationDisplayColumns;"></mat-row>
+    </mat-table>
+  </div>
+    <br/>
+   <div [hidden]="!data.transaction.linkedTransactions || data.transaction.linkedTransactions.length === 0">
+   <mat-table #table [dataSource]="linkedTransactionsDataSource$">
+     <ng-container matColumnDef="transactionType">
+       <mat-header-cell *matHeaderCellDef> Transaction Type </mat-header-cell>
+       <mat-cell *matCellDef="let row"> {{this.getTransactionTypeDesc(row.transactionType)}} </mat-cell>
+     </ng-container>
+     <ng-container matColumnDef="documentNumber">
+       <mat-header-cell *matHeaderCellDef> Document Number </mat-header-cell>
+       <mat-cell *matCellDef="let row"> {{this.getDocumentNumber(row)}} </mat-cell>
+     </ng-container>
+     <ng-container matColumnDef="amount">
+       <mat-header-cell *matHeaderCellDef> Amount </mat-header-cell>
+       <mat-cell *matCellDef="let row"> {{row.amount | currency: 'R'}}  </mat-cell>
+     </ng-container>
+     <ng-container matColumnDef="transactionDate">
+      <mat-header-cell *matHeaderCellDef> Transaction Date </mat-header-cell>
+      <mat-cell *matCellDef="let row"> {{row.transactionDate | date: 'yyyy/MM/dd'}} </mat-cell>
+    </ng-container>
+     <ng-container matColumnDef="createdDate">
+       <mat-header-cell *matHeaderCellDef> Created Date </mat-header-cell>
+       <mat-cell *matCellDef="let row"> {{row.createdDate | date: 'yyyy/MM/dd'}} </mat-cell>
+     </ng-container>
+     <ng-container matColumnDef="createdBy">
+       <mat-header-cell *matHeaderCellDef> Created By </mat-header-cell>
+       <mat-cell *matCellDef="let row"> {{row.createdBy}} </mat-cell>
+     </ng-container>
+     <ng-container matColumnDef="modifiedDate">
+       <mat-header-cell *matHeaderCellDef> Modified Date </mat-header-cell>
+       <mat-cell *matCellDef="let row"> {{row.modifiedDate | date: 'yyyy/MM/dd'}} </mat-cell>
+     </ng-container>
+     <ng-container matColumnDef="modifiedBy">
+       <mat-header-cell *matHeaderCellDef> Modified By </mat-header-cell>
+       <mat-cell *matCellDef="let row"> {{row.modifiedBy}} </mat-cell>
+     </ng-container>
+
+     <mat-header-row *matHeaderRowDef="linkedTransactionDisplayColumns"></mat-header-row>
+     <mat-row *matRowDef="let row; columns: linkedTransactionDisplayColumns;"></mat-row>
+   </mat-table>
+ </div>
+ </mat-card-content>
+  </mat-card>
+  <mat-card class="container" *ngIf="this.getTransactionTypeDesc(data.transaction.transactionType) !== 'Invoice'  && this.getTransactionTypeDesc(data.transaction.transactionType) !== 'Interest'">
+    <mat-card-content>
+    <div *ngIf="isLoading$ | async">
+        <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+        <label class="mat-label other-label"><i>loading ... please wait</i></label>
+    </div>
+    <div *ngIf="!data.transaction.linkedTransactions || data.transaction.linkedTransactions.length === 0">
+        <i>There were no linked transactions found.</i> <br />
+     </div>
+     <div [hidden]="!data.transaction.linkedTransactions || data.transaction.linkedTransactions.length === 0">
+      <mat-table #table [dataSource]="linkedTransactionsDataSource$">
+        <ng-container matColumnDef="transactionType">
+          <mat-header-cell *matHeaderCellDef> Transaction Type </mat-header-cell>
+          <mat-cell *matCellDef="let row"> {{this.getTransactionTypeDesc(row.transactionType)}} </mat-cell>
+        </ng-container>
+        <ng-container matColumnDef="documentNumber">
+          <mat-header-cell *matHeaderCellDef> Document Number </mat-header-cell>
+          <mat-cell *matCellDef="let row"> {{this.getDocumentNumber(row)}} </mat-cell>
+        </ng-container>
+        <ng-container matColumnDef="amount">
+          <mat-header-cell *matHeaderCellDef> Amount </mat-header-cell>
+          <mat-cell *matCellDef="let row"> {{row.amount | currency: 'R'}}  </mat-cell>
+        </ng-container>
+        <ng-container matColumnDef="transactionDate">
+         <mat-header-cell *matHeaderCellDef> Transaction Date </mat-header-cell>
+         <mat-cell *matCellDef="let row"> {{row.transactionDate | date: 'yyyy/MM/dd'}} </mat-cell>
+       </ng-container>
+        <ng-container matColumnDef="createdDate">
+          <mat-header-cell *matHeaderCellDef> Created Date </mat-header-cell>
+          <mat-cell *matCellDef="let row"> {{row.createdDate | date: 'yyyy/MM/dd'}} </mat-cell>
+        </ng-container>
+        <ng-container matColumnDef="createdBy">
+          <mat-header-cell *matHeaderCellDef> Created By </mat-header-cell>
+          <mat-cell *matCellDef="let row"> {{row.createdBy}} </mat-cell>
+        </ng-container>
+        <ng-container matColumnDef="modifiedDate">
+          <mat-header-cell *matHeaderCellDef> Modified Date </mat-header-cell>
+          <mat-cell *matCellDef="let row"> {{row.modifiedDate | date: 'yyyy/MM/dd'}} </mat-cell>
+        </ng-container>
+        <ng-container matColumnDef="modifiedBy">
+          <mat-header-cell *matHeaderCellDef> Modified By </mat-header-cell>
+          <mat-cell *matCellDef="let row"> {{row.modifiedBy}} </mat-cell>
+        </ng-container>
+
+        <mat-header-row *matHeaderRowDef="linkedTransactionDisplayColumns"></mat-header-row>
+        <mat-row *matRowDef="let row; columns: linkedTransactionDisplayColumns;"></mat-row>
+      </mat-table>
+    </div>
+     </mat-card-content>
+    </mat-card>
+
+    <mat-card class="container" *ngIf="this.getTransactionTypeDesc(data.transaction.transactionType) === 'Interest'">
+      <mat-card-content>
+      <div *ngIf="isLoading$ | async">
+          <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+          <label class="mat-label other-label"><i>loading ... please wait</i></label>
+      </div>
+      <div *ngIf="!data.transaction.debitTransactionAllocations || data.transaction.debitTransactionAllocations.length === 0">
+          <i>There are no allocations.</i> <br />
+       </div>
+
+      <div [hidden]="!data.transaction.debitTransactionAllocations || data.transaction.debitTransactionAllocations.length === 0">
+        <mat-table #table [dataSource]="debitAllocationsDataSource$">
+          <ng-container matColumnDef="transactionType">
+            <mat-header-cell *matHeaderCellDef> Transaction Type </mat-header-cell>
+            <mat-cell *matCellDef="let row"> Payment Allocation </mat-cell>
+          </ng-container>
+          <ng-container matColumnDef="amount">
+            <mat-header-cell *matHeaderCellDef> Amount </mat-header-cell>
+            <mat-cell *matCellDef="let row"> {{row.amount | currency: 'R'}}  </mat-cell>
+          </ng-container>
+          <ng-container matColumnDef="createdDate">
+            <mat-header-cell *matHeaderCellDef> Created Date </mat-header-cell>
+            <mat-cell *matCellDef="let row"> {{row.createdDate | date: 'yyyy/MM/dd'}} </mat-cell>
+          </ng-container>
+          <ng-container matColumnDef="createdBy">
+            <mat-header-cell *matHeaderCellDef> Created By </mat-header-cell>
+            <mat-cell *matCellDef="let row"> {{row.createdBy}} </mat-cell>
+          </ng-container>
+          <ng-container matColumnDef="modifiedDate">
+            <mat-header-cell *matHeaderCellDef> Modified Date </mat-header-cell>
+            <mat-cell *matCellDef="let row"> {{row.modifiedDate | date: 'yyyy/MM/dd'}} </mat-cell>
+          </ng-container>
+          <ng-container matColumnDef="modifiedBy">
+            <mat-header-cell *matHeaderCellDef> Modified By </mat-header-cell>
+            <mat-cell *matCellDef="let row"> {{row.modifiedBy}} </mat-cell>
+          </ng-container>
+
+          <mat-header-row *matHeaderRowDef="debitAllocationDisplayColumns"></mat-header-row>
+          <mat-row *matRowDef="let row; columns: debitAllocationDisplayColumns;"></mat-row>
+        </mat-table>
+      </div>
+       </mat-card-content>
+      </mat-card>
+    <div class ="balance">
+        Balance: R{{data.transaction.balance | number:'1.2-2'}}
+    </div>
+</div>

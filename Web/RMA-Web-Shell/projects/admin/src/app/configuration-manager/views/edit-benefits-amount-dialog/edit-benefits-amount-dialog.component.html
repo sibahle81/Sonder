@@ -1,0 +1,40 @@
+<div class="mat-container">
+    <div class="menu-bar">
+      <span class="material-icons">
+        receipt_long
+      </span>&nbsp;
+      <label class="form-label">
+        <b>Edit Benefit Amounts</b>
+      </label>
+    </div>
+	<hr/>
+	<div class="mat-container">
+		<section>
+			<mat-form-field class="mat-form-field">
+				<mat-label>Benefit Description</mat-label>
+				<input matInput type="text" placeholder="Benefit Description" 
+                      [(ngModel)]="editedClaimsBenefitsAmount.description" disabled="true">
+		  </mat-form-field>
+		</section>
+		&nbsp;
+		<section>
+      <mat-form-field class="mat-form-field">
+				<mat-label class="mat-label other-label">Min Compensation Amount</mat-label>
+				<input matInput type="text" placeholder="Min Compensation Amount" 
+                      [(ngModel)]="editedClaimsBenefitsAmount.minimumCompensationAmount">
+			</mat-form-field>
+      
+			<mat-form-field class="mat-form-field">
+				<mat-label class="mat-label other-label">Max Compensation Amount</mat-label>
+				<input matInput type="text" placeholder="Max Compensation Amount" 
+                      [(ngModel)]="editedClaimsBenefitsAmount.maximumCompensationAmount">
+			</mat-form-field>
+		</section>
+		
+	</div>
+	<br/>
+	<div class="form-group-button mat-form-button matformgroupbutton" fxLayoutAlign="end end">
+		<button type="button" class="button float-button" (click)="updateClaimBenefitsAmounts()">Update</button>
+		<button type="button" class="button float-button" (click)="close()">Cancel</button>
+	</div>
+</div>

@@ -1,0 +1,8 @@
+
+<payment-search [allowMultiple]="true" [title]="'Payment Recall'" [triggerReset]="triggerRefresh" [paymentTypes]="paymentTypeFilter" [paymentStatus]="recallPaymentStatus" (paymentSelectedEmit)="setPayment($event)"></payment-search>
+<div [hidden]="isItemSelected()" class="menu-bar">           
+    <button class="button submit-button" (click)="recallSelectedPayment()" [disabled]="disableRecallFunction()">Recall Payments</button>
+    <span *ngIf="disableRecallFunction()" class="site-font red">
+        This functionality is currently disabled. You can only recall payments before {{morningCutOffTime}} and after {{afternoonOpenTime}}.
+    </span>
+</div><br/>

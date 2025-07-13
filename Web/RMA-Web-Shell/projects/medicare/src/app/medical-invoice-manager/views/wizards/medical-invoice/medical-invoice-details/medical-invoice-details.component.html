@@ -1,0 +1,615 @@
+<div class="margine-space">
+  <div class="mat-header">
+    <h1>Capture Medical Invoice</h1>
+  </div>
+
+  <div *ngIf="loadingClaimsData$ | async">
+    <mat-progress-bar mode="indeterminate"
+      [ngClass]="{ 'loading-main-double-menu-progress': doubleMenu, 'loading-main-single-menu-progress': !doubleMenu }">
+    </mat-progress-bar>
+    <p class="site-font grey">Loading Claims Data...</p>
+  </div>
+
+   <div *ngIf="selectedEvent && personEventId > 0">
+    <holistic-person-event-list *ngIf="selectedEvent && personEventId" [event]="selectedEvent"
+      [personEventId]="personEventId" (emitPersonEvent)="setPersonEvent($event)" [selectedTab]="2"
+      [icd10List]="icd10ListClaims" [rolePlayerId]="healthCareProviderId"></holistic-person-event-list>
+  </div> 
+
+  <form [formGroup]="medicalInvoiceForm">
+    <br>
+    <mat-card class="matCard">
+      <div class="clear">&nbsp;</div>
+      <section>
+        <!--Vat Registered-->
+        <div class="field-container">
+          <div><label class="mat-label other-label">Vat Registered</label></div>
+          <mat-form-field>
+            <input matInput formControlName="vatRegistered" #vatRegistered id="vatRegistered" name="vatRegistered">
+          </mat-form-field>
+        </div>
+        <!--Practice Number-->
+        <div class="field-container-right">
+          <div><label class="mat-label other-label">Practice Number</label></div>
+          <mat-form-field>
+            <input matInput formControlName="practiceNumber" id="practiceNumber" name="practiceNumber">
+            <div *ngIf="this.model && this.model?.practiceNumber != '' && isPracticeActive; else inActivePractice">
+              <span class="material-icons" matTooltip="Practice Active ">
+                verified_user <span class="practive-status">{{"Practice Active"}}</span>
+              </span>
+            </div>
+            <ng-template #inActivePractice>
+              <span class="material-icons" matTooltip="Practice In-Active ">
+                remove_moderator <span class="practive-status">{{"Practice In-Active"}}</span>
+              </span>
+            </ng-template>
+          </mat-form-field>
+        </div>
+      </section>
+      <div class="clear">&nbsp;</div>
+      <section>
+        <!--Payee Type-->
+        <div class="field-container">
+          <mat-form-field>
+            <label class="mat-label other-label">Payee Type</label>
+            <mat-select (selectionChange)="onChangePayeeType($event)" formControlName="payeeType" id="payeeType"
+              name="payeeType">
+              <mat-option *ngFor="let payeeType of rolePlayerIdentificationTypesList"
+                [value]="+RolePlayerIdentificationTypesEnum[payeeType]">
+                {{formatLookup(payeeType)}}
+              </mat-option>
+            </mat-select>
+            <mat-error *ngIf="medicalInvoiceForm.controls?.payeeType.invalid">
+              {{getError('payeeType')}}
+            </mat-error>
+          </mat-form-field>
+          <div class="field-container-right">
+            <button type="button" title="Payee advance search" (click)="searchPayee()"
+              class="button float-button submit-button import-button"><i class="material-icons">search</i></button>
+          </div>
+        </div>
+        <!--Payee-->
+        <div class="field-container-right">
+          <div><label class="mat-label other-label">Payee Name</label></div>
+          <mat-form-field>
+            <input matInput formControlName="payee" #payee id="payee" name="payee">
+          </mat-form-field>
+        </div>
+        <!--Invoice No-->
+        <div class="field-container-right" [hidden]="currentUrl.includes('capture-medical-invoice')">
+          <div><label class="mat-label other-label mandatory-field">Invoice No.</label></div>
+          <mat-form-field>
+            <input matInput formControlName="invoiceNo" id="invoiceNo" name="invoiceNo">
+            <mat-error *ngIf="medicalInvoiceForm.controls?.invoiceNo.invalid">
+              {{getError('invoiceNo')}}
+            </mat-error>
+          </mat-form-field>
+        </div>
+      </section>
+      <br />
+      <div class="clear">&nbsp;</div>
+
+      <section>
+        <!--Patient/Acc No-->
+        <div class="field-container">
+          <div><label class="mat-label other-label">Patient Account No.</label></div>
+          <mat-form-field>
+            <input matInput formControlName="patientAccNo" id="patientAccNo" name="patientAccNo">
+          </mat-form-field>
+        </div>
+        <!--Invoice Date-->
+        <div class="field-container-right">
+          <mat-form-field>
+            <label class="mat-label other-label mandatory-field">Invoice Date</label>
+            <input matInput formControlName="dateOfConsultation" [matDatepicker]="dateOfConsultation"
+              id="dateOfConsultation" name="dateOfConsultation">
+            <mat-datepicker-toggle matSuffix [for]="dateOfConsultation"></mat-datepicker-toggle>
+            <mat-datepicker touchUi="true" #dateOfConsultation></mat-datepicker>
+            <mat-error *ngIf="medicalInvoiceForm.controls?.dateOfConsultation.invalid">
+              {{getError('dateOfConsultation')}}
+            </mat-error>
+          </mat-form-field>
+        </div>
+      </section>
+      <br />
+      <div class="clear">&nbsp;</div>
+
+      <section>
+        <!--Date Submitted-->
+        <div class="field-container">
+          <mat-form-field>
+            <label class="mat-label other-label mandatory-field">Date Submitted</label>
+            <input matInput formControlName="dateSubmitted" [matDatepicker]="dateSubmitted" id="dateSubmitted"
+              name="dateSubmitted">
+            <mat-datepicker-toggle matSuffix [for]="dateSubmitted"></mat-datepicker-toggle>
+            <mat-datepicker touchUi="true" #dateSubmitted></mat-datepicker>
+            <mat-error *ngIf="medicalInvoiceForm.controls?.dateSubmitted.invalid">
+              {{getError('dateSubmitted')}}
+            </mat-error>
+          </mat-form-field>
+        </div>
+        <!--Date Recieved-->
+        <div class="field-container-right">
+          <mat-form-field>
+            <label class="mat-label other-label mandatory-field">Date Received</label>
+            <input matInput formControlName="dateReceived" [matDatepicker]="dateReceived" id="dateReceived"
+              name="dateReceived">
+            <mat-datepicker-toggle matSuffix [for]="dateReceived"></mat-datepicker-toggle>
+            <mat-datepicker touchUi="true" #dateReceived></mat-datepicker>
+            <mat-error *ngIf="medicalInvoiceForm.controls?.dateReceived.invalid">
+              {{getError('dateReceived')}}
+            </mat-error>
+          </mat-form-field>
+        </div>
+      </section>
+      <br />
+      <div class="clear">&nbsp;</div>
+
+      <section>
+        <!--Date of Treatment From-->
+        <div class="field-container">
+          <mat-form-field>
+            <label class="mat-label other-label mandatory-field">Date of Treatment From</label>
+            <input matInput formControlName="dateTreatmentFrom" [matDatepicker]="dateTreatmentFrom"
+              (dateChange)="onDateTreatmentFromChange($event,invoiceCaptureState[1])" id="dateTreatmentFrom"
+              name="dateTreatmentFrom">
+            <mat-datepicker-toggle matSuffix [for]="dateTreatmentFrom"></mat-datepicker-toggle>
+            <mat-datepicker touchUi="true" #dateTreatmentFrom></mat-datepicker>
+            <mat-error *ngIf="medicalInvoiceForm.controls?.dateTreatmentFrom.invalid">
+              {{getError('dateTreatmentFrom')}}
+            </mat-error>
+          </mat-form-field>
+        </div>
+        <!--Date of Treatment To-->
+        <div class="field-container-right">
+          <mat-form-field>
+            <label class="mat-label other-label mandatory-field">Date of Treatment To</label>
+            <input matInput formControlName="dateTreatmentTo" [matDatepicker]="dateTreatmentTo" id="dateTreatmentTo"
+              (dateChange)="onDateTreatmentToChange($event,invoiceCaptureState[1])" name="dateTreatmentTo">
+            <mat-datepicker-toggle matSuffix [for]="dateTreatmentTo"></mat-datepicker-toggle>
+            <mat-datepicker touchUi="true" #dateTreatmentTo></mat-datepicker>
+            <mat-error *ngIf="medicalInvoiceForm.controls?.dateTreatmentTo.invalid">
+              {{getError('dateTreatmentTo')}}
+            </mat-error>
+          </mat-form-field>
+        </div>
+      </section>
+      <br />
+      <div class="clear">&nbsp;</div>
+
+      <section>
+        <!--HCP Invoice Number-->
+        <div class="field-container">
+          <div><label class="mat-label other-label mandatory-field">HCP Invoice Number</label></div>
+          <mat-form-field>
+            <input matInput formControlName="hcpInvoiceNumber" id="hcpInvoiceNumber" name="hcpInvoiceNumber" (change)="invoiceNoChange($event.target.value);">
+            <mat-error *ngIf="medicalInvoiceForm.controls?.hcpInvoiceNumber.invalid">
+              {{getError('hcpInvoiceNumber')}}
+            </mat-error>
+          </mat-form-field>
+        </div>
+      </section>
+      <br />
+      <div class="clear">&nbsp;</div>
+
+      <section>
+        <div *ngIf="(isLoading$ | async)">
+          <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+          <label class="mat-label other-label"><i>Checking for duplicates...please wait</i></label>
+        </div>
+        <div class="field-container" *ngIf="duplicateInvoiceFound">
+          <label class="mat-label validation-errors">Duplicate - An Invoice with this Invoice/Account Number has already been submitted
+          </label>    
+          <button type="button" class="button float-button" (click)="viewDuplicateInvoice()">View Duplicate</button>
+        </div>
+      </section>        
+      <br />
+      <div class="clear">&nbsp;</div>
+
+      <section>
+        <div class="field-container">
+          <div><label class="mat-label other-label">Autolink PreAuthNo on Invoice</label></div>
+          <div *ngIf="defaultPreAuthNumber.length < 1; else editMode">
+            <div *ngFor="let linkPreAuthNumber of linkPreAuthNumberList;let i = index">
+              <div><label class="mat-label other-label">
+                  <mat-checkbox [checked]="true" id="{{'preAuthNoInvoice'+i}}"
+                    (change)="selected =i;onPreAuthNoAutolinkChange(linkPreAuthNumber)">
+                  </mat-checkbox>
+                </label>
+                <a class="open-preauth-View"
+                  (click)="openPreauthViewModal(linkPreAuthNumber.preAuthId)">{{linkPreAuthNumber.preAuthNumber}}</a>
+              </div>
+            </div>
+          </div>
+          <ng-template #editMode>
+            <div *ngFor="let linkPreAuthNumber of linkedPreAuthDetailsList;let i = index">
+              <div><label class="mat-label other-label">
+                  <mat-checkbox [checked]="linkPreAuthNumber.selected" [disabled]="linkPreAuthNumber.selected"
+                    id="{{linkPreAuthNumber.preAuthId}}"
+                    (change)="selected =i;onPreAuthNoAutolinkChange(linkPreAuthNumber)">
+                  </mat-checkbox>
+                  <a class="open-preauth-View"
+                    (click)="openPreauthViewModal(linkPreAuthNumber.preAuthNumber)">{{linkPreAuthNumber.preAuthNumber}}</a>
+                </label></div>
+            </div>
+          </ng-template>
+        </div>
+
+        <!--PreAuthNo on Invoice Checkbox status-->
+        <div class="field-container-right">
+          <div><label class="mat-label other-label">PreAuthNo on Invoice.</label></div>
+          <mat-checkbox id="preAuthorisationNo" name="preAuthorisationNo" formControlName="preAuthorisationNo">
+          </mat-checkbox>
+        </div>
+        <!--Payment Delay-->
+        <div class="field-container-right">
+          <div><label class="mat-label other-label">Is Payment Delay?</label></div>
+          <mat-checkbox id="isPaymentDelay" name="isPaymentDelay" formControlName="isPaymentDelay">
+          </mat-checkbox>
+        </div>
+      </section>
+      <div class="clear">&nbsp;</div>
+    </mat-card>
+    <!--Medical Report View-->
+    <mat-expansion-panel>
+      <div *ngIf="loading$ | async">
+        <mat-progress-bar mode="indeterminate"
+          [ngClass]="{ 'loading-main-double-menu-progress': doubleMenu, 'loading-main-single-menu-progress': !doubleMenu }">
+        </mat-progress-bar>
+        <p class="site-font grey">Loading.....</p>
+      </div>
+      <mat-expansion-panel-header>
+        <mat-panel-title>
+          Linked Medical reports
+        </mat-panel-title>
+      </mat-expansion-panel-header>
+      <br>
+      <div *ngIf="linkMedicalReportList.length > 0;else no_medical_report">
+        <medical-report-list [medicalReports]="linkMedicalReportList" [event]="selectedEvent"
+                             [isWizard]="true"></medical-report-list>
+      </div>
+    </mat-expansion-panel>
+    <ng-template #no_medical_report>
+      <span class="red-text-status-message">{{"No Medical Report Found"}}</span>
+    </ng-template>
+    <br>
+    <app-medical-invoice-breakdown-details [dataSource]="dataSource" [invoiceData]="model" [showEditOptions]="true"
+      [switchBatchType]="switchBatchTypeEnum.MedEDI" (editLineClicked)="onEditLineItem($event)"
+      (deleteLineClicked)="onDeleteLineItem($event)"></app-medical-invoice-breakdown-details>
+    <br>
+
+    <div
+      *ngIf="documentSet && documentSystemName && key && this.model?.switchBatchId <= 0 && (linkedId > 0 || this.model?.invoiceId > 0)"
+      #elementDocUploader>
+      <document-uploader [documentSet]="documentSet" [systemName]="documentSystemName" [keyName]="key" [keyValue]="linkedId"
+        [documentTypeFilter]="documentTypeEnums" [canDelete]="true"
+        [forceRequiredDocumentTypeFilter]="forceRequiredDocumentTypeFilter"
+        (requiredDocumentsUploadedEmit)="isRequiredDocumentsUploaded($event)"
+        (emitAllDocuments)="allDocumentsEmitted($event)"></document-uploader>
+    </div>
+    
+    <mat-card class="matCard">
+      <div formGroupName="newInvoiceCapture">
+        <h1>Add New Line Item</h1>
+        <section>
+          <!--Service Date -->
+          <div class="field-container">
+            <mat-form-field>
+              <label class="mat-label other-label mandatory-field">Service Date</label>
+              <input matInput formControlName="serviceDate" [matDatepicker]="serviceDate" id="serviceDate"
+                name="serviceDate" (dateChange)="onInvoiceServiceDateChange($event,invoiceCaptureState[1])">
+              <!--direct means the date picker control was manipulated directly not programmatically-->
+              <mat-datepicker-toggle matSuffix [for]="serviceDate"></mat-datepicker-toggle>
+              <mat-datepicker touchUi="true" #serviceDate></mat-datepicker>
+              <mat-error *ngIf="medicalInvoiceForm.controls?.newInvoiceCapture.get('serviceDate').invalid">
+                {{getError('serviceDate')}}
+              </mat-error>
+            </mat-form-field>
+          </div>
+        </section>
+        <br />
+        <div class="clear">&nbsp;</div>
+
+        <section>
+          <!--serviceTimeStart-->
+          <div class="field-container">
+            <div><label class="mat-label other-label">Service Time Start</label></div>
+            <mat-form-field>
+              <input matInput formControlName="serviceTimeStart" id="serviceTimeStart" name="serviceTimeStart"
+                type="time" (input)="CalculateAndSetLineValues()">
+            </mat-form-field>
+          </div>
+          <!--serviceTimeEnd-->
+          <div class="field-container-right">
+            <div><label class="mat-label other-label">Service Time End</label></div>
+            <mat-form-field>
+              <input matInput formControlName="serviceTimeEnd" id="serviceTimeEnd" name="serviceTimeEnd"
+                type="time" (input)="CalculateAndSetLineValues()">
+            </mat-form-field>
+          </div>
+          <input matInput formControlName="invoiceLineId" class="hidden">
+        </section>
+        <br />
+        <div class="clear">&nbsp;</div>
+
+        <!--Tariff Search child component #tariffSearchComponent-->
+        <tariff-search [hidden]='hideTariffSearchControl' [tariffSearchType]="tariffSearchType"
+          [tariffTypeIds]="tariffTypeIds" [preAuthFromDate]="dateTreatmentFromToTarif"
+          [practitionerTypeId]="practitionerTypeId" (tariffSearchResults)="onSearchTarifResponse($event)">
+        </tariff-search>
+        <br />
+
+        <section>
+          <!--TariffBaseUnitCostType -->
+          <div class="field-container">
+            <mat-form-field>
+              <label class="mat-label other-label">Tariff Base unit Cost Type</label>
+              <mat-select (selectionChange)="onChangeTariffBaseUnitCostType($event)"
+                formControlName="tariffBaseUnitCostType" id="tariffBaseUnitCostType" name="tariffBaseUnitCostType">
+                <mat-option *ngFor="let tariffBaseUnitCostType of tariffBaseUnitCostTypes"
+                  [value]="tariffBaseUnitCostType.tariffBaseUnitCostTypeId">
+                  {{tariffBaseUnitCostType.description}}</mat-option>
+              </mat-select>
+              <mat-error *ngIf="medicalInvoiceForm.controls?.newInvoiceCapture.get('tariffBaseUnitCostType').invalid">
+                {{getError('tariffBaseUnitCostType')}}
+              </mat-error>
+            </mat-form-field>
+          </div>
+          <!--TariffCode-->
+          <div class="field-container-right">
+            <div><label class="mat-label other-label mandatory-field">Tariff Code</label></div>
+            <mat-form-field>
+              <mat-form-field>
+                <input matInput formControlName="tariffCode" id="tariffCode" name="tariffCode">
+                <!--disbale and hide field-->
+              </mat-form-field>
+            </mat-form-field>
+          </div>
+          <!--TariffDescription-->
+          <div class="field-container">
+            <div><label class="mat-label other-label mandatory-field">Tariff Description</label></div>
+            <mat-form-field>
+              <input matInput formControlName="description" id="description" name="description">
+              <!--disbale and hide field-->
+            </mat-form-field>
+          </div>
+        </section>
+        <br />
+        <div class="clear">&nbsp;</div>
+        <section>
+          <!--totalTariffAmount-->
+          <div class="field-container">
+            <div><label class="mat-label other-label mandatory-field">Tariff Amount</label></div>
+            <mat-form-field>
+              <input matInput formControlName="totalTariffAmount" id="totalTariffAmount" name="totalTariffAmount">
+              <!--disbale and hide field-->
+            </mat-form-field>
+          </div>
+          <!--Quantity-->
+          <div class="field-container-right">
+            <div><label class="mat-label other-label mandatory-field">Default Quantity</label></div>
+            <mat-form-field>
+              <input type="number" matInput formControlName="quantity" id="quantity" name="quantity">
+              <!--disbale field-->
+            </mat-form-field>
+          </div>
+          <!--TimeUnits-->
+          <div class="field-container">
+            <div><label class="mat-label other-label">Time Units</label></div>
+            <mat-form-field>
+              <input type="number" matInput formControlName="timeUnits" id="timeUnits" name="timeUnits">
+              <!--disbale field-->
+            </mat-form-field>
+          </div>
+          <!--InvUnitAmount-->
+          <div class="field-container-right">
+            <div><label class="mat-label other-label mandatory-field">Inv Unit Amount</label></div>
+            <mat-form-field>
+              <input matInput formControlName="invUnitAmount" id="invUnitAmount" name="invUnitAmount"
+                  (keyup)="onInvUnitAmountCalculate(medicalInvoiceForm)">
+                <!--same as tariff amount from search-->
+            </mat-form-field>
+          </div>
+        </section>
+        <br />
+        <div class="clear">&nbsp;</div>
+        <section>
+          <!--RequestedQuantity-->
+          <div class="field-container">
+            <div><label class="mat-label other-label mandatory-field">Requested Quantity</label></div>
+            <mat-form-field>
+              <input type="number" matInput min="0" formControlName="requestedQuantity" id="requestedQuantity"
+                name="requestedQuantity" (click)="onRequestedQuantityDiscountCalculate(medicalInvoiceForm)"
+                (keyup)="onRequestedQuantityDiscountCalculate(medicalInvoiceForm)">
+              <!--how many days/treatment-->
+            </mat-form-field>
+          </div>
+          <!--InvTotalAmount-->
+          <div class="field-container-right">
+            <div><label class="mat-label other-label mandatory-field">Inv Total Amount</label></div>
+            <mat-form-field>
+              <mat-form-field>
+                <input matInput formControlName="invTotalAmount" id="invTotalAmount" name="invTotalAmount">
+                <!--totalTariffAmount * requestedQuantity-->
+              </mat-form-field>
+            </mat-form-field>
+          </div>
+          <!--Discount/creditAmount-->
+          <div class="field-container">
+            <div><label class="mat-label other-label">Discount</label></div>
+            <mat-form-field>
+              <input step=".01" type="number" matInput formControlName="creditAmount" id="creditAmount"
+                name="creditAmount" (keyup)="onRequestedQuantityDiscountCalculate(medicalInvoiceForm)">
+            </mat-form-field>
+          </div>
+        </section>
+        <br />
+        <div class="clear">&nbsp;</div>
+        <section>
+          <!--SubTotalEx-->
+          <div class="field-container">
+            <div><label class="mat-label other-label">Sub Total Ex</label></div>
+            <mat-form-field>
+              <mat-form-field>
+                <input matInput formControlName="subTotalEx" id="subTotalEx" name="subTotalEx">
+                <!--invTotalAmount - creditAmount-->
+              </mat-form-field>
+            </mat-form-field>
+          </div>
+          <!--VAT/vatCode-->
+          <div class="field-container-right">
+            <div><label class="mat-label other-label">VAT</label></div>
+            <mat-form-field>
+              <input matInput formControlName="vatCode" id="vatCode" name="vatCode"><!-- disable field-->
+            </mat-form-field>
+          </div>
+          <!--TotalIncl-->
+          <div class="field-container-right">
+            <div><label class="mat-label other-label">Total Incl</label></div>
+            <mat-form-field>
+              <mat-form-field>
+                <input matInput formControlName="totalIncl" id="totalIncl" name="totalIncl">
+                <!--invTotalAmount - creditAmount + Vat amount-->
+              </mat-form-field>
+            </mat-form-field>
+          </div>
+        </section>
+        <br />
+        <div class="clear">&nbsp;</div>
+        <section>
+          <!--ICD10 Code-->
+          <div class="field-container">
+            <div><label class="mat-label other-label mandatory-field">ICD10 Code</label></div>
+            <mat-form-field>
+              <mat-form-field>
+                <input matInput formControlName="icd10Code" id="icd10Code" name="icd10Code"
+                  (keyup)="onValidateICD10CodeFormat(medicalInvoiceForm.controls?.newInvoiceCapture.get('icd10Code').value)"
+                  (change)="onValidateICD10CodeFormat(medicalInvoiceForm.controls?.newInvoiceCapture.get('icd10Code').value)">
+                <div
+                  *ngIf="medicalInvoiceForm.controls?.newInvoiceCapture.get('icd10Code').invalid || iCD10CodeValidateState">
+                  <mat-error>
+                    {{getError('icd10Code')}}
+                  </mat-error>
+                </div>
+
+              </mat-form-field>
+            </mat-form-field>
+          </div>
+          <!--Treatment Code-->
+          <div class="field-container-right">
+            <div><label class="mat-label other-label">Treatment Code</label></div>
+            <mat-form-field>
+              <input matInput formControlName="treatmentCode" id="treatmentCode" name="treatmentCode">
+            </mat-form-field>
+          </div>
+        </section>
+        <br />
+        <div *ngIf="savingLineItems$ | async">
+          <mat-progress-bar mode="indeterminate"
+            [ngClass]="{ 'loading-main-double-menu-progress': doubleMenu, 'loading-main-single-menu-progress': !doubleMenu }">
+          </mat-progress-bar>
+          <p class="site-font grey">Saving line item...</p>
+        </div>
+        <br />
+        <div class="clear">&nbsp;</div>
+        <div class="form-buttons submit-button">
+          <button type="button" class="button float-button"
+            (click)="onSaveNewCapturedLineItemInvoice(medicalInvoiceForm.getRawValue())" [disabled]="medicalInvoiceForm.controls?.newInvoiceCapture.invalid || 
+            medicalInvoiceForm.controls?.newInvoiceCapture.get('icd10Code').invalid || iCD10CodeValidateState">
+            Save</button>
+        </div>
+        <div class="form-buttons submit-button">
+          <button type="button" class="button float-button" (click)="onResetNewCapturedLineItemInvoice()">Reset</button>
+        </div>
+        <div class="clear">&nbsp;</div>
+      </div>
+    </mat-card>
+    <br>
+
+    <mat-card class="matCard">
+      <div formGroupName="subTotalsSection">
+        <h1>Sub Totals & Vat</h1>
+        <section>
+          <!--InvoiceTotalInc-->
+          <div class="field-container">
+            <div><label class="mat-label other-label mandatory-field">InvoiceTotalInc</label></div>
+            <mat-form-field>
+              <mat-form-field>
+                <input matInput formControlName="invoiceTotalInc" id="invoiceTotalInc" name="invoiceTotalInc"
+                  (keyup)="onSubTotalAdjustValues(medicalInvoiceForm)">
+                <div
+                  *ngIf="medicalInvoiceForm.controls?.subTotalsSection.get('invoiceTotalInc').invalid || footerSubTotalValidationState.footerSubTotalInvoiceTotalIncValidation">
+                  <mat-error *ngIf="medicalInvoiceForm.controls?.subTotalsSection.get('invoiceTotalInc').invalid">
+                    {{getError('invoiceTotalInc')}}
+                  </mat-error>
+                  <mat-error *ngIf="footerSubTotalValidationState.footerSubTotalInvoiceTotalIncValidation">
+                    {{getError('footerSubTotalInvoiceTotalIncValidation')}}
+                  </mat-error>
+                </div>
+              </mat-form-field>
+            </mat-form-field>
+          </div>
+          <!--VATRate-->
+          <div class="field-container-right">
+            <div><label class="mat-label other-label">VATRate</label></div>
+            <mat-form-field>
+              <input matInput formControlName="vatRate" id="vatRate" name="vatRate">
+            </mat-form-field>
+          </div>
+        </section>
+        <br />
+        <div class="clear">&nbsp;</div>
+        <section>
+          <!--InvoiceTotalExcl-->
+          <div class="field-container">
+            <div><label class="mat-label other-label mandatory-field">InvoiceTotalExcl</label></div>
+            <mat-form-field>
+              <mat-form-field>
+                <input matInput formControlName="invoiceTotalExcl" id="invoiceTotalExcl" name="invoiceTotalExcl"
+                  (keyup)="onSubTotalAdjustValues(medicalInvoiceForm)">
+                <div
+                  *ngIf="medicalInvoiceForm.controls?.subTotalsSection.get('invoiceTotalExcl').invalid || footerSubTotalValidationState.footerSubTotalInvoiceTotalExclValidation">
+                  <mat-error *ngIf="medicalInvoiceForm.controls?.subTotalsSection.get('invoiceTotalExcl').invalid">
+                    {{getError('invoiceTotalExcl')}}
+                  </mat-error>
+                  <mat-error *ngIf="footerSubTotalValidationState.footerSubTotalInvoiceTotalExclValidation">
+                    {{getError('footerSubTotalInvoiceTotalExclValidation')}}
+                  </mat-error>
+                </div>
+              </mat-form-field>
+            </mat-form-field>
+          </div>
+          <!--VAT R-->
+          <div class="field-container-right">
+            <div><label class="mat-label other-label mandatory-field">VAT R</label></div>
+            <mat-form-field>
+              <input matInput formControlName="vatR" id="vatR" name="vatR"
+                (keyup)="onSubTotalAdjustValues(medicalInvoiceForm)">
+              <div
+                *ngIf="medicalInvoiceForm.controls?.subTotalsSection.get('vatR').invalid || footerSubTotalValidationState.footerSubTotalVatRValidation">
+                <mat-error *ngIf="medicalInvoiceForm.controls?.subTotalsSection.get('vatR').invalid">
+                  {{getError('vatR')}}
+                </mat-error>
+                <mat-error *ngIf="footerSubTotalValidationState.footerSubTotalVatRValidation">
+                  {{getError('footerSubTotalVatRValidation')}}
+                </mat-error>
+              </div>
+            </mat-form-field>
+          </div>
+        </section>
+        <br />
+        <div class="clear">&nbsp;</div>
+
+        <div class="form-buttons submit-button">
+          <button type="button" class="button float-button" (click)="onResetAllFormFields()">Reset</button>
+        </div>
+        <div class="form-buttons submit-button">
+          <button type="button" class="button float-button" [routerLink]="'/medicare/medical-invoice-list'"
+            (click)="onCancelInvoiveCapture()">Cancel</button>
+        </div>
+        <div class="clear">&nbsp;</div><br>
+      </div>
+    </mat-card>
+  </form>
+
+</div>

@@ -1,0 +1,59 @@
+<mat-card>
+    <mat-card *ngIf="selectedReport">
+        <div class="menu-bar">
+            <span class="material-icons">
+                find_in_page
+            </span>
+            {{this.selectedReport.key}}
+            <span class="material-icons pointer right" matTooltip="reset filters" (click)="reset()">
+                restart_alt
+            </span>
+        </div>
+
+        <mat-expansion-panel [(expanded)]='standardFiltersExpanded'>
+            <mat-expansion-panel-header>
+                <mat-panel-title>
+                    Standard Report Filters
+                </mat-panel-title>
+            </mat-expansion-panel-header>
+            <date-range-filter [defaultDateRange]="defaultDateRange" [triggerReset]="triggerReset"
+                (parameterEmit)="setParameters($event)"></date-range-filter>
+            <payment-type-filter [triggerReset]="triggerReset"
+                (parameterEmit)="setParameters($event)"></payment-type-filter>
+        </mat-expansion-panel>
+        <br />
+        <mat-expansion-panel
+            *ngIf="currentUser.isInternalUser && (!originalParameters || originalParameters?.length <= 0)"
+            [(expanded)]='advancedFiltersExpanded'>
+            <mat-expansion-panel-header>
+                <mat-panel-title>
+                    Advanced Report Filters
+                </mat-panel-title>
+                <mat-panel-description *ngIf="selectedRolePlayer || selectedPolicy || selectedClaim"><span
+                        class="material-icons" matTooltip="pinned policy">
+                        push_pin
+                    </span>
+                    {{selectedRolePlayer?.displayName}}{{selectedPolicy?.policyNumber}}{{selectedClaim?.claimReferenceNumber
+                    ? selectedClaim?.claimReferenceNumber :
+                    selectedClaim?.personEventReferenceNumber}}</mat-panel-description>
+            </mat-expansion-panel-header>
+
+            <mat-tab-group animationDuration="500ms">
+                <mat-tab label="Role Player">
+                    <role-player-search (rolePlayerSelectedEmit)="setRolePlayer($event)"></role-player-search>
+                </mat-tab>
+                <mat-tab label="Policy">
+                    <policy-search-V2 (policySelectedEmit)="setPolicy($event)"></policy-search-V2>
+                </mat-tab>
+                <mat-tab label="Claim">
+                    <claim-search (claimSelectedEmit)="setClaim($event)"></claim-search>
+                </mat-tab>
+            </mat-tab-group>
+        </mat-expansion-panel>
+
+        <div *ngIf="parameters && parameters.length > 0 && reportUrl">
+            <br />
+            <ssrs-report-viewer-V2 [reporturl]="reportUrl" [parameters]="parameters"></ssrs-report-viewer-V2>
+        </div>
+    </mat-card>
+</mat-card>

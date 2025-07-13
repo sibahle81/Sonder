@@ -1,0 +1,184 @@
+<mat-card style="margin: 15px 30px 15px 30px">
+    <mat-card-header>
+        <mat-card-title class="wizard-font card-title grey">
+            <h1 style="padding: 0;">Medical Work Pool</h1>
+        </mat-card-title>
+    </mat-card-header>
+
+    <div class="row">
+    </div>
+
+    <mat-card-content style="margin-left: 10px;">
+
+        <form [formGroup]="form" class="mat-container" style="display:contents;" novalidate>
+            <mat-form-field style="width: 20%;" class="mat-form-field">
+                <label class="mat-label other-label">Work-Pool</label>
+                <mat-select id="filter" name="filter" matInput [(ngModel)]="selectedFilterTypeId"
+                    formControlName="filter" (selectionChange)="selectedWorkPoolChanged($event)">
+                    <mat-option [value]="0">All</mat-option>
+                    <mat-option [value]="1">PreAuthorisations</mat-option>
+                </mat-select>
+            </mat-form-field>
+            <mat-form-field style="width: 20%;" class="mat-form-field" class="mat-form-field-right">
+                <label class="mat-label other-label">Assigned Type</label>
+                <mat-select id="filterAssignedType" name="filterAssignedType" matInput [(ngModel)]="selectedFilterAssignedType"
+                    formControlName="filterAssignedType" [disabled]="disableRoles" (selectionChange)="selectedAssignedTypeChanged($event)">
+                    <mat-option [value]="0">Select Type</mat-option>
+                    <mat-option [value]="'Role'">Role</mat-option>
+                    <mat-option [value]="'User'">User</mat-option>
+                </mat-select>
+            </mat-form-field>
+            <div hidden="true">
+                <mat-form-field style="width: 20%;" class="mat-form-field" class="mat-form-field-right">
+                    <label class="mat-label other-label">Users</label>
+                    <mat-select id="filterUser" name="filterUser" matInput [(ngModel)]="selectedFilterUser"
+                        formControlName="filterUser" [disabled]="disableUsers" (selectionChange)="selectedUserChanged($event)">
+                        <mat-option [value]="0">Select User</mat-option>
+                        <mat-option *ngFor="let user of UsersForWorkPool" [value]="user.userEmail">
+                            {{user.userName}}
+                        </mat-option>
+                    </mat-select>
+                </mat-form-field>
+            </div>
+        </form>
+        <br />
+        <div [hidden]="!dataSource.data">
+            <mat-form-field [floatLabel]="'never'">
+                <input matInput maxlength="50" name="filter" id="filter" #filter width="300" minLength="3"
+                    matTooltip="{{placeHolder}}" matTooltipShowDelay="1000">
+                <mat-placeholder class="placeholder">{{placeHolder}}</mat-placeholder>
+            </mat-form-field>
+        </div>
+        <div [hidden]="!(dataSource.loading$ | async)">
+            <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+            <span class="site-font grey" style="margin-top: 15px;"><i>Loading WorkPools...</i></span>
+        </div>
+        <div [hidden]="paginator.length === 0 || (dataSource.loading$ | async)">
+            <div class="mat-container mat-elevation-z8 x-overflow " [hidden]="dataSource.loading$ | async">
+                <div [hidden]="!dataSource.data">
+                    <mat-table #table [dataSource]="dataSource" matSort id="tblData">
+                        <ng-container matColumnDef="rowIndex">
+                            <mat-header-cell *matHeaderCellDef>
+                            </mat-header-cell>
+                            <mat-cell *matCellDef="let row">{{row.rowIndex}}</mat-cell>
+                        </ng-container>
+                        <!-- Check Box  -->
+                        <ng-container matColumnDef="select">
+                            <mat-header-cell *matHeaderCellDef>
+                            </mat-header-cell>
+                            <mat-cell *matCellDef="let row" (click)="$event.stopPropagation()">
+                                <mat-checkbox
+                                    (change)="AddCheckedItems($event, row)">
+                                </mat-checkbox>
+                            </mat-cell>
+                        </ng-container>
+                        <!--Description-->
+                        <ng-container matColumnDef="description">
+                            <mat-header-cell *matHeaderCellDef>Description</mat-header-cell>
+                            <mat-cell *matCellDef="let row" matTooltip="{{row.description}}">{{row.description}}</mat-cell>
+                        </ng-container>
+                        <!--PreAuth Number-->
+                        <ng-container matColumnDef="referenceNumber">
+                            <mat-header-cell *matHeaderCellDef>PreAuth Number</mat-header-cell>
+                            <mat-cell *matCellDef="let row" matTooltip="{{row.referenceNumber}}">{{row.referenceNumber}}</mat-cell>
+                        </ng-container>
+                        <!--Claim Ref -->
+                        <ng-container matColumnDef="claimReferenceNumber">
+                            <mat-header-cell *matHeaderCellDef>Claim Number</mat-header-cell>
+                            <mat-cell *matCellDef="let row" matTooltip="{{row.claimReferenceNumber}}">{{row.claimReferenceNumber}}</mat-cell>
+                        </ng-container>
+                        <!--Date -->
+                        <ng-container matColumnDef="dateCreated">
+                            <mat-header-cell *matHeaderCellDef> Created Date </mat-header-cell>
+                            <mat-cell *matCellDef="let row" matTooltip="{{row.dateCreated}}">{{row.dateCreated | date:"yyyy-MM-dd "}}</mat-cell>
+                        </ng-container>
+                        <!--Created By -->
+                        <ng-container matColumnDef="createdBy">
+                            <mat-header-cell *matHeaderCellDef> Created By </mat-header-cell>
+                            <mat-cell *matCellDef="let row" matTooltip="{{row.createdBy}}">
+                                <div style="display: block; overflow: hidden;">{{row.createdBy}}</div>
+                            </mat-cell>
+                        </ng-container>
+                        <!--User SLA -->
+                        <ng-container matColumnDef="userSLAHours">
+                            <mat-header-cell *matHeaderCellDef> User SLA </mat-header-cell>
+                            <mat-cell *matCellDef="let row" matTooltip="{{row.userSLAHours}}"
+                                [ngClass]="row.nUserSLA == '-1' ? 'greenSLA' : row.nUserSLA == '1' ? 'redSLA' : row.nUserSLA == '0' ? 'greenSLA' : row.nUserSLA == '-3' ? 'amberSLA': row.nUserSLA == '-2' ? 'greenSLA' : ''">
+                                {{row.userSLAHours}}</mat-cell>
+                        </ng-container>
+                        <!--Overall SLA -->
+                        <ng-container matColumnDef="overAllSLAHours">
+                            <mat-header-cell *matHeaderCellDef> Overall SLA </mat-header-cell>
+                            <mat-cell *matCellDef="let row" matTooltip="{{row.overAllSLAHours}}"
+                                [ngClass]="row.nOverAllSLA == '1' ? 'greenSLA' : row.nOverAllSLA == '3' ? 'redSLA' : row.nOverAllSLA == '0' ? 'greenSLA' : row.nOverAllSLA == '2' ? 'amberSLA' : ''">
+                                {{row.overAllSLAHours}} </mat-cell>
+                        </ng-container>
+                        <!-- assignedToUser  -->
+                        <ng-container matColumnDef="assignedToUser">
+                            <mat-header-cell *matHeaderCellDef> Assigned To User </mat-header-cell>
+                            <mat-cell *matCellDef="let row" matTooltip="{{row.assignedToUser}}">{{row.assignedToUser}}</mat-cell>
+                        </ng-container>
+                        <!-- lockedToUser  -->
+                        <ng-container matColumnDef="lockedToUser">
+                            <mat-header-cell *matHeaderCellDef> Locked To User </mat-header-cell>
+                            <mat-cell *matCellDef="let row" matTooltip="{{row.lockedToUser}}">{{row.lockedToUser}}</mat-cell>
+                        </ng-container>
+                        <!-- workPoolId  -->
+                        <ng-container matColumnDef="workPoolId">
+                            <mat-header-cell *matHeaderCellDef> Work Pool Id </mat-header-cell>
+                            <mat-cell *matCellDef="let row"> {{row.workPoolId}} </mat-cell>
+                        </ng-container>
+                        <!-- userID  -->
+                        <ng-container matColumnDef="userID">
+                            <mat-header-cell *matHeaderCellDef> User Id </mat-header-cell>
+                            <mat-cell *matCellDef="let row"> {{row.userID}} </mat-cell>
+                        </ng-container>
+                        <!-- startDateAndTime  -->
+                        <ng-container matColumnDef="startDateTime">
+                            <mat-header-cell *matHeaderCellDef> Start DateAndTime </mat-header-cell>
+                            <mat-cell *matCellDef="let row"> {{row.startDateTime}} </mat-cell>
+                        </ng-container>
+                        <!-- endDateAndTime  -->
+                        <ng-container matColumnDef="endDateTime">
+                            <mat-header-cell *matHeaderCellDef> End DateAndTime </mat-header-cell>
+                            <mat-cell *matCellDef="let row"> {{row.endDateTime}} </mat-cell>
+                        </ng-container>
+                        <!-- Actions -->
+                        <ng-container matColumnDef="actions">
+                            <mat-header-cell *matHeaderCellDef>Action</mat-header-cell>
+                            <mat-cell *matCellDef="let row" [matMenuTriggerFor]="menu" (click)="filterMenu(row)">
+                                <span class="material-icons pointer right">more_vert</span>
+                                <mat-menu #menu="matMenu">
+                                    <button mat-menu-item *ngFor="let menu of menus"
+                                    (click)="onMenuSelect(row, menu.title)"                                    
+                                        disabled={{menu.disable}}>{{menu.title}}</button>
+                                </mat-menu>
+                            </mat-cell>
+                        </ng-container>
+
+                        <mat-header-row *matHeaderRowDef="getDisplayedColumns();"></mat-header-row>
+                        <mat-row *matRowDef="let row; columns: getDisplayedColumns();"></mat-row>
+                    </mat-table>
+
+                    <mat-paginator #paginator [length]="dataSource.rowCount$" [pageIndex]="0" [pageSize]="5"
+                        [pageSizeOptions]="[5, 10, 25, 100]">
+                    </mat-paginator>
+                </div>
+            </div>
+        </div>
+
+        <div [hidden]="dataSource.data && dataSource.data.data.length > 0  || ( dataSource.loading$ | async)"
+            style="margin-left: 20px;">
+            <span class="grey site-font">No records found.</span>
+        </div>
+
+        <div class="form-group-button mat-form-button action-buttons">
+            <button type="button" [hidden]="!canAllocateReallocate" (click)="openAllocateToUsersPopup()"
+                class="button float-button">Allocate</button>
+            <button type="button" [hidden]="!canAllocateReallocate" (click)="openReAllocateToUsersPopup()"
+                class="button float-button">Re-Allocate</button>
+        </div>
+
+    </mat-card-content>
+
+</mat-card>

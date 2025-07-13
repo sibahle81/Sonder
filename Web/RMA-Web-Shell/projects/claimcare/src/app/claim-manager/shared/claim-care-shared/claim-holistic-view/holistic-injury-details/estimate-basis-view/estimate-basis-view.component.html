@@ -1,0 +1,96 @@
+<div class="menu-bar">
+    <span class="material-icons">
+        medication
+    </span>&nbsp;ICD10 Codes Estimates
+    <span class="material-icons pointer right" matTooltip="cancel" (click)="cancel()">
+        cancel
+    </span>
+</div>
+
+<mat-card class="pad" *ngIf="(isLoading$ | async)">
+    <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+    <label class="mat-label other-label"><i>loading icd10 codes...please wait</i></label>
+</mat-card>
+
+<div [hidden]="(isLoading$ | async)">
+    <mat-card>
+        <section>
+            <div>
+                <mat-table #icd10CodeTable [dataSource]="dataSource" matSort>
+                    <ng-container matColumnDef="icd10Code">
+                        <mat-header-cell *matHeaderCellDef>ICD10 Code </mat-header-cell>
+                        <mat-cell *matCellDef="let row"><b>{{row.icd10CodeDescription}}</b> ({{row.icd10Code}})</mat-cell>
+                    </ng-container>
+
+                    <ng-container matColumnDef="minEstimatedAmount">
+                        <mat-header-cell *matHeaderCellDef>Cost Min</mat-header-cell>
+                        <mat-cell *matCellDef="let row"> {{formatMoney(getEstimatedAmount(row.icd10Code, minEstimate,
+                            medicalEstimateType))}} </mat-cell>
+                    </ng-container>
+    
+                    <ng-container matColumnDef="avgEstimatedAmount">
+                        <mat-header-cell *matHeaderCellDef>Cost Avg</mat-header-cell>
+                        <mat-cell *matCellDef="let row"> {{formatMoney(getEstimatedAmount(row.icd10Code,
+                            averageEstimate, medicalEstimateType))}} </mat-cell>
+                    </ng-container>
+    
+                    <ng-container matColumnDef="maxEstimatedAmount">
+                        <mat-header-cell *matHeaderCellDef>Cost Max</mat-header-cell>
+                        <mat-cell *matCellDef="let row"> {{formatMoney(getEstimatedAmount(row.icd10Code,
+                            maxEstimate,medicalEstimateType))}} </mat-cell>
+                    </ng-container>
+    
+                    <ng-container matColumnDef="minPDPercentage">
+                        <mat-header-cell *matHeaderCellDef>Min PD%</mat-header-cell>
+                        <mat-cell *matCellDef="let row"> {{getEstimatedAmount(row.icd10Code,
+                            minEstimate,pdEstimateType)}}%</mat-cell>
+                    </ng-container>
+    
+                    <ng-container matColumnDef="avgPDPercentage">
+                        <mat-header-cell *matHeaderCellDef>Avg PD%</mat-header-cell>
+                        <mat-cell *matCellDef="let row"> {{getEstimatedAmount(row.icd10Code,
+                            averageEstimate,pdEstimateType)}}%</mat-cell>
+                    </ng-container>
+    
+                    <ng-container matColumnDef="maxPDPercentage">
+                        <mat-header-cell *matHeaderCellDef>Max PD%</mat-header-cell>
+                        <mat-cell *matCellDef="let row"> {{getEstimatedAmount(row.icd10Code,
+                            maxEstimate,pdEstimateType)}}%</mat-cell>
+                    </ng-container>
+    
+                    <ng-container matColumnDef="minTTD">
+                        <mat-header-cell *matHeaderCellDef>Days Min</mat-header-cell>
+                        <mat-cell *matCellDef="let row"> {{getEstimatedAmount(row.icd10Code,
+                            minEstimate,ttdEstimateType)}} day(s)</mat-cell>
+                    </ng-container>
+    
+                    <ng-container matColumnDef="avgTTD">
+                        <mat-header-cell *matHeaderCellDef>Days Avg</mat-header-cell>
+                        <mat-cell *matCellDef="let row"> {{getEstimatedAmount(row.icd10Code,
+                            averageEstimate,ttdEstimateType)}} day(s)</mat-cell>
+                    </ng-container>
+    
+                    <ng-container matColumnDef="maxTTD">
+                        <mat-header-cell *matHeaderCellDef>Days Max</mat-header-cell>
+                        <mat-cell *matCellDef="let row"> {{getEstimatedAmount(row.icd10Code,
+                            maxEstimate,ttdEstimateType)}} day(s)</mat-cell>
+                    </ng-container>
+
+                    <mat-header-row *matHeaderRowDef="getDisplayedColumns()"></mat-header-row>
+                    <mat-row *matRowDef="let row; columns: getDisplayedColumns();"></mat-row>
+                </mat-table>
+
+                <mat-paginator #paginator [pageIndex]="0" [pageSize]="5" [pageSizeOptions]="[5, 10, 25, 100]"
+                    [length]="dataSource.data ? dataSource.data.length : 0 ">
+                </mat-paginator>
+            </div>
+
+            <div *ngIf="(isLoading$ | async)" class="loadingDiv">
+                <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+                <label class="mat-label other-label">
+                    <i>getting estimates for selected icd10 codes...please wait</i>
+                </label>
+            </div>
+        </section>
+    </mat-card>
+</div>

@@ -1,0 +1,133 @@
+<div *ngIf="event">
+  <div class="menu-bar">
+    <span class="material-icons">
+      personal_injury
+    </span>
+    Incident Details
+    <span *ngIf="!isReadOnly" (click)="cancel()" class="material-icons pointer right" matTooltip="cancel">
+      close
+    </span>
+
+    <span *ngIf="form.valid && !form.pristine && !isReadOnly" (click)="save()"
+      class="material-icons pointer right pulse greenFont" matTooltip="save">
+      save
+    </span>
+
+    <span *ngIf="employer && !(isSaving$ | async) && isReadOnly && !event.addingMoreInjuredEmployees"
+      (click)="edit()" class="material-icons pointer right" matTooltip="edit">
+      settings
+    </span>
+  </div>
+
+  <mat-card *ngIf="!employer || (isLoading$ | async)">
+    <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+    <label class="mat-label other-label"><i>loading incident details...please wait</i></label>
+  </mat-card>
+
+  <mat-card *ngIf="(isSaving$ | async)">
+    <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+    <label class="mat-label other-label"><i>saving incident details...please wait</i></label>
+  </mat-card>
+
+  <div *ngIf="employer && !((isLoading$ | async) || (isSaving$ | async))">
+    <mat-card>
+      <form [formGroup]="form" class="mat-container details-form" novalidate>
+        <section>
+          <mat-form-field class="mat-form-field">
+            <label class="mat-label other-label mandatory-field">Member Site</label>
+            <mat-select name="memberSite" id="memberSite" formControlName="memberSite">
+              <mat-option *ngFor="let item of subsidiaries" [value]="item.rolePlayerId">
+                {{item.name}}
+              </mat-option>
+            </mat-select>
+            <mat-error *ngIf="form.get('memberSite').hasError('required')">
+              Member site is <strong>required</strong>
+            </mat-error>
+          </mat-form-field>
+
+          <mat-form-field class="mat-form-field-right">
+            <label class="mat-label other-label mandatory-field">Date of Accident</label>
+            <input matInput formControlName="dateOfAccident" [matDatepicker]="dateOfAccident" id="dateOfAccident"
+              name="dateOfAccident" [max]="maxDate" readonly>
+            <mat-datepicker-toggle matSuffix [for]="dateOfAccident" [disabled]="false"></mat-datepicker-toggle>
+            <mat-datepicker startView="month" [startAt]="startDate" touchUi="true" #dateOfAccident></mat-datepicker>
+            <mat-error class="mat-error-incident"
+              *ngIf="form.get('dateOfAccident').hasError('required')  && form.get('dateOfAccident').touched">
+              Date of Accident is <strong>required</strong>
+            </mat-error>
+          </mat-form-field>
+        </section>
+
+        <section>
+          <mat-form-field class="mat-form-field">
+            <label class="mat-label other-label mandatory-field">Time of Accident</label>
+            <input matInput formControlName="timeOfAccident" id="timeOfAccident" name="timeOfAccident" type="time"
+              (blur)="validateTimeAndDate()">
+            <mat-error class="mat-error-incident"
+              *ngIf="form.get('timeOfAccident').hasError('required')  && form.get('timeOfAccident').touched">
+              Time of Accident is <strong>required</strong>
+            </mat-error>
+            <mat-error class="mat-error-incident"
+              *ngIf="form.get('timeOfAccident').hasError('isTimeBefore')  && form.get('timeOfAccident').touched">
+              Time of accident cannot be in the <strong>future</strong>
+            </mat-error>
+          </mat-form-field>
+
+          <mat-form-field class="mat-form-field-right">
+            <label class="mat-label other-label mandatory-field">Details of Accident</label>
+            <textarea matInput formControlName="detailsOfAccident" id="detailsOfAccident"
+              name="detailsOfAccident"></textarea>
+            <mat-error class="mat-error-incident" *ngIf="(form.get('detailsOfAccident').hasError('required')  && form.get('detailsOfAccident').touched)
+              || (form.get('detailsOfAccident').hasError('minlength')  && form.get('detailsOfAccident').touched)
+              || (form.get('detailsOfAccident').hasError('maxlength')  && form.get('detailsOfAccident').touched)">
+              Details is <strong>required</strong>,length should<strong> be less or equal to 260</strong>
+            </mat-error>
+          </mat-form-field>
+        </section>
+        <section>
+          <mat-form-field class="mat-form-field">
+            <label class="mat-label other-label mandatory-field">Location Category</label>
+            <mat-select name="locationCategoryId" id="locationCategoryId" formControlName="locationCategoryId">
+              <mat-option *ngFor="let locationCategory of locationCategories" [value]="locationCategory.id">
+                {{locationCategory.name}}
+              </mat-option>
+            </mat-select>
+            <mat-error class="mat-error-incident"
+              *ngIf="form.get('locationCategoryId').hasError('required')  && form.get('locationCategoryId').touched">
+              Location is <strong>required</strong>
+            </mat-error>
+          </mat-form-field>
+
+
+          <mat-form-field class="mat-form-field-right">
+            <label class="mat-label other-label mandatory-field">Number of Deceased Employees </label>
+            <input matInput id="employeesDeceased" name="employeesDeceased" formControlName="employeesDeceased"
+              type="number" min="0" />
+            <label class="mat-error-incident" *ngIf="employeesDeceasedRequired()">Number
+              of deceased Employees is <strong>required</strong></label>
+            <label class="mat-error-incident" *ngIf="employeesDeceasedValidation()">
+              Number of deceased Employees cannot be<strong> less than 0</strong></label>
+          </mat-form-field>
+        </section>
+
+        <section>
+          <mat-form-field class="mat-form-field">
+            <label class="mat-label other-label mandatory-field">Number of Injured Employees </label>
+            <input matInput id="employeesInjured" name="employeesInjured" formControlName="employeesInjured"
+              type="number" min="1" />
+            <label class="mat-error-incident" *ngIf="employeeRequired()"> Number of Injured Employees
+              <strong>required</strong></label>
+            <label class="mat-error-incident" *ngIf="employeeValidation()"> Number of Injured Employees
+              cannot be<strong> less than 1</strong></label>
+          </mat-form-field>
+
+          <mat-form-field class="mat-form-field-right">
+            <label class="mat-label other-label">Medical Benefits Waiting Period</label>
+            <input matInput id="medicalBenefit" name="medicalBenefit" formControlName="medicalBenefit" type="text"
+              [readonly]="true" class="disableInput" />
+          </mat-form-field>
+        </section>
+      </form>
+    </mat-card>
+  </div>
+</div>

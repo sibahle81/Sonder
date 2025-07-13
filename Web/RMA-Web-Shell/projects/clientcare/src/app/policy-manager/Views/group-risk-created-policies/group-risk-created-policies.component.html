@@ -1,0 +1,438 @@
+<!--<div class="wizard-main-content">
+  <mat-card class="wizard-mat-card wizard-mat-table">
+     <mat-card-header>
+       <h4>Created Policies</h4>
+     </mat-card-header>
+     <mat-card-content class="wizard-mat-card-content">
+   <div>
+         <div class="mat-container mat-elevation-z8">
+           <div *ngIf="dataSource.isLoading">
+             <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+           </div>
+           <div>
+
+        <mat-table #table [dataSource]="dataSource" matSort>
+
+
+               <ng-container matColumnDef="policyName">
+                 <mat-header-cell *matHeaderCellDef mat-sort-header> Policy Name </mat-header-cell>
+                 <mat-cell *matCellDef="let row"> {{row.policyName }} </mat-cell>
+               </ng-container>
+
+
+               <ng-container matColumnDef="policyNumber">
+                 <mat-header-cell *matHeaderCellDef mat-sort-header>Policy Number </mat-header-cell>
+                 <mat-cell *matCellDef="let row"> {{row.policyNumber }} </mat-cell>
+               </ng-container>
+
+
+               <ng-container matColumnDef="policyStartDate">
+                 <mat-header-cell *matHeaderCellDef mat-sort-header> Policy Start Date </mat-header-cell>
+                 <mat-cell *matCellDef="let row"> {{row.policyStartDate  | date: 'dd-MM-yyyy'}} </mat-cell>
+               </ng-container>
+
+               <ng-container matColumnDef="policyEndDate">
+                 <mat-header-cell *matHeaderCellDef mat-sort-header> Policy End Date </mat-header-cell>
+                 <mat-cell *matCellDef="let row">  {{row.policyEndDate ? (row.policyEndDate | date: 'dd-MM-yyyy') : ''}} </mat-cell>
+               </ng-container>
+
+
+               <ng-container matColumnDef="rmaAdministrator">
+                 <mat-header-cell *matHeaderCellDef mat-sort-header> Rma Administrator </mat-header-cell>
+                 <mat-cell *matCellDef="let row"> {{row.rmaAdministrator }} </mat-cell>
+               </ng-container>
+
+
+               <ng-container matColumnDef="partner">
+                 <mat-header-cell *matHeaderCellDef mat-sort-header> Partner </mat-header-cell>
+                 <mat-cell *matCellDef="let row"> {{row.partner }} </mat-cell>
+               </ng-container>
+
+
+               <ng-container *ngIf="!hideActionsLink" matColumnDef="actions">
+                 <mat-header-cell *matHeaderCellDef>Actions</mat-header-cell>
+                 <mat-cell *matCellDef="let row; let i = index;">
+                     <span *ngIf="!isDisabled" > <img src="/assets/images/edit.png" class="action-icon" /> <a role="button" class="link-edit action-link" (click)="onView(row, i)">View</a></span>
+                   </mat-cell>
+               </ng-container>
+
+               <mat-header-row *matHeaderRowDef="displayedColumns;"></mat-header-row>
+               <mat-row *matRowDef="let row; columns: displayedColumns;"></mat-row>
+             </mat-table>
+
+             <mat-paginator #paginator [length]="dataSource.data.length" [pageIndex]="0" [pageSize]="5"
+               [pageSizeOptions]="[5, 10,100]">
+             </mat-paginator>
+           </div>
+
+           <div [hidden]="dataSource.data.length > 0 || dataSource.isLoading">
+             <span class="grey site-font">No policies have been added.</span>
+           </div>
+         </div>
+       </div>
+
+     </mat-card-content>
+   </mat-card>
+
+   <div class="wizard-main-content">
+   <h4>Edit Policy</h4>
+   <mat-card class="wizard-mat-card">
+     <mat-card-content class="wizard-mat-card-content">
+       <div [hidden]="!isViewPolicy">
+         <div>
+
+        <form [formGroup]="form" class="mat-container details-form" novalidate>
+
+     <section>
+       <mat-form-field class="mat-form-field">
+         <label class="mat-label other-label">Deal</label>
+         <mat-select [(value)]="selectedGroupRiskDealTypeId" name="groupRiskDeal" id="groupRiskDeal"
+           formControlName="groupRiskDeal">
+           <mat-option *ngFor="let groupRiskDeal of groupRiskDealTypes" [value]="groupRiskDeal.id">
+             {{formatLookup(groupRiskDeal.name)}}
+           </mat-option>
+         </mat-select>
+         <mat-error *ngIf="form.get('groupRiskDeal').hasError('required')">
+          Deal is <strong>required</strong>
+         </mat-error>
+       </mat-form-field>
+
+
+       <mat-form-field class="mat-form-field-right">
+         <label class="mat-label other-label">Product</label>
+          <mat-select [(value)]="selectedProductId" name="product" id="product"
+            formControlName="product">
+            <mat-option *ngFor="let product of products" [value]="product.id">
+              {{formatLookup(product.name)}}
+            </mat-option>
+          </mat-select>
+          <mat-error *ngIf="form.get('product').hasError('required')">
+            Product is <strong>required</strong>
+          </mat-error>
+         </mat-form-field>
+      </section>
+
+      <section>
+
+       <mat-form-field class="mat-form-field">
+         <label class="mat-label other-label">Policy Number</label>
+         <input matInput formControlName="policyNumber">
+      </mat-form-field>
+
+
+       <mat-form-field class="mat-form-field-right">
+         <label class="mat-label other-label">Policy Type</label>
+          <mat-select [(value)]="selectedProductOptionTypeId" name="productOptionType" id="productOptionType"
+            formControlName="productOptionType">
+            <mat-option *ngFor="let productOptionType of productOptionTypes" [value]="productOptionType.id">
+              {{formatLookup(productOptionType.name)}}
+            </mat-option>
+          </mat-select>
+          <mat-error *ngIf="form.get('productOptionType').hasError('required')">
+            Policy Type is <strong>required</strong>
+          </mat-error>
+         </mat-form-field>
+
+      </section>
+
+      <section>
+
+       <mat-form-field class="mat-form-field">
+         <label class="mat-label other-label">Policy Name</label>
+         <input matInput formControlName="policyName">
+      </mat-form-field>
+
+
+       <mat-form-field class="mat-form-field-right">
+         <label class="mat-label other-label">Brokerage</label>
+          <mat-select [(value)]="selectedBrokerageId" name="brokerage" id="brokerage"
+            formControlName="brokerage">
+            <mat-option *ngFor="let brokerage of brokerages" [value]="brokerage.id">
+              {{formatLookup(brokerage.name)}}
+            </mat-option>
+          </mat-select>
+          <mat-error *ngIf="form.get('brokerage').hasError('required')">
+            Brokerage is <strong>required</strong>
+          </mat-error>
+         </mat-form-field>
+
+      </section>
+
+      <section>
+
+       <mat-form-field class="mat-form-field">
+         <label class="mat-label other-label">Commission</label>
+         <mat-select [(value)]="selectedCommissionTypeId" name="commissionType" id="commissionType"
+         formControlName="commissionType">
+         <mat-option *ngFor="let commissionType of commissionTypes" [value]="commissionType.id">
+           {{formatLookup(commissionType.name)}}
+         </mat-option>
+       </mat-select>
+       <mat-error *ngIf="form.get('commissionType').hasError('required')">
+         Commission Type is <strong>required</strong>
+       </mat-error>
+
+      </mat-form-field>
+
+
+       <mat-form-field class="mat-form-field-right">
+         <label class="mat-label other-label">Commission Payment Process</label>
+          <mat-select [(value)]="selectedCommissionPaymentProcessTypeId" name="commissionPaymentProcessType" id="commissionPaymentProcessType"
+            formControlName="commissionPaymentProcessType">
+            <mat-option *ngFor="let commissionPaymentProcessType of commissionPaymentProcessTypes" [value]="commissionPaymentProcessType.id">
+              {{formatLookup(commissionPaymentProcessType.name)}}
+            </mat-option>
+          </mat-select>
+          <mat-error *ngIf="form.get('commissionPaymentProcessType').hasError('required')">
+           Commission Payment Process is <strong>required</strong>
+          </mat-error>
+         </mat-form-field>
+
+      </section>
+
+      <section>
+
+       <mat-form-field class="mat-form-field">
+         <label class="mat-label other-label">Policy Holder</label>
+         <mat-select [(value)]="selectedPolicyHolderTypeId" (selectionChange)="selectPolicyHolderType($event)"   name="policyHolderType" id="policyHolderType"
+         formControlName="policyHolderType">
+         <mat-option     *ngFor="let policyHolderType of policyHolderTypes" [value]="policyHolderType.id">
+           {{formatLookup(policyHolderType.name)}}
+         </mat-option>
+       </mat-select>
+       <mat-error *ngIf="form.get('policyHolderType').hasError('required')">
+         Policy Holder Type is <strong>required</strong>
+       </mat-error>
+
+      </mat-form-field>
+
+
+       <mat-form-field class="mat-form-field-right">
+         <label class="mat-label other-label">New Effective Date</label>
+         <input matInput formControlName="newEffectiveDate" [matDatepicker]="newEffectiveDate">
+         <mat-datepicker-toggle matSuffix [for]="newEffectiveDate" [disabled]="form.disabled"></mat-datepicker-toggle>
+         <mat-datepicker touchUi="true" #newEffectiveDate></mat-datepicker>
+          <mat-error *ngIf="form.get('newEffectiveDate').hasError('required')">
+           New Effective Date is <strong>required</strong>
+          </mat-error>
+         </mat-form-field>
+
+      </section>
+      <section>
+
+       <mat-form-field class="mat-form-field">
+         <label class="mat-label other-label">Start Date</label>
+         <input matInput formControlName="startDate" [matDatepicker]="startDate">
+         <mat-datepicker-toggle matSuffix [for]="startDate" [disabled]="form.disabled"></mat-datepicker-toggle>
+         <mat-datepicker touchUi="true" #startDate></mat-datepicker>
+          <mat-error *ngIf="form.get('startDate').hasError('required')">
+           Start Date is <strong>required</strong>
+          </mat-error>
+         </mat-form-field>
+
+         <mat-form-field class="mat-form-field-right">
+           <label class="mat-label other-label">End Date</label>
+           <input matInput formControlName="endDate" [matDatepicker]="endDate">
+           <mat-datepicker-toggle matSuffix [for]="endDate" [disabled]="form.disabled"></mat-datepicker-toggle>
+           <mat-datepicker touchUi="true" #endDate></mat-datepicker>
+
+         </mat-form-field>
+
+     </section>
+
+   <section>
+     <mat-form-field class="mat-form-field">
+       <label class="mat-label other-label">Administrator</label>
+       <mat-select [(value)]="selectedAdministratorId" name="administrator" id="administrator"
+       formControlName="administrator">
+       <mat-option *ngFor="let administrator of administrators" [value]="administrator.id">
+         {{formatLookup(administrator.name)}}
+       </mat-option>
+     </mat-select>
+     <mat-error *ngIf="form.get('administrator').hasError('required')">
+     Administartor is <strong>required</strong>
+     </mat-error>
+
+     </mat-form-field>
+     <mat-form-field class="mat-form-field-right">
+       <label class="mat-label other-label">RMA Relationship manager</label>
+       <mat-select [(value)]="selectedRmaRelationshipManagerId" name="rmaRelationshipManager" id="rmaRelationshipManager"
+       formControlName="rmaRelationshipManager">
+       <mat-option *ngFor="let rmaRelationshipManager of rmaRelationshipManagers" [value]="rmaRelationshipManager.id">
+         {{formatLookup(rmaRelationshipManager.name)}}
+       </mat-option>
+     </mat-select>
+     <mat-error *ngIf="form.get('rmaRelationshipManager').hasError('required')">
+     Rma Relationship Manager is <strong>required</strong>
+     </mat-error>
+
+     </mat-form-field>
+
+   </section>
+
+
+   <section>
+     <mat-form-field class="mat-form-field">
+       <label class="mat-label other-label">Anniversary Month</label>
+       <mat-select [(value)]="selectedAnniversaryMonthId" name="anniversaryMonth" id="anniversaryMonth"
+       formControlName="anniversaryMonth">
+       <mat-option *ngFor="let anniversaryMonth of anniversaryMonths" [value]="anniversaryMonth.id">
+         {{formatLookup(anniversaryMonth.name)}}
+       </mat-option>
+     </mat-select>
+     <mat-error *ngIf="form.get('anniversaryMonth').hasError('required')">
+       Anniversary Month is <strong>required</strong>
+     </mat-error>
+
+     </mat-form-field>
+
+     <mat-form-field class="mat-form-field-right">
+       <label class="mat-label other-label">Profit Share</label>
+       <mat-select formControlName="profitShare" [(value)]="selectedProfitShare">
+         <mat-option [value]="true">Yes</mat-option>
+         <mat-option [value]="false">No</mat-option>
+       </mat-select>
+       <mat-error *ngIf="form.get('profitShare').hasError('required')">
+         Profit Share is <strong>required</strong>
+       </mat-error>
+
+     </mat-form-field>
+
+   </section>
+
+   <section>
+     <mat-form-field class="mat-form-field">
+        <label class="mat-label other-label">Scheme Status</label>
+        <input matInput formControlName="schemeStatus">
+     </mat-form-field>
+     <mat-form-field class="mat-form-field-right">
+       <label class="mat-label other-label">Last Rate Update Date </label>
+       <input matInput formControlName="lastRateUpdateDate" [matDatepicker]="lastRateUpdateDate">
+       <mat-datepicker-toggle matSuffix [for]="lastRateUpdateDate" [disabled]="form.disabled"></mat-datepicker-toggle>
+       <mat-datepicker touchUi="true" #lastRateUpdateDate></mat-datepicker>
+     </mat-form-field>
+  </section>
+
+  <section>
+   <mat-form-field class="mat-form-field">
+     <label class="mat-label other-label">Next Rate Review Date </label>
+     <input matInput formControlName="nextRateReviewDate" [matDatepicker]="nextRateReviewDate">
+     <mat-datepicker-toggle matSuffix [for]="nextRateReviewDate" [disabled]="form.disabled"></mat-datepicker-toggle>
+     <mat-datepicker touchUi="true" #nextRateReviewDate></mat-datepicker>
+   </mat-form-field>
+
+   <mat-form-field class="mat-form-field-right">
+     <label class="mat-label other-label">Allow Contractor</label>
+     <mat-select formControlName="allowContractor" [(value)]="selectedAllowContractor">
+       <mat-option [value]="true">Yes</mat-option>
+       <mat-option [value]="false">No</mat-option>
+     </mat-select>
+     <mat-error *ngIf="form.get('allowContractor').hasError('required')">
+       Allow contractor is <strong>required</strong>
+     </mat-error>
+
+
+   </mat-form-field>
+ </section>
+ <section>
+   <mat-form-field class="mat-form-field">
+   <label class="mat-label other-label">First Year Broker Commission</label>
+   <mat-select formControlName="firstYearBrokerCommission" [(value)]="selectedFirstYearBrokerCommission">
+     <mat-option [value]="true">Yes</mat-option>
+     <mat-option [value]="false">No</mat-option>
+   </mat-select>
+   <mat-error *ngIf="form.get('firstYearBrokerCommission').hasError('required')">
+     First Year Broker Commission <strong>required</strong>
+   </mat-error>
+ </mat-form-field>
+   <mat-form-field class="mat-form-field-right">
+     <label class="mat-label other-label">Comission Discount</label>
+     <input matInput formControlName="comissionDiscount"  type="number">
+     <mat-error *ngIf="form.get('comissionDiscount').hasError('required')">
+       Comission Discount <strong>required</strong>
+     </mat-error>
+  </mat-form-field>
+ </section>
+
+ <section>
+   <mat-form-field class="mat-form-field">
+   <label class="mat-label other-label">Partial Waiver - Actively at work</label>
+   <mat-select formControlName="partialWaiverActivelyAtWork" [(value)]="selectedPartialWaiverActivelyAtWork">
+     <mat-option [value]="true">Yes</mat-option>
+     <mat-option [value]="false">No</mat-option>
+   </mat-select>
+   <mat-error *ngIf="form.get('partialWaiverActivelyAtWork').hasError('required')">
+     Partial Waiver - Actively at work <strong>required</strong>
+   </mat-error>
+ </mat-form-field>
+   <mat-form-field class="mat-form-field-right">
+     <label class="mat-label other-label">Partial Waiver - Pre Existing Conditions</label>
+     <mat-select formControlName="partialWaiverPreExistingCondition" [(value)]="selectedPartialWaiverPreExistingCondition">
+       <mat-option [value]="true">Yes</mat-option>
+       <mat-option [value]="false">No</mat-option>
+     </mat-select>
+     <mat-error *ngIf="form.get('partialWaiverPreExistingCondition').hasError('required')">
+       Partial Waiver - Actively at work <strong>required</strong>
+     </mat-error>
+  </mat-form-field>
+ </section>
+
+ <section>
+   <mat-form-field class="mat-form-field">
+     <label class="mat-label other-label">Reinsurance Treaty</label>
+     <mat-select [(value)]="selectedReinsuranceTreatyTypeId" name="reinsuranceTreatyType" id="reinsuranceTreatyType"
+     formControlName="reinsuranceTreatyType">
+     <mat-option *ngFor="let reinsuranceTreatyType of reinsuranceTreatyTypes" [value]="reinsuranceTreatyType.id">
+       {{formatLookup(reinsuranceTreatyType.name)}}
+     </mat-option>
+   </mat-select>
+   <mat-error *ngIf="form.get('reinsuranceTreatyType').hasError('required')">
+     Reinsurance Treaty is <strong>required</strong>
+   </mat-error>
+
+   </mat-form-field>
+
+   <mat-form-field class="mat-form-field-right">
+     <label class="mat-label other-label">Billing Frequency</label>
+     <mat-select [(value)]="selectedBillingFrequencyTypeId" name="billingFrequencyType" id="billingFrequencyType"
+     formControlName="billingFrequencyType">
+     <mat-option *ngFor="let billingFrequencyType of billingFrequencyTypes" [value]="billingFrequencyType.id">
+       {{formatLookup(billingFrequencyType.name)}}
+     </mat-option>
+   </mat-select>
+   <mat-error *ngIf="form.get('billingFrequencyType').hasError('required')">
+     Billing Frequency is <strong>required</strong>
+   </mat-error>
+
+   </mat-form-field>
+
+ </section>
+
+ <section>
+
+   <mat-form-field class="mat-form-field">
+      <label class="mat-label other-label">Previous Insurer</label>
+      <input matInput formControlName="previousInsurer">
+   </mat-form-field>
+ </section>
+
+    </form>
+
+
+         </div>
+       </div>
+     </mat-card-content>
+     <mat-card-footer>
+         <div class="form-group-button mat-form-button" *ngIf="isEditPolicy"
+           class="form-buttons submit-button" style="margin-bottom: 10px;">
+           <button (click)="onSaveEditedPolicy()" class="button submit-button">Save</button>
+           <button (click)="cancelEditedPolicy()" class="button submit-button">Cancel</button>
+         </div>
+     </mat-card-footer>
+   </mat-card>
+
+ </div>
+
+-->
+
+

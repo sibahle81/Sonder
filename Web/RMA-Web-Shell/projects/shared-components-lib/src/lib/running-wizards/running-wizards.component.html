@@ -1,0 +1,48 @@
+<div class="menu-bar">
+  <span class="material-icons">
+    rebase_edit
+  </span>
+  {{title}}
+  <span class="material-icons pointer right" matTooltip="refresh" (click)="getRunningWizardProcesses()">
+    refresh
+  </span>
+</div>
+
+<mat-card *ngIf="isLoading$ | async">
+  <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+  <label class="mat-label other-label"><i>loading...please wait</i></label>
+</mat-card>
+
+<div *ngIf="!(isLoading$ | async) && !hideOnNoWizardFound">
+
+  <div *ngIf="wizardsInProgress && wizardsInProgress?.length > 0">
+    <div class="scrollTable">
+      <label class="mat-label other-label"><b>{{wizardsInProgress?.length}}</b> Active Workflow(s)</label>
+      <table class="altRowTable">
+        <tr>
+          <th>Name</th>
+          <th>Type</th>
+          <th>Status</th>
+          <th>Locked To</th>
+          <th *ngIf="!hideActionColumn">Action</th>
+        </tr>
+        <tr *ngFor="let wizard of wizardsInProgress">
+          <td class="left">{{wizard.name}}</td>
+          <td class="left">{{wizard.wizardConfiguration ? wizard.wizardConfiguration.name : 'Unknown'}}</td>
+          <td class="center">{{formatStatus(wizard.wizardStatus)}}</td>
+          <td class="center" matTooltip="Locked" *ngIf="wizard.lockedToUser">
+            <user-display-name [userName]="wizard.lockedToUser"></user-display-name>
+          </td>
+          <td class="center" matTooltip="Unlocked" *ngIf="!wizard.lockedToUser"><span
+              class="material-icons">lock_open</span>
+          </td>
+          <td *ngIf="!hideActionColumn" class="center"><a
+              href="{{moduleName}}/{{managerName}}/{{wizard.wizardConfiguration.name}}/continue/{{wizard.id}}">select</a>
+          </td>
+      </table>
+    </div>
+  </div>
+  <mat-card *ngIf="wizardsInProgress && wizardsInProgress?.length <= 0 && !hideOnNoWizardFound">
+    <label class="mat-label other-label"><i>No {{title}} found...</i></label>
+  </mat-card>
+</div>

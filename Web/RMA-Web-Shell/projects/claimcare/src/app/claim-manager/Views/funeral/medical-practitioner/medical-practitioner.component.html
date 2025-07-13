@@ -1,0 +1,108 @@
+<div class="page-header"></div>
+<div *ngIf="!canAdd">
+    <div style="padding-bottom: 15px; color: orange; font-family: 'Oswald', sans-serif;">You do not have sufficient permissions to add medical practitioner.</div>
+    <div (click)="back()" class="form-buttons submit-button">
+        <button type="button" class="button float-button">Back</button>
+    </div>
+</div>
+
+<div [hidden]="!canAdd" style="padding-top: 15px;">
+    <mat-card style="margin: 15px 30px 15px 30px">
+        <mat-card-content style="margin-left: 10px;">
+            <form [formGroup]="form"  class="mat-container" novalidate>
+                <div style="margin-top: 20px;">
+                    <div class="menu-bar">
+                        <!-- Row 0 -->
+                        <section>
+                            <span *ngIf="canEditForm && !showSetting" (click)="cancel()" class="material-icons pointer right" matTooltip="cancel">
+                                close
+                              </span>
+                          
+                              <span *ngIf="form.valid && !form.pristine && canEditForm && !showSetting" (click)="save()"
+                                class="material-icons pointer right pulse greenFont" matTooltip="save">
+                                save
+                              </span>
+                                                  
+                              <span *ngIf="!(isSaving$ | async) && canEditForm && showSetting"
+                                (click)="edit()" class="material-icons pointer right" matTooltip="edit">
+                                settings
+                              </span>
+    
+                        </section>
+                     </div>                 
+                     <br />
+
+                    <section>
+                            <!--Registration-->
+                            <mat-form-field >
+                                <label class="mat-label other-label">Registration Number</label>
+                                <input matInput maxlength="50" formControlName="registrationNumber" (blur)="searchMsp()" name="registrationNumber" id="registrationNumber">
+                                <span [style.visibility]="isLoading ? 'visible' : 'hidden'">
+                                    <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+                                    <span class="grey site-font"><i>Searching MSP...please wait</i></span>
+                                </span>
+                            </mat-form-field>
+                    </section>
+                    <section>
+                        <!--First name-->
+                        <mat-form-field>
+                            <label class="mat-label other-label">First Name</label>
+                            <input matInput maxlength="50" formControlName="firstName" name="firstName" id="firstName">
+                        </mat-form-field>
+                        <!--Last name-->
+                        <mat-form-field class="mat-form-field-right">
+                            <label class="mat-label other-label">Last Name</label>
+                            <input matInput maxlength="50" formControlName="lastName" name="lastName" id="lastName">
+                        </mat-form-field>
+                    </section>
+                    <section>
+                        <!--Contact number-->
+                        <mat-form-field>
+                            <label class="mat-label other-label">Contact Number</label>
+                            <input matInput minlength="3" maxlength="10" formControlName="contactNumber" name="contactNumber" 
+                            id="contactNumber" NumberOnly="true">
+                            <mat-error *ngIf="form.get('contactNumber').hasError('minlength')">
+                                Contact number must be at least <strong>three digits</strong>
+                            </mat-error>
+                            <mat-error *ngIf="form.get('contactNumber').hasError('maxlength')">
+                                Contact number must be no more then <strong>ten digits</strong>
+                            </mat-error>
+                        </mat-form-field>
+                            <!--Type of Medical Practitioner-->
+                            <mat-form-field class="mat-form-field-right">
+                                <label class="mat-label other-label">Type of Medical Practitioner</label>
+                                <input matInput name="medicalPractitionerType" id="medicalPractitionerType" formControlName="medicalPractitionerType">
+                                <!-- <mat-select name="medicalPractitionerType" id="medicalPractitionerType" formControlName="medicalPractitionerType" (selectionChange)="medicalPractitionerTypeChanged($event)">
+                                    <mat-option [value]="1">Doctor</mat-option>
+                                    <mat-option [value]="2">Nurse</mat-option>
+                                    <mat-option [value]="3">Paramedic</mat-option>
+                                    <mat-option [value]="4">Intern</mat-option>
+                                </mat-select> -->
+                            </mat-form-field>
+                
+                    </section>
+                    <section style="margin-top: 15px; margin-bottom: 15px;">
+                        <mat-checkbox id="isValid" name="isValid" formControlName="isValid" (change)="isActiveChange($event)">
+                            <label class="mat-label other-label">Is active?</label>
+                        </mat-checkbox>
+                    </section>
+                </div>
+                <!--Buttons-->
+                <!-- <div *ngIf="showButtons" class="form-group-button mat-form-button">
+
+                    <div *ngIf="showSaveButton" class="form-buttons" matTooltip="No changes have been made" [matTooltipDisabled]="!form.pristine">
+                        <button [disabled]="form.pristine" class="button float-button submit-button">Save</button>
+                    </div>
+
+                    <div *ngIf="showEditButton" (click)="edit()" class="form-buttons submit-button">
+                        <button type="button" class="button float-button">Edit</button>
+                    </div>
+
+                    <div (click)="back()" class="form-buttons submit-button">
+                        <button type="button" class="button float-button">Back</button>
+                    </div>
+                </div> -->
+            </form>
+        </mat-card-content>
+    </mat-card>
+</div>

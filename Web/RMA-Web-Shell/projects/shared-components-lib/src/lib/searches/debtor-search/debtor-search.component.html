@@ -1,0 +1,77 @@
+<mat-card>
+    <div class="menu-bar">
+        <span class="material-icons">
+            search
+        </span>
+        {{title}}
+        <span *ngIf="!(dataSource.loading$ | async)" (click)="reset()" class="material-icons pointer right"
+            matTooltip="reset">
+            restart_alt
+        </span>
+    </div>
+
+    <form [formGroup]="form" class="mat-container details-form" novalidate>
+        <section>
+            <mat-form-field class="mat-form-field" [floatLabel]="'never'">
+                <input matInput name="searchTerm" id="searchTerm" formControlName="searchTerm">
+                <mat-placeholder class="placeholder">search debtors by debtor number, member
+                    name, compensation fund registration number, compensation fund reference number, registration
+                    number</mat-placeholder>
+            </mat-form-field>
+        </section>
+    </form>
+</mat-card>
+
+<mat-card *ngIf="(dataSource.loading$ | async)">
+    <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+    <label class="mat-label other-label"><i>searching...please wait</i></label>
+</mat-card>
+
+<div [hidden]="(dataSource.loading$ | async)">
+    <mat-card>
+        <div *ngIf="searchTerm">Search Results for <b>{{searchTerm}}</b></div>
+        <div [hidden]="!(dataSource.data && dataSource.data.data && dataSource.data.data.length > 0)">
+            <mat-table #table [dataSource]="dataSource" matSort id="tblData" (matSortChange)="getData()">
+                <ng-container matColumnDef="finpayeeNumber">
+                    <mat-header-cell *matHeaderCellDef mat-sort-header> Number </mat-header-cell>
+                    <mat-cell *matCellDef="let row">{{row.finPayee ? row.finPayee.finPayeNumber : 'N/A'}}</mat-cell>
+                </ng-container>
+                <ng-container matColumnDef="displayName">
+                    <mat-header-cell *matHeaderCellDef mat-sort-header> Name </mat-header-cell>
+                    <mat-cell *matCellDef="let row">{{row.displayName}}</mat-cell>
+                </ng-container>
+                <ng-container matColumnDef="clientType">
+                    <mat-header-cell *matHeaderCellDef mat-sort-header> Client Type </mat-header-cell>
+                    <mat-cell *matCellDef="let row">{{getClientType(row.clientType)}}</mat-cell>
+                </ng-container>
+                <ng-container matColumnDef="industryClass">
+                    <mat-header-cell *matHeaderCellDef mat-sort-header> Industry Class </mat-header-cell>
+                    <mat-cell *matCellDef="let row">{{row.company ? getIndustryClass(row.company.industryClass) :
+                        'N/A'}}</mat-cell>
+                </ng-container>
+
+                <!-- Actions -->
+                <ng-container matColumnDef="actions">
+                    <mat-header-cell *matHeaderCellDef>Actions</mat-header-cell>
+                    <mat-cell *matCellDef="let row">
+                        <span><a role="button" id="btnAction" class="link-edit"
+                                (click)="memberSelected(row)">Select</a></span>
+                    </mat-cell>
+                </ng-container>
+
+
+                <mat-header-row *matHeaderRowDef="getDisplayedColumns()"></mat-header-row>
+                <mat-row *matRowDef="let row; columns: getDisplayedColumns();"></mat-row>
+            </mat-table>
+
+            <mat-paginator #paginator [pageIndex]="0" [pageSize]="5" [pageSizeOptions]="[5, 10, 25, 100]"
+                [length]="this.dataSource.rowCount$ | async" (page)="getData()">
+            </mat-paginator>
+        </div>
+
+        <mat-card
+            *ngIf="!(dataSource.data && dataSource.data.data && dataSource.data.data.length > 0 || (dataSource.loading$ | async))">
+            <label class="mat-label other-label"><i>No debtors found...</i></label>
+        </mat-card>
+    </mat-card>
+</div>

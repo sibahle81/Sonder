@@ -1,0 +1,107 @@
+<div *ngIf="isAuthorized; else notAuthorized">
+    <form [formGroup]="form" class="mat-container details-form" novalidate>
+        <div>
+            <div class="field-container">
+                <mat-form-field>
+                    <label class="mandatory-field">Pay Status</label>
+                    <mat-select id="payStatusType" name="payStatusType" formControlName="payStatusType" (selectionChange)="onStatusTypeSelect($event)">
+                        <mat-option *ngFor="let statusType of payStatusTypes" [value]="statusType.id">
+                            {{statusType.name}}
+                        </mat-option>
+                    </mat-select>
+                </mat-form-field>
+            </div>
+            <div class="field-container-right">
+                <mat-form-field class="mat-form-field">
+                    <label class="mat-label other-label">Search {{commissionType}} Commissions</label>
+                    <input matInput formControlName="filterCommissions" id="filterCommissions" (keyup)="searchCommissions()">
+                    <mat-icon class="search-icon" (click)="searchCommissions()" matSuffix>search</mat-icon>
+                </mat-form-field>
+            </div>
+        </div>
+    </form>
+
+    <div *ngIf="isLoading">
+        <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+        <label class="mat-label other-label"><i>Loading {{commissionType}} commissions...please wait</i></label>
+    </div>
+    <div [hidden]="datasource.data.length === 0">
+        <mat-table #table [dataSource]="datasource" matSort matSortActive="headerId" matSortDirection="asc">
+
+            <ng-container matColumnDef="recepientName">
+                <mat-header-cell *matHeaderCellDef mat-sort-header>Name</mat-header-cell>
+                <mat-cell *matCellDef="let row">{{row.recepientName}}</mat-cell>
+                <mat-footer-cell *matFooterCellDef></mat-footer-cell>
+            </ng-container>
+            <ng-container matColumnDef="isFitAndProper">
+                <mat-header-cell *matHeaderCellDef>Fit &amp; Proper</mat-header-cell>
+                <mat-cell *matCellDef="let row" style="justify-content:center;display:flex !important;">
+                    <img *ngIf="!row.isFitAndProper && !row.fitAndProperCheckDate" src="/assets/images/pause-icon.png" width="16" height="16" />
+                    <img *ngIf="row.isFitAndProper" src="/assets/images/checked-icon.png" width="16" height="16" />
+                    <img *ngIf="!row.isFitAndProper  && row.fitAndProperCheckDate"
+                        src="/assets/images/not_checked-icon.png" width="16" height="16" /></mat-cell>
+                <mat-footer-cell *matFooterCellDef></mat-footer-cell>
+            </ng-container>
+            <ng-container matColumnDef="fitAndProperCheckDate">
+                <mat-header-cell *matHeaderCellDef>Verification Date</mat-header-cell>
+                <mat-cell *matCellDef="let row">{{row.fitAndProperCheckDate | date:'yyyy-MM-dd'}}</mat-cell>
+                <mat-footer-cell *matFooterCellDef></mat-footer-cell>
+            </ng-container>
+            <ng-container matColumnDef="totalHeaderAmount">
+                <mat-header-cell *matHeaderCellDef>Amount</mat-header-cell>
+                <mat-cell *matCellDef="let row" class="right-aligned-amounts"><a role="button" (click)="getCommissionDetailByHeader(row)" class="link-edit">{{row.totalHeaderAmount}}</a></mat-cell>
+                <mat-footer-cell *matFooterCellDef class="right-aligned-amounts">{{calculateTotalAmount() |number:'1.2-2'}}</mat-footer-cell>
+            </ng-container>
+            <ng-container matColumnDef="pay">
+                <mat-header-cell *matHeaderCellDef>{{payColumnHeaderText}}
+                    <mat-checkbox (change)="onReleaseSelectAll($event)" style="color: #ffffff;" *ngIf="showReleaseAll"></mat-checkbox>
+                </mat-header-cell>
+                <mat-cell *matCellDef="let row; let i = index" style="justify-content:center;display:flex !important;">
+                    <mat-checkbox [checked]="selectedApprovedPaymentIds.indexOf(row.headerId) > -1" (change)="approvePaymentChecked($event,row)" [disabled]="!row.isFitAndProper">
+                    </mat-checkbox>
+                </mat-cell>
+                <mat-footer-cell *matFooterCellDef></mat-footer-cell>
+            </ng-container>
+            <ng-container matColumnDef="withHold">
+                <mat-header-cell *matHeaderCellDef>WithHold</mat-header-cell>
+                <mat-cell *matCellDef="let row; let i = index;" style="justify-content:center;display:flex !important;">
+                    <mat-checkbox [checked]="selectedWithHeldPaymentIds.indexOf(row.headerId) > -1" (change)="withHoldPaymentChecked($event,row)">
+                    </mat-checkbox>
+                </mat-cell>
+                <mat-footer-cell *matFooterCellDef></mat-footer-cell>
+            </ng-container>
+            <ng-container matColumnDef="comment">
+                <mat-header-cell *matHeaderCellDef>Reason</mat-header-cell>
+                <mat-cell *matCellDef="let row; let i = index;">
+                    <mat-form-field class="mat-form-field" floatLabel="never" *ngIf="showComment">
+                        <textarea matInput rows="4" cols="10" wrap="physical" style="height: 40px; min-width: 250px;" disabled>{{row.comment}}</textarea>
+                    </mat-form-field>
+                    <mat-form-field *ngIf="(showReasons && selectedApprovedPaymentIds.indexOf(row.headerId) === -1) || selectedWithHeldPaymentIds.indexOf(row.headerId) > -1">
+                        <mat-select (selectionChange)="onWithHoldingReasonSelect(row, $event)" [(value)]="row.withholdingReasonId">
+                            <mat-option *ngFor="let withHoldingReason of withHoldingReasons" [value]="withHoldingReason.id">
+                                {{withHoldingReason.name}}
+                            </mat-option>
+                        </mat-select>
+                    </mat-form-field>
+                </mat-cell>
+                <mat-footer-cell *matFooterCellDef></mat-footer-cell>
+            </ng-container>
+            <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
+            <mat-row *matRowDef="let row; columns: displayedColumns;"></mat-row>
+            <mat-footer-row class="sticky-footer" *matFooterRowDef="displayedColumns"></mat-footer-row>
+        </mat-table>
+        <mat-paginator [pageSize]="10" [pageSizeOptions]="[5, 10, 25, 100]">
+        </mat-paginator>
+    </div>
+    <div *ngIf="showSubmit" class="form-buttons" (click)="releaseCommissions()" style="margin-left: 10px">
+        <button class="button float-button submit-button">Submit</button>
+    </div>
+</div>
+<ng-template #notAuthorized>
+    <div>
+        <div class="wizard-permissions-error">You do not have sufficient permissions to release commissions.</div>
+        <div (click)="navigateBack()" class="form-buttons submit-button">
+            <button type="button" class="button float-button">Back</button>
+        </div>
+    </div>
+</ng-template>

@@ -1,0 +1,88 @@
+<div>
+  <mat-card style="margin: 15px 30px 15px 30px">
+      <mat-card-content style="margin-left: 10px;">
+          <div>
+              <!--[hidden]="isLoading"-->
+              <div class="mat-container mat-elevation-z8">
+                  <div class="mat-header">
+                      <div class="search-container search-container-right">
+                          <input type="text" name="search" (keyup)="applyFilter($event.target.value)" placeholder="search here...">
+                      </div>
+                  </div>
+                  <mat-table #table [dataSource]="dataSource" matSort>
+                      <ng-container matColumnDef="productCodeId">
+                          <mat-header-cell *matHeaderCellDef mat-sort-header> PRODUCT CODE</mat-header-cell>
+                          <mat-cell *matCellDef="let row"> {{row.productCodeId}} </mat-cell>
+                      </ng-container>
+                      <ng-container matColumnDef="origin">
+                          <mat-header-cell *matHeaderCellDef mat-sort-header> ORIGIN </mat-header-cell>
+                          <mat-cell *matCellDef="let row"> {{row.origin}} </mat-cell>
+                      </ng-container>
+                      <ng-container matColumnDef="companyNo">
+                          <mat-header-cell *matHeaderCellDef mat-sort-header> COMPANY </mat-header-cell>
+                          <mat-cell *matCellDef="let row"> {{row.companyNo}} </mat-cell>
+                      </ng-container>
+                      <ng-container matColumnDef="branchNo">
+                          <mat-header-cell *matHeaderCellDef mat-sort-header> BRANCH </mat-header-cell>
+                          <mat-cell *matCellDef="let row"> {{row.branchNo}} </mat-cell>
+                      </ng-container>
+                      <ng-container matColumnDef="transactionTypeName">
+                          <mat-header-cell *matHeaderCellDef mat-sort-header> TRANSACTION TYPE </mat-header-cell>
+                          <mat-cell *matCellDef="let row"> {{row.transactionType}} </mat-cell>
+                      </ng-container>
+                      <ng-container matColumnDef="Level1">
+                          <mat-header-cell *matHeaderCellDef mat-sort-header> LEVEL 1 </mat-header-cell>
+                          <mat-cell *matCellDef="let row"> {{row.level1}} </mat-cell>
+                      </ng-container>
+                      <ng-container matColumnDef="Level2">
+                          <mat-header-cell *matHeaderCellDef mat-sort-header> LEVEL 2 </mat-header-cell>
+                          <mat-cell *matCellDef="let row"> {{row.level2}} </mat-cell>
+                      </ng-container>
+                      <ng-container matColumnDef="Level3">
+                          <mat-header-cell *matHeaderCellDef mat-sort-header> LEVEL 3 </mat-header-cell>
+                          <mat-cell *matCellDef="let row"> {{row.level3}} </mat-cell>
+                      </ng-container>
+                      <ng-container matColumnDef="ChartISNo">
+                          <mat-header-cell *matHeaderCellDef mat-sort-header> IS CHART NO </mat-header-cell>
+                          <mat-cell *matCellDef="let row"> {{row.chartISNo}} </mat-cell>
+                      </ng-container>
+                      <ng-container matColumnDef="ChartISName">
+                          <mat-header-cell *matHeaderCellDef mat-sort-header> IS CHART NAME </mat-header-cell>
+                          <mat-cell *matCellDef="let row"> {{row.chartIsName}} </mat-cell>
+                      </ng-container>
+                      <ng-container matColumnDef="ChartBSNo">
+                          <mat-header-cell *matHeaderCellDef mat-sort-header> BS CHART NO </mat-header-cell>
+                          <mat-cell *matCellDef="let row"> {{row.chartBSNo}} </mat-cell>
+                      </ng-container>
+                      <ng-container matColumnDef="BSChartName">
+                          <mat-header-cell *matHeaderCellDef mat-sort-header> BS CHART NAME </mat-header-cell>
+                          <mat-cell *matCellDef="let row"> {{row.chartBsName}} </mat-cell>
+                      </ng-container>
+                      <ng-container matColumnDef="benefitCode">
+                          <mat-header-cell *matHeaderCellDef mat-sort-header> BENEFIT CODE </mat-header-cell>
+                          <mat-cell *matCellDef="let row"> {{row.benefitCode}} </mat-cell>
+                      </ng-container>
+                      <!-- <ng-container matColumnDef="Actions">
+                          <mat-header-cell *matHeaderCellDef mat-sort-header> ACTIONS </mat-header-cell>
+                          <mat-cell *matCellDef="let row">
+                              <a role="button" (click)="onEdit(row)" class="link-edit">Edit&nbsp;</a>/
+                              <a role="button" (click)="onDelete(row)" class="link-edit">&nbsp;Delete</a>
+                          </mat-cell>
+                      </ng-container> -->
+                      <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
+                      <mat-row *matRowDef="let row; columns: displayedColumns;"></mat-row>
+                  </mat-table>
+                  <mat-paginator #paginator [length]="dataSource.data.length" [pageIndex]="0" [pageSize]="10" [pageSizeOptions]="[5, 10, 25, 100]">
+                  </mat-paginator>
+              </div>
+          </div>
+      </mat-card-content>
+  </mat-card>
+</div>
+
+<div>
+  <table class="form-group row" style="    margin-left: 64px;">
+      <button [disabled]="canExport==0" (click)="exporttoCSV()" class="button float-button">Export</button>
+      <button type="button" (click)="clear()" class="button float-button">Back</button>
+  </table>
+</div>

@@ -1,0 +1,23 @@
+<app-medicare-search-menus></app-medicare-search-menus>
+
+<div *ngIf="dataSourceTeba.loading$ | async">
+    <mat-progress-bar mode="indeterminate"
+        [ngClass]="{ 'loading-main-double-menu-progress': doubleMenu, 'loading-main-single-menu-progress': !doubleMenu }">
+    </mat-progress-bar>
+    <p class="site-font grey">Loading Teba Invoices.....</p>
+</div>
+
+<app-medical-invoice-list *ngIf="this.invoiceDetails?.length > 0; else noTebaInvoices"
+    [medicalInvoiceDetailsListSearchCrateria]="invoiceDetails" [switchBatchType]="switchBatchType" [searchByHealthCareProvider]="true"
+    (onSortPagingSearchedInvoiceTable)="onSortPagingSearchedInvoiceTable($event)">
+</app-medical-invoice-list>
+
+<ng-template #noTebaInvoices>
+    <span *ngIf="!dataSourceTeba.loading$ | async">No Teba Invoices found, try again.....</span>
+</ng-template>
+
+<div class="items-buttons-container" *ngIf="this.invoiceDetails?.length <= 0">
+    <div class="form-buttons submit-button" *ngIf="!this.isExternalUser">
+        <button type="button" class="button float-button" (click)="onCaptureNewTebaInvoice()">New Teba Invoice</button>
+    </div>
+</div>

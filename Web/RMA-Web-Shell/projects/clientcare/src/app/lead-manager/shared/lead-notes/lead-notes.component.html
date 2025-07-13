@@ -1,0 +1,78 @@
+<div *ngIf="!viewNote">
+  <div *ngIf="!hideForm">
+    <form [formGroup]="form" class="mat-container details-form" novalidate>
+      <mat-form-field>
+        <label class="mat-label other-label mandatory-field">Note Text</label>
+        <textarea matTextareaAutosize matAutosizeMinRows="5" matAutosizeMaxRows="3" maxlength="255" matInput
+          minlength="3" id="text" name="text" formControlName="text"></textarea>
+        <mat-error *ngIf="form.get('text').hasError('required')">
+          Note is <strong>required</strong>
+        </mat-error>
+        <mat-error *ngIf="form.get('text').hasError('minlength')">
+          Note must be at least <strong>three characters</strong>
+        </mat-error>
+      </mat-form-field>
+    </form>
+
+    <span *ngIf="form.valid && !form.pristine" class="mat-label other-label pointer" style="margin-left: 10px;"
+      (click)="add()"><span class="material-icons" style="color: green;">check_circle</span></span>
+    <span *ngIf="!form.valid || form.pristine" class="mat-label other-label pointer" style="margin-left: 10px;"><span
+        class="material-icons" style="color: lightpink;">check_circle</span></span>
+    <span class="mat-label other-label pointer" (click)="cancel()"><span class="material-icons">cancel</span></span>
+  </div>
+
+  <div *ngIf="notes">
+
+    <div *ngIf="hideForm && notes.length <= 0">
+      <label class="mat-label other-label"><i>No notes have been added...</i><span *ngIf="hasPermission"
+          class="mat-label other-label pointer" (click)="toggle()"><span
+            class="material-icons">add_circle</span></span></label><br />
+    </div>
+
+    <div *ngIf="hideForm && notes.length > 0 && hasPermission">
+      <label class="mat-label other-label"><i></i><span *ngIf="hideForm" class="mat-label other-label pointer"
+          (click)="toggle()"><span class="material-icons">add_circle</span></span></label><br />
+    </div>
+
+    <div *ngIf="notes.length > 0 && hideForm" class="scrollTable">
+      <table class="altRowTable" style="width:100%;">
+        <tr>
+          <th>Note</th>
+          <th>Created By</th>
+          <th>Date</th>
+          <th>Action</th>
+        </tr>
+        <tr *ngFor="let note of notes">
+          <td>{{note.note.substring(0,25)}}...</td>
+          <td>{{note.createdBy}}</td>
+          <td>{{note.createdDate | date:'yyyy-MM-dd'}}</td>
+          <td>
+            <a role="button" class="link-edit" (click)="toggleNote(note)"><span class="material-icons icn">
+                visibility
+              </span></a>
+              <a *ngIf="note.noteId > 0" role="button" class="link-edit" (click)="openAuditDialog(note)"><span class="material-icons icn" matTooltip="View Audit Details">
+                fingerprint
+              </span></a>
+          </td>
+        </tr>
+      </table>
+    </div>
+  </div>
+
+  <div *ngIf="!notes && hideForm">
+    <label class="mat-label other-label"><i>No notes have been added...</i><span *ngIf="hasPermission"
+        class="mat-label other-label pointer" (click)="toggle()"><span
+          class="material-icons">add_circle</span></span></label><br />
+  </div>
+</div>
+
+<div class="notedisplay" *ngIf="viewNote">
+  <b>"{{note.note}}"</b>
+  <br />
+  <span *ngIf="(isLoading$ | async)"><br /><i>loading display name...please wait</i></span>
+  <span *ngIf="!(isLoading$ | async)"><br /><i>{{userDisplayName}} ({{(note.createdBy)}})</i></span>
+  <br />{{note.createdDate | date:'yyyy-MM-dd'}}
+  <br />
+  <br /><span class="mat-label other-label pointer" (click)="toggleNote()"><span
+      class="material-icons">cancel</span></span>
+</div>

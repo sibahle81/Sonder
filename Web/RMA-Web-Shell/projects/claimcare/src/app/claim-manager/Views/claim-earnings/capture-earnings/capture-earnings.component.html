@@ -1,0 +1,179 @@
+<mat-card *ngIf="!(asyncTabs | async)">
+  <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+  <label class="mat-label other-label"><i>loading...please wait</i></label>
+</mat-card>
+
+<mat-card *ngIf="isSavingEarnings$ | async">
+  <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+  <label class="mat-label other-label"><i>saving earnings...please wait</i></label>
+</mat-card>
+
+<div [hidden]="!(asyncTabs | async) || (isSavingEarnings$ | async)">
+  <div class="menu-bar">
+    <span class="material-icons">
+      paid
+    </span>Earnings <span *ngIf="data?.earningType">: {{getEarningType(data?.earningType)}}</span>
+    <span *ngIf="!(isSavingEarnings$ | async)">
+      <span class="material-icons pointer right pulse" matTooltip="cancel" (click)="onCancel()">
+        cancel
+      </span>
+      <span *ngIf="isFormValid() && !isUpdate" class="material-icons pointer right pulse" matTooltip="save"
+        (click)="onSave()">
+        save
+      </span>
+      <span *ngIf="isFormValid() && isUpdate" class="material-icons pointer right pulse" matTooltip="save"
+        (click)="onUpdate()">
+        save
+      </span>
+    </span>
+  </div>
+
+  <mat-tab-group animationDuration="500ms">
+    <mat-tab label="Section 51" *ngIf="data?.isAgeUnder26 || data?.isTrainee">
+
+      <mat-card *ngIf="!(documentComponentReady$ | async)">
+        <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+        <label class="mat-label other-label"><i>loading...please wait</i></label>
+      </mat-card>
+
+      <span [hidden]="!(documentComponentReady$ | async)">
+        <mat-card>
+          <div class="menu-bar">
+            Section 51
+          </div>
+  
+          {{data.section51Reason}}
+  
+          <mat-card>
+            <form [formGroup]="section21Form" class="mat-container details-form" novalidate>
+              <section>
+                <mat-form-field class="mat-form-field">
+                  <label class="mat-label other-label mandatory-field">Employee Number <i>(not the injured
+                      employee)</i></label>
+                  <input matInput formControlName="sec51EmpNo" name="sec51EmpNo" id="sec51EmpNo" />
+                  <mat-error *ngIf="section21Form.get('sec51EmpNo').hasError('required')">
+                    employee number is <strong>required</strong>
+                  </mat-error>
+                  <mat-error *ngIf="section21Form.get('sec51EmpNo').hasError('notUnique')">
+                    employee number cannot be the same as the <strong>injured employee</strong>
+                  </mat-error>
+                </mat-form-field>
+              </section>
+  
+              <mat-card>
+                <div class="menu-bar">
+                  <label class="mat-label other-label">Please complete one of the below options for the
+                    section 51 template that has been supplied</label>
+                  <span *ngIf="!(section51FormulaSheetOverride$ | async)" class="material-icons pointer right pulse" matTooltip="reset" (click)="resetSection51Form()">
+                    replay
+                  </span>
+                </div>
+  
+                <section *ngIf="data?.isAgeUnder26">
+                  <mat-form-field class="mat-form-field">
+                    <label class="mat-label other-label mandatory-field">Date of Birth <i>(not the injured
+                        employee)</i></label>
+                    <input (dateChange)="handleControls('sec51DateOfBirth', $event.value)" matInput
+                      formControlName="sec51DateOfBirth" [matDatepicker]="sec51DateOfBirth" [max]="maxDate">
+                    <mat-datepicker-toggle matSuffix [for]="sec51DateOfBirth">
+                    </mat-datepicker-toggle>
+                    <mat-datepicker touchUi="true" #sec51DateOfBirth></mat-datepicker>
+                    <mat-error *ngIf="section21Form.get('sec51DateOfBirth').hasError('required')">
+                      date of birth is <strong>required</strong>
+                    </mat-error>
+                    <mat-error *ngIf="section21Form.get('sec51DateOfBirth').hasError('invalidAge')">
+                      age of employee must be <strong>26 years</strong>
+                    </mat-error>
+                  </mat-form-field>
+                </section>
+  
+                <section *ngIf="data?.isTrainee">
+                  <mat-form-field class="mat-form-field">
+                    <label class="mat-label other-label mandatory-field">Date of Qualification <i>(not the injured
+                        employee)</i></label>
+                    <input (dateChange)="handleControls('sec51DateOfQualification', $event.value)" matInput
+                      formControlName="sec51DateOfQualification" [matDatepicker]="sec51DateOfQualification" [max]="maxDate">
+                    <mat-datepicker-toggle matSuffix [for]="sec51DateOfQualification">
+                    </mat-datepicker-toggle>
+                    <mat-datepicker touchUi="true" #sec51DateOfQualification></mat-datepicker>
+                    <mat-error *ngIf="section21Form.get('sec51DateOfQualification').hasError('required')">
+                      date of qualification is <strong>required</strong>
+                    </mat-error>
+                  </mat-form-field>
+                </section>
+  
+                <section>
+                  <mat-form-field class="mat-form-field">
+                    <label class="mat-label other-label mandatory-field">Date of Engagement <i>(not the injured
+                        employee)</i></label>
+                    <input (dateChange)="handleControls('sec51DateOfEngagement', $event.value)" matInput
+                      formControlName="sec51DateOfEngagement" [matDatepicker]="sec51DateOfEngagement" [max]="maxDate">
+                    <mat-datepicker-toggle matSuffix [for]="sec51DateOfEngagement">
+                    </mat-datepicker-toggle>
+                    <mat-datepicker touchUi="true" #sec51DateOfEngagement></mat-datepicker>
+                    <mat-error *ngIf="section21Form.get('sec51DateOfEngagement').hasError('required')">
+                      date of engagement is <strong>required</strong>
+                    </mat-error>
+                    <mat-error *ngIf="section21Form.get('sec51DateOfEngagement').hasError('underage')">
+                      date of engagement must be <strong>5 years or more</strong>
+                    </mat-error>
+                  </mat-form-field>
+                </section>
+              </mat-card>
+            </form>
+          </mat-card>
+        </mat-card>
+  
+        <mat-card>
+          If the section 51 template is unavailable, Please upload the completed RMA Formula Sheet
+          <document-uploader *ngIf="personEvent" [documentSet]="documentSet" [systemName]="documentSystemName"
+            [keyName]="'PersonEventId'" [documentTypeFilter]="documentTypeFilter" [keyValue]="personEvent.personEventId"
+            (emitAllDocuments)="isRMAFormulaSheetDocumentsUploaded($event)" (documentComponentReadyEmit)="setDocumentComponentReady($event)"></document-uploader>
+        </mat-card>
+      </span>
+    </mat-tab>
+
+    <mat-tab label="Earnings">
+      <div fxLayout="row" fxLayoutGap="2px" class="fxwrapperIE">
+        <mat-tab-group animationDuration="500ms" [(selectedIndex)]="selectedIndex">
+          <mat-tab *ngFor="let tab of asyncTabs | async">
+            <ng-template mat-tab-label>
+              {{ tab.content }}
+            </ng-template>
+            <app-non-variable-earnings [updateParentModel]="updateEarning"
+              [defaultValues]="earningsBehaviorSubject$.value"
+              [nonVariableDetailUpdateList]="nonVariableDetailUpdateList" *ngIf="displayNonVariable(tab.label)"
+              (onFormValidChanged)="onNonVariableFormValidChangedHandler($event)">
+            </app-non-variable-earnings>
+            <app-variable-earnings [updateParentModel]="updateEarning" [defaultValues]="earningsBehaviorSubject$.value"
+              [eventDate]="eventDate" [variableDetailUpdateList]="variableDetailUpdateList"
+              (onFormValidChanged)="onVariableFormValidChangedHandler($event)" *ngIf="displayVariable(tab.label)">
+            </app-variable-earnings>
+          </mat-tab>
+          <mat-tab label="Summary">
+            <mat-card>
+              <table class="mat-elevation-z8 footer-row">
+                <tr>
+                  <td>&nbsp;&nbsp;Avg Variable</td>
+                  <td> {{ displayAvgVariables()?.toFixed(2) }}</td>
+                </tr>
+                <tr>
+                  <td>+ Basic Salary</td>
+                  <td>{{ displayBasicSalary()?.toFixed(2) }}</td>
+                </tr>
+                <tr>
+                  <td>+ Non Variable</td>
+                  <td>{{ displayNonVariables()?.toFixed(2) }}</td>
+                </tr>
+                <tr>
+                  <td class="borders"><b>= Total Earnings</b></td>
+                  <td class="borders">{{ displayPayableEarnings()?.toFixed(2) }}</td>
+                </tr>
+              </table>
+            </mat-card>
+          </mat-tab>
+        </mat-tab-group>
+      </div>
+    </mat-tab>
+  </mat-tab-group>
+</div>

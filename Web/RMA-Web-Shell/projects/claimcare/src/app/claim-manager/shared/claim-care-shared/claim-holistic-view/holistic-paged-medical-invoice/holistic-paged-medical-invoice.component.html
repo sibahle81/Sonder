@@ -1,0 +1,141 @@
+<mat-card class="pad" *ngIf="!dataSource || (dataSource && dataSource.loading$ | async)">
+    <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+    <label class="mat-label other-label"><i>loading medical invoices...please wait</i></label>
+</mat-card>
+
+<div [hidden]="(dataSource.loading$ | async)">
+    <mat-card>
+        <div class="menu-bar">
+            <span class="material-icons">
+                medical_services
+            </span>&nbsp;Medical Invoices
+        </div>
+        <div>
+            <div class="mat-form-field">
+                <label class="mat-label other-label">Invoice Status</label>
+                <mat-select (selectionChange)="onStatusChange($event)">
+                    <mat-option *ngFor="let invoiceStatus of invoiceStatuses;" [value]="invoiceStatus">
+                        {{formatText(invoiceStatus)}}</mat-option>
+                </mat-select>
+            </div>
+        </div>
+        <div
+            [hidden]="!(dataSource && dataSource.data && dataSource.data.data && dataSource.data.data.length > 0) || (dataSource.loading$ | async)">
+
+            <mat-table #table [dataSource]="dataSource" matSort>
+                <ng-container matColumnDef="claimReferenceNumber">
+                    <mat-header-cell *matHeaderCellDef mat-sort-header> Claim Number </mat-header-cell>
+                    <mat-cell *matCellDef="let row" matTooltip="{{row.claimReferenceNumber}}">
+                        {{row.claimReferenceNumber}} </mat-cell>
+                </ng-container>
+
+                <ng-container matColumnDef="HCPInvoiceNumber">
+                    <mat-header-cell *matHeaderCellDef mat-sort-header> HCP Inv-No. </mat-header-cell>
+                    <mat-cell *matCellDef="let row" matTooltip="{{row.hcpInvoiceNumber}}">
+                        {{row.hcpInvoiceNumber}}
+                    </mat-cell>
+                </ng-container>
+
+                <ng-container matColumnDef="RMAInvoiceNo">
+                    <mat-header-cell *matHeaderCellDef mat-sort-header> RMA Inv-No </mat-header-cell>
+                    <mat-cell *matCellDef="let row" matTooltip="{{row.invoiceNumber}}"> {{row.invoiceNumber}}
+                    </mat-cell>
+                </ng-container>
+
+                <ng-container matColumnDef="invoiceStatus">
+                    <mat-header-cell *matHeaderCellDef mat-sort-header> Status </mat-header-cell>
+                    <mat-cell *matCellDef="let row" matTooltip="{{getInvoiceStatus(row.invoiceStatus)}}" [ngClass]="{'allocated': row.invoiceStatus == allocated, 
+                                'partially': row.invoiceStatus == partially, 
+                                'paid'     : row.invoiceStatus == paid, 
+                                'rejected' : row.invoiceStatus == rejected}">
+                        {{getInvoiceStatus(row.invoiceStatus)}}
+                    </mat-cell>
+                </ng-container>
+
+                <ng-container matColumnDef="MSP">
+                    <mat-header-cell *matHeaderCellDef mat-sort-header> MSP / Provider </mat-header-cell>
+                    <mat-cell *matCellDef="let row"
+                        matTooltip="{{row.healthCareProviderName +' - '+ row.practiceNumber}}">
+                        {{row.healthCareProviderName +" - "+ row.practiceNumber}}
+                    </mat-cell>
+                </ng-container>
+
+                <ng-container matColumnDef="hcpInvoiceNumber">
+                    <mat-header-cell *matHeaderCellDef mat-sort-header> Inv-No </mat-header-cell>
+                    <mat-cell *matCellDef="let row" matTooltip="{{row.hcpInvoiceNumber}}">
+                        {{row.hcpInvoiceNumber}}
+                    </mat-cell>
+                </ng-container>
+
+                <ng-container matColumnDef="hcpAccountNumber">
+                    <mat-header-cell *matHeaderCellDef mat-sort-header> Acc-No </mat-header-cell>
+                    <mat-cell *matCellDef="let row" matTooltip="{{row.hcpAccountNumber}}">
+                        {{row.hcpAccountNumber}}
+                    </mat-cell>
+                </ng-container>
+
+                <ng-container matColumnDef="serviceDate">
+                    <mat-header-cell *matHeaderCellDef mat-sort-header> Date Admitted
+                    </mat-header-cell>
+                    <mat-cell *matCellDef="let row" matTooltip="{{row.dateAdmitted | date:'yyyy-MM-dd'}}">
+                        {{row.dateAdmitted | date:'yyyy-MM-dd'}} </mat-cell>
+                </ng-container>
+
+                <ng-container matColumnDef="invoiceDate">
+                    <mat-header-cell *matHeaderCellDef mat-sort-header> INV Date </mat-header-cell>
+                    <mat-cell *matCellDef="let row" matTooltip="{{row.invoiceDate | date:'yyyy-MM-dd'}}">
+                        {{row.invoiceDate | date:'yyyy-MM-dd'}} </mat-cell>
+                    <mat-footer-cell *matFooterCellDef> </mat-footer-cell>
+                </ng-container>
+
+                <ng-container matColumnDef="paymentConfirmationDate">
+                    <mat-header-cell *matHeaderCellDef mat-sort-header> Payment Confirmation Date
+                    </mat-header-cell>
+                    <mat-cell *matCellDef="let row" matTooltip="{{row.paymentConfirmationDate | date:'yyyy-MM-dd'}}">
+                        {{row.paymentConfirmationDate | date:'yyyy-MM-dd'}} </mat-cell>
+                    <mat-footer-cell *matFooterCellDef> </mat-footer-cell>
+                </ng-container>
+
+                <ng-container matColumnDef="invoiceAmount">
+                    <mat-header-cell *matHeaderCellDef mat-sort-header> Invoice Total(Inc) </mat-header-cell>
+                    <mat-cell *matCellDef="let row" matTooltip="{{row.invoiceAmount}}"> {{row.invoiceAmount}}
+                    </mat-cell>
+                </ng-container>
+
+                <ng-container matColumnDef="authorizedAmount">
+                    <mat-header-cell *matHeaderCellDef mat-sort-header> Auth Total Inc </mat-header-cell>
+                    <mat-cell *matCellDef="let row" matTooltip="{{row.authorisedAmount}}">
+                        {{row.authorisedAmount}}
+                    </mat-cell>
+                    <mat-footer-cell *matFooterCellDef> </mat-footer-cell>
+                </ng-container>
+
+                <ng-container matColumnDef="actions">
+                    <mat-header-cell *matHeaderCellDef> Actions </mat-header-cell>
+                    <mat-cell *matCellDef="let invoice" [matMenuTriggerFor]="menu" (click)="filterMenu(invoice)">
+                        <span class="material-icons pointer">more_vert</span>
+                        <mat-menu #menu="matMenu">
+                            <button disabled="{{menu.disable}}" mat-menu-item *ngFor="let menu of menus"
+                                (click)="onMenuItemClick(invoice, menu)">{{menu.title}}</button>
+                        </mat-menu>
+                    </mat-cell>
+                </ng-container>
+
+                <mat-header-row *matHeaderRowDef="getDisplayedColumns()"></mat-header-row>
+                <mat-row *matRowDef="let row; columns: getDisplayedColumns();"></mat-row>
+            </mat-table>
+
+            <mat-paginator #paginator [length]="dataSource && dataSource.rowCount$ | async" [pageIndex]="0"
+                [pageSize]="5" [pageSizeOptions]="[5, 10, 25, 100]">
+            </mat-paginator>
+        </div>
+    </mat-card>
+
+    <mat-card
+        *ngIf="!(dataSource && dataSource.data && dataSource.data.data && dataSource.data.data.length > 0) && !(dataSource.loading$ | async)">
+        <label class="mat-label other-label"><i>No medical invoices...</i></label>
+    </mat-card>
+</div>
+
+<lib-view-medical-invoices *ngIf="selectedInvoice" [invoiceData]="selectedInvoice"
+    (emitClose)="close()"></lib-view-medical-invoices>

@@ -1,0 +1,31 @@
+<div *ngIf="!isContextReady() || (!(getSelectedMemberContext() > 0) && !hasPermission)">
+    <b>Manage Users</b>
+</div>
+
+<div *ngIf="isContextReady()">
+    <div *ngIf="!(getSelectedMemberContext() > 0) && hasPermission">
+        <member-search-V2 [basicMode]="false" (memberSelectedEmit)="setRolePlayer($event)"></member-search-V2>
+    </div>
+
+    <div *ngIf="getSelectedMemberContext() > 0">
+        <div *ngIf="hasPermission">
+            <mat-card>
+                <div class="menu-bar" *ngIf="linkedUserMember && linkedUserMember.memberName">
+                    <span class="material-icons">
+                        person_search
+                    </span>
+                    <b>{{linkedUserMember.memberName}}</b>
+
+                    <span matTooltip="reset serach" class="material-icons pointer right pulseBlue" (click)="reset()">
+                        youtube_searched_for
+                    </span>
+                </div>
+
+                <member-register-user [companyId]="getSelectedMemberContext()"></member-register-user>
+            </mat-card>
+        </div>
+        <div *ngIf="!hasPermission">
+            <access-denied></access-denied>
+        </div>
+    </div>
+</div>

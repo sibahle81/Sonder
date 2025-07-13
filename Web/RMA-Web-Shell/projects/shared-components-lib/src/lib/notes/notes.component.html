@@ -1,0 +1,94 @@
+<mat-card class="container-margin">
+    <h1>{{title}}</h1>
+      <mat-card-header *ngIf="!notesRequest && !isWizard">
+          <mat-card-subtitle *ngIf="name?.length">
+                <span class="grey site-font"><i>Notes can be added after the {{name}} has been added.</i></span>
+          </mat-card-subtitle>
+          <mat-card-subtitle *ngIf="!name?.length">
+            <span class="grey site-font"><i>no notes have been added</i></span>
+      </mat-card-subtitle>
+      </mat-card-header>
+      <mat-card-content style="margin-left: 10px;">
+          <div [hidden]="!notesRequest && !isWizard">
+              <mat-progress-bar *ngIf="showLoading" mode="indeterminate"></mat-progress-bar>
+              <div *ngIf="mode === 'edit' && isLoading" class="site-font grey">Saving note...</div>
+  
+              <div [hidden]="isLoading || selectedNote || mode === 'edit'">
+                  <div class="mat-container mat-elevation-z8">
+  
+                      <div [hidden]="dataSource.data.length === 0">
+                          <mat-table #table [dataSource]="dataSource" matSort>
+  
+                              <!--All standard columns-->
+                              <ng-container *ngFor="let column of columns" [matColumnDef]="column.columnDefinition">
+                                  <mat-header-cell *matHeaderCellDef class="mat-header-cell ng-tns-c10-2 cdk-column-Name mat-column-Name">
+                                      {{ column.header }}</mat-header-cell>
+                                  <mat-cell *matCellDef="let row" class="mat-cell cdk-column-Name mat-column-Name">
+                                      {{ column.cell(row) }}</mat-cell>
+                              </ng-container>
+  
+                              <!-- Actions -->
+                              <ng-container matColumnDef="actions">
+                                  <mat-header-cell *matHeaderCellDef mat-sort-header>Actions</mat-header-cell>
+                                  <mat-cell *matCellDef="let row; let element">
+                                      <a role="button" class="link-edit" (click)="onselectIndex(row, element)">
+                                          <span>View</span>
+                                      </a>
+                                  </mat-cell>
+                              </ng-container>
+  
+                              <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
+                              <mat-row *matRowDef="let row; columns: displayedColumns;"></mat-row>
+                          </mat-table>
+  
+                          <mat-paginator #paginator [length]="dataSource.data.length" [pageIndex]="0" [pageSize]="5" [pageSizeOptions]="[5, 10, 25, 100]">
+                          </mat-paginator>
+                      </div>
+  
+                      <div [hidden]="dataSource.data.length > 0">
+                          <span class="grey site-font">No notes have been added.</span>
+                      </div>
+                      <div [hidden]="!this.hasViewOnly  || this.wizardInApprovalMode && !name?.length" style="margin-top: 15px;margin-bottom: 10px;" (click)="add()">
+                          <button class="button">Add Note</button>
+                      </div>
+                  </div>
+              </div>
+              <!--Note details-->
+              <div *ngIf="form" [hidden]="isLoading || individualLoading || mode === 'view'">
+                  <form [formGroup]="form" class="mat-container details-form" novalidate>
+                      <!--Note text-->
+                      <mat-form-field>
+                          <label class="mat-label other-label mandatory-field">Note Text</label>
+                          <textarea matTextareaAutosize matAutosizeMinRows="5" matAutosizeMaxRows="3" maxlength="255" matInput minlength="3" id="code" name="text" formControlName="text"></textarea>
+                          <mat-error *ngIf="form.get('text').hasError('required')">
+                              Note is <strong>required</strong>
+                          </mat-error>
+                          <mat-error *ngIf="form.get('text').hasError('minlength')">
+                              Note must be at least <strong>three characters</strong>
+                          </mat-error>
+                      </mat-form-field>
+                  </form>
+  
+                  <div *ngIf="showLabelForLabelAdded" class="site-font grey" style="margin-left: 10px;">
+                      <div *ngIf="selectedNote" class="site-font grey" style="margin-left: 10px;">
+                          <hr />
+                          <div>Note was added by {{displayNameForOnScreen}} on: {{selectedNote.modifiedDate | date:'yyyy/MM/dd HH:mm:ss'}}</div>
+                      </div>
+                  </div>
+  
+                  <div class="form-group-button mat-form-button" *ngIf="true" style="margin: 20px 0 20px 0;">
+  
+                      <div class="form-buttons" (click)="save()">
+                          <button *ngIf="form.enabled" [disabled]="form.pristine" class="button float-button submit-button">Save</button>
+                      </div>
+  
+                      <div class="form-buttons" (click)="back()">
+                          <button class="button float-button submit-button">Back</button>
+                      </div>
+                  </div>
+  
+              </div>
+          </div>
+      </mat-card-content>
+  </mat-card>
+  

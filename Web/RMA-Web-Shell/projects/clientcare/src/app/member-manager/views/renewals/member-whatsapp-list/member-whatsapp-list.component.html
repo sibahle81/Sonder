@@ -1,0 +1,93 @@
+<br />
+<div *ngIf="(isLoading$ | async)">
+  <mat-card>
+    <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+    <label class="mat-label other-label"><i>loading...please wait</i></label>
+  </mat-card>
+  <br />
+</div>
+
+<div *ngIf="!(isLoading$ | async) && !isWizard">
+  <mat-card>
+    <h1>Declaration SMS Notification List</h1><br/>
+  <form [formGroup]="form" class="mat-container details-form" novalidate>
+    <section>
+      <mat-form-field class="mat-form-field">
+        <label class="mat-label other-label">Industry Class</label>
+        <mat-select (selectionChange)="industryClassChanged($event)" name="industryClass" id="industryClass"
+          formControlName="industryClass">
+          <mat-option *ngFor="let industryClass of industryClasses" [value]="industryClass">
+            {{industryClass}}
+          </mat-option>
+        </mat-select>
+      </mat-form-field>
+    </section>
+
+    <div class="form-buttons submit-button">
+      <button [disabled]="!selectedIndustryClassId" class="button submit-button buttonMargin" (click)="startWizard()">Create Member List</button>
+    </div>
+  </form>
+
+    <div *ngIf="selectedIndustryClassId">
+      <br/>
+      <lib-running-wizards 
+      [moduleName]="'clientcare'"
+      [managerName]="'member-manager'" 
+      [linkedItemId]="selectedIndustryClassId" 
+      [wizardTypeCSVs]="'whatsapp-company-list'">
+    </lib-running-wizards>
+    </div>
+</mat-card>
+</div>
+<br />
+<br />
+<section *ngIf="isWizard">
+  <div *ngIf="(rolePlayers && rolePlayers.length> 0)" class="scrollTable">
+    <table matSort class="altRowTable">
+      <tr>
+        <th>Company Name</th>
+        <th>Reg No</th>
+        <th>Member No</th>
+        <th>Contact</th>
+        <th *ngIf="!isReadOnly">Actions</th>
+      </tr>
+      <tr *ngFor="let rolePlayer of rolePlayers">
+        <td>{{rolePlayer.company.name}}</td>
+        <td>{{rolePlayer.company.referenceNumber}}</td>
+        <td>{{rolePlayer.finPayee.finPayeNumber}}</td>
+        <td>
+          <span *ngIf="rolePlayer.rolePlayerContacts && rolePlayer.rolePlayerContacts.length > 0">
+            <span *ngIf="!roleplayerHasValidContacts(rolePlayer.rolePlayerContacts)"><i>No sms declaration contacts found...</i></span>
+
+            <span *ngFor="let rolePlayerContact of rolePlayer.rolePlayerContacts">
+            <span
+              *ngIf="validContactToDisplay(rolePlayerContact)">
+              <li>{{rolePlayerContact.firstname}} {{rolePlayerContact.surname}}: {{rolePlayerContact.contactNumber}}
+              </li>
+            </span>
+            </span>
+          </span>
+          <span *ngIf="!(rolePlayer.rolePlayerContacts && rolePlayer.rolePlayerContacts.length > 0)">
+            <i>No contacts found..,</i>
+          </span>
+        </td>
+        <td *ngIf="!isReadOnly">
+          <a role="button" (click)="edit(rolePlayer)">
+            <span class="material-icons pointer" matTooltip="edit">
+              settings
+            </span>
+          </a>
+          <a role="button" (click)="delete(rolePlayer)">
+            <span class="material-icons pointer" matTooltip="delete">
+              delete
+            </span>
+          </a>
+        </td>
+      </tr>
+    </table>
+  </div>
+
+  <div *ngIf="(!rolePlayers || rolePlayers.length == 0)">
+    <i>No members found...</i>
+  </div>
+</section>

@@ -1,0 +1,54 @@
+<mat-table #table [dataSource]="medicalReports" matSort matSortActive="MedicalReportFormId" matSortDirection="desc"
+  matSortDisableClear>
+  <ng-container matColumnDef="practiceNumber">
+    <mat-header-cell *matHeaderCellDef mat-sort-header>Practice Number</mat-header-cell>
+    <mat-cell *matCellDef="let medicalReport" matTooltip="{{medicalReport.healthcareProviderPracticeNumber }}">
+      <span class="truncate-text"> {{ medicalReport.healthcareProviderPracticeNumber}} </span>
+    </mat-cell>
+  </ng-container>
+
+  <ng-container matColumnDef="practiceName">
+    <mat-header-cell *matHeaderCellDef mat-sort-header> Practice Name </mat-header-cell>
+    <mat-cell *matCellDef="let medicalReport" matTooltip="{{medicalReport.healthcareProviderName}}">
+      <span class="truncate-text"> {{ medicalReport.healthcareProviderName}} </span>
+    </mat-cell>
+  </ng-container>
+  <ng-container matColumnDef="reportDate">
+    <mat-header-cell *matHeaderCellDef mat-sort-header> Report Date</mat-header-cell>
+    <mat-cell *matCellDef="let medicalReport" matTooltip="{{medicalReport.reportDate}}">
+      <span class="truncate-text"> {{ medicalReport.reportDate | date:'yyyy-MM-dd HH:MM:SS' }} </span>
+    </mat-cell>
+  </ng-container>
+  <ng-container matColumnDef="consultationDate">
+    <mat-header-cell *matHeaderCellDef mat-sort-header> Consultation Date </mat-header-cell>
+    <mat-cell *matCellDef="let medicalReport" matTooltip="{{medicalReport.consultationDate}}">
+      <span class="truncate-text"> {{ medicalReport.consultationDate | date:'yyyy-MM-dd HH:MM:SS' }} </span>
+    </mat-cell>
+  </ng-container>
+  <ng-container matColumnDef="eventDate">
+    <mat-header-cell *matHeaderCellDef mat-sort-header> Event Date </mat-header-cell>
+    <mat-cell *matCellDef="let medicalReport" matTooltip="{{medicalReport.eventDate}}">
+      <span class="truncate-text"> {{ medicalReport.eventDate | date:'yyyy-MM-dd HH:MM:SS' }} </span>
+    </mat-cell>
+  </ng-container>
+  <ng-container matColumnDef="reportTypeId">
+    <mat-header-cell *matHeaderCellDef mat-sort-header> Report Type </mat-header-cell>
+    <mat-cell *matCellDef="let medicalReport" matTooltip="{{medicalReport.reportTypeId}}">
+      <span class="truncate-text"> {{ medicalReportType[medicalReport.reportTypeId] }} </span>
+    </mat-cell>
+  </ng-container>
+  <ng-container matColumnDef="icd10Codes">
+    <mat-header-cell *matHeaderCellDef mat-sort-header> Icd10Codes </mat-header-cell>
+    <mat-cell *matCellDef="let medicalReport" matTooltip="{{medicalReport.icd10Codes}}">
+      <span class="truncate-text"> {{ medicalReport.icd10Codes}} </span>
+    </mat-cell>
+  </ng-container>
+  <ng-container matColumnDef="viewReport">
+    <mat-header-cell *matHeaderCellDef> View MedicalReport </mat-header-cell>
+    <mat-cell *matCellDef="let medicalReport">
+      <a role="button" class="link-edit"  (click)="openMedicalDialog(medicalReport)">View</a>
+    </mat-cell>
+  </ng-container>
+  <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
+  <mat-row *matRowDef="let row; columns: displayedColumns;"></mat-row>
+</mat-table>

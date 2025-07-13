@@ -1,0 +1,117 @@
+<div class="menu-bar">
+  <span class="material-icons">
+    supervised_user_circle
+  </span>
+  Insured Lives
+  <span *ngIf="!(dataSource.loading$ | async)" (click)="reset()" class="material-icons pointer right"
+    matTooltip="reset">
+    restart_alt
+  </span>
+</div>
+
+<mat-card class="pad" *ngIf="(dataSource.loading$ | async)">
+  <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+  <label class="mat-label other-label"><i>loading insured lives...please wait</i></label>
+</mat-card>
+
+<div class="pad" [hidden]="(dataSource.loading$ | async)">
+  <div [hidden]="showDetail">
+    <div [hidden]="!(dataSource.data && dataSource.data.data && dataSource.data.data.length > 0)">
+      <mat-table #table [dataSource]="dataSource" matSort id="tblData">
+        <ng-container matColumnDef="memberName">
+          <mat-header-cell *matHeaderCellDef> Name </mat-header-cell>
+          <mat-cell *matCellDef="let row"><b>{{row.memberName ? row.memberName : 'N/A'}}</b></mat-cell>
+        </ng-container>
+
+        <ng-container matColumnDef="rolePlayerType">
+          <mat-header-cell *matHeaderCellDef> Type </mat-header-cell>
+          <mat-cell *matCellDef="let row">{{row.rolePlayerType ? getRolePlayerType(row.rolePlayerType) :
+            'N/A'}}</mat-cell>
+        </ng-container>
+
+        <ng-container matColumnDef="idNumber">
+          <mat-header-cell *matHeaderCellDef> Id/Passport </mat-header-cell>
+          <mat-cell *matCellDef="let row">{{row.idNumber ? row.idNumber : 'N/A'}}</mat-cell>
+        </ng-container>
+
+        <ng-container matColumnDef="dateOfBirth">
+          <mat-header-cell *matHeaderCellDef> DOB </mat-header-cell>
+          <mat-cell *matCellDef="let row" [ngClass]="{ 'highlightDeath': row.dateOfDeath }">
+            <span *ngIf="!row.dateOfDeath && (row.dateOfBirth | date:'yyyy-MM-dd') == (today | date:'yyyy-MM-dd')" class="material-icons">
+              cake
+            </span>
+            {{row.dateOfBirth ? (row.dateOfBirth | date:'yyyy-MM-dd') : 'N/A'}}
+          </mat-cell>
+        </ng-container>
+
+        <ng-container matColumnDef="dateOfDeath">
+          <mat-header-cell *matHeaderCellDef> DOD </mat-header-cell>
+          <mat-cell *matCellDef="let row" [ngClass]="{ 'highlightDeath': row.dateOfDeath }">{{row.dateOfDeath ?
+            (row.dateOfDeath | date:'yyyy-MM-dd') : 'N/A'}}
+          </mat-cell>
+        </ng-container>
+
+        <ng-container matColumnDef="policyJoinDate">
+          <mat-header-cell *matHeaderCellDef> Join Date </mat-header-cell>
+          <mat-cell *matCellDef="let row">{{row.policyJoinDate ? (row.policyJoinDate | date:'yyyy-MM-dd') : 'N/A'}}
+          </mat-cell>
+        </ng-container>
+
+        <ng-container matColumnDef="joinAge">
+          <mat-header-cell *matHeaderCellDef> Join Age </mat-header-cell>
+          <mat-cell *matCellDef="let row">
+            {{getAge(row.dateOfBirth, row.policyJoinDate)}}
+          </mat-cell>
+        </ng-container>
+
+        <ng-container matColumnDef="currentAge">
+          <mat-header-cell *matHeaderCellDef> Current Age </mat-header-cell>
+          <mat-cell *matCellDef="let row" [ngClass]="{ 'highlightDeath': row.dateOfDeath }">
+            <span *ngIf="row.dateOfDeath" class="material-icons" matTooltip="Age at time of death">warning_amber</span>
+            {{row.dateOfBirth ? (getAge(row.dateOfBirth, row.dateOfDeath)) : 'N/A'}}
+          </mat-cell>
+        </ng-container>
+
+        <ng-container matColumnDef="insuredLifeStatus">
+          <mat-header-cell *matHeaderCellDef> Status </mat-header-cell>
+          <mat-cell *matCellDef="let row">{{row.insuredLifeStatus ? getInsuredLifeStatus(row.insuredLifeStatus) :
+            'N/A'}}</mat-cell>
+        </ng-container>
+
+        <ng-container matColumnDef="premium">
+          <mat-header-cell *matHeaderCellDef> Premium </mat-header-cell>
+          <mat-cell *matCellDef="let row"><b>{{row.premium != null && row.premium != undefined ? formatMoney(row.premium.toFixed(2)) : row.benefitRate ? formatMoney(row.benefitRate.baseRate.toFixed(2)) : 'N/A'}}</b></mat-cell>
+        </ng-container>
+
+        <ng-container matColumnDef="coverAmount">
+          <mat-header-cell *matHeaderCellDef> Cover Amount </mat-header-cell>
+          <mat-cell *matCellDef="let row"><b>{{row.coverAmount ? formatMoney(row.coverAmount.toFixed(2)) : row.benefitRate ? formatMoney(row.benefitRate.benefitAmount.toFixed(2)) : 'N/A'}}</b></mat-cell>
+        </ng-container>
+
+        <ng-container matColumnDef="actions">
+          <mat-header-cell *matHeaderCellDef>Action</mat-header-cell>
+          <mat-cell *matCellDef="let row">
+            <a *ngIf="hasAuditPermission" (click)="openAuditDialog(row)" role="button"
+              class="link-edit">
+              <span matTooltip="view audit" class="material-icons icn pointer">
+                fingerprint
+              </span>
+            </a>
+          </mat-cell>
+        </ng-container>
+
+        <mat-header-row *matHeaderRowDef="getDisplayedColumns()"></mat-header-row>
+        <mat-row *matRowDef="let row; columns: getDisplayedColumns();"></mat-row>
+      </mat-table>
+
+      <mat-paginator #paginator [pageIndex]="0" [pageSize]="5" [pageSizeOptions]="[5, 10, 25, 100]"
+        [length]="this.dataSource.rowCount$ | async" (page)="getData()">
+      </mat-paginator>
+    </div>
+
+    <mat-card
+      *ngIf="!(dataSource.data && dataSource.data.data && dataSource.data.data.length > 0 || (dataSource.loading$ | async))">
+      <label class="mat-label other-label"><i>No insured lives found...</i></label>
+    </mat-card>
+  </div>
+</div>

@@ -1,0 +1,97 @@
+
+<div *ngIf="isLoading$ | async">
+  <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+  <label class="mat-label other-label"><i>{{loadingMessages$ | async}}</i></label>
+</div>
+
+<div *ngIf="!(isLoading$ | async)">
+  <mat-card>
+    <div class="menu-bar">
+      <span class="material-icons">
+        receipt_long
+      </span>&nbsp;
+      <label>Add Disability Assessment</label>
+      <span *ngIf="formValid() && isMedicalReportSelected && actionType != 'edit' && actionType != 'view'" (click)="save()" class="material-icons menu-button">
+        save
+      </span>
+      <span *ngIf="formValid() && isMedicalReportSelected && actionType == 'edit'" (click)="update()" class="material-icons menu-button">
+        edit
+      </span>
+    </div>
+    <br />
+
+    <form *ngIf="!(isLoading$ | async)" [formGroup]="form" class="mat-container details-form" novalidate>
+      <section>
+        <mat-form-field class="mat-form-field">
+          <label class="mat-label other-label mandatory-field">Nett Assessed PD Percentage </label>
+          <input matInput formControlName="netAssessedPdPercentage" name="netAssessedPdPercentage"
+            id="netAssessedPdPercentage" type="number" />
+          <mat-error *ngIf="form.get('netAssessedPdPercentage').hasError('required')">
+            Nett Assessed PD Percentage <strong>required</strong>
+          </mat-error>
+        </mat-form-field>
+        <mat-form-field class="mat-form-field-right">
+          <label class="mat-label other-label mandatory-field">Raw PD Percentage</label>
+          <input matInput formControlName="rawPdPercentage" name="rawPdPercentage" id="rawPdPercentage" type="number" />
+          <mat-error *ngIf="form.get('rawPdPercentage').hasError('required')">
+            Raw PD Percentage <strong>required</strong>
+          </mat-error>
+        </mat-form-field>
+      </section>
+
+      <section>
+        <mat-form-field class="mat-form-field">
+          <label class="mat-label other-label mandatory-field">Assessment Date</label>
+          <input matInput formControlName="assessmentDate" [matDatepicker]="assessmentDate" readonly [max]="maxDate" date="true"
+            time="false">
+          <mat-datepicker-toggle matSuffix [for]="assessmentDate">
+          </mat-datepicker-toggle>
+          <mat-datepicker startView="month" touchUi="true" #assessmentDate></mat-datepicker>
+          <mat-error *ngIf="form.get('assessmentDate').hasError('required')">
+            Assessment Date is <strong>required</strong>
+          </mat-error>
+        </mat-form-field>
+        
+        <mat-form-field class="mat-form-field-right controlSize">
+          <label class="mat-label other-label mandatory-field">Assessed By</label>
+          <mat-select id="assessedBy" name="assessedBy" matInput formControlName="assessedBy"
+            (selectionChange)="filterByUserName($event)">
+            <input matInput (keyup)="onUserKeyChange($event.target.value)">
+            <mat-option *ngFor="let user of filteredUsers" [value]="user.id">
+              {{user.displayName}}
+            </mat-option>
+          </mat-select>
+        </mat-form-field>
+      </section>
+
+      <section>
+        <mat-form-field class="mat-form-field">
+          <label class="mat-label other-label mandatory-field">Diagnosis Description</label>
+          <textarea matInput formControlName="finalFiagnosis" name="finalFiagnosis" id="finalFiagnosis"
+                  cdkTextareaAutosize cdkAutosizeMinRows="3" cdkAutosizeMaxRows="5" maxlength="1000"></textarea>
+          <mat-error *ngIf="form.get('finalFiagnosis').hasError('required')">
+            Final Diagnosis <strong>required</strong>
+          </mat-error>
+        </mat-form-field>
+      </section>
+
+      <div *ngIf="invalidDate">
+        <label  class="alert alert-danger">
+          The assessment date cannot be earlier than the consultation date.
+        </label>
+      </div>
+
+      <div *ngIf="duplicateAssessmentReport">
+        <label  class="alert alert-danger">
+          A disability assessment has already been captured for this report. 
+        </label>
+      </div>
+      
+      <div>
+        <claim-disability-linked-report [personEvent]="personEvent" [claimDisabilityAssessment]="claimDisabilityAssessment"
+          [isReadOnly]="isReadOnly"
+          (finalMedicalReportEmit)="onSelectedFinalMedicalReport($event)"></claim-disability-linked-report>
+      </div>
+    </form>
+  </mat-card>
+</div>

@@ -1,0 +1,79 @@
+
+<mat-table #table [dataSource]="linkPreAuthDetails" matSort matSortActive="preAuthId" matSortDirection="desc"
+  matSortDisableClear>
+  <ng-container matColumnDef="preAuthNumber">
+    <mat-header-cell *matHeaderCellDef mat-sort-header>PreAuth Number</mat-header-cell>
+    <mat-cell *matCellDef="let preAuth" matTooltip="{{preAuth.preAuthNumber }}">
+      <span class="truncate-text"> {{ preAuth.preAuthNumber }} </span>
+    </mat-cell>
+  </ng-container>
+
+  <ng-container matColumnDef="preAuthType">
+    <mat-header-cell *matHeaderCellDef mat-sort-header> PreAuth Type </mat-header-cell>
+    <mat-cell *matCellDef="let preAuth" matTooltip="{{preauthType[preAuth.preAuthType]}}">
+      <span class="truncate-text"> {{ preauthType[preAuth.preAuthType]}} </span>
+    </mat-cell>
+  </ng-container>
+  <ng-container matColumnDef="preAuthStatus">
+    <mat-header-cell *matHeaderCellDef mat-sort-header> PreAuth Status</mat-header-cell>
+    <mat-cell *matCellDef="let preAuth" matTooltip="{{preAuthStatus[preAuth.preAuthStatus]}}">
+      <span class="truncate-text"> {{ preAuthStatus[preAuth.preAuthStatus] }} </span>
+    </mat-cell>
+  </ng-container>
+  <ng-container matColumnDef="dateAuthorisedFrom">
+    <mat-header-cell *matHeaderCellDef mat-sort-header> Date AuthorisedFrom </mat-header-cell>
+    <mat-cell *matCellDef="let preAuth" matTooltip="{{preAuth.dateAuthorisedFrom}}">
+      <span class="truncate-text"> {{ preAuth.dateAuthorisedFrom | date:'yyyy-MM-dd HH:MM:SS' }} </span>
+    </mat-cell>
+  </ng-container>
+  <ng-container matColumnDef="dateAuthorisedTo">
+    <mat-header-cell *matHeaderCellDef mat-sort-header> Date AuthorisedTo </mat-header-cell>
+    <mat-cell *matCellDef="let preAuth" matTooltip="{{preAuth.dateAuthorisedTo}}">
+      <span class="truncate-text"> {{ preAuth.dateAuthorisedTo | date:'yyyy-MM-dd HH:MM:SS' }} </span>
+    </mat-cell>
+  </ng-container>
+  <ng-container matColumnDef="dateAuthorised">
+    <mat-header-cell *matHeaderCellDef mat-sort-header> Date Authorised </mat-header-cell>
+    <mat-cell *matCellDef="let preAuth" matTooltip="{{preAuth.dateAuthorised}}">
+      <span class="truncate-text"> {{ preAuth.dateAuthorised | date:'yyyy-MM-dd HH:MM:SS' }} </span>
+    </mat-cell>
+  </ng-container>
+  <ng-container matColumnDef="authorisedAmount">
+    <mat-header-cell *matHeaderCellDef mat-sort-header> Authorised Amount </mat-header-cell>
+    <mat-cell *matCellDef="let preAuth" matTooltip="{{preAuth.authorisedAmount}}">
+      <span class="truncate-text"> {{ preAuth.authorisedAmount }} </span>
+    </mat-cell>
+  </ng-container>
+  <ng-container matColumnDef="injuryDate">
+    <mat-header-cell *matHeaderCellDef mat-sort-header> Injury Date </mat-header-cell>
+    <mat-cell *matCellDef="let preAuth" matTooltip="{{preAuth.injuryDate}}">
+      <span class="truncate-text"> {{ preAuth.injuryDate}} </span>
+    </mat-cell>
+  </ng-container>
+  <ng-container matColumnDef="isClaimLinked">
+    <mat-header-cell *matHeaderCellDef mat-sort-header> Claim Linked </mat-header-cell>
+    <mat-cell *matCellDef="let preAuth" matTooltip="{{preAuth.isClaimLinked}}">
+      <span class="truncate-text"> {{ preAuth.isClaimLinked}} </span>
+    </mat-cell>
+  </ng-container>
+  <ng-container matColumnDef="isPatientVerified">
+    <mat-header-cell *matHeaderCellDef mat-sort-header> Patient Verified </mat-header-cell>
+    <mat-cell *matCellDef="let preAuth" matTooltip="{{preAuth.isPatientVerified}}">
+      <span class="truncate-text"> {{ preAuth.isPatientVerified}} </span>
+    </mat-cell>
+  </ng-container>
+  <ng-container matColumnDef="preAuthContactNumber">
+    <mat-header-cell *matHeaderCellDef mat-sort-header> PreAuth Contact Number </mat-header-cell>
+    <mat-cell *matCellDef="let preAuth" matTooltip="{{preAuth.preAuthContactNumber}}">
+      <span class="truncate-text"> {{ preAuth.preAuthContactNumber}} </span>
+    </mat-cell>
+  </ng-container>
+  <ng-container matColumnDef="viewMoreInfo">
+    <mat-header-cell *matHeaderCellDef> View More Info </mat-header-cell>
+    <mat-cell *matCellDef="let preAuth">
+      <a role="button" class="link-edit" (click)="openPreauthViewModal(preAuth.preAuthId)">View</a>
+    </mat-cell>
+  </ng-container>
+  <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
+  <mat-row *matRowDef="let row; columns: displayedColumns;"></mat-row>
+</mat-table>

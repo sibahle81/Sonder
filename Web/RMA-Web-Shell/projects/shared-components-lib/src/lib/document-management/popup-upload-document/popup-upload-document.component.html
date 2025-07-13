@@ -1,0 +1,44 @@
+<mat-card>
+  <mat-card-header>
+    <mat-card-title class="wizard-font card-title grey">
+      <h1>Documents</h1>
+    </mat-card-title>
+    <mat-card-subtitle>
+      <span class="grey site-font"><i>Upload documents that may be required</i></span>
+    </mat-card-subtitle>
+  </mat-card-header>
+  <mat-card-content>
+    <form [formGroup]="form" class="mat-container">
+      <div *ngIf="!isLoading">
+        <section class="type-field">
+          <!-- Document Type -->
+          <mat-label class="mat-label other-label">Document Type</mat-label>
+          <mat-select formControlName="documentType" name="openFile" (selectionChange)="onDocumentSelect($event)">
+            <mat-option *ngFor="let documentType of documentTypes" [value]="documentType.id">
+              {{ documentType.name }}</mat-option>
+          </mat-select>
+
+          <mat-form-field>
+            <label class="mat-label other-label ">Document Description</label>
+            <input matInput maxlength="150" formControlName="documentDescription" name="documentDescription">
+        </mat-form-field>
+
+        </section>
+      </div>
+      <span [style.visibility]="isLoading ? 'visible' : 'hidden'">
+        <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+        <span class="grey site-font"><i>uploading file...please wait</i></span>
+      </span>
+
+      <div>
+        <upload-control #registrationDocuments></upload-control>
+      </div>
+
+      <div class="form-group-button mat-form-button">
+        <button [disabled]="isUploading || form.pristine" (click)='UploadDocuments()' class="button float-button">Upload</button>
+        <button [disabled]="canClose" (click)='onNoClick()' type="button" class="button float-button">Close</button>
+      </div>
+    </form>
+  </mat-card-content>
+
+</mat-card>

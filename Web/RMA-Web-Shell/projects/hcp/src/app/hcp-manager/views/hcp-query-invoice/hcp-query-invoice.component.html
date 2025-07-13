@@ -1,0 +1,11 @@
+<medical-invoice-searchV2 
+    [allowMultiple]="true" 
+    [rolePlayerId]="rolePlayerId"
+    [toggleDeselect]="toggleDeselect"
+    (invoiceSelectedEmit)="invoiceSelected($event)"></medical-invoice-searchV2>
+<div *ngIf="haveSelectedInvoice()">
+    <hcp-log-query
+        [invoices]="selectedInvoices"
+        [rolePlayerId]="rolePlayerId"
+        (logQueryDoneEmit)="logQueryDone($event)"></hcp-log-query>
+</div>

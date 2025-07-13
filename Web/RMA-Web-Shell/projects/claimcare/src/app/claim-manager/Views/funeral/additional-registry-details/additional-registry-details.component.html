@@ -1,0 +1,298 @@
+<div class="page-header"></div>
+<div *ngIf="!canAdd">
+    <h1>Funeral Parlor</h1>
+    <div style="padding-bottom: 15px; color: orange; font-family: 'Oswald', sans-serif;">You do not have sufficient
+        permissions to Addtional Registry Details.</div>
+    <div (click)="back()" class="form-buttons submit-button">
+        <button type="button" class="button float-button">Back</button>
+    </div>
+</div>
+
+<div [hidden]="!canAdd">
+    <mat-card class="top-selector-container">
+        <mat-card class="summary-container-deceased">
+            <mat-card-header>
+                <mat-card-title>
+                    <h1 class="wizard-font">Deceased Details</h1>
+                </mat-card-title>
+            </mat-card-header>
+            <mat-card-content class="content-container">
+                <div *ngIf="this.deceased">
+                    <table class="altRowTable" style="width:100%;">
+                        <tr>
+                            <td><b>Name:</b> {{this.deceased.person.firstName}}</td>
+                        </tr>
+                        <tr>
+                            <td><b>Surname:</b> {{this.deceased.person.surname}}</td>
+                        </tr>
+                        <tr>
+                            <td><b>ID/Passport:</b>
+                                   {{this.deceased.person.idNumber ? 
+                                    this.deceased.person.idNumber : 
+                                    this.deceased.person.passportNumber}} </td>
+                        </tr>
+                        <tr>
+                            <td><b>Birth Date:</b>
+                                {{this.deceased.person.dateOfBirth | date:'yyyy/MM/dd'}}</td>
+                        </tr>
+                        <tr>
+                            <td><b>Gender:</b> {{this.gen}}</td>
+                        </tr>
+                    </table>
+                </div>
+            </mat-card-content>
+        </mat-card>
+
+        <span style="margin-left: 25px"></span>
+
+        <mat-card class="summary-container">
+            <mat-card-header>
+                <mat-card-title>
+                    <h1 class="wizard-font">Policy Details</h1>
+                </mat-card-title>
+            </mat-card-header>
+            <mat-card-content class="content-container">
+                <div class="text-container" *ngIf="policyLength != 0 else policyWarning">
+                    <table id="policies">
+                        <thead>
+                            <tr>
+                                <th><b>Policy Number</b></th>
+                                <th><b>Status</b></th>
+                                <th><b>Inception Date</b></th>
+                            </tr>
+                        </thead>
+
+                        <tbody>
+                            <tr *ngFor="let row of policies;let i = index;">
+                                <td>
+                                    {{row.policyNumber}}
+                                </td>
+                                <td *ngIf="greenPolicyStatus.includes(getStatus(row.policyStatus))" align="center"><span
+                                        class="material-icons lightGreen"
+                                        matTooltip="{{getStatus(row.policyStatus)}}">play_circle_filled</span></td>
+                                <td *ngIf="amberPolicyStatus.includes(getStatus(row.policyStatus))" align="center"><span
+                                        class="material-icons lightAmber"
+                                        matTooltip="{{getStatus(row.policyStatus)}}">pause_circle_filled</span></td>
+                                <td *ngIf="redPolicyStatus.includes(getStatus(row.policyStatus))" align="center"><span
+                                        class="material-icons lightRed"
+                                        matTooltip="{{getStatus(row.policyStatus)}}">stop</span></td>
+                                <td *ngIf="bluePolicyStatus.includes(getStatus(row.policyStatus))" align="center"><span
+                                        class="material-icons lightBlue"
+                                        matTooltip="{{getStatus(row.policyStatus)}}">cached</span></td>
+                                <td>
+                                    {{row.policyInceptionDate  | date:'yyyy/MM/dd'}}
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <ng-template #policyWarning>&nbsp;&nbsp;&nbsp;&nbsp;No policies have been found</ng-template>
+
+            </mat-card-content>
+            <span [style.visibility]="isLoading ? 'visible' : 'hidden'">
+                <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+                <span class="grey site-font"><i>Loading Policies...please wait</i></span>
+            </span>
+        </mat-card>
+    </mat-card>
+
+    <mat-card style="margin: 15px 30px 15px 30px">
+
+        <mat-card-content style="margin-left: 10px;">           
+            <form [formGroup]="form" class="mat-container" novalidate>
+                <div style="margin-top: 20px;">
+                    <div class="menu-bar">
+                       <!-- Row 0 -->
+                        <div *ngIf="this.deceased">
+                            <section>
+                                <label class="mat-label other-label"><b>Claim Number :
+                                        {{this.model.personEventId}}</b></label>
+                           
+                        <span *ngIf="canEditForm && !showSetting" (click)="cancel()" class="material-icons pointer right" matTooltip="cancel">
+                          close
+                        </span>
+                    
+                        <span *ngIf="form.valid && !form.pristine && canEditForm && !showSetting" (click)="save()"
+                          class="material-icons pointer right pulse greenFont" matTooltip="save">
+                          save
+                        </span>
+                                            
+                        <span *ngIf="!(isSaving$ | async) && canEditForm && showSetting"
+                          (click)="edit()" class="material-icons pointer right" matTooltip="edit">
+                          settings
+                        </span>
+                         </section>
+                     </div>
+                    </div>
+                    <br />
+                    <br />
+                    <!-- Row 1 -->
+                    <section>
+                        <!--Type of death-->
+                        <mat-form-field>
+                            <label class="mat-label other-label">Type of Death</label>
+                            <mat-select name="filter" id="filter" formControlName="typeOfDeath" [disabled]="true"
+                                (onSelect)="causeOfDeathChange($event)">
+                                <mat-option [value]="1">Natural</mat-option>
+                                <mat-option [value]="2">Unnatural</mat-option>
+                                <mat-option [value]="3">Stillborn</mat-option>
+                                <mat-option [value]="4">Suicide</mat-option>                                
+                                <mat-option [value]="6">Under Investigation</mat-option>
+                            </mat-select>
+                        </mat-form-field>
+                        <!-- Date Notified -->
+                        <mat-form-field class="mat-form-field-right">
+                            <label class="form-label other-label">Date Notified</label>
+                            <input readonly matInput formControlName="dateNotified" [matDatepicker]="dateNotified"
+                                id="dateNotified" name="dateNotified">
+                            <mat-datepicker-toggle matSuffix [for]="dateNotified"
+                                style="position: absolute;top: 14px;right: 0;"></mat-datepicker-toggle>
+                            <mat-datepicker touchUi="true" #dateNotified></mat-datepicker>
+                        </mat-form-field>
+                    </section>
+                    <!-- Row 2 -->
+                    <section>
+                        <!-- Cause of death - Always displayed -->
+                        <mat-form-field>
+                            <label class="mat-label other-label">Cause of Death</label>
+                            <mat-select name="causeOfDeath" id="causeOfDeath" formControlName="causeOfDeath">
+                                <mat-option *ngFor="let causeOfDeathType of causeOfDeathTypes"
+                                    [value]="causeOfDeathType.id">
+                                    {{causeOfDeathType.name}}</mat-option>
+                            </mat-select>
+                            <span [style.visibility]="isLoading ? 'visible' : 'hidden'">
+                                <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+                                <span class="grey site-font"><i>Loading Cause of Death...please wait</i></span>
+                            </span>
+                        </mat-form-field>
+                        <!--Date of death - Always displayed-->
+                        <mat-form-field class="mat-form-field-right">
+                            <label class="form-label other-label">Date of Death</label>
+                            <input readonly matInput [min]="minDate" formControlName="dateOfDeath"
+                                [matDatepicker]="dateOfDeath" id="dateOfDeath" name="dateOfDeath">
+                            <mat-datepicker-toggle matSuffix [for]="dateOfDeath"
+                                style="position: absolute;top: 14px;right: 0;"></mat-datepicker-toggle>
+                            <mat-datepicker touchUi="true" #dateOfDeath></mat-datepicker>
+                        </mat-form-field>
+                    </section>
+                    <!-- Row 3 -->
+                    <section>
+                        <!--DHA Reference-->
+                        <mat-form-field>
+                            <label class="mat-label other-label">DHA Reference Number</label>
+                            <input matInput maxlength="50" formControlName="dhaReferenceNumber"
+                                name="dhaReferenceNumber"id="dhaReferenceNumber">
+                        </mat-form-field>
+                        <!--Death Certificate-->
+                        <mat-form-field class="mat-form-field-right">
+                            <label class="mat-label other-label">Death Certificate Reference Number</label>
+                            <input matInput maxlength="50" formControlName="deathCertificateReferenceNumber"
+                                name="deathCertificateReferenceNumber" id="deathCertificateReferenceNumber">
+                        </mat-form-field>
+                    </section>
+                    <!-- Row 4 -->
+                    <section>
+                        <!--Place Event Occured-->
+                        <mat-form-field>
+                            <label class="mat-label other-label">Place Event Occured</label>
+                            <input matInput maxlength="50" formControlName="placeEventOccured" name="placeEventOccured" id="placeEventOccured">
+                        </mat-form-field>
+                        <!-- Place of death -->
+                        <mat-form-field class="mat-form-field-right">
+                            <label class="mat-label other-label mandatory">Place Of Death - Province</label>
+                            <mat-select name="placeOfDeath" id="placeOfDeath" formControlName="placeOfDeath">
+                                <mat-option *ngFor="let province of provinces"
+                                [value]="province.id">
+                                {{province.name}}</mat-option>
+                            </mat-select>
+                            <mat-error *ngIf="form.get('placeOfDeath').hasError('required')">
+                                Province is required
+                            </mat-error>
+                        </mat-form-field>
+                    </section>
+                    <!-- Row 5 -->
+                    <section>
+                        <!-- Nationality of Deceased
+                        <mat-form-field>
+                            <label class="mat-label other-label">Nationality of Deceased</label>
+                            <input matInput maxlength="50" formControlName="nationalityOfDeceased"
+                                name="nationalityOfDeceased">
+                        </mat-form-field> -->
+                        <!--Home Affairs Region-->
+                        <div *ngIf="isSouthAfricanCitizen">
+                            <mat-form-field class="form-label other-label">
+
+                                <label class="mat-label other-label">Home Affairs Region</label>
+                                <input matInput maxlength="50" formControlName="homeAffairsRegion"
+                                    name="homeAffairsRegion" id="homeAffairsRegion">
+
+                            </mat-form-field>
+                        </div>
+                    </section>
+                    <!-- Row 6 -->
+                    <div *ngIf="isStillBorn">
+                        <section>
+                            <!--Gender-->
+                            <mat-form-field>
+                                <label class="mat-label other-label">Gender</label>
+                                <mat-select name="gender" id="gender" formControlName="gender"
+                                    (selectionChange)="genderChanged($event)">
+                                    <mat-option [value]="1">Female</mat-option>
+                                    <mat-option [value]="2">Male</mat-option>
+                                </mat-select>
+                            </mat-form-field>
+                            <!--Gestation-->
+                            <mat-form-field class="mat-form-field-right">
+                                <label>Gestation</label>
+                                <mat-select name="gestation" id="gestation" formControlName="gestation"
+                                    (selectionChange)="gestationChanged($event)">
+                                    <mat-option [value]="26">26 weeks</mat-option>
+                                    <mat-option [value]="27">27 weeks</mat-option>
+                                    <mat-option [value]="28">28 weeks</mat-option>
+                                    <mat-option [value]="29">29 weeks</mat-option>
+                                    <mat-option [value]="30">30 weeks</mat-option>
+                                    <mat-option [value]="31">31 weeks</mat-option>
+                                    <mat-option [value]="32">32 weeks</mat-option>
+                                    <mat-option [value]="33">33 weeks</mat-option>
+                                    <mat-option [value]="34">34 weeks</mat-option>
+                                    <mat-option [value]="35">35 weeks</mat-option>
+                                    <mat-option [value]="36">36 weeks</mat-option>
+                                    <mat-option [value]="37">37 weeks</mat-option>
+                                    <mat-option [value]="38">38 weeks</mat-option>
+                                    <mat-option [value]="39">39 weeks</mat-option>
+                                    <mat-option [value]="40">40 weeks</mat-option>
+                                </mat-select>
+                                <mat-error *ngIf="form.get('gestation').hasError('required') && isStillBorn">
+                                    Gestation period is required
+                                </mat-error>
+                            </mat-form-field>
+                        </section>
+                    </div>
+                </div>
+                <!-- Row 7 -->
+                <section>
+                    <!-- Interview With Family Memeber -->
+                    <mat-checkbox id="interviewWithFamilyMember" name="interviewWithFamilyMember"
+                        formControlName="interviewWithFamilyMember" (change)="interviewWithFamilyMember($event)">
+                        <label class="mat-label other-label">Interview with Family Member</label>
+                    </mat-checkbox><br />
+                    <!-- Medical Practitioner Opinion -->
+                    <mat-checkbox id="medicalPractitionerOpinion" name="medicalPractitionerOpinion"
+                        formControlName="medicalPractitionerOpinion" (change)="isMedicalPractitionerOpinion($event)">
+                        <label class="mat-label other-label">Medical Practitioner Opinion Received</label>
+                    </mat-checkbox>
+                </section>
+                <section>
+                    <!-- Vopd Verified -->
+                    <mat-checkbox [disabled]="isVopdVerified" id="OverrideVopd" name="OverrideVopd"
+                        formControlName="OverrideVopd" (change)="isVopdOverridden($event)">
+                        <label class="mat-label other-label">Overide VOPD</label> &nbsp;
+                        <label class="mat-label other-label" class="label">{{this.isVopdVerifiedLabel}}</label>
+                    </mat-checkbox>
+                </section>
+                <br />
+            </form>
+        </mat-card-content>
+    </mat-card>
+</div>

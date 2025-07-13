@@ -1,0 +1,187 @@
+<mat-card *ngIf="isLoading$ | async">
+    <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+    <label class="mat-label other-label"><i>loading accident details...please wait</i></label>
+</mat-card>
+
+<mat-card *ngIf="noPhysicalDataDetected && !(isLoading$ | async)">
+    <label class="mat-label other-label"><i>no physical damage data detected in database...</i></label>
+</mat-card>
+
+<div [hidden]="(isLoading$ | async) || noPhysicalDataDetected">
+    <div class="menu-bar">
+        <span class="material-icons">
+            personal_injury
+        </span>&nbsp;Accident Details
+        <span *ngIf="!isReadOnly && form.valid && !form.pristine" (click)="save()" class="material-icons pointer right"
+            matTooltip="save">
+            save
+        </span>
+        <span *ngIf="(!isReadOnly && isWizard) || hasEditPermissions()" (click)="editForm()"
+            class="material-icons pointer right" matTooltip="edit">
+            settings
+        </span>
+        <span *ngIf="hasAuditPermission && !isWizard" (click)="openAuditDialog(selectedPersonEvent)" matTooltip="audit"
+            class="material-icons pointer right">
+            fingerprint
+        </span>
+    </div>
+
+    <mat-card>
+        <form [formGroup]="form" class="mat-container details-form" novalidate>
+            <div>
+                <section>
+                    <mat-form-field class="mat-form-field">
+                        <label class="mat-label other-label mandatory-field">Insurance Type</label>
+                        <mat-select name="insuranceType" id="insuranceType" formControlName="insuranceType"
+                            (selectionChange)="CheckInsuranceType($event)">
+                            <input matInput (keyup)="onInsuranceTypeKey($event.target.value)">
+                            <mat-option *ngFor="let type of filteredInsuranceTypes" [value]="type.code">
+                                {{type.code}}
+                            </mat-option>
+                        </mat-select>
+                        <mat-error *ngIf="form.get('insuranceType').hasError('required')">
+                            insurance Type is <strong>required</strong>
+                        </mat-error>
+                    </mat-form-field>
+
+                    <mat-form-field class="mat-form-field-right">
+                        <label class="mat-label other-label mandatory-field">Date Notified</label>
+                        <input matInput formControlName="dateNotified" readonly [max]="maxDate"
+                            [matDatepicker]="dateNotified" id="dateNotified" name="dateNotified">
+                        <mat-datepicker-toggle matSuffix [for]="dateNotified"
+                            [disabled]="false"></mat-datepicker-toggle>
+                        <mat-datepicker touchUi="true" #dateNotified></mat-datepicker>
+                        <mat-error *ngIf="form.get('dateNotified').hasError('required')">
+                            Date notified is <strong>required</strong>
+                        </mat-error>
+                        <mat-error *ngIf="form.get('dateNotified').hasError('inValidDate')">
+                            Date notified must not be before date of accident
+                        </mat-error>
+                    </mat-form-field>
+                </section>
+                <section>
+                    <mat-form-field class="mat-form-field">
+                        <label class="mat-label other-label mandatory-field">Claim Type</label>
+                        <mat-select name="claimType" id="claimType" formControlName="claimType"
+                            (selectionChange)="checkClaimType($event)">
+                            <input matInput (keyup)="onClaimTypeKey($event.target.value)">
+                            <mat-option *ngFor="let type of filteredClaimTypes" [value]="type.name">
+                                {{type.name}}
+                            </mat-option>
+                        </mat-select>
+                        <mat-error *ngIf="form.get('claimType').hasError('required')">
+                            claim Type is <strong>required</strong>
+                        </mat-error>
+                    </mat-form-field>
+
+                    <mat-form-field class="mat-form-field-right">
+                        <label *ngIf="!isStatutory" class="mat-label other-label mandatory-field">Benefits</label>
+                        <label *ngIf="isStatutory" class="mat-label other-label mandatory-field">Injury
+                            Type</label>
+                        <mat-select name="benefits" id="benefits" formControlName="benefits"
+                            (selectionChange)="checkBenefits($event)">
+                            <input matInput (keyup)="onBenefitsKey($event.target.value)">
+                            <mat-option *ngFor="let type of filteredBenefits" [value]="type.name">
+                                {{type.name}}
+                            </mat-option>
+                        </mat-select>
+                        <mat-error *ngIf="form.get('benefits').hasError('required')">
+                            benefit is <strong>required</strong>
+                        </mat-error>
+                    </mat-form-field>
+                </section>
+                <section>
+                    <mat-form-field class="mat-form-field" *ngIf="ledToDeath">
+                        <label class="mat-label other-label mandatory-field">Date Of Death</label>
+                        <input matInput formControlName="dateOfDeath" readonly [max]="maxDate"
+                            [matDatepicker]="dateOfDeath" id="dateOfDeath" name="dateOfDeath">
+                        <mat-datepicker-toggle matSuffix [for]="dateOfDeath"></mat-datepicker-toggle>
+                        <mat-datepicker touchUi="true" #dateOfDeath></mat-datepicker>
+                        <mat-error *ngIf="form.get('dateOfDeath').hasError('required') && !inValidDateOfDeath">
+                            Date of death is <strong>required</strong>
+                        </mat-error>
+                        <mat-error *ngIf="form.get('dateOfDeath').hasError('inValidDate')">
+                            Date of Death must not be before date of accident
+                        </mat-error>
+                    </mat-form-field>
+                </section>
+                <section>
+                    <mat-form-field class="mat-form-field" *ngIf="ledToDeath">
+                        <label class="mat-label other-label">Death Certificate Number</label>
+                        <input matInput id="certificateNumber" name="certificateNumber"
+                            formControlName="certificateNumber" />
+                    </mat-form-field>
+
+                    <mat-form-field class="mat-form-field-right" *ngIf="ledToDeath">
+                        <label class="mat-label other-label">Cause Of Death</label>
+                        <input matInput id="causeOfDeath" name="causeOfDeath" formControlName="causeOfDeath" />
+                        <mat-error class="mat-error-incident" *ngIf="(form.get('causeOfDeath').hasError('required')  && form.get('causeOfDeath').touched)
+            || (form.get('causeOfDeath').hasError('minlength')  && form.get('causeOfDeath').touched)
+            || (form.get('causeOfDeath').hasError('maxlength')  && form.get('causeOfDeath').touched)">
+                            Cause Of Death is <strong>required</strong>,length should<strong> between 5 and
+                                250</strong>
+                        </mat-error>
+                    </mat-form-field>
+                </section>
+                <section>
+                    <mat-form-field class="mat-form-field">
+                        <label class="mat-label other-label mandatory-field">Primary Injury Diagnostic
+                            Group</label>
+                        <mat-select name="diagnostics" id="diagnostics" formControlName="diagnostics"
+                            (selectionChange)="checkDiagnostic($event)">
+                            <input matInput (keyup)="onDiagnosticKey($event.target.value)">
+                            <mat-option *ngFor="let type of filteredDiagnostics" [value]="type.code">
+                                {{type?.code}}: {{type?.description}}
+                            </mat-option>
+                        </mat-select>
+                        <mat-error *ngIf="form.get('diagnostics').hasError('required')">
+                            Primary Injury Diagnostic Group is <strong>required</strong>
+                        </mat-error>
+                    </mat-form-field>
+
+                    <mat-form-field class="mat-form-field-right">
+                        <label class="mat-label other-label mandatory-field">Brief Description Of
+                            Injury</label>
+                        <textarea matInput formControlName="injuryDescription" id="injuryDescription"
+                            name="injuryDescription"></textarea>
+                        <mat-error *ngIf="form.get('injuryDescription').hasError('required')">
+                            Brief Description Of Injury is <strong>required</strong>
+                        </mat-error>
+                    </mat-form-field>
+                </section>
+                <section>
+                    <mat-form-field class="mat-form-field">
+                        <label class="mat-label other-label mandatory-field">Severity</label>
+                        <mat-select name="severity" id="severity" formControlName="severity"
+                            (selectionChange)="checkSeverity($event)">
+                            <input matInput (keyup)="onSeverityKey($event.target.value)">
+                            <mat-option *ngFor="let type of filteredSeverities" [value]="type.name">
+                                {{type.name}}
+                            </mat-option>
+                        </mat-select>
+                        <mat-error *ngIf="form.get('severity').hasError('required')">
+                            Severity is <strong>required</strong>
+                        </mat-error>
+                    </mat-form-field>
+
+                    <mat-form-field class="mat-form-field-right">
+                        <label class="mat-label other-label mandatory-field">Body Side</label>
+                        <mat-select name="bodySide" id="bodySide" formControlName="bodySide"
+                            (selectionChange)="CheckBodySide($event)">
+                            <input matInput (keyup)="onBodySideKey($event.target.value)">
+                            <mat-option *ngFor="let type of filteredBodySides" [value]="type.name">
+                                {{type.name}}
+                            </mat-option>
+                        </mat-select>
+                        <mat-error *ngIf="form.get('bodySide').hasError('required')">
+                            Body Side is <strong>required</strong>
+                        </mat-error>
+                    </mat-form-field>
+                </section>
+            </div>           
+        </form>
+    </mat-card>
+</div>
+
+<holistic-injury-details-view [selectedPersonEvent]="selectedPersonEvent" [isWizard]="isWizard" [isReadOnly]="false"
+    [icd10List]="selectedIcd10List" (refreshEmit)="refresh($event)"></holistic-injury-details-view>

@@ -1,0 +1,19 @@
+<form [formGroup]="form" name="form" class="mat-container details-form" novalidate>
+    <div *ngIf="isLoadingCategories">
+        <mat-progress-bar mode="indeterminate" [ngClass]="{ 'loading-main-double-menu-progress': doubleMenu, 'loading-main-single-menu-progress': !doubleMenu }">
+        </mat-progress-bar>
+        <p class="site-font grey">Loading categories...</p>
+    </div>
+
+    <div class="field-container">
+        <mat-form-field>
+            <label class="mat-label other-label mandatory-field">Physio Therapy Details</label>
+            <div>
+                <mat-form-field>
+                    <textarea maxlength="1000" formControlName="physioTherapyDescription" id="physioTherapyDescription" name="physioTherapyDescription"
+                        matInput placeholder="Physio Therapy Description..."></textarea>
+                </mat-form-field>
+            </div>
+        </mat-form-field>
+    </div>
+</form>

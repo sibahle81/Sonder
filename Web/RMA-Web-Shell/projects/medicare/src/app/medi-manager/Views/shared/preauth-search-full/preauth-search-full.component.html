@@ -1,0 +1,104 @@
+<mat-card class="matcard">
+  <mat-card-content class="matcard content">
+      <div class="page-header">
+          <h1>Find a Preauthorisation</h1>
+      </div>
+      <mat-form-field [floatLabel]="'never'">
+          <input matInput maxlength="50" name="filterPreAuthNumber" #filterPreAuthNumber width="300" minLength="3"
+              matTooltip="Search by PreAuth number" matTooltipShowDelay="1000">
+          <mat-placeholder class="placeholder">PreAuth number</mat-placeholder>
+      </mat-form-field>
+      <br><br>
+      <mat-form-field [floatLabel]="'never'">
+        <input matInput maxlength="50" name="filterDescription" #filterDescription width="300" minLength="3"
+            matTooltip="Search by Description" matTooltipShowDelay="1000">
+        <mat-placeholder class="placeholder">Description</mat-placeholder>      
+      </mat-form-field>
+    <br><br>
+    <mat-form-field [floatLabel]="'never'">
+      <input matInput maxlength="50" name="filterAuthComments" #filterAuthComments width="300" minLength="3"
+          matTooltip="Search by Auth Comments" matTooltipShowDelay="1000">
+      <mat-placeholder class="placeholder">Auth Comments</mat-placeholder>      
+    </mat-form-field>
+  <br><br>
+    
+    <button class="button submit-button import-button" (click)="search()"
+            matTooltip="Search by parameters supplied above" matTooltipShowDelay="1000"><i class="material-icons">search</i></button>
+    
+      <div *ngIf="dataSource.loading$ | async">
+          <mat-progress-bar mode="indeterminate"
+              [ngClass]="{ 'loading-main-double-menu-progress': doubleMenu, 'loading-main-single-menu-progress': !doubleMenu }">
+          </mat-progress-bar>
+          <p class="site-font grey">Searching...</p>
+      </div>
+      <br><br>
+      <div [hidden]="paginator.length == 0">
+          <mat-table #table [dataSource]="dataSource" matSort matSortActive="reportDate" matSortDirection="desc" matSortDisableClear>
+            <ng-container matColumnDef="preAuthId">
+              <mat-header-cell *matHeaderCellDef mat-sort-header> PreAuth Id </mat-header-cell>
+              <mat-cell *matCellDef="let preAuthorisation" matTooltip="{{preAuthorisation.preAuthId}}">
+                <span class="truncate-text"> {{ preAuthorisation.preAuthId}} </span>
+              </mat-cell>
+            </ng-container>
+            <ng-container matColumnDef="personEventId">
+              <mat-header-cell *matHeaderCellDef mat-sort-header> Person Event Id </mat-header-cell>
+              <mat-cell *matCellDef="let preAuthorisation" matTooltip="{{preAuthorisation.personEventId}}">
+                <span class="truncate-text"> {{ preAuthorisation.personEventId}} </span>
+              </mat-cell>
+            </ng-container>
+            <ng-container matColumnDef="preAuthNumber">
+              <mat-header-cell *matHeaderCellDef mat-sort-header> PreAuth Number </mat-header-cell>
+              <mat-cell *matCellDef="let preAuthorisation" matTooltip="{{preAuthorisation.preAuthNumber}}">
+                <span class="truncate-text"> {{ preAuthorisation.preAuthNumber}} </span>
+              </mat-cell>
+            </ng-container>
+            <ng-container matColumnDef="dateAuthorisedFrom">
+              <mat-header-cell *matHeaderCellDef mat-sort-header> Authorised From </mat-header-cell>
+              <mat-cell *matCellDef="let preAuthorisation" matTooltip="{{preAuthorisation.dateAuthorisedFrom}}">
+                <span class="truncate-text"> {{ preAuthorisation.dateAuthorisedFrom}} </span>
+              </mat-cell>
+            </ng-container>
+            <ng-container matColumnDef="dateAuthorisedTo">
+              <mat-header-cell *matHeaderCellDef mat-sort-header> Authorised To </mat-header-cell>
+              <mat-cell *matCellDef="let preAuthorisation" matTooltip="{{preAuthorisation.dateAuthorisedTo}}">
+                <span class="truncate-text"> {{ preAuthorisation.dateAuthorisedTo}} </span>
+              </mat-cell>
+            </ng-container>
+            <ng-container matColumnDef="preAuthStatus">
+              <mat-header-cell *matHeaderCellDef mat-sort-header> PreAuth Status </mat-header-cell>
+              <mat-cell *matCellDef="let preAuthorisation" matTooltip="{{preAuthorisation.preAuthStatus}}">
+                <span class="truncate-text"> {{ preAuthorisation.preAuthStatus}} </span>
+              </mat-cell>
+            </ng-container>
+            <ng-container matColumnDef="viewReport">
+              <mat-header-cell *matHeaderCellDef> View PreAuthorisation </mat-header-cell>
+              <mat-cell *matCellDef="let preAuthorisation">
+                <a role="button" class="link-edit" (click)="onSelect(preAuthorisation)">View</a>
+              </mat-cell>        
+            </ng-container>
+
+              <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
+              <mat-row *matRowDef="let row; columns: displayedColumns;"></mat-row>
+          </mat-table>
+
+          <mat-paginator #paginator [length]="dataSource.rowCount$" [pageIndex]="0" [pageSize]="5"
+              [pageSizeOptions]="[5, 10, 25, 100]">
+          </mat-paginator>
+      </div>
+
+      <div [hidden]="paginator.length > 0 || !currentQuery || currentQuery == ''"
+          class="no-search-results-add-button">
+          <div class="site-font grey">
+              <p class="grey">Your search - <strong>{{currentQuery}}</strong> - did not match any preauthorisations.</p>
+              <span>Suggestions: </span>
+              <ul>
+                  <li>Make sure that all words are spelled correctly.</li>
+                  <li>Try different keywords.</li>
+                  <li>Try more general keywords.</li>
+                  <li>Try fewer keywords.</li>
+              </ul>
+          </div>
+      </div>
+
+  </mat-card-content>
+</mat-card>

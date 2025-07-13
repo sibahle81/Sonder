@@ -1,0 +1,161 @@
+<h1>Terms Arrangement Initiation</h1>
+<div *ngIf="isAuthorized; else notAuthorized">
+    <form [formGroup]="form" class="mat-container details-form" novalidate>
+        <br />
+        <mat-accordion>
+            <mat-expansion-panel [expanded]="panelOpenState$ | async" class="searchBgColor">
+                <mat-expansion-panel-header>
+                    <mat-panel-description class="left-aligned">
+                        <span >Search Debtor Acccount</span>
+                      </mat-panel-description>
+                </mat-expansion-panel-header>             
+                <app-seach-debtor (itemSelected)="onAccountSelected($event)"></app-seach-debtor>
+            </mat-expansion-panel>
+        </mat-accordion>
+        <br />
+        <div *ngIf="rolePlayerId > 0 && subsidiaries.length < 2" class="clear-both">
+            <table class="roleplayerDeatais">
+                <tr>
+                    <td>{{rolePlayerName}}</td>
+                </tr>
+                <tr>
+                    <td>{{finPayeNumber}}</td>
+                    <td><button class="button  submit-button" type="button" [disabled]="!showSubmit"  (click)="addSubsidiary()">Add Subsidiary</button></td>
+                </tr>
+            </table>
+        </div>
+        <br />
+        <div *ngIf="(isCheckingDeclarations$ | async)">
+            <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+            <label class="mat-label other-label"><i>Checking Declarations...please wait...</i></label>
+        </div>       
+        <div *ngIf="termsWizardinProgress" class="termsWizardinProgress">
+            Please note there is already an open Terms and Arrangements task in progress for debtor:<br> Task
+            ref:
+            {{wizardInProgressName}}<br> A new task will not be created.<p>
+                <button (click)="goToTasks()" class="button submit-button">Go To Tasks</button>
+            </p>
+        </div>
+        <div *ngIf="initiationFailed" class="termsWizardinProgress">
+            Initiation Unsuccessful. Notification has been sent to the member.
+            <p>
+                <button (click)="goToTasks()" class="button submit-button">Go To Tasks</button>
+            </p>
+        </div>
+        <br />
+        <div class="errorMessage" *ngIf="searchFailedMessage.length > 0">{{searchFailedMessage}}</div>
+        <div *ngIf="(isSubmitting$ | async) && !termsWizardinProgress">
+            <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+            <label class="mat-label other-label"><i>Creating terms capture wizard...please wait...</i></label>
+        </div>
+        <div *ngIf="(isSendingUnsuccessfulInitiationNotification$ | async) ">
+            <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+            <label class="mat-label other-label"><i>Sending unsuccessful initiation notification...please wait...</i></label>
+        </div>
+        <div>
+            <br />
+            <span class="errorMessage">{{message}}</span>
+        </div>
+        <div *ngIf="rolePlayerId > 0">
+            <mat-card>
+                <app-debtor-policies [roleplayerId]="rolePlayerId" (policiesSelectedHandler)="policiesSelected($event)"
+                    [multiselect]="true" [showProductBalances]="true"
+                    [checkMemberCompliance]="false"></app-debtor-policies>
+            </mat-card>
+            <br />
+        </div>
+
+        <div [hidden]="datasourceProducts.data.length === 0" class="table-container">
+            <br />
+            <mat-accordion>
+                <mat-expansion-panel expanded="true" class="searchBgColor">
+                    <mat-expansion-panel-header>
+                        <mat-panel-title>
+                            <p class="labelParagraph">Debtor(s) and product(s) that will form part of arrangement</p>
+                        </mat-panel-title>
+                    </mat-expansion-panel-header>
+                    <mat-table #table [dataSource]="datasourceProducts">
+                        <ng-container matColumnDef="productName">
+                            <mat-header-cell *matHeaderCellDef>Product</mat-header-cell>
+                            <mat-cell *matCellDef="let row">{{row.productOptionName}}</mat-cell>
+                            <mat-footer-cell *matFooterCellDef></mat-footer-cell>
+                        </ng-container>
+                        <ng-container matColumnDef="finPayenumber">
+                            <mat-header-cell *matHeaderCellDef>Debtor No.</mat-header-cell>
+                            <mat-cell *matCellDef="let row">{{row.finPayenumber}}</mat-cell>
+                            <mat-footer-cell *matFooterCellDef class="footerBold">Total</mat-footer-cell>
+                        </ng-container>
+                        <ng-container matColumnDef="amount">
+                            <mat-header-cell *matHeaderCellDef>Total</mat-header-cell>
+                            <mat-cell *matCellDef="let row" class="right-aligned-amounts">{{row.contractAmount |
+                                currency:'':''}}</mat-cell>
+                            <mat-footer-cell *matFooterCellDef
+                                class="footerBold right-aligned-amounts">{{getProductTotals() |
+                                currency:'':''}}</mat-footer-cell>
+                        </ng-container>
+                        <ng-container matColumnDef="onActiveTerms">
+                            <mat-header-cell *matHeaderCellDef>On Active Terms</mat-header-cell>
+                            <mat-cell *matCellDef="let row">{{this.retrievingActiveTermArrangementProductOptions$.value === true? "loading" : ( validateIfRolePlayerProductIsOnActiveTermArrangement(row.roleplayerId, row.productOptionId) ? "Yes": "No") }}</mat-cell>
+                            <mat-footer-cell *matFooterCellDef></mat-footer-cell>
+                        </ng-container>
+                        <ng-container matColumnDef="compliantStatus">
+                            <mat-header-cell *matHeaderCellDef>Compliant Status</mat-header-cell>
+                            <mat-cell *matCellDef="let row">
+                                <member-compliance class="right"  *ngIf="row.policyId && row.policyId != 0"  [policyId]="row.policyId" (complianceResultEmit)="setProductComplianceResult($event,row)">                               
+                                </member-compliance>
+                            </mat-cell>
+                            <mat-footer-cell *matFooterCellDef></mat-footer-cell>
+                        </ng-container>
+                        <ng-container matColumnDef="actions">
+                            <mat-header-cell *matHeaderCellDef>Action</mat-header-cell>
+                            <mat-cell *matCellDef="let row">
+                                <a (click)="removeProductOption(row)" role="button" class="link-edit">
+                                    <span matTooltip="remove" class="material-icons icn pointer">
+                                        delete
+                                    </span>
+                                </a>
+                                &nbsp;
+                                <a *ngIf="row.complianceResult && (!row.complianceResult.isBillingCompliant || !row.complianceResult.isDeclarationCompliant )  " (click)="sendUnsuccessfulInitiationNotificationDialog(row)" role="button" class="link-edit" [disabled]="isSendingUnsuccessfulInitiationNotification$">
+                                    <span matTooltip="send unsuccessful notification" class="material-icons icn pointer">
+                                        send
+                                    </span>
+                                </a>
+                            </mat-cell>
+                            <mat-footer-cell *matFooterCellDef></mat-footer-cell>
+                        </ng-container>
+                        <mat-header-row *matHeaderRowDef="displayedColumnsProducts"></mat-header-row>
+                        <mat-row *matRowDef="let row; columns: displayedColumnsProducts;"></mat-row>
+                        <mat-footer-row class="sticky-footer"
+                            *matFooterRowDef="displayedColumnsProducts"></mat-footer-row>
+                    </mat-table>
+                    <mat-paginator #paginator [pageIndex]="0" [pageSize]="5" [pageSizeOptions]="[5, 10, 25, 100]">
+                    </mat-paginator>
+                </mat-expansion-panel>
+            </mat-accordion>
+        </div>
+        <br />
+        <div class="errorMessage" *ngIf="hasZeroBalance && productsSearched">Cannot initate terms. Some of the selected products have no
+            outstanding debt
+        </div>
+        <div class="errorMessage" *ngIf="hasInvalidProducts">Cannot initate terms. Some of the selected products are no eligible for Terms Arrangement
+        </div>
+        <div class="errorMessage" *ngIf="showProductOnActiveTermsError">Cannot initate terms. Some of the selected products is on active Term Arrangement
+        </div>
+        <div class="errorMessage" *ngIf=" datasourceProducts.data.length > 0  && this.checkingComplianceDone() && !this.checkCompliance()">Cannot initate terms. Some of the selected products are declarations non compliant.
+        </div>
+        <div class="form-buttons" calss="leftMargin">
+            <button *ngIf="showSubmit" (click)="submit()"
+                [disabled]="datasourceProducts.data.length === 0  || !this.checkCompliance()|| (isSubmitting$ | async) || (retrievingActiveTermArrangementProductOptions$ | async)"
+                class="button float-button submit-button">Submit</button>
+            <button type="button" class="button float-button submit-button" (click)="back()">Back</button>
+        </div>
+    </form>
+</div>
+<ng-template #notAuthorized>
+    <div>
+        <div class="wizard-permissions-error">You do not have sufficient permissions to Initiate Term Arrangements</div>
+        <div (click)="navigateBack()" class="form-buttons submit-button">
+            <button type="button" class="button float-button">Back</button>
+        </div>
+    </div>
+</ng-template>

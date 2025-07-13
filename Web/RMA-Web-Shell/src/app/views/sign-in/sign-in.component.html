@@ -1,0 +1,44 @@
+<body [style.backgroundImage]="'url(' + backgroundImage + ')'">
+  <div class="content-container">
+    <div class="header-container">
+      <h1 style="font-weight: lighter;">LOG INTO YOUR ACCOUNT</h1>
+    </div>
+    <form [formGroup]="loginForm" class="login-form" (ngSubmit)="login()" novalidate>
+      <label class="form-label first-label mandatory-field">Email</label>
+      <mat-form-field>
+        <input matInput id="email" name="email" formControlName="email" required>
+        <mat-error *ngIf="loginForm.get('email').hasError('required')">
+          Email is required
+        </mat-error>
+        <mat-error *ngIf="loginForm.get('email').hasError('email')">
+          Please enter a <strong>valid</strong> email address.
+        </mat-error>
+      </mat-form-field>
+      <label class="form-label other-label mandatory-field">Password</label>
+      <mat-form-field>
+        <input matInput id="password" name="password" formControlName="password" [type]="hide ? 'password' : 'text'" required>
+        <mat-icon class="visibility-icon" matSuffix (click)="hide = !hide">
+          {{hide ? 'visibility_off' : 'visibility'}}</mat-icon>
+        <mat-error *ngIf="loginForm.get('password').hasError('required')">
+          Password is required
+        </mat-error>
+      </mat-form-field>
+
+      <div class="loginOptions">
+        <a (click)="register()" class="forgetPassword">REGISTER</a>
+        <a (click)="registerHCP()" class="forgetPassword">REGISTER HCP</a>
+        <a (click)="forgetPassword()" class="forgetPassword">FORGOT PASSWORD </a>
+
+      </div>
+      <button [disabled]="loginForm.disabled" class="button login-button" type="submit">
+        <span style="position:relative;top:-13px;">SIGN IN</span>
+      </button>
+      <div *ngIf="isIE" >
+        <img class="image-browser-not-supported" src="/assets/images/browser-not-supported-03.png">
+      </div>
+    </form>
+  </div>
+  <div class="image-container">
+    <img src="/assets/images/rmalogo.png" alt="" />
+  </div>
+</body>

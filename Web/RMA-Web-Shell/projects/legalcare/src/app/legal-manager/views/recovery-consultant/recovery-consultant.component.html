@@ -1,0 +1,120 @@
+<section class="legal-admin">
+
+  <div *ngIf="!isLoading" class="admin-view-inside">
+
+    <div class="legal-ad-view">
+      <div class="recovery-btn">
+        <button mat-button class="rev-tab">Recovery</button>
+      </div>
+      <div class="notifi-icon">
+
+        <div class="demo-section">
+          <mat-icon class="top-icons" matBadge="89" matBadgeColor="warn">notification_important</mat-icon>
+        </div>
+
+        <div class="demo-section">
+          <mat-icon class="top-icons" matBadge="152" matBadgeColor="warn">message</mat-icon>
+        </div>
+
+        <div class="demo-section">
+          <img class="user-profile-image" src="./assets/images/user_image.png" alt="">
+        </div>
+
+      </div>
+    </div>
+
+
+    <div class="tab-view-div">
+      <ng-container *ngFor="let item of typeTabs">
+        <div class="type-class" (click)="onSelectTab(item)">
+          <span class="type-class-item" [ngStyle]="selectedTab == getTabName(item) ? 
+             {'color' : '#006586' } : { 'color': '#5BB5D0' }">{{getTabName(item)}}</span>
+          <span class="type-class-border"
+            [ngStyle]="selectedTab == getTabName(item) ? 
+              { 'border': '2px solid #006586', 'visibility': 'visible' } : { 'border': '2px solid #5BB5D0','visibility': 'hidden' }"></span>
+        </div>
+      </ng-container>
+    </div>
+
+
+  </div>
+
+  <div *ngIf="!isLoading" class="magr-table-div">
+
+    <div class="legal-manager-table">
+      <div class="legal-manager-table-1">
+
+        <div class="search-div">
+          <mat-icon matPrefix>search</mat-icon>
+          <input matInput (keyup)="applyFilter($event)" placeholder="Search here..." #input class="search-input">
+        </div>
+
+      </div>
+
+      <div class="legal-table-content">
+
+        <div class="table-insie">
+          <table mat-table [dataSource]="dataSource" matSort class="mat-table-data">
+
+            <ng-container matColumnDef="claimNumber">
+              <th mat-header-cell *matHeaderCellDef mat-sort-header> Claim Number </th>
+              <td mat-cell *matCellDef="let row">
+                <span class="select-td">
+                  <span (click)="showDetails(row)" class="select-text">{{row.claimNumber}}</span>
+                </span>
+              </td>
+            </ng-container>
+
+            <ng-container matColumnDef="policyNumber">
+              <th mat-header-cell *matHeaderCellDef mat-sort-header> Policy Number </th>
+              <td mat-cell *matCellDef="let row" (click)="showDetails(row)"> {{row.policyNumber}} </td>
+            </ng-container>
+
+            <ng-container matColumnDef="customerName">
+              <th mat-header-cell *matHeaderCellDef mat-sort-header> Customer Name </th>
+              <td mat-cell *matCellDef="let row" (click)="showDetails(row)"> {{row.customerName}} </td>
+            </ng-container>
+
+            <ng-container matColumnDef="date">
+              <th mat-header-cell *matHeaderCellDef mat-sort-header> Date </th>
+              <td mat-cell *matCellDef="let row" (click)="showDetails(row)"> {{row.date.split('T')[0]}} </td>
+            </ng-container>
+
+            <ng-container matColumnDef="status">
+              <th mat-header-cell *matHeaderCellDef mat-sort-header> Status </th>
+              <td mat-cell *matCellDef="let row" class="transform-text"> <span class="status-block" [ngStyle]=" row.status == 'approved' ? {'background-color': 'green'} :  
+             {'background-color': '#F00'} ">{{row.status}}</span> </td>
+            </ng-container>
+
+            <ng-container matColumnDef="acknowlegement">
+              <th mat-header-cell *matHeaderCellDef mat-sort-header> Acknowledgement </th>
+              <td mat-cell *matCellDef="let row; let i= index">
+                <span (click)="openDialog(row,i)">Acknowledge</span>
+              </td>
+            </ng-container>
+
+
+            <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+            <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+
+
+          </table>
+
+          <hr>
+
+          <mat-paginator #paginator class="demo-paginator" (page)="handlePageinatorEventRecoveryConullant($event)"
+            [hidePageSize]="!hasMoreData" [length]="totalItems" [pageIndex]="page - 1" [pageSize]="pageSize"
+            [pageSizeOptions]="pageSizeOptions" [showFirstLastButtons]="false">
+          </mat-paginator>
+        </div>
+
+      </div>
+    </div>
+
+  </div>
+
+  <div [hidden]="!isLoading" [ngClass]="isLoading ? 'progress-bar-container' : '' " class="progress-bar">
+    <mat-progress-bar *ngIf="isLoading" mode="indeterminate"></mat-progress-bar>
+  </div>
+
+</section>

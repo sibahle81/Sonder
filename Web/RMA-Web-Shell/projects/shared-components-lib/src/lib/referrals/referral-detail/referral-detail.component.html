@@ -1,0 +1,191 @@
+<mat-card *ngIf="(isLoading$ | async)">
+  <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+  <label class="mat-label other-label"><i>{{loadingMessage$ | async}}</i></label>
+</mat-card>
+
+<mat-tab-group *ngIf="!(isLoading$ | async)" animationDuration="500ms">
+  <mat-tab label="Referral">
+    <mat-card>
+      <div class="menu-bar">
+        <span class="material-icons">
+          live_help
+        </span>
+        Referral Details
+        <span
+          *ngIf="form.valid && !form.pristine && form.get('referralNatureOfQuery').value && referral?.assignedToRoleId > 0 && (!referral.referralId || referral.referralId <= 0)"
+          (click)="save()" class="material-icons pointer right pulse" matTooltip="save">
+          save
+        </span>
+      </div>
+
+      <form [formGroup]="form" class="mat-container details-form" novalidate>
+        <section *ngIf="referral.referralId > 0 ">
+          <mat-form-field class="mat-form-field">
+            <label class="mat-label other-label mandatory-field">Reference Number</label>
+            <input matInput formControlName="referralReferenceNumber" name="referralReferenceNumber"
+              id="referralReferenceNumber" />
+          </mat-form-field>
+        </section>
+        <section>
+          <mat-form-field class="mat-form-field">
+            <label class="mat-label other-label mandatory-field">Referral Type</label>
+            <mat-select name="referralType" id="referralType" formControlName="referralType">
+              <mat-option *ngFor="let referralType of referralTypes" [value]="referralType">
+                {{formatLookup(referralType)}}
+              </mat-option>
+            </mat-select>
+            <mat-error *ngIf="form.get('referralType').hasError('required')">
+              referral type is <strong>required</strong>
+            </mat-error>
+          </mat-form-field>
+
+          <mat-form-field class="mat-form-field-right">
+            <label class="mat-label other-label">Status</label>
+            <mat-select name="referralStatus" id="referralStatus" formControlName="referralStatus">
+              <mat-option *ngFor="let referralStatus of referralStatuses" [value]="referralStatus">
+                {{formatLookup(referralStatus)}}
+              </mat-option>
+            </mat-select>
+            <mat-error *ngIf="form.get('referralStatus').hasError('required')">
+              status is <strong>required</strong>
+            </mat-error>
+          </mat-form-field>
+        </section>
+
+        <section>
+          <mat-form-field class="mat-form-field">
+            <label class="mat-label other-label mandatory-field">Source Module</label>
+            <mat-select name="sourceModuleType" id="sourceModuleType" formControlName="sourceModuleType">
+              <mat-option *ngFor="let moduleTypes of moduleTypes" [value]="moduleTypes">
+                {{formatLookup(moduleTypes)}}
+              </mat-option>
+            </mat-select>
+            <mat-error *ngIf="form.get('sourceModuleType').hasError('required')">
+              source module is <strong>required</strong>
+            </mat-error>
+          </mat-form-field>
+
+          <mat-form-field class="mat-form-field-right">
+            <label class="mat-label other-label mandatory-field">Target Module</label>
+            <mat-select (selectionChange)="targetModuleChanged($event.value)" name="targetModuleType"
+              id="targetModuleType" formControlName="targetModuleType">
+              <mat-option *ngFor="let moduleTypes of moduleTypes" [value]="moduleTypes">
+                {{formatLookup(moduleTypes)}}
+              </mat-option>
+            </mat-select>
+            <mat-error *ngIf="form.get('targetModuleType').hasError('required')">
+              target module is <strong>required</strong>
+            </mat-error>
+          </mat-form-field>
+        </section>
+
+        <section>
+          <mat-form-field class="mat-form-field">
+            <label class="mat-label other-label">Item Type (Context) <a
+                *ngIf="referral?.referralId > 0 && referral.linkUrl" href="{{referral.linkUrl}}"><b>click here to
+                  navigate to this context</b></a></label>
+            <mat-select (selectionChange)="openReferralContextSearchDialog($event.value)" name="referralItemType"
+              id="referralItemType" formControlName="referralItemType">
+              <mat-option *ngFor="let referralItemType of referralItemTypes" [value]="referralItemType">
+                {{formatLookup(referralItemType)}}
+              </mat-option>
+            </mat-select>
+          </mat-form-field>
+
+          <mat-form-field class="mat-form-field-right">
+            <label class="mat-label other-label">Item Type Reference (Context Reference)</label>
+            <input matInput formControlName="referralItemTypeReference" name="referralItemTypeReference"
+              id="referralItemTypeReference" />
+          </mat-form-field>
+        </section>
+
+        <section>
+          <mat-form-field class="mat-form-field">
+            <label class="mat-label other-label mandatory-field">Nature of Query <span class="info"
+                *ngIf="!form.get('targetModuleType').hasError('required') && filteredReferralNatureOfQueries?.length <= 0"><i>(no
+                  nature of query options have been configured for the selected <strong>target
+                    module</strong>)</i></span>
+            </label>
+            <mat-select #referralNatureOfQuery name="referralNatureOfQuery" id="referralNatureOfQuery"
+              formControlName="referralNatureOfQuery">
+              <mat-option *ngFor="let referralNatureOfQuery of filteredReferralNatureOfQueries"
+                [value]="referralNatureOfQuery.referralNatureOfQueryId">
+                {{formatLookup(referralNatureOfQuery.name)}}
+              </mat-option>
+            </mat-select>
+            <mat-icon *ngIf="selectedTargetModule && !isReadOnly" matTooltip="search"
+              (click)="openReferralNatureOfQuerySearchDialog(); $event.stopPropagation()"
+              class="icn icn-button shift-icn-down" matSuffix [for]="referralNatureOfQuery">search</mat-icon>
+            <mat-error *ngIf="form.get('referralNatureOfQuery').hasError('required')">
+              nature of query is <strong>required</strong>
+            </mat-error>
+          </mat-form-field>
+        </section>
+
+        <mat-form-field class="mat-form-field wide">
+          <label class="mat-label other-label mandatory-field">Referral</label>
+          <textarea class="full" matInput maxlength="4000" name="comment" id="comment" formControlName="comment"
+            cdkTextareaAutosize cdkAutosizeMinRows="1" cdkAutosizeMaxRows="10"></textarea>
+          <mat-error *ngIf="form.get('comment').hasError('required')">
+            referral is <strong>required</strong>
+          </mat-error>
+        </mat-form-field>
+      </form>
+
+      <document-uploader *ngIf="referral?.referralReferenceNumber" [documentSet]="documentSet"
+        [systemName]="documentSystemName" [keyName]="'ReferralReferenceNumber'"
+        [keyValue]="referral.referralReferenceNumber" [showDocumentStatusButton]="false"
+        [isReadOnly]="referral.referralStatus == closed">
+      </document-uploader>
+
+      <mat-card>
+        <div class="menu-bar">
+          <span class="material-icons">
+            people
+          </span>
+          Assignment
+          <span
+            *ngIf="!(referral.referralId > 0) || ((userHasPermission(reAssignPermission) && referral.assignedToUserId != currentUser.id) && referral.referralStatus != closed)"
+            (click)="openUserSearchDialog()" class="material-icons pointer right pulse"
+            matTooltip="{{referral.assignedToRoleId > 0 ? 're-assign to user' : 'assign to user'}}">
+            person_search
+          </span>
+
+          <span
+            *ngIf="!(referral.referralId > 0) || ((userHasPermission(reAssignPermission) && referral.assignedToUserId != currentUser.id) && referral.referralStatus != closed)"
+            (click)="openRoleSearchDialog()" class="material-icons pointer right pulse"
+            matTooltip="{{referral.assignedToRoleId > 0 ? 're-assign to role' : 'assign to role'}}">
+            people
+          </span>
+        </div>
+
+        <span>
+          <label class="mat-label other-label">Assigned By:</label>
+          <user-display-name [displayUserRole]="true"
+            [userId]="referral.assignedByUserId ? referral.assignedByUserId : currentUser.id"></user-display-name>
+        </span>
+        <br />
+        <span>
+          <label class="mat-label other-label">Assigned To:</label>
+          <user-display-name *ngIf="referral.assignedToUserId" [displayUserRole]="true"
+            [userId]="referral.assignedToUserId"></user-display-name>
+          <span *ngIf="referral.assignedToRoleId && !referral.assignedToUserId"><br /><role-display-name
+              [roleId]="referral.assignedToRoleId"></role-display-name></span>
+          <span *ngIf="!referral.assignedToUserId"><br /><label class="mat-label other-label"><i>No user has been
+                assigned</i></label></span>
+        </span>
+      </mat-card>
+    </mat-card>
+
+    <referral-feedback *ngIf="referral.referralId > 0" [referral]="referral"
+      (referralEmit)="setReferral($event)"></referral-feedback>
+    <referral-performance-rating
+      *ngIf="(referral.referralStatus == actioned && referral.assignedByUserId == currentUser.id) || referral.referralStatus == closed"
+      [referral]="referral" (referralEmit)="setReferral($event)"></referral-performance-rating>
+  </mat-tab>
+
+  <mat-tab *ngIf="referral && referral.referralId > 0" label="SLA">
+    <paged-sla-status-change-audits [slaItemType]="slaItemType" [currentQuery]="referral.referralId"
+      [triggerRefresh]="triggerRefresh"></paged-sla-status-change-audits>
+  </mat-tab>
+</mat-tab-group>

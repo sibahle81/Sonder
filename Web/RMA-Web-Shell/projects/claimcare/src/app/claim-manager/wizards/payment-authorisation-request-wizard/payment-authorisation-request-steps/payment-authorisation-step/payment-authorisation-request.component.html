@@ -1,0 +1,62 @@
+<mat-card *ngIf="!model || (isLoading$ | async)">
+    <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+    <label class="mat-label other-label"><i>loading earnings...please wait</i></label>
+</mat-card>
+
+<span *ngIf="!(isLoading$ | async)">
+    <mat-card>
+        <div class="menu-bar">
+            <span>
+                <span class="material-icons">
+                    thumbs_up_down
+                </span>
+                Authorise Claim Invoice
+            </span>
+        </div>
+        <div class="scrollTable">
+            <table class="altRowTable table">
+                <tr>
+                    <th>Recipient (Payee)</th>
+                    <th>Invoice Type</th>
+                    <th>Status</th>
+                    <th>Date Captured</th>
+                    <th>Amount</th>
+                    <th>Created By</th>
+                    <th *ngIf="!inApprovalMode">Action</th>
+                </tr>
+                <tr>
+                    <td>
+                        <role-player-display-name *ngIf="model.payeeRolePlayerId"
+                            [rolePlayerId]="model.payeeRolePlayerId"></role-player-display-name>
+                        <span *ngIf="!model.payeeRolePlayerId && model.payee">{{model.payee}}</span>
+                        <span *ngIf="!model.payeeRolePlayerId && !model.payee"><i>N/A</i></span>
+                    </td>
+
+                    <td>{{getClaimInvoiceType(model.claimInvoiceType)}}</td>
+                    <td>{{getClaimInvoiceStatus(model.claimInvoiceStatusId)}}</td>
+                    <td>{{model.createdDate | date}}</td>
+                    <td>{{'R' + formatMoney(model.invoiceAmount.toFixed(2))}}</td>
+                    <td><user-display-name [userName]="model.createdBy"></user-display-name></td>
+
+                    <td *ngIf="!inApprovalMode">
+                        <span
+                            *ngIf="model.claimInvoiceStatusId == approved || model.claimInvoiceStatusId == pendingAuthorisation"
+                            class="material-icons pointer" matTooltip="reject"
+                            (click)="setClaimInvoiceStatus(rejected)">
+                            thumb_down
+                        </span>
+                        <span
+                            *ngIf="model.claimInvoiceStatusId == rejected || model.claimInvoiceStatusId == pendingAuthorisation"
+                            class="material-icons pointer" matTooltip="approve"
+                            (click)="setClaimInvoiceStatus(approved)">
+                            thumb_up
+                        </span>
+                    </td>
+                </tr>
+            </table>
+        </div>
+    </mat-card>
+
+    <member-view [rolePlayerId]="personEvent.companyRolePlayerId" [isReadOnly]="true"></member-view>
+    <person-event-view [personEventId]="personEvent.personEventId"></person-event-view>
+</span>

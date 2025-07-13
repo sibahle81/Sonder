@@ -1,0 +1,75 @@
+<div *ngIf="(dataSource?.loading$ | async)" class="loader">
+    <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+    <span class="site-font">loading estimates...please wait</span>
+</div>
+
+<div [hidden]="(dataSource.loading$ | async) 
+            || (dataSource && dataSource.data && dataSource.data.data && dataSource.data.data.length <= 0) 
+            || (paginator && paginator.length === 0 && !(dataSource.loading$ | async))">
+    <div class="menu-bar">
+        <span>
+            Estimate(s)
+        </span>
+    </div>
+    <mat-table #table [dataSource]="dataSource" matSort id="tblData" (matSortChange)="getData()">
+        <ng-container matColumnDef="select">
+            <mat-header-cell *matHeaderCellDef>
+                <span class="material-icons noHover">
+                    security_update_good
+                </span>
+            </mat-header-cell>
+            <mat-cell *matCellDef="let row">
+                <mat-checkbox id="chk_{{row.claimId}}" (change)="AddCheckedItems(row, false)">
+                </mat-checkbox>
+            </mat-cell>
+        </ng-container>
+
+        <ng-container matColumnDef="estimatedValue">
+            <mat-header-cell *matHeaderCellDef> Est. Value </mat-header-cell>
+            <mat-cell *matCellDef="let row">{{row.estimatedValue && row.estimatedValue > 0 ?
+                'R ' + formatMoney(row.estimatedValue.toFixed(2)) : '-'}}</mat-cell>
+        </ng-container>
+
+        <ng-container matColumnDef="estimatedDaysOff">
+            <mat-header-cell *matHeaderCellDef> Est. Days Off </mat-header-cell>
+            <mat-cell *matCellDef="let row">{{row.estimatedDaysOff && row.estimatedDaysOff > 0 ?
+                row.estimatedDaysOff + ' Day(s)' : '-'}}</mat-cell>
+        </ng-container>
+
+        <ng-container matColumnDef="allocaAmount">
+            <mat-header-cell *matHeaderCellDef>Alloc. Value</mat-header-cell>
+            <mat-cell *matCellDef="let row">{{row.allocatedValue && row.allocatedValue > 0 ?
+                'R ' + formatMoney(row.allocatedValue.toFixed(2)) : '-'}}</mat-cell>
+        </ng-container>
+
+        <ng-container matColumnDef="authAmount">
+            <mat-header-cell *matHeaderCellDef>Auth. Value</mat-header-cell>
+            <mat-cell *matCellDef="let row">{{row.authorisedValue && row.authorisedValue > 0 ?
+                'R ' + formatMoney(row.authorisedValue.toFixed(2)) : '-'}}</mat-cell>
+        </ng-container>
+
+        <ng-container matColumnDef="outstandingValue">
+            <mat-header-cell *matHeaderCellDef> Outstanding Value</mat-header-cell>
+            <mat-cell *matCellDef="let row">{{row.outstandingValue && row.outstandingValue > 0 ?
+                'R ' + formatMoney(row.outstandingValue.toFixed(2)) : '-'}}</mat-cell>
+        </ng-container>
+
+        <ng-container matColumnDef="outstandingDaysOff">
+            <mat-header-cell *matHeaderCellDef> Outstanding Days Off</mat-header-cell>
+            <mat-cell *matCellDef="let row">{{row.outstandingDaysOff && row.outstandingDaysOff > 0 ?
+                row.outstandingDaysOff + ' Day(s)' : '-'}}</mat-cell>
+        </ng-container>
+
+        <mat-header-row *matHeaderRowDef="getDisplayedColumns()"></mat-header-row>
+        <mat-row *matRowDef="let row; columns: getDisplayedColumns();"></mat-row>
+    </mat-table>
+    <mat-paginator #paginator [pageIndex]="0" [pageSize]="5" [pageSizeOptions]="[5, 10, 25]"
+      [length]="this.dataSource.rowCount$ | async" (page)="getData()">
+    </mat-paginator>
+</div>
+
+<div *ngIf="paginator.length === 0 && !(dataSource.loading$ | async)">
+    <mat-card>
+        <label class="mat-label other-label"><i>No estimates found...</i></label>
+    </mat-card>
+</div>

@@ -1,0 +1,16 @@
+<mat-card *ngIf="isLoading$ | async">
+    <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+    <label class="mat-label other-label"><i>loading...please wait</i></label>
+</mat-card>
+
+<mat-tab-group *ngIf="!(isLoading$ | async)" animationDuration="500ms">
+    <mat-tab *ngIf="!disable_coid_vaps_e2e_clientcare" label="Search Members">
+        <member-search-V2 [basicMode]="false" (memberSelectedEmit)="memberSelected($event)"></member-search-V2>
+    </mat-tab>
+    <mat-tab label="Search Policies">
+        <policy-search-V2 (policySelectedEmit)="policySelected($event)"></policy-search-V2>
+    </mat-tab>
+    <mat-tab label="Search Role Players">
+        <role-player-search (rolePlayerSelectedEmit)="rolePlayerSelected($event)"></role-player-search>
+    </mat-tab>
+</mat-tab-group>

@@ -1,0 +1,183 @@
+﻿<!-- PERMISSIONS DIV -->
+<div [hidden]="hasPermission">
+  <h1>Recovery View</h1>
+  <div style="padding-bottom: 15px; color: orange; font-family: 'Oswald', sans-serif;">You do not have sufficient
+    permissions to Recovery View.</div>
+  <div (click)="back()" class="form-buttons submit-button">
+    <button type="button" class="button float-button">Back</button>
+  </div>
+</div>
+<!-- LOADING DIV -->
+<div [hidden]="!isLoading" class="menu-container" style="margin-top:12px">
+  <div style="margin-right: 15px;">
+    <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+    <i>Loading Recovery Details...please wait</i>
+  </div>
+</div>
+
+<div [hidden]="isLoading || !hasPermission " *ngIf="claimRecoveryView" class="mainDiv">
+  <mat-icon class="backIcon" matTooltip="Back to search" (click)="backToRecoveries()" >close</mat-icon>
+  <mat-tab-group mat-align-tabs="center" class="grouptabs">
+    <mat-tab label="Recovery Details">
+      <ng-template matTabContent>
+        <mat-card class="top-selector-container">
+          <mat-card class="summary-container">
+            <mat-card-header>
+              <mat-card-title>
+                <h1 class="wizard-font">Deceased Details</h1>
+              </mat-card-title>
+            </mat-card-header>
+            <mat-card-content class="content-container">
+              <div>
+                <table class="altRowTable" style="width:100%;">
+                  <tr>
+                    <td><b>Name:</b> {{this.claimRecoveryView.deceased.person.firstName}}</td>
+                  </tr>
+                  <tr>
+                    <td><b>Surname:</b> {{this.claimRecoveryView.deceased.person.surname}}</td>
+                  </tr>
+                  <tr>
+                    <td><b>ID/Passport:</b>
+                      {{this.claimRecoveryView.deceased.person.idNumber}} </td>
+                  </tr>
+                  <tr>
+                    <td><b>Birth Date:</b>
+                      {{this.claimRecoveryView.deceased.person.dateOfBirth | date:'yyyy/MM/dd'}}</td>
+                  </tr>
+                </table>
+                <br />
+                <div>
+                  <h1 class="wizard-font">Claim Details</h1>
+                </div>
+                <table class="altRowTable" style="width:100%;">
+                  <tr>
+                    <td><b>Event Description:</b> {{this.claimRecoveryView.eventDescription}}</td>
+                  </tr>
+                  <tr>
+                    <td><b>Claim Number:</b> {{this.claimRecoveryView.claimNumber}}</td>
+                  </tr>
+                  <tr>
+                    <td><b>Claim Created Date:</b>{{this.claimRecoveryView.claimCreatedDate | date: 'yyyy/MM/dd'}} </td>
+                  </tr>
+                </table>
+              </div>
+            </mat-card-content>
+          </mat-card>
+          <span style="margin-left: 25px"></span>
+
+          <mat-card class="summary-container">
+            <mat-card-header>
+              <mat-card-title>
+                <h1 class="wizard-font">Paid Beneficiary Details</h1>
+              </mat-card-title>
+            </mat-card-header>
+            <mat-card-content class="content-container">
+              <div>
+                <table class="altRowTable" style="width:100%;">
+                  <tr>
+                    <td><b>Name:</b>
+                      {{this.claimRecoveryView.recoveryRolePlayer.person.firstName}}
+                    </td>
+                  </tr>
+                  <tr>
+                    <td><b>Surname:</b>
+                      {{this.claimRecoveryView.recoveryRolePlayer.person.surname}}
+                    </td>
+                  </tr>
+                  <tr>
+                    <td><b>ID/Passport:</b>
+                      {{this.claimRecoveryView.recoveryRolePlayer.person.idNumber}}
+                    </td>
+                  </tr>
+                  <tr>
+                    <td><b>Birth Date:</b>
+                      {{this.claimRecoveryView.recoveryRolePlayer.person.dateOfBirth | date:'yyyy/MM/dd'}}
+                    </td>
+                  </tr>
+                </table>
+                <br />
+                <div>
+                  <h1 class="wizard-font">Banking Details</h1>
+                </div>
+                <table class="altRowTable" style="width:100%;">
+                  <tr>
+                    <td><b>Account Holder:</b>
+                      {{bankingDetails.accountHolderName}}
+                    </td>
+                  </tr>
+                  <tr>
+                    <td><b>Bank Name:</b>
+                      {{bankingDetails.bankName}}
+                    </td>
+                  </tr>
+                  <tr>
+                    <td><b>Branch Code:</b>
+                      {{bankingDetails.branchCode}}
+                    </td>
+                  </tr>
+                  <tr>
+                    <td><b>Account Number:</b>
+                      {{bankingDetails.accountNumber}}
+                    </td>
+                  </tr>
+                </table>
+              </div>
+
+            </mat-card-content>
+            <span [style.visibility]="isLoading ? 'visible' : 'hidden'">
+              <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+              <span class="grey site-font"><i>Loading Claim Details...please wait</i></span>
+            </span>
+          </mat-card>
+
+          <span style="margin-left: 25px"></span>
+
+          <mat-card class="summary-container">
+            <mat-card-header>
+              <mat-card-title>
+                <h1 class="wizard-font">Claim Recovery Invoice</h1>
+              </mat-card-title>
+            </mat-card-header>
+            <mat-card-content class="content-container">
+              <div *ngIf="this.claimRecoveryView.claimInvoice === null">
+                <label class="mat-label other-label font"><i>No Invoice Available</i></label>
+              </div>
+              <div *ngIf="this.claimRecoveryView.claimInvoice">
+                <table class="altRowTable" style="width:100%;">
+                  <tr>
+                    <td><b>Claim Number:</b>
+                      {{this.claimRecoveryView.claimNumber}}
+                    </td>
+                  </tr>
+                  <tr>
+                    <td><b>Date Created:</b>
+                      {{this.claimRecoveryView.claimInvoice.dateApproved | date: 'yyyy/MM/dd'}}
+                    </td>
+                  </tr>
+                  <tr>
+                    <td><b>Amount Paid:</b>
+                      {{this.claimRecoveryView.claimInvoice.authorisedAmount}}
+                    </td>
+                  </tr>
+                </table>
+              </div>
+
+            </mat-card-content>
+            <span [style.visibility]="isLoading ? 'visible' : 'hidden'">
+              <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+              <span class="grey site-font"><i>Loading Claim Details...please wait</i></span>
+            </span>
+          </mat-card>
+        </mat-card>
+        
+      </ng-template>
+    </mat-tab>
+    <mat-tab label=" Recovery Notes">
+      <ng-template matTabContent>
+        <mat-card class="document-container">
+          <recovery-notes></recovery-notes>
+        </mat-card>
+      </ng-template>
+    </mat-tab>
+  </mat-tab-group>
+</div>

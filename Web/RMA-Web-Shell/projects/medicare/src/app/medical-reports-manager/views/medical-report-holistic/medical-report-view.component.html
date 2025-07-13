@@ -1,0 +1,101 @@
+<div>
+    <div>
+        <mat-card>
+            <div class="menu-bar">
+                <span class="material-icons">
+                    medical_information
+                </span>
+                Medical Report
+            </div>
+            <mat-tab-group animationDuration="500ms" [(selectedIndex)]="tabIndex" (selectedTabChange)="tabChanged($event)">
+                <mat-tab label="Claimant Details">
+                    <app-report-claimant-details [medicalReportId]="medicalReportId" [claimId]="claimId" [healthCareProviderId]="healthCareProviderId" [isReadOnly]="isReadOnly" [isFromClaimView] ="isFromClaimView" (workItemMedicalReportEmit)="setWorkItemMedicalReport($event)"></app-report-claimant-details>
+                </mat-tab>
+
+                <mat-tab *ngIf="workItemMedicalReport" label="Diagnosis">
+                    <app-report-diagnosis [workItemMedicalReport]="workItemMedicalReport" [isReadOnly]="isReadOnly" (isCompletedEmit)="setTabIndexOrUpdate(true)"></app-report-diagnosis>
+                </mat-tab>
+
+                <mat-tab *ngIf="canShowTab('firstMedicalReport')" label="First Medical Report">
+                    <app-first-accident-report [workItemMedicalReport]="workItemMedicalReport" [isReadOnly]="isReadOnly" (isCompletedEmit)="setTabIndexOrUpdate(true)"></app-first-accident-report>
+                </mat-tab>
+
+                <mat-tab *ngIf="canShowTab('firstDiseaseMedicalReport')"  label="First Medical Report">
+                    <app-first-disease-report [workItemMedicalReport]="workItemMedicalReport" [isReadOnly]="isReadOnly" (isCompletedEmit)="setTabIndexOrUpdate(true)"></app-first-disease-report>
+                </mat-tab>
+                <mat-tab *ngIf="canShowTab('firstDiseaseMedicalReport')"  label="Occupation Impact">
+                    <app-first-disease-occupation-impact-report [workItemMedicalReport]="workItemMedicalReport" [isReadOnly]="isReadOnly" (isCompletedEmit)="setTabIndexOrUpdate(true)"></app-first-disease-occupation-impact-report>
+                </mat-tab>
+                <mat-tab *ngIf="canShowTab('firstDiseaseMedicalReport')"  label="PTSD">
+                    <app-first-disease-ptsd-report [workItemMedicalReport]="workItemMedicalReport" [isReadOnly]="isReadOnly" (isCompletedEmit)="setTabIndexOrUpdate(true)"></app-first-disease-ptsd-report>
+                </mat-tab>
+
+                <mat-tab *ngIf="canShowTab('progressMedicalReport')" label="Progress Medical Report">
+                    <app-progress-accident-report [workItemMedicalReport]="workItemMedicalReport" [isReadOnly]="isReadOnly" (isCompletedEmit)="setTabIndexOrUpdate(true)"></app-progress-accident-report>
+                </mat-tab>
+                <mat-tab *ngIf="canShowTab('progressDiseaseMedicalReport')" label="Progress Medical Report">
+                    <app-progress-disease-report [workItemMedicalReport]="workItemMedicalReport" [isReadOnly]="isReadOnly" (isCompletedEmit)="setTabIndexOrUpdate(true)"></app-progress-disease-report>
+                </mat-tab>
+
+                <mat-tab *ngIf="canShowTab('finalMedicalReport')" label="Final Medical Report">
+                    <app-final-accident-report [workItemMedicalReport]="workItemMedicalReport" [isReadOnly]="isReadOnly" (isCompletedEmit)="setTabIndexOrUpdate(true)"></app-final-accident-report>
+                </mat-tab>
+                <mat-tab *ngIf="canShowTab('finalDiseaseMedicalReport')" label="Final Medical Report">
+                    <app-final-disease-report [workItemMedicalReport]="workItemMedicalReport" [isReadOnly]="isReadOnly" (isCompletedEmit)="setTabIndexOrUpdate(true)"></app-final-disease-report>
+                </mat-tab>
+
+                <mat-tab *ngIf="canShowTab('EyeInjuryReport')" label="Eye Injury">
+                    <app-eye-injury-report [workItemMedicalReport]="workItemMedicalReport" [isReadOnly]="isReadOnly" (isCompletedEmit)="setTabIndexOrUpdate(true)"></app-eye-injury-report>
+                </mat-tab>
+                
+                <mat-tab *ngIf="canShowTab('HomeVisit')" label="Home Visit">
+                    <app-home-visit-report [workItemMedicalReport]="workItemMedicalReport" [isReadOnly]="isReadOnly" (isCompletedEmit)="setTabIndexOrUpdate(true)"></app-home-visit-report>
+                </mat-tab>                
+                
+                <mat-tab *ngIf="canShowTab('PhysioTherapyReport')" label="Physio Therapy">
+                    <app-physio-therapy-report [workItemMedicalReport]="workItemMedicalReport" [isReadOnly]="isReadOnly" (isCompletedEmit)="setTabIndexOrUpdate(true)"></app-physio-therapy-report>
+                </mat-tab>
+                
+                <mat-tab *ngIf="canShowTab('PMPMedHistory')" label="PMP Medical History">
+                    <app-pmp-med-history-report [workItemMedicalReport]="workItemMedicalReport" [isReadOnly]="isReadOnly" (isCompletedEmit)="setTabIndexOrUpdate(true)"></app-pmp-med-history-report>
+                </mat-tab> 
+
+                <mat-tab *ngIf="canShowTab('ProstheticReview')" label="Prosthetic Review">
+                    <app-prosthetic-review-report [workItemMedicalReport]="workItemMedicalReport" [isReadOnly]="isReadOnly" (isCompletedEmit)="setTabIndexOrUpdate(true)"></app-prosthetic-review-report>
+                </mat-tab>
+                
+                <mat-tab *ngIf="canShowTab('RadiologyReport')" label="Radiology Report">
+                    <app-radiology-report [workItemMedicalReport]="workItemMedicalReport" [isReadOnly]="isReadOnly" (isCompletedEmit)="setTabIndexOrUpdate(true)"></app-radiology-report>
+                </mat-tab>                
+                
+                <mat-tab *ngIf="canShowTab('UrologicalReview')" label="Urological Review">
+                    <app-urological-review-report [workItemMedicalReport]="workItemMedicalReport" [isReadOnly]="isReadOnly" (isCompletedEmit)="setTabIndexOrUpdate(true)"></app-urological-review-report>
+                </mat-tab>
+
+                <mat-tab *ngIf="workItemMedicalReport" label="Declaration">
+                    <app-report-declaration [workItemMedicalReport]="workItemMedicalReport" [isReadOnly]="isReadOnly" [healthCareProviderId]="healthCareProviderId" (isCompletedEmit)="setTabIndexOrUpdate(false)"></app-report-declaration>
+                </mat-tab>
+            </mat-tab-group>
+        </mat-card>
+
+        <div class="form-group-button mat-form-button">
+            <div class="form-buttons">
+                <button class="button float-button submit-button" [disabled]="!isValid()" (click)="save()" matTooltip="Submit Medical Report Form">
+                    Submit
+                </button>
+                <button *ngIf="showAcceptReport" class="button float-button submit-button" (click)="acceptMedicalReport()" [disabled]="canAcceptReport" matTooltip="{{altAcceptReport}}">
+                    Accept
+                </button>
+                <button *ngIf="showRejectReport" class="button float-button submit-button" (click)="openRejectMedicalReportDialog()" [disabled]="canRejectReport" matTooltip="{{altRejectReport}}">
+                    Reject
+                </button>
+                <button *ngIf="showDeleteReport" class="button float-button submit-button" (click)="deleteMedicalReport()" [disabled]="canDeleteReport" matTooltip="{{altDeleteReport}}">
+                    Delete
+                </button>
+                <button class="button float-button submit-button" (click)="back()">
+                    Back
+                </button>
+            </div>
+        </div>
+    </div>
+</div>

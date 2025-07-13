@@ -1,0 +1,329 @@
+<div class="margine-space">
+    <div class="mat-header">
+        <h1>Batch Medical Invoice Viewer </h1>
+    </div>
+    <mat-card class="matCard">
+        <div>
+
+            <div class="grid">
+                <div>
+                    <span class="title">Name</span>
+                    <span class="value">{{ invoiceData.healthCareProviderName }} </span>
+                </div>
+
+                <div>
+                    <span class="title">Claim No.</span>
+                    <span class="value">{{ invoiceData.claimReferenceNumber }}</span>
+                </div>
+
+                <div>
+                    <span class="title">ICD10 Code</span>
+                    <span class="value">{{concatenatedICD10Codes}}</span>
+                </div>
+            </div>
+
+            <div class="grid">
+                <div>
+                    <span class="title">Prac#</span>
+                    <span class="value">{{ invoiceData.practiceNumber }} </span>
+                </div>
+
+                <div>
+                    <span class="title">Date of Birth</span>
+                    <span class="value">{{ invoiceData.dateOfBirth }}</span>
+                </div>
+
+                <div>
+                    <span class="title">InvoiceNumber</span>
+                    <span class="value">{{ invoiceData.spInvoiceNumber }}</span>
+                </div>
+            </div>
+
+            <div class="grid">
+                <div>
+                    <span class="title">Address</span>
+                    <span class="value">{{ invoiceData.healthCareProviderName }} </span>
+                </div>
+
+                <div>
+                    <span class="title">Member Surname</span>
+                    <span class="value">{{ invoiceData.payeeTypeId }}</span>
+                </div>
+
+                <div>
+                    <span class="title">Line Item Total</span>
+                    <span class="value">{{ invoiceData.totalInvoiceAmount }}</span>
+                </div>
+            </div>
+
+            <div class="grid">
+                <div>
+                    <span class="title">Contact</span>
+                    <span class="value">{{ invoiceData.invoiceDate }} </span>
+                </div>
+
+                <div>
+                    <span class="title">Member Initial</span>
+                    <span class="value">{{ invoiceData.initials }}</span>
+                </div>
+
+                <div>
+                    <span class="title">CPT 4 Code(s)</span>
+                    <span class="value">{{ invoiceData.dateSubmitted }}</span>
+                </div>
+            </div>
+
+            <div class="grid">
+                <div>
+                    <span class="title">Hosp?</span>
+                    <span class="value">{{ invoiceData.hospitalIndicator }} </span>
+                </div>
+
+                <div>
+                    <span class="title">Patient's Name</span>
+                    <span class="value">{{ invoiceData.firstName }}</span>
+                </div>
+
+                <div>
+                    <span class="title"></span>
+                    <span class="value"> </span>
+                </div>
+            </div>
+
+            <div class="grid">
+                <div>
+                    <span class="title">Practitioners Involved</span>
+                    <span class="value">{{ invoiceData.healthCareProviderName }} </span>
+                </div>
+
+                <div>
+                    <span class="title">Gender</span>
+                    <span class="value">{{ invoiceData.patientGender }}</span>
+                </div>
+
+                <div>
+                    <span class="title"></span>
+                    <span class="value"> </span>
+                </div>
+            </div>
+
+            <div class="grid">
+                <div>
+                    <span class="title">Referring Prac#</span>
+                    <span class="value">{{ invoiceData.referringDocBhf }} </span>
+                </div>
+
+                <div>
+                    <span class="title">Patient/AccNumber</span>
+                    <span class="value">{{ invoiceData.spAccountNumber }}</span>
+                </div>
+
+                <div>
+                    <span class="title"></span>
+                    <span class="value"> </span>
+                </div>
+            </div>
+
+            <div class="grid">
+                <div>
+                    <span class="title">ReferringHSPCA#</span>
+                    <span class="value">{{ invoiceData.referredTo }} </span>
+                </div>
+
+                <div>
+                    <span class="title">Duty</span>
+                    <span class="value">{{ invoiceData.dateDischarged | date:'yyyy-MM-dd' }}</span>
+                </div>
+
+                <div>
+                    <span class="title"></span>
+                    <span class="value"> </span>
+                </div>
+            </div>
+
+            <div class="grid">
+                <div>
+                    <span class="title">Referral#</span>
+                    <span class="value">{{ invoiceData.referringDocBhf }} </span>
+                </div>
+
+                <div>
+                    <span class="title">Employee Number</span>
+                    <span class="value">{{ invoiceData.employeeNumber }} </span>
+                </div>
+
+                <div>
+                    <span class="title"></span>
+                    <span class="value"> </span>
+                </div>
+            </div>
+
+            <div class="grid">
+                <div>
+                    <span class="title">Attending Prac#</span>
+                    <span class="value">{{ invoiceData.preAuthNumber }}</span>
+                </div>
+
+                <div>
+                    <span class="title">Employer</span>
+                    <span class="value"> {{ invoiceData.employerName }} </span>
+                </div>
+
+                <div>
+                    <span class="title"></span>
+                    <span class="value"> </span>
+                </div>
+            </div>
+
+            <div class="grid">
+                <div>
+                    <span class="title">AttendingHSPCA#</span>
+                    <span class="value">{{ invoiceData.preAuthNumber }}</span>
+                </div>
+
+                <div>
+                    <span class="title">Date Of Injury</span>
+                    <span class="value"> {{ invoiceData.eventDate | date:'yyyy-MM-dd' }} </span>
+                </div>
+
+                <div>
+                    <span class="title"></span>
+                    <span class="value"> </span>
+                </div>
+            </div>
+            <div class="grid">
+                <div>
+                    <span class="title"></span>
+                    <span class="value"> </span>
+                </div>
+
+                <div>
+                    <span class="title">Pre Auth No</span>
+                    <span class="value"> {{ invoiceData.preAuthNumber }} </span>
+                </div>
+
+                <div>
+                    <span class="title"></span>
+                    <span class="value"> </span>
+                </div>
+            </div>
+
+        </div>
+    </mat-card>
+
+    <mat-card class="matCard">
+        <h1>View Line Items</h1>
+        <div *ngIf="loadingineItems$ | async">
+            <mat-progress-bar mode="indeterminate"
+                [ngClass]="{ 'loading-main-double-menu-progress': doubleMenu, 'loading-main-single-menu-progress': !doubleMenu }">
+            </mat-progress-bar>
+            <p class="site-font grey">loading line items data...</p>
+        </div>
+        <div>
+            <mat-table [dataSource]="dataSource" class="mat-elevation-z8">
+
+                <ng-container matColumnDef="ServiceDate">
+                    <mat-header-cell *matHeaderCellDef> Service Date </mat-header-cell>
+                    <mat-cell *matCellDef="let element"> {{element.serviceDate | date:'yyyy-MM-dd'}}
+                    </mat-cell>
+                    <mat-footer-cell *matFooterCellDef> Total </mat-footer-cell>
+                </ng-container>
+                <!-- TarrifCode Column -->
+                <ng-container matColumnDef="hcpTariffCode">
+                    <mat-header-cell *matHeaderCellDef> {{(switchBatchType == switchBatchTypeEnum.MedEDI) ? 'Tariff
+                        Code' : 'Travel Rate'}} </mat-header-cell>
+                    <mat-cell *matCellDef="let element; let i = index"
+                        matTooltip="{{(switchBatchType == switchBatchTypeEnum.MedEDI) ? resultMedicalTariff[i]?.tariffDescription : resultTebaTariff[i]?.description}}">
+                        {{element.tariffCode}} </mat-cell>
+                    <mat-footer-cell *matFooterCellDef> </mat-footer-cell>
+                </ng-container>
+                <!--TarrifDiscription Column-->
+                <ng-container matColumnDef="description">
+                    <mat-header-cell *matHeaderCellDef> {{(switchBatchType == switchBatchTypeEnum.MedEDI) ? 'Tariff
+                        Description' : 'Travel Description'}} </mat-header-cell>
+                    <mat-cell *matCellDef="let element"> {{element.description}} </mat-cell>
+                    <mat-footer-cell *matFooterCellDef> </mat-footer-cell>
+                </ng-container>
+                <!-- ICD10Code Column -->
+                <ng-container matColumnDef="icd10Code">
+                    <mat-header-cell *matHeaderCellDef> ICD10 Code </mat-header-cell>
+                    <mat-cell *matCellDef="let element; let i = index"
+                        matTooltip="{{icd10CodesDescriptions[i]?.icd10CodeDescription}}">
+                        {{element.icd10Code}}
+                    </mat-cell>
+                    <mat-footer-cell *matFooterCellDef> </mat-footer-cell>
+                </ng-container>
+                <!-- TarrifAmount Column -->
+                <ng-container matColumnDef="totalTariffAmount">
+                    <mat-header-cell *matHeaderCellDef> {{(switchBatchType == switchBatchTypeEnum.MedEDI) ? 'Tariff
+                        Amount' : 'Travel
+                        Amount'}} </mat-header-cell>
+                    <mat-cell *matCellDef="let element; let i = index"> {{element.totalInvoiceLineCostInclusive
+                        | currency:"R":"symbol":'1.0-2'}}
+                    </mat-cell>
+                    <mat-footer-cell *matFooterCellDef> {{calculateTotalTariffAmount() | currency:"R":"symbol":'1.0-2'}}
+                    </mat-footer-cell>
+                </ng-container>
+                <!-- Quantity Column -->
+                <ng-container matColumnDef="quantity">
+                    <mat-header-cell *matHeaderCellDef> Default Quantity </mat-header-cell>
+                    <!-- element.authorisedQuantity -->
+                    <mat-cell *matCellDef="let element"> {{element.quantity}} </mat-cell>
+                    <mat-footer-cell *matFooterCellDef> {{calculateTotalQuantity() | number}}</mat-footer-cell>
+                </ng-container>
+                <!-- InvUnitAmount Column -->
+                <ng-container matColumnDef="InvUnitAmount">
+                    <mat-header-cell *matHeaderCellDef> Inv Unit Amount </mat-header-cell>
+                
+                    <mat-cell *matCellDef="let element; let i = index">
+                        {{tariffInvoiceUnitAmount(resultTebaTariff[i], resultMedicalTariff[i]) }}
+                    </mat-cell>
+                
+                    <mat-footer-cell *matFooterCellDef> {{calculateTotalTariffAmount() |
+                        currency:"R":"symbol":'1.0-2'}}</mat-footer-cell>
+                </ng-container>
+                <!-- InvTotalAmount Column -->
+                <ng-container matColumnDef="authorisedAmount">
+                    <mat-header-cell *matHeaderCellDef> Inv Total Amount </mat-header-cell>
+                
+                    <mat-cell *matCellDef="let element; let i = index">
+                        {{tariffInvoiceTotalAmount(resultTebaTariff[i], resultMedicalTariff[i], element.quantity) }}
+                    </mat-cell>
+                    <mat-footer-cell *matFooterCellDef> {{calculateInvTotalAmount() |
+                        currency:"R":"symbol":'1.0-2'}}</mat-footer-cell>
+                </ng-container>
+                <!-- SubTotalEx Column -->
+                <ng-container matColumnDef="requestedAmount">
+                    <mat-header-cell *matHeaderCellDef> Sub Total Ex </mat-header-cell>
+                    <!-- (invUnitAmount * quantity) - discount -->
+                    <mat-cell *matCellDef="let element"> {{(element.totalInvoiceLineCost) -
+                        element.creditAmount | currency:"R":"symbol":'1.0-2'}} </mat-cell>
+                    <mat-footer-cell *matFooterCellDef> {{calculateSubTotalExAmount() | currency:"R":"symbol":'1.0-2'}}
+                    </mat-footer-cell>
+                </ng-container>
+                <!-- VAT Column -->
+                <ng-container matColumnDef="totalTariffVat">
+                    <mat-header-cell *matHeaderCellDef> VAT </mat-header-cell>
+                    <mat-cell *matCellDef="let element"> {{element.totalInvoiceLineVat |
+                        currency:"R":"symbol":'1.0-2'}}
+                    </mat-cell>
+                    <mat-footer-cell *matFooterCellDef> {{calculateTotalTariffVat() | currency:"R":"symbol":'1.0-2'}}
+                    </mat-footer-cell>
+                </ng-container>
+                <!-- TotalIncl - to -totalIncl Column -->
+                <ng-container matColumnDef="totalIncl">
+                    <mat-header-cell *matHeaderCellDef> Total Incl </mat-header-cell>
+                    <mat-cell *matCellDef="let element"> {{(element.totalInvoiceLineCostInclusive * element.quantity) -
+                        element.creditAmount + (element.totalInvoiceLineVat * element.quantity) |
+                        currency:"R":"symbol":'1.0-2'}} </mat-cell>
+                    <mat-footer-cell *matFooterCellDef> {{calculateTotalIncl() | currency:"R":"symbol":'1.0-2'}}
+                    </mat-footer-cell>
+                </ng-container>
+
+                <mat-header-row *matHeaderRowDef="getDisplayedColumns()"></mat-header-row>
+                <mat-row *matRowDef="let row; columns: getDisplayedColumns();"></mat-row>
+                <mat-footer-row *matFooterRowDef="getDisplayedColumns(); sticky: true"></mat-footer-row>
+            </mat-table>
+        </div>
+    </mat-card>
+</div>

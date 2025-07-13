@@ -1,0 +1,8 @@
+<mat-card *ngIf="(isLoading$ | async)">
+    <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+    <label class="mat-label other-label"><i>loading...please wait</i></label>
+</mat-card>
+
+<div *ngIf="!(isLoading$ | async) && _policy">
+    <renewal-declaration [policy]="_policy" [isReadOnly]="true"></renewal-declaration>
+</div>

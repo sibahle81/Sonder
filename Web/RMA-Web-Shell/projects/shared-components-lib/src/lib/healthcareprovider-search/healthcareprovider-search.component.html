@@ -1,0 +1,90 @@
+<mat-card>
+    <div class="menu-bar">
+        <span class="material-icons">
+            search
+        </span>
+        Search Healthcare Provider
+        <span *ngIf="!(dataSource.loading$ | async) && searchTerm && searchTerm.length > 0" (click)="reset()"
+            class="material-icons pointer right" matTooltip="reset">
+            restart_alt
+        </span>
+    </div>
+
+    <form [formGroup]="form" class="mat-container details-form" novalidate>
+        <section>
+            <mat-form-field class="mat-form-field">
+                <input matInput name="searchTerm" id="searchTerm" formControlName="searchTerm">
+                <mat-error *ngIf="form.get('searchTerm').hasError('required')">
+                    Search Term is <strong>required</strong>
+                </mat-error>
+            </mat-form-field>
+        </section>
+    </form>
+</mat-card>
+<br />
+<mat-card class="pad" *ngIf="(dataSource.loading$ | async)">
+    <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+    <label class="mat-label other-label"><i>searching...please wait</i></label>
+</mat-card><br />
+
+<div [hidden]="(dataSource.loading$ | async) || (!searchTerm || searchTerm.length <= 0)">
+    <mat-card>
+        Search Results for <b>{{searchTerm ? searchTerm : ''}}</b>
+        <br /><br />
+        <div [hidden]="!(dataSource.data && dataSource.data.data && dataSource.data.data.length > 0)">
+            <mat-table #table [dataSource]="dataSource" matSort id="tblData">
+                <ng-container matColumnDef="name">
+                    <mat-header-cell *matHeaderCellDef> HealthCare Provider Name </mat-header-cell>
+                    <mat-cell *matCellDef="let row">{{row.name}}</mat-cell>
+                </ng-container>
+
+                <ng-container matColumnDef="practitionerTypeName">
+                    <mat-header-cell *matHeaderCellDef> Practitioner Type Name </mat-header-cell>
+                    <mat-cell *matCellDef="let row">{{row.practitionerTypeName}}</mat-cell>
+                </ng-container>
+
+                <ng-container matColumnDef="practiceNumber">
+                    <mat-header-cell *matHeaderCellDef> Practice Number </mat-header-cell>
+                    <mat-cell *matCellDef="let row">{{row.practiceNumber}}</mat-cell>
+                </ng-container>
+
+                <ng-container matColumnDef="isVat">
+                    <mat-header-cell *matHeaderCellDef> Is Vat Registered </mat-header-cell>
+                    <mat-cell *matCellDef="let row">{{row.isVat ? "Yes":"No"}}</mat-cell>
+                </ng-container>
+
+                <ng-container matColumnDef="isAuthorised">
+                    <mat-header-cell *matHeaderCellDef> Is Authorised HCP </mat-header-cell>
+                    <mat-cell *matCellDef="let row">{{row.isAuthorised ? "Yes":"No"}}</mat-cell>
+                </ng-container>
+
+                <!-- Actions -->
+                <ng-container matColumnDef="actions">
+                    <mat-header-cell *matHeaderCellDef mat-sort-header>Actions</mat-header-cell>
+                    <mat-cell *matCellDef="let row">
+                        <span><a role="button" id="btnAction" class="link-edit"
+                                (click)="healthCareProviderSelected(row)">Select</a></span>
+                    </mat-cell>
+                </ng-container>
+
+
+                <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
+                <mat-row *matRowDef="let row; columns: displayedColumns;"></mat-row>
+            </mat-table>
+
+            <mat-paginator #paginator [pageIndex]="0" [pageSize]="5" [pageSizeOptions]="[5, 10, 25, 100]"
+                [length]="this.dataSource.rowCount$ | async" (page)="getData()">
+            </mat-paginator>
+        </div>
+
+        <mat-card
+            *ngIf="!(dataSource.data && dataSource.data.data && dataSource.data.data.length > 0 || (dataSource.loading$ | async))">
+            <label class="mat-label other-label"><i>No HealthCare Providers found...</i></label>
+            <hr>
+            <div class="border pointer" (click)="registeredHealthcareProvider()">
+                <label class="mat-label other-label pointer"><span class="material-icons">
+                        add_circle</span>Registered New Healthcare Provider Profile</label>
+            </div>
+        </mat-card>
+    </mat-card>
+</div>

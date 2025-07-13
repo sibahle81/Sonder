@@ -1,0 +1,86 @@
+﻿<div *ngIf="showHideDetails == 1">
+    <required-documents-list (requiredDocumentEmit)="requiredDocumentChangeHandler($event)"></required-documents-list>
+
+    <div>
+        <div class="rates-button">
+            <table class="form-group row">
+                <div style="margin: 0px 0px 0px 32px;">
+                    <button type="button" (click)="addNew()" class="button float-button">Add</button>
+                    <button type="button" (click)="backToSearch()" class="button float-button">Back</button>
+                </div>
+            </table>
+        </div>
+    </div>
+</div>
+
+<div *ngIf="showHideDetails == 2">
+    <mat-card style="margin: 15px 30px 15px 30px">
+        <mat-card-content style="margin-left: 10px;">
+            <h1>Required Document Details</h1><br />
+            <form [formGroup]="form" (ngSubmit)="save()" class="mat-container details-form" novalidate>
+                <section>
+                    <mat-form-field>
+                        <label>Document Category </label>
+                        <mat-select id="documentCategoryType" name="documentCategoryType" matInput [(ngModel)]="selectedDocumentCategoryType" #documentCategoryTypeSelect [value]="selectedDocumentCategoryType" (ngModelChange)="onSelectDocumentCategoryType(selectedDocumentCategoryType)"
+                            formControlName="documentCategoryType">
+                            <mat-option *ngFor="let documentCategoryType of documentCategoryTypes" [value]="documentCategoryType">
+                                {{documentCategoryType.name}}
+                            </mat-option>
+                        </mat-select>
+                        <mat-error *ngIf="documentCategoryTypeSelect.errorState && form.get('documentCategoryType').hasError('required')">
+                            Document category is <strong>required</strong>
+                        </mat-error>
+                    </mat-form-field>
+
+                    <mat-form-field class="mat-form-field-right">
+                        <label>Module </label>
+                        <mat-select id="documentCategory" name="documentCategory" matInput [(ngModel)]="selectedDocumentCategory" #documentCategorySelect [value]="selectedDocumentCategory" (ngModelChange)="onSelectDocumentCategory(selectedDocumentCategory)" formControlName="documentCategory">
+                            <mat-option *ngFor="let documentCategory of documentCategories" [value]="documentCategory">
+                                {{documentCategory.name}}
+                            </mat-option>
+                        </mat-select>
+                        <mat-error *ngIf="documentCategorySelect.errorState && form.get('documentCategory').hasError('required')">
+                            Module is <strong>required</strong>
+                        </mat-error>
+                    </mat-form-field>
+                </section>
+
+                <section>
+                    <mat-form-field>
+                        <label>Document Name</label>
+                        <input matInput id="documentName" name="documentName" formControlName="documentName">
+                        <mat-error *ngIf="form.get('documentName').hasError('required')">
+                            Document name is <strong>required</strong>
+                        </mat-error>
+                    </mat-form-field>
+                </section>
+
+
+
+                <div class="rates-button">
+                    <table class="form-group row">
+                        <div class="rates-button">
+                            <div id="div1" *ngIf="showEditBtn==1"><button type="button" (click)="edit()" class="button float-button">Edit</button></div>
+                            <div id="div2" *ngIf="showEditBtn==0"><button [disabled]="form.pristine" class="button float-button submit-button">Save</button></div>
+                            <div id="div3"><button type="button" (click)="clear()" class="button float-button">Back</button></div>
+                        </div>
+                    </table>
+                </div>
+            </form>
+        </mat-card-content>
+    </mat-card>
+</div>
+
+<style>
+    #div1 {
+        display: inline-block;
+    }
+    
+    #div2 {
+        display: inline-block;
+    }
+    
+    #div3 {
+        display: inline-block;
+    }
+</style>

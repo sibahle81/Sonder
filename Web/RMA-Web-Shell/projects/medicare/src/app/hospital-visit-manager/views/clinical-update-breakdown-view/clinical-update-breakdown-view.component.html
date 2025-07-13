@@ -1,0 +1,224 @@
+<div class="mat-header">
+  <div> 
+  <a mat-flat-button routerLink="/medicare/hospital-visit-manager/hospital-visits">
+    <mat-icon>arrow_back</mat-icon>
+    Back</a>
+  </div>
+  <br>
+  <div [hidden]="!isLoading">
+    <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+    Loading...
+  </div>  
+  <br>
+  <h1>View Hospital Visit Details</h1><br />
+</div>
+<div *ngIf="clinicalUpdateView != null">
+  <fieldset>
+    <legend>PreAuth Details</legend>
+      <div class="grid">
+        <div>
+          <span class="title">Health Care Provider</span>
+          <span class="value">{{ preAuthDetails.healthCareProviderName }} </span>
+        </div>
+        <div>
+          <span class="title">Practice Number</span>
+          <span class="value">{{ preAuthDetails.practiceNumber }}</span>
+        </div>
+      </div>
+  
+      <div class="grid">
+        <div>
+          <span class="title">Authorised</span>
+          <span class="value">{{ getPreauthStatus(preAuthDetails.preAuthStatus) }} </span>
+        </div>
+  
+        <div>
+          <span class="title">Medical Service PAC No</span>
+          <span class="value"> {{ preAuthDetails.preAuthNumber }}</span>
+        </div>
+      </div>
+  
+      <div class="grid">
+        <div>
+          <span class="title">Auth Date From</span>
+          <span class="value">{{ preAuthDetails.dateAuthorisedFrom | date: "d MMM y" }}
+          </span>
+        </div>
+  
+        <div>
+          <span class="title">Auth Date To</span>
+          <span class="value">{{ preAuthDetails.dateAuthorisedTo | date: "d MMM y" }} </span>
+        </div>
+      </div>
+  </fieldset>
+  <br>
+  <fieldset>
+    <legend>Client Details</legend>
+    <div class="grid">
+      <div>
+        <span class="title">Full Name</span>
+        <span class="value">{{ preAuthClaimDetail?.personName }}</span>
+      </div>
+      <div>
+        <span class="title">Cell/Tell Number</span>
+        <span class="value">{{ preAuthClaimDetail?.claimContactNo }}</span>
+      </div>
+    </div>
+    <div class="grid">
+      <div>
+        <span class="title">Physical Address</span>
+        <span class="value"></span>
+      </div>
+    </div>
+    <div class="grid">
+      <div>
+        <span class="title">Date Of Injury</span>
+        <span class="value">{{ preAuthClaimDetail?.eventDate }}</span>
+      </div>
+      <div>
+        <span class="title">Claim/Pension No.</span>
+        <span class="value">{{ preAuthClaimDetail?.claimReferenceNumber }}</span>
+      </div>
+    </div>
+    <div class="grid">
+      <div>
+        <span class="title">Industry No.</span>
+        <span class="value">{{ preAuthClaimDetail?.industryNumber }}</span>
+      </div>
+      <div>
+        <span class="title">Company No.</span>
+        <span class="value">{{ preAuthClaimDetail?.employerName }}</span>
+      </div>
+    </div>
+    <div class="grid">
+      <div>
+        <span class="title">Id No.</span>
+        <span class="value">{{ preAuthClaimDetail?.idNumber }}</span>
+      </div>
+      <div>
+        <span class="title">Passport Number.</span>
+        <span class="value">{{ preAuthClaimDetail?.passportNumber }}</span>
+      </div>
+    </div>
+    <!-- </div> -->
+  </fieldset>
+  <br>
+  <fieldset>
+    <legend>Hospital Visit Report Details</legend>
+    <br>
+    <div class="grid">
+      <div>
+        <span class="title">Treatment Plan</span>
+        <span *ngFor="let plan of clinicalUpdateTreatmentPlans; let i=index">
+          <span *ngIf="i <= clinicalUpdateTreatmentPlans.length">{{ plan.treatmentPlanDescription }}</span>
+          <span class="list-format" *ngIf="i!=clinicalUpdateTreatmentPlans.length-1">&#44;&nbsp;</span>
+        </span>      
+      </div>
+      <div>
+        <span class="title"></span>
+        <span class="value"></span>
+      </div>
+    </div>
+    <br>
+    <div class="grid">
+      <div>
+        <span class="title">Treatment Protocol</span>        
+        <span *ngFor="let protocolItem of protocolList; let i=index">
+          <span *ngIf="i <= protocolList.length">{{ protocolItem.treatmentProtocolDescription }}</span>
+          <span class="list-format" *ngIf="i!=protocolList.length-1">&#44;&nbsp;</span>  
+        </span>      
+      </div>
+      <div>
+        <span class="title"></span>
+        <span class="value"></span>
+      </div>
+    </div>
+    <br>
+    <div class="grid">
+      <div>
+        <span class="title">Subsequent Care</span>
+        <br>
+        <span class="value">{{ clinicalUpdateView?.subsequentCare? 'Yes' : 'No'  }}</span>
+      </div>
+    </div>
+    <br>
+    <div class="grid">
+      <div>
+        <span class="title">Discharge Date</span>
+        <br>
+        <span class="value">{{ clinicalUpdateView?.dischargeDate | date: "d MMM y" }}</span>
+      </div>
+    </div>
+    <br>
+    <div class="grid">
+      <div>
+        <span class="title">Interim Account Balance</span>
+        <br>
+        <span class="value">{{ clinicalUpdateView?.interimAccountBalance }}</span>
+      </div>
+    </div>
+    <br>
+    <div class="grid">
+      <div>
+        <span class="title">Comments</span>
+        <br>
+        <span class="value">{{ clinicalUpdateView?.comments }}</span>
+      </div>
+    </div>
+    <br>
+    <div class="grid">
+      <div>
+        <span class="title">Diagnosis</span>
+        <br> 
+        <span class="value">{{ clinicalUpdateView?.diagnosis }}</span>     
+      </div>
+    </div>
+    <br>
+    <div class="grid">
+      <div>
+        <span class="title">Medication</span>
+        <br>
+        <span class="value">{{ clinicalUpdateView?.medication }}</span>
+      </div>
+    </div>
+    <br>
+    <div class="grid" >
+      <div>
+        <span class="title">Status</span>
+        <br>
+        <span class="value">{{ getClinicalUpdateStatus(clinicalUpdateView?.clinicalUpdateStatus) }}</span>
+      </div>
+    </div>
+    <br>
+    <div *ngIf="isAuthorised">
+      <div class="grid">
+        <div>
+          <span class="title">Review Comments</span>
+          <br>
+          <span class="value">{{ clinicalUpdateView?.reviewComment }}</span>
+        </div>
+      </div>
+      <br>
+      <div class="grid">
+        <div>
+          <span class="title">Review Date</span>
+          <br>
+          <span class="value">{{ clinicalUpdateView?.reviewDate | date: "d MMM y" }}</span>
+        </div>
+      </div>
+    </div>
+    <br>
+  </fieldset>
+  <br>
+  <fieldset>
+    <legend>Line Items</legend>
+    <br>
+    <div *ngIf="doShowPreAuthDetails">
+    <preauth-details [doShowPreAuthDetails]="false" [auth]="preAuthDetails" [isInternalUser]="isInternalUser" [bodySides]="bodySides$ | async"></preauth-details>
+    </div>
+  </fieldset>
+  <br>
+  <br>
+  <br>
+  <br>
+</div>

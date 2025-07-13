@@ -1,0 +1,121 @@
+<form [formGroup]="form">
+    <div class="mat-header">
+      <h1 class="mat-header-text">Capture Visits</h1>
+    </div>
+  
+    <mat-card>
+      <mat-card-header>
+        <mat-card-title>Visits</mat-card-title>
+      </mat-card-header>
+      <mat-card-content>
+        <mat-table #table [dataSource]="dataSource" class="tableWidth">
+            
+          <ng-container matColumnDef="dateVisited">
+            <mat-header-cell class="mat-header-cell" *matHeaderCellDef> Date Visited </mat-header-cell>
+            <mat-cell *matCellDef="let visit" matTooltip="{{visit.dateVisited}}">
+              <span class="truncate-text"> {{ visit.dateVisited | date:'yyyy-MM-dd'}} </span>
+            </mat-cell>
+          </ng-container>
+
+          <ng-container matColumnDef="serviceType">
+            <mat-header-cell class="mat-header-cell" *matHeaderCellDef> Service Type </mat-header-cell>
+            <mat-cell *matCellDef="let visit">
+              <span class="truncate-text"> {{ getServiceEnumName(visit.serviceId) }} </span>
+            </mat-cell>
+          </ng-container>
+
+          <ng-container matColumnDef="modifiedBy">
+            <mat-header-cell class="mat-header-cell" *matHeaderCellDef> Last Modified By </mat-header-cell>
+            <mat-cell *matCellDef="let visit" matTooltip="{{visit.modifiedBy}}">
+              <span class="truncate-text"> {{ visit.modifiedBy}} </span>
+            </mat-cell>
+          </ng-container>
+
+          <ng-container matColumnDef="edit">
+            <mat-header-cell class="mat-header-cell" *matHeaderCellDef> Edit </mat-header-cell>
+            <mat-cell *matCellDef="let visit">
+              <a role="button" class="link-edit" (click)="editItem(visit)">Edit</a>
+            </mat-cell>
+          </ng-container>
+
+          <ng-container matColumnDef="delete">
+            <mat-header-cell class="mat-header-cell" *matHeaderCellDef> Delete </mat-header-cell>
+            <mat-cell *matCellDef="let visit">
+              <a role="button" class="link-edit" (click)="deleteItem(visit)">Delete</a>
+            </mat-cell>
+          </ng-container>
+  
+          <mat-header-row class="mat-header-cell" *matHeaderRowDef="getDisplayedColumns();"></mat-header-row>
+          <mat-row *matRowDef="let row; columns: getDisplayedColumns();"></mat-row>
+        </mat-table>
+      </mat-card-content>
+    </mat-card>
+    
+    <mat-card>
+      <mat-card-header>
+        <mat-card-title *ngIf="showAddItemTitlesAndControls">Add Visit</mat-card-title>
+        <mat-card-title *ngIf="showEditControls">Edit Visit</mat-card-title>
+      </mat-card-header>
+      <mat-card-content>
+        <!-- Hidden field for distinguishing between in-memory and DB lines -->
+        <input matInput formControlName="visitId" class="hidden">
+        <section>
+          <div class="field-container">
+            <mat-label class="other-label mandatory-field">Service Type
+            </mat-label>
+            <mat-select name="serviceType" id="serviceType" formControlName="serviceType">
+              <mat-option *ngFor="let type of services" [value]="type.serviceId">
+                {{type.name}}
+              </mat-option>
+            </mat-select>              
+          </div>
+          <div class="field-container-right">
+            <mat-label class="other-label mandatory-field">Date Visited
+            </mat-label>
+            <mat-form-field class="date-field" color="accent">
+              <input matInput [matDatepicker]="picker2" [max]="today" formControlName="dateVisited">
+              <mat-datepicker-toggle 
+                matSuffix [for]="picker2"></mat-datepicker-toggle>
+              <mat-datepicker #picker2></mat-datepicker>
+            </mat-form-field>
+          </div>
+        </section>
+        <br><br><br><br>
+        <section>
+          <div class="field-container">
+              <mat-label class="other-label">Mobile Clinic Venue
+              </mat-label>
+              <mat-form-field class="mat-form-field">
+                  <mat-select name="clinicVenue" id="clinicVenue" formControlName="clinicVenue">
+                    <mat-option *ngFor="let option of clinicVenues" [value]="option.clinicVenueId">
+                      {{ option.name }}
+                    </mat-option>
+                  </mat-select>
+              </mat-form-field>
+          </div>
+          <div class="field-container-right">
+            <mat-label class="other-label mandatory-field">Visit Comments
+            </mat-label>
+            <mat-form-field class="mat-form-field">
+              <textarea matInput formControlName="visitComments" id="visitComments"
+                  name="visitComments" style="height: 100px;"></textarea>
+            </mat-form-field>
+          </div>
+        </section>
+        <br><br><br><br>
+      <div *ngIf="loading$ | async">
+        <mat-progress-bar mode="indeterminate"
+          [ngClass]="{ 'loading-main-double-menu-progress': doubleMenu, 'loading-main-single-menu-progress': !doubleMenu }">
+        </mat-progress-bar>
+        <p class="site-font grey">Validating visits...</p>
+      </div>
+      <br><br><br><br><br>
+      <button *ngIf="showAddItemTitlesAndControls" type="button" title="Add item to Visit list" class="button float-button submit-button import-button"
+        (click)="addItemToVisitList()">Save</button>
+      <button *ngIf="showEditControls" type="button" title="Update Visit Item" class="button float-button submit-button import-button"
+        (click)="updateItem()">Save</button>
+      </mat-card-content>
+      <br>
+    </mat-card>
+  </form>
+  

@@ -1,0 +1,60 @@
+<div *ngIf="(isLoading$ | async)">
+  <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+  <label class="mat-label other-label"><i>loading...please wait</i></label>
+</div>
+
+<div *ngIf="!(isLoading$ | async)">
+  <div class="menu-bar">
+    <span>
+      <span class="material-icons">
+        face
+      </span>
+      Representative
+      <span *ngIf="!isReadOnly && !showSearch && !representative && userHasPermission(addPermission)" (click)="toggle()"
+        class="material-icons pointer right" matTooltip="add">
+        add_circle
+      </span>
+      <span *ngIf="showSearch" (click)="toggle()" class="material-icons pointer right" matTooltip="cancel">
+        close
+      </span>
+    </span>
+  </div>
+
+  <div *ngIf="!showSearch && representative">
+    <table class="altRowTable">
+      <tr>
+        <th>Code</th>
+        <th>Name</th>
+        <th>Identity Number</th>
+        <th>Email</th>
+        <th>Type</th>
+        <th *ngIf="!isReadOnly && userHasPermission(editPermission)">Action</th>
+      </tr>
+      <tr>
+        <td>{{representative.code}}</td>
+        <td>{{representative.name}}</td>
+        <td><data-masker [text]="representative.idNumber"></data-masker></td>
+        <td><data-masker [text]="representative.email"></data-masker></td>
+        <td>{{getRepresentativeType(representative.repType)}}</td>
+        <td *ngIf="!isReadOnly && userHasPermission(editPermission)">
+          <span (click)="toggle()" matTooltip="edit"
+              class="material-icons pointer">
+              settings
+            </span>
+          <span (click)="delete()" matTooltip="delete"
+              class="material-icons pointer">
+              delete
+            </span>
+        </td>
+      </tr>
+    </table>
+  </div>
+
+  <div *ngIf="!this.showSearch && !representative" class="scrollTable">
+    <label class="mat-label other-label"><i>No representative found...</i></label>
+  </div>
+
+  <div *ngIf="showSearch">
+    <representative-search-V2 (representativeSelectedEmit)="representativeSelected($event)"></representative-search-V2>
+  </div>
+</div>

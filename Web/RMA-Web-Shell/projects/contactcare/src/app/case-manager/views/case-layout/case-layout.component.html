@@ -1,0 +1,17 @@
+<div>
+  <div>
+    <nav class="innertop-nav">
+      <button mat-button [routerLink]="['/contactcare/case-manager']">Home</button>
+
+      <button mat-button [routerLink]="['crm-customer-view']">360 Customer View</button>
+
+      <button mat-button [matMenuTriggerFor]="menu2" class='Activebutton'>Reports</button>
+      <mat-menu #menu2="matMenu" [overlapTrigger]="false">
+        <button mat-menu-item [routerLink]="['referral-reports']">Referral Reports</button>
+      </mat-menu>
+    </nav>
+  </div>
+  <div [hidden]="loadingMessage != null" class="container-padding">
+    <router-outlet></router-outlet>
+  </div>
+</div>

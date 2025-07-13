@@ -1,0 +1,17 @@
+<div>
+	<div>
+		<nav class="innertop-nav">
+            <button mat-button [routerLink]="['/claimcare/event-manager/event']">Home</button>
+           
+            <button mat-button [matMenuTriggerFor]="menu4">Event</button>
+            <mat-menu #menu4="matMenu" [overlapTrigger]="false">
+                <button mat-menu-item (click)="navigateTo()">Add Event</button>
+                <button mat-menu-item [routerLink]="['search-event']">Search Event</button>
+            </mat-menu>
+           
+        </nav>
+	</div>
+	<div [hidden]="loadingMessage != null || error != null" class="container-padding">
+		<router-outlet></router-outlet>
+    </div>
+</div> 

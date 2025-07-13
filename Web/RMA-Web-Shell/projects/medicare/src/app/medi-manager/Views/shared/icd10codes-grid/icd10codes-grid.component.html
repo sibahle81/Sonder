@@ -1,0 +1,44 @@
+<div >
+  <table mat-table [dataSource]="existingICD10Records" class="mat-elevation-z8">
+    <ng-container matColumnDef="icd10Code">
+      <th mat-header-cell *matHeaderCellDef> icd10Code </th>
+      <td mat-cell *matCellDef="let element"> {{element.icd10Code}} </td>
+    </ng-container>
+
+    <ng-container matColumnDef="bodySideId">
+      <th mat-header-cell *matHeaderCellDef> Body Side </th>
+      <td mat-cell *matCellDef="let element"> 
+        {{ element.bodySideId }} 
+      </td>
+    </ng-container>
+
+    <ng-container matColumnDef="injuryType">
+      <th mat-header-cell *matHeaderCellDef> Injury Type </th>
+      <td mat-cell *matCellDef="let element"> {{ element.injuryType }} </td>
+    </ng-container>
+
+    <ng-container matColumnDef="isClinicalUpdate">
+      <th mat-header-cell *matHeaderCellDef> Clinical Update </th>
+      <td mat-cell *matCellDef="let element"> {{element.isClinicalUpdate}} </td>
+    </ng-container>
+
+    <ng-container matColumnDef="updateSequenceNo">
+      <th mat-header-cell *matHeaderCellDef> Update Sequence No </th>
+      <td mat-cell *matCellDef="let element"> {{element.updateSequenceNo}} </td>
+    </ng-container>
+
+    <ng-container matColumnDef="authorizationCheck">
+      <th mat-header-cell *matHeaderCellDef> Authorization Check </th>
+      <td mat-cell *matCellDef="let element"> 
+        <div *ngFor="let x of existingICD10Records">
+          <mat-checkbox value="Authorised" (change)="onChange(x)" [(ngModel)]="x.isAuthorised"> Authorised </mat-checkbox>
+        </div>
+      </td>
+    </ng-container>
+
+    <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+    <tr mat-row *matRowDef="let element; columns: displayedColumns;"></tr>
+    </table>
+  </div>
+
+  

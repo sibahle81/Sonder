@@ -1,0 +1,387 @@
+<form [formGroup]="form" name="form" class="mat-container details-form" novalidate>
+    <div *ngIf="isLoadingCategories">
+        <mat-progress-bar mode="indeterminate" [ngClass]="{ 'loading-main-double-menu-progress': doubleMenu, 'loading-main-single-menu-progress': !doubleMenu }">
+        </mat-progress-bar>
+        <p class="site-font grey">Loading categories...</p>
+    </div>
+
+    <section>
+        <div class="field-container">
+            <div><label class="mat-label other-label mandatory-field">Pain</label></div>
+            <mat-select formControlName="pain" id="pain" name="pain">
+                <mat-option value="Yes">Yes</mat-option>
+                <mat-option value="No">No</mat-option>
+            </mat-select>
+        </div>
+        <div class="field-container-right">
+            <div><label class="mat-label other-label">If yes, describe location, frequency & type of pain</label></div>
+            <mat-form-field>
+                <textarea maxlength="1000" formControlName="painDescription" id="painDescription" name="painDescription"
+                    matInput placeholder="Pain Description..."></textarea>
+            </mat-form-field>
+        </div>
+    </section>
+
+    <section>
+        <div class="field-container">
+            <div><label class="mat-label other-label mandatory-field">Skin blister or sore</label></div>
+            <mat-select formControlName="skinblister" id="skinblister" name="skinblister">
+                <mat-option value="Yes">Yes</mat-option>
+                <mat-option value="No">No</mat-option>
+            </mat-select>
+        </div>
+        <div class="field-container-right">
+            <div><label class="mat-label other-label mandatory-field">Size of Blister</label></div>
+            <mat-select formControlName="sizeofBlister" id="sizeofBlister" name="sizeofBlister">
+                <mat-option value="1800">1 - 3 cm</mat-option>
+                <mat-option value="1801">3 - 5 cm</mat-option>
+                <mat-option value="1802">More than 5 cm</mat-option>
+            </mat-select>
+        </div>
+    </section>
+    <section>
+        <div class="field-container">
+            <div><label class="mat-label other-label mandatory-field">If no blister, colour of skin</label></div>
+            <mat-select formControlName="colourofskin" id="colourofskin" name="colourofskin">
+                <mat-option value="Abnormal">Abnormal</mat-option>
+                <mat-option value="Normal">Normal</mat-option>
+            </mat-select>
+        </div>
+        <div class="field-container-right">
+            <div><label class="mat-label other-label">If other symptoms please describe</label></div>
+            <textarea maxlength="1000" formControlName="txtsOtherSymptoms5" id="txtsOtherSymptoms5"
+                name="txtsOtherSymptoms5" matInput placeholder="please describe"></textarea>
+        </div>
+    </section>
+
+    <section>
+        <div class="field-container">
+            <div><label class="mat-label other-label">Height in meters</label></div>
+            <mat-form-field>
+                <input matInput formControlName="heightinmeters" id="heightinmeters" name="heightinmeters">
+            </mat-form-field>
+        </div>
+        <div class="field-container-right">
+            <div><label class="mat-label other-label">Weight in kilograms</label></div>
+            <mat-form-field>
+                <input matInput formControlName="weightinkilograms" id="weightinkilograms" name="weightinkilograms">
+            </mat-form-field>
+        </div>
+    </section>
+    <section>
+        <div class="field-container">
+            <div><label class="mat-label other-label">BMI</label></div>
+            <mat-form-field>
+                <input matInput formControlName="bMI" id="bMI" name="bMI">
+            </mat-form-field>
+        </div>
+        <div class="field-container-right">
+            <div><label class="mat-label other-label">Waist circumference in cm's at level of umbilicus</label></div>
+            <mat-form-field>
+                <input matInput formControlName="waistcircumference" id="waistcircumference" name="waistcircumference">
+            </mat-form-field>
+        </div>
+    </section>
+    <section>
+        <div class="field-container">
+            <div><label class="mat-label other-label">Pulse BPM</label></div>
+            <mat-form-field>
+                <input matInput formControlName="pulseBPM" id="pulseBPM" name="pulseBPM">
+            </mat-form-field>
+        </div>
+        <div class="field-container-right">
+            <div><label class="mat-label other-label">Blood Pressure mm Hg</label></div>
+            <mat-form-field>
+                <input matInput formControlName="bloodPressure" id="bloodPressure" name="bloodPressure">
+            </mat-form-field>
+        </div>
+    </section>
+    <section>
+        <div class="field-container">
+            <div><label class="mat-label other-label mandatory-field">Has Pressure Sores?</label></div>
+            <mat-select formControlName="hasPressureSores" id="hasPressureSores" name="hasPressureSores">
+                <mat-option value="Yes">Yes</mat-option>
+                <mat-option value="No">No</mat-option>
+            </mat-select>
+        </div>
+        <div class="field-container-right">
+            <div><label class="mat-label other-label mandatory-field">Pressure Sores Elbow Skin</label></div>
+            <mat-select formControlName="pressureSoresElbowSkin" id="pressureSoresElbowSkin"
+                name="pressureSoresElbowSkin">
+                <mat-option value="Yes">Yes</mat-option>
+                <mat-option value="No">No</mat-option>
+            </mat-select>
+        </div>
+    </section>
+    <section>
+        <div class="field-container">
+            <div><label class="mat-label other-label mandatory-field">Pressure Sores Knees Skin</label></div>
+            <mat-select formControlName="pressureSoresKneesSkin" id="pressureSoresKneesSkin"
+                name="pressureSoresKneesSkin">
+                <mat-option value="Yes">Yes</mat-option>
+                <mat-option value="No">No</mat-option>
+            </mat-select>
+        </div>
+        <div class="field-container-right">
+            <div><label class="mat-label other-label mandatory-field">Pressure Sores Back Skin</label></div>
+            <mat-select formControlName="pressureSoresBackSkin" id="pressureSoresBackSkin" name="pressureSoresBackSkin">
+                <mat-option value="Yes">Yes</mat-option>
+                <mat-option value="No">No</mat-option>
+            </mat-select>
+        </div>
+    </section>
+    <section>
+        <div class="field-container">
+            <div><label class="mat-label other-label mandatory-field">Pressure Sores Sacral Skin</label></div>
+            <mat-select formControlName="pressureSoresSacralSkin" id="pressureSoresSacralSkin"
+                name="pressureSoresSacralSkin">
+                <mat-option value="Yes">Yes</mat-option>
+                <mat-option value="No">No</mat-option>
+            </mat-select>
+        </div>
+        <div class="field-container-right">
+            <div><label class="mat-label other-label">Other Pressure Sores</label></div>
+            <mat-form-field>
+                <input matInput formControlName="otherPressureSores" id="otherPressureSores" name="otherPressureSores">
+            </mat-form-field>
+        </div>
+    </section>
+    <section>
+        <div class="field-container">
+            <div><label class="mat-label other-label">Other Physical Features</label></div>
+            <mat-form-field>
+                <textarea maxlength="1000" formControlName="otherPhysicalFeatures" id="otherPhysicalFeatures"
+                    name="otherPhysicalFeatures" matInput placeholder="Other Physical Features"></textarea>
+            </mat-form-field>
+        </div>
+        <div class="field-container-right">
+            <div><label class="mat-label other-label">Respiration in breath per minute</label></div>
+            <mat-form-field>
+                <input matInput formControlName="respirationinbreathperminute" id="respirationinbreathperminute"
+                    name="respirationinbreathperminute">
+            </mat-form-field>
+        </div>
+    </section>
+    <section>
+        <div class="field-container">
+            <div><label class="mat-label other-label mandatory-field">Cynanosis (blueness)</label></div>
+            <mat-select formControlName="cynanosis" id="cynanosis" name="cynanosis">
+                <mat-option value="Yes">Yes</mat-option>
+                <mat-option value="No">No</mat-option>
+            </mat-select>
+        </div>
+        <div class="field-container-right">
+            <div><label class="mat-label other-label">If Cynanosis please describe</label></div>
+            <mat-form-field>
+                <textarea maxlength="1000" formControlName="cynanosisDescription" id="cynanosisDescription"
+                    name="cynanosisDescription" matInput placeholder="Cynanosis Description..."></textarea>
+            </mat-form-field>
+        </div>
+    </section>
+    <section>
+        <div class="field-container">
+            <div><label class="mat-label other-label mandatory-field">Clubbing of Fingers</label></div>
+            <mat-select formControlName="cyClubbingofFingersnanosis" id="cyClubbingofFingersnanosis"
+                name="cyClubbingofFingersnanosis">
+                <mat-option value="Yes">Yes</mat-option>
+                <mat-option value="No">No</mat-option>
+            </mat-select>
+        </div>
+        <div class="field-container-right">
+            <div><label class="mat-label other-label">If finger clubbing please describe</label></div>
+            <mat-form-field>
+                <textarea maxlength="1000" formControlName="clubbingDescription" id="clubbingDescription"
+                    name="clubbingDescription" matInput placeholder="clubbing Description..."></textarea>
+            </mat-form-field>
+        </div>
+    </section>
+    <section>
+        <div class="field-container">
+            <div><label class="mat-label other-label mandatory-field">Auscultation of Chest</label></div>
+            <mat-select formControlName="auscultationofChest" id="auscultationofChest" name="auscultationofChest">
+                <mat-option value="Abnormal">Abnormal</mat-option>
+                <mat-option value="Normal">Normal</mat-option>
+            </mat-select>
+        </div>
+        <div class="field-container-right">
+            <div><label class="mat-label other-label">if auscultation of chest please describe</label></div>
+            <mat-form-field>
+                <textarea maxlength="1000" formControlName="auscultationDescription" id="auscultationDescription"
+                    name="auscultationDescription" matInput placeholder="auscultation Description..."></textarea>
+            </mat-form-field>
+        </div>
+    </section>
+    <section>
+        <div class="field-container">
+            <div><label class="mat-label other-label mandatory-field">Are there any palpable masses or hernia'
+                    evident?</label></div>
+            <mat-select formControlName="cbobPalpableMassesOrHernia" id="cbobPalpableMassesOrHernia"
+                name="cbobPalpableMassesOrHernia">
+                <mat-option value="Yes">Yes</mat-option>
+                <mat-option value="No">No</mat-option>
+            </mat-select>
+        </div>
+        <div class="field-container-right">
+            <div><label class="mat-label other-label">Any abdomen scars?</label></div>
+            <mat-select formControlName="anyabdomenscars" id="anyabdomenscars" name="anyabdomenscars">
+                <mat-option value="Yes">Yes</mat-option>
+                <mat-option value="No">No</mat-option>
+            </mat-select>
+        </div>
+    </section>
+    <section>
+        <div class="field-container">
+            <div><label class="mat-label other-label mandatory-field">Where are the abdomen scars?</label></div>
+            <mat-form-field>
+                <input matInput formControlName="abdomenScarsWhere" id="abdomenScarsWhere" name="abdomenScarsWhere">
+            </mat-form-field>
+        </div>
+        <div class="field-container-right">
+            <div><label class="mat-label other-label">Tone of abdomen</label></div>
+            <mat-select formControlName="toneofabdomen" id="toneofabdomen" name="toneofabdomen">
+                <mat-option value="Abnormal">Abnormal</mat-option>
+                <mat-option value="Normal">Normal</mat-option>
+            </mat-select>
+        </div>
+    </section>
+    <section>
+        <div class="field-container">
+            <div><label class="mat-label other-label mandatory-field">Tenderness of abdomen</label></div>
+            <mat-select formControlName="tendernessofabdomen" id="tendernessofabdomen" name="tendernessofabdomen">
+                <mat-option value="Yes">Yes</mat-option>
+                <mat-option value="No">No</mat-option>
+            </mat-select>
+        </div>
+        <div class="field-container-right">
+            <div><label class="mat-label other-label">If abdomen tenderness please describe</label></div>
+            <mat-form-field>
+                <textarea maxlength="1000" formControlName="abdomenTendernessDescription"
+                    id="abdomenTendernessDescription" name="abdomenTendernessDescription" matInput>
+            </textarea>
+            </mat-form-field>
+        </div>
+    </section>
+    <section>
+        <div class="field-container">
+            <div><label class="mat-label other-label mandatory-field">Is the scrotum normal	</label></div>
+            <mat-select formControlName="isthescrotumnormal" id="isthescrotumnormal" name="isthescrotumnormal">
+                <mat-option value="Yes">Yes</mat-option>
+                <mat-option value="No">No</mat-option>
+            </mat-select>
+        </div>
+        <div class="field-container-right">
+            <div><label class="mat-label other-label">If scrotum is not normal please describe</label></div>
+            <mat-form-field>
+                <textarea maxlength="1000" formControlName="scrotumNormalDescription"
+                    id="scrotumNormalDescription" name="scrotumNormalDescription" matInput>
+            </textarea>
+            </mat-form-field>
+        </div>
+    </section>
+    <section>
+        <div class="field-container">
+            <div><label class="mat-label other-label mandatory-field">Hydrocele of Scrotum</label></div>
+            <mat-select formControlName="hydroceleofScrotum" id="hydroceleofScrotum" name="hydroceleofScrotum">
+                <mat-option value="Yes">Yes</mat-option>
+                <mat-option value="No">No</mat-option>
+            </mat-select>
+        </div>
+        <div class="field-container-right">
+            <div><label class="mat-label other-label">If hydrocele of scrotum please describe</label></div>
+            <mat-form-field>
+                <textarea maxlength="1000" formControlName="genitalsScrotumHydroceleDescription"
+                    id="genitalsScrotumHydroceleDescription" name="genitalsScrotumHydroceleDescription" matInput>
+            </textarea>
+            </mat-form-field>
+        </div>
+    </section>
+    <section>
+        <div class="field-container">
+            <div><label class="mat-label other-label mandatory-field">Phimosis</label></div>
+            <mat-select formControlName="phimosis" id="phimosis" name="phimosis">
+                <mat-option value="Yes">Yes</mat-option>
+                <mat-option value="No">No</mat-option>
+            </mat-select>
+        </div>
+        <div class="field-container-right">
+            <div><label class="mat-label other-label">If phimosis describe</label></div>
+            <mat-form-field>
+                <textarea maxlength="1000" formControlName="phimosisDescription"
+                    id="phimosisDescription" name="phimosisDescription" matInput>
+            </textarea>
+            </mat-form-field>
+        </div>
+    </section>
+    <section>
+        <div class="field-container">
+            <div><label class="mat-label other-label">Other genitals abnormalities</label></div>
+            <mat-form-field>
+                <textarea maxlength="1000" formControlName="othersGenitalsOtherAbnomalities"
+                    id="othersGenitalsOtherAbnomalities" name="othersGenitalsOtherAbnomalities" matInput>
+            </textarea>
+            </mat-form-field>
+        </div>
+        <div class="field-container-right">
+            <div><label class="mat-label other-label mandatory-field">Urinary dipstix</label></div>
+            <mat-select formControlName="urinarydipstix" id="urinarydipstix" name="urinarydipstix">
+                <mat-option selected="selected" value="0" title="Select">Select</mat-option>
+				<mat-option value="1711" title="Abnormal">Abnormal</mat-option>
+				<mat-option value="1704" title="Blood">Blood</mat-option>
+				<mat-option value="1701" title="Gilrrubin">Gilrrubin</mat-option>
+				<mat-option value="1700" title="Glucose">Glucose</mat-option>
+				<mat-option value="1702" title="Ketone">Ketone</mat-option>
+				<mat-option value="1709" title="Leucocytes">Leucocytes</mat-option>
+				<mat-option value="1708" title="Nitrate">Nitrate</mat-option>
+				<mat-option value="1710" title="Normal">Normal</mat-option>
+				<mat-option value="1705" title="PH">PH</mat-option>
+				<mat-option value="1706" title="Protein">Protein</mat-option>
+				<mat-option value="1703" title="Specific Gravity">Specific Gravity</mat-option>
+				<mat-option value="1707" title="Urobilogen">Urobilogen</mat-option>
+            </mat-select>
+        </div>
+    </section>
+    <section>
+        <div class="field-container">
+            <div><label class="mat-label other-label">Urine colour</label></div>
+            <mat-select formControlName="urinecolour" id="urinecolour" name="urinecolour">
+                <mat-option value="Abnormal">Abnormal</mat-option>
+                <mat-option value="Normal">Normal</mat-option>
+            </mat-select>
+        </div>
+        <div class="field-container-right">
+            <div><label class="mat-label other-label">Urine odour</label></div>
+            <mat-select formControlName="urineodour" id="urineodour" name="urineodour">
+                <mat-option value="Abnormal">Abnormal</mat-option>
+                <mat-option value="Normal">Normal</mat-option>
+            </mat-select>
+        </div>
+    </section>
+    <section>
+        <div class="field-container">
+            <div><label class="mat-label other-label mandatory-field">Action plan in response to comments made</label></div>
+            <mat-select formControlName="actionplanresponse" id="actionplanresponse" name="actionplanresponse">
+                <mat-option value="Yes">Yes</mat-option>
+                <mat-option value="No">No</mat-option>
+            </mat-select>
+        </div>
+        <div class="field-container-right">
+            <div><label class="mat-label other-label">Action taken in response to comments made</label></div>
+            <mat-form-field>
+                <textarea maxlength="1000" formControlName="actiontakenresponse"
+                    id="actiontakenresponse" name="actiontakenresponse" matInput>
+            </textarea>
+            </mat-form-field>
+        </div>
+    </section>
+    <section>
+        <div class="field-container">
+            <div><label class="mat-label other-label mandatory-field">Reviewed By</label></div>
+            <mat-form-field>
+                <input matInput formControlName="reviewedBy" id="reviewedBy" name="reviewedBy">
+            </mat-form-field>
+        </div>
+        <div class="field-container-right">
+          
+        </div>
+    </section>
+</form>

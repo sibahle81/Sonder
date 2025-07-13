@@ -1,0 +1,140 @@
+<mat-card>
+  <mat-card-content>
+
+<form [formGroup]="form" *ngIf="this.form">
+
+<div *ngIf="isRehabilitationRequest">
+
+<div class="mat-header">
+    <h1 class="mat-header-text">First Pre-authorisation application</h1>
+  </div>
+
+  <mat-expansion-panel>
+    <mat-expansion-panel-header>
+      <mat-panel-title class="mandatory-field">
+        Treatment plan
+      </mat-panel-title>
+     
+    </mat-expansion-panel-header>
+
+    <div>
+
+      <mat-form-field class="mat-form-field-right">
+        <label class="mat-label other-label mandatory-field">Therapist Name</label>
+        <input matInput formControlName="therapistName" type="text" />
+      </mat-form-field>
+
+      <mat-form-field class="date-field mat-form-field-right" color="accent">
+          <label class="mat-label other-label mandatory-field">Date of Initial consultation</label>
+          <input matInput [matDatepicker]="picker1" name="consultationDate" id="consultationDate"
+              formControlName="consultationDate" (change)="onChange();">
+          <mat-datepicker-toggle
+              style=" position: absolute !important;right: 0 !important;top: 18px  !important;" matSuffix
+              [for]="picker1"></mat-datepicker-toggle>
+          <mat-datepicker #picker1></mat-datepicker>
+      </mat-form-field>
+
+    </div>
+
+  </mat-expansion-panel>
+
+  <mat-expansion-panel>
+    <mat-expansion-panel-header>
+      <mat-panel-title>
+        A. Rehabilitation Goals(Max 300 characters)
+      </mat-panel-title>
+     
+    </mat-expansion-panel-header>
+    <div>   
+      <mat-form-field class="mat-form-field-right">
+      <label class="mat-label other-label mandatory-field">Rehabilitation Goals</label>
+      <textarea matInput cdkTextareaAutosize cdkAutosizeMinRows="3" cdkAutosizeMaxRows="5"
+          formControlName="rehabilitationGoals" id="rehabilitationGoals" class="mat-input-element"
+          maxlength="300"></textarea>
+          <button class="button submit-button" (click)="addRehabilitationGoal()">Add</button>
+          <div *ngIf="rehabilitationGoalList.length > 0; else norecords">
+            <mat-list>
+              <ng-container *ngFor="let item of rehabilitationGoalList; let itemIndex = index">
+                <mat-list-item>
+                  {{ item }} &nbsp;
+                  <button class="button submit-button" (click)="removeRehabilitationGoal(item, itemIndex)">Remove</button>
+                </mat-list-item>
+              </ng-container>
+            </mat-list>
+          </div>
+          
+          <ng-template #norecords>
+            <div>No records found...</div>
+          </ng-template>         
+         
+  </mat-form-field>
+
+</div>
+  </mat-expansion-panel>
+
+  <mat-expansion-panel>
+    <mat-expansion-panel-header>
+      <mat-panel-title>
+        B. Anticipated duration and frequency of treatment
+      </mat-panel-title>
+    </mat-expansion-panel-header>
+    <div>
+      <mat-form-field class="mat-form-field-right">
+        <label class="mat-label other-label mandatory-field">Frequency of treatment</label>
+        <input matInput formControlName="frequencyOfTreament" type="text" />
+      </mat-form-field>
+  
+      <mat-form-field class="mat-form-field-right">
+        <label class="mat-label other-label mandatory-field">Overall Expected duration of treatment(Months)</label>
+        <input matInput formControlName="overallExpectedTreatmentDuration" type="number" />
+      </mat-form-field>
+    </div>
+    <div>
+      <mat-form-field class="mat-form-field-right">
+        <label class="mat-label other-label mandatory-field">Number of treatment sessions requested</label>
+        <input matInput formControlName="numberOfTreatmentSessionRequested" type="number" />
+      </mat-form-field>
+    </div>
+  </mat-expansion-panel>
+
+  <mat-expansion-panel>
+    <mat-expansion-panel-header>
+      <mat-panel-title>
+        Referring doctor details
+      </mat-panel-title>
+     
+    </mat-expansion-panel-header>
+     <div>
+      <healthcareprovider-search #healthCareProviderSearchComponent [showTelephoneNumber]="true" (healthCareProviderChanged)="onHealthCareProviderChanged($event)"
+      (telephoneNumberChanged)="onHealthCareProviderTelephoneNoChanged($event)"></healthcareprovider-search>
+    </div>  
+    <div *ngIf="isEditView">
+      <div class="mat-header">
+        <h1>Healthcare Provider Details</h1>
+      </div>
+      <mat-card>
+        <mat-card-content>
+          <div class="grid">
+            <div>
+              <span class="title">Health Care Provider</span>
+              <span class="value">{{ healthCareProvider?.name }} </span>
+            </div>
+            <div>
+              <span class="title">Practice Number</span>
+              <span class="value">{{ healthCareProvider?.practiceNumber }}</span>
+            </div>
+          </div>
+          <div class="grid">
+            <div>
+              <span class="title">Telephone number</span>
+              <span class="value">{{telephone_number }} </span>
+            </div>
+          </div>
+        </mat-card-content>
+      </mat-card>
+    </div>   
+  </mat-expansion-panel>
+</div>
+</form>
+</mat-card-content>
+</mat-card>

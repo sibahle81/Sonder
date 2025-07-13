@@ -1,0 +1,88 @@
+<mat-card>
+  <div class="menu-bar">
+    <span class="material-icons">
+      tab
+    </span>&nbsp;Healthcare Provider Details
+  </div>
+  <mat-card-content>
+    <div class="grid">
+      <div>
+        <span class="title">Health Care Provider</span>
+        <span class="value">{{ healthCareProvider?.name }} </span>
+      </div>
+      <div>
+        <span class="title">Practice Number</span>
+        <span class="value">{{ healthCareProvider?.practiceNumber }}</span>
+      </div>
+    </div>
+    <div class="grid">
+      <div>
+        <span class="title">Authorised</span>
+        <span class="value">{{ checkIfAuthorised(authDetails?.preAuthStatus) }} </span>
+      </div>
+      <div>
+        <span class="title">PreAuth Status</span>
+        <span class="value"> {{ getPreauthStatus(authDetails?.preAuthStatus) }} </span>
+      </div>
+    </div>
+    <div class="grid">
+      <div>
+        <span class="title">Authorised From</span>
+        <span class="value">{{ authDetails?.dateAuthorisedFrom | date: "d MMM y" }} </span>
+      </div>
+      <div>
+        <span class="title">Authorised To</span>
+        <span class="value">{{ authDetails?.dateAuthorisedTo | date: "d MMM y" }}</span>
+      </div>
+    </div>
+    <div class="grid">
+      <div>
+        <span class="title">Medical Service PAC No</span>
+        <span class="value">{{ authDetails?.preAuthNumber }} </span>
+      </div>
+      <div *ngIf="preAuthClaimDetails | async as preAuthClaimDetail; else loading">
+        <span class="title">Injury Date</span>
+        <span class="value">{{ authDetails?.injuryDate | date: "dd-MMM-yyyy" }}</span>
+        <span class="safety-orange" *ngIf="authDetails && preAuthClaimDetail && (authDetails.injuryDate | date: 'shortDate') !== (preAuthClaimDetail.eventDate | date: 'shortDate')">
+          Injury date is not matching to Claim event date
+        </span>
+      </div>
+      <ng-template  #loading>Loading...</ng-template>      
+    </div>
+      <div class="grid">
+        <div *ngIf="isInternalUser || (getPreauthStatus(authDetails?.preAuthStatus) == preAuthStatus[6])">
+          <span class="title">Requested Amount</span>
+          <span class="value"> {{authDetails?.requestedAmount | currency:'R '}}</span>
+        </div>
+    
+        <div *ngIf="isInternalUser || (getPreauthStatus(authDetails?.preAuthStatus) == preAuthStatus[6])">
+          <span class="title">Authorised Amount</span>
+          <span class="value"> {{ authDetails?.authorisedAmount | currency:'R '}} </span>
+        </div>
+      </div>
+      <div class="grid">
+        <div>
+          <span class="title">Requested Comments</span>
+          <span class="value">{{authDetails?.requestComments }} </span>
+        </div>
+    
+        <div>
+          <span class="title">Review Comments</span>
+          <span class="value"> {{ authDetails?.reviewComments }} </span>
+        </div>
+      </div>
+      <div class="grid">
+        <div *ngIf="isTreatmentAuth">
+          <span class="title">Is In-Hospital?</span>
+          <span class="value">{{ getIsInHospital() }} </span>
+        </div>
+      </div>
+
+      <div *ngIf="isTreatmentAuth">
+        <app-treatment-preauth-document-type [linkedId]="authDetails.preAuthId" 
+        [hideTreatmentDocTypeDropdown]="true"
+        ></app-treatment-preauth-document-type>
+      </div>
+
+  </mat-card-content>
+</mat-card>

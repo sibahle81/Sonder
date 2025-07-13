@@ -1,0 +1,120 @@
+<div class="pad-form">
+  <mat-card>
+    <mat-card-header>
+      <mat-card-title class="wizard-font card-title grey">
+        <h1 style="color:#389cae">Main Member</h1>
+      </mat-card-title>
+    </mat-card-header>
+    <mat-card-content>
+      <div *ngIf="isLoading">
+        <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+      </div>
+      <div [hidden]="isLoading">
+        <form [formGroup]="form" class="mat-container details-form" novalidate>
+          <section>
+            <mat-form-field class="mat-form-field">
+              <label class="mat-label other-label mandatory-field">First Name</label>
+              <input matInput formControlName="firstName">
+              <mat-error *ngIf="form.get('firstName').hasError('required')">
+                First name is required
+              </mat-error>
+            </mat-form-field>
+            <mat-form-field class="mat-form-field-right">
+              <label class="mat-label other-label mandatory-field">Surname</label>
+              <input matInput formControlName="surname">
+              <mat-error *ngIf="form.get('firstName').hasError('required')">
+                Surname is required
+              </mat-error>
+            </mat-form-field>
+          </section>
+          <section>
+            <mat-form-field class="mat-form-field">
+              <label class="mat-label other-label mandatory-field">ID Type</label>
+              <mat-select formControlName="idTypeId">
+                <mat-option *ngFor="let idType of idTypes" [value]="idType.id">
+                  {{idType.name}}
+                </mat-option>
+              </mat-select>
+              <mat-error *ngIf="form.get('idTypeId').hasError('required') || form.get('idTypeId').hasError('min')">
+                ID type is required
+              </mat-error>
+            </mat-form-field>
+            <mat-form-field class="mat-form-field-right">
+              <label class="mat-label other-label mandatory-field">ID Number</label>
+              <input matInput formControlName="idNumber" (keyup)="calculateDateOfBirth()">
+              <mat-error *ngIf="form.get('idNumber').hasError('required')">
+                ID number is required
+              </mat-error>
+            </mat-form-field>
+          </section>
+          <section>
+            <mat-form-field class="mat-form-field">
+              <label class="mat-label other-label mandatory-field">Date of Birth</label>
+              <input matInput formControlName="dateOfBirth" [max]="maxDate" [matDatepicker]="dateOfBirth"
+                (dateChange)="calculateAge()">
+              <mat-datepicker-toggle matSuffix [for]="dateOfBirth" [disabled]="form.disabled">
+              </mat-datepicker-toggle>
+              <mat-datepicker touchUi="true" #dateOfBirth></mat-datepicker>
+              <mat-error *ngIf="form.get('dateOfBirth').hasError('required')">
+                Date of birth is required
+              </mat-error>
+            </mat-form-field>
+            <mat-form-field class="mat-form-field-right">
+              <label class="mat-label other-label">Age</label>
+              <input [hidden]="true" matInput formControlName="age">
+              <input matInput [(value)]="age" disabled>
+              <mat-error *ngIf="form.get('age').hasError('required')">
+                Age is required
+              </mat-error>
+              <mat-error *ngIf="form.get('age').hasError('min')">
+                Minimum age is 18
+              </mat-error>
+            </mat-form-field>
+          </section>
+          <section>
+            <mat-form-field class="mat-form-field">
+              <label class="mat-label other-label mandatory-field">Policy Join Date</label>
+              <input matInput formControlName="policyJoinDate"
+                [min]="minDate"
+                [matDatepicker]="policyJoinDate"
+                [matDatepickerFilter]="isFirstDayOfMonth"
+                (dateChange)="calculateJoinAge()">
+              <mat-datepicker-toggle matSuffix [for]="policyJoinDate" [disabled]="form.disabled">
+              </mat-datepicker-toggle>
+              <mat-datepicker touchUi="true" #policyJoinDate></mat-datepicker>
+              <mat-error *ngIf="form.get('policyJoinDate').hasError('required')">
+                Policy join date is required
+              </mat-error>
+            </mat-form-field>
+            <mat-form-field class="mat-form-field-right">
+              <label class="mat-label other-label">Join Age</label>
+              <input [hidden]="true" matInput formControlName="joinAge">
+              <input matInput [(value)]="joinAge" disabled>
+              <mat-error *ngIf="form.get('joinAge').hasError('required')">
+                Age is required
+              </mat-error>
+              <mat-error *ngIf="form.get('joinAge').hasError('min')">
+                Minimum age is 18
+              </mat-error>
+            </mat-form-field>
+          </section>
+          <section>
+            <mat-form-field class="mat-form-field">
+              <label class="mat-label other-label mandatory-field">Benefit</label>
+              <mat-select formControlName="benefitId">
+                <mat-option *ngFor="let benefit of filteredBenefits" [value]="benefit.id">
+                  {{benefit.name}}
+                </mat-option>
+              </mat-select>
+              <mat-error *ngIf="form.get('benefitId').hasError('required') || form.get('benefitId').hasError('min')">
+                Please select a benefit
+              </mat-error>
+            </mat-form-field>
+          </section>
+        </form>
+      </div>
+
+    </mat-card-content>
+  </mat-card>
+</div>
+<div class="spacer"></div>

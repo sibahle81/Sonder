@@ -1,0 +1,33 @@
+export class AgeAnalysis {
+  controlNumber: string;
+  controlName: string;
+  accountId: number;
+  accountNumber: string;
+  clientName: string;
+  balance: number;
+  interest: number;
+  current: number;
+  balance30Days: number;
+  balance60Days: number;
+  balance90Days: number;
+  balance120Days: number;
+  balance120PlusDays: number;
+  collectionAgent: string;
+  debtorsClerk: string;
+  noteId1: number;
+  note1: string;
+  user1: string;
+  date1: Date;
+  noteId2: number;
+  note2: string;
+  user2: string;
+  date2: Date;
+  noteId3: number;
+  note3: string;
+  user3: string;
+  date3: Date;
+  selected: boolean;
+  productName: string;
+  interestIndicator: boolean;
+  productCoverType: string;
+}

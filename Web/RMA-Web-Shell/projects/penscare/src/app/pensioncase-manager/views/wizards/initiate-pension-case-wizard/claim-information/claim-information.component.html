@@ -1,0 +1,112 @@
+<mat-card>
+  <mat-card-content>
+      <h1>Claim Information </h1>
+      <form [formGroup]="form" *ngIf="this.form">
+        <section>
+          <mat-form-field>
+            <label class="mat-label other-label mandatory-field">Claim Reference Number</label>
+            <input matInput maxlength="50" formControlName="claimReferenceNumber" name="claimReferenceNumber" id="claimReferenceNumber" />
+            <mat-error *ngIf="form.get('claimReferenceNumber').hasError('required')">
+                Claim Reference Number is required
+            </mat-error>
+          </mat-form-field>
+
+          <mat-form-field class="mat-form-field  mat-form-field-right">
+            <label class="mat-label other-label mandatory-field">Date of Accident</label>
+            <input matInput formControlName="dateOfAccident" name="dateOfAccident" id="dateOfAccident" date="true" [matDatepicker]="dateOfAccident">
+            <mat-datepicker-toggle matSuffix class="mat-toggle-datepicker datePick" [for]="dateOfAccident">
+            </mat-datepicker-toggle>
+            <mat-datepicker touchUi="true" #dateOfAccident></mat-datepicker>
+          </mat-form-field>
+        </section>
+
+
+        <section>
+          <mat-form-field class="mat-form-field">
+            <label class="mat-label other-label mandatory-field">Date of Stabilisation</label>
+            <input matInput formControlName="dateOfStabilisation" id="dateOfStabilisation" name="dateOfStabilisation" date="true" [matDatepicker]="dateOfStabilisation">
+            <mat-datepicker-toggle matSuffix class="mat-toggle-datepicker datePick" [for]="dateOfStabilisation">
+            </mat-datepicker-toggle>
+            <mat-datepicker touchUi="true" #dateOfStabilisation></mat-datepicker>
+          </mat-form-field>
+          <mat-form-field class="mat-form-field  mat-form-field-right">
+            <label class="mat-label other-label mandatory-field">Earnings</label>
+            <input matInput maxlength="50" formControlName="earnings" id="earnings" name="earnings" />
+            <mat-error *ngIf="form.get('earnings').hasError('required')">
+              Earnings is required
+            </mat-error>
+          </mat-form-field>
+        </section>
+
+        <section>
+          <mat-form-field>
+            <label class="mat-label other-label">Pension Lumpsum</label>
+            <input matInput maxlength="50" formControlName="pensionLumpSum" name="pensionLumpSum" id="pensionLumpSum"/>
+            <mat-error *ngIf="form.get('pensionLumpSum').hasError('required')">
+              Pension lump sum is required
+            </mat-error>
+          </mat-form-field>
+
+          <mat-form-field class="mat-form-field  mat-form-field-right">
+            <label class="mat-label other-label">Widow Lumpsum</label>
+            <input matInput maxlength="50" formControlName="widowLumpSum" name="widowLumpSum" id="widowLumpSum"/>
+            <mat-error *ngIf="form.get('widowLumpSum').hasError('required')">
+              Widow lump sum is required
+            </mat-error>
+          </mat-form-field>
+        </section>
+
+        <section>
+          <mat-form-field>
+            <label class="mat-label other-label mandatory-field">Estimated Capitalized Value</label>
+            <input matInput maxlength="50" formControlName="estimatedCV" id="estimatedCV" name="estimatedCV" />
+          </mat-form-field>
+
+          <mat-form-field class="mat-form-field  mat-form-field-right">
+            <label class="mat-label other-label">Verified Capitalized Value</label>
+            <input matInput maxlength="50" formControlName="verifiedCV" id="verifiedCV" name="verifiedCV" />
+          </mat-form-field>
+        </section>
+
+        <section>
+          <mat-form-field>
+            <label class="mat-label other-label mandatory-field">Member</label>
+            <input matInput id="member" name="member" formControlName="member" readonly>
+            <mat-error *ngIf="form.get('member').hasError('required')">
+              Member is required
+            </mat-error>
+          </mat-form-field>
+          <mat-form-field class="mat-form-field-right">
+            <label class="mat-label other-label mandatory-field">ICD10 Driver</label>
+            <input matInput id="icd10Driver" name="icd10Driver" formControlName="icd10Driver" readonly>
+          </mat-form-field>
+        </section>
+
+        <section>
+          <mat-form-field>
+            <label class="mat-label other-label mandatory-field">DRG</label>
+            <input matInput id="drg" name="drg" formControlName="drg" readonly>
+          </mat-form-field>       
+          <mat-form-field class="mat-form-field-right">
+            <label class="mat-label other-label mandatory-field">Death Date</label>
+            <input matInput id="deathDate" name="deathDate" formControlName="deathDate" readonly>
+          </mat-form-field>        
+        </section>
+        
+        <div class="border pointer" (click)="addDeathDetails()"  *ngIf="personEvent">
+          <label class="mat-label other-label pointer"><span class="material-icons">
+              add_circle</span>Capture Death Details</label>
+        </div>
+        <mat-card-actions>
+          <div class="left-margin actions-container">
+            <div>
+              <button class="button submit-button" (click)="viewClaims()">View claims</button>
+            </div>
+          </div>
+        </mat-card-actions>
+      </form>
+  </mat-card-content>
+</mat-card>
+
+
+

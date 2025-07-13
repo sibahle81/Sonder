@@ -1,0 +1,64 @@
+<mat-card *ngIf="(isLoading$ | async) || (dataSource.loading$ | async)">
+  <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+  <label class="mat-label other-label"><i>loading beneficiary...please wait</i></label>
+</mat-card>
+
+<div [hidden]="(isLoading$ | async) || (dataSource?.loading$ | async)
+            || (dataSource && dataSource.data && dataSource.data.data && dataSource.data.data.length <= 0) 
+            || (paginator && paginator.length === 0 && !(dataSource.loading$ | async))">
+  <mat-table #table [dataSource]="dataSource" matSort id="tblData" (matSortChange)="getData()">
+    <ng-container matColumnDef="beneficiaryName">
+      <mat-header-cell *matHeaderCellDef> Beneficiary Name </mat-header-cell>
+      <mat-cell *matCellDef="let row"> {{row.person.firstName}}
+      </mat-cell>
+    </ng-container>
+
+    <ng-container matColumnDef="beneficiaryLastName">
+      <mat-header-cell *matHeaderCellDef> Beneficiary Surname </mat-header-cell>
+      <mat-cell *matCellDef="let row"> {{row.person.surname}}
+      </mat-cell>
+    </ng-container>
+
+    <ng-container matColumnDef="idNumber">
+      <mat-header-cell *matHeaderCellDef> ID / Passport </mat-header-cell>
+      <mat-cell *matCellDef="let row"> {{row.person.idNumber ?? row.person.passportNumber}}
+      </mat-cell>
+    </ng-container>
+
+    <ng-container matColumnDef="relation">
+      <mat-header-cell *matHeaderCellDef> Relation </mat-header-cell>
+      <mat-cell *matCellDef="let row"> {{row.fromRolePlayers[0]?.rolePlayerTypeId ?
+        getRelationName(row.fromRolePlayers[0]?.rolePlayerTypeId) : 'N/A'}}
+      </mat-cell>
+    </ng-container>
+
+    <ng-container matColumnDef="actions">
+      <mat-header-cell *matHeaderCellDef>
+        <span class="material-icons noHover">
+          more_vert
+        </span>
+      </mat-header-cell>
+      <mat-cell *matCellDef="let row">
+        <a role="button" class="link-edit" (click)="showDetail(row, 'view', true)" matTooltip="view">
+          <span matTooltip="view" class="material-icons icn pointer">visibility</span>
+        </a>
+        <a role="button" class="link-edit pointer" (click)="showDetail(row, 'edit', false)">
+          <span matTooltip="edit" class="material-icons icn pointer">settings</span>
+        </a>
+        <a role="button" class="link-edit pointer" (click)="onRemove(row, 'delete')">
+          <span matTooltip="delete" class="material-icons icn pointer">delete</span>
+        </a>
+      </mat-cell>
+    </ng-container>
+
+    <mat-header-row *matHeaderRowDef="getDisplayedColumns()"></mat-header-row>
+    <mat-row *matRowDef="let row; columns: getDisplayedColumns();"></mat-row>
+  </mat-table>
+  <mat-paginator #paginator [pageIndex]="0" [pageSize]="5" [pageSizeOptions]="[5, 10, 25]"
+    [length]="this.dataSource.rowCount$ | async" (page)="getData()">
+  </mat-paginator>
+</div>
+
+<mat-card *ngIf="!(dataSource.data?.data?.length > 0 || (dataSource.loading$ | async))">
+  <label class="mat-label other-label">No beneficiaries...</label>
+</mat-card>

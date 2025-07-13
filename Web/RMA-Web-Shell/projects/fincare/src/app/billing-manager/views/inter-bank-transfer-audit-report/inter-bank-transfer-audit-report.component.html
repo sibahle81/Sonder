@@ -1,0 +1,32 @@
+<mat-card>
+
+  <div *ngIf="isLoading$ | async">
+    <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+    <label class="mat-label other-label"><i>Loading...please wait</i></label>
+  </div>
+
+  <div [hidden]="isLoading$ | async">
+    <form [formGroup]="form" class="mat-container details-form" novalidate>
+      <div [hidden]="showReport">
+        <section style="width:33%;">
+          <label class="mat-label other-label mandatory-field">RMA Bank Account</label>
+          <mat-select id="account" name="account" matInput formControlName="account"
+            (selectionChange)="onAccountSelected($event)">
+            <mat-option *ngFor="let rmaBankAccount of rmaBankAccounts" [value]="rmaBankAccount.accountNumber">
+              {{rmaBankAccount.product}} {{rmaBankAccount.accountNumber}}
+            </mat-option>
+          </mat-select>
+        </section>
+      </div>
+    </form>
+
+
+    <div [hidden]="!showReport">
+      <report-viewer-with-date-and-period-filter (resetClicked)="onReset()" [reportTitle]="'Interdbank Transfer Audit'"
+        [reportUrl]="'RMA.Reports.FinCare/InterBankAuditStandard'"
+        [friendlyReportUrl]="'RMA.Reports.FinCare/InterBankAudit'" [dataParameterName]="'RMABankAccountNumber'"
+        [data]="selectedBankAccount" [offerFriendlyVersion]="true">
+      </report-viewer-with-date-and-period-filter>
+    </div>
+  </div>
+</mat-card>

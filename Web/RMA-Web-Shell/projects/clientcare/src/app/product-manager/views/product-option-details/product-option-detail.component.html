@@ -1,0 +1,210 @@
+<div class="page-header"></div>
+<div style="padding-top: 15px;">
+  <mat-card style="margin: 0">
+    <mat-card-content style="margin-left: 0;">
+      <form [formGroup]="form" class="mat-container details-form" novalidate>
+
+        <section>
+          <mat-form-field>
+            <label class="mat-label other-label mandatory-field">Product</label>
+            <mat-select name="product" id="product" (selectionChange)="productChanged($event)"
+              formControlName="product">
+              <mat-option *ngFor="let product of products" [value]="product.id">
+                {{product.name}}
+              </mat-option>
+            </mat-select>
+            <mat-error *ngIf="form.get('product').hasError('required') || form.get('product').hasError('min')">
+              Product is <strong>required</strong>
+            </mat-error>
+          </mat-form-field>
+          <mat-form-field class="mat-form-field-right">
+            <label class="mat-label other-label mandatory-field">Option Code</label>
+            <input matInput id="code" name="code" formControlName="code">
+          </mat-form-field>
+        </section>
+        <section>
+
+          <div class="field-container">
+            <mat-form-field class="mat-form-field" *ngIf="canEditOptionDetails">
+              <label class="mat-label other-label">Option Name </label>
+              <input matInput id="optionName" name="optionName" formControlName="optionName">
+            </mat-form-field>
+
+            <mat-form-field [ngClass]="(isOther)?'mat-form-field-right':'mat-form-field'" class="mat-form-field"
+              *ngIf="(!canEditOptionDetails || isOther)">
+              <label class="mat-label other-label mandatory-field">Option Name</label>
+              <input matInput minLength="3" maxlength="50" formControlName="name" unique-validator
+                [table]="'ProductOption'" [field]="'Name'" [currentValue]="this.form.getRawValue().name"
+                [metaValue]="this.form.getRawValue().product" [serviceType]="2" />
+              <mat-error *ngIf="form.get('name').hasError('minLength')">
+                Product option name must be at least 3 characters
+              </mat-error>
+              <mat-error *ngIf="form.get('name').hasError('required')">
+                Product option name is required
+              </mat-error>
+              <mat-error *ngIf="form.get('name').hasError('isTaken')">
+                This option name <strong>already exists</strong>
+              </mat-error>
+            </mat-form-field>
+          </div>
+          <div class="field-container-right">
+            <mat-form-field>
+              <label class="mat-label other-label">Option Description (Optional)</label>
+              <input matInput maxlength="255" formControlName="description" />
+            </mat-form-field>
+          </div>
+        </section>
+
+        <section *ngIf="!isStatutory">
+          <div class="field-container">
+            <mat-form-field>
+              <label class="mat-label other-label mandatory-field">Intemediary Service Fee</label>
+              <input (ngModelChange)="updateMaxAdminFee($event)" Percentage matInput formControlName="maxAdminFee" />
+            </mat-form-field>
+          </div>
+          <div class="field-container-right">
+            <mat-form-field>
+              <label class="mat-label other-label mandatory-field">Max Commission Fee Percentage</label>
+              <input (ngModelChange)="updateMaxCommissionFee($event)" Percentage matInput
+                formControlName="maxCommissionFee" />
+            </mat-form-field>
+          </div>
+        </section>
+
+        <section *ngIf="!isStatutory">
+          <div class="field-container">
+            <mat-form-field>
+              <label class="mat-label other-label mandatory-field">Max Binder Fee Percentage</label>
+              <input (ngModelChange)="updateMaxBinderFee($event)" Percentage matInput formControlName="maxBinderFee" />
+            </mat-form-field>
+          </div>
+          <div class="field-container-right">
+            <mat-form-field>
+              <label class="mat-label other-label">Commission Scale</label>
+              <mat-select name="scale" id="scale" formControlName="scale"
+                (selectionChange)="selectedScaleChanged($event)">
+                <mat-option [value]="1">Scale A</mat-option>
+              </mat-select>
+              <mat-error *ngIf="form.get('scale').hasError('required')">
+                Commission scale is required
+              </mat-error>
+            </mat-form-field>
+          </div>
+        </section>
+        <section>
+          <div class="field-container">
+            <mat-form-field>
+              <label class="mat-label other-label">Group Cover Amount</label>
+              <mat-select name="groupCoverAmountOption" id="groupCoverAmountOption" formControlName="groupCoverAmountOption">
+                <mat-option *ngFor="let value of groupCoverAmountOptions" [value]="value.id">
+                  {{value.name}}
+                </mat-option>
+              </mat-select>
+            </mat-form-field>
+          </div>
+        </section>
+        <section>
+          <div class="field-container">
+            <mat-form-field>
+              <div><label class="mat-label other-label mandatory-field">Option Start Date</label></div>
+              <input matInput formControlName="startDate" [matDatepicker]="startDate" id="startDate" name="startDate"
+                (dateChange)="validateDates()">
+              <mat-datepicker-toggle matSuffix [for]="startDate" [disabled]="form.disabled">
+              </mat-datepicker-toggle>
+              <mat-datepicker touchUi="true" #startDate></mat-datepicker>
+              <mat-error *ngIf="form.get('startDate').hasError('min')">
+                Product option start date cannot come <strong>after the end date</strong>
+              </mat-error>
+              <mat-error *ngIf="form.get('startDate').hasError('required')">
+                Product option start date is <strong>required</strong>
+              </mat-error>
+              <mat-error *ngIf="form.get('startDate').hasError('min-today')">
+                Please select a start date in the <strong>future</strong>
+              </mat-error>
+            </mat-form-field>
+          </div>
+          <div class="field-container-right">
+            <mat-form-field>
+              <div><label class="mat-label other-label">Option End Date</label></div>
+              <input matInput formControlName="endDate" [matDatepicker]="endDate" id="endDate" name="endDate"
+                (dateChange)="validateDates()">
+              <mat-datepicker-toggle matSuffix [for]="endDate" [disabled]="form.disabled"></mat-datepicker-toggle>
+              <mat-datepicker touchUi="true" #endDate></mat-datepicker>
+              <mat-error *ngIf="form.get('endDate').hasError('min')">
+                Product option end date cannot be <strong>less than the start date</strong>
+              </mat-error>
+            </mat-form-field>
+          </div>
+        </section>
+
+        <section>
+          <!--Cover type-->
+          <mat-form-field class="field-container">
+            <label class="mat-label other-label mandatory-field">Option Cover Types</label>
+            <mat-select name="coverType" id="coverType" (selectionChange)="coverTypeChanged($event)"
+              formControlName="coverType">
+              <mat-option *ngFor="let coverType of coverTypes" [value]="coverType.id">
+                {{coverType.name}}
+              </mat-option>
+            </mat-select>
+            <mat-error *ngIf="form.get('coverType').hasError('required') || form.get('coverType').hasError('min')">
+              Option Cover Type is <strong>required</strong>
+            </mat-error>
+          </mat-form-field>
+
+          <div class="field-container-right" *ngIf="!isStatutory">
+            <label class="mat-label other-label mandatory-field">Option Payment Frequencies</label>
+            <multi-select [lookupName]="'PaymentFrequency'" [selectedIds]="form.get('paymentFrequencies').value"
+              id="PaymentFrequency" name="PaymentFrequency" [isReadOnly]="form.disabled"
+              (onChange)="onMultiSelectChanged()">
+            </multi-select>
+          </div>
+
+        </section>
+
+        <section>
+          <!--Product Option Status-->
+          <div class="field-container">
+            <mat-form-field class="mat-form-field">
+              <label class="mat-label other-label ">Option Status</label>
+              <mat-select formControlName="productStatus">
+                <mat-option *ngFor="let status of productStatuses" [value]="status.id">{{status.name}}</mat-option>
+              </mat-select>
+            </mat-form-field>
+          </div>
+
+        </section>
+
+        <div *ngIf="isStatutory">
+          <section>
+            <!--Product Type -->
+            <mat-form-field class="mat-form-field">
+              <label class="mat-label other-label">Product Type</label>
+              <mat-select name="productType" id="productType" (selectionChange)="productTypechanged($event)"
+                formControlName="productType">
+                <mat-option *ngFor="let productType of productTypes" [value]="productType.id">
+                  {{productType.name}}
+                </mat-option>
+              </mat-select>
+            </mat-form-field>
+
+            <mat-form-field class="mat-form-field-right">
+              <label class="mat-label other-label ">Cover Member Type</label>
+              <mat-select formControlName="coverOptionTypeId">
+                <mat-option *ngFor="let coverOptionType of coverOptionTypes" [value]="coverOptionType.id">
+                  {{coverOptionType.name}}</mat-option>
+              </mat-select>
+            </mat-form-field>
+          </section>
+        </div>
+        <div *ngIf="isStatutory">
+          <section>
+            <div class="field-container">
+              <mat-checkbox formControlName="taxabled">Taxabled</mat-checkbox>
+            </div>
+          </section>
+        </div>
+      </form>
+    </mat-card-content>
+  </mat-card>
+</div>

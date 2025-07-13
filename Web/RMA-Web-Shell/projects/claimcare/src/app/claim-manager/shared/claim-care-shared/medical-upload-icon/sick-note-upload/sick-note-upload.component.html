@@ -1,0 +1,249 @@
+<mat-card class="pad" *ngIf="(isLoading$ | async)">
+    <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+    <label><i>{{loadingMessage$ | async}}</i></label>
+</mat-card>
+
+<mat-card *ngIf="!(isLoading$ | async)">
+    <div class="menu-bar">
+        <span class="material-icons">
+            edit_document
+        </span>&nbsp;Sick Note Medical Report
+
+        <span class="material-icons pointer right" matTooltip="close" (click)='cancel()'>
+            close
+        </span>
+        <span class="material-icons pointer right pulse" matTooltip="save" (click)='save()'
+            *ngIf="(form.valid && !form.pristine) && selectedICDCodes.length > 0 && documentsEmitted && documentsEmitted.length > 0">
+            save
+        </span>
+    </div>
+
+    <health-care-provider-search-V2 *ngIf="!selectedHealthCareProvider"
+        (healthCareProviderSelectedEmit)="setHealthCareProvider($event)"></health-care-provider-search-V2>
+
+    <form [formGroup]="form" class="mat-container details-form" novalidate>
+        <div *ngIf="selectedHealthCareProvider">
+            <section>
+                <mat-form-field class="mat-form-field">
+                    <label class="mat-label other-label mandatory-field">Received Date</label>
+                    <input matInput formControlName="reportDate" [matDatepicker]="reportDate" id="reportDate"
+                        name="reportDate">
+                    <mat-datepicker-toggle matSuffix [for]="reportDate" [disabled]="false"></mat-datepicker-toggle>
+                    <mat-datepicker startView="month" [startAt]="startDate" touchUi="true" #reportDate></mat-datepicker>
+                </mat-form-field>
+
+                <mat-form-field class="mat-form-field-right">
+                    <label class="mat-label other-label">Healthcare Provider Practice Number</label>
+                    <input #healthcareProviderPracticeNumber matInput formControlName="healthcareProviderPracticeNumber"
+                        name="healthcareProviderPracticeNumber" id="healthcareProviderPracticeNumber" />
+                    <mat-icon *ngIf="!isReadOnly" matTooltip="search health care provider" (click)="resetHCPSearch()"
+                        class="icn icn-button shift-icn-down" matSuffix
+                        [for]="healthcareProviderPracticeNumber">restart_alt</mat-icon>
+                </mat-form-field>
+            </section>
+
+            <section>
+                <mat-form-field class="mat-form-field">
+                    <label class="mat-label other-label mandatory-field">Healthcare Provider Name</label>
+                    <input matInput id="healthcareProviderName" name="healthcareProviderName"
+                        formControlName="healthcareProviderName" />
+                </mat-form-field>
+            </section>
+
+            <section>
+                <mat-form-field class="mat-form-field">
+                    <label class="mat-label other-label">Medical Report Category</label>
+                    <mat-select name="medicalReportCategory" id="medicalReportCategory"
+                        formControlName="medicalReportCategory">
+                        <mat-option *ngFor="let medicalReportCategory of medicalReportCategories"
+                            [value]="medicalReportCategory.id">
+                            {{medicalReportCategory.name}}
+                        </mat-option>
+                    </mat-select>
+                    <mat-error
+                        *ngIf="form.get('medicalReportCategory').hasError('required') && form.get('medicalReportCategory').touched">
+                        medical report category is <strong>required</strong>
+                    </mat-error>
+                </mat-form-field>
+
+                <mat-form-field class="mat-form-field-right">
+                    <label class="mat-label other-label mandatory-field">Date of Consultation</label>
+                    <input readonly matInput formControlName="dateOfConsultation" [matDatepicker]="dateOfConsultation"
+                        id="dateOfConsultation" name="dateOfConsultation" [min]="minDate" [max]="startDate" date="true"
+                        time="false" (dateChange)="consultationDateChange($event)">
+                    <mat-datepicker-toggle matSuffix [for]="dateOfConsultation"
+                        [disabled]="false"></mat-datepicker-toggle>
+                    <mat-datepicker startView="month" [startAt]="startDate" touchUi="true"
+                        #dateOfConsultation></mat-datepicker>
+                    <mat-error
+                        *ngIf="form.get('dateOfConsultation').hasError('required') && form.get('dateOfConsultation').touched">
+                        date of consultation is <strong>required</strong>
+                    </mat-error>
+                    <mat-error *ngIf="form.get('dateOfConsultation').hasError('inValidDate')">
+                        date of consultation must not be before date of accident
+                    </mat-error>
+                </mat-form-field>
+            </section>
+
+            <section>
+                <mat-form-field class="mat-form-field">
+                    <label class="mat-label other-label mandatory-field">Clinical Description</label>
+                    <textarea matInput formControlName="clinicalDescription" id="clinicalDescription"
+                        name="clinicalDescription"></textarea>
+                    <mat-error *ngIf="form.get('clinicalDescription').hasError('required') && form.get('clinicalDescription').touched">
+                        clinical description is <strong>required</strong>
+                    </mat-error>
+                </mat-form-field>
+
+                <mat-form-field class="mat-form-field-right">
+                    <label class="mat-label other-label mandatory-field">Mechanism of Injury</label>
+                    <textarea matInput formControlName="mechanismOfInjury" id="mechanismOfInjury"
+                        name="mechanismOfInjury"></textarea>
+                    <mat-error *ngIf="form.get('mechanismOfInjury').hasError('required') && form.get('mechanismOfInjury').touched">
+                        mechanism of injury is <strong>required</strong>
+                    </mat-error>
+                </mat-form-field>
+            </section>
+
+            <section>
+                <mat-form-field class="mat-form-field">
+                    <label class="mat-label other-label mandatory-field">Body Side</label>
+                    <mat-select name="bodySide" id="bodySide" formControlName="bodySide">
+                        <mat-option *ngFor="let bodySide of bodySides" [value]="bodySide.id">
+                            {{bodySide.name}}
+                        </mat-option>
+                    </mat-select>
+                    <mat-error *ngIf="form.get('bodySide').hasError('required') && form.get('bodySide').touched">
+                        body side is <strong>required</strong>
+                    </mat-error>
+                </mat-form-field>
+
+                <mat-form-field class="mat-form-field-right">
+                    <label class="mat-label other-label">Severity</label>
+                    <mat-select name="severity" id="severity" formControlName="severity">
+                        <mat-option *ngFor="let severity of severities" [value]="severity.id">
+                            {{severity.name}}
+                        </mat-option>
+                    </mat-select>
+                    <mat-error *ngIf="form.get('severity').hasError('required') && form.get('severity').touched">
+                        severity is <strong>required</strong>
+                    </mat-error>
+                </mat-form-field>
+            </section>
+
+            <mat-card class="mat-color">
+                <mat-checkbox id="nextReviewDateApplicable" name="nextReviewDateApplicable" (change)="nextReviewDateApplicableChecked($event)"
+                    formControlName="nextReviewDateApplicable" class="example-margin">
+                    <label id="lblnextReviewDateApplicable" class="mat-label other-label">Is next review date applicable?</label>
+                </mat-checkbox>
+                <br />
+                <mat-checkbox id="isPreExistingConditions" name="isPreExistingConditions"
+                    formControlName="isPreExistingConditions" class="example-margin"
+                    (change)="onIsPreExistingConditionsChecked($event)">
+                    <label id="lblnextReviewDateApplicable" class="mat-label other-label">Is a pre-existing condition?</label>
+                </mat-checkbox>
+            </mat-card>
+
+
+            <mat-card *ngIf="nextReviewSelected || isPreExistingConditionSelected">
+                <section>
+                    <mat-form-field class="mat-form-field" *ngIf="nextReviewSelected">
+                        <label class="mat-label other-label mandatory-field">Date of next review</label>
+                        <input readonly matInput formControlName="dateOfNextReview" [matDatepicker]="dateOfNextReview"
+                            id="dateOfNextReview" name="dateOfNextReview" [min]="reviewDateMin">
+                        <mat-datepicker-toggle matSuffix [for]="dateOfNextReview"
+                            [disabled]="false"></mat-datepicker-toggle>
+                        <mat-datepicker startView="month" [startAt]="startDate" touchUi="true"
+                            #dateOfNextReview></mat-datepicker>
+                        <mat-error
+                            *ngIf="form.get('dateOfNextReview').hasError('required') && form.get('dateOfNextReview').touched">
+                            date of next review is <strong>required</strong>
+                        </mat-error>
+                        <mat-error *ngIf="form.get('dateOfNextReview').hasError('invalidEndDate')">
+                            date of next review cannot be before date of consultation
+                        </mat-error>
+                    </mat-form-field>
+
+                    <mat-form-field class="mat-form-field-right" *ngIf="isPreExistingConditionSelected">
+                        <label class="mat-label other-label">Pre-existing conditions description</label>
+                        <textarea matInput formControlName="preExistingConditions" id="preExistingConditions"
+                            name="preExistingConditions"></textarea>
+                        <mat-error
+                            *ngIf="form.get('preExistingConditions').hasError('required') && form.get('preExistingConditions').touched">
+                            pre-existing conditions description is <strong>required</strong>
+                        </mat-error>
+                    </mat-form-field>
+                </section>
+            </mat-card>
+
+            <mat-card>
+                <mat-checkbox id="isInjuryMechanismConsistent" name="isInjuryMechanismConsistent"
+                    formControlName="isInjuryMechanismConsistent" class="example-margin">
+                    <label id="lblnextReviewDateApplicable" class="mat-label other-label">Is the injury mechanism consistent?</label>
+                </mat-checkbox>
+            </mat-card>
+
+            <mat-card>
+                <label class="other-label">Is the patient eligible for days off?</label><br /><br />
+                <mat-radio-group formControlName="isUnfitForWork" id="isUnfitForWork"
+                    (change)="isUnfitForWorkChange($event)">
+                    <mat-radio-button value="Yes">Yes</mat-radio-button>&nbsp;
+                    <mat-radio-button value="No">No</mat-radio-button>
+                </mat-radio-group>
+                <br /><br />
+                <section *ngIf="form.value.isUnfitForWork == 'Yes' || isUnfitForWorkSelected">
+                    <mat-form-field class="mat-form-field">
+                        <label class="other-label mandatory-field">First day off</label>
+                        <input readonly matInput [matDatepicker]="firstDayOffPicker" formControlName="firstDayOff" [min]="minDate"
+                            id="firstDayOff" (dateChange)="processFirstLastDate()">
+                        <mat-datepicker-toggle matSuffix [for]="firstDayOffPicker"></mat-datepicker-toggle>
+                        <mat-datepicker startView="month" [startAt]="startDate" touchUi="true" #firstDayOffPicker></mat-datepicker>
+                        <mat-error *ngIf="form.get('firstDayOff').hasError('required') && form.get('firstDayOff').touched">
+                            first day off is <strong>required</strong>
+                        </mat-error>
+                        <mat-error *ngIf="form.get('firstDayOff').hasError('inValidDate')">
+                            first day off must not be before date of accident
+                        </mat-error>
+                    </mat-form-field>
+                    
+                    <mat-form-field class="mat-form-field-right">
+                        <label class="other-label mandatory-field">Last day off</label>
+                        <input readonly matInput [matDatepicker]="lastDayOffPicker" formControlName="lastDayOff" [min]="minDate"
+                            id="lastDayOff" (dateChange)="processFirstLastDate()">
+                        <mat-datepicker-toggle matSuffix [for]="lastDayOffPicker"></mat-datepicker-toggle>
+                        <mat-datepicker startView="month" [startAt]="startDate" touchUi="true" #lastDayOffPicker></mat-datepicker>
+                        <mat-error *ngIf="form.get('lastDayOff').hasError('required') && form.get('lastDayOff').touched">
+                            last day off is <strong>required</strong>
+                        </mat-error>
+                        <mat-error *ngIf="form.get('lastDayOff').hasError('inValidDate')">
+                            last day off date cannot be before first day off date
+                        </mat-error>
+                    </mat-form-field>
+                </section>
+
+                <section *ngIf="form.value.isUnfitForWork == 'Yes' || isUnfitForWorkSelected">
+                    <mat-form-field class="mat-form-field">
+                        <label class="mat-label other-label">Estimated days off</label>
+                        <input matInput formControlName="estimatedDaysOff" id="estimatedDaysOff"
+                            name="estimatedDaysOff" />
+                    </mat-form-field>
+                </section>
+            </mat-card>
+
+            <estimate-icd-code-list [personEvent]="personEvent" [event]="event" [selectedICDCodes]="selectedICDCodes"
+                [medicalReportForm]="personEvent.firstMedicalReport" [isWizard]="isWizard" [isReadOnly]="isReadOnly"
+                (formStatusChanged)="onIcdCodeListFormStatusChanged($event)"></estimate-icd-code-list>
+
+            <document-uploader *ngIf="claimMedicalDocuments" [documentSet]="claimMedicalDocuments"
+                [documentTypeFilter]="sickNoteReportEnum" [systemName]="documentSystemName"
+                [forceRequiredDocumentTypeFilter]="sickNoteReportEnum"
+                [keyName]="'PersonEventId'"
+                [keyValue]="personEvent.personEventId"
+                [canDelete]="personEvent.isStraightThroughProcess ? false : true"
+                [documentUploadStatus]="documentUploadStatus"
+                (documentUploadedEmit)="checkIfDocumentUploaded($event)"
+                (refreshClaimEmit)="refreshEmit($event)"
+                (emitAllDocuments)="allDocumentsEmitted($event)"></document-uploader>
+        </div>
+    </form>
+</mat-card>

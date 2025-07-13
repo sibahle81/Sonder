@@ -1,0 +1,625 @@
+<div [hidden]="!isViewMode">
+  <mat-card>
+    <div class="expansionTitle"><span class="material-icons">groups</span>Employee Injury Details<span
+        *ngIf="viewInsuranceDetails" (click)="closeView()" class="material-icons pointer right"
+        matTooltip="Close Employee Details">
+        close
+      </span>
+
+      <span *ngIf="!isWizard && !viewInsuranceDetails" (click)="expand()" class="material-icons pointer right"
+        matTooltip="Close Employee Details">
+        cancel
+      </span>
+    </div>
+    <div [hidden]="!viewInsuranceDetails">
+      <div [hidden]="!viewInsuranceDetails">
+        <mat-accordion multi="false">
+          <mat-expansion-panel [expanded]="false" class="expansionHeaderColor">
+            <mat-expansion-panel-header>
+              <mat-panel-title>
+                <span>
+                  <span class="material-icons">
+                    task_alt
+                  </span>&nbsp;&nbsp;&nbsp;&nbsp;Injury Checks
+                </span>
+              </mat-panel-title>
+              <mat-panel-description>
+              </mat-panel-description>
+            </mat-expansion-panel-header>
+            <div [hidden]="!viewInsuranceDetails">
+              <div class="expansionTitle"><span *ngIf="!isWizard" class="material-icons pointer right"
+                  matTooltip="Close Injury Details">
+                  close
+                </span>
+              </div>
+
+              <form [formGroup]="formChecks" class="mat-container details-form" novalidate>
+                <section>
+                  <mat-checkbox id="atWorkPlace" name="atWorkPlace" formControlName="atWorkPlace"
+                    class="example-margin">Did
+                    the accident occur at employee's normal work place</mat-checkbox>
+                </section>
+
+                <section>
+                  <mat-checkbox id="inScopeOfDuty" name="" formControlName="inScopeOfDuty" class="example-margin">Did
+                    the
+                    injury occur while performing scope of duty</mat-checkbox>
+                </section>
+                <section>
+                  <mat-checkbox id="denturesDamaged" name="denturesDamaged" formControlName="denturesDamaged"
+                    class="example-margin">Were employees dentures damaged?</mat-checkbox>
+                </section>
+                <section>
+                  <mat-checkbox id="ledToDeath" name="ledToDeath" formControlName="ledToDeath" class="example-margin"
+                    (change)="ledToDeathChange($event)">Did
+                    accident lead to death of a person?</mat-checkbox>
+                </section>
+                <section>
+                  <mat-checkbox id="isAssault" name="isAssault" formControlName="isAssault" class="example-margin"
+                    (change)="isAssaultChange($event)">Was it an assault?</mat-checkbox>
+                </section>
+                <section>
+                  <mat-checkbox id="roadAccident" name="roadAccident" formControlName="roadAccident"
+                    class="example-margin" (change)="isRoadAccidentChange($event)">Was it road accident?
+                  </mat-checkbox>
+                </section>
+                <section>
+                  <mat-checkbox id="isHijack" name="isHijack" formControlName="isHijack" class="example-margin"
+                    (change)="isHijackChange($event)">Was it an hijack?</mat-checkbox>
+                </section>
+                <div *ngIf="isRoadAccident">
+                  <mat-card>
+                    <div class="expansionTitle"><span class="material-icons">taxi_alert</span>&nbsp;Road Accident
+                      Details
+                    </div>
+                    <section>
+                      <mat-form-field class="mat-form-field">
+                        <label class="mat-label other-label">Employee Vehicle Make</label>
+                        <input matInput id="vehicleMake" name="vehicleMake" formControlName="vehicleMake" />
+                        <mat-error *ngIf="formChecks.get('vehicleMake').hasError('required')">
+                          Employee vehicle make is <strong>required</strong>
+                        </mat-error>
+                      </mat-form-field>
+
+                      <mat-form-field class="mat-form-field-right">
+                        <label class="mat-label other-label">Employee Vehicle Registration</label>
+                        <input matInput id="vehicleRegistration" name="vehicleRegistration"
+                          formControlName="vehicleRegistration" />
+                        <mat-error *ngIf="formChecks.get('vehicleRegistration').hasError('required')">
+                          Employee Vehicle Registration is <strong>required</strong>
+                        </mat-error>
+                      </mat-form-field>
+                    </section>
+                    <section>
+                      <mat-form-field class="mat-form-field">
+                        <label class="mat-label other-label">Other Party Vehicle Make</label>
+                        <input matInput id="otherVehicleMake" name="otherVehicleMake"
+                          formControlName="otherVehicleMake" />
+                        <mat-error *ngIf="formChecks.get('otherVehicleMake').hasError('required')">
+                          Other Party Vehicle Make is <strong>required</strong>
+                        </mat-error>
+                      </mat-form-field>
+
+                      <mat-form-field class="mat-form-field-right">
+                        <label class="mat-label other-label">Other Party Vehicle Registration</label>
+                        <input matInput id="otherVehicleRegistration" name="otherVehicleRegistration"
+                          formControlName="otherVehicleRegistration" />
+                        <mat-error *ngIf="formChecks.get('otherVehicleRegistration').hasError('required')">
+                          Other Party Vehicle Registration is <strong>required</strong>
+                        </mat-error>
+                      </mat-form-field>
+                    </section>
+                    <section>
+                      <mat-form-field class="mat-form-field">
+                        <label class="mat-label other-label">Police Reference Number</label>
+                        <input matInput id="policeReference" name="policeReference" formControlName="policeReference" />
+                        <mat-error *ngIf="formChecks.get('policeReference').hasError('required')">
+                          Police Reference Number is <strong>required</strong>
+                        </mat-error>
+                      </mat-form-field>
+
+                      <mat-form-field class="mat-form-field-right">
+                        <label class="mat-label other-label">Police Station Name</label>
+                        <input matInput id="policeStationName" name="policeStationName"
+                          formControlName="policeStationName" />
+                        <mat-error *ngIf="formChecks.get('policeStationName').hasError('required')">
+                          Police Station Name is <strong>required</strong>
+                        </mat-error>
+                      </mat-form-field>
+                    </section>
+                    <section>
+                      <mat-checkbox id="isBusiness" name="isBusiness" formControlName="isBusiness"
+                        class="example-margin" (change)="travelTypeChange($event, 'isBusiness')">
+                        Travelling
+                        on employer's business</mat-checkbox>
+                    </section>
+                    <section>
+                      <mat-checkbox id="isTraining" name="isTraining" formControlName="isTraining"
+                        class="example-margin" (change)="travelTypeChange($event, 'isTraining')">
+                        Travelling
+                        to training course/test/seminar on employer's instruction</mat-checkbox>
+                    </section>
+                    <section>
+                      <mat-checkbox id="toWork" name="toWork" formControlName="toWork" class="example-margin"
+                        (change)="travelTypeChange($event, 'toWork')">Travelling
+                        to/from
+                        work</mat-checkbox>
+                    </section>
+                    <section>
+                      <mat-checkbox id="onCallout" name="onCallout" formControlName="onCallout" class="example-margin"
+                        (change)="onCalloutChange()">
+                        On Callout
+                      </mat-checkbox>
+                    </section>
+                    <section>
+                      <mat-checkbox id="onStandBy" name="onStandBy" formControlName="onStandBy" class="example-margin"
+                        (change)="onStandByChange()">
+                        On StandBy
+                      </mat-checkbox>
+                    </section>
+                    <section>
+                      <mat-checkbox id="onPublicRoad" name="onPublicRoad" formControlName="onPublicRoad"
+                        (change)="onPublicRoadChange()" class="example-margin">On Public Road</mat-checkbox>
+                    </section>
+                    <section>
+                      <mat-checkbox id="onPrivateRoad" name="onPrivateRoad" formControlName="onPrivateRoad"
+                        (change)="onPrivateRoadChange()" class="example-margin">On Private Road</mat-checkbox>
+                    </section>
+                  </mat-card>
+                </div>
+              </form>
+            </div>
+          </mat-expansion-panel>
+          <br />
+          <mat-expansion-panel [expanded]="false" class="expansionHeaderColor">
+            <mat-expansion-panel-header>
+              <mat-panel-title>
+                <span>
+                  <span class="material-icons">groups</span>&nbsp;&nbsp;&nbsp;&nbsp;Injury Details
+                </span>
+              </mat-panel-title>
+              <mat-panel-description>
+              </mat-panel-description>
+            </mat-expansion-panel-header>
+            <div [hidden]="!viewInsuranceDetails">
+              <form [formGroup]="form" class="mat-container details-form" novalidate>
+                <section>
+                  <!--Insurance Type-->
+                  <mat-form-field class="mat-form-field">
+                    <label class="mat-label other-label mandatory-field">Insurance Type</label>
+                    <input matInput #insuranceTypeElement aria-label="insuranceType"
+                      [matAutocomplete]="insuranceTypesAuto" id="insuranceType" name="insuranceType"
+                      (blur)="CheckResult('insuranceType')" formControlName="insuranceType">
+                    <span class="material-icons icon">
+                      expand_more
+                    </span>
+                    <mat-autocomplete #insuranceTypesAuto="matAutocomplete" id="insuranceType">
+                      <mat-option *ngFor="let type of filteredInsuranceTypes" [value]="type.code">
+                        {{type.code}}
+                      </mat-option>
+                    </mat-autocomplete>
+                    <mat-error *ngIf="form.get('bodySide').hasError('required')">
+                      insurance Type is <strong>required</strong>
+                    </mat-error>
+                  </mat-form-field>
+                  <mat-form-field class="mat-form-field-right">
+                    <label class="mat-label other-label mandatory-field">Date Notified</label>
+                    <input matInput formControlName="dateNotified" readonly [max]="maxDate"
+                      [matDatepicker]="dateNotified" id="dateNotified" name="dateNotified">
+                    <mat-datepicker-toggle matSuffix [for]="dateNotified" [disabled]="false"></mat-datepicker-toggle>
+                    <mat-datepicker touchUi="true" #dateNotified></mat-datepicker>
+                    <mat-error *ngIf="form.get('dateNotified').hasError('required')">
+                      Date notified is <strong>required</strong>
+                    </mat-error>
+                    <mat-error *ngIf="form.get('dateNotified').hasError('inValidDate')">
+                      Date notified must not be before date of accident
+                    </mat-error>
+                  </mat-form-field>
+                </section>
+                <section>
+                  <!--Claim Type-->
+                  <mat-form-field class="mat-form-field">
+                    <label class="mat-label other-label mandatory-field">Claim Type</label>
+                    <input matInput #claimTypeElement aria-label="claimType" [matAutocomplete]="claimTypesAuto"
+                      (blur)="CheckResult('claimType')" id="claimType" name="claimType" formControlName="claimType">
+                    <span class="material-icons icon">
+                      expand_more
+                    </span>
+                    <mat-autocomplete #claimTypesAuto="matAutocomplete" id="claimType">
+                      <mat-option *ngFor="let type of filteredClaimTypes" [value]="type.name">
+                        {{type.name}}
+                      </mat-option>
+                    </mat-autocomplete>
+                    <mat-error *ngIf="form.get('claimType').hasError('required')">
+                      claim Type is <strong>required</strong>
+                    </mat-error>
+                  </mat-form-field>
+                  <!--Benefits-->
+                  <mat-form-field class="mat-form-field-right">
+                    <label *ngIf="!isStatutory" class="mat-label other-label mandatory-field">Benefits</label>
+                    <label *ngIf="isStatutory" class="mat-label other-label mandatory-field">Injury Type</label>
+                    <input matInput #benefitDueElement aria-label="benefits" [matAutocomplete]="benefitsAuto"
+                      (blur)="CheckResult('benefits')" id="benefits" name="benefits" formControlName="benefits">
+                    <span class="material-icons icon">
+                      expand_more
+                    </span>
+                    <mat-autocomplete #benefitsAuto="matAutocomplete" id="benefits">
+                      <mat-option *ngFor="let benefit of filteredBenefits" [value]="benefit.name"
+                        matTooltip="{{benefit.description}}">
+                        {{benefit.name}}
+                      </mat-option>
+                    </mat-autocomplete>
+                    <mat-error *ngIf="form.get('benefits').hasError('required')">
+                      benefit is <strong>required</strong>
+                    </mat-error>
+                  </mat-form-field>
+                </section>
+                <section>
+                  <mat-form-field class="mat-form-field" *ngIf="ledToDeath">
+                    <label class="mat-label other-label mandatory-field">Date Of Death</label>
+                    <input matInput formControlName="dateOfDeath" readonly [max]="maxDate" [matDatepicker]="dateOfDeath"
+                      id="dateOfDeath" name="dateOfDeath">
+                    <mat-datepicker-toggle matSuffix [for]="dateOfDeath" [disabled]="false"></mat-datepicker-toggle>
+                    <mat-datepicker touchUi="true" #dateOfDeath></mat-datepicker>
+                    <mat-error *ngIf="form.get('dateOfDeath').hasError('required') && !inValidDateOfDeath">
+                      Date of death is <strong>required</strong>
+                    </mat-error>
+                    <mat-error *ngIf="form.get('dateOfDeath').hasError('inValidDate')">
+                      Date of Death must not be before date of accident
+                    </mat-error>
+                  </mat-form-field>
+                </section>
+                <section>
+                  <mat-form-field class="mat-form-field" *ngIf="ledToDeath">
+                    <label class="mat-label other-label">Death Certificate Number</label>
+                    <input matInput id="certificateNumber" name="certificateNumber"
+                      formControlName="certificateNumber" />
+                  </mat-form-field>
+
+                  <mat-form-field class="mat-form-field-right" *ngIf="ledToDeath">
+                    <label class="mat-label other-label">Cause Of Death</label>
+                    <input matInput id="causeOfDeath" name="causeOfDeath" formControlName="causeOfDeath" />
+                    <mat-error class="mat-error-incident" *ngIf="(form.get('causeOfDeath').hasError('required')  && form.get('causeOfDeath').touched)
+                    || (form.get('causeOfDeath').hasError('minlength')  && form.get('causeOfDeath').touched)
+                    || (form.get('causeOfDeath').hasError('maxlength')  && form.get('causeOfDeath').touched)">
+                      Cause Of Death is <strong>required</strong>,length should<strong> between 5 and 250</strong>
+                    </mat-error>
+                  </mat-form-field>
+                </section>
+
+                <div [hidden]="allowCapturer">
+                  <section>
+                    <!--Diagnostic Groups-->
+                    <mat-form-field class="mat-form-field">
+                      <label class="mat-label other-label mandatory-field">Primary Injury Diagnostic Group</label>
+                      <input matInput #diagnosticElement aria-label="diagnostics" (blur)="CheckResult('diagnostics')"
+                        [matAutocomplete]="diagnosticTypesAuto" id="diagnostics" name="diagnostics"
+                        formControlName="diagnostics">
+                      <span class="material-icons icon">
+                        expand_more
+                      </span>
+                      <mat-autocomplete #diagnosticTypesAuto="matAutocomplete" id="diagnostics">
+                        <mat-option *ngFor="let type of filteredDiagnostics" [value]="type.code">
+                          {{type?.code}}: {{type?.description}}
+                        </mat-option>
+                      </mat-autocomplete>
+                      <mat-error *ngIf="form.get('diagnostics').hasError('required')">
+                        Primary Injury Diagnostic Group is <strong>required</strong>
+                      </mat-error>
+                    </mat-form-field>
+
+                    <!-- icd code -->
+                    <mat-form-field class="mat-form-field-right">
+                      <label class="mat-label other-label mandatory-field">ICD10 Code Category</label>
+                      <input matInput #icdCategoriesElement aria-label="codeCategory"
+                        (blur)="CheckResult('codeCategory')" [matAutocomplete]="codeCategoryAuto" id="codeCategory"
+                        name="codeCategory" formControlName="codeCategory">
+                      <span class="material-icons icon">
+                        expand_more
+                      </span>
+                      <mat-autocomplete #codeCategoryAuto="matAutocomplete" id="codeCategory">
+                        <mat-option *ngFor="let type of filteredIcdCategories" [value]="type.icd10CategoryCode">
+                          {{type.icd10CategoryCode}}: {{type.icd10CategoryDescription}}
+                        </mat-option>
+                      </mat-autocomplete>
+                      <mat-error *ngIf="form.get('codeCategory').hasError('required')">
+                        ICD10 Code Category is <strong>required</strong>
+                      </mat-error>
+                    </mat-form-field>
+                  </section>
+                  <section>
+                    <!-- sub-category -->
+                    <mat-form-field class="mat-form-field">
+                      <label class="mat-label other-label mandatory-field">ICD10 Code Sub-Category</label>
+                      <input matInput #icdSubCategoriesElement aria-label="subCategory" [matAutocomplete]="subCodeAuto"
+                        (blur)="CheckResult('subCategory')" id="subCategory" name="subCategory"
+                        formControlName="subCategory">
+                      <span class="material-icons icon">
+                        expand_more
+                      </span>
+                      <mat-autocomplete #subCodeAuto="matAutocomplete" id="subCategory">
+                        <mat-option *ngFor="let type of filteredIcdSubCategories" [value]="type.icd10SubCategoryCode">
+                          {{type.icd10SubCategoryCode}}: {{type.icd10SubCategoryDescription}}
+                        </mat-option>
+                      </mat-autocomplete>
+                      <mat-error *ngIf="form.get('subCategory').hasError('required')">
+                        ICD10 Code Sub-Category is <strong>required</strong>
+                      </mat-error>
+                    </mat-form-field>
+
+                    <mat-form-field class="mat-form-field-right">
+                      <label class="mat-label other-label mandatory-field">Brief Description Of Injury</label>
+                      <textarea matInput formControlName="injuryDescription" id="injuryDescription"
+                        name="injuryDescription"></textarea>
+                      <mat-error *ngIf="form.get('injuryDescription').hasError('required')">
+                        Brief Description Of Injury is <strong>required</strong>
+                      </mat-error>
+                    </mat-form-field>
+                  </section>
+                  <section>
+                    <!--ICD10 Code-->
+                    <mat-form-field class="mat-form-field">
+                      <label class="mat-label other-label mandatory-field">ICD10 Code</label>
+                      <input matInput #icdCodeElement aria-label="icdCode" [matAutocomplete]="codeAuto" id="icdCode"
+                        (blur)="CheckResult('icdCode')" name="icdCode" formControlName="icdCode">
+                      <span class="material-icons icon">
+                        expand_more
+                      </span>
+                      <mat-autocomplete #codeAuto="matAutocomplete" id="icdCode">
+                        <mat-option *ngFor="let type of filteredIcdCodes" [value]="type.icd10Code">
+                          {{type.icd10Code}}: {{type.icd10CodeDescription}}
+                        </mat-option>
+                      </mat-autocomplete>
+                      <mat-error *ngIf="form.get('icdCode').hasError('required')">
+                        ICD10 Code is <strong>required</strong>
+                      </mat-error>
+                    </mat-form-field>
+                    <!--Severity-->
+                    <mat-form-field class="mat-form-field-right">
+                      <label class="mat-label other-label">Severity</label>
+                      <input matInput #severityElement aria-label="severity" [matAutocomplete]="severityTypesAuto"
+                        (blur)="CheckResult('severity')" id="severity" name="severity" formControlName="severity">
+                      <span class="material-icons icon">
+                        expand_more
+                      </span>
+                      <mat-autocomplete #severityTypesAuto="matAutocomplete" id="severity">
+                        <mat-option *ngFor="let type of filteredSeverities" [value]="type.name">
+                          {{type.name}}
+                        </mat-option>
+                      </mat-autocomplete>
+                      <mat-error *ngIf="form.get('severity').hasError('required')">
+                        Severity is <strong>required</strong>
+                      </mat-error>
+                    </mat-form-field>
+                  </section>
+                  <section>
+                    <!--Body Side-->
+                    <mat-form-field class="mat-form-field">
+                      <label class="mat-label other-label mandatory-field">Body Side</label>
+                      <input matInput #bodySideElement aria-label="bodySide" [matAutocomplete]="bodySideTypesAuto"
+                        (blur)="CheckResult('bodySide')" id="bodySide" name="bodySide" formControlName="bodySide">
+                      <span class="material-icons icon">
+                        expand_more
+                      </span>
+                      <mat-autocomplete #bodySideTypesAuto="matAutocomplete" id="bodySide">
+                        <mat-option *ngFor="let type of filteredBodySides" [value]="type.name">
+                          {{type.name}}
+                        </mat-option>
+                      </mat-autocomplete>
+                      <mat-error *ngIf="form.get('bodySide').hasError('required')">
+                        Body Side is <strong>required</strong>
+                      </mat-error>
+                    </mat-form-field>
+                  </section>
+                </div>
+
+                <!-- not capturer -->
+                <div class="externalUser" [hidden]="!allowCapturer">
+                  <section>
+                    <!--Diagnostic Groups-->
+                    <mat-form-field class="mat-form-field">
+                      <label class="mat-label other-label mandatory-field">Primary Injury Diagnostic Group</label>
+                      <input matInput #diagnosticCapturerElement aria-label="diagnosticsNotCapturer"
+                        (blur)="CheckResult('diagnosticsNotCapturer')" [matAutocomplete]="diagnosticTypesAuto"
+                        id="diagnosticsNotCapturer" name="diagnosticsNotCapturer"
+                        formControlName="diagnosticsNotCapturer">
+                      <span class="material-icons icon">
+                        expand_more
+                      </span>
+                      <mat-autocomplete #diagnosticTypesAuto="matAutocomplete" id="diagnosticsNotCapturer">
+                        <mat-option *ngFor="let type of filteredDiagnostics" [value]="type.code">
+                          {{type?.code}}: {{type?.description}}
+                        </mat-option>
+                      </mat-autocomplete>
+                      <mat-error *ngIf="form.get('diagnosticsNotCapturer').hasError('required')">
+                        Primary Injury Diagnostic Group is <strong>required</strong>
+                      </mat-error>
+                    </mat-form-field>
+
+                    <!--Brief Description-->
+                    <mat-form-field class="mat-form-field-right">
+                      <label class="mat-label other-label mandatory-field">Brief Description Of Injury</label>
+                      <textarea matInput formControlName="injuryDescription" id="injuryDescription"
+                        name="injuryDescription"></textarea>
+                      <mat-error *ngIf="form.get('injuryDescription').hasError('required')">
+                        Brief Description Of Injury is <strong>required</strong>
+                      </mat-error>
+                    </mat-form-field>
+                  </section>
+                  <section>
+
+                    <!--Severity-->
+                    <mat-form-field class="mat-form-field">
+                      <label class="mat-label other-label mandatory-field">Severity</label>
+                      <input matInput #severityCapturerElement aria-label="severityNotCapturer"
+                        [matAutocomplete]="severityTypesAuto" id="severityNotCapturer" name="severityNotCapturer"
+                        (blur)="CheckResult('severityNotCapturer')" formControlName="severityNotCapturer">
+                      <span class="material-icons icon">
+                        expand_more
+                      </span>
+                      <mat-autocomplete #severityTypesAuto="matAutocomplete" id="severityNotCapturer">
+                        <mat-option *ngFor="let type of filteredSeverities" [value]="type.name">
+                          {{type.name}}
+                        </mat-option>
+                      </mat-autocomplete>
+                      <mat-error *ngIf="form.get('severityNotCapturer').hasError('required')">
+                        Severity is <strong>required</strong>
+                      </mat-error>
+                    </mat-form-field>
+
+                    <!--Body Side-->
+                    <mat-form-field class="mat-form-field-right">
+                      <label class="mat-label other-label mandatory-field">Body Side</label>
+                      <input matInput #bodySideCapturerElement aria-label="bodySide" (blur)="CheckResult('bodySide')"
+                        [matAutocomplete]="bodySideTypesAuto" id="bodySide" name="bodySide" formControlName="bodySide">
+                      <span class="material-icons icon">
+                        expand_more
+                      </span>
+                      <mat-autocomplete #bodySideTypesAuto="matAutocomplete" id="bodySide">
+                        <mat-option *ngFor="let type of filteredBodySides" [value]="type.name">
+                          {{type.name}}
+                        </mat-option>
+                      </mat-autocomplete>
+                      <mat-error *ngIf="form.get('bodySide').hasError('required')">
+                        Body Side is <strong>required</strong>
+                      </mat-error>
+                    </mat-form-field>
+                  </section>
+                </div>
+              </form>
+
+              <div *ngIf="isEditMode || isAddMode">
+                <span *ngIf="(form.valid && !form.pristine) && formChecks.valid" class="mat-label other-label pointer"
+                  style="margin-left: 10px;" (click)="save()"><span
+                    class="material-icons valid">check_circle</span></span>
+                <span *ngIf="(!form.valid || form.pristine) || !formChecks.valid" class="mat-label other-label pointer"
+                  style="margin-left: 10px;"><span class="material-icons"
+                    class="material-icons inValid">check_circle</span></span>
+                <span class="mat-label other-label pointer" (click)="cancel()"><span
+                    class="material-icons">cancel</span></span>
+              </div>
+            </div>
+            <br />
+            <br />
+            <div *ngIf="hasData">
+              <div class="expansionTitle"><span class="material-icons">
+                  medication
+                </span>&nbsp; ICD10 Codes
+              </div>
+              <mat-table #physicalDamages [dataSource]="physicalDamagesDataSource" matSort>
+
+                <!-- Name Column -->
+                <ng-container matColumnDef="description">
+                  <mat-header-cell *matHeaderCellDef> ICD10 Code Description </mat-header-cell>
+                  <mat-cell *matCellDef="let row"> {{row.description}} </mat-cell>
+                </ng-container>
+
+                <!-- Surname Column -->
+                <ng-container matColumnDef="bodySideAffectedType">
+                  <mat-header-cell *matHeaderCellDef> Body Side </mat-header-cell>
+                  <mat-cell *matCellDef="let row"> {{getBodySide(row.injuries[0].bodySideAffectedType)}}
+                  </mat-cell>
+                </ng-container>
+
+                <!-- idPassportNumber Column -->
+                <ng-container matColumnDef="injurySeverityType">
+                  <mat-header-cell *matHeaderCellDef> Severity </mat-header-cell>
+                  <mat-cell *matCellDef="let row"> {{getSeverity(row.injuries[0].injurySeverityType)}}
+                  </mat-cell>
+                </ng-container>
+
+                <!-- Actions Column -->
+                <ng-container matColumnDef="actions">
+                  <mat-header-cell *matHeaderCellDef> Actions </mat-header-cell>
+                  <mat-cell *matCellDef="let row" [matMenuTriggerFor]="menu" (click)="filterIcdMenu(row)"
+                    class="material-icons pointer">
+                    <span class="material-icons pointer right">more_vert</span>
+                    <mat-menu #menu="matMenu">
+                      <button disabled="{{menu.disable}}" mat-menu-item *ngFor="let menu of menus"
+                        (click)="onIcdMenuItemClick(row, menu)">{{menu.title}}</button>
+                    </mat-menu>
+                  </mat-cell>
+                </ng-container>
+
+                <mat-header-row *matHeaderRowDef="displayedColumnsIcd10"></mat-header-row>
+                <mat-row *matRowDef="let row; columns: displayedColumnsIcd10;"></mat-row>
+              </mat-table>
+            </div>
+          </mat-expansion-panel>
+        </mat-accordion>
+      </div>
+    </div>
+
+    <div *ngIf="(isLoading$ | async)">
+      <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+      <label class="mat-label other-label"><i>loading employee details...please wait</i></label>
+    </div>
+
+    <div *ngIf="!(isLoading$ | async) && dataSource.data.length === 0 && !viewInsuranceDetails">
+      <label class="mat-label other-label"><i>No employee details have been added...</i></label><br />
+    </div>
+
+    <div *ngIf="!(isLoading$ | async) && dataSource.data.length !== 0 && !viewInsuranceDetails">
+      <mat-table #table [dataSource]="dataSource" matSort>
+
+        <!-- Name Column -->
+        <ng-container matColumnDef="name">
+          <mat-header-cell *matHeaderCellDef> Name </mat-header-cell>
+          <mat-cell *matCellDef="let row"> {{row.rolePlayer.person.firstName}} </mat-cell>
+        </ng-container>
+
+        <!-- Surname Column -->
+        <ng-container matColumnDef="surname">
+          <mat-header-cell *matHeaderCellDef> Surname </mat-header-cell>
+          <mat-cell *matCellDef="let row"> {{row.rolePlayer.person.surname}} </mat-cell>
+        </ng-container>
+
+        <!-- idPassportNumber Column -->
+        <ng-container matColumnDef="idPassportNumber">
+          <mat-header-cell *matHeaderCellDef> Id/Passport Number </mat-header-cell>
+          <mat-cell *matCellDef="let row"> {{row.rolePlayer.person.idNumber ? row.rolePlayer.person.idNumber:
+            row.rolePlayer.person.passportNumber}}
+          </mat-cell>
+        </ng-container>
+
+        <ng-container matColumnDef="isVopdVerified">
+          <mat-header-cell *matHeaderCellDef> Is VOPD Verfied </mat-header-cell>
+          <mat-cell *matCellDef="let row"> {{row.rolePlayer.person.isVopdVerified}}
+          </mat-cell>
+        </ng-container>
+
+        <!-- Actions Column -->
+        <ng-container matColumnDef="actions">
+          <mat-header-cell *matHeaderCellDef> Actions </mat-header-cell>
+          <mat-cell *matCellDef="let row" [matMenuTriggerFor]="menu" (click)="filterMenu(row)"
+            class="material-icons pointer">
+            <span class="material-icons pointer right">more_vert</span>
+            <mat-menu #menu="matMenu">
+              <button disabled="{{menu.disable}}" mat-menu-item *ngFor="let menu of menus"
+                (click)="onMenuItemClick(row, menu)">{{menu.title}}</button>
+            </mat-menu>
+          </mat-cell>
+        </ng-container>
+
+        <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
+        <mat-row *matRowDef="let row; columns: displayedColumns;"></mat-row>
+      </mat-table>
+      <mat-paginator #paginator [length]="dataSource.data ? dataSource.data.length : 0" [pageIndex]="0" [pageSize]="5"
+        [pageSizeOptions]="[5, 10, 25, 100]">
+      </mat-paginator>
+    </div>
+    <br />
+
+
+  </mat-card>
+</div>
+
+<div *ngIf="!isViewMode">
+  <mat-card>
+    <div class="expansionTitle"><span class="material-icons">groups</span>Injury Details<span (click)="expand()"
+        class="material-icons pointer right" matTooltip="View Injury Details">
+        expand_more
+      </span></div>
+  </mat-card>
+</div>
+<br />

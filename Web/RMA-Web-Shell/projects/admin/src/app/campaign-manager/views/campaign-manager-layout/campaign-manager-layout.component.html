@@ -1,0 +1,27 @@
+﻿<div>
+    <div>
+        <nav class="innertop-nav">
+            <button mat-button [matMenuTriggerFor]="menu1">Campaigns</button>
+            <mat-menu #menu1="matMenu" [overlapTrigger]="false">
+                <button mat-menu-item [routerLink]="['campaign-details']">Create a campaign</button>
+                <!-- button mat-menu-item (click)="showCreateWizard()">Create campaign wizard</button -->
+                <button mat-menu-item [routerLink]="['find-campaign']">Find a campaign</button>
+                <button mat-menu-item [routerLink]="['campaign-list/mine']">My campaigns</button>
+            </mat-menu>
+            <button mat-button [matMenuTriggerFor]="menu2">Templates</button>
+            <mat-menu #menu2="matMenu" [overlapTrigger]="false">
+                <button mat-menu-item [routerLink]="['template-details']">Create a template</button>
+                <button mat-menu-item [routerLink]="['find-template']">Find a template</button>
+            </mat-menu>
+			<!--
+            <button mat-button [matMenuTriggerFor]="menu3">Reports</button>
+            <mat-menu #menu3="matMenu" [overlapTrigger]="false">
+                <button mat-menu-item [routerLink]="['retentions-report']">Retentions</button>
+            </mat-menu>
+			-->
+        </nav>
+    </div>
+    <div [hidden]="loadingMessage != null || error != null" class="container-padding">
+        <router-outlet></router-outlet>
+    </div>
+</div>

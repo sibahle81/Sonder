@@ -1,0 +1,318 @@
+<mat-card *ngIf="(isLoading$ | async)">
+  <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+  <label class="mat-label other-label"><i>loading pensioner details...please wait</i></label>
+</mat-card>
+
+<div [hidden]="(isLoading$ | async)">
+  <mat-card>
+    <form [formGroup]="form" class="mat-container details-form" novalidate>
+      <div class="menu-bar">
+        <span class="material-icons">
+          elderly
+        </span>
+        <b>&nbsp;Disability Pension Interview</b>
+        <span *ngIf="!isReadOnly" (click)="close()" class="material-icons pointer right" matTooltip="close">
+          close
+        </span>
+        <span *ngIf="isReadOnly" (click)="edit()" class="material-icons pointer right" matTooltip="edit">
+          settings
+        </span>
+        <span *ngIf="(form.valid && !form.pristine)" (click)="save()" class="material-icons pointer right"
+          matTooltip="save">
+          save
+        </span>
+      </div>
+
+      <mat-tab-group animationDuration="500ms">
+        <!--Details of the Beneficiary-->
+        <mat-tab label="Beneficiary">
+          <div class="menu-bar">
+            <span class="material-icons">
+              loyalty
+            </span>&nbsp;Beneficiaries
+            <span *ngIf="toggle" class="material-icons pointer right" matTooltip="close" (click)="cancelBeneficiary()">
+              arrow_back
+            </span>
+            <span *ngIf="!toggle" class="material-icons pointer right" matTooltip="add beneficiary"
+              (click)="addBeneficiary()">
+              add_circle
+            </span>
+          </div>
+          <div *ngIf="toggle && selectedPersonEvent">
+            <mat-tab-group animationDuration="500ms" [(selectedIndex)]="selectedTabIndex">
+              <mat-tab label="Beneficiary Details">
+                <beneficiary-person-detail [personEvent]="selectedPersonEvent" [isReadOnly]="isReadOnly"
+                  [isWizard]="isWizard" [mode]="mode"
+                  (emitNewBeneficiary)="setBeneficiary($event)"></beneficiary-person-detail>
+              </mat-tab>
+              <mat-tab label="Beneficiary Relation" *ngIf="showRelation">
+                <beneficiary-relation [beneficiary]="beneficiary" [toRolePlayerId]="toRolePlayerId"
+                  [isReadOnly]="isReadOnly" [isWizard]="isWizard"></beneficiary-relation>
+              </mat-tab>
+            </mat-tab-group>
+          </div>
+          <div *ngIf="!toggle && selectedPersonEvent">
+            <beneficiary-paged-list [personEvent]="selectedPersonEvent" 
+              (emitSelectedBeneficiary)="setSelectedBeneficiary($event)"></beneficiary-paged-list>
+          </div>
+        </mat-tab>
+        <!--Details of Disability-->
+        <mat-tab label="Disability">
+          <div class="menu-bar">
+            <span class="material-icons">
+              loyalty
+            </span>&nbsp;Details of Disability
+          </div>
+          <br>
+          <section>
+            <mat-form-field class="mat-form-field">
+              <label class="mat-label other-label">Interview Date</label>
+              <input matInput formControlName="interviewDate" id="interviewDate" readonly date="true" time="false"
+                name="interviewDate" [matDatepicker]="interviewDate">
+              <mat-datepicker-toggle matSuffix [for]="interviewDate"></mat-datepicker-toggle>
+              <mat-datepicker touchUi="true" #interviewDate></mat-datepicker>
+            </mat-form-field>
+          </section>
+
+          <section>
+            <div class="checkbox-container">
+              <label for="isInjury" class="other-label">Is Injury?</label>
+              <mat-checkbox id="isInjury" name="isInjury" formControlName="isInjury"></mat-checkbox>
+            </div>
+          
+            <div class="checkbox-container">
+              <label for="isDisease" class="other-label">Is Disease?</label>
+              <mat-checkbox id="isDisease" name="isDisease" formControlName="isDisease"></mat-checkbox>
+            </div>
+          </section>
+          
+          <section>
+            <mat-form-field class="mat-form-field">
+              <label class="mat-label other-label mandatory-field">Occupational Injury/Disease Name</label>
+              <input matInput type="text" formControlName="occupationalName" name="occupationalName"
+                id="occupationalName" />
+            </mat-form-field>
+          </section>
+
+          <section>
+            <div class="radio-container">
+              <label class="other-label mandatory-field">Is the injury Amputee?</label>
+              <mat-radio-group aria-label="Is the occupational injury amputee?"
+                formControlName="isAmputee" id="isAmputee">
+                <mat-radio-button value="Yes">Yes</mat-radio-button>&nbsp;
+                <mat-radio-button value="No">No</mat-radio-button>
+              </mat-radio-group>
+            </div>
+          </section>
+
+          <section>
+            <div class="radio-container">
+              <label class="other-label mandatory-field">Is the injury Paraplegic?</label>
+              <mat-radio-group aria-label="Is the occupational injury paraplegic?"
+                formControlName="isParaplegic" id="isParaplegic">
+                <mat-radio-button value="Yes">Yes</mat-radio-button>&nbsp;
+                <mat-radio-button value="No">No</mat-radio-button>
+              </mat-radio-group>
+            </div>
+          </section>
+
+          <section>
+            <mat-form-field class="mat-form-field">
+              <label class="mat-label other-label">Wheelchair Issued Date</label>
+              <input matInput formControlName="wheelchairIssuedDate" id="wheelchairIssuedDate" readonly date="true" time="false"
+                name="wheelchairIssuedDate" [matDatepicker]="wheelchairIssuedDate">
+              <mat-datepicker-toggle matSuffix [for]="wheelchairIssuedDate"></mat-datepicker-toggle>
+              <mat-datepicker touchUi="true" #wheelchairIssuedDate></mat-datepicker>
+            </mat-form-field>
+            <mat-form-field class="mat-form-field-right">
+              <label class="mat-label other-label">Make/Model</label>
+              <input matInput type="text" formControlName="makeModel" name="makeModel" id="makeModel" />
+            </mat-form-field>
+          </section>
+
+          <section>
+            <mat-form-field class="mat-form-field">
+              <label class="mat-label other-label">Appliance Review Date</label>
+              <input matInput formControlName="applianceReviewDate" id="applianceReviewDate" readonly date="true" time="false"
+              name="applianceReviewDate" [matDatepicker]="applianceReviewDate">
+              <mat-datepicker-toggle matSuffix [for]="applianceReviewDate"></mat-datepicker-toggle>
+              <mat-datepicker touchUi="true" #applianceReviewDate></mat-datepicker>
+            </mat-form-field>
+          </section>
+
+          <section>
+            <mat-form-field class="mat-form-field">
+              <label class="mat-label other-label mandatory-field">Level Of Amputation</label>
+              <mat-select name="levelOfAmputation" id="levelOfAmputation" formControlName="levelOfAmputation">
+                <mat-option *ngFor="let levelOfAmputationType of levelOfAmputationTypes"
+                  [value]="levelOfAmputationType">
+                  {{formatLookup(levelOfAmputationType)}}
+                </mat-option>
+              </mat-select>
+            </mat-form-field>
+            <mat-form-field class="mat-form-field-right">
+              <label class="mat-label other-label mandatory-field">Limb Amputated</label>
+              <input matInput type="text" formControlName="limbAmputated" name="limbAmputated" id="limbAmputated" />
+            </mat-form-field>
+          </section>
+
+          <section>
+            <mat-form-field class="mat-form-field">
+              <label class="mat-label other-label">Prosthetic Review Date</label>
+              <input matInput formControlName="prostheticReviewDate" id="prostheticReviewDate" readonly date="true" time="false"
+                name="prostheticReviewDate" [matDatepicker]="prostheticReviewDate">
+              <mat-datepicker-toggle matSuffix [for]="prostheticReviewDate"></mat-datepicker-toggle>
+              <mat-datepicker touchUi="true" #prostheticReviewDate></mat-datepicker>
+            </mat-form-field>
+            <mat-form-field class="mat-form-field-right">
+              <label class="mat-label other-label">Prosthetic Issued</label>
+              <input matInput type="text" formControlName="prostheticIssued" name="prostheticIssued" id="prostheticIssued" />
+            </mat-form-field>
+          </section>
+
+          <section>
+            <div class="radio-container">
+              <label class="other-label other-label">Is the CAA?</label>
+              <mat-radio-group aria-label="Is the CAA?"
+                formControlName="isCAA" id="isCAA">
+                <mat-radio-button value="Yes">Yes</mat-radio-button>&nbsp;
+                <mat-radio-button value="No">No</mat-radio-button>
+              </mat-radio-group>
+            </div>
+          </section>
+
+          <section>
+            <div class="radio-container">
+              <label class="other-label">Is the family allowance?</label>
+              <mat-radio-group aria-label="Is the family allowance?"
+                formControlName="isFamilyAllowance" id="isFamilyAllowance">
+                <mat-radio-button value="Yes">Yes</mat-radio-button>&nbsp;
+                <mat-radio-button value="No">No</mat-radio-button>
+              </mat-radio-group>
+            </div>
+          </section>
+          
+          <section>
+            <mat-form-field class="mat-form-field">
+              <label class="mat-label other-label">Name Of Institution</label>
+              <input matInput type="text" formControlName="nameOfInstitution" name="nameOfInstitution"
+                id="nameOfInstitution" />
+            </mat-form-field>
+            <mat-form-field class="mat-form-field-right">
+              <label class="mat-label other-label">Landline Number</label>
+              <input matInput type="tel" formControlName="landlineNumberInstitution" name="landlineNumberInstitution"
+                id="landlineNumberInstitution" pattern="^[0-9]{10}$" maxlength="10" />
+              <mat-error
+                *ngIf="form.get('landlineNumberInstitution').hasError('pattern') && form.get('landlineNumberInstitution').touched">
+                Please enter exactly 10 digits.
+              </mat-error>
+            </mat-form-field>
+          </section>
+        </mat-tab>
+        <!--Briefing on Pension-->
+        <mat-tab label="Briefing on Pension">
+          <div class="menu-bar">
+            <span class="material-icons">
+              loyalty
+            </span>&nbsp;Briefing on Pension
+          </div>
+          <br>
+          <section>
+            <mat-form-field class="mat-form-field">
+              <label class="other-label">Chronic Medicines and Sundries</label>
+              <textarea matInput cdkTextareaAutosize cdkAutosizeMinRows="3" cdkAutosizeMaxRows="5"
+                id="chronicMedicinesAndSundries" formControlName="chronicMedicinesAndSundries" class="mat-input-element"
+                maxlength="1000"></textarea>
+            </mat-form-field>
+            <mat-form-field class="mat-form-field-right">
+              <label class="other-label">Certification Of Life Yearly and Suspension</label>
+              <textarea matInput cdkTextareaAutosize cdkAutosizeMinRows="3" cdkAutosizeMaxRows="5"
+                id="certificationOfLifeYearlyAndSuspension" formControlName="certificationOfLifeYearlyAndSuspension"
+                maxlength="1000"></textarea>
+            </mat-form-field>
+          </section>
+
+          <section>
+            <mat-form-field class="mat-form-field">
+              <label class="other-label">Information Brochure</label>
+              <textarea matInput cdkTextareaAutosize cdkAutosizeMinRows="3" cdkAutosizeMaxRows="5"
+                id="informationBrochure" formControlName="informationBrochure" class="mat-input-element"
+                maxlength="1000"></textarea>
+            </mat-form-field>
+          </section>
+
+          <section>
+            <mat-checkbox id="explainedCalculation" name="explainedCalculation" formControlName="explainedCalculation">
+              Explained to pensioner how disability and pension are calculated?
+            </mat-checkbox>
+          </section>
+          <section>
+            <mat-checkbox id="explainedIncreases" name="explainedIncreases" formControlName="explainedIncreases">
+              Explained to pensioner how pension increases are determined and applied?
+            </mat-checkbox>
+          </section>
+          <section>
+            <mat-checkbox id="explainedMedicalTreatment" name="explainedMedicalTreatment"
+              formControlName="explainedMedicalTreatment">
+              Explained to pensioner the medical treatment (acute/chronic) that RMA is responsible for?
+            </mat-checkbox>
+          </section>
+          <section>
+            <mat-checkbox id="explainedPreAuthorisation" name="explainedPreAuthorisation"
+              formControlName="explainedPreAuthorisation">
+              Explained to pensioner the pre authorisation process for medical treatment?
+            </mat-checkbox>
+          </section>
+          <section>
+            <mat-checkbox id="explainedPayDates" name="explainedPayDates" formControlName="explainedPayDates">
+              Explained to pensioner the RMA Pension Pay Dates and supplied a list?
+            </mat-checkbox>
+          </section>
+          <section>
+            <mat-checkbox id="explainedProofOfLife" name="explainedProofOfLife" formControlName="explainedProofOfLife">
+              Explained to pensioner proof of life process?
+            </mat-checkbox>
+          </section>
+          <section>
+            <mat-checkbox id="explainedMaintenance" name="explainedMaintenance" formControlName="explainedMaintenance">
+              Explained to pensioner the maintenance of the wheelchair/prosthetic?
+            </mat-checkbox>
+          </section>
+          <section>
+            <mat-checkbox id="suppliedBooklet" name="suppliedBooklet" formControlName="suppliedBooklet">
+              Supplied pensioner with the “RMA Pension Guide” Booklet?
+            </mat-checkbox>
+          </section>
+          <section>
+            <mat-checkbox id="suppliedContactDetails" name="suppliedContactDetails"
+              formControlName="suppliedContactDetails">
+              Supplied pensioner with contact number of RMA Contact Centre and the PMCA?
+            </mat-checkbox>
+          </section>
+          <section>
+            <mat-checkbox id="explainedChronicMedication" name="explainedChronicMedication"
+              formControlName="explainedChronicMedication">
+              Explained chronic medication and sundries?
+            </mat-checkbox>
+          </section>
+          <section>
+            <mat-checkbox id="explainedTransportation" name="explainedTransportation"
+              formControlName="explainedTransportation">
+              Explained the process of transportation?
+            </mat-checkbox>
+          </section>
+        </mat-tab>
+        <!--Notes-->
+        <mat-tab label="Notes">
+          <div class="menu-bar">
+            <span class="material-icons">
+              loyalty
+            </span>&nbsp;Notes
+          </div>
+          <common-notes [moduleType]="moduleType" [noteItemType]="noteItemType" [noteType]="noteType"
+            [noteCategory]="noteCategory"></common-notes>
+        </mat-tab>
+      </mat-tab-group>
+    </form>
+  </mat-card>
+</div>

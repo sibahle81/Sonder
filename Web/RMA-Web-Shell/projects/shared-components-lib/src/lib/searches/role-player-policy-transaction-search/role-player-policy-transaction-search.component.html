@@ -1,0 +1,212 @@
+<mat-card *ngIf="isLoading$ | async">
+    <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+    <label class="mat-label other-label"><i>{{loadingMessage$ | async}}</i></label>
+</mat-card>
+
+<div [hidden]="(isLoading$ | async)">
+    <mat-card>
+        <div class="menu-bar">
+            <span>
+                <span class="material-icons">
+                    account_balance
+                </span>
+                <span
+                    *ngIf="dataSource && dataSource.coverPeriod">&nbsp;{{dataSource.coverPeriod}}</span>&nbsp;Collections
+                <span *ngIf="!(dataSource.loading$ | async)" (click)="reset()" class="material-icons pointer right"
+                    matTooltip="reset">
+                    restart_alt
+                </span>
+
+                <span *ngIf="!(dataSource.loading$ | async)" (click)="openCollectionsReportDialog()"
+                    class="material-icons pointer right" matTooltip="view / download collections report">
+                    download
+                </span>
+
+                <span
+                    *ngIf="userHasPermission(editPermission) && !(dataSource.loading$ | async) && selectedRolePlayerPolicyTransactions && selectedRolePlayerPolicyTransactions?.length > 0"
+                    (click)="openConfirmationDialog()" class="material-icons pointer right pulse"
+                    matTooltip="authorise">
+                    logout
+                </span>
+            </span>
+        </div>
+
+        <form [formGroup]="form" class="mat-container details-form" novalidate>
+            <section>
+                <mat-form-field class="mat-form-field controlSize">
+                    <label class="mat-label other-label">Cover Period<span *ngIf="defaultCoverPeriod">&nbsp;&nbsp;<i><a
+                                    class="pointer" matTooltip="view current period" (click)="reset()">(current period:
+                                    {{defaultCoverPeriod}})</a></i></span></label>
+                    <mat-select name="coverPeriodFilter" id="coverPeriodFilter" formControlName="coverPeriodFilter"
+                        (selectionChange)="coverPeriodFilterChanged($event.value)">
+                        <mat-option *ngFor="let coverPeriod of coverPeriods" [value]="coverPeriod">
+                            {{coverPeriod}}
+                        </mat-option>
+                    </mat-select>
+                </mat-form-field>
+            </section>
+        </form>
+    </mat-card>
+
+    <mat-card *ngIf="(dataSource.loading$ | async)">
+        <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+        <label class="mat-label other-label"><i>searching...please wait</i></label>
+    </mat-card>
+
+    <div [hidden]="(dataSource.loading$ | async)">
+        <mat-card>
+            <span class="blue"><span *ngIf="this.rolePlayerId && this.rolePlayerId > 0">Total </span>Annual Premium:
+                <span *ngIf="!(isLoadingAnnualPremium$ | async)"><b>{{annualPremiumForCoverYear ?
+                        formatMoney(annualPremiumForCoverYear.toFixed(2)) : '0.00'}}</b></span>
+                <span *ngIf="isLoadingAnnualPremium$ | async" class="material-icons">autorenew</span>
+            </span>
+            <label class="mat-label other-label" *ngIf="relatedRecordContext"><i>&nbsp;&nbsp;highlighting all transactions raised for <b>{{relatedRecordContext | date: "yyyy-MM-dd"}}</b> collection cycle:
+                 <b>{{amountForSelectedPaymentCycle && amountForSelectedPaymentCycle > 0 ? formatMoney(amountForSelectedPaymentCycle.toFixed(2)) : '0.00'}}</b></i></label>
+            <br /><br />
+            <div [hidden]="!(dataSource.data && dataSource.data.data && dataSource.data.data?.length > 0)">
+                <mat-table #table [dataSource]="dataSource" matSort id="tblData" (matSortChange)="getData()">
+                    <ng-container matColumnDef="select">
+                        <mat-header-cell *matHeaderCellDef> Select </mat-header-cell>
+                        <mat-cell *matCellDef="let row">
+                            <mat-checkbox [disabled]="row.rolePlayerPolicyTransactionStatus == authorised"
+                                (change)="rolePlayerPolicyTransactionSelected(row)"
+                                [checked]="isSelected(row)"></mat-checkbox>
+                        </mat-cell>
+                    </ng-container>
+
+                    <ng-container matColumnDef="policyId">
+                        <mat-header-cell *matHeaderCellDef> Policy </mat-header-cell>
+                        <mat-cell *matCellDef="let row"><policy-number-display
+                                [policyId]="row.policyId" [isReadOnly]="!currentUser?.isInternalUser"></policy-number-display></mat-cell>
+                    </ng-container>
+
+                    <ng-container matColumnDef="transactionType">
+                        <mat-header-cell *matHeaderCellDef> Type </mat-header-cell>
+                        <mat-cell *matCellDef="let row">{{getTransactionType(row.transactionType)}}</mat-cell>
+                    </ng-container>
+
+                    <ng-container matColumnDef="documentNumber">
+                        <mat-header-cell *matHeaderCellDef mat-sort-header> Document Number </mat-header-cell>
+                        <mat-cell *matCellDef="let row">
+                            <span *ngIf="canViewDocument(row)"
+                                matTooltip="view / download {{getTransactionType(row.transactionType)}}">
+                                <b><a (click)="openInvoiceViewDialog(row)">{{row.documentNumber}}</a></b>
+                            </span>
+                            <span *ngIf="!canViewDocument(row)">
+                                <i>{{getInvoiceReferenceNumber(row)}}</i>
+                            </span>
+                        </mat-cell>
+                    </ng-container>
+
+                    <ng-container matColumnDef="effectiveDate">
+                        <mat-header-cell *matHeaderCellDef mat-sort-header> Collection Cycle </mat-header-cell>
+                        <mat-cell *matCellDef="let row" (click)="setRelatedRecordContext(row)"><b><a
+                                    matTooltip="highlight all transactions in collection cycle">{{row.effectiveDate | date: "yyyy/MM/dd"}}</a></b></mat-cell>
+                    </ng-container>
+
+                    <ng-container matColumnDef="totalAmount">
+                        <mat-header-cell *matHeaderCellDef> Amount </mat-header-cell>
+                        <mat-cell *matCellDef="let row">
+                            <span
+                                [ngClass]="row.rolePlayerPolicyTransactionStatus == authorised && row.transactionType != creditNote ? 'blue' : row.rolePlayerPolicyTransactionStatus == authorised && row.transactionType == creditNote ? 'amber' : 'gray'"><b>{{row.totalAmount
+                                    ? formatMoney(row.totalAmount.toFixed(2)) : 'N/A'}}</b></span>
+                        </mat-cell>
+                    </ng-container>
+
+                    <ng-container matColumnDef="rolePlayerPolicyTransactionStatus">
+                        <mat-header-cell *matHeaderCellDef mat-sort-header> Status </mat-header-cell>
+                        <mat-cell *matCellDef="let row">
+                            <div [ngClass]="row.rolePlayerPolicyTransactionStatus == authorised ? 'green' : 'gray'">
+                                {{getRolePlayerPolicyTransactionStatus(row.rolePlayerPolicyTransactionStatus)}}
+                            </div>
+                        </mat-cell>
+                    </ng-container>
+
+                    <ng-container matColumnDef="sentDate">
+                        <mat-header-cell *matHeaderCellDef> Date Authorised </mat-header-cell>
+                        <mat-cell *matCellDef="let row">{{row.sentDate ? (row.sentDate | date: 'yyyy/MM/dd HH:mm:ss') :
+                            'N/A'}}</mat-cell>
+                    </ng-container>
+
+                    <ng-container matColumnDef="documentDate">
+                        <mat-header-cell *matHeaderCellDef> Document Date </mat-header-cell>
+                        <mat-cell *matCellDef="let row">{{row.documentDate ? (row.documentDate | date: 'yyyy/MM/dd') :
+                            'N/A'}}</mat-cell>
+                    </ng-container>
+
+                    <ng-container matColumnDef="invoiceStatus">
+                        <mat-header-cell *matHeaderCellDef> Collections Status </mat-header-cell>
+                        <mat-cell *matCellDef="let row"><view-invoice-status [invoiceNumber]="row.documentNumber"
+                                (invoiceEmit)="addInvoice($event)"></view-invoice-status></mat-cell>
+                    </ng-container>
+
+                    <ng-container matColumnDef="complianceStatus">
+                        <mat-header-cell *matHeaderCellDef> Compliance </mat-header-cell>
+                        <mat-cell *matCellDef="let row">
+                            <span *ngIf="row.rolePlayerPolicyTransactionStatus == authorised && checkCompliance(row) ">
+                                <span *ngIf="getInvoice(row.documentNumber)?.invoiceStatus == paid">
+                                    <span class="material-icons green" matTooltip="compliant">
+                                        local_police
+                                    </span>
+                                </span>
+                                <span
+                                    *ngIf="getInvoice(row.documentNumber)?.invoiceStatus == unpaid || getInvoice(row.documentNumber)?.invoiceStatus == partially">
+                                    <span *ngIf="!hasTermsArrangement()" class="material-icons red"
+                                        matTooltip="unpaid invoice is causing non-compliant member flag">
+                                        gpp_bad
+                                    </span>
+                                    <span *ngIf="hasTermsArrangement()" class="material-icons blue"
+                                        matTooltip="unpaid invoice non-compliance overridden by terms arrangement">
+                                        gpp_bad
+                                    </span>
+                                </span>
+                                <span
+                                    *ngIf="getInvoice(row.documentNumber)?.invoiceStatus == queued || getInvoice(row.documentNumber)?.invoiceStatus == pending || getInvoice(row.documentNumber)?.invoiceStatus == allocated">
+                                    N/A
+                                </span>
+                            </span>
+                            <span *ngIf="row.rolePlayerPolicyTransactionStatus != authorised || !checkCompliance(row)">
+                                N/A
+                            </span>
+                        </mat-cell>
+                    </ng-container>
+
+                    <ng-container matColumnDef="actions">
+                        <mat-header-cell *matHeaderCellDef mat-sort-header> Actions </mat-header-cell>
+                        <mat-cell *matCellDef="let row">
+                            <span *ngIf="canViewDocument(row)" (click)="openInvoiceViewDialog(row)"
+                                matTooltip="view / download {{getTransactionType(row.transactionType)}}"
+                                class="material-icons icn pointer icn-button">
+                                download
+                            </span>
+
+                            <span (click)="openRolePlayerTransactionDetailsDialog(row)"
+                                class="material-icons icn pointer icn-button" matTooltip="view">
+                                visibility
+                            </span>
+
+                            <span *ngIf="userHasPermission(viewAuditPermission)"
+                                (click)="openRolePlayerPolicyTransactionAuditDialog(row)" matTooltip="audit"
+                                class="material-icons icn pointer icn-button">
+                                fingerprint
+                            </span>
+                        </mat-cell>
+                    </ng-container>
+
+                    <mat-header-row *matHeaderRowDef="getDisplayedColumns()"></mat-header-row>
+                    <mat-row *matRowDef="let row; columns: getDisplayedColumns();"
+                        [ngClass]="row.effectiveDate == relatedRecordContext ? 'highlight' : ''"></mat-row>
+                </mat-table>
+
+                <mat-paginator #paginator [pageIndex]="0" [pageSize]="5" [pageSizeOptions]="[5, 10, 25, 100]"
+                    [length]="this.dataSource.rowCount$ | async" (page)="getData()">
+                </mat-paginator>
+            </div>
+
+            <mat-card
+                *ngIf="!(dataSource.data && dataSource.data.data && dataSource.data.data?.length > 0 || (dataSource.loading$ | async))">
+                <label class="mat-label other-label"><i>No transactions found...</i></label>
+            </mat-card>
+        </mat-card>
+    </div>
+</div>

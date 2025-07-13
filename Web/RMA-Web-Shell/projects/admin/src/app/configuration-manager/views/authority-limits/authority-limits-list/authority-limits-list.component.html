@@ -1,0 +1,45 @@
+<mat-tab-group>
+  <mat-tab label="Authority Limits">
+    <paged-authority-limit-configuration-search [roleId]="-1"></paged-authority-limit-configuration-search>
+  </mat-tab>
+  <mat-tab label="Authority Limits (Claims) - **to be deprecated**">
+    <h1 *ngIf="!showSelectButton">Manage Authority Limits</h1>
+    <mat-card>
+      <div *ngIf="isLoading">
+        <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+        <label class="mat-label other-label"><i>loading referral limits...please wait</i></label>
+      </div>
+
+      <div *ngIf="dataSource && !isLoading">
+        <div class="mat-container mat-elevation-z8">
+          <mat-table #table [dataSource]="dataSource">
+            <ng-container matColumnDef="referralname" class="referral-name">
+              <mat-header-cell *matHeaderCellDef> Name </mat-header-cell>
+              <mat-cell *matCellDef="let row"> {{ row.permissionName }} </mat-cell>
+            </ng-container>
+
+            <ng-container matColumnDef="amount">
+              <mat-header-cell *matHeaderCellDef> Limit Amount </mat-header-cell>
+              <mat-cell *matCellDef="let row"> {{'R' + formatMoney(row.amountLimit.toFixed(2))}} </mat-cell>
+            </ng-container>
+
+            <ng-container matColumnDef="action">
+              <mat-header-cell *matHeaderCellDef> Action </mat-header-cell>
+              <mat-cell *matCellDef="let row"><a *ngIf="showEditButton"
+                  (click)="onEdit(row)">Edit</a>&nbsp;&nbsp;&nbsp;<input type="checkbox" *ngIf="showSelectButton"
+                  [disabled]="!inEditPermissionsMode" [value]="switchReferralPermission(row).id" #cb
+                  (change)="onSelect(row, cb)" [checked]="isChecked(row)" [id]="row.referralTypeLimitConfigurationId" />
+              </mat-cell>
+            </ng-container>
+            <mat-header-row *matHeaderRowDef="displayColumns"></mat-header-row>
+            <mat-row *matRowDef="let row; columns: displayColumns"></mat-row>
+          </mat-table>
+
+          <mat-paginator #paginator [pageIndex]="0" [pageSize]="5" [pageSizeOptions]="[5, 10, 25, 100]"
+            [showFirstLastButtons]="true">
+          </mat-paginator>
+        </div>
+      </div>
+    </mat-card>
+  </mat-tab>
+</mat-tab-group>

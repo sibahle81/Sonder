@@ -1,0 +1,42 @@
+<div mat-dialog-content>
+    <h1>{{title}}</h1><br />
+    <div *ngIf="loading$ | async">
+        <mat-progress-bar mode="indeterminate"
+            [ngClass]="{ 'loading-main-double-menu-progress': doubleMenu, 'loading-main-single-menu-progress': !doubleMenu }">
+        </mat-progress-bar>
+        <p class="site-font grey">Loading...</p>
+    </div>
+</div>
+
+<div mat-dialog-content *ngIf="!(loading$ | async)">
+    <div *ngIf="loading$ | async">
+        <mat-progress-bar mode="indeterminate"
+            [ngClass]="{ 'loading-main-double-menu-progress': doubleMenu, 'loading-main-single-menu-progress': !doubleMenu }">
+        </mat-progress-bar>
+        <p class="site-font grey">Loading...</p>
+    </div>
+
+    <form [formGroup]="form" class="mat-container details-form" novalidate>
+       <section>
+            <mat-form-field>
+                <label class="mat-label other-label  mandatory-field">Roles</label>
+                    <mat-select name="role" formControlName="role">
+                        <mat-option *ngFor="let item of roles" [value]="item?.id">{{item.name}}</mat-option>
+                    </mat-select>
+                    <mat-error *ngIf="form.get('role').hasError('required')">
+                        Role is required
+                    </mat-error>
+            </mat-form-field>
+         </section>
+    </form>
+</div>
+
+<div class="items-buttons-container" *ngIf="!(loading$ | async)">
+    <div class="form-buttons submit-button">
+        <button class="button float-button cancel-btn" [mat-dialog-close]="false">Cancel</button>
+    </div>
+    <div class="form-buttons submit-button">
+        <button *ngIf="form.enabled" [disabled]="form.pristine" type="button" class="button float-button" 
+            (click)="onSubmit()">Save</button>
+    </div>
+</div>

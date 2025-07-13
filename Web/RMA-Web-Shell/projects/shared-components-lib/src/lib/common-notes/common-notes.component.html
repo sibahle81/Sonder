@@ -1,0 +1,127 @@
+<mat-card class="removePaddingBottom">
+    <div class="menu-bar">
+        <span>
+            <span class="material-icons">
+                search
+            </span>
+            Search Notes
+            <span *ngIf="!(dataSource.loading$ | async)" (click)="reset()" class="material-icons pointer right"
+                matTooltip="reset">
+                restart_alt
+            </span>
+            <span *ngIf="!(dataSource.loading$ | async)" (click)="openNoteDialog(crudActionType.create, null)"
+                class="material-icons pointer right" matTooltip="add">
+                add_circle
+            </span>
+        </span>
+    </div>
+
+    <form [formGroup]="form" class="mat-container details-form" novalidate>
+        <section>
+            <mat-form-field class="mat-form-field controlSize">
+                <label class="mat-label other-label">Category</label>
+                <mat-select name="noteCategoryFilter" id="noteCategoryFilter" formControlName="noteCategoryFilter"
+                    (selectionChange)="noteCategoryTypeFilterChanged($event.value)">
+                    <mat-option *ngFor="let noteCategory of noteCategoryList" [value]="noteCategory">
+                        {{formatLookup(noteCategory)}}
+                    </mat-option>
+                </mat-select>
+            </mat-form-field>
+
+            <mat-form-field class="mat-form-field-right controlSize">
+                <label class="mat-label other-label">Type</label>
+                <mat-select name="noteTypeFilter" id="noteTypeFilter" formControlName="noteTypeFilter"
+                    (selectionChange)="noteTypeFilterChanged($event.value)">
+                    <input matInput (keyup)="onNoteTypeKeyChange($event.target.value)">
+                    <mat-option *ngFor="let noteType of filteredNoteTypeList" [value]="noteType">
+                        {{formatLookup(noteType)}}
+                    </mat-option>
+                </mat-select>
+            </mat-form-field>
+
+            <mat-form-field class="mat-form-field" [floatLabel]="'never'">
+                <input matInput name="searchTerm" id="searchTerm" formControlName="searchTerm">
+                <mat-placeholder class="placeholder">search by note text..</mat-placeholder>
+            </mat-form-field>
+        </section>
+    </form>
+</mat-card>
+
+<mat-card *ngIf="(dataSource.loading$ | async) || (isLoading$ | async)">
+    <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+    <label class="mat-label other-label"><i>loading notes...please wait</i></label>
+</mat-card>
+
+<div [hidden]="(dataSource.loading$ | async) || (isLoading$ | async)">
+    <mat-card>
+        <div *ngIf="searchTerm">Search Results for <b>{{searchTerm}}</b></div>
+        <div [hidden]="!(dataSource.data && dataSource.data.data && dataSource.data.data.length > 0)">
+            <mat-table #table [dataSource]="dataSource" matSort id="tblData" (matSortChange)="getData()">
+                <ng-container matColumnDef="text">
+                    <mat-header-cell *matHeaderCellDef> Note </mat-header-cell>
+                    <mat-cell *matCellDef="let row">{{row.text}}</mat-cell>
+                </ng-container>
+
+                <ng-container matColumnDef="createdBy">
+                    <mat-header-cell *matHeaderCellDef> Created By </mat-header-cell>
+                    <mat-cell *matCellDef="let row">
+                        {{row.createdBy}}
+                    </mat-cell>
+                </ng-container>
+                <ng-container matColumnDef="createdByConverted">
+                    <mat-header-cell *matHeaderCellDef> *Created By </mat-header-cell>
+                    <mat-cell *matCellDef="let row">
+                        <user-display-name [userName]="row.createdBy"></user-display-name>
+                    </mat-cell>
+                </ng-container>
+
+                <ng-container matColumnDef="createdDate">
+                    <mat-header-cell *matHeaderCellDef> Created Date </mat-header-cell>
+                    <mat-cell *matCellDef="let row">
+                        {{row.createdDate | date: "yyyy-MM-dd"}}
+                    </mat-cell>
+                </ng-container>
+
+                <ng-container matColumnDef="noteCategory">
+                    <mat-header-cell *matHeaderCellDef> Category </mat-header-cell>
+                    <mat-cell *matCellDef="let row">{{row.noteCategory ? getNoteCategory(row.noteCategory):
+                        'N/A'}}</mat-cell>
+                </ng-container>
+
+                <ng-container matColumnDef="noteType">
+                    <mat-header-cell *matHeaderCellDef mat-sort-header> Type </mat-header-cell>
+                    <mat-cell *matCellDef="let row" class="note">{{row.noteType ? getNoteType(row.noteType): 'System Added'}}
+                    </mat-cell>
+                </ng-container>
+
+                <ng-container matColumnDef="actions">
+                    <mat-header-cell *matHeaderCellDef> Actions </mat-header-cell>
+                    <mat-cell *matCellDef="let row">
+                        <a (click)="openNoteDialog(crudActionType.read, row)" role="button" class="link-edit">
+                            <span matTooltip="view more info" class="material-icons pointer">
+                                visibility
+                            </span>
+                        </a>
+                        <a *ngIf="canCurrentUserEditNote(row)" (click)="openNoteDialog(crudActionType.edit, row)" role="button" class="link-edit">
+                            <span matTooltip="edit" class="material-icons icn pointer">
+                                settings
+                            </span>
+                        </a>
+                    </mat-cell>
+                </ng-container>
+
+                <mat-header-row *matHeaderRowDef="getDisplayedColumns()"></mat-header-row>
+                <mat-row *matRowDef="let row; columns: getDisplayedColumns();"></mat-row>
+            </mat-table>
+
+            <mat-paginator #paginator [pageIndex]="0" [pageSize]="5" [pageSizeOptions]="[5, 10, 25, 100]"
+                [length]="this.dataSource.rowCount$ | async" (page)="getData()">
+            </mat-paginator>
+        </div>
+
+        <mat-card
+            *ngIf="!(dataSource.data && dataSource.data.data && dataSource.data.data.length > 0 || (dataSource.loading$ | async))">
+            <label class="mat-label other-label"><i>No notes found...</i></label>
+        </mat-card>
+    </mat-card>
+</div>

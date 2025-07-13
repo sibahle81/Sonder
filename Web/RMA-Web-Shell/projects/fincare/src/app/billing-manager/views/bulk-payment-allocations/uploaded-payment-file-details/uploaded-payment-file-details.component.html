@@ -1,0 +1,107 @@
+<div *ngIf="datasource.isLoading">
+  <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+  <label class="mat-label other-label"><i>loading...please wait</i></label>
+</div>
+<br>
+<br>
+<div *ngIf="(isSubmitting$ | async)">
+  <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+  <label class="mat-label other-label"><i>submitting records...please wait</i></label>
+</div>
+<div  [hidden]="datasource.isLoading || datasource.data.length === 0" >
+  <app-search-input (searchcriteria)="searchData($event)" [placeHolder]="placeHolder"></app-search-input>
+        <mat-table #table [dataSource]="datasource" matSort>
+          <ng-container matColumnDef="userReference">
+            <mat-header-cell *matHeaderCellDef mat-sort-header>UserReference</mat-header-cell>
+            <mat-cell *matCellDef="let row">
+              <input
+              type="text"
+              matInput
+              [(ngModel)]="row.userReference"   
+              (change)="valueInput(row)" [disabled]="selectedItemIdsToEdit.indexOf(row.id) < 0"/>
+            </mat-cell>
+          </ng-container>
+          <ng-container matColumnDef="userReference2">
+            <mat-header-cell *matHeaderCellDef mat-sort-header>userReference2</mat-header-cell>
+            <mat-cell *matCellDef="let row">
+              <input
+              type="text"
+              matInput
+              [(ngModel)]="row.userReference2"
+              (change)="valueInput(row)" [disabled]="selectedItemIdsToEdit.indexOf(row.id) < 0"/>
+            </mat-cell>
+          </ng-container>
+          <ng-container matColumnDef="allocateTo">
+            <mat-header-cell *matHeaderCellDef mat-sort-header>AllocateTo</mat-header-cell>
+            <mat-cell *matCellDef="let row">
+                <input
+                type="text"
+                matInput
+                [(ngModel)]="row.allocateTo"
+                (change)="valueInput(row)" [disabled]="selectedItemIdsToEdit.indexOf(row.id) < 0"/>
+              </mat-cell>
+          </ng-container>
+          <ng-container matColumnDef="amount">
+            <mat-header-cell *matHeaderCellDef mat-sort-header>Amount</mat-header-cell>
+            <mat-cell *matCellDef="let row">
+              <input
+              type="text"
+              matInput
+              [(ngModel)]="row.amount"
+              (change)="valueInput(row)" [disabled]="selectedItemIdsToEdit.indexOf(row.id) < 0"/>
+            </mat-cell>
+          </ng-container>
+          <ng-container matColumnDef="status">
+            <mat-header-cell *matHeaderCellDef mat-sort-header>Proccessed Status</mat-header-cell>
+            <mat-cell *matCellDef="let row"> {{row.lineProcessingStatus}} </mat-cell>
+          </ng-container>
+          <ng-container matColumnDef="error">
+            <mat-header-cell *matHeaderCellDef mat-sort-header>Error</mat-header-cell>
+            <mat-cell *matCellDef="let row"> {{row.error}} </mat-cell>
+          </ng-container>
+
+          <ng-container matColumnDef="editActions">
+            <mat-header-cell *matHeaderCellDef><mat-icon aria-hidden="false">edit</mat-icon>&nbsp;Edit</mat-header-cell>
+            <mat-cell *matCellDef="let row; let i = index" class="edit_item">
+              <mat-checkbox [checked]="selectedItemIdsToEdit.indexOf(row.itemId) > -1"
+                (change)="editChecked($event,row)"   *ngIf="(row.lineProcessingStatus !== 'Success'); else noEdit">
+              </mat-checkbox>
+              <ng-template #noEdit>
+                <span >&nbsp;</span>
+              </ng-template>
+            </mat-cell>
+          </ng-container>
+
+          <ng-container matColumnDef="deleteActions">
+            <mat-header-cell *matHeaderCellDef><mat-icon aria-hidden="false">delete</mat-icon>&nbsp;Delete</mat-header-cell>
+            <mat-cell *matCellDef="let row; let i = index" class="edit_item">
+              <mat-checkbox [checked]="selectedItemsToDelete.indexOf(row.itemId) > -1"
+                (change)="deleteChecked($event,row)"   *ngIf="(row.lineProcessingStatus !== 'Success'); else noReversalCheck">
+              </mat-checkbox>
+              <ng-template #noDelete>
+                <span >&nbsp;</span>
+              </ng-template>
+            </mat-cell>
+          </ng-container>
+          <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
+          <mat-row *matRowDef="let row; columns: displayedColumns;"></mat-row>
+        </mat-table>
+        <mat-paginator #paginator [length]="datasource.data ? datasource.data.length : 0" [pageIndex]="0" [pageSize]="5"
+        [pageSizeOptions]="[5, 10, 20, 50]">
+      </mat-paginator>
+        <div *ngIf="showSubmitEdit" class="form-buttons" class="div_submit">
+          <button class="button float-button submit-button" (click)="submitEdit()"  [disabled]="isSubmitting$ | async">Submit Edited</button>
+          <button type="button" class="button float-button submit-button" (click)="back()">Back</button>
+        </div>
+        <div *ngIf="showSubmitDelete" class="form-buttons" class="div_submit">
+          <button class="button float-button submit-button" (click)="submitDelete()"  [disabled]="isSubmitting$ | async">Submit Deleted</button>
+          <button type="button" class="button float-button submit-button" (click)="back()">Back</button>
+        </div>
+        <div  *ngIf="(!showSubmitDelete  && !showSubmitEdit)">
+          <button type="button" class="button float-button submit-button" (click)="back()">Back</button>
+        </div>
+    </div>
+<div *ngIf="noData">
+  No data found...
+</div>
+

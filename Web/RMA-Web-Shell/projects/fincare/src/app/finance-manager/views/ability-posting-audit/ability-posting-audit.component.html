@@ -1,0 +1,110 @@
+<div>
+  <mat-card style="margin: 15px 30px 15px 30px">
+      <mat-card-content style="margin-left: 10px;">
+          <div>
+              <!--[hidden]="isLoading"-->
+              <div class="mat-container mat-elevation-z8">
+                  <div class="mat-header">
+                      <h1>Payment Transactions</h1><br />
+
+                  </div>
+                  <app-search-input (searchcriteria)="searchData($event)" [placeHolder]="placeHolder"></app-search-input>
+                  <mat-table #table [dataSource]="dataSource" matSort>
+                      <ng-container matColumnDef="PayeeDetails">
+                          <mat-header-cell *matHeaderCellDef mat-sort-header> PAYEE DETAILS </mat-header-cell>
+                          <mat-cell *matCellDef="let row"> {{row.payeeDetails}} </mat-cell>
+                      </ng-container>
+                      <ng-container matColumnDef="PaymentDate">
+                          <mat-header-cell *matHeaderCellDef mat-sort-header> DATE</mat-header-cell>
+                          <mat-cell *matCellDef="let row">  {{row.createdDate | date:'yyyy/MM/dd'}} </mat-cell>
+                      </ng-container>
+                    <ng-container matColumnDef="time">
+                        <mat-header-cell *matHeaderCellDef mat-sort-header> TIME</mat-header-cell>
+                        <mat-cell *matCellDef="let row">  {{row.createdDate | date:'h:mm a'}} </mat-cell>
+                    </ng-container>
+                      <ng-container matColumnDef="PaymentType">
+                          <mat-header-cell *matHeaderCellDef mat-sort-header> PAYMENT TYPE</mat-header-cell>
+                          <mat-cell *matCellDef="let row">  {{row.paymentTypeDesc}} </mat-cell>
+                      </ng-container>
+                      <ng-container matColumnDef="Reference">
+                          <mat-header-cell *matHeaderCellDef mat-sort-header> REFERENCE </mat-header-cell>
+                          <mat-cell *matCellDef="let row"> {{row.reference}} </mat-cell>
+                      </ng-container>
+                      <ng-container matColumnDef="Bank">
+                          <mat-header-cell *matHeaderCellDef mat-sort-header> BANK </mat-header-cell>
+                          <mat-cell *matCellDef="let row"> {{row.bank}} </mat-cell>
+                      </ng-container>
+                      <ng-container matColumnDef="AccountDetails">
+                          <mat-header-cell *matHeaderCellDef mat-sort-header> ACCOUNT DETAILS </mat-header-cell>
+                          <mat-cell *matCellDef="let row"> {{row.accountDetails}} </mat-cell>
+                      </ng-container>
+                      <ng-container matColumnDef="BankBranch">
+                          <mat-header-cell *matHeaderCellDef mat-sort-header> BANK BRANCH </mat-header-cell>
+                          <mat-cell *matCellDef="let row"> {{row.bankBranch}} </mat-cell>
+                      </ng-container>
+                      <ng-container matColumnDef="Amount">
+                          <mat-header-cell *matHeaderCellDef mat-sort-header> AMOUNT PAID </mat-header-cell>
+                          <mat-cell *matCellDef="let row"> {{row.amount | currency:'ZAR':'' | replace:',':' ' }} </mat-cell>
+                      </ng-container>
+                      <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
+                      <mat-row *matRowDef="let row; columns: displayedColumns;"></mat-row>
+                  </mat-table>
+                  <mat-paginator #paginator
+                                 [pageIndex]="0"
+                                 [pageSize]="10"
+                                 [pageSizeOptions]="[5, 10, 25, 100]">
+                  </mat-paginator>
+              </div>
+          </div>
+      </mat-card-content>
+  </mat-card>
+</div>
+
+<div>
+  <table class="form-group row" style="    margin-left: 29px;">
+      <button type="button" (click)="clear()" class="button float-button">Back</button>
+  </table>
+</div>
+
+<div class="download-section">
+  <table>
+    <tr>
+      <td class="download-sub">
+        <input type="image" alt="Dowload" (click)="downloadReport()" src="/assets/images/downloads-icon.png"
+          width="40" height="40" />
+      </td>
+      <td class="download-sub">
+        <mat-radio-group aria-labelledby="reportformat-radio-group-label" class="reportformat-radio-group"
+          (change)="reportFormatChange($event)">
+          <mat-radio-button class="reportformat-radio-button" *ngFor="let reportFormat of reportFormats"
+            [value]="reportFormat">
+            {{reportFormat}} &nbsp;&nbsp;
+          </mat-radio-button>
+        </mat-radio-group>
+      </td>
+    </tr>
+    <tr *ngIf="(isDownloading$ | async)">
+      <td colspan="2" class="download-sub">
+        <div>
+          <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+          <label class="mat-label other-label">
+            <i>
+              downloading {{selectedreportFormat}} payment list
+              report...
+            </i>
+          </label>
+        </div>
+      </td>
+    </tr>
+    <tr>
+    </tr>
+  </table>
+</div>
+
+<div [hidden]="true">
+  <ssrs-reportviewer [reportserver]="reportServerAudit" [reporturl]="reportUrlAudit"
+    [showparameters]="showParametersAudit" [parameters]="parametersAudit" [language]="languageAudit"
+    [width]="widthAudit" [height]="heightAudit" [toolbar]="toolbarAudit" [format]="selectedreportFormat"
+    [isDownload]="isDownload" [reportName]="'Posting_Ability_Transaction_Audit_Report'">
+  </ssrs-reportviewer>
+</div>

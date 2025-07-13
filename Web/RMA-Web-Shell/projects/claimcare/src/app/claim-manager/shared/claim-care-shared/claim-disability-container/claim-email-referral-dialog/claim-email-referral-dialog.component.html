@@ -1,0 +1,49 @@
+<div class="menu-bar">
+  <span class="material-icons menu-button" (click)="cancel()">
+      close
+  </span>
+</div>
+
+<div *ngIf="(isLoading$ | async)">
+  <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+  <label class="mat-label other-label"><i>loading referral details...please wait</i></label>
+</div>
+
+<div *ngIf="!(isLoading$ | async)">
+  <mat-card>
+    <div class="menu-bar">
+      <span class="material-icons">
+        mail
+      </span>&nbsp;
+      <label>Send email referral for Claim: {{claim.claimReferenceNumber}}</label>
+      <span *ngIf="formValid()" (click)="sendReferral()" class="material-icons menu-button">
+        send
+      </span>
+    </div>
+    <br />
+    
+    <form [formGroup]="form" class="mat-container" novalidate *ngIf="!(isLoading$ | async)">
+      <section>
+        <mat-form-field class="mat-form-field">
+          <label class="mat-label other-label">Refer to: (recipient)</label>
+          <input matInput formControlName="recipient" name="recipient" id="recipient" />
+          <mat-error *ngIf="form.get('recipient').hasError('required')">
+            recipient <strong>required</strong>
+          </mat-error>
+          <mat-error *ngIf="form.get('recipient').hasError('email')">
+            Email must be a valid email address
+          </mat-error>
+        </mat-form-field>
+  
+        <mat-form-field class="mat-form-field-right">
+          <label class="mat-label other-label">Message</label>
+          <textarea matInput formControlName="message" name="message" id="message"></textarea>
+          <mat-error *ngIf="form.get('message').hasError('required')">
+            Message <strong>required</strong>
+          </mat-error>
+        </mat-form-field>
+  
+      </section>
+    </form>
+  </mat-card>
+</div>

@@ -1,0 +1,92 @@
+<mat-card *ngIf="(isLoading$ | async)">
+    <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+    <label class="mat-label other-label"><i>{{loadingMessage$ | async}}</i></label>
+</mat-card>
+
+<mat-card>
+    <input type="file" (change)="onFileChange($event)" multiple="false" />
+</mat-card>
+
+<span *ngIf="!(isLoading$ | async)" class="font">
+    <mat-card *ngIf="!files">
+        <div class="menu-bar">
+            <span class="material-icons">
+                source
+            </span>
+            {{title}}
+            <span *ngIf="expectedColumnHeadings.length > 0" (click)="generateTemplate()"
+                class="material-icons pointer right pulse" matTooltip="generate blank template">
+                note_add
+            </span>
+        </div>
+    </mat-card>
+
+    <mat-card *ngIf="files && files.length == 1">
+        <div class="menu-bar">
+            <span class="material-icons">
+                source
+            </span>
+            {{title}}: <b>{{files[0].name}}</b>
+            <span (click)="reset()" class="material-icons pointer right pulse" matTooltip="reset">
+                replay
+            </span>
+        </div>
+        <mat-card>
+            <mat-card>
+                <div>File Name: <b>{{files[0].name}}</b></div>
+                <div>File Size: <b>{{files[0].size/1000000}} Mb</b></div>
+                <div *ngIf="data">Total Rows: <b>{{data.length}} rows</b></div>
+            </mat-card>
+            <div
+                *ngIf="invalidData && invalidData.length > 1 && expectedColumnHeadings && expectedColumnHeadings.length > 0">
+                <label class="mat-label other-label">
+                    <mat-card>
+                        <span class="material-icons info amberFont">
+                            warning
+                        </span>&nbsp;
+                        <b>{{invalidData.length - 1}} of {{data.length}} invalid rows detected</b><br />
+                        Export invalid rows, then re-upload the exported file after correction for processing &nbsp;
+                        <span (click)="exportInvalid()" class="material-icons pointer pulse" matTooltip="export">
+                            file_upload
+                        </span>
+                    </mat-card>
+                </label>
+            </div>
+
+            <div
+                *ngIf="data && data.length > 0 && ((data.length) - (invalidData.length - 1) > 0) && expectedColumnHeadings && expectedColumnHeadings.length > 0">
+                <label class="mat-label other-label">
+                    <mat-card>
+                        <span class="material-icons info greenFont">
+                            fact_check
+                        </span>&nbsp;
+                        <b>{{(data.length) - (invalidData.length - 1)}} of {{data.length}} valid rows detected</b><br />
+                        Would you like to process the valid records? &nbsp;
+                        <span (click)="process()" class="material-icons pointer pulse" matTooltip="process">
+                            play_arrow
+                        </span>
+                    </mat-card>
+                </label>
+            </div>
+        </mat-card>
+    </mat-card>
+
+    <mat-card class="heightX scrollY"
+        *ngIf="data && data.length > 0 && expectedColumnHeadings && expectedColumnHeadings.length > 0">
+        <div class="scrollTable">
+            <table class="altRowTable table">
+                <tr>
+                    <th class="tableCell" *ngFor="let title of header">
+                        {{title}}
+                    </th>
+                </tr>
+                <tr *ngFor="let row of data"
+                    [ngClass]="{'invalid': invalidData && invalidData.length > 1 && invalidData.includes(row)}">
+                    <td class="tableCell" *ngFor="let value of row">
+                        {{value}}
+                    </td>
+                </tr>
+            </table>
+        </div>
+    </mat-card>
+</span>

@@ -1,0 +1,25 @@
+<div mat-dialog-content style="margin:5px;">
+    {{data.question}}
+  </div>
+  
+    <div *ngIf="optionalDataList">
+      <ul>
+        <li *ngFor = "let item of optionalDataList.messageList">{{item}}</li>
+      </ul>
+    </div>
+  
+  
+  <div *ngIf="!data.isNotification">
+    <div mat-dialog-actions style="margin-bottom:5px;">
+      <button mat-button *ngIf="!hideCloseBtn" (click)="onNoClick()">No Thanks</button>
+      <button mat-button [mat-dialog-close]="data" cdkFocusInitial>Yes</button>
+    </div>
+  </div>
+  
+  <div *ngIf="data.isNotification">
+    <div mat-dialog-actions style="margin-bottom:5px;">
+      <button mat-button (click)="onNoClick()">Continue</button>
+    </div>
+  </div>
+  
+  

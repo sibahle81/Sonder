@@ -1,0 +1,29 @@
+<div *ngIf="claimId > 0">
+<div>
+    <button mat-button (click)="getMedicalInvoices()">Medical Invoices</button>
+    <button mat-button  [matMenuTriggerFor]="menu2" #menuTrigger="matMenuTrigger" (mouseover)="menuTrigger.openMenu()">PreAuthorisations</button> 
+
+    <mat-menu #menu2="matMenu" [overlapTrigger]="false">
+        <span (mouseleave)="menuTrigger.closeMenu()">
+            <button mat-menu-item (click)="getHospitalAuthorisations()">Hospital Authorisations</button>
+            <button mat-menu-item (click)="getTreatmentAuthorisations()">Treatment Authorisations</button>
+            <button mat-menu-item (click)="getProstheticAuthorisations()">Prosthetic Authorisations</button>
+            <button mat-menu-item (click)="getChronicAuthorisations()">Chronic Authorisations</button>
+            <button mat-menu-item (click)="getTravelAuthorisations()">Travel Authorisations</button>
+        </span>
+    </mat-menu>
+    <button *ngIf="!isExternalUser" mat-button (click)="getProstheticQuoteList()">Prosthetic Quote List</button> 
+    <button mat-button (click)="getMedicalReports()">Medical Reports</button> 
+</div>
+  
+<div>
+  <ng-container #componentContainer></ng-container>
+</div>
+
+</div>
+
+<br />
+<div class="clear">&nbsp;</div>
+
+<br />
+<div class="clear">&nbsp;</div>

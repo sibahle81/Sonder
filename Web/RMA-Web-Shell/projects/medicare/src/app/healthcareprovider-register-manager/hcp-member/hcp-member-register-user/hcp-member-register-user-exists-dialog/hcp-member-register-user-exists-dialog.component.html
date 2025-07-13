@@ -1,0 +1,78 @@
+<div *ngIf="!alreadyRegistered && user && roles.includes(user.role.name)">
+  <div class="menu-bar">
+    <span class="material-icons">
+      add_link
+    </span>
+    Link Registered Healthcare Provider User
+  </div>
+  <label class="mat-label other-label">A user with the same email/username already exists. Would you like to <b>link</b>
+    this user?</label>
+  <br /><br />
+
+  <form [formGroup]="form" class="mat-container details-form" novalidate>
+    <section>
+      <mat-form-field class="mat-form-field">
+        <label class="mat-label other-label">Display Name</label>
+        <input matInput formControlName="displayName" id="displayName">
+      </mat-form-field>
+
+      <mat-form-field class="mat-form-field-right">
+        <label class="mat-label other-label">Email</label>
+        <input matInput formControlName="email" id="email">
+        <mat-error *ngIf="form.get('email').hasError('required')">
+          Email is <strong>required</strong>
+        </mat-error>
+      </mat-form-field>
+    </section>
+
+    <section>
+      <mat-form-field class="mat-form-field">
+        <label class="mat-label other-label">Role</label>
+        <mat-select name="role" id="role" formControlName="role">
+          <mat-option *ngFor="let role of roles" [value]="role">
+            {{formatText(role)}}
+          </mat-option>
+        </mat-select>
+        <mat-error *ngIf="form.get('role').hasError('required')">
+          Role is <strong>required</strong>
+        </mat-error>
+      </mat-form-field>
+    </section>
+  </form>
+
+  <span class="mat-label other-label pointer" style="margin-left: 10px;" (click)="save()"><span class="material-icons"
+      style="color: green;">check_circle</span></span>
+  <span class="mat-label other-label pointer" (click)="close()"><span class="material-icons">cancel</span></span>
+</div>
+
+<div *ngIf="!alreadyRegistered && user && !roles.includes(user.role.name)">
+  <div class="menu-bar">
+    <span (click)="close()" class="material-icons pointer right">
+      cancel
+    </span>
+    Link Registered User
+  </div>
+  <label class="mat-label other-label">A user with the same email/username already exists.<br />
+    The existing user does not have the supported role to allow this link</label>
+</div>
+
+<div *ngIf="alreadyRegistered && user">
+  <div class="menu-bar">
+    <span (click)="close()" class="material-icons pointer right">
+      cancel
+    </span>
+    Link Registered User
+  </div>
+  <label class="mat-label other-label">A user with the same email/username is already linked</label>
+</div>
+
+<div *ngIf="alreadyRegistered && !user">
+  <div class="menu-bar">
+    <span (click)="close()" class="material-icons pointer right">
+      cancel
+    </span>
+    User Pending Registration
+  </div>
+  <label class="mat-label other-label">A user with the same email/username is already pending activation.<br />Once the
+    user has completed the activation process, The user will be linked</label>
+</div>

@@ -1,0 +1,219 @@
+<div class="page-header"></div>
+<div *ngIf="!canAdd">
+  <div class="wizard-permissions-error">You do not have sufficient permissions to add brokerage contacts.</div>
+  <div (click)="back()" class="form-buttons submit-button">
+    <button type="button" class="button float-button">Back</button>
+  </div>
+</div>
+<div class="wizard-main-content">
+  <h4>Contact Details</h4>
+  <mat-card class="wizard-mat-card">
+    <mat-card-content class="wizard-mat-card-content">  
+      <div [hidden]="!canAdd">
+        <div>
+          <form [formGroup]="form" class="mat-container details-form" novalidate>            
+            <section>
+              <!--First Name-->
+              <mat-form-field class="mat-form-field">
+                <label class="mat-label other-label mandatory-field">First name</label>
+                <input matInput maxlength="50" id="firstName" name="firstName" formControlName="firstName" />
+                <mat-error *ngIf="form.get('firstName').hasError('required')">
+                  First Name<strong> is required</strong>
+                </mat-error>
+                <mat-error *ngIf="form.get('firstName').hasError('minlength')">
+                  First Name must be at least <strong>three characters</strong>
+                </mat-error>
+              </mat-form-field>
+              <!--Last Name-->
+              <mat-form-field class="mat-form-field-right">
+                <label class="mat-label other-label mandatory-field">Last name</label>
+                <input matInput maxlength="50" id="lastName" name="lastName" formControlName="lastName" />
+                <mat-error *ngIf="form.get('lastName').hasError('required')">
+                  Last Name<strong> is required</strong>
+                </mat-error>
+                <mat-error *ngIf="form.get('lastName').hasError('minlength')">
+                  Last Name must be at least <strong>three characters</strong>
+                </mat-error>
+              </mat-form-field>
+            </section>
+            <section>
+              <mat-form-field class="mat-form-field">
+                <label class="mat-label other-label">ID/Passport Number</label>
+                <input matInput maxlength="50" id="idPassportNumber" name="idPassportNumber" formControlName="idPassportNumber" />                
+                <mat-error *ngIf="form.get('idPassportNumber').hasError('maxlength')">
+                  ID/Passport Number must not be more than <strong>13 characters</strong>
+                </mat-error>
+              </mat-form-field>
+              <mat-form-field class="mat-form-field-right">
+                <label class="mat-label other-label">Date of Birth</label>
+                <input matInput id="dateOfBirth" name="dateOfBirth" formControlName="dateOfBirth" [matDatepicker]="dateOfBirth" />
+                <mat-datepicker-toggle matSuffix [for]="dateOfBirth"></mat-datepicker-toggle>
+                <mat-datepicker touchUi="true" #dateOfBirth></mat-datepicker>
+              </mat-form-field>
+            </section>
+            <section>
+              <!--Email Address-->
+              <mat-form-field class="mat-form-field">
+                <label class="mat-label other-label mandatory-field">Email address</label>
+                <input matInput maxlength="50" id="email" name="email" formControlName="email" />
+                <mat-error *ngIf="form.get('email').hasError('email')">
+                  A <strong>valid</strong> email address required
+                </mat-error>
+                <mat-error *ngIf="form.get('email').hasError('required')">
+                  Email<strong> is required</strong>
+                </mat-error>
+              </mat-form-field>
+              <!--Mobile phone-->
+              <mat-form-field class="mat-form-field-right">
+                <label class="mat-label other-label mandatory-field">Mobile number</label>
+                <input matInput maxlength="10" type="tel" minlength="10" id="mobileNumber" name="mobileNumber"
+                  formControlName="mobileNumber" NumberOnly="true" />
+                <mat-error *ngIf="form.get('mobileNumber').hasError('required')">
+                  Mobile number<strong> is required</strong>
+                </mat-error>
+                <mat-error *ngIf="form.get('mobileNumber').hasError('minlength')">
+                  Mobile number <strong>10 characters</strong>
+                </mat-error>
+              </mat-form-field>
+            </section>
+            <section>
+              <!--Telephone-->
+              <mat-form-field class="mat-form-field">
+                <label class="mat-label other-label mandatory-field">Telephone number</label>
+                <input matInput type="tel" maxlength="10" id="telephoneNumber" name="telephoneNumber"
+                  formControlName="telephoneNumber" NumberOnly="true" />
+                <mat-error *ngIf="form.get('telephoneNumber').hasError('required')">
+                  Telephone<strong> is required</strong>
+                </mat-error>
+                <mat-error *ngIf="form.get('telephoneNumber').hasError('minlength')">
+                  Telephone number <strong>10 characters</strong>
+                </mat-error>
+                <mat-error *ngIf="form.get('telephoneNumber').hasError('maxlength')">
+                  Telephone number maximum <strong>characters is 10</strong>
+                </mat-error>
+              </mat-form-field>
+              <!--Contact Type-->
+              <mat-form-field class="mat-form-field-right">
+                <label class="mat-label other-label mandatory-field">Contact type</label>
+                <mat-select name="contactType" id="contactType" #contactType formControlName="contactType"  [(ngModel)]="contactTypeId"
+                  [(value)]="contactTypeId">
+                  <mat-option *ngFor="let contactType of contactTypes" [value]="contactType.id">{{contactType.name}}
+                  </mat-option>
+                </mat-select>
+                <mat-error
+                  *ngIf="form.get('contactType').hasError('required') || form.get('contactType').hasError('min')">
+                  Contact type is <strong>required</strong>
+                </mat-error>
+              </mat-form-field>
+            </section>            
+          </form>
+        </div>
+      </div>
+    </mat-card-content>
+    <mat-card-footer>              
+        <div class="form-group-button mat-form-button" *ngIf="isWizard && !isEditContact && !isDisabled"
+          class="form-buttons submit-button" style="margin-bottom: 10px;">
+          <button (click)="addContact()" class="button submit-button">ADD CONTACT DETAILS</button>
+        </div>
+        <div class="form-group-button mat-form-button" *ngIf="isWizard && isEditContact"
+          class="form-buttons submit-button" style="margin-bottom: 10px;">
+          <button (click)="onSaveEditedContact()" class="button submit-button">Save</button>
+          <button (click)="cancelEditedContact()" class="button submit-button">Cancel</button>
+        </div>      
+    </mat-card-footer>
+  </mat-card>
+
+  <mat-card class="wizard-mat-card wizard-mat-table">
+    <mat-card-header>
+      <h4>Added Contact Details</h4>
+    </mat-card-header>
+    <mat-card-content class="wizard-mat-card-content">      
+
+      <div>
+        <div class="mat-container mat-elevation-z8">
+          <div *ngIf="dataSource.isLoading">
+            <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+          </div>
+          <div>
+            <mat-table #table [dataSource]="dataSource" matSort>
+
+              <!-- First Name  -->
+              <ng-container matColumnDef="firstName">
+                <mat-header-cell *matHeaderCellDef mat-sort-header> First Name </mat-header-cell>
+                <mat-cell *matCellDef="let row"> {{row.firstName || '---'}} </mat-cell>
+              </ng-container>
+
+              <!-- Last Name  -->
+              <ng-container matColumnDef="lastName">
+                <mat-header-cell *matHeaderCellDef mat-sort-header> Last Name </mat-header-cell>
+                <mat-cell *matCellDef="let row"> {{row.lastName || '---'}} </mat-cell>
+              </ng-container>
+
+              <!-- ID/Passport Number -->
+              <ng-container matColumnDef="idNumber">
+                <mat-header-cell *matHeaderCellDef mat-sort-header> ID/Passport Number </mat-header-cell>
+                <mat-cell *matCellDef="let row"> {{row.idNumber || '---'}} </mat-cell>
+              </ng-container>
+
+              <!-- Date Of Birth -->
+              <ng-container matColumnDef="dateOfBirth">
+                <mat-header-cell *matHeaderCellDef mat-sort-header> Date Of Birth </mat-header-cell>
+                <mat-cell *matCellDef="let row"> {{row.dateOfBirth ? (row.dateOfBirth | date: 'yyyy-MM-dd') : '---'}} </mat-cell>
+              </ng-container>
+
+              <!-- Telephone -->
+              <ng-container matColumnDef="telephoneNumber">
+                <mat-header-cell *matHeaderCellDef mat-sort-header> Telephone </mat-header-cell>
+                <mat-cell *matCellDef="let row"> {{row.telephoneNumber || '---'}} </mat-cell>
+              </ng-container>
+
+              <!-- Cell -->
+              <ng-container matColumnDef="mobileNumber">
+                <mat-header-cell *matHeaderCellDef mat-sort-header> Mobile </mat-header-cell>
+                <mat-cell *matCellDef="let row"> {{row.mobileNumber || '---'}} </mat-cell>
+              </ng-container>
+
+              <!-- Email -->
+              <ng-container matColumnDef="email">
+                <mat-header-cell *matHeaderCellDef mat-sort-header> Email </mat-header-cell>
+                <mat-cell *matCellDef="let row"> {{row.email || '---'}} </mat-cell>
+              </ng-container>
+
+              <!-- Contact Type -->
+              <ng-container matColumnDef="contactType">
+                <mat-header-cell *matHeaderCellDef mat-sort-header> Contact Type </mat-header-cell>
+                <mat-cell *matCellDef="let row"> {{this.getContactTypeDesc(row.contactType) || '---'}} </mat-cell>
+              </ng-container>
+              
+              <!-- Actions -->
+              <ng-container *ngIf="!hideActionsLink" matColumnDef="actions">
+                <mat-header-cell *matHeaderCellDef>Actions</mat-header-cell>
+                <mat-cell *matCellDef="let row; let i = index;">
+                    <span *ngIf="!isDisabled" > <img src="/assets/images/edit.png" class="action-icon" /> <a role="button" class="link-edit action-link" (click)="onEdit(row, i)">EDIT</a></span>
+                    <span *ngIf="!isDisabled" > <img src="/assets/images/delete.png" class="action-icon action-icon-right" /> <a role="button" class="link-edit action-link" (click)="onRemove(row, i)">REMOVE</a></span>
+                    <a *ngIf="row.id > 0" (click)="openAuditDialog(row)" role="button" class="link-edit">
+                      <span matTooltip="audit" class="material-icons icn pointer">
+                          fingerprint
+                      </span>
+                    </a>
+                  </mat-cell>
+              </ng-container>
+
+              <mat-header-row *matHeaderRowDef="getDisplayedColumns();"></mat-header-row>
+              <mat-row *matRowDef="let row; columns: getDisplayedColumns();"></mat-row>
+            </mat-table>
+
+            <mat-paginator #paginator [length]="dataSource.data.length" [pageIndex]="0" [pageSize]="5"
+              [pageSizeOptions]="[5, 10]">
+            </mat-paginator>
+          </div>
+
+          <div [hidden]="dataSource.data.length > 0 || dataSource.isLoading">
+            <span class="grey site-font">No brokerage contacts have been added.</span>
+          </div>
+        </div>
+      </div>
+
+    </mat-card-content>
+  </mat-card>
+</div>

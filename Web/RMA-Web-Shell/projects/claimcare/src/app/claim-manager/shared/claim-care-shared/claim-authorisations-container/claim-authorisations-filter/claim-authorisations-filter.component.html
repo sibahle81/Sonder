@@ -1,0 +1,26 @@
+<div *ngIf="(isLoading$ | async)">
+    <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+    <span class="site-font">loading Authorisations types...please wait</span>
+</div>
+
+<mat-card>
+    <div class="menu-bar">
+        <span class="material-icons">
+            verified
+        </span>&nbsp;Authorisations
+        <span *ngIf="query" class="material-icons menu-button" (click)="openAuthorisationsDialog()">
+            post_add
+        </span>
+    </div>
+    <form [formGroup]="form" novalidate>
+        <mat-form-field class="mat-form-field-left">
+            <label class="mat-label other-label">Authorisations Type</label>
+            <mat-select name="AuthorizationTypeFilter" id="AuthorizationTypeFilter" formControlName="AuthorizationTypeFilter"
+                (selectionChange)="authorizationTypeChanged($event.value)">
+                <mat-option *ngFor="let authorizarion of AuthorisationsTypes" [value]="authorizarion">
+                    {{formatLookup(authorizarion)}}
+                </mat-option>
+            </mat-select>
+        </mat-form-field>
+    </form>
+</mat-card>

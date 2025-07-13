@@ -1,0 +1,61 @@
+<mat-card class="margin" *ngIf="(isLoading$ | async)">
+  <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+  <label class="mat-label other-label"><i>initialising wizard...please wait</i></label>
+</mat-card>
+
+<div *ngIf="!(isLoading$ | async) && model">
+  <member-view [rolePlayerId]="model.policyOwnerId" [isWizard]="false"
+    [isReadOnly]="inApprovalMode"></member-view>
+  <policy-view [rolePlayerId]="model.policyOwnerId" [isWizard]="true" [isReadOnly]="inApprovalMode"
+    [filteredPolicyIds]="filteredPolicyIds"></policy-view>
+
+  <mat-card *ngIf="model">
+    <form [formGroup]="form" class="mat-container details-form" novalidate>
+      <section>
+        <mat-form-field class="mat-form-field">
+          <label class="mat-label other-label">Inception Date</label>
+          <input matInput formControlName="targetedPolicyInceptionDate" [matDatepicker]="targetedPolicyInceptionDate"
+           [min]="minDate" [max]="maxDate">
+          <mat-datepicker-toggle matSuffix [for]="targetedPolicyInceptionDate">
+          </mat-datepicker-toggle>
+          <mat-datepicker touchUi="true" #targetedPolicyInceptionDate></mat-datepicker>
+          <mat-error *ngIf="form.get('targetedPolicyInceptionDate').hasError('required')">
+            inception date is <strong>required</strong>
+          </mat-error>
+        </mat-form-field>
+
+        <mat-form-field class="mat-form-field-right">
+          <label class="mat-label other-label">Collection Frequency</label>
+          <mat-select name="paymentFrequency" id="paymentFrequency"
+            formControlName="paymentFrequency">
+            <mat-option *ngFor="let paymentFrequency of paymentFrequencies" [value]="paymentFrequency">
+              {{formatLookup(paymentFrequency)}}
+            </mat-option>
+          </mat-select>
+          <mat-error *ngIf="form.get('paymentFrequency').hasError('required')">
+            collection frequency is <strong>required</strong>
+          </mat-error>
+        </mat-form-field>
+      </section>
+
+      <section>
+        <mat-form-field class="mat-form-field">
+          <label class="mat-label other-label">Collection Method</label>
+          <mat-select name="paymentMethod" id="paymentMethod"
+              formControlName="paymentMethod">
+              <mat-option *ngFor="let paymentMethod of paymentMethods" [value]="paymentMethod">
+                  {{formatLookup(paymentMethod)}}
+              </mat-option>
+          </mat-select>
+          <mat-error *ngIf="form.get('paymentMethod').hasError('required')">
+              collection method is <strong>required</strong>
+          </mat-error>
+      </mat-form-field>
+      </section>
+    </form>
+
+    <document-uploader [documentSet]="documentSet" [systemName]="documentSystemName" [keyName]="'WizardId'"
+      [keyValue]="wizardId" [isReadOnly]="inApprovalMode"
+      (requiredDocumentsUploadedEmit)="isRequiredDocumentsUploaded($event)"></document-uploader>
+  </mat-card>
+</div>

@@ -1,0 +1,80 @@
+<mat-card>
+  <mat-card-header>
+      <mat-card-title class="wizard-font card-title grey">
+          <h1>Outstanding Documents</h1>
+      </mat-card-title>
+      <mat-card-subtitle>
+          <span class="grey site-font"><i>Outstanding documents that are required</i></span>
+      </mat-card-subtitle>
+</mat-card-header>
+<div *ngIf="isLoading" class="menu-container" style="margin-top:12px">
+  <div style="margin-right: 15px;">
+    <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+    <i>loading...please wait</i>
+  </div>
+</div>
+<mat-card-content [hidden]="isLoading" style="margin-left: 10px;">
+  <div [hidden]="dataSource.data.length === 0">
+    <div class="mat-container mat-elevation-z8" [hidden]="isLoading" class="divAlign">
+      <div [hidden]="dataSource.data.length === 0">
+        <mat-table #table [dataSource]="dataSource" matSort>
+          <!-- Document type name -->
+          <ng-container matColumnDef="documentTypeName">
+            <mat-header-cell *matHeaderCellDef mat-sort-header> Document Type </mat-header-cell>
+            <mat-cell *matCellDef="let row"> {{row.documentTypeName}} </mat-cell>
+          </ng-container>
+          <!-- document status  -->
+          <ng-container matColumnDef="status">
+            <mat-header-cell *matHeaderCellDef mat-sort-header> Status </mat-header-cell>
+            <mat-cell *matCellDef="let row"> {{row.documentStatusText}} </mat-cell>
+          </ng-container>
+          <mat-header-row *matHeaderRowDef="getDisplayedColumns();"></mat-header-row>
+          <mat-row *matRowDef="let row; columns: getDisplayedColumns();"></mat-row>
+        </mat-table>
+
+        <mat-paginator #paginator [length]="dataSource.data.length" [pageIndex]="0" [pageSize]="5"
+          [pageSizeOptions]="[5, 10, 25, 100]">
+        </mat-paginator>
+      </div>
+    </div>
+    <form [formGroup]="form" (ngSubmit)="send()" class="mat-container">
+      <div style="margin-top: 20px;">
+        <section>
+          <!-- Method of Communication -->
+          <mat-form-field>
+            <label class="mat-label other-label">Method of Communication</label>
+            <!-- <input matInput maxlength="50" name="communicationMethod" id="communicationMethod"
+              formControlName="communicationMethod" disabled value="Email" /> -->
+            <mat-select name="communicationMethod" id="communicationMethod" formControlName="communicationMethod"
+              (selectionChange)="communicationTypeChanged($event)" [(ngModel)]="communicationMethodId">
+              <mat-option [value]="1">Email</mat-option>
+              <mat-option [value]="2">Phone</mat-option>
+              <mat-option [value]="3">SMS</mat-option>
+              <mat-option [value]="4">Post</mat-option>
+            </mat-select>
+          </mat-form-field>
+          <!--Email Address-->
+          <mat-form-field class="mat-form-field-right">
+            <label class="mat-label other-label">Email Address/Number</label>
+            <input matInput maxlength="50" name="emailAddress" id="emailAddress" formControlName="emailAddress" />
+            <mat-error *ngIf="form.get('emailAddress').hasError('required')">
+              Email is <strong>required</strong>
+            </mat-error>
+            <mat-error *ngIf="form.get('emailAddress').hasError('email')">
+              Valid email is <strong>required</strong>
+            </mat-error>
+          </mat-form-field>
+        </section>
+      </div>
+      <div class="form-group-button mat-form-button">
+        <button [mat-dialog-close]="form" [disabled]="!form.valid" (click)="send()" class="button float-button">Send</button>
+        <button [mat-dialog-close]="" (click)="onNoClick()" class="button float-button">Back</button>
+      </div>
+    </form>
+  </div>
+  <div [hidden]="dataSource.data.length > 0 || !isLoading" style="margin-left: 20px;">
+    <span class="grey site-font">No records found.</span>
+  </div>
+</mat-card-content>
+
+</mat-card>

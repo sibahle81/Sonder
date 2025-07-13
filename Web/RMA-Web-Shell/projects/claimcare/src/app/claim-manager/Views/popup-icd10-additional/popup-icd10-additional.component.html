@@ -1,0 +1,156 @@
+<mat-card>
+  <mat-card-header>
+    <mat-card-title class="wizard-font card-title grey">
+      <h1>Add More ICD10</h1>
+    </mat-card-title>
+    <mat-card-subtitle>
+      <span class="grey site-font"><i>Adding more ICD10 codes to accident</i></span>
+    </mat-card-subtitle>
+  </mat-card-header>
+
+  <mat-card-content>
+    <form [formGroup]="form" (ngSubmit)="submit()" class="mat-container" novalidate>
+      <div class="externalUser" *ngIf="user && !user.isInternalUser">
+        <section *ngIf="user && !user.isInternalUser">
+          <!--DRG-->
+          <mat-form-field class="mat-form-field">
+            <label class="mat-label other-label mandatory-field">Primary Injury Diagnostic Group</label>
+            <mat-select name="diagnosticGroup" id="diagnosticGroup" formControlName="diagnosticGroup"
+              (selectionChange)="drgChanged($event)">
+              <mat-option *ngFor="let item of diagnosticGroups" [value]="item.icd10DiagnosticGroupId">
+                {{item.code}}: {{item.description}}
+              </mat-option>
+            </mat-select>
+            <mat-error *ngIf="form.get('diagnosticGroup').hasError('required')">
+              Diagnostic Group is <strong>required</strong>
+            </mat-error>
+          </mat-form-field>
+
+          <!--Brief Description-->
+          <mat-form-field class="mat-form-field-right">
+            <label class="mat-label other-label mandatory-field">Brief Description of Injury</label>
+            <input matInput id="briefDescription" name="briefDescription" formControlName="briefDescription" />
+          </mat-form-field>
+        </section>
+        <section>
+          <!--Severity-->
+          <mat-form-field class="mat-form-field">
+            <label class="mat-label other-label mandatory-field">Severity</label>
+            <mat-select name="severity" id="severity" formControlName="severity">
+              <mat-option *ngFor="let item of severities" [value]="item.id">
+                {{item.name}}
+              </mat-option>
+            </mat-select>
+            <mat-error *ngIf="form.get('severity').hasError('required')">
+              Severity is <strong>required</strong>
+            </mat-error>
+          </mat-form-field>
+
+          <mat-form-field class="mat-form-field-right">
+            <label class="mat-label other-label">Body Side</label>
+            <mat-select id="bodySide" name="bodySide" formControlName="bodySide">
+              <mat-option *ngFor="let bodySide of bodySides" [value]="bodySide.id">
+                {{bodySide.name}}
+              </mat-option>
+            </mat-select>
+            <mat-error *ngIf="form.get('bodySide').hasError('required')">
+              Body Side is <strong>required</strong>
+            </mat-error>
+          </mat-form-field>
+        </section>
+      </div>
+
+      <div *ngIf="user && user.isInternalUser">
+        <section>
+          <!--DRG-->
+          <mat-form-field class="mat-form-field">
+            <label class="mat-label other-label mandatory-field">Primary Injury Diagnostic Group</label>
+            <mat-select name="diagnosticGroup" id="diagnosticGroup" formControlName="diagnosticGroup"
+              (selectionChange)="drgChanged($event)">
+              <mat-option *ngFor="let item of diagnosticGroups" [value]="item.icd10DiagnosticGroupId">
+                {{item.code}}: {{item.description}}
+              </mat-option>
+            </mat-select>
+            <mat-error *ngIf="form.get('diagnosticGroup').hasError('required')">
+              Diagnostic Group is <strong>required</strong>
+            </mat-error>
+          </mat-form-field>
+
+          <!--ICD10 Category-->
+          <mat-form-field class="mat-form-field-right">
+            <label class="mat-label other-label mandatory-field">ICD10 Category</label>
+            <mat-select (selectionChange)="categoryChanged($event)" name="icdCategory" id="icdCategory"
+              formControlName="icdCategory">
+              <mat-option *ngFor="let item of icdCategories" [value]="item.icd10CategoryId">
+                {{item.icd10CategoryCode}}: {{item.icd10CategoryDescription}}
+              </mat-option>
+            </mat-select>
+            <mat-error *ngIf="form.get('icdCategory').hasError('required')">
+              ICD10 Category is <strong>required</strong>
+            </mat-error>
+          </mat-form-field>
+        </section>
+
+        <section>
+          <!--ICD10 Sub Category-->
+          <mat-form-field class="mat-form-field" *ngIf="user && user.isInternalUser">
+            <label class="mat-label other-label mandatory-field">ICD10 Sub-Category</label>
+            <mat-select (selectionChange)="subCategoryChanged($event)" name="icdSubCategory" id="icdSubCategory"
+              formControlName="icdSubCategory">
+              <mat-option *ngFor="let item of icdSubCategories" [value]="item.icd10SubCategoryId">
+                {{item.icd10SubCategoryCode}}: {{item.icd10SubCategoryDescription}}
+              </mat-option>
+            </mat-select>
+            <mat-error *ngIf="form.get('icdSubCategory').hasError('required')">
+              ICD10 Sub-Category is <strong>required</strong>
+            </mat-error>
+          </mat-form-field>
+
+          <!--ICD10 Code-->
+          <mat-form-field class="mat-form-field-right" *ngIf="user && user.isInternalUser">
+            <label class="mat-label other-label mandatory-field">ICD10 Code</label>
+            <mat-select (selectionChange)="codeChanged($event)" name="icdCode" id="icdCode" formControlName="icdCode">
+              <mat-option *ngFor="let item of icdCodes" [value]="item.icd10CodeId">
+                {{item.icd10Code}}: {{item.icd10CodeDescription}}
+              </mat-option>
+            </mat-select>
+            <mat-error *ngIf="form.get('icdCode').hasError('required')">
+              ICD10 Code is <strong>required</strong>
+            </mat-error>
+          </mat-form-field>
+        </section>
+        <section>
+          <!--Severity-->
+          <mat-form-field class="mat-form-field">
+            <label class="mat-label other-label mandatory-field">Severity</label>
+            <mat-select name="severity" id="severity" formControlName="severity">
+              <mat-option *ngFor="let item of severities" [value]="item.id">
+                {{item.name}}
+              </mat-option>
+            </mat-select>
+            <mat-error *ngIf="form.get('severity').hasError('required')">
+              Severity is <strong>required</strong>
+            </mat-error>
+          </mat-form-field>
+
+          <mat-form-field class="mat-form-field-right">
+            <label class="mat-label other-label">Body Side</label>
+            <mat-select id="bodySide" name="bodySide" formControlName="bodySide">
+              <mat-option *ngFor="let bodySide of bodySides" [value]="bodySide.id">
+                {{bodySide.name}}
+              </mat-option>
+            </mat-select>
+            <mat-error *ngIf="form.get('bodySide').hasError('required')">
+              Body Side is <strong>required</strong>
+            </mat-error>
+          </mat-form-field>
+        </section>
+      </div>
+
+      <div class="form-group-button mat-form-button">
+        <button (click)='submit()' [disabled]="isViewOnly" type="button" class="button float-button">Submit</button>
+        <button (click)='onNoClick()' type="button" class="button float-button">Close</button>
+      </div>
+    </form>
+  </mat-card-content>
+</mat-card>

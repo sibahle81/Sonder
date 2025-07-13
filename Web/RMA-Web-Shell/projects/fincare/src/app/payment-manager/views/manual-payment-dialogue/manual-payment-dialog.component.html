@@ -1,0 +1,215 @@
+<div *ngIf="isSubmitting">
+    <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+    <label class="mat-label other-label"><i>Submitting manual payment...please wait</i></label>
+</div>
+
+    <form [formGroup]="form" class="mat-container details-form" novalidate>
+      <section>
+            <mat-form-field class="mat-form-field form-item">
+                <label class="mat-label other-label">Payee</label>
+                <input matInput formControlName="payee" id="payee" required="true">
+            </mat-form-field>
+
+            <mat-form-field class="mat-form-field form-item">
+                <label class="mat-label other-label">Bank</label>
+                <mat-select formControlName="bank" id="bank" required="true">
+                  <mat-option *ngFor="let bank of banks" [value]="bank.name">
+                      {{ bank.name  }}
+                  </mat-option>
+              </mat-select>
+            </mat-form-field>
+
+            <mat-form-field class="mat-form-field  form-item">
+              <label class="mat-label other-label">Bank Branch</label>
+              <input matInput formControlName="bankBranch" id="bankBranch" required="true">
+          </mat-form-field>
+      </section>
+      <section>
+            <mat-form-field class="mat-form-field  form-item">
+                <label class="mat-label other-label">Account No</label>
+                <input matInput formControlName="accountNumber" id="accountNumber" required="true">
+            </mat-form-field>
+
+            <mat-form-field class="mat-form-field form-item">
+              <label class="mat-label other-label">Bank Account Type</label>
+              <mat-select formControlName="bankAccountType" id="bankAccountType" required="true">
+                <mat-option *ngFor="let bankAccountType of bankAccountTypes" [value]="bankAccountType.id">
+                    {{ bankAccountType.name  }}
+                </mat-option>
+              </mat-select>
+            </mat-form-field>
+
+            <mat-form-field class="mat-form-field form-item">
+                <label class="mat-label other-label">Amount</label>
+                <input matInput formControlName="amount" id="amount" required="true">
+            </mat-form-field>
+      </section>
+      <section>
+            <mat-form-field class="mat-form-field form-item">
+                <label class="mat-label other-label">Product</label>
+                <mat-select formControlName="product" id="product" required="true">
+                  <mat-option *ngFor="let clientType of ClientTypes" [value]="clientType">
+                    {{ formatLookup(clientType) }}
+                </mat-option>
+              </mat-select>
+            </mat-form-field>
+
+            <mat-form-field class="mat-form-field form-item">
+                <label class="mat-label other-label">Company</label>
+                <input matInput formControlName="company" id="company" required="true">
+            </mat-form-field>
+
+            <mat-form-field class="mat-form-field form-item">
+                <label class="mat-label other-label">Branch</label>
+                <input matInput formControlName="branch" id="branch" required="true">
+            </mat-form-field>
+      </section>
+      <section>
+            <mat-form-field class="mat-form-field form-item">
+                <label class="mat-label other-label">Sender Account No</label>
+                <input matInput formControlName="senderAccountNumber" id="senderAccountNumber" required="true">
+            </mat-form-field>
+
+            <mat-form-field class="mat-form-field form-item">
+                <label class="mat-label other-label">Broker code</label>
+                <input matInput formControlName="brokerCode" id="brokerCode" required="true">
+            </mat-form-field>
+
+            <mat-form-field class="mat-form-field form-item">
+                <label class="mat-label other-label">Broker Name</label>
+                <input matInput formControlName="brokerName" id="brokerName" required="true">
+            </mat-form-field>
+      </section>
+      <section>
+            <mat-form-field class="mat-form-field form-item">
+                <label class="mat-label other-label">ID Number</label>
+                <input matInput formControlName="idNumber" id="idNumber" required="true">
+            </mat-form-field>
+
+            <mat-form-field class="mat-form-field form-item">
+                <label class="mat-label other-label">Email Address</label>
+                <input matInput formControlName="emailAddress" id="emailAddress" required="true">
+            </mat-form-field>
+      </section>
+      <section>
+        <mat-form-field class="mat-form-field form-item">
+            <label class="mat-label other-label">Payment Type</label>
+            <mat-select formControlName="paymentType" id="paymentType" required="true">
+              <mat-option *ngFor="let paymentType of PaymentTypes" [value]="paymentType">
+                {{ formatLookup(paymentType) }}
+            </mat-option>
+          </mat-select>
+        </mat-form-field>
+
+        <mat-form-field class="mat-form-field form-item">
+            <label class="mat-label other-label">Payment Type Description</label>
+            <input matInput formControlName="paymentTypeDescription" id="paymentTypeDescription" required="true">
+        </mat-form-field>
+  </section>
+      <section>
+            <mat-form-field class="mat-form-field form-item">
+                <label class="mat-label other-label">Claim Type</label>
+                <mat-select formControlName="claimType" id="claimType" required="true">
+                    <mat-option *ngFor="let claimType of ClaimTypes" [value]="claimType">
+                      {{ formatLookup(claimType) }}
+                  </mat-option>
+                </mat-select>
+            </mat-form-field>
+
+            <mat-form-field class="mat-form-field form-item">
+                <label class="mat-label other-label">Claim Type Description</label>
+                <input matInput formControlName="claimTypeDescription" id="claimTypeDescription" required="true">
+            </mat-form-field>
+
+            <mat-form-field class="mat-form-field form-item">
+                <label class="mat-label other-label">Account Type Description</label>
+                <input matInput formControlName="accountTypeDescription" id="accountTypeDescription" required="true">
+            </mat-form-field>
+      </section>
+      <section>
+            <mat-form-field class="mat-form-field form-item">
+                <label class="mat-label other-label">Client Type</label>
+                <mat-select formControlName="clientType" id="clientType" required="true">
+                  <mat-option *ngFor="let clientType of ClientTypes" [value]="clientType">
+                    {{ formatLookup(clientType) }}
+                </mat-option>
+              </mat-select>
+            </mat-form-field>
+
+            <mat-form-field class="mat-form-field form-item">
+                <label class="mat-label other-label">Reference</label>
+                <input matInput formControlName="reference" id="reference" required="true">
+            </mat-form-field>
+
+            <mat-form-field class="mat-form-field form-item">
+                <label class="mat-label other-label">Claim Reference</label>
+                <input matInput formControlName="claimReference" id="claimReference" required="true">
+            </mat-form-field>
+      </section>
+      <section>
+            <mat-form-field class="mat-form-field form-item">
+                <label class="mat-label other-label">Batch Reference</label>
+                <input matInput formControlName="batchReference" id="batchReference" required="true">
+            </mat-form-field>
+
+            <mat-form-field class="mat-form-field form-item">
+                <label class="mat-label other-label">Policy Reference</label>
+                <input matInput formControlName="policyReference" id="policyReference" required="true">
+            </mat-form-field>
+
+            <mat-form-field class="mat-form-field form-item">
+                <label class="mat-label other-label">Bank Statement Reference</label>
+                <input matInput formControlName="bankStatementReference" id="bankStatementReference" required="true">
+            </mat-form-field>
+      </section>
+      <section>
+            <mat-form-field class="mat-form-field form-item">
+                <label class="mat-label other-label">Member Name</label>
+                <input matInput formControlName="memberName" id="memberName" required="true">
+            </mat-form-field>
+
+            <mat-form-field class="mat-form-field form-item">
+                <label class="mat-label other-label">Member Number</label>
+                <input matInput formControlName="memberNumber" id="memberNumber" required="true">
+            </mat-form-field>
+
+            <mat-form-field class="mat-form-field form-item">
+                <label class="mat-label other-label">Benefit Type</label>
+                <mat-select formControlName="benefitType" id="benefitType" required="true">
+                  <mat-option *ngFor="let benefitType of BenefitTypes" [value]="benefitType">
+                    {{ formatLookup(benefitType) }}
+                </mat-option>
+              </mat-select>
+            </mat-form-field>
+      </section>
+      <section>
+            <mat-form-field class="mat-form-field form-item">
+                <label class="mat-label other-label">Scheme</label>
+                <input matInput formControlName="scheme" id="scheme">
+            </mat-form-field>
+
+            <mat-form-field class="mat-form-field form-item">
+              <label class="mat-label other-label">Destination Country</label>
+              <mat-select formControlName="destinationCountry" id="destinationCountry">
+                  <mat-option *ngFor="let country of countries" [value]="country.id">
+                      {{ country.name  }}
+                  </mat-option>
+              </mat-select>
+            </mat-form-field>
+
+            <mat-form-field class="mat-form-field form-item">
+              <label class="mat-label other-label">Strike Date</label>
+              <input matInput [matDatepicker]="strikeDatePicker" date="true" [value]="strikeDt.value" time="false" formControlName="strikeDate" readonly>
+              <mat-datepicker-toggle matSuffix class="picker-toggle" [for]="strikeDatePicker">
+              </mat-datepicker-toggle>
+              <mat-datepicker #strikeDatePicker touchUi="true" ng-model-options="{ timezone: 'sast' }">
+              </mat-datepicker>
+            </mat-form-field>
+      </section>
+    </form>
+    <section class="dialog-buttons">
+      <button class="button submit-button " (click)="submitPayment()">Submit Payment</button>
+      <button class="button submit-button" (click)="closeDialog()">Cancel</button>
+    </section>
+
+

@@ -1,0 +1,82 @@
+<mat-card>
+<div class="menu-bar">
+    <span class="material-icons">
+    assignment
+    </span>
+    Final Medical Report
+    <span *ngIf="form && form.valid" (click)="save()" class="material-icons pointer right pulseGreen" matTooltip="save">
+        save
+    </span>
+</div>
+<br />
+
+<form [formGroup]="form" *ngIf="this.form">
+    <!--Date from which fit for work-->
+    <section>                
+        <mat-form-field class="mat-form-field" color="accent">
+            <label class="mat-label other-label mandatory-field">Date from which fit for work</label>
+            <input matInput [matDatepicker]="returnToWorkDatePicker" formControlName="dateReturnToWork" id="dateReturnToWork">
+            <mat-datepicker-toggle matSuffix [for]="returnToWorkDatePicker"></mat-datepicker-toggle>
+            <mat-datepicker #returnToWorkDatePicker></mat-datepicker>
+        </mat-form-field>
+    </section>
+
+    <!-- Required to change occupation? -->
+    <section>
+        <mat-form-field class="mat-form-field" color="accent">
+            <label class="mat-label other-label">Required to change occupation?</label>&nbsp;
+            <input [hidden]="true" matInput formControlName="isJobChangeRequired"/>
+            <mat-radio-group (change)="isJobChangeRequiredChanged($event.value)" formControlName="isJobChangeRequired" id="isJobChangeRequired">
+                <mat-radio-button value='true'>Yes</mat-radio-button>&nbsp;
+                <mat-radio-button value='false'>No</mat-radio-button>
+            </mat-radio-group>
+        </mat-form-field>
+    </section>
+    <section *ngIf="form.value.isJobChangeRequired == 'true'">                
+        <mat-form-field class="mat-form-field" color="accent">
+            <label class="mat-label other-label mandatory-field">Briefly state details</label>
+            <textarea matInput cdkTextareaAutosize cdkAutosizeMinRows="3" cdkAutosizeMaxRows="5"
+                formControlName="jobChangeDetails" class="mat-input-element" maxlength="1000" id="jobChangeDetails"></textarea>
+        </mat-form-field>
+    </section>
+
+    <!-- Any permanent loss of function due to disease?-->
+    <section>
+        <mat-form-field class="mat-form-field" color="accent">
+            <label class="mat-label other-label">Any permanent loss of function due to disease?</label>&nbsp;
+            <input [hidden]="true" matInput formControlName="hasFunctionLoss"/>
+            <mat-radio-group (change)="hasFunctionLossChanged($event.value)" formControlName="hasFunctionLoss" id="hasFunctionLoss">
+                <mat-radio-button value='true'>Yes</mat-radio-button>&nbsp;
+                <mat-radio-button value='false'>No</mat-radio-button>
+            </mat-radio-group>
+        </mat-form-field>
+    </section>
+    <section *ngIf="form.value.hasFunctionLoss == 'true'">                
+        <mat-form-field class="mat-form-field" color="accent">
+            <label class="mat-label other-label mandatory-field">Briefly state details</label>
+            <textarea matInput cdkTextareaAutosize cdkAutosizeMinRows="3" cdkAutosizeMaxRows="5" id="functionLossDetails"
+                formControlName="functionLossDetails" class="mat-input-element" maxlength="1000"></textarea>
+        </mat-form-field>
+        <p>If there are impairment findings, please detail any permanent anatomical defect and/or impairment of functions on the relevant assessment chart, <br> to be found at: <a
+            href="https://randmutual.co.za/Downloads#48932-general-medical-reports" target="_blank">https://randmutual.co.za/Downloads#48932-general-medical-reports</a>.<br> Upload the completed assessment chart via the CompCare channel
+        </p>
+    </section>
+
+    <section>                
+        <mat-form-field class="mat-form-field" color="accent">
+            <label class="mat-label other-label mandatory-field">Date of stabilisation</label>
+            <input matInput [matDatepicker]="stabilisationDatePicker" formControlName="stabilisationDate" id="stabilisationDate">
+            <mat-datepicker-toggle matSuffix [for]="stabilisationDatePicker"></mat-datepicker-toggle>
+            <mat-datepicker #stabilisationDatePicker></mat-datepicker>
+        </mat-form-field>
+    </section>
+
+    <section>                
+        <mat-form-field class="mat-form-field">
+            <label class="mat-label other-label mandatory-field">Briefly state details</label>
+            <textarea matInput cdkTextareaAutosize cdkAutosizeMinRows="3" cdkAutosizeMaxRows="5" id="conditionStabilisedDetails"
+                formControlName="conditionStabilisedDetails" class="mat-input-element" maxlength="1000"></textarea>
+        </mat-form-field>
+    </section>
+</form>
+</mat-card>

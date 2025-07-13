@@ -1,0 +1,42 @@
+<mat-card *ngIf="isLoading$ | async">
+    <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+    <label class="mat-label other-label"><i>loading...please wait</i></label>
+</mat-card>
+
+<mat-card *ngIf="!(isLoading$ | async)">
+
+    <div class="menu-bar">
+        <span class="material-icons">
+            volunteer_activism
+        </span>
+        Validate Letter of Good Standing
+    </div>
+
+    <form [formGroup]="form" class="mat-container details-form" novalidate>
+        <section>
+            <mat-form-field class="mat-form-field">
+                <label class="mat-label other-label">Certificate Number</label>
+                <input (focus)="reset()" matInput formControlName="certificateNo" name="certificateNo" id="certificateNo" />
+            </mat-form-field>
+        </section>
+    </form>
+
+    <div *ngIf="form.valid && !form.pristine && !(isLoading$ | async) && !showResult" class="form-buttons">
+        <button [disabled]="form.invalid" class="button submit-button" (click)="validate()">Submit</button>
+    </div>
+
+    <div class="width" *ngIf="showResult">
+        <div *ngIf="isValid" class="green">
+            <span class="material-icons">
+                verified
+            </span>
+            Certificate is valid
+        </div>
+        <div *ngIf="!isValid" class="red">
+            <span class="material-icons">
+                gpp_bad
+            </span>
+            Certificate is not valid
+        </div>
+    </div>
+</mat-card>

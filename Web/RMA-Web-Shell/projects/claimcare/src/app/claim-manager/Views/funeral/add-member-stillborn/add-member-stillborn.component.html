@@ -1,0 +1,318 @@
+<mat-tab-group [(selectedIndex)]="selectedIndex" (selectedTabChange)="tabChanged($event)"
+    class="mat-tab-group mat-primary">
+    <mat-tab label="Notifier & Deceased Information">
+        <mat-card style="margin: 15px 30px 15px 30px">
+            <mat-card-header>
+                <mat-card-title class="wizard-font card-title grey">
+                    <!-- <h1 class="wizard-font" style="padding: 0;">Deceased Information</h1> -->
+                </mat-card-title>
+            </mat-card-header>
+            <mat-card-content style="margin-left: 10px;">
+
+                <div *ngIf="insuredLive===0">
+                    <search-claimant-policy (resultEmit)="claimantChangeHandler($event)" [title]="'Search Policy'">
+                    </search-claimant-policy>
+                </div>
+                <div *ngIf="insuredLive===1">
+                    <mat-card class="main-container">
+                        <mat-card class="top-selector-container">
+
+                            <mat-card class="summary-container" style="width: 450px">
+                                <mat-card-header>
+                                    <mat-card-title>
+                                        <h1 class="wizard-font">Policy Details</h1>
+                                    </mat-card-title>
+                                </mat-card-header>
+                                <mat-card-content class="content-container">
+                                    <div class="text-container" *ngIf="policies != null else policyWarning">
+                                        <table id="brokers">
+                                            <thead>
+                                                <tr>
+                                                    <th><b>Policy</b></th>
+                                                    <th><b>Policy Number</b></th>
+                                                </tr>
+                                            </thead>
+
+                                            <tbody>
+                                                <tr *ngFor="let row of policies;let i = index;">
+                                                    <td>
+                                                        {{row.policy}}
+                                                    </td>
+                                                    <td>
+                                                        {{row.policynumber}}
+                                                    </td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
+
+                                    <ng-template #policyWarning>&nbsp;&nbsp;&nbsp;&nbsp;No policies have been found
+                                    </ng-template>
+
+                                </mat-card-content>
+                            </mat-card>
+                        </mat-card>
+                    </mat-card>
+                    <div *ngIf="actionType=='StillBorn'">
+                        <form [formGroup]="stillBornForm" (ngSubmit)="save()" class="mat-container" novalidate>
+                            <mat-card class="main-container">
+                                <mat-card class="top-selector-container">
+                                    <mat-card class="summary-container" style="width: 450px">
+                                        <mat-card-header>
+                                            <mat-card-title>
+                                                <h1 class="wizard-font">Claimant Details</h1>
+                                            </mat-card-title>
+                                        </mat-card-header>
+                                        <section>
+                                            <mat-form-field class="mat-form-field-right">
+                                                <label>Notifier First Name</label>
+                                                <input matInput maxlength="50" formControlName="claimantFirstName"
+                                                    name="claimantFirstName">
+                                                <mat-error
+                                                    *ngIf="stillBornForm.get('claimantFirstName').hasError('required')">
+                                                    First name is <strong>required</strong>
+                                                </mat-error>
+                                            </mat-form-field>
+
+                                            <mat-form-field class="mat-form-field-right">
+                                                <label>Claimiant Last Name</label>
+                                                <input matInput maxlength="50" formControlName="claimantLastName"
+                                                    name="claimantLastName">
+                                                <mat-error
+                                                    *ngIf="stillBornForm.get('claimantIdNumber').hasError('required')">
+                                                    Claimiant Id Number is <strong>required</strong>
+                                                </mat-error>
+                                            </mat-form-field>
+                                        </section>
+                                        <section>
+                                            <mat-form-field class="mat-form-field-right">
+                                                <label>Claimant Id Number</label>
+                                                <input matInput maxlength="13" formControlName="claimantIdNumber"
+                                                    name="claimantIdNumber">
+                                                <mat-error
+                                                    *ngIf="stillBornForm.get('claimantIdNumber').hasError('required')">
+                                                    Claimant Id Number is <strong>required</strong>
+                                                </mat-error>
+                                            </mat-form-field>
+
+                                            <mat-form-field class="mat-form-field-right">
+                                                <label class="mat-label other-label">Date of Birth</label>
+                                                <input readonly matInput [max]="minDate" date="true" time="false"
+                                                    formControlName="claimantDateOfBirth" 
+                                                    [matDatepicker]="claimantDateOfBirth" id="claimantDateOfBirth" />
+                                                <mat-datepicker-toggle matSuffix
+                                                    style="position: absolute;right: 0;top: 13px;"
+                                                    [for]="claimantDateOfBirth"></mat-datepicker-toggle>
+                                                <mat-datepicker touchUi="true" #dateOfDeath></mat-datepicker>
+                                            </mat-form-field>
+                                        </section>
+                                        <section>
+                                            <mat-form-field class="mat-form-field-right">
+                                                <label>Cellphone Number</label>
+                                                <input matInput maxlength="50" formControlName="claimantCellnumber"
+                                                    name="claimantCellnumber">
+                                                <mat-error
+                                                    *ngIf="stillBornForm.get('claimantCellnumber').hasError('required')">
+                                                    Cellphone Number is <strong>required</strong>
+                                                </mat-error>
+                                            </mat-form-field>
+
+                                            <mat-form-field class="mat-form-field-right">
+                                                <label>Notifier Email Address</label>
+                                                <input matInput maxlength="50" formControlName="claimantEmailAddress"
+                                                    name="claimantEmailAddress">
+                                                <mat-error
+                                                    *ngIf="stillBornForm.get('claimantEmailAddress').hasError('required')">
+                                                    Preferred method of communication is <strong>required</strong>
+                                                </mat-error>
+                                                <mat-error
+                                                    *ngIf="stillBornForm.get('claimantEmailAddress').hasError('email')">
+                                                    Valid email address is <strong>required</strong>
+                                                </mat-error>
+                                            </mat-form-field>
+                                        </section>
+                                        <section>
+                                            <mat-form-field class="mat-form-field-right">
+                                                <label class="mat-label other-label">Preffered Method Of Contact</label>
+                                                <mat-select name="filter" id="filter"
+                                                    formControlName="communicationType" #communicationSelect
+                                                    (selectionChange)="communicationTypeChanged($event)">
+                                                    <mat-option [value]="1">Email</mat-option>
+                                                    <mat-option [value]="2">Phone</mat-option>
+                                                    <mat-option [value]="3">SMS</mat-option>
+                                                    <mat-option [value]="4">Post</mat-option>
+                                                </mat-select>
+                                                <mat-error
+                                                    *ngIf="communicationSelect.errorState && stillBornForm.get('communicationType').hasError('required')">
+                                                    Preferred method of communication is <strong>required</strong>
+                                                </mat-error>
+                                            </mat-form-field>
+                                        </section>
+                                    </mat-card>
+                                    <span style="margin-left: 25px"></span>
+                                    <mat-card class="summary-container" style="width: 450px">
+                                        <mat-card-header>
+                                            <mat-card-title>
+                                                <h1 class="wizard-font">Still Born Details</h1>
+                                            </mat-card-title>
+                                        </mat-card-header>
+                                        <section>
+                                            <mat-form-field class="mat-form-field-right">
+                                                <label class="mat-label other-label">Date Notified</label>
+                                                <input readonly matInput [max]="minDate" date="true" time="false"
+                                                    formControlName="dateNotified"
+                                                    (ngModelChange)="getDateNotified($event)"
+                                                    [matDatepicker]="dateNotified" id="dateNotified" />
+                                                <mat-datepicker-toggle matSuffix
+                                                    style="position: absolute;right: 0;top: 13px;" [for]="dateNotified">
+                                                </mat-datepicker-toggle>
+                                                <mat-datepicker touchUi="true" #dateNotified></mat-datepicker>
+                                                <mat-error
+                                                    *ngIf="stillBornForm.get('dateNotified').hasError('required')">
+                                                    Date notified is <strong>required</strong>
+                                                </mat-error>
+                                            </mat-form-field>
+                                        </section>
+                                        <section>
+                                            <mat-form-field class="mat-form-field-right">
+                                                <label>First Name</label>
+                                                <input matInput maxlength="50" formControlName="firstName"
+                                                    name="firstName" (blur)="enableDateOfDeath()">
+                                                <mat-error *ngIf="stillBornForm.get('firstName').hasError('required')">
+                                                    First name is <strong>required</strong>
+                                                </mat-error>
+                                                <mat-error *ngIf="stillBornForm.get('firstName').hasError('pattern')">
+                                                    First name cannot be <strong>numeric</strong>
+                                                </mat-error>
+                                            </mat-form-field>
+
+                                            <mat-form-field class="mat-form-field-right">
+                                                <label>Last Name</label>
+                                                <input matInput maxlength="50" formControlName="lastName"
+                                                    name="lastName" (blur)="enableDateOfDeath()">
+                                                <mat-error *ngIf="stillBornForm.get('lastName').hasError('required')">
+                                                    Last name is <strong>required</strong>
+                                                </mat-error>
+                                                <mat-error *ngIf="stillBornForm.get('lastName').hasError('pattern')">
+                                                    First name cannot be <strong>numeric</strong>
+                                                </mat-error>
+                                            </mat-form-field>
+                                        </section>
+                                        <section>
+                                            <mat-form-field class="mat-form-field-right">
+                                                <label class="mat-label other-label">Date of Death</label>
+                                                <input readonly matInput [max]="minDate" date="true" time="false"
+                                                    (ngModelChange)="setDateOfDeath($event)"
+                                                    formControlName="dateOfDeath" [matDatepicker]="dateOfDeath"
+                                                    id="dateOfDeath" />
+                                                <mat-datepicker-toggle matSuffix
+                                                    style="position: absolute;right: 0;top: 13px;" [for]="dateOfDeath">
+                                                </mat-datepicker-toggle>
+                                                <mat-datepicker touchUi="true" #dateOfDeath></mat-datepicker>
+                                                <mat-error
+                                                    *ngIf="stillBornForm.get('dateOfDeath').hasError('required')">
+                                                    Date of death is <strong>required</strong>
+                                                </mat-error>
+                                            </mat-form-field>
+
+                                            <mat-form-field class="mat-form-field-right">
+                                                <label class="mat-label other-label">Type of death</label>
+                                                <mat-select name="filter" id="filter" formControlName="typeOfDeath"
+                                                    (selectionChange)="typeOfDeathChanged($event)">
+                                                    <mat-option [value]="1">Natural</mat-option>
+                                                    <mat-option [value]="2">Unnatural</mat-option>
+                                                    <mat-option [value]="3">Stillborn</mat-option>
+                                                    <mat-option [value]="4">Suicide</mat-option>
+                                                </mat-select>
+                                                <mat-error
+                                                    *ngIf="stillBornForm.get('typeOfDeath').hasError('required')">
+                                                    Type of death is <strong>required</strong>
+                                                </mat-error>
+                                            </mat-form-field>
+                                        </section>
+                                    </mat-card>
+                                    <br>
+                                </mat-card>
+                            </mat-card>
+                        </form>
+                    </div>
+                </div>
+            </mat-card-content>
+            <mat-card-footer>
+                <div *ngIf="currentAction != ''" class="menu-container">
+                    <div style="margin-right: 15px;">
+                        <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+                    </div>
+                    <label class="mat-label other-label"><i>{{currentAction}}</i></label>
+                </div>
+                <div *ngIf="insuredLive === 1" class="form-group-button mat-form-button">
+
+                    <div *ngIf="actionType==='StillBorn'" class="form-buttons" matTooltip="Go to next tab"
+                        (click)="addDeceasedInfo()">
+                        <button class="button float-button" id="btnSubmit"
+                            [disabled]="!stillBornForm.valid || !overrideDuplicate || isDisabled">Submit</button>
+                    </div>
+                    <div (click)="cancel()" class="form-group-button mat-form-button">
+                        <button type="button" class="button float-button">Cancel</button>
+                    </div>
+                </div>
+            </mat-card-footer>
+        </mat-card>
+    </mat-tab>
+    <div style="margin: 0px 0px 0px 22px;">
+        <mat-tab label="Confirmation">
+            <mat-card class="summary-container" style="width: 1050px">
+                <mat-card-header>
+                    <mat-card-title>
+                        <h1 class="wizard-font">Funeral claim details</h1>
+                    </mat-card-title>
+                </mat-card-header>
+                <mat-card-content class="content-container">
+                    <div class="text-container">
+                        <table id="brokers">
+                            <thead>
+                                <tr>
+                                    <th><b>Name and Surname</b></th>
+                                    <th><b>ID/Passport</b></th>
+                                    <th><b>Policy Number</b></th>
+                                    <th><b>Role</b></th>
+                                    <th><b>Claim Number</b></th>
+                                    <th><b>Date Created</b></th>
+                                </tr>
+                            </thead>
+
+                            <tbody>
+                                <tr *ngFor="let row of deathDetails;let i = index;">
+                                    <td>
+                                        {{row.nameSurname}}
+                                    </td>
+                                    <td>
+                                        {{row.idNumber}}
+                                    </td>
+                                    <td>
+                                        {{row.policyNumber}}
+                                    </td>
+                                    <td>
+                                        {{row.role}}
+                                    </td>
+                                    <td>
+                                        {{row.claimNumber}}
+                                    </td>
+                                    <td>
+                                        {{row.dateCreated}}
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </mat-card-content>
+                <div class="form-group-button mat-form-button">
+                    <div (click)="confirm()" class="form-group-button mat-form-button">
+                        <button type="button" class="button float-button">Done</button>
+                    </div>
+                </div>
+            </mat-card>
+        </mat-tab>
+    </div>
+
+</mat-tab-group>

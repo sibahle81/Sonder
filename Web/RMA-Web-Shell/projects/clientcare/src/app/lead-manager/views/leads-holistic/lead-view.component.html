@@ -1,0 +1,104 @@
+<div
+    *ngIf="isReadOnly || ((userHasPermission(viewPermission) && leadId > 0) || (userHasPermission(addPermission) && !leadId || leadId <= 0) || (userHasPermission(editPermission) && leadId > 0))">
+    <mat-card *ngIf="isLoading$ | async">
+        <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+        <label class="mat-label other-label"><i>fetching product offering...please wait</i></label>
+    </mat-card>
+
+    <div *ngIf="!(isLoading$ | async)">
+        <mat-card>
+            <div class="menu-bar">
+                <span class="material-icons">
+                    person
+                </span>
+                Lead <span *ngIf="lead && lead.code">({{lead.code}})</span>
+            </div>
+
+            <mat-card *ngIf="!isReadOnly && lead?.isConverted">
+                <span class="material-icons info">
+                    info
+                </span>
+                This lead is in read only mode because it has been converted to business...Click <i><a href="clientcare/member-manager/member-wholistic-view/{{lead.rolePlayerId}}"><b>here</b></a></i> to navigate to this member
+            </mat-card>
+
+            <mat-tab-group animationDuration="500ms" [(selectedIndex)]="tabIndex">
+                <mat-tab label="Lead">
+                    <lead-details [leadId]="leadId" [isReadOnly]="isReadOnly || lead?.isConverted"
+                        (leadEmit)="setLead($event)"></lead-details>
+                </mat-tab>
+
+                <mat-tab *ngIf="lead && companyTypes.includes(lead.clientType)"
+                    label="{{isCompanyValid() ? 'Company' : 'Company (required)'}}">
+                    <lead-company [lead]="lead" [isReadOnly]="isReadOnly || lead?.isConverted"
+                        (isCompletedEmit)="setTabIndex(2)"></lead-company>
+                </mat-tab>
+
+                <mat-tab *ngIf="lead" label="{{isContactValid() ? 'Contacts' : 'Contacts (required)'}}">
+                    <lead-contact-V2 *ngIf="!lead.isConverted" [lead]="lead" [isReadOnly]="isReadOnly"
+                        (isCompletedEmit)="setTabIndex(3)"></lead-contact-V2>
+                    <member-contacts *ngIf="lead.isConverted" [member]="lead.rolePlayer"
+                        [isReadOnly]="isReadOnly || lead?.isConverted"></member-contacts>
+                </mat-tab>
+
+                <mat-tab *ngIf="lead" label="{{isAddressValid() ? 'Address' : 'Address (required)'}}">
+                    <lead-address *ngIf="!lead.isConverted" [lead]="lead" [isReadOnly]="isReadOnly"
+                        (isCompletedEmit)="setTabIndex(4)"></lead-address>
+                    <role-player-address-list *ngIf="lead.isConverted" [rolePlayer]="lead.rolePlayer"
+                        [isReadOnly]="isReadOnly || lead?.isConverted"></role-player-address-list>
+                </mat-tab>
+
+                <mat-tab *ngIf="lead" label="{{isNotesValid() ? 'Notes' : 'Notes (required)'}}">
+                    <lead-note [lead]="lead" [isReadOnly]="isReadOnly"></lead-note>
+                </mat-tab>
+
+                <mat-tab *ngIf="lead && lead.leadId > 0 && !isReadOnly || lead?.isConverted" label="SLA">
+                    <paged-sla-status-change-audits [slaItemType]="slaItemType"
+                        [currentQuery]="lead.leadId"></paged-sla-status-change-audits>
+                </mat-tab>
+
+                <mat-tab *ngIf="lead && lead.leadId > 0 && !isReadOnly" label="Referrals">
+                    <referral-view [targetModuleType]="targetModuleType" [referralItemType]="referralItemType" [itemId]="lead.leadId" [referralItemTypeReference]="referralItemTypeReference"></referral-view>
+                  </mat-tab>
+            </mat-tab-group>
+
+            <mat-tab-group *ngIf="!isReadOnly && (lead && lead.leadId > 0)" [(selectedIndex)]="productOfferingTabIndex">
+                <mat-tab label="Product Offering">
+                    <product-selector-V2 [lead]="lead" (triggerRefreshEmit)="refreshQuotes()"></product-selector-V2>
+                </mat-tab>
+                <mat-tab label="My Quotes">
+                    <lead-quotes [lead]="lead" [refresh]="refreshQuote"></lead-quotes>
+                </mat-tab>
+                <mat-tab label="Documents" *ngIf="!(isLoadingIndustryClassConfiguration | async)">
+                    <document-uploader [documentSet]="documentSet" [systemName]="documentSystemName"
+                        [keyName]="'MemberId'" [keyValue]="lead.rolePlayerId"
+                        [canDelete]="currentUser?.isInternalUser"
+                        [expiryDate]="currentCoverPeriodEndDate"></document-uploader>
+                </mat-tab>
+            </mat-tab-group>
+        </mat-card>
+
+        <div *ngIf="lead" class="form-group-button mat-form-button">
+            <div *ngIf="lead.leadId <= 0" class="form-buttons">
+                <button class="button float-button submit-button" [disabled]="!isValid()" (click)="save()">
+                    Next
+                </button>
+            </div>
+
+            <div *ngIf="!isReadOnly" (click)="back()" class="form-buttons">
+                <button type="button" class="button float-button submit-button">Back</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div *ngIf="!isReadOnly && (!userHasPermission(viewPermission) && !userHasPermission(editPermission) && leadId > 0)">
+    <mat-card>
+        <label class="mat-label other-label"><i>you do not have permission to view/edit leads</i></label>
+    </mat-card>
+</div>
+
+<div *ngIf="!userHasPermission(addPermission) && !leadId || leadId <= 0">
+    <mat-card>
+        <label class="mat-label other-label"><i>you do not have permission to add leads</i></label>
+    </mat-card>
+</div>

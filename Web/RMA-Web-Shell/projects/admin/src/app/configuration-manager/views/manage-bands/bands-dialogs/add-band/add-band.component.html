@@ -1,0 +1,43 @@
+<div>
+  <h3 mat-dialog-title>Add New Commission Band</h3>
+
+  <form class="mat-dialog-content" (ngSubmit)="submit" #formControl="ngForm">
+    <section>
+      <mat-form-field>
+          <label>Commission Band Name</label>
+          <input matInput id="commissionBandName" name="commissionBandName" [(ngModel)]="data.commissionBandName" required>
+          <mat-error *ngIf="formControl.invalid">{{getErrorMessage()}}</mat-error>
+      </mat-form-field>
+
+      <mat-form-field class="mat-form-field-right">
+          <label>Min Salary Band</label>
+          <input matInput id="minSalaryBand" (blur)="validateMinSalaryBand($event)" name="minSalaryBand" [(ngModel)]="data.minSalaryBand" DecimalNumber required>
+          <mat-error *ngIf="formControl.invalid">{{getErrorMessage()}}</mat-error>
+          <div *ngIf="isMinSalaryVal">
+            <label style="color: red; font-size: 75%;">Salary Band must be over existing bands</label>
+          </div>
+      </mat-form-field>
+  </section>
+
+  <section>
+      <mat-form-field>
+          <label>Max Salary Band</label>
+          <input matInput id="maxSalaryBand" (blur)="validateMaxSalaryBand($event)" name="maxSalaryBand" [(ngModel)]="data.maxSalaryBand" DecimalNumber required>
+          <mat-error *ngIf="formControl.invalid">{{getErrorMessage()}}</mat-error>
+          <div *ngIf="isMaxSalaryVal">
+            <label style="color: red; font-size: 75%;">Salary Band must be over existing bands</label>
+          </div>
+      </mat-form-field>
+      <mat-form-field class="mat-form-field-right">
+          <label>Commission rate</label>
+          <input matInput id="commissionRate" name="commissionRate" [(ngModel)]="data.commissionRate" DecimalNumber required>
+          <mat-error *ngIf="formControl.invalid">{{getErrorMessage()}}</mat-error>
+      </mat-form-field>
+  </section>
+
+    <div mat-dialog-actions>
+      <button mat-button [type]="submit" class="button float-button" [disabled]="!formControl.valid || isMinSalaryVal || isMaxSalaryVal" [mat-dialog-close]="1" (click)="confirmAdd()">Save</button>
+      <button mat-button (click)="onNoClick()" class="button float-button" tabindex="-1">Cancel</button>
+    </div>
+  </form>
+</div>

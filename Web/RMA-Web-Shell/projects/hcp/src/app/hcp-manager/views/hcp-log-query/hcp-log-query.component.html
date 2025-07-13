@@ -1,0 +1,81 @@
+<mat-card class="removePaddingBottom">
+    <div class="menu-bar">
+        <span>
+            <span class="material-icons">
+                note_add
+            </span>
+            {{title}}
+        </span>
+    </div>
+</mat-card>
+<mat-card *ngIf="(isSaving$ | async)">
+    <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+    <label class="mat-label other-label"><i>Logging query...please wait</i></label>
+</mat-card>
+<mat-card class="removePaddingBottom">
+    <form [formGroup]="form" class="mat-container details-form" novalidate>
+        <section>
+            <!--RolePlayerItemQueryType-->
+            <div class="field-container">
+                <div><label class="mat-label other-label mandatory-field">Query Type</label></div>
+                <mat-form-field>
+                    <mat-select name="itemQueryType" id="itemQueryType" formControlName="itemQueryType">
+                        <mat-option [value]="''">Please select</mat-option>
+                        <mat-option *ngFor="let itemQueryType of itemQueryTypes" [value]="itemQueryType">
+                            {{formatLookup(itemQueryType)}}
+                        </mat-option>
+                    </mat-select>
+                </mat-form-field>
+                <mat-error *ngIf="form.get('itemQueryType').hasError('required')">
+                    Query Type<strong> is required</strong>
+                </mat-error>
+            </div>
+
+            <!--RolePlayerItemQueryCategory-->
+            <div class="field-container-right">
+                <div><label class="mat-label other-label mandatory-field">Query Category</label></div>
+                <mat-form-field>
+                    <mat-select name="itemQueryCategory" id="itemQueryCategory" formControlName="itemQueryCategory">
+                        <mat-option [value]="''">Please select</mat-option>
+                        <mat-option *ngFor="let itemQueryCategory of itemQueryCategories" [value]="itemQueryCategory">
+                            {{formatLookup(itemQueryCategory)}}
+                        </mat-option>
+                    </mat-select>
+                </mat-form-field>
+                <mat-error *ngIf="form.get('itemQueryCategory').hasError('required')">
+                    Query Category<strong> is required</strong>
+                </mat-error>
+            </div>
+        </section>
+        <section>
+            <!--query description-->
+            <div class="field-container">
+                <div><label class="mat-label other-label mandatory-field">Query Description</label></div>
+                <mat-form-field class="mat-form-field">
+                    <textarea matInput formControlName="queryDescription" id="queryDescription" class="text-area-input" name="queryDescription"
+                        cdkAutosizeMinRows="3" cdkAutosizeMaxRows="5" maxlength="250"></textarea>
+                </mat-form-field>
+                <mat-error *ngIf="form.get('queryDescription').hasError('required')">
+                    Query Description<strong> is required</strong>
+                </mat-error>
+                <mat-error *ngIf="form.get('queryDescription').hasError('minlength')">
+                    Query Description must be at least <strong>ten characters</strong>
+                </mat-error>
+            </div>
+        </section>
+    </form>
+
+    <document-uploader *ngIf="doneGettingReferenceNumber$ | async"
+        [documentSet]="documentSet"
+        [systemName]="documentSystemName" 
+        [keyName]="'ItemQueryReferenceNumber'"
+        [keyValue]="queryReferenceNumber" 
+        [showDocumentStatusButton]="false"
+        (documentComponentReadyEmit)="documentComponentReady($event)">
+    </document-uploader>
+
+    <div class="form-buttons submit-button">
+        <button type="button" [disabled]="busyProcessing()" class="button float-button" (click)="onLogQuery()">Log
+            Query</button>
+    </div>
+</mat-card>

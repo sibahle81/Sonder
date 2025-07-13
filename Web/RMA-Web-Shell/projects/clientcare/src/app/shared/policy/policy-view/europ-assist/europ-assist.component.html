@@ -1,0 +1,44 @@
+<mat-card *ngIf="(isLoading$ | async)">
+    <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+    <label class="mat-label other-label"><i>{{loadingMessage$ | async}}</i></label>
+</mat-card>
+
+<mat-card *ngIf="!(isLoading$ | async)">
+    <div class="menu-bar">
+        <span class="material-icons">
+            support
+        </span>
+        Europ Assist
+    </div>
+    <mat-card>
+        <form [formGroup]="form" class="mat-container details-form" novalidate>
+            <section>
+                <mat-checkbox (change)="check()" name="isEuropAssist" id="isEuropAssist" formControlName="isEuropAssist"
+                    [(ngModel)]="policy.isEuropAssist" [disabled]="isReadOnly">
+                    <label class="mat-label other-label">Europ Assist ?</label>
+                </mat-checkbox>
+            </section>
+            <section *ngIf="policy && policy.isEuropAssist">
+                <br />
+                <mat-form-field class="mat-form-field">
+                    <label class="mat-label other-label mandatory-field">Europ Assist Effective From</label>
+                    <input [(ngModel)]="policy.europAssistEffectiveDate" matInput
+                        formControlName="europAssistEffectiveFromDate" [matDatepicker]="europAssistEffectiveFromDate"
+                        format="yyyy-MM-dd">
+                    <mat-datepicker-toggle matSuffix [for]="europAssistEffectiveFromDate"></mat-datepicker-toggle>
+                    <mat-datepicker touchUi="true" #europAssistEffectiveFromDate></mat-datepicker>
+                    <mat-error *ngIf="form.get('europAssistEffectiveFromDate').hasError('required')">
+                        effective from date is required
+                    </mat-error>
+                </mat-form-field>
+                <mat-form-field class="mat-form-field-right">
+                    <label class="mat-label other-label">Europ Assist Effective To</label>
+                    <input [(ngModel)]="policy.europAssistEndDate" matInput formControlName="europAssistEffectiveToDate"
+                        [matDatepicker]="europAssistEffectiveToDate" format="yyyy-MM-dd">
+                    <mat-datepicker-toggle matSuffix [for]="europAssistEffectiveToDate"></mat-datepicker-toggle>
+                    <mat-datepicker touchUi="true" #europAssistEffectiveToDate></mat-datepicker>
+                </mat-form-field>
+            </section>
+        </form>
+    </mat-card>
+</mat-card>

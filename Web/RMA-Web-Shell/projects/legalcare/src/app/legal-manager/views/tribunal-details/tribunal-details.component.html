@@ -1,0 +1,270 @@
+
+<section>
+  <div class="collection-data" [ngClass]=" isSpinner ? 'on-disabled' : 'on-enabled' ">
+
+  <div class="details-heading action-comment">
+  <div class="details-div-inside">
+
+    <div class="details-view-div">
+      <div class="recovery-btn-div">
+        <button mat-button class="recovery-btn"> {{userDetails?.customerName}}</button>
+      </div>
+      <div class="notifi-icon">
+      </div>
+    </div>
+  </div>
+  </div>
+
+  <div class="legal-info-div">
+  <div class="legal-info-div-inside">
+
+    <div class="information information-view">
+      <div class="inside-content-div">
+        <div class="heading-tab">
+          <span class="heading-text">Information</span>
+        </div>
+        <div class="info-div-inside">
+          <div>
+            <ng-container *ngFor="let item of information">
+              <div class="value-div"><span class="key">{{item.key}} :</span>
+                <span class="value"
+                  [ngStyle]="item.key == 'Date Assessed' || item.key == 'Date of Referal' || item.key == 'Comments' ? {'font-weight': 'bold'} : {}">{{item.value}}</span>
+              </div>
+            </ng-container>
+          </div>
+
+          <div *ngIf="information.length == 0 && !isInfoLoading" class="no-data">
+            <h2>No data available</h2>
+          </div>
+        </div>
+
+        <div [hidden]="!isInfoLoading" [ngClass]="isInfoLoading ? 'details-progress-bar-container' : '' ">
+          <mat-progress-bar *ngIf="isInfoLoading" mode="indeterminate"></mat-progress-bar>
+        </div>
+
+      </div>
+    </div>
+
+    <div class="action">
+      <div class="inside-content-div">
+        <div class="heading-tab action-log-heading header-with-search padding-bottom-5">
+          <span class="heading-text border-none">Action Logs</span>
+          <div class="action-tab-search-field">
+          <div class="search-container-css">
+            <div class="search-container-data border-none">
+              <span matPrefix (click)="toggleSearchInput()" class="information-list border-none padding-bottom">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <path d="M0 0H24V24H0V0Z" fill="white"/>
+                  <path d="M4 6H20H4ZM7 12H17H7ZM11 18H13H11Z" fill="white"/>
+                  <path d="M4 6H20M7 12H17M11 18H13" stroke="black" stroke-linecap="round" stroke-linejoin="round"/>
+                  </svg>
+              </span>
+              <mat-form-field *ngIf="showSearchInput" class="search-popup">
+                
+                <button mat-icon-button matSuffix (click)="toggleSearchInput()">
+                  <mat-icon>close</mat-icon>
+                </button>
+                <div class="detailHeadInnerDiv">
+                  <div class="date-picker-upadte-status status-update-mff legal-add-payment-field question-div question-div-legal">
+                    <p>Date From</p>
+                    <mat-form-field appearance="outline" class="date-picker-field date-picker-container-css">
+                      <input matInput [matDatepicker]="fromPicker" [formControl]="fromDateControl" readonly class="border-none">
+                      <mat-datepicker-toggle matSuffix [for]="fromPicker" class="date-picker-toggle-css"></mat-datepicker-toggle>
+                      <mat-datepicker #fromPicker [matDatepickerFilter]="fromDateFilter" (dateChange)="fromDateSelected($event);filterLogsByDateRange()"></mat-datepicker>
+                    </mat-form-field>
+                  </div>
+                  <div class="date-picker-upadte-status status-update-mff legal-add-payment-field question-div question-div-legal">
+                    <p>Date To</p>
+                    <mat-form-field appearance="outline" class="date-picker-field date-picker-container-css">
+
+                     <input matInput [matDatepicker]="toPicker" placeholder="To Date" [formControl]="toDateControl" class="border-none"
+         >
+  <mat-datepicker-toggle matSuffix [for]="toPicker" class="date-picker-toggle-css"></mat-datepicker-toggle>
+  <mat-datepicker #toPicker [matDatepickerFilter]="toDateFilter" (dateChange)="toDateSelected($event);filterLogsByDateRange()"></mat-datepicker>
+                    </mat-form-field>
+                  
+                  </div>
+                </div>
+                <div class="detaildropdownInnerDiv">
+                   
+                  <div class="search-container-data">
+                    <span matPrefix class="border-none padding-bottom">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none">
+                            <path
+                                d="M19 11C19 12.5823 18.5308 14.129 17.6518 15.4446C16.7727 16.7602 15.5233 17.7856 14.0615 18.3911C12.5997 18.9966 10.9911 19.155 9.43928 18.8463C7.88743 18.5376 6.46197 17.7757 5.34315 16.6569C4.22433 15.5381 3.4624 14.1126 3.15372 12.5608C2.84504 11.0089 3.00347 9.40038 3.60897 7.93857C4.21447 6.47676 5.23985 5.22733 6.55544 4.34828C7.87103 3.46923 9.41775 3.00004 11 3.00004C12.0515 2.99674 13.0933 3.20141 14.0654 3.60228C15.0375 4.00315 15.9207 4.5923 16.6642 5.33582C17.4077 6.07935 17.9969 6.96257 18.3978 7.93467C18.7986 8.90677 19.0033 9.94854 19 11Z"
+                                stroke="#292929" stroke-linecap="round" stroke-linejoin="round" />
+                            <path d="M20.9993 21L16.6562 16.657" stroke="#292929" stroke-linecap="round"
+                                stroke-linejoin="round" />
+                        </svg>
+                    </span>
+                    <mat-select [formControl]="selectedOptionsControl"  multiple (click)="preventFocusShift($event)"
+                    [panelClass]="'custom-dropdown'" class="mat-multi-select border-none mat-multi-select-scroll">
+                    <input matInput placeholder="Search here..." #input class="search-input" (input)="filterList($event.target.value)" (keydown)="handleSpaceKey($event)">
+                      <mat-checkbox (change)="selectAllOptions($event.checked)" class="mat-multi-select border-none select-all-checkbox primary">Select All</mat-checkbox>
+                      <hr class="margin-none">
+                      <ng-container *ngFor="let option of filteredOptions; let last = last">
+                        <mat-option [value]="option">
+                          {{ option }}
+                        </mat-option>
+                        <hr class="margin-none" *ngIf="!last">
+                      </ng-container>
+                    
+                    
+                     
+                  </mat-select>
+              </div>
+                </div>
+                <div class="action-div action-btn-right">
+                  <button class="select-action action-submit" mat-button (click)="resetFilters()">Reset</button>
+                  <button class="select-action action-submit" mat-button (click)="filterLogsByDateRange()">Apply Filter</button>
+  </div>
+              </mat-form-field>
+
+            </div>
+          </div>
+          <div class="download-icon-div">
+            <mat-icon matTooltip="download" (click)="exportToPdf()">arrow_downward</mat-icon>
+          </div> 
+
+          </div>
+        </div>
+        <div class="action-log-div">
+          <div *ngIf="userActionLogs.length > 0 ? { 'max-height': '68vh','overflow-y': 'auto'} : {}">
+            <div class="action-value-div"
+              *ngFor="let item of (filteredList.length > 0 ? filteredList : userActionLogs); let i=index">
+              <div class="flex-view action-icon-text">
+                <span class="user-icon">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="34" height="34" viewBox="0 0 34 34" fill="none">
+                    <path
+                      d="M33 17C33 20.3012 32.0002 23.3689 30.287 25.9168C27.4142 30.1891 22.5354 33 17 33C11.4646 33 6.58582 30.1891 3.71305 25.9168C1.99977 23.3689 1 20.3012 1 17C1 8.16344 8.16344 1 17 1C25.8366 1 33 8.16344 33 17Z"
+                      stroke="#292929" />
+                    <path
+                      d="M20.5564 11.6649C20.5564 13.6286 18.9645 15.2205 17.0009 15.2205C15.0372 15.2205 13.4453 13.6286 13.4453 11.6649C13.4453 9.70125 15.0372 8.10938 17.0009 8.10938C18.9645 8.10938 20.5564 9.70125 20.5564 11.6649Z"
+                      stroke="#292929" />
+                    <path
+                      d="M17.0011 32.9988C12.1405 32.9988 7.78599 30.8313 4.85156 27.4101C5.72618 24.4734 8.44693 22.332 11.6678 22.332H22.3345C25.5554 22.332 28.2761 24.4734 29.1507 27.4101C26.2163 30.8313 21.8618 32.9988 17.0011 32.9988Z"
+                      stroke="#292929" />
+                  </svg>
+                </span>
+                <div class="action-item-name">
+                  <span class="heading-text title-text">{{item.title}}</span>
+                  <span class="note-comment" [ngClass]="{'show-less': item.showShortDesciption}">{{ item.comment
+                    }}</span>
+
+                    <div class="add-by-user">
+
+                      <div class="download-file">
+
+                      <div *ngIf="item && item?.customerName && item.customerName?.length > 0 && getDownloadDocStatus(item.customerName)" class="download-action-log-doc">
+                        <div  (click)="downloadDocument(item.customerName)" class="download-action-log-icon" matTooltip="Download">
+                          <svg class="w-6 h-6 text-gray-800 dark:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                            <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 15v2a3 3 0 0 0 3 3h10a3 3 0 0 0 3-3v-2m-8 1V4m0 12-4-4m4 4 4-4"/>
+                          </svg>
+                        </div>
+                      </div>
+
+                      <span>{{item.addedByUser}} - {{item.modifiedDate | date: "yyyy-MM-dd"}} | {{item.modifiedDate |
+                        date: "hh:mm"}}</span>
+                        
+                       </div> 
+                    </div>
+
+                </div>
+              </div>
+              <div class="notes-div note-field" #content>
+              </div>
+              <button class="show-button" *ngIf="item.comment?.length > 250" type="button"
+                (click)="alterDescriptionText(item)">
+                {{ item.showShortDesciption ? 'SHOW ALL': 'SHOW LESS' }}
+              </button>
+
+            </div>
+
+          </div>
+
+          <div *ngIf="userActionLogs.length == 0 && !isLogsLoading" class="no-data">
+            <h2>No data available</h2>
+          </div>
+
+        </div>
+
+        <div [hidden]="!isLogsLoading" [ngClass]="isLogsLoading ? 'details-progress-bar-container' : '' ">
+          <mat-progress-bar *ngIf="isLogsLoading" mode="indeterminate"></mat-progress-bar>
+        </div>
+
+      </div>
+    </div>
+
+
+    <div class="option">
+      <div>
+
+        <div class="option-item" (click)="openDialog('Notes','45vw')">
+          <svg xmlns="http://www.w3.org/2000/svg" width="18" height="24" viewBox="0 0 18 24" fill="none">
+            <path
+              d="M13.125 3H15C16.6547 3 18 4.34531 18 6V21C18 22.6547 16.6547 24 15 24H3C1.34531 24 0 22.6547 0 21V6C0 4.34531 1.34531 3 3 3H4.875H5.325C5.67188 1.28906 7.18594 0 9 0C10.8141 0 12.3281 1.28906 12.675 3H13.125ZM3 5.25C2.5875 5.25 2.25 5.5875 2.25 6V21C2.25 21.4125 2.5875 21.75 3 21.75H15C15.4125 21.75 15.75 21.4125 15.75 21V6C15.75 5.5875 15.4125 5.25 15 5.25H14.25V6.375C14.25 6.99844 13.7484 7.5 13.125 7.5H9H4.875C4.25156 7.5 3.75 6.99844 3.75 6.375V5.25H3ZM9 4.875C9.29837 4.875 9.58452 4.75647 9.7955 4.5455C10.0065 4.33452 10.125 4.04837 10.125 3.75C10.125 3.45163 10.0065 3.16548 9.7955 2.9545C9.58452 2.74353 9.29837 2.625 9 2.625C8.70163 2.625 8.41548 2.74353 8.2045 2.9545C7.99353 3.16548 7.875 3.45163 7.875 3.75C7.875 4.04837 7.99353 4.33452 8.2045 4.5455C8.41548 4.75647 8.70163 4.875 9 4.875Z"
+              fill="#0E456A" fill-opacity="0.75" />
+          </svg>
+          <div> <span>Notes</span></div>
+        </div>
+
+
+        <div class="option-item" (click)="openDialog('Assessment','45vw')">
+          <svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" viewBox="0 0 30 30" fill="none">
+            <rect width="30" height="30" fill="#E6F4FB" />
+            <path
+              d="M20.0629 6.56289C20.6488 5.97695 20.6488 5.02539 20.0629 4.43945C19.477 3.85352 18.5254 3.85352 17.9395 4.43945L11.5035 10.8801L8.81289 8.18945C8.22695 7.60352 7.27539 7.60352 6.68945 8.18945C6.10352 8.77539 6.10352 9.72695 6.68945 10.3129L10.4395 14.0629C11.0254 14.6488 11.977 14.6488 12.5629 14.0629L20.0629 6.56289ZM24.5629 12.5629C25.1488 11.977 25.1488 11.0254 24.5629 10.4395C23.977 9.85352 23.0254 9.85352 22.4395 10.4395L11.5035 21.3801L6.56289 16.4441C5.97695 15.8582 5.02539 15.8582 4.43945 16.4441C3.85352 17.0301 3.85352 17.9816 4.43945 18.5676L10.4395 24.5676C11.0254 25.1535 11.977 25.1535 12.5629 24.5676L24.5629 12.5676V12.5629Z"
+              fill="#0E456A" fill-opacity="0.75" />
+          </svg>
+          <div><span>Assessment</span></div>
+        </div>
+
+
+        <div class="option-item" (click)="openDialog('DocumentPack','70vw')">
+          <svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" viewBox="0 0 30 30" fill="none">
+            <rect width="30" height="30" fill="#E6F4FB" />
+            <path
+              d="M9 3C7.34531 3 6 4.34531 6 6V24C6 25.6547 7.34531 27 9 27H21C22.6547 27 24 25.6547 24 24V10.5H18C17.1703 10.5 16.5 9.82969 16.5 9V3H9ZM18 3V9H24L18 3ZM10.5 5.25C10.5 4.8375 10.8375 4.5 11.25 4.5H12.75C13.1625 4.5 13.5 4.8375 13.5 5.25C13.5 5.6625 13.1625 6 12.75 6H11.25C10.8375 6 10.5 5.6625 10.5 5.25ZM10.5 8.25C10.5 7.8375 10.8375 7.5 11.25 7.5H12.75C13.1625 7.5 13.5 7.8375 13.5 8.25C13.5 8.6625 13.1625 9 12.75 9H11.25C10.8375 9 10.5 8.6625 10.5 8.25ZM10.5 11.25C10.5 10.8375 10.8375 10.5 11.25 10.5H12.75C13.1625 10.5 13.5 10.8375 13.5 11.25C13.5 11.6625 13.1625 12 12.75 12H11.25C10.8375 12 10.5 11.6625 10.5 11.25ZM10.2047 14.6156C10.3781 13.9594 10.9734 13.5 11.6531 13.5H12.3469C13.0266 13.5 13.6219 13.9547 13.7953 14.6156L14.8969 18.75C14.9625 19.0031 14.9953 19.2609 14.9953 19.5187C14.9953 21.1687 13.6453 22.5047 11.9953 22.5047C10.3453 22.5047 8.99531 21.1687 8.99531 19.5187C8.99531 19.2609 9.02813 18.9984 9.09375 18.75L10.1953 14.6156H10.2047ZM11.25 18.75C10.8375 18.75 10.5 19.0875 10.5 19.5C10.5 19.9125 10.8375 20.25 11.25 20.25H12.75C13.1625 20.25 13.5 19.9125 13.5 19.5C13.5 19.0875 13.1625 18.75 12.75 18.75H11.25Z"
+              fill="#0E456A" fill-opacity="0.75" />
+          </svg>
+
+          <div> <span>Document Pack</span></div>
+        </div>
+
+
+        <div class="option-item" (click)="openDialog('SetMeeting','65vw')">
+          <svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" viewBox="0 0 30 30" fill="none">
+            <rect width="30" height="30" fill="#E6F4FB" />
+            <path
+              d="M4.8 6.8H8.1C8.59875 6.8 9 6.39875 9 5.9C9 5.40125 8.59875 5 8.1 5H4.2C3.53625 5 3 5.53625 3 6.2V10.1C3 10.5988 3.40125 11 3.9 11C4.39875 11 4.8 10.5988 4.8 10.1V6.8ZM9.5925 13.4C9.82888 13.4 10.0629 13.3534 10.2813 13.263C10.4997 13.1725 10.6981 13.0399 10.8653 12.8728C11.0324 12.7056 11.165 12.5072 11.2555 12.2888C11.3459 12.0704 11.3925 11.8364 11.3925 11.6C11.3925 11.3636 11.3459 11.1296 11.2555 10.9112C11.165 10.6928 11.0324 10.4944 10.8653 10.3272C10.6981 10.1601 10.4997 10.0275 10.2813 9.93702C10.0629 9.84656 9.82888 9.8 9.5925 9.8C9.35612 9.8 9.12206 9.84656 8.90367 9.93702C8.68528 10.0275 8.48685 10.1601 8.31971 10.3272C8.15256 10.4944 8.01998 10.6928 7.92952 10.9112C7.83906 11.1296 7.7925 11.3636 7.7925 11.6C7.7925 11.8364 7.83906 12.0704 7.92952 12.2888C8.01998 12.5072 8.15256 12.7056 8.31971 12.8728C8.48685 13.0399 8.68528 13.1725 8.90367 13.263C9.12206 13.3534 9.35612 13.4 9.5925 13.4ZM8.59875 14.6C7.49625 14.6 6.6 15.4963 6.6 16.5988C6.6 17.15 7.04625 17.6 7.60125 17.6H9.705C10.005 16.3213 10.935 15.2863 12.15 14.84C11.8688 14.6862 11.5425 14.6 11.2013 14.6H8.59875ZM22.3988 17.6C22.95 17.6 23.4 17.1538 23.4 16.5988C23.4 15.4925 22.5038 14.6 21.4013 14.6H18.7987C18.4538 14.6 18.1313 14.6862 17.85 14.84C19.065 15.2863 19.995 16.3213 20.295 17.6H22.3988ZM19.0463 17.6C18.7238 16.6888 17.925 16.0025 16.95 15.8375C16.8038 15.8113 16.6538 15.8 16.5 15.8H13.5C13.3463 15.8 13.1962 15.8113 13.05 15.8375C12.075 16.0025 11.2763 16.6888 10.9538 17.6C10.8525 17.8813 10.8 18.185 10.8 18.5C10.8 18.9988 11.2013 19.4 11.7 19.4H18.3C18.7988 19.4 19.2 18.9988 19.2 18.5C19.2 18.185 19.1475 17.8813 19.0463 17.6ZM20.4 13.4C20.6364 13.4 20.8704 13.3534 21.0888 13.263C21.3072 13.1725 21.5056 13.0399 21.6728 12.8728C21.8399 12.7056 21.9725 12.5072 22.063 12.2888C22.1534 12.0704 22.2 11.8364 22.2 11.6C22.2 11.3636 22.1534 11.1296 22.063 10.9112C21.9725 10.6928 21.8399 10.4944 21.6728 10.3272C21.5056 10.1601 21.3072 10.0275 21.0888 9.93702C20.8704 9.84656 20.6364 9.8 20.4 9.8C20.1636 9.8 19.9296 9.84656 19.7112 9.93702C19.4928 10.0275 19.2944 10.1601 19.1272 10.3272C18.9601 10.4944 18.8275 10.6928 18.737 10.9112C18.6466 11.1296 18.6 11.3636 18.6 11.6C18.6 11.8364 18.6466 12.0704 18.737 12.2888C18.8275 12.5072 18.9601 12.7056 19.1272 12.8728C19.2944 13.0399 19.4928 13.1725 19.7112 13.263C19.9296 13.3534 20.1636 13.4 20.4 13.4ZM17.4 12.2C17.4 11.5635 17.1471 10.953 16.6971 10.5029C16.247 10.0529 15.6365 9.8 15 9.8C14.3635 9.8 13.753 10.0529 13.3029 10.5029C12.8529 10.953 12.6 11.5635 12.6 12.2C12.6 12.8365 12.8529 13.447 13.3029 13.8971C13.753 14.3471 14.3635 14.6 15 14.6C15.6365 14.6 16.247 14.3471 16.6971 13.8971C17.1471 13.447 17.4 12.8365 17.4 12.2ZM21.9 6.8H25.2V10.1C25.2 10.5988 25.6013 11 26.1 11C26.5988 11 27 10.5988 27 10.1V6.2C27 5.53625 26.4638 5 25.8 5H21.9C21.4013 5 21 5.40125 21 5.9C21 6.39875 21.4013 6.8 21.9 6.8ZM4.8 22.4V19.1C4.8 18.6013 4.39875 18.2 3.9 18.2C3.40125 18.2 3 18.6013 3 19.1V23C3 23.6638 3.53625 24.2 4.2 24.2H8.1C8.59875 24.2 9 23.7987 9 23.3C9 22.8013 8.59875 22.4 8.1 22.4H4.8ZM21.9 22.4C21.4013 22.4 21 22.8013 21 23.3C21 23.7987 21.4013 24.2 21.9 24.2H25.8C26.4638 24.2 27 23.6638 27 23V19.1C27 18.6013 26.5988 18.2 26.1 18.2C25.6013 18.2 25.2 18.6013 25.2 19.1V22.4H21.9Z"
+              fill="#0E456A" fill-opacity="0.75" />
+          </svg>
+
+          <div> <span>Set Meeting</span></div>
+
+        </div>
+
+
+
+        <div class="option-item" (click)="openDialog('JudgementDecision','45vw')">
+          <svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" viewBox="0 0 30 30" fill="none">
+            <rect width="30" height="30" fill="#E6F4FB" />
+            <path
+              d="M12.0699 3.43945C12.6559 2.85352 13.6074 2.85352 14.1934 3.43945L19.8184 9.06445C20.4043 9.65039 20.4043 10.602 19.8184 11.1879L19.0684 11.9379C18.4824 12.5238 17.5309 12.5238 16.9449 11.9379L16.7574 11.7504L11.7512 16.752L11.9387 16.9395C12.5246 17.5254 12.5246 18.477 11.9387 19.0629L11.1887 19.8129C10.6027 20.3988 9.65117 20.3988 9.06523 19.8129L3.44023 14.1879C2.8543 13.602 2.8543 12.6504 3.44023 12.0645L4.19023 11.3145C4.77617 10.7285 5.72773 10.7285 6.31367 11.3145L6.50117 11.502L11.5074 6.4957L11.3199 6.3082C10.734 5.72227 10.734 4.7707 11.3199 4.18477L12.0699 3.43477V3.43945ZM19.1949 16.9395C19.7809 16.3535 20.7324 16.3535 21.3184 16.9395L26.5684 22.1895C27.1543 22.7754 27.1543 23.727 26.5684 24.3129L24.3184 26.5629C23.7324 27.1488 22.7809 27.1488 22.1949 26.5629L16.9449 21.3129C16.359 20.727 16.359 19.7754 16.9449 19.1895L17.0105 19.1238L14.2543 16.3723L16.3777 14.2488L19.1293 17.0004L19.1949 16.9348V16.9395Z"
+              fill="#0E456A" fill-opacity="0.75" />
+          </svg>
+          <div> <span>Judgement Decision</span></div>
+        </div>
+
+      </div>
+    </div>
+
+  </div>
+  </div>
+
+  <div [hidden]="!isSpinner" class="spinner-view">
+    <mat-spinner *ngIf="isSpinner"></mat-spinner>
+  </div>
+
+  </div>
+</section>

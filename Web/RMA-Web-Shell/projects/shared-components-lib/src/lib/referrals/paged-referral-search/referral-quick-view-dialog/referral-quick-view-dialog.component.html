@@ -1,0 +1,12 @@
+<div class="menu-bar">
+  <span class="material-icons">
+    quickreply
+  </span>
+  Referral Feedback Quick View <span *ngIf="data?.referral"><b>({{data.referral.referralReferenceNumber}} <span *ngIf="data.referral.referralItemTypeReference">: {{data.referral.referralItemTypeReference}}</span>)</b></span>
+  <span (click)="cancel()" class="material-icons pointer right" matTooltip="close">
+    cancel
+  </span>
+</div>
+
+<div *ngIf="data?.referral" class="scrollable-div" >{{data.referral.comment}}</div>
+<referral-feedback *ngIf="data?.referral" [referral]="data.referral" [isReadOnly]="true"></referral-feedback>

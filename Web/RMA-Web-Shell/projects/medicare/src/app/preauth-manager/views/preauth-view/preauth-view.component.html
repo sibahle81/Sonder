@@ -1,0 +1,54 @@
+<div class="mat-header">
+  <div [hidden]="backButtonShowState">
+    <a mat-flat-button routerLink="/medicare/work-manager">
+      <mat-icon>arrow_back</mat-icon>
+      Back</a>
+  </div>
+  <h1>View PreAuthorisation Details</h1><br />
+</div>
+<div *ngIf="switchBatchType == switchBatchTypeEnum.MedEDI">
+<div *ngIf="preAuthView$ | async as auth">
+  <mat-expansion-panel [expanded]="true">
+    <mat-expansion-panel-header>
+      <mat-panel-title>
+        <div *ngIf="!isSingleAuth">Hospital Auth Details {{auth.preAuthNumber}}</div>
+        <div *ngIf="isSingleAuth">Auth Details {{auth.preAuthNumber}}</div>
+      </mat-panel-title>
+    </mat-expansion-panel-header>
+    <hr>
+    <preauth-details [auth]="auth" [isInternalUser]="isInternalUser" [bodySides]="bodySides$ | async"></preauth-details>
+    <mat-expansion-panel [expanded]="false" *ngIf="!hideIfIsTreatmentAuthType()">
+      <mat-expansion-panel-header>
+        <mat-panel-title>
+          Clinical Update Details
+        </mat-panel-title>
+      </mat-expansion-panel-header>
+      <hr>
+      <hospital-visit-details [preAuthId]="hospitalAuthId"></hospital-visit-details>
+    </mat-expansion-panel>
+  </mat-expansion-panel>
+
+  <mat-expansion-panel *ngIf="!isSingleAuth">
+    <mat-expansion-panel-header>
+      <mat-panel-title>
+        Treating Doctor Auth {{TreatingDoctorPreauthNumber}}
+      </mat-panel-title>
+    </mat-expansion-panel-header>
+    <hr>
+    <preauth-treating-doctor-details [auth]="auth?.subPreAuthorisations"
+      [isInternalUser]="isInternalUser"></preauth-treating-doctor-details>
+  </mat-expansion-panel>
+  <mat-expansion-panel>
+    <mat-expansion-panel-header>
+      <mat-panel-title>PreAuth Activity</mat-panel-title>
+    </mat-expansion-panel-header>
+    <hr>
+    <preauth-activity [auth]="auth?.preAuthActivities"></preauth-activity>
+  </mat-expansion-panel>
+</div>
+</div>
+
+<div *ngIf="isShowTravelAuth && switchBatchType == switchBatchTypeEnum.Teba">
+  <preauth-details [auth]="travelAuthConverted" [switchBatchType]="switchBatchType"
+    [isInternalUser]="isInternalUser"></preauth-details>
+</div>

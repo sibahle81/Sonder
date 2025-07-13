@@ -1,0 +1,38 @@
+<div class="menu-bar">
+  Manage Communication Type
+  <span (click)="cancel()" class="material-icons pointer right" matTooltip="Close">
+    cancel
+  </span>
+  <span *ngIf="emailRecipients?.length > 0 || smsRecipients?.length > 0" (click)="save()"
+    class="material-icons pointer right pulse" matTooltip="Send Communication">
+    send
+  </span>
+</div>
+
+<!-- Loading Indicator -->
+<mat-card *ngIf="(isLoading$ | async)">
+  <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+  <label class="mat-label other-label"><i>Loading... please wait</i></label>
+</mat-card>
+
+<table *ngIf="data?.rolePlayerContacts?.length != 0 && !(isLoading$ | async)" class="altRowTable table">
+  <tr>
+    <th>Contact Name</th>
+    <th>Preferred Communication Method</th>
+    <th>Email Address</th>
+    <th>Contact Number</th>
+    <th class="col-checkbox">Actions</th>
+  </tr>
+  <tr *ngFor="let contact of data.rolePlayerContacts">
+    <td>{{contact.firstname}} {{contact.surname}}</td>
+    <td>{{getCommunicationType(contact.communicationType)}}</td>
+    <td [ngStyle]="{'color': isEmailSelected(contact) ? 'green' : 'black'}">{{contact.emailAddress}}</td>
+    <td [ngStyle]="{'color': isSmsSelected(contact) ? 'green' : 'black'}">{{contact.contactNumber}}</td>
+    <td class="col-checkbox">
+      <mat-checkbox (change)="emailSelected(contact)" [checked]="isEmailSelected(contact)"
+        [disabled]="false">Email</mat-checkbox><br />
+      <mat-checkbox (change)="smsSelected(contact)" [checked]="isSmsSelected(contact)"
+        [disabled]="false">Sms</mat-checkbox>
+    </td>
+  </tr>
+</table>

@@ -1,0 +1,141 @@
+<mat-card class="matcard" [hidden]="creatingWizard">
+  <mat-card-content class="matcard content">
+    <div [hidden]="addTaxRatesMode">
+      <div class="page-header">
+        <h1 style="margin-bottom: 15px;">Find tax rate</h1>
+      </div>
+
+      <mat-form-field [floatLabel]="'never'" style="overflow: hidden">
+          <input class="find-tax-rate-input" matInput maxlength="50" name="filter" #filter minLength="3"
+              matTooltip="Search by name, code, or description" matTooltipShowDelay="1000">
+          <mat-placeholder class="placeholder">Search by Year</mat-placeholder>
+          <mat-icon class="search-icon" (click)="search()" matSuffix>search</mat-icon>
+          <button style="visibility: hidden;" class="button submit-button" (click)="search()"
+              matTooltip="Search by name, code, or description" matTooltipShowDelay="1000">Search</button>
+      </mat-form-field>
+
+      <button class="addProductButton" (click)="beforeAddTaxRate()" *ngIf="canEdit">
+        <p class="addProductText">Add Tax Rate<span class="material-icons add">add_circle_outline</span></p>
+      </button>
+
+      <br>
+      <div *ngIf="showSearchProgress">
+        <mat-progress-bar mode="indeterminate"
+            [ngClass]="{ 'loading-main-double-menu-progress': doubleMenu, 'loading-main-single-menu-progress': !doubleMenu }">
+        </mat-progress-bar>
+        <p class="site-font grey">Loading tax rates...</p>
+      </div>
+
+      <div [hidden]="!searchInitiated">
+        <div [hidden]="showSearchProgress || dataSource.length === 0">
+          <mat-table #table [dataSource]="dataSource" matSort matSortActive="taxableIncome" matSortDirection="desc"
+            matSortDisableClear>
+            <ng-container matColumnDef="taxableIncome">
+              <mat-header-cell *matHeaderCellDef>Taxable income</mat-header-cell>
+              <mat-cell *matCellDef="let row">
+                <ng-container *ngIf="row.toIncome !== 0">
+                  <span class="truncate-text"> {{ row.fromIncome | currency:'R'}} - {{ row.toIncome | currency:'R'}} </span>
+                </ng-container>
+
+                <ng-container *ngIf="row.toIncome === 0">
+                  <span class="truncate-text"> {{ row.fromIncome | currency:'R'}} and above </span>
+                </ng-container>
+              </mat-cell>
+            </ng-container>
+
+            <ng-container matColumnDef="ratesOfTax">
+              <mat-header-cell *matHeaderCellDef>Rates of tax</mat-header-cell>
+              <mat-cell *matCellDef="let row">
+                <ng-container *ngIf="row.standardTaxRate !== 0">
+                  <span class="truncate-text">  {{row.standardTaxRate | currency:'R'}} + {{ row.taxPercentageRate}}% of taxable income above {{ (row.fromIncome - 1) | currency:'R'}} </span>
+                </ng-container>
+
+                <ng-container *ngIf="row.standardTaxRate === 0">
+                  <span class="truncate-text">  {{ row.taxPercentageRate}}% of taxable income</span>
+                </ng-container>
+              </mat-cell>
+            </ng-container>
+
+            <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
+            <mat-row *matRowDef="let row; columns: displayedColumns;"></mat-row>
+          </mat-table>
+          <button class="button submit-button" (click)="manageTaxRate('edit', taxYearInput)" *ngIf="canEdit">
+            Edit Tax Rates for Tax Year {{taxYearInput}}
+          </button>
+        </div>
+
+        <div [hidden]="dataSource.length > 0"
+            class="no-search-results-add-button">
+            <div class="site-font grey">
+                <p class="grey">Your search - <strong>{{currentQuery}}</strong> - did not match any tax rates.</p>
+                <span>Suggestions: </span>
+                <ul>
+                    <li>Make sure that all words are spelled correctly.</li>
+                    <li>Try different keywords.</li>
+                    <li>Try more general keywords.</li>
+                    <li>Try fewer keywords.</li>
+                </ul>
+            </div>
+        </div>
+      </div>
+
+    </div>
+
+    <div [hidden]="!addTaxRatesMode">
+      <section>
+        <input maxlength="4"
+          placeholder="Enter Tax Year"
+          #taxYear
+          (keypress)="validatorService.numberEntryCheck($event)"
+          name="taxYear"/>
+        <div [hidden]="!taxRatesExists"
+          class="no-search-results-add-button">
+          <div class="site-font grey">
+              <p class="grey">Tax rates for year <strong>{{taxYearInput}}</strong> already exist.</p>
+              <span>Suggestions: </span>
+              <ul>
+                  <li>Make sure that you enter year which has not yet been captured.</li>
+              </ul>
+          </div>
+        </div>
+
+        <div [hidden]="!negativeTaxYear"
+          class="no-search-results-add-button">
+          <div class="site-font grey">
+              <p class="grey">Tax rebates cannot be a negative amount.</p>
+              <span>Suggestions: </span>
+              <ul>
+                  <li>Make sure that you capture a correct year.</li>
+              </ul>
+          </div>
+        </div>
+      </section>
+
+      <div *ngIf="!validateTaxRateProgress">
+        <button class="submit-button button" (click)="validateTaxRate()">Add Tax Rates selected Tax Year</button>
+        <button class="submit-button button back-button" (click)="back()">Back</button>
+      </div>
+
+      <div *ngIf="validateTaxRateProgress">
+        <mat-progress-bar mode="indeterminate"
+            class="loading-main-double-menu-progress">
+        </mat-progress-bar>
+        <p class="site-font grey">Validating Tax Year...</p>
+      </div>
+    </div>
+  </mat-card-content>
+</mat-card>
+
+<mat-card *ngIf="creatingWizard">
+  <mat-card-header>
+      <mat-card-title>
+          <h1>Creating requested Wizard</h1>
+      </mat-card-title>
+      <mat-card-subtitle>
+          <span class="wizard-font grey" style="font-size: 18px;">This shouldn't take long...</span>
+      </mat-card-subtitle>
+  </mat-card-header>
+  <mat-card-content>
+      <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+  </mat-card-content>
+</mat-card>

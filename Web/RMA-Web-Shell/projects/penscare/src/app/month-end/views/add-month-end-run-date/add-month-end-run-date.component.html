@@ -1,0 +1,111 @@
+<div class="menu-bar">
+  <span class="material-icons">
+    today
+  </span>
+  <span *ng-If="isEditMode">Edit Month End</span>
+  <span *ng-If="!isEditMode">Add Month End</span>
+  <span (click)="cancel()" class="material-icons pointer right" matTooltip="close">
+    close
+  </span>
+  <span (click)="onSave()" class="material-icons pointer right" matTooltip="save">
+    save
+  </span>
+</div>
+<div *ngIf="(loading$ | async)">
+  <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+  <label class="mat-label other-label"><i>loading ..please wait</i></label>
+</div>
+<div *ngIf="(monthEndPending$ | async) && !(loading$ | async)">
+  <span class="material-icons info">
+    info
+  </span>
+  There is a month end that is currently processing. You can only load a new month end after the current one completes.
+</div>
+<div *ngIf="!(monthEndPending$ | async) && !(loading$ | async)">
+  <form [formGroup]="form" class="mat-container details-form" novalidate>
+    <section>
+      <mat-form-field class="mat-form-field">
+        <label class="mat-label other-label">Month</label>
+        <mat-select name="month" id="month" formControlName="month">
+          <mat-option *ngFor="let runMonth of runMonthList" [value]="runMonth">
+            {{runMonth}}
+          </mat-option>
+        </mat-select>
+      </mat-form-field>
+
+      <mat-form-field class="mat-form-field-right">
+        <label class="mat-label other-label">Year</label>
+        <input matInput formControlName="year" id="year" name="year" readonly />
+      </mat-form-field>
+    </section>
+    <section>
+      <mat-form-field class="mat-form-field">
+        <label class="mat-label other-label">Authorization Close Of Date</label>
+        <input matInput formControlName="authorizationCloseOfDate" [matDatepicker]="authorizationCloseOfDate" [min]="minDate" [max]="maxDate">
+        <mat-datepicker-toggle matSuffix [for]="authorizationCloseOfDate">
+        </mat-datepicker-toggle>
+        <mat-datepicker touchUi="true" #authorizationCloseOfDate></mat-datepicker>
+        <mat-error *ngIf="form.get('authorizationCloseOfDate').hasError('required')">
+          Authorization Close Of Date is <strong>required</strong>
+        </mat-error>
+      </mat-form-field>
+
+      <mat-form-field class="mat-form-field-right">
+        <label class="mat-label other-label">Month End Close Of Date</label>
+        <input matInput formControlName="monthEndCloseOfDate" [matDatepicker]="monthEndCloseOfDate" [min]="minDate" [max]="maxDate">
+        <mat-datepicker-toggle matSuffix [for]="monthEndCloseOfDate">
+        </mat-datepicker-toggle>
+        <mat-datepicker touchUi="true" #monthEndCloseOfDate></mat-datepicker>
+        <mat-error *ngIf="form.get('monthEndCloseOfDate').hasError('required')">
+          Month End Close Of Date is <strong>required</strong>
+        </mat-error>
+      </mat-form-field>
+    </section>
+    <section>
+      <mat-form-field class="mat-form-field">
+        <label class="mat-label other-label">Payment Date</label>
+        <input matInput formControlName="paymentDate" [matDatepicker]="paymentDate" [min]="minDate" [max]="maxDate">
+        <mat-datepicker-toggle matSuffix [for]="paymentDate">
+        </mat-datepicker-toggle>
+        <mat-datepicker touchUi="true" #paymentDate></mat-datepicker>
+        <mat-error *ngIf="form.get('paymentDate').hasError('required')">
+          Payment Date is <strong>required</strong>
+        </mat-error>
+      </mat-form-field>
+
+      <mat-form-field class="mat-form-field-right">
+        <label class="mat-label other-label">Month End Balance And Release Date</label>
+        <input matInput formControlName="monthEndBalanceAndReleaseDate" [matDatepicker]="monthEndBalanceAndReleaseDate" [min]="minDate" [max]="maxDate">
+        <mat-datepicker-toggle matSuffix [for]="monthEndBalanceAndReleaseDate">
+        </mat-datepicker-toggle>
+        <mat-datepicker touchUi="true" #monthEndBalanceAndReleaseDate></mat-datepicker>
+        <mat-error *ngIf="form.get('monthEndBalanceAndReleaseDate').hasError('required')">
+          Month End Balance And Release Date is <strong>required</strong>
+        </mat-error>
+      </mat-form-field>
+    </section>
+    <section>
+      <mat-form-field class="mat-form-field">
+        <label class="mat-label other-label">PACS Created Date</label>
+        <input matInput formControlName="pacsCreateDate" [matDatepicker]="pacsCreateDate" [min]="minDate" [max]="maxDate">
+        <mat-datepicker-toggle matSuffix [for]="pacsCreateDate">
+        </mat-datepicker-toggle>
+        <mat-datepicker touchUi="true" #pacsCreateDate></mat-datepicker>
+        <mat-error *ngIf="form.get('pacsCreateDate').hasError('required')">
+          PACS Created  Date is <strong>required</strong>
+        </mat-error>
+      </mat-form-field>
+
+      <mat-form-field class="mat-form-field-right">
+        <label class="mat-label other-label">PACS Strike Date</label>
+        <input matInput formControlName="pacsStrikeDate" [matDatepicker]="pacsStrikeDate" [min]="minDate" [max]="maxDate">
+        <mat-datepicker-toggle matSuffix [for]="pacsStrikeDate">
+        </mat-datepicker-toggle>
+        <mat-datepicker touchUi="true" #pacsStrikeDate></mat-datepicker>
+        <mat-error *ngIf="form.get('pacsStrikeDate').hasError('required')">
+          PACS Strike Date is <strong>required</strong>
+        </mat-error>
+      </mat-form-field>
+    </section>
+  </form>
+</div>

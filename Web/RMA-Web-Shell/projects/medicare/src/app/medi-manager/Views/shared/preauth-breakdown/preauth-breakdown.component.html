@@ -1,0 +1,313 @@
+<form [formGroup]="form">
+
+  <!-- <div class="mat-header">
+    <h1 class="mat-header-text">Capture Preauthorisation item codes for {{authType}}</h1>
+    <button *ngIf="showResetButton" class="button submit-button" (click)="resetForm()">Reset</button>
+  </div> -->
+  <div class="menu-bar">
+    Capture Preauthorisation item codes for {{authType}}&nbsp;   
+    <span        
+    class="material-icons pointer right pulse" matTooltip='reset'
+    *ngIf="showResetButton" (click)="resetForm()">
+    restart_alt
+  </span>
+  </div>
+  <br><br>
+  <mat-card>
+    <mat-card-header>
+      <mat-card-title>Preauthorisation lines</mat-card-title>
+    </mat-card-header>
+    <mat-card-content>
+      <mat-table #table [dataSource]="dataSource" class="tableWidth">
+        <ng-container matColumnDef="select">
+          <mat-header-cell class="mat-header-cell" *matHeaderCellDef> Select </mat-header-cell>
+          <mat-cell *matCellDef="let preAuthorisationBreakdown">
+            <mat-checkbox (change)="onSelectPreAuthBreakdown($event,preAuthorisationBreakdown)"></mat-checkbox>
+          </mat-cell>
+        </ng-container>
+        <ng-container matColumnDef="itemCode">
+          <mat-header-cell class="mat-header-cell" *matHeaderCellDef> Item Code </mat-header-cell>
+          <mat-cell *matCellDef="let preAuthorisationBreakdown" matTooltip="{{preAuthorisationBreakdown.itemCode}}">
+            <span class="truncate-text"> {{ preAuthorisationBreakdown.tariffCode}} </span>
+          </mat-cell>
+        </ng-container>
+        <ng-container matColumnDef="description">
+          <mat-header-cell class="mat-header-cell" *matHeaderCellDef> Description </mat-header-cell>
+          <mat-cell *matCellDef="let preAuthorisationBreakdown" matTooltip="{{preAuthorisationBreakdown.description}}">
+            <span class="truncate-text"> {{ preAuthorisationBreakdown.tariffDescription}} </span>
+          </mat-cell>
+        </ng-container>
+        <ng-container matColumnDef="treatmentCode">
+          <mat-header-cell class="mat-header-cell" *matHeaderCellDef> CPT Code </mat-header-cell>
+          <mat-cell *matCellDef="let preAuthorisationBreakdown" matTooltip="{{preAuthorisationBreakdown.treatmentCode}}">
+            <span class="truncate-text"> {{ preAuthorisationBreakdown.treatmentCode}} </span>
+          </mat-cell>
+        </ng-container>
+        <ng-container matColumnDef="treatmentCodeDescription">
+          <mat-header-cell class="mat-header-cell" *matHeaderCellDef> CPT Description </mat-header-cell>
+          <mat-cell *matCellDef="let preAuthorisationBreakdown" matTooltip="{{preAuthorisationBreakdown.treatmentCodeDescription}}">
+            <span class="truncate-text"> {{ preAuthorisationBreakdown.treatmentCodeDescription}} </span>
+          </mat-cell>
+        </ng-container>
+        <ng-container matColumnDef="requestedTreatments">
+          <mat-header-cell class="mat-header-cell" *matHeaderCellDef> Requested Quantity </mat-header-cell>
+          <mat-cell *matCellDef="let preAuthorisationBreakdown"
+            matTooltip="{{preAuthorisationBreakdown.requestedTreatments}}">
+            <span class="truncate-text"> {{ preAuthorisationBreakdown.requestedTreatments}} </span>
+          </mat-cell>
+        </ng-container>
+        <ng-container matColumnDef="dateAuthorisedFrom">
+          <mat-header-cell class="mat-header-cell" *matHeaderCellDef> Date Authorised From </mat-header-cell>
+          <mat-cell *matCellDef="let preAuthorisationBreakdown"
+            matTooltip="{{preAuthorisationBreakdown.dateAuthorisedFrom}}">
+            <span class="truncate-text"> {{ preAuthorisationBreakdown.dateAuthorisedFrom | date:'yyyy-MM-dd'}} </span>
+          </mat-cell>
+        </ng-container>
+        <ng-container matColumnDef="dateAuthorisedTo">
+          <mat-header-cell class="mat-header-cell" *matHeaderCellDef> Date Authorised To </mat-header-cell>
+          <mat-cell *matCellDef="let preAuthorisationBreakdown"
+            matTooltip="{{preAuthorisationBreakdown.dateAuthorisedTo}}">
+            <span class="truncate-text"> {{ preAuthorisationBreakdown.dateAuthorisedTo | date:'yyyy-MM-dd'}} </span>
+          </mat-cell>
+        </ng-container>
+        <ng-container matColumnDef="requestedAmount">
+          <mat-header-cell class="mat-header-cell" *matHeaderCellDef> Requested Amount </mat-header-cell>
+          <mat-cell *matCellDef="let preAuthorisationBreakdown"
+            matTooltip="{{preAuthorisationBreakdown.requestedAmount}}">
+            <span class="truncate-text"> {{ preAuthorisationBreakdown.requestedAmount}} </span>
+          </mat-cell>
+        </ng-container>
+        <ng-container matColumnDef="tariffAmount">
+          <mat-header-cell class="mat-header-cell" *matHeaderCellDef> Tariff Amount </mat-header-cell>
+          <mat-cell *matCellDef="let preAuthorisationBreakdown" matTooltip="{{preAuthorisationBreakdown.tariffAmount}}">
+            <span class="truncate-text"> {{ preAuthorisationBreakdown.tariffAmount}} </span>
+          </mat-cell>
+        </ng-container>
+        <ng-container matColumnDef="authorisedQuantity">
+          <mat-header-cell class="mat-header-cell" *matHeaderCellDef> Authorised Quantity </mat-header-cell>
+          <mat-cell *matCellDef="let preAuthorisationBreakdown"
+            matTooltip="{{preAuthorisationBreakdown.authorisedQuantity}}">
+            <input #authorisedQuantity type="number" class="input-width-fill-container"
+              value="{{preAuthorisationBreakdown.authorisedQuantity}}"
+              (keyup)="calculateAuthorisedQty(authorisedQuantity.value, preAuthorisationBreakdown)"
+              (change) = "authorisedQtyChangeValidation(authorisedQuantity.value, preAuthorisationBreakdown)">
+          </mat-cell>
+        </ng-container>
+        <ng-container matColumnDef="authorisedAmount">
+          <mat-header-cell class="mat-header-cell" *matHeaderCellDef> Authorised Amount </mat-header-cell>
+          <mat-cell *matCellDef="let preAuthorisationBreakdown"
+            matTooltip="{{preAuthorisationBreakdown.authorisedAmount}}">
+            <input #authorisedQuantity type="number" class="input-width-fill-container"
+              value="{{preAuthorisationBreakdown.authorisedAmount}}">
+          </mat-cell>
+        </ng-container>
+        <ng-container matColumnDef="quantityChangedReason">
+          <mat-header-cell class="mat-header-cell" *matHeaderCellDef> Quantity Changed Reason </mat-header-cell>
+          <mat-cell *matCellDef="let preAuthorisationBreakdown"
+            matTooltip="{{preAuthorisationBreakdown.quantityChangedReason}}">
+            <textarea #quantityChangedReason class="truncate-text" name="quantityChangedReason" mdInput
+              (change)="onQuantitychangeReason(quantityChangedReason.value, preAuthorisationBreakdown)"></textarea>
+          </mat-cell>
+        </ng-container>
+        <ng-container matColumnDef="edit">
+          <mat-header-cell class="mat-header-cell" *matHeaderCellDef> Edit </mat-header-cell>
+          <mat-cell *matCellDef="let preAuthorisationBreakdown">
+            <a *ngIf="checkIfCanEdit(preAuthorisationBreakdown)" role="button" class="link-edit" (click)="editItem(preAuthorisationBreakdown)">Edit</a>
+          </mat-cell>
+        </ng-container>
+        <ng-container matColumnDef="delete">
+          <mat-header-cell class="mat-header-cell" *matHeaderCellDef> Delete </mat-header-cell>
+          <mat-cell *matCellDef="let preAuthorisationBreakdown">
+            <a *ngIf="checkIfCanDelete(preAuthorisationBreakdown)" role="button" class="link-edit" (click)="deleteItem(preAuthorisationBreakdown)">Delete</a>
+          </mat-cell>
+        </ng-container>
+
+        <mat-header-row class="mat-header-cell" *matHeaderRowDef="getDisplayedColumns();"></mat-header-row>
+        <mat-row *matRowDef="let row; columns: getDisplayedColumns();"></mat-row>
+      </mat-table>
+      <br>
+      <div *ngIf="showLevelOfCareGrid">
+        <div class="menu-bar">
+          <span class="material-icons">
+            pinch
+          </span>&nbsp;Level Of Care
+        </div>
+        <mat-table #table [dataSource]="dataSourceLengthOfStay" class="tableWidth">
+          <ng-container matColumnDef="tariffCode">
+            <mat-header-cell *matHeaderCellDef> Item Code </mat-header-cell>
+            <mat-cell *matCellDef="let levelOfCare" matTooltip="{{levelOfCare.tariffCode}}">
+              <span class="truncate-text"> {{ levelOfCare.tariffCode}} </span>
+            </mat-cell>
+          </ng-container>
+          <ng-container matColumnDef="levelOfCare">
+            <mat-header-cell *matHeaderCellDef> LevelOfCare </mat-header-cell>
+            <mat-cell *matCellDef="let levelOfCare" matTooltip="{{levelOfCare.levelOfCare}}">
+              <span class="truncate-text"> {{ levelOfCare.levelOfCare}} </span>
+            </mat-cell>
+          </ng-container>
+          <ng-container matColumnDef="dateTimeAdmitted">
+            <mat-header-cell *matHeaderCellDef> DateTime Admitted </mat-header-cell>
+            <mat-cell *matCellDef="let levelOfCare" matTooltip="{{levelOfCare.dateTimeAdmitted}}">
+              <span class="truncate-text"> {{ levelOfCare.dateTimeAdmitted | date:'yyyy-MM-dd HH:mm:ss'}} </span>
+            </mat-cell>
+          </ng-container>
+          <ng-container matColumnDef="dateTimeDischarged">
+            <mat-header-cell *matHeaderCellDef> DateTime Discharged </mat-header-cell>
+            <mat-cell *matCellDef="let levelOfCare" matTooltip="{{levelOfCare.dateTimeDischarged}}">
+              <span class="truncate-text"> {{ levelOfCare.dateTimeDischarged | date:'yyyy-MM-dd HH:mm:ss'}} </span>
+            </mat-cell>
+          </ng-container>
+          <ng-container matColumnDef="lengthOfStay">
+            <mat-header-cell *matHeaderCellDef> Length Of Stay </mat-header-cell>
+            <mat-cell *matCellDef="let levelOfCare" matTooltip="{{levelOfCare.lengthOfStay}}">
+              <span class="truncate-text"> {{ levelOfCare.lengthOfStay }} {{ (levelOfCare.lengthOfStay == 0 || levelOfCare.lengthOfStay > 1) ? 'Days' : 'Day' }} </span>
+            </mat-cell>
+          </ng-container>
+          <mat-header-row *matHeaderRowDef="lengthOfStayColumns"></mat-header-row>
+          <mat-row *matRowDef="let row; columns: lengthOfStayColumns;"></mat-row>
+        </mat-table>
+      </div>
+    </mat-card-content>
+  </mat-card>
+  <br><br>
+  <mat-expansion-panel [expanded]="expandNewLineItemControl">
+    <mat-expansion-panel-header>
+      <mat-panel-title *ngIf="showAddItemTitlesAndControls">
+        Add line items +
+      </mat-panel-title>
+    </mat-expansion-panel-header>
+    <mat-card>
+      <mat-card-header>
+      </mat-card-header>
+      <mat-card-content>
+
+        <div class="menu-bar" *ngIf="showAddItemTitlesAndControls">
+          Add new line item&nbsp;   
+          <span        
+          class="material-icons pointer right pulse" 
+          *ngIf="showAddItemTitlesAndControls" matTooltip="Add item to PreAuth Breakdown list" 
+          (click)="addItemToBreakdownList()">
+          save
+        </span>
+        </div>
+        <div class="menu-bar" *ngIf="showEditControls">
+          Edit Line Item&nbsp;   
+          <span        
+          class="material-icons pointer right pulse"         
+          *ngIf="showEditControls"matTooltip="Update PreAuth Breakdown Item" 
+            (click)="updateItem()">
+          save
+        </span>
+        </div>
+        <!-- Hidden field for distinguishing between in-memory and DB lines -->
+        <input matInput formControlName="preAuthBreakdownId" class="hidden">
+        
+        <br>
+        <mat-form-field class="mat-form-field">
+          <label>Tariff Code</label>
+          <input matInput formControlName="tariffCode" type="text" />
+        </mat-form-field>
+        <br>
+        <mat-form-field class="date-field mat-form-field-right" color="accent">
+          <label class="mat-label other-label mandatory-field">Treatment authorised from date</label>
+          <input matInput [matDatepicker]="picker2" formControlName="dateAuthorisedFrom"
+            (dateChange)="setTariffTypeId($event);">
+          <mat-datepicker-toggle 
+            matSuffix [for]="picker2"></mat-datepicker-toggle>
+          <mat-datepicker #picker2></mat-datepicker>
+        </mat-form-field>
+        <mat-form-field class="date-field mat-form-field-right" color="accent">
+          <label class="mat-label other-label mandatory-field">Treatment authorised to date</label>
+          <input matInput [matDatepicker]="picker3" formControlName="dateAuthorisedTo"
+            (dateChange)="setAdmissionDateAndDischargeDate();">
+          <mat-datepicker-toggle class="datePicker" matSuffix [for]="picker3"></mat-datepicker-toggle>
+          <mat-datepicker #picker3></mat-datepicker>
+        </mat-form-field>
+        <br>
+        <div *ngIf="showHideCPT" class="mat-form-field">
+          <mat-checkbox (change)="showHideCPTControl($event)" formControlName="isCPTCode">
+            <label class="mat-label other-label">Is CPT code</label>
+          </mat-checkbox>
+        </div>
+        <preauth-crosswalk-search #crosswalkSearchComponent [hidden]='hideCPTSearchControl' [tariffSearchType]="tariffSearchType" [tariffTypeId]="tariffTypeId" [preAuthFromDate]="preAuthFromDate" [practitionerTypeId]="practitionerTypeId">
+        </preauth-crosswalk-search>
+        <br>
+        <tariff-search #tariffSearchComponent [hidden]='hideTariffSearchControl' [tariffSearchType]="tariffSearchType"
+          [tariffTypeIds]="tariffTypeIds" [preAuthFromDate]="preAuthFromDate" [practitionerTypeId]="practitionerTypeId"
+          [hideTariffAmount]="!isInternalUser" [practitionerName]="practitionerName"
+          (tariffSearchResults)="setCurrentBreakdownItem($event)"></tariff-search>
+        <br>
+        <div *ngIf="showLevelOfCare && authType == 'Hospitalization'">
+          <!--only visible to hospital auth(for admission code only) not treating doctor-->
+          <mat-form-field class="mat-form-field-right">
+            <label class="mat-label other-label">Level of Care</label>
+            <mat-form-field style="width: 100%;">
+              <mat-select formControlName="levelOfCare" (selectionChange)="setCurrentLevelOfCare($event)">
+                <mat-option *ngFor="let l of levelOfCareList$" [value]="l.levelOfCareId">
+                  {{ l.name }}</mat-option>
+              </mat-select>
+            </mat-form-field>
+          </mat-form-field>
+
+          <div *ngIf="showTreatingProtocols">
+            <div *ngFor="let protocol of filteredTreatingProtocols" class="treating-protocols">
+              <mat-checkbox [value]="protocol" (change)="onCheckChange($event)">
+                {{ protocol.name }}
+              </mat-checkbox>
+            </div>
+          </div>
+          <br>
+          <mat-form-field class="mat-form-field-right">
+            <label class="mat-label other-label">Admission Date</label>
+            <input matInput [matDatepicker]="admissionDate" formControlName="admissionDate"
+                   (dateChange)="CalculateLengthOfStay($event)" class="form-control" />
+            <mat-datepicker-toggle class="datePicker" matSuffix [for]="admissionDate"></mat-datepicker-toggle>
+            <mat-datepicker #admissionDate></mat-datepicker>
+            <label class="mat-label other-label mandatory-field">Admission Time</label>
+            <input matInput type="time" formControlName="admissionTime" (input)="CalculateLengthOfStay($event)"
+                   class="form-control" />
+          </mat-form-field>
+          <mat-form-field class="mat-form-field-right">
+            <label class="mat-label other-label">Discharge Date</label>
+            <input matInput [matDatepicker]="dischargeDate" formControlName="dischargeDate"
+                   (dateChange)="CalculateLengthOfStay($event)" class="form-control" />
+            <mat-datepicker-toggle class="datePicker" matSuffix [for]="dischargeDate"></mat-datepicker-toggle>
+            <mat-datepicker #dischargeDate></mat-datepicker>
+            <label class="mat-label other-label mandatory-field">Discharge Time</label>
+            <input matInput type="time" formControlName="dischargeTime" (input)="CalculateLengthOfStay($event)"
+                   class="form-control" />
+          </mat-form-field>
+          <br>
+          <mat-form-field class="mat-form-field-right">
+            <label>Length Of Stay</label>
+            <input matInput formControlName="lengthOfStay" type="text" id="los-style" />
+          </mat-form-field>
+        </div>
+          <!--always show for both external and internal-->
+         
+          <div *ngIf="!hideRequestedQuantity">
+            <mat-form-field class="mat-form-field-right" >
+              <label class="mat-label other-label mandatory-field">Requested Quantity</label>
+              <input #requestedQuantity matInput formControlName="requestedQuantity" type="number"
+                (keyup)="calculateRequestedAmount(requestedQuantity.value)" (click)="calculateRequestedAmount(requestedQuantity.value)"/>
+            </mat-form-field>
+          </div>
+          <div [hidden]='hideQtyAndAmount'>
+            <!--always hide for external-->
+            <mat-form-field class="mat-form-field-right">
+              <label>Requested Amount</label>
+              <input matInput formControlName="requestedAmount" type="text" />
+            </mat-form-field>
+          </div>
+
+          <div *ngIf="loading$ | async">
+            <mat-progress-bar mode="indeterminate"
+              [ngClass]="{ 'loading-main-double-menu-progress': doubleMenu, 'loading-main-single-menu-progress': !doubleMenu }">
+            </mat-progress-bar>
+            <p class="site-font grey">Validating line items...</p>
+          </div>
+      </mat-card-content>
+    </mat-card>
+  </mat-expansion-panel>
+  <br><br><br><br>
+</form>

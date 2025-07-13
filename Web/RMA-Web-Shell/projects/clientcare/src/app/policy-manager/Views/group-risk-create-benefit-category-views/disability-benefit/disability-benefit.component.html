@@ -1,0 +1,120 @@
+<div class="wizard-main-content mat-elevation-z8">
+  <form [formGroup]="form" class="mat-container details-form">
+    <section>
+      <mat-form-field class="mat-form-field">
+        <label class="mat-label other-label mandatory-field">Claim Waiting Period</label>
+        <mat-select formControlName="claimWaitingPeriodOptionId" required>
+          <mat-option *ngFor="let option of waitingPeriodOptions" [value]="option.benefitOptionItemValueId">
+            {{option.optionItemName}}
+          </mat-option>
+        </mat-select>
+        <mat-error *ngIf="form.get('claimWaitingPeriodOptionId').hasError('required')">
+          Claim Waiting Period is <strong>required</strong>
+        </mat-error>
+      </mat-form-field>
+      <mat-form-field class="mat-form-field-right">
+        <label class="mat-label other-label mandatory-field">Employee Benefits</label>
+        <mat-select formControlName="employeeBenefitsOptionId" required>
+          <mat-option *ngFor="let option of employeeBenefitOptions" [value]="option.benefitOptionItemValueId">
+            {{option.optionItemName}}
+          </mat-option>
+        </mat-select>
+        <mat-error *ngIf="form.get('employeeBenefitsOptionId').hasError('required')">
+          Employee Benefits is <strong>required</strong>
+        </mat-error>
+      </mat-form-field>
+    </section>
+    <section>
+      <mat-form-field class="mat-form-field">
+        <label class="mat-label other-label mandatory-field">Salary (Benfit Purpose)</label>
+        <mat-select formControlName="benefitSalaryTypeOptionItemId" required>
+          <mat-option *ngFor="let option of benefitSalaryTypeOptions" [value]="option.benefitOptionItemValueId">
+            {{option.optionItemName}}
+          </mat-option>
+        </mat-select>
+        <mat-error *ngIf="form.get('benefitSalaryTypeOptionItemId').hasError('required')">
+          Salary (Benfit Purpose) is <strong>required</strong>
+        </mat-error>
+      </mat-form-field>
+      <mat-form-field class="mat-form-field-right">
+        <label class="mat-label other-label mandatory-field">Salary (Premium Purpose)</label>
+        <mat-select formControlName="premiumSalaryTypeOptionItemId" required>
+          <mat-option *ngFor="let option of premiumSalaryTypeOptions" [value]="option.benefitOptionItemValueId">
+            {{option.optionItemName}}
+          </mat-option>
+        </mat-select>
+        <mat-error *ngIf="form.get('premiumSalaryTypeOptionItemId').hasError('required')">
+          Salary (Premium Purpose) is <strong>required</strong>
+        </mat-error>
+      </mat-form-field>
+    </section>
+  <section>
+    <mat-form-field class="mat-form-field">
+      <label class="mat-label other-label mandatory-field">Benefit Definition</label>
+      <mat-select formControlName="benefitDefinitionOptionItemId" required>
+        <mat-option *ngFor="let option of benefitDefinitionOptions" [value]="option.benefitOptionItemValueId">
+          {{option.optionItemName}}
+        </mat-option>
+      </mat-select>
+      <mat-error *ngIf="form.get('benefitDefinitionOptionItemId').hasError('required')">
+        Benefit Definition is <strong>required</strong>
+      </mat-error>
+    </mat-form-field>
+    <mat-form-field class="mat-form-field-right">
+      <label class="mat-label other-label mandatory-field">Initial Benefit Period</label>
+      <mat-select formControlName="initialBenefitPeriodOptionItemId" required>
+        <mat-option *ngFor="let option of initialBenefitPeriodOptions" [value]="option.benefitOptionItemValueId">
+          {{option.optionItemName}}
+        </mat-option>
+      </mat-select>
+      <mat-error *ngIf="form.get('initialBenefitPeriodOptionItemId').hasError('required')">
+        Initial Benefit Period is <strong>required</strong>
+      </mat-error>
+    </mat-form-field>
+  </section>
+  <section>
+    <mat-form-field class="mat-form-field">
+      <label class="mat-label other-label mandatory-field">Benefit Escalation Rate</label>
+      <mat-select formControlName="benefitEscalationRateOptionItemId" required>
+        <mat-option *ngFor="let option of benefitEscalationRateOptions" [value]="option.benefitOptionItemValueId">
+          {{option.optionItemName}}
+        </mat-option>
+      </mat-select>
+      <mat-error *ngIf="form.get('benefitEscalationRateOptionItemId').hasError('required')">
+        Benefit Escalation Rate is <strong>required</strong>
+      </mat-error>
+    </mat-form-field>
+    <mat-form-field class="mat-form-field-right">
+      <label class="mat-label other-label mandatory-field">Employer Waiver</label>
+      <input matInput formControlName="employerWaiver" type="number" />
+      <mat-error *ngIf="form.get('employerWaiver').hasError('required')">
+        Employer Waiver is <strong>required</strong>
+      </mat-error>
+    </mat-form-field>
+  </section>
+  <section>
+    <mat-form-field class="mat-form-field">
+      <label class="mat-label other-label mandatory-field">Medical Premium Waiver</label>
+      <mat-select formControlName="medicalPremiumWaiverOptionItemId" required>
+        <mat-option *ngFor="let option of medicalPremiumWaiverOptions" [value]="option.benefitOptionItemValueId">
+          {{option.optionItemName}}
+        </mat-option>
+      </mat-select>
+      <mat-error *ngIf="form.get('medicalPremiumWaiverOptionItemId').hasError('required')">
+        Medical Premium Waiver is <strong>required</strong>
+      </mat-error>
+    </mat-form-field>
+    <mat-form-field class="mat-form-field-right">
+      <label class="mat-label other-label mandatory-field">Medical Premium Waiver Benefit Payment Term</label>
+      <mat-select formControlName="medicalWaiverPaymentTermOptionId" required>
+        <mat-option *ngFor="let option of medicalWaiverPaymentTermOptions" [value]="option.benefitOptionItemValueId">
+          {{option.optionItemName}}
+        </mat-option>
+      </mat-select>
+      <mat-error *ngIf="form.get('medicalWaiverPaymentTermOptionId').hasError('required')">
+        Medical Premium Waiver Benefit Payment Term is <strong>required</strong>
+      </mat-error>
+    </mat-form-field>
+  </section>
+  </form>
+</div>

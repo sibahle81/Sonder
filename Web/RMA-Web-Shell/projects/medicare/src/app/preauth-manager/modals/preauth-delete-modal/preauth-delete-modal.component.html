@@ -1,0 +1,107 @@
+<div mat-dialog-content>
+    <h1>{{preauthHeader}} PreAuthorisation </h1><br />
+    <div *ngIf="loading$ | async">
+        <mat-progress-bar mode="indeterminate"
+            [ngClass]="{ 'loading-main-double-menu-progress': doubleMenu, 'loading-main-single-menu-progress': !doubleMenu }">
+        </mat-progress-bar>
+        <p class="site-font grey">Loading...</p>
+    </div>
+    <div class="grid">
+        <div>
+            <span class="title">Claim Number: </span>
+            <span class="value">{{ preauthDataSelected.personEventId }} </span>
+        </div>
+    </div>
+    <div class="grid">
+        <div>
+            <span class="title">PreAuth Number: </span>
+            <span class="value">{{ preauthDataSelected.preAuthNumber}}</span>
+        </div>
+    </div>
+    <div class="grid">
+        <div>
+            <span class="title">HealthCareProvider: </span>
+            <span class="value">{{ preauthDataSelected.healthCareProviderName}}</span>
+        </div>
+    </div>
+    <div class="grid">
+        <div>
+            <span class="title">Practice Number: </span>
+            <span class="value">{{ preauthDataSelected.practiceNumber}} </span>
+        </div>
+    </div>
+    <div class="grid">
+        <div>
+            <span class="title">Authorised From: </span>
+            <span class="value">{{ preauthDataSelected.dateAuthorisedFrom | date:'yyyy-MM-dd HH:MM:SS' }} </span>
+        </div>
+    </div>
+    <div class="grid">
+        <div>
+            <span class="title">Authorised To: </span>
+            <span class="value">{{ preauthDataSelected.dateAuthorisedTo | date:'yyyy-MM-dd HH:MM:SS' }}  </span>
+        </div>
+    </div>
+    <div class="grid">
+        <div>
+            <span class="title">Request Comments: </span>
+            <span class="value">{{ preauthDataSelected.requestComments }} </span>
+        </div>
+    </div>
+    <div class="grid">
+        <div>
+            <span class="title">PreAuth Status: </span>
+            <span class="value">{{ getPreauthStatus(preauthDataSelected.preAuthStatus) }} </span>
+        </div>
+    </div>
+    
+</div>
+
+<div mat-dialog-content *ngIf="!(loading$ | async)">
+    <div *ngIf="loading$ | async">
+        <mat-progress-bar mode="indeterminate"
+            [ngClass]="{ 'loading-main-double-menu-progress': doubleMenu, 'loading-main-single-menu-progress': !doubleMenu }">
+        </mat-progress-bar>
+        <p class="site-font grey">Loading...</p>
+    </div>
+
+    <form [formGroup]="form" class="mat-container details-form" novalidate>
+  
+        <section>
+            <mat-form-field>
+                <label class="mat-label other-label">Reason</label>
+                <mat-select (selectionChange)="onReasonChange($event)" formControlName="deleteReason"
+                    id="deleteReason" name="deleteReason">
+                    <mat-option *ngFor="let deleteReason of deleteReasons" [value]="deleteReason">
+                        {{deleteReason?.description}}</mat-option>
+                </mat-select>
+            </mat-form-field>
+        </section>
+
+
+        <section>
+            <mat-form-field>
+                <label class="mat-label other-label">Description</label>
+                <textarea matInput formControlName="description" id="description"
+                    name="description" minlength="10">
+                </textarea>
+                <mat-error *ngIf="form.get('description').hasError('minlength')">
+                    Description must be at least 10 characters
+                </mat-error>
+
+            </mat-form-field>
+        </section>
+
+    </form>
+</div>
+
+<div class="items-buttons-container" *ngIf="!(loading$ | async)">
+    <div class="form-buttons submit-button">
+        <button class="button float-button cancel-btn" [mat-dialog-close]="false">Cancel</button>
+    </div>
+    <div class="form-buttons submit-button">
+        <button type="button" class="button float-button"
+            [disabled]="deletedReason < 1 || form.get('description').hasError('minlength') || form.get('description').value.length < 10"
+            (click)="onSubmit()">Submit</button>
+    </div>
+</div>

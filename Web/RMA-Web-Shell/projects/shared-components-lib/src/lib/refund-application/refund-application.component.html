@@ -1,0 +1,143 @@
+<div *ngIf="rolePlayer">
+  <div class="menu-bar">
+    Request For Refund
+  </div>
+
+  <div *ngIf="refundWizardinProgress" class="refundWizardinProgress">
+    Please note there is already an open Refund in progress
+  </div>
+
+  <div *ngIf="!hasRefundableCreditBalance && creditBalanceChecked" class="error-message">
+    You do not have a credit balance to refund
+  </div> 
+
+  <mat-card *ngIf="isLoading$ | async">
+    <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+    <label class="mat-label other-label">
+      <i>loading...please wait</i>
+    </label>
+  </mat-card>
+
+  <mat-card>
+    <form [formGroup]="form" novalidate>  
+      <div>
+        <section>
+          <p>Please select Refund Type/Reason:</p>
+          <br/>
+          <mat-form-field>
+            <label class="mat-label other-label mandatory-field">Refund Type: </label>
+            <mat-select formControlName="refundTypeId" (selectionChange)="refundTypeChanged($event.value)">
+              <mat-option *ngFor="let refundtype of refundTypes" [value]="refundtype.id">
+                {{ splitPascalCaseWord(refundtype.name) }}
+              </mat-option>
+            </mat-select>
+          </mat-form-field>
+        </section>
+      </div>
+
+      <mat-card *ngIf="isLoadingCreditBalanceInfo$ | async">
+        <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+        <label class="mat-label other-label">
+          <i>Loading your credit balance info...please wait</i>
+        </label>
+      </mat-card> 
+
+      <section *ngIf="!showCreditBalance && hasRefundableCreditBalance && creditBalanceChecked">
+        <mat-card>
+          <div [hidden]="datasourceCreditBalance.data.length === 0">
+            <p class="info">Your credit balance info: </p>
+            <p class="message">Click on Apply for refund to start process</p>
+            <mat-table #table [dataSource]="datasourceCreditBalance">
+              <ng-container matColumnDef="creditBalance">
+                <mat-header-cell *matHeaderCellDef>Credit Balance</mat-header-cell>
+                <mat-cell *matCellDef="let row">{{row.balance | currency: '':''}}</mat-cell>
+              </ng-container>
+              <ng-container matColumnDef="action">
+                <mat-header-cell *matHeaderCellDef></mat-header-cell>
+                <mat-cell *matCellDef="let row">
+                  <span>
+                    <a class="link-edit" (click)="displayBankingDetails()">Apply for refund</a>
+                  </span>
+                </mat-cell>
+              </ng-container>
+              <mat-header-row *matHeaderRowDef="displayCreditBalanceColumns;"></mat-header-row>
+              <mat-row *matRowDef="let row; columns: displayCreditBalanceColumns;"></mat-row>
+            </mat-table>
+          </div>
+        </mat-card>
+      </section>
+
+      <br/>
+
+      <mat-card>
+        <section  *ngIf="showBanking">
+          <h4>Refund Banking Details</h4>
+          <div>
+            <role-player-banking-list (rolePlayerBankingSelectedEmit)="setBankAccount($event)" 
+            [rolePlayer]="rolePlayer" 
+            [isReadOnly]="false"
+            [verifyAccount]="true" [showSelectColumn]="true">
+          </role-player-banking-list>
+          </div>
+        </section>
+        
+        <section>
+          <mat-form-field class="mat-form-field">
+            <label class="mat-label other-label">Group Email</label>
+            <input matInput formControlName="groupEmail" />
+          </mat-form-field>
+
+          <mat-form-field class="mat-form-field-right">
+            <label class="mat-label other-label">Client Email</label>
+            <input matInput formControlName="clientEmail" (keyup)="logClientEmailPopulated($event.target.value)" />
+          </mat-form-field>
+
+          <span *ngIf="!isDisabled && (cleintEmailPopulated | async)" (click)="addEmail()" matTooltip="save"
+          class="material-icons icn icn-button pointer edit-icon email-save">save</span>
+        </section>
+
+        <section>
+          <label class="mat-label other-label mandatory-field">Total Refund Amount</label>
+          <div>
+            <mat-form-field class="mat-form-field">            
+              <input matInput formControlName="amount" name="amount" id="amount" DecimalNumber  min="1" />
+              <mat-error *ngIf="form.get('amount').hasError('required')">
+                Amount is <strong>required</strong>
+              </mat-error>
+            </mat-form-field>
+            
+            <span (click)="editAmount()" *ngIf="canEditAmount" class="material-icons icn icn-button pointer edit-icon edit"  matTooltip="edit">
+              edit
+            </span>
+            
+            <span (click)="updateAmount()" *ngIf="canUpdateAmount" class="material-icons icn icn-button pointer edit-icon edit"  matTooltip="save">
+              save
+            </span>
+          </div>           
+        </section>
+      </mat-card>
+
+      <section *ngIf="refundDocSet > 0">
+        <document-uploader [documentSet]="refundDocSet" [systemName]="documentSystemName" [keyName]="'tempWizardId'"
+          [keyValue]="documentKeyValue"
+          (requiredDocumentsUploadedEmit)="isRequiredDocumentsUploaded($event)"></document-uploader>
+      </section> 
+
+      <div *ngIf="isSubmitting$ | async">
+        <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+        <label class="mat-label other-label"><i>Submitting application...please wait...</i></label>
+      </div>
+
+      <div class="form-group-button mat-form-button">
+        <div *ngIf="!refundWizardinProgress" class="form-buttons">
+          <button (click)="submitRefunds()" [disabled]="(isSubmitting$ | async) || !canSubmit" class="button float-button submit-button">
+            Submit
+          </button>
+        </div>
+        <button class="button float-button submit-button" (click)="back()">
+          Back
+        </button>
+      </div>   
+    </form> 
+  </mat-card>
+</div>

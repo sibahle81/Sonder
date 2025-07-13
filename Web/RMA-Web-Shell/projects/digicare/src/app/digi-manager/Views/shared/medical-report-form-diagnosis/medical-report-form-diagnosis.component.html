@@ -1,0 +1,40 @@
+<div class="row">
+  <div [ngClass]="{'column': isModernization}" class="column">
+    <div >
+      <mat-card>
+        <mat-card-header>
+          <mat-card-title>
+          </mat-card-title>
+        </mat-card-header>
+        <mat-card-content>
+          <h4>Diagnosis</h4>
+        </mat-card-content>
+        <form [formGroup]="form" *ngIf="this.form">
+          <div class="autoResize" id="icd10CodeDiaglog">
+            <i class="pointer" (click)="onShowDialogClick()">Add ICD10 codes</i>
+            <i class="material-icons icon" (click)="onShowDialogClick()">add</i>
+          </div>
+          <div class="autoResize">
+            <ul class="noStyle">
+              <li class="lineHeight" *ngFor="let x of icd10Codes">
+                <div class="icd10LineItemPadding">
+                <div class="icd10LineItem"><span class="listitem-hover">{{x.displayValue}} </span><span class="emphasise">|
+                    Body side affected : {{ isModernization ? getBodySideAffectedType(x.bodySideAffected) : x.bodySideAffected }} {{x.bodySideComment}} | Severity : {{isModernization ?  getInjurySeverityType(x.severity): x.severity }}</span>
+                </div>
+                <div class="clear"><i class="material-icons icon" (click)="onItemRemoved(x)"
+                    matTooltip="Delete ICD10 Code">clear</i></div>
+                
+              </div>
+              </li>
+            </ul>
+          </div>
+          <input type="hidden" formControlName="icd10Codes" ng-model="icd10Codes" ng-required="true">
+        </form>
+      </mat-card>
+    </div>
+  </div>
+  <div *ngIf="isModernization && documentId" class="column">
+    <document-viewer [documentId]="documentId"></document-viewer>
+  </div>
+</div>
+<br />

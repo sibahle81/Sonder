@@ -1,0 +1,11 @@
+<mat-tab-group animationDuration="500ms">
+    <mat-tab label="Search Policies">
+        <policy-search-V2 (policySelectedEmit)="policySelected($event)"></policy-search-V2>
+    </mat-tab>
+    <mat-tab *ngIf="!disable_coid_vaps_e2e_clientcare" label="Search Members">
+        <member-search-V2 [basicMode]="false" (memberSelectedEmit)="memberSelected($event)"></member-search-V2>
+    </mat-tab>
+    <mat-tab *ngIf="!disable_coid_vaps_e2e_clientcare" label="Search Role Players">
+        <role-player-search (rolePlayerSelectedEmit)="rolePlayerSelected($event)"></role-player-search>
+    </mat-tab>
+</mat-tab-group>

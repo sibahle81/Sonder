@@ -1,0 +1,81 @@
+﻿<mat-card>
+  <mat-card-content style="margin-left: 10px;">
+
+    <div class="page-header">
+      <h1 style="margin-bottom: 15px;">Find a Representative</h1>
+    </div>
+    <mat-form-field [floatLabel]="'never'">
+      <input matInput maxlength="50" name="filter" #filter width="300" minLength="3"
+        matTooltip="Search by name, surname, or Id Number" matTooltipShowDelay="1000">
+      <mat-placeholder class="placeholder">Search By Name, Code, or ID Number</mat-placeholder>
+      <mat-icon class="search-icon" (click)="search()" matSuffix>search</mat-icon>
+      <button style="visibility: hidden;" class="button submit-button" (click)="search()"
+        matTooltip="Search By Name, Code, or ID Number" matTooltipShowDelay="1000">Search</button>
+    </mat-form-field>
+
+    <div *ngIf="dataSource.loading$ | async">
+      <mat-progress-bar mode="indeterminate"
+        [ngClass]="{ 'loading-main-double-menu-progress': doubleMenu, 'loading-main-single-menu-progress': !doubleMenu }">
+      </mat-progress-bar>
+      <p class="site-font grey">Searching...</p>
+    </div>
+
+    <div [hidden]="paginator.length == 0 || !showResults">
+      <mat-table #table [dataSource]="dataSource" matSort matSortActive="FirstName" matSortDirection="asc"
+        matSortDisableClear>
+
+        <!-- Code -->
+        <ng-container matColumnDef="code">
+          <mat-header-cell *matHeaderCellDef mat-sort-header> Code </mat-header-cell>
+          <mat-cell *matCellDef="let row"> {{row.code}} </mat-cell>
+        </ng-container>
+
+        <!-- Name -->
+        <ng-container matColumnDef="name">
+          <mat-header-cell *matHeaderCellDef mat-sort-header> Name </mat-header-cell>
+          <mat-cell *matCellDef="let row"> {{row.name}} </mat-cell>
+        </ng-container>
+
+        <!-- Id Number -->
+        <ng-container matColumnDef="idNumber">
+          <mat-header-cell *matHeaderCellDef mat-sort-header> Identification Number </mat-header-cell>
+          <mat-cell *matCellDef="let row"> {{row.idNumber}} </mat-cell>
+        </ng-container>
+
+        <!-- Actions -->
+        <ng-container matColumnDef="actions">
+          <mat-header-cell *matHeaderCellDef mat-sort-header>Actions</mat-header-cell>
+          <mat-cell *matCellDef="let row">
+            <span *ngIf="!selectOnly">
+              <span><a role="button" class="link-edit" (click)="onSelect(row)">View</a></span>
+              <span *ngIf="canEdit">&nbsp;|&nbsp;<a role="button" class="link-edit"
+                  (click)="linkAgent(row)">Link</a></span>
+            </span>
+            <span *ngIf="selectOnly">
+              <span>&nbsp;|&nbsp;<a role="button" class="link-edit"
+                  (click)="selectedRepresentativeChanged(row)">Select</a></span>
+            </span>
+          </mat-cell>
+        </ng-container>
+
+        <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
+        <mat-row *matRowDef="let row; columns: displayedColumns;"></mat-row>
+      </mat-table>
+      <mat-paginator #paginator [length]="dataSource.rowCount$" [pageSize]="5" [pageSizeOptions]="[5, 10, 25, 100]">
+      </mat-paginator>
+    </div>
+
+    <div [hidden]="paginator.length > 0 || !currentQuery || currentQuery == ''" class="no-search-results-add-button">
+      <div class="site-font grey">
+        <p class="grey">Your search - <strong>{{currentQuery}}</strong> - did not match any representatives.</p>
+        <span>Suggestions: </span>
+        <ul>
+          <li>Make sure that all words are spelled correctly.</li>
+          <li>Try different keywords.</li>
+          <li>Try more general keywords.</li>
+          <li>Try fewer keywords.</li>
+        </ul>
+      </div>
+    </div>
+  </mat-card-content>
+</mat-card>

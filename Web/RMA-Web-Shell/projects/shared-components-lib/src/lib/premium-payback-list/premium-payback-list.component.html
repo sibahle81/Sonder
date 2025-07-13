@@ -1,0 +1,122 @@
+<div class="table-container">
+  <div *ngIf="sendingNotification">
+    <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+    <label class="mat-label other-label"><i>sending notification...please wait</i></label>
+  </div>
+  <div *ngIf="verifyingBankDetails">
+    <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+    <label class="mat-label other-label"><i>verifying banking details...please wait</i></label>
+  </div>
+  <div *ngIf="isDownloading">
+    <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+    <label class="mat-label other-label"><i>downloading report...please wait</i></label>
+    <br />
+  </div>
+  <!-- Search controls -->
+  <div>
+    <table>
+      <tr>
+        <td>
+          <mat-form-field style="width: 250px !important" class="search-input" [floatLabel]="'never'">
+            <input matInput minlength="3" maxlength="64" name="filter" #filter>
+            <mat-placeholder class="placeholder">Search paybacks</mat-placeholder>
+          </mat-form-field>
+        </td>
+        <td>
+          <mat-icon class="search-icon" (click)="filterData()" matSuffix matTooltip="Search">search</mat-icon>
+        </td>
+        <td>
+          <mat-icon class="clear-icon" (click)="resetFilter()" matSuffix matTooltip="Clear">clear</mat-icon>
+        </td>
+        <td>
+          <div class="download-control" (click)="exportReport()" matTooltip="Download">
+            <a>
+              <span class="material-icons">file_download</span>
+              <span>Download premium payback report</span>
+            </a>
+          </div>
+        </td>
+      </tr>
+    </table>
+  </div>
+  <!-- Download report -->
+  <div [hidden]="true">
+    <ssrs-reportviewer [reportserver]="reportServer" 
+      [reporturl]="reportUrl" 
+      [reportName]="reportName"
+      [showparameters]="showParameters" 
+      [format]="reportFormat" 
+      [parameters]="parameters" 
+      [language]="language"
+      [width]="width" 
+      [height]="height" 
+      [toolbar]="toolbar" 
+      [isDownload]="isDownload"
+      (downloadComplete)="downLoadComplete($event)">
+    </ssrs-reportviewer>
+  </div>
+  <div [hidden]="hideTable">
+    <mat-table #table [dataSource]="dataSource" matSort id="tblData">
+      <ng-container matColumnDef="policyNumber">
+        <mat-header-cell class="text-cell col-policy-number" *matHeaderCellDef> Policy Number </mat-header-cell>
+        <mat-cell class="text-cell col-policy-number" *matCellDef="let row">{{row.policyNumber}}</mat-cell>
+      </ng-container>
+      <ng-container matColumnDef="policyInceptionDate">
+        <mat-header-cell class="text-cell col-date" *matHeaderCellDef> Inception Date </mat-header-cell>
+        <mat-cell class="text-cell col-date" *matCellDef="let row">{{row.policyInceptionDate |
+          date:'yyyy-MM-dd'}}</mat-cell>
+      </ng-container>
+      <ng-container matColumnDef="paybackDate">
+        <mat-header-cell class="text-cell col-date" *matHeaderCellDef> Payback Date </mat-header-cell>
+        <mat-cell class="text-cell col-date" *matCellDef="let row">
+          {{row.paybackDate | date:'yyyy-MM-dd'}}
+        </mat-cell>
+      </ng-container>
+      <ng-container matColumnDef="premiumPaybackStatus">
+        <mat-header-cell class="text-cell col-status" *matHeaderCellDef> Payback Status </mat-header-cell>
+        <mat-cell class="text-cell col-status" *matCellDef="let row">
+          {{ getStatusString(row.premiumPaybackStatus) }}
+        </mat-cell>
+      </ng-container>
+      <ng-container matColumnDef="paybackAmount">
+        <mat-header-cell class="number-cell col-amount" *matHeaderCellDef> Amount </mat-header-cell>
+        <mat-cell class="number-cell col-amount" *matCellDef="let row">
+          {{row.paybackAmount | number: '1.2-2'}}
+        </mat-cell>
+      </ng-container>
+      <ng-container matColumnDef="accountType">
+        <mat-header-cell class="text-cell col-mobile" *matHeaderCellDef> Account Type </mat-header-cell>
+        <mat-cell class="text-cell col-mobile" *matCellDef="let row">{{ getBankAccountType(row.bankAccountType) }}</mat-cell>
+      </ng-container>      
+      <ng-container matColumnDef="policyOwner">
+        <mat-header-cell class="text-cell col-member" *matHeaderCellDef> Member </mat-header-cell>
+        <mat-cell class="text-cell col-member" *matCellDef="let row">{{row.policyOwner}}</mat-cell>
+      </ng-container>
+      <ng-container matColumnDef="mobileNumber">
+        <mat-header-cell class="text-cell col-mobile" *matHeaderCellDef> Mobile# </mat-header-cell>
+        <mat-cell class="text-cell col-mobile" *matCellDef="let row">{{row.mobileNumber}}</mat-cell>
+      </ng-container>     
+      <ng-container matColumnDef="paybackFailedReason">
+        <mat-header-cell class="text-cell" *matHeaderCellDef> Error </mat-header-cell>
+        <mat-cell class="text-cell" *matCellDef="let row">{{row.paybackFailedReason}}</mat-cell>
+      </ng-container>
+      <ng-container matColumnDef="action">
+        <mat-header-cell class="col-action" *matHeaderCellDef>&nbsp;</mat-header-cell>
+        <mat-cell class="col-action" *matCellDef="let row" [matMenuTriggerFor]="menu">
+          <span class="material-icons pointer right">more_vert</span>
+          <mat-menu #menu="matMenu">
+            <ng-container *ngFor="let menu of menus">
+              <button mat-menu-item (click)="onMenuItemClick(row, menu)" [disabled]="!showMenuItem(row, menu)">
+                {{menu.title}}
+              </button>
+            </ng-container>
+          </mat-menu>
+        </mat-cell>
+      </ng-container>
+      <mat-header-row *matHeaderRowDef="displayedColumns; sticky: true"></mat-header-row>
+      <mat-row *matRowDef="let row; columns: displayedColumns;"
+        [ngClass]="{'orange-row': row.premiumPaybackStatus === 10}">
+      </mat-row>
+    </mat-table>
+  </div>
+</div>

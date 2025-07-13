@@ -1,0 +1,306 @@
+<mat-card *ngIf="(isLoading$ | async)">
+  <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+  <label class="mat-label other-label"><i>loading questionnaire details...please wait</i></label>
+</mat-card>
+
+<mat-card *ngIf="!(isLoading$ | async)">
+  <div class="menu-bar">
+    Questionnaire
+    <span (click)="onNoClick()" class="material-icons pointer right"
+        matTooltip="close">
+        close
+    </span>
+    <span *ngIf="!isViewOnly" (click)="submit()" class="material-icons pointer right pulse"
+        matTooltip="submit">
+        save
+    </span>
+  </div>
+
+  <div mat-dialog-content>
+    <form [formGroup]="questionnaire" (ngSubmit)="submit()" class="mat-container" novalidate>
+      <mat-card>
+        <div class="menu-bar">
+          Employer Details
+        </div>
+        <span *ngIf="(isLoadingRolePlayer$ | async)">
+          <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+          <label class="mat-label other-label"><i>loading employer details...please wait</i></label>
+        </span>
+        <section *ngIf="!(isLoadingRolePlayer$ | async)">
+          <mat-form-field class="mat-form-field">
+            <label class="mat-label other-label mandatory-field">Name Of Employer</label>
+            <input id="employerName" name="employerName" matInput formControlName="employerName" readonly />
+          </mat-form-field>
+          <mat-form-field class="mat-form-field-right">
+            <label class="mat-label other-label mandatory-field">Company/Industry No.</label>
+            <input id="companyNumber" name="companyNumber" matInput formControlName="companyNumber" readonly />
+          </mat-form-field>
+        </section>
+      </mat-card>
+
+      <mat-card>
+        <div class="menu-bar">
+          Employee Details
+        </div>
+        <section>
+          <mat-form-field class="mat-form-field">
+            <label class="mat-label other-label mandatory-field">Passport/ID Number</label>
+            <input id="idNumber" name="idNumber" matInput formControlName="idNumber" readonly />
+          </mat-form-field>
+          <mat-form-field class="mat-form-field-right">
+            <label class="mat-label other-label mandatory-field">Name Of Employee</label>
+            <input id="employeeName" name="employeeName" matInput formControlName="employeeName" readonly />
+          </mat-form-field>
+        </section>
+        <section>
+          <mat-form-field class="mat-form-field">
+            <label class="mat-label other-label mandatory-field">Date of Birth</label>
+            <input matInput formControlName="dateOfBirth" [matDatepicker]="dateOfBirth" id="dateOfBirth" readonly
+              name="dateOfBirth" [max]="maxDate">
+            <mat-datepicker-toggle matSuffix [for]="dateOfBirth"></mat-datepicker-toggle>
+            <mat-datepicker touchUi="true" #dateOfBirth></mat-datepicker>
+          </mat-form-field>
+          <mat-form-field class="mat-form-field-right">
+            <label class="mat-label other-label mandatory-field">Age At Date Of Accident</label>
+            <input id="employeeAge" name="employeeAge" matInput formControlName="employeeAge" readonly />
+          </mat-form-field>
+        </section>
+        <section>
+          <mat-form-field class="mat-form-field">
+            <label class="mat-label other-label mandatory-field">Date Of Accident</label>
+            <input matInput formControlName="dateOfAccident" [matDatepicker]="dateOfAccident" id="dateOfAccident" readonly
+              name="dateOfAccident" [max]="maxDate">
+            <mat-datepicker-toggle matSuffix [for]="dateOfAccident"></mat-datepicker-toggle>
+            <mat-datepicker touchUi="true" #dateOfAccident></mat-datepicker>
+          </mat-form-field>
+          <mat-form-field class="mat-form-field-right">
+            <label class="mat-label other-label mandatory-field">Present Occupation</label>
+            <input id="presentOccupation" name="presentOccupation" matInput formControlName="presentOccupation" />
+          </mat-form-field>
+        </section>
+        <section>
+          <mat-form-field class="mat-form-field-left">
+            <label class="mat-label other-label mandatory-field">Patterson Band Category</label>
+            <mat-select id="pattersonBand" name="pattersonBand" formControlName="pattersonBand">
+              <mat-option *ngFor="let patersonGrading of patersonGradings" [value]="patersonGrading.patersonGradingId">
+                {{patersonGrading.description}}
+              </mat-option>
+            </mat-select>
+          </mat-form-field>
+        </section>
+        <section>
+          <div class="field-container-radio">
+            <fieldset class="radio-field">
+              <legend><label class="mat-label other-label mandatory-field">
+                  Was the employee an apprentice or in the process of being trained in any trained
+                  , occupation or profession at the time of accident</label></legend>
+              <p>
+                <input type="radio" value="true" formControlName="isTrainee" (change)="isTraineeChange()"><label>Yes</label>
+                <input type="radio" value="false" formControlName="isTrainee" (change)="isTraineeChange()"><label>No</label>
+              </p>
+            </fieldset>
+          </div>
+        </section>
+      </mat-card>
+      
+      <mat-card *ngIf="employeeIsTrainee">
+        <div class="menu-bar">Summary (Trainee)</div>
+          <section>
+            <mat-form-field class="mat-form-field">
+              <label class="mat-label other-label mandatory-field">
+                Average of 6 months earnings of a person in the same trade, occupation or profession with 5 years more experience than the injured employee
+              </label>
+              <input id="traineeLocation" name="traineeLocation" matInput formControlName="traineeLocation" DecimalNumber (blur)="traineeLocationChange()"/>
+              <mat-error *ngIf="questionnaire.get('traineeLocation').hasError('required')">
+                Trainee location is <strong>required</strong>
+              </mat-error>
+            </mat-form-field>
+    
+            <mat-form-field class="mat-form-field-right">
+              <label class="mat-label other-label mandatory-field">Average of 6 months earnings
+                of a person recently qualified in the same trade, occupation or profession</label>
+              <input id="averageEarnings" name="averageEarnings" matInput formControlName="averageEarnings" DecimalNumber (blur)="averageEarningsChange()"/>
+              <mat-error *ngIf="questionnaire.get('averageEarnings').hasError('required')">
+                Average Earnings is <strong>required</strong>
+              </mat-error>
+            </mat-form-field>
+          </section>
+          <section>
+            <mat-form-field class="mat-form-field">
+              <label class="mat-label other-label mandatory-field">Average Basic Rate</label>
+              <input id="basicRate" name="basicRate" matInput formControlName="basicRate" DecimalNumber  (blur)="traineeLocationChange()"/>
+              <mat-error *ngIf="questionnaire.get('basicRate').hasError('required')">
+                Average basic rate is <strong>required</strong>
+              </mat-error>
+            </mat-form-field>
+    
+            <mat-form-field class="mat-form-field-right">
+              <label class="mat-label other-label mandatory-field">Average Basic Rate</label>
+              <input id="secondBasicRateAverage" name="secondBasicRateAverage" matInput formControlName="secondBasicRateAverage" DecimalNumber (blur)="averageEarningsChange()"/>
+              <mat-error *ngIf="questionnaire.get('secondBasicRateAverage').hasError('required')">
+                Average basic rate is <strong>required</strong>
+              </mat-error>
+            </mat-form-field>
+          </section>
+          <section>
+            <mat-form-field class="mat-form-field">
+              <label class="mat-label other-label mandatory-field">Average Annual Bonus</label>
+              <input id="annualBonus" name="annualBonus" matInput formControlName="annualBonus" DecimalNumber  (blur)="traineeLocationChange()"/>
+              <mat-error *ngIf="questionnaire.get('annualBonus').hasError('required')">
+                Average annual bonus is <strong>required</strong>
+              </mat-error>
+            </mat-form-field>
+            <mat-form-field class="mat-form-field-right">
+              <label class="mat-label other-label mandatory-field">Average Annual Bonus</label>
+              <input id="secondAnnualBonusAverage" name="secondAnnualBonusAverage" matInput formControlName="secondAnnualBonusAverage"
+                DecimalNumber  (blur)="averageEarningsChange()"/>
+              <mat-error *ngIf="questionnaire.get('secondAnnualBonusAverage').hasError('required')">
+                Average annual bonus is <strong>required</strong>
+              </mat-error>
+            </mat-form-field>
+          </section>
+        
+          <section>
+            <mat-form-field class="mat-form-field">
+              <label class="mat-label other-label mandatory-field">Sub Total</label>
+              <input id="subTotal" name="subTotal" matInput formControlName="subTotal" DecimalNumber readonly/>
+              <mat-error *ngIf="questionnaire.get('subTotal').hasError('required')">
+                Sub total is <strong>required</strong>
+              </mat-error>
+            </mat-form-field>
+    
+            <mat-form-field class="mat-form-field-right">
+              <label class="mat-label other-label mandatory-field">Sub Total</label>
+              <input id="subTotalSecond" name="subTotalSecond" matInput formControlName="subTotalSecond" DecimalNumber readonly/>
+              <mat-error *ngIf="questionnaire.get('subTotalSecond').hasError('required')">
+                Sub total is <strong>required</strong>
+              </mat-error>
+            </mat-form-field>
+          </section>
+          <section>
+            <mat-form-field class="mat-form-field">
+              <label class="mat-label other-label mandatory-field">Employee Number</label>
+              <input id="employeeNumber" name="employeeNumber" matInput formControlName="employeeNumber" />
+              <mat-error *ngIf="questionnaire.get('employeeNumber').hasError('required')">
+                Employee number is <strong>required</strong>
+              </mat-error>
+            </mat-form-field>
+            <mat-form-field class="mat-form-field-right">
+              <label class="mat-label other-label mandatory-field">Employee Number</label>
+              <input id="employeeNumberPrimary" name="employeeNumberPrimary" matInput formControlName="employeeNumberPrimary" />
+              <mat-error *ngIf="questionnaire.get('employeeNumberPrimary').hasError('required')">
+                Employee number is <strong>required</strong>
+              </mat-error>
+            </mat-form-field>
+          </section>
+      </mat-card>
+
+      <mat-card *ngIf="isUnderTwentySix">
+        <div class="menu-bar">Summary (Under Twenty Six)</div>
+        <section>
+          <mat-form-field class="mat-form-field">
+            <label class="mat-label other-label mandatory-field">Average of 6 months earnings
+              of a person in the same trade, occupation or profession with 5 years
+              more experience than the injured employee</label>
+            <input id="secondAverageEarnings" name="secondAverageEarnings" matInput
+              formControlName="secondAverageEarnings" DecimalNumber />
+            <mat-error *ngIf="questionnaire.get('secondAverageEarnings').hasError('required')">
+              Average earnings is <strong>required</strong>
+            </mat-error>
+          </mat-form-field>
+  
+          <mat-form-field class="mat-form-field-right">
+            <label class="mat-label other-label mandatory-field">Average of 6 months earnings
+              of a person of 26 years of age performing the same work
+              as the injured employee</label>
+            <input id="employeeAverageEarnings" name="employeeAverageEarnings" matInput
+              formControlName="employeeAverageEarnings" DecimalNumber />
+            <mat-error *ngIf="questionnaire.get('employeeAverageEarnings').hasError('required')">
+              Employee average earnings is <strong>required</strong>
+            </mat-error>
+          </mat-form-field>
+        </section>
+        <section>
+          <mat-form-field class="mat-form-field">
+            <label class="mat-label other-label mandatory-field">Average Basic Rate</label>
+            <input id="employeeBasicRate" name="employeeBasicRate" matInput formControlName="employeeBasicRate"
+              DecimalNumber />
+            <mat-error *ngIf="questionnaire.get('employeeBasicRate').hasError('required')">
+              Employee basic rate is <strong>required</strong>
+            </mat-error>
+          </mat-form-field>
+  
+          <mat-form-field class="mat-form-field-right">
+            <label class="mat-label other-label mandatory-field">Average Basic Rate</label>
+            <input id="secondBasicRate" name="secondBasicRate" matInput formControlName="secondBasicRate" DecimalNumber />
+            <mat-error *ngIf="questionnaire.get('secondBasicRate').hasError('required')">
+              Average basic rate is <strong>required</strong>
+            </mat-error>
+          </mat-form-field>
+        </section>
+
+        <section>
+          <mat-form-field class="mat-form-field">
+            <label class="mat-label other-label mandatory-field">Average Annual Bonus</label>
+            <input id="employeeAnnualBonus" name="employeeAnnualBonus" matInput formControlName="employeeAnnualBonus"
+              DecimalNumber />
+            <mat-error *ngIf="questionnaire.get('employeeAnnualBonus').hasError('required')">
+              Average annual bonus is <strong>required</strong>
+            </mat-error>
+          </mat-form-field>
+
+          <mat-form-field class="mat-form-field-right">
+            <label class="mat-label other-label mandatory-field">Average Annual Bonus</label>
+            <input id="secondAnnualBonus" name="secondAnnualBonus" matInput formControlName="secondAnnualBonus"
+              DecimalNumber />
+            <mat-error *ngIf="questionnaire.get('secondAnnualBonus').hasError('required')">
+              Average annual bonus is <strong>required</strong>
+            </mat-error>
+          </mat-form-field>
+        </section>
+        <section>
+          <mat-form-field class="mat-form-field">
+            <label class="mat-label other-label mandatory-field">Housing Food And Quarters</label>
+            <input id="firstHousingQuarters" name="firstHousingQuarters" matInput formControlName="firstHousingQuarters"
+              DecimalNumber />
+            <mat-error *ngIf="questionnaire.get('firstHousingQuarters').hasError('required')">
+              Housing food and quarters is <strong>required</strong>
+            </mat-error>
+          </mat-form-field>
+  
+          <mat-form-field class="mat-form-field-right">
+            <label class="mat-label other-label mandatory-field">Housing Food And Quarters</label>
+            <input id="secondHousingQuarters" name="secondHousingQuarters" matInput
+              formControlName="secondHousingQuarters" DecimalNumber />
+            <mat-error *ngIf="questionnaire.get('secondHousingQuarters').hasError('required')">
+              Housing food and quarters is <strong>required</strong>
+            </mat-error>
+          </mat-form-field>
+        </section>
+
+        <section>
+          <mat-form-field class="mat-form-field">
+            <label class="mat-label other-label mandatory-field">Employee Number
+            </label>
+            <input id="employeeLocation" name="employeeLocation" matInput formControlName="employeeLocation" />
+            <mat-error *ngIf="questionnaire.get('employeeLocation').hasError('required')">
+              Employee location is <strong>required</strong>
+            </mat-error>
+          </mat-form-field>
+  
+          <mat-form-field class="mat-form-field-right">
+            <label class="mat-label other-label mandatory-field">Employee Number</label>
+            <input id="secondEmployeeNumber" name="secondEmployeeNumber" matInput
+              formControlName="secondEmployeeNumber" />
+            <mat-error *ngIf="questionnaire.get('secondEmployeeNumber').hasError('required')">
+              Employee number is <strong>required</strong>
+            </mat-error>
+          </mat-form-field>
+        </section>
+      </mat-card>
+  
+      
+    </form>
+  </div>
+  
+</mat-card>

@@ -1,0 +1,11 @@
+<div class="menu-bar">
+    <span class="material-icons menu-button" (click)="cancel()">
+        close
+    </span>
+</div>
+
+<ng-container [ngSwitch]="data.authorisationType">
+    <claim-travel-authorisations *ngSwitchCase="travelAuthorisation" 
+        [claimAuthorisation]="data.claimAuthorisation"
+        [personEvent]="data.personEvent" [user]="data.user" (closeEmit)="cancel()"></claim-travel-authorisations>
+</ng-container>

@@ -1,0 +1,43 @@
+<div>
+    <form [formGroup]="searchForm" class="mat-container details-form" novalidate>
+      <section>
+        <mat-form-field class="mat-form-field">
+          <label class="mat-label other-label">Company</label>
+          <mat-select formControlName="company">
+            <mat-option *ngFor="let company of companies" [value]="company.id">{{ company.name }}</mat-option>
+          </mat-select>
+        </mat-form-field>
+  
+        <mat-form-field class="mat-form-field-right">
+          <label class="mat-label other-label">Branch</label>
+          <mat-select formControlName="branch">
+            <mat-option *ngFor="let branch of branches" [value]="branch.id">{{ branch.name }}</mat-option>
+          </mat-select>
+        </mat-form-field>
+  
+        <mat-form-field class="mat-form-field">
+          <label class="mat-label other-label">Control</label>
+          <mat-select formControlName="controlNumber">
+            <mat-option [value]="-1">All</mat-option>
+            <mat-option *ngFor="let control of controls" [value]="control.number">{{ control.name }}</mat-option>
+          </mat-select>
+        </mat-form-field>
+      </section>
+  
+      <section>
+        <mat-form-field class="mat-form-field">
+          <label class="mat-label other-label">From Date</label>
+          <input matInput formControlName="startDate" [matDatepicker]="startDate">
+          <mat-datepicker-toggle matSuffix [for]="startDate"></mat-datepicker-toggle>
+          <mat-datepicker #startDate></mat-datepicker>
+        </mat-form-field>
+  
+        <mat-form-field class="mat-form-field-right">
+          <label class="mat-label other-label">To Date</label>
+          <input matInput formControlName="endDate" [matDatepicker]="endDate">
+          <mat-datepicker-toggle matSuffix [for]="endDate"></mat-datepicker-toggle>
+          <mat-datepicker #endDate></mat-datepicker>
+        </mat-form-field>
+      </section>
+    </form>
+</div>

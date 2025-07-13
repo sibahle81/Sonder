@@ -1,0 +1,29 @@
+
+<mat-card>
+    <div class="menu-bar">
+        <label>Manage PD Adjudication.</label>
+        <br>
+        <label>You can select to route to a CCA user or CCA pool</label>
+    </div>
+    <form [formGroup]="form" class="mat-container" novalidate>
+        <br />
+        <section>
+            <form [formGroup]="form" novalidate>
+                <mat-form-field class="filterControl">
+                    <label class="mat-label other-label" required>Select User</label>
+                    <input type="text" #selectUser aria-label="Number" matInput [matAutocomplete]="auto" (input)="filterUsers($event.target.value)">
+                    <mat-autocomplete #auto="matAutocomplete">
+                      <mat-option *ngFor="let user of filteredUsers" [value]="user.id" (click)="userSelected(user)">
+                        {{ user.displayName }}
+                      </mat-option>
+                    </mat-autocomplete>
+                  </mat-form-field>
+              </form>
+        </section>
+        <div class="form-buttons" >
+            <button class="button float-button submit-button" (click)="submit()">Ok</button>
+            &nbsp;&nbsp;
+            <button class="button float-button submit-button" (click)="cancel()">Cancel</button>
+        </div>
+    </form>
+</mat-card>

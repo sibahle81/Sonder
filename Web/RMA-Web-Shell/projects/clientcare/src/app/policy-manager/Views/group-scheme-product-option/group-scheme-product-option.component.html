@@ -1,0 +1,66 @@
+<div class="main-content">
+  <mat-card>
+    <h3>Product Option</h3>
+    <div *ngIf="isLoading">
+      <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+    </div>
+    <form *ngIf="form && !isLoading" [formGroup]="form" class="mat-container details-form" novalidate>
+      <section>
+        <div class="field-container" style="margin-top: -2px">
+          <div><label class="mat-label other-label mandatory-field">Effective Date</label></div>
+          <mat-form-field class="mat-form-field">
+            <input matInput formControlName="effectiveDate" id="effectiveDate" name="effectiveDate"
+              [matDatepicker]="effectiveDate" [matDatepickerFilter]="isFirstDayOfMonth" [min]="today">
+            <mat-datepicker-toggle matSuffix [for]="effectiveDate" [disabled]="form.disabled"></mat-datepicker-toggle>
+            <mat-datepicker touchUi="true" #effectiveDate></mat-datepicker>
+            <mat-error *ngIf="form.get('effectiveDate').hasError('required')">
+              Effective date is required
+            </mat-error>
+          </mat-form-field>
+        </div>
+        <div class="field-container-right">
+          <mat-form-field>
+            <label class="mat-label other-label">Current Product Option</label>
+            <input matInput name="beforeProductOption" id="beforeProductOption" formControlName="beforeProductOption"
+              [readonly]="true">
+          </mat-form-field>
+        </div>
+      </section>
+      <section>
+        <div class="field-container">
+          <mat-form-field class="mat-form-field">
+            <label class="mat-label other-label mandatory-field">Product</label>
+            <div [hidden]="isLoadingProducts">
+            <mat-select [hidden]="isLoadingProducts" id="productId" name="productId" formControlName="productId"
+              (selectionChange)="loadProductOptions($event.value)">
+              <mat-option *ngFor="let product of products" [value]="product.id">
+                {{product.name}}
+              </mat-option>
+            </mat-select>
+          </div>
+          </mat-form-field>
+          <mat-progress-bar *ngIf="isLoadingProducts" mode="indeterminate"></mat-progress-bar>
+        </div>
+        <div class="field-container-right">
+          <mat-form-field class="mat-form-field">
+            <label class="mat-label other-label mandatory-field">Product Option</label>
+            <div [hidden]="isLoadingProductOptions">
+              <mat-select id="productOptionId" name="productOptionId" formControlName="productOptionId">
+                <mat-option *ngFor="let option of productOptions" [value]="option.id">
+                  {{option.name}}
+                </mat-option>
+              </mat-select>
+            </div>
+            <mat-progress-bar *ngIf="isLoadingProductOptions" mode="indeterminate"></mat-progress-bar>
+            <mat-error *ngIf="form.get('productOptionId').hasError('required')">
+              Product option is required
+            </mat-error>
+          </mat-form-field>         
+        </div>
+      </section>
+      <section>
+        <mat-progress-bar *ngIf="isLoadingBenefits" mode="indeterminate"></mat-progress-bar>
+      </section>
+    </form>
+  </mat-card>
+</div>

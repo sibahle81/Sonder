@@ -1,0 +1,106 @@
+<div *ngIf="isAuthorized; else notAuthorized">
+  <mat-accordion>
+    <mat-expansion-panel [expanded]="panelOpenState">
+      <mat-expansion-panel-header>
+        <mat-panel-title>
+          <h4>Search</h4>
+        </mat-panel-title>
+      </mat-expansion-panel-header>
+      <app-seach-debtor (itemSelected)="onAccountSelected($event)"></app-seach-debtor>
+    </mat-expansion-panel>
+  </mat-accordion>
+  <br />
+  <div *ngIf="(isSubmitting$ | async)">
+    <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+    <label class="mat-label other-label"><i>Creating task...please wait...</i></label>
+</div>
+<div *ngIf="wizardinProgress" class="wizardinProgress" >
+    Please note there is already an open Interest Reversal task in progress for debtor:<br> A new task will not be created.<p>
+        <button (click)="goToTasks()" class="button submit-button">Go To Tasks</button>
+    </p>           
+</div>
+  <br />
+  <div *ngIf="isLoading && !isRefreshing">
+    <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+    <label class="mat-label other-label"><i>Loading Transactions for debtor...please wait</i></label>
+  </div>
+    <div class="searchMessage" *ngIf="searchFailedMessage.length > 0">{{searchFailedMessage}}</div>
+  <div class="div_scroll" *ngIf="!isLoading && datasource.data.length > 0">
+    <mat-card>
+      <mat-table #table [dataSource]="datasource" matSort>
+        <ng-container matColumnDef="transactionType">
+          <mat-header-cell *matHeaderCellDef mat-sort-header> Type </mat-header-cell>
+          <mat-cell *matCellDef="let row"> {{row.transactionType}}
+          </mat-cell>
+        </ng-container>
+        <ng-container matColumnDef="documentNumber">
+          <mat-header-cell *matHeaderCellDef mat-sort-header>Document Number</mat-header-cell>
+          <mat-cell *matCellDef="let row"> {{row.documentNumber}} </mat-cell>
+        </ng-container>
+        <ng-container matColumnDef="description">
+          <mat-header-cell *matHeaderCellDef mat-sort-header>Description</mat-header-cell>
+          <mat-cell *matCellDef="let row"> {{row.description}} </mat-cell>
+        </ng-container>
+        <ng-container matColumnDef="transactionDate">
+          <mat-header-cell *matHeaderCellDef mat-sort-header>Document Date</mat-header-cell>
+          <mat-cell *matCellDef="let row"> {{row.transactionDate | date:'yyyy/MM/dd'}} </mat-cell>
+        </ng-container>
+        <ng-container matColumnDef="amount">
+          <mat-header-cell *matHeaderCellDef mat-sort-header>Amount</mat-header-cell>
+          <mat-cell *matCellDef="let row" class="right-aligned-amounts"> {{row.amount | currency:'R'}} </mat-cell>
+        </ng-container>
+        <ng-container matColumnDef="balance">
+          <mat-header-cell *matHeaderCellDef mat-sort-header>Balance</mat-header-cell>
+          <mat-cell *matCellDef="let row" class="right-aligned-amounts"> {{row.balance | currency:'R'}} </mat-cell>
+        </ng-container>
+        <ng-container matColumnDef="period">
+          <mat-header-cell *matHeaderCellDef mat-sort-header>Period</mat-header-cell>
+          <mat-cell *matCellDef="let row"> {{row.period}} </mat-cell>
+        </ng-container>
+        <ng-container matColumnDef="actions">
+          <mat-header-cell *matHeaderCellDef>Reverse</mat-header-cell>
+          <mat-cell *matCellDef="let row; let i = index" class="tableActions">
+            <mat-checkbox [checked]="selectedTransactionIds.indexOf(row.itemId) > -1"
+              (change)="interestTransactionChecked($event,row)">
+            </mat-checkbox>
+          </mat-cell>
+        </ng-container>
+        <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
+        <mat-row *matRowDef="let row; columns: displayedColumns;"></mat-row>
+      </mat-table>
+      <mat-paginator [pageSize]="10" [pageSizeOptions]="[5, 10, 25, 100]">
+      </mat-paginator>
+
+      <form [formGroup]="form" class="mat-container details-form" novalidate>
+        <mat-form-field *ngIf="selectedTransactionIds  && selectedTransactionIds.length >0">
+          <label class="mat-label other-label mandatory-field">Reversal Reason</label>
+          <textarea matTextareaAutosize matAutosizeMinRows="5" matAutosizeMaxRows="3" maxlength="255" matInput
+            minlength="3" id="reason" name="reason" formControlName="reason"></textarea>
+          <mat-error *ngIf="form.get('reason').hasError('required')">
+            Reason is <strong>required</strong>
+          </mat-error>
+          <mat-error *ngIf="form.get('reason').hasError('minlength')">
+            Reason must be at least <strong>three characters</strong>
+          </mat-error>
+        </mat-form-field>
+      </form>
+      <div *ngIf="showSubmit" class="form-buttons" class="div_submit">
+        <button class="button float-button submit-button" (click)="openDialog()">Create Workflow</button>
+        <button type="button" class="button float-button submit-button" (click)="back()">Back</button>
+      </div>
+      <div *ngIf="!showSubmit" class="div_submit">
+        <button type="button" class="button float-button submit-button" (click)="back()">Back</button>
+      </div>
+      <br /><br />
+    </mat-card>
+  </div>
+</div>
+
+<ng-template #notAuthorized>
+  <div>
+    <div class="wizard-permissions-error">You do not have sufficient permissions to do Interest Reversals.</div>
+    <div (click)="navigateBack()" class="form-buttons submit-button">
+      <button type="button" class="button float-button">Back</button>
+    </div>
+  </div>
+</ng-template>

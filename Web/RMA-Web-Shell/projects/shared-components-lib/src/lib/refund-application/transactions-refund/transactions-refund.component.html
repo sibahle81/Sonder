@@ -1,0 +1,114 @@
+<mat-card>
+  <ng-container *ngIf="rolePlayer">
+    <ul>
+      <li>Below  are your product categories</li>
+      <li>Please select one or more product for which you want a refund for</li>
+      <li>Please select the type of refund which you are applying for</li>
+    </ul>
+
+    <debtor-policies 
+      [roleplayer]="rolePlayer" 
+      (policiesSelectedHandler)="policiesSelected($event)"
+      [multiselect]="true" 
+      [showProductBalances]="false">
+    </debtor-policies>
+
+    <section>
+      <mat-form-field>
+        <label class="mat-label other-label mandatory-field">Refund Type: </label>
+        <mat-select formControlName="refundTypeId" (selectionChange)="refundTypeChanged($event)">
+          <mat-option *ngFor="let refundtype of refundTypes" [value]="refundtype.id">
+            {{ splitPascalCaseWord(refundtype.name) }}
+          </mat-option>
+        </mat-select>
+      </mat-form-field>
+    </section>
+
+    <section>
+      <label class="mat-label other-label mandatory-field">Total Refund Amount</label>
+      <div>
+        <mat-form-field>
+          <input matInput formControlName="amount" DecimalNumber min="1" />
+          <mat-error *ngIf="form.get('amount').hasError('required')">
+            Amount is <strong>required</strong>
+          </mat-error>
+        </mat-form-field>
+        <span (click)="editAmount()" *ngIf="canEditAmount" matTooltip="edit" class="material-icons icn icn-button pointer edit-icon">edit</span>
+        <span (click)="updateAmount()" *ngIf="canUpdateAmount" matTooltip="save" class="material-icons icn icn-button pointer edit-icon">save</span>
+      </div>           
+    </section>
+  </ng-container>
+
+  <ng-container *ngIf="isLoading$ | async">
+    <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+    <label class="mat-label other-label"><i>Loading Transactions...please wait</i></label>
+  </ng-container>
+
+  <form [formGroup]="form" class="mat-container details-form" novalidate>
+    <section *ngIf="!showTransactions">
+      <mat-card>
+        <ng-container *ngIf="datasource.data.length > 0">
+          <mat-table #table [dataSource]="datasource" matSort>
+            <ng-container matColumnDef="transactionType">
+              <mat-header-cell *matHeaderCellDef mat-sort-header>Transaction Type</mat-header-cell>
+              <mat-cell *matCellDef="let row">{{ getTransactionTypeDesc(row.transactionType) }}</mat-cell>
+            </ng-container>
+            <ng-container matColumnDef="documentNumber">
+              <mat-header-cell *matHeaderCellDef mat-sort-header>Document Number</mat-header-cell>
+              <mat-cell *matCellDef="let row">{{ getDocumentNumber(row) }}</mat-cell>
+            </ng-container>
+            <ng-container matColumnDef="transactionAmount">
+              <mat-header-cell *matHeaderCellDef mat-sort-header>Transaction Amount</mat-header-cell>
+              <mat-cell *matCellDef="let row" class="right-aligned-amounts">{{ row.amount | currency }}</mat-cell>
+            </ng-container>
+            <ng-container matColumnDef="balance">
+              <mat-header-cell *matHeaderCellDef mat-sort-header>Refundable Balance</mat-header-cell>
+              <mat-cell *matCellDef="let row" class="right-aligned-amounts">{{ row.balance | currency }}</mat-cell>
+            </ng-container>
+            <ng-container matColumnDef="refundAmount">
+              <mat-header-cell *matHeaderCellDef mat-sort-header>Refund Amount</mat-header-cell>
+              <mat-cell *matCellDef="let row" class="right-aligned-amounts">{{ row.refundAmount | currency }}</mat-cell>
+            </ng-container>
+            <ng-container matColumnDef="documentDate">
+              <mat-header-cell *matHeaderCellDef mat-sort-header>Document Date</mat-header-cell>
+              <mat-cell *matCellDef="let row">{{ row.transactionDate | date: 'yyyy/MM/dd' }}</mat-cell>
+            </ng-container>
+            <ng-container matColumnDef="action">
+              <mat-header-cell *matHeaderCellDef>
+                <mat-checkbox (change)="transactionsAllChecked($event)" class="margin-right">Amount</mat-checkbox>
+              </mat-header-cell>
+              <mat-cell *matCellDef="let row">
+                <mat-checkbox
+                  [checked]="selectedTransactionIds.indexOf(row.transactionId) > -1 || (isAllTransactionsSelected$ | async)"
+                  (change)="transactionChecked($event, row)">
+                </mat-checkbox>
+              </mat-cell>
+            </ng-container>
+            <mat-header-row *matHeaderRowDef="displayedColumns;"></mat-header-row>
+            <mat-row *matRowDef="let row; columns: displayedColumns;"></mat-row>
+          </mat-table>
+          <mat-paginator [length]="datasource.data.length" [pageIndex]="0" [pageSize]="5" [pageSizeOptions]="[5, 10, 25, 100]"></mat-paginator>
+        </ng-container>
+        <ng-container *ngIf="showOwnAmount">
+          <section>
+            <mat-form-field>
+              <label class="mat-label other-label mandatory-field">Amount</label>
+              <input matInput formControlName="partialAmount" DecimalNumber min="1" [max]="maxAmountAllowed" />
+              <div class="error-message" *ngIf="showMessage">Amount must be between 1 and {{ maxAmountAllowed | currency }}</div>
+            </mat-form-field>
+          </section>
+          <button type="button" (click)="addPartialAmount()" class="button float-button">Continue</button>
+        </ng-container>
+      </mat-card>
+    </section>
+    <section *ngIf="refundDocSet > 0">
+      <document-uploader 
+        [documentSet]="refundDocSet" 
+        [systemName]="documentSystemName" 
+        [keyName]="'tempWizardId'" 
+        [keyValue]="documentKeyValue"
+        (requiredDocumentsUploadedEmit)="isRequiredDocumentsUploaded($event)">
+      </document-uploader>
+    </section>
+  </form>
+</mat-card>

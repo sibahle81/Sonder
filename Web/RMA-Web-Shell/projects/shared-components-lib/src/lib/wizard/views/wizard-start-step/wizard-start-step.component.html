@@ -1,0 +1,287 @@
+<mat-card *ngIf="isLoading$ | async">
+    <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+    <label class="mat-label other-label"><i>deleting <b>{{wizardContext.wizard.name}}</b> wizard...please</i></label>
+</mat-card>
+
+<span *ngIf="!(isLoading$ | async)">
+    <mat-card *ngIf="!isReady">
+        <mat-card-header>
+            <mat-card-title class="wizard-font card-title grey">
+                <h1>{{loadingTitle}}</h1>
+            </mat-card-title>
+            <mat-card-subtitle>
+                <span class="wizard-font grey" style="font-size: 18px;">This shouldn't take long...</span>
+            </mat-card-subtitle>
+        </mat-card-header>
+        <mat-card-content>
+            <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+        </mat-card-content>
+    </mat-card>
+
+    <div *ngIf="isReady">
+        <!--New Wizard-->
+        <div *ngIf="isNew">
+            <mat-card>
+                <mat-card-header>
+                    <mat-card-title class="wizard-font card-title grey">
+                        <h1>Start a {{wizardContext.wizard.wizardConfiguration.displayName}} wizard</h1>
+                    </mat-card-title>
+                    <mat-card-subtitle>
+                        <span class="wizard-font grey"
+                            style="font-size: 18px;">{{wizardContext.wizard.wizardConfiguration.description}}</span>
+                    </mat-card-subtitle>
+                </mat-card-header>
+
+                <mat-card-content>
+                    <div class="left-margin">
+
+                        <div class="wizard-font card-title grey">Reference: {{wizardContext.wizard.name}}</div>
+                        <div class="wizard-font" style="font-size: 18px;">
+                            <span class="grey">Status:&nbsp;</span>
+                            <span class="valid">In Progress - Step {{currentStep}} of {{totalSteps}}</span>
+                            <span class="invalid" *ngIf="!wizardContext.wizard.canStart">
+                                This wizard can only be started by someone
+                                with permission: <span
+                                    *ngFor="let permission of wizardContext.wizard.wizardConfiguration.startPermissions; let i = index">
+                                    <span *ngIf="i > 0">, </span> {{permission}};
+                                </span>
+                            </span>
+                        </div>
+
+                        <div *ngIf="wizardContext.wizard.canStart">
+                            <span class="wizard-font card-title grey">Wizard Steps:</span>
+                            <mat-list>
+                                <mat-list-item *ngFor="let wizardStep of wizardContext.getActiveWizardComponents()">
+                                    <mat-icon style="color: rgba(0, 0, 0, .54) !important;" mat-list-icon>folder
+                                    </mat-icon>
+                                    <h4 class="valid" mat-line>{{wizardStep.name}}</h4>
+                                </mat-list-item>
+
+                                <!--Complete Wizard-->
+                                <mat-list-item *ngIf="wizardContext.wizard.hasApproval">
+                                    <mat-icon style="color: rgba(0, 0, 0, .54) !important;" mat-list-icon>folder
+                                    </mat-icon>
+                                    <h4 class="valid" mat-line>Wizard Validation &amp; Completion</h4>
+                                </mat-list-item>
+
+                                <!--Request Approval-->
+                                <mat-list-item *ngIf="wizardContext.wizard.hasApproval">
+                                    <mat-icon style="color: rgba(0, 0, 0, .54) !important;" mat-list-icon>folder
+                                    </mat-icon>
+                                    <h4 class="valid" mat-line>Wizard Validation &amp; Approval</h4>
+                                    <div *ngIf="wizardContext.wizard.wizardConfiguration.approvalPermissions.length > 0"
+                                        class="wizard-font grey" mat-line>
+                                        <div>
+                                            This wizard can be approved by someone with permission: <span
+                                                *ngFor="let permission of wizardContext.wizard.wizardConfiguration.approvalPermissions; let i = index">
+                                                <span *ngIf="i > 0">, </span> {{permission}};
+                                            </span>
+                                        </div>
+                                    </div>
+                                </mat-list-item>
+                            </mat-list>
+                        </div>
+                    </div>
+                </mat-card-content>
+
+                <mat-card-actions>
+                    <div class="left-margin" style="padding-bottom: 15px;">
+                        <div *ngIf="wizardContext.wizard.canStart">
+                            <button class="button submit-button" (click)="start()">Continue</button>
+                            <button *ngIf="!wizardContext.wizard.canStart" class="button submit-button"
+                                (click)="back()">Cancel</button>
+                            <button class="button submit-button" (click)="back()">Back</button>
+                        </div>
+                    </div>
+                </mat-card-actions>
+            </mat-card>
+        </div>
+
+        <!--Contiue Wizard-->
+        <div *ngIf="isContinue">
+            <mat-card>
+                <mat-card-header>
+                    <mat-card-title class="wizard-font card-title grey">
+                        <h1 *ngIf="!wizardContext.wizard.lockedReason">
+                            Continue a {{wizardContext.wizard.wizardConfiguration.displayName}} wizard
+                        </h1>
+                        <h1 *ngIf="wizardContext.wizard.lockedReason">
+                            View a {{wizardContext.wizard.wizardConfiguration.displayName}} wizard
+                        </h1>
+                    </mat-card-title>
+                    <mat-card-subtitle>
+                        <span class="wizard-font grey"
+                            style="font-size: 18px;">{{wizardContext.wizard.wizardConfiguration.description}}</span>
+                    </mat-card-subtitle>
+                </mat-card-header>
+
+                <mat-card-content>
+                    <div class="left-margin">
+                        <div class="wizard-font card-title grey"><b>Reference:</b> {{wizardContext.wizard.name}}</div>
+
+                        <!--Locked-->
+                        <div class="wizard-font" style="font-size: 18px;">
+                            <span class="grey"><b>Locked:&nbsp;</b></span>
+                            <span *ngIf="!wizardContext.wizard.lockedToUser" class="valid">Not locked</span>
+                            <span *ngIf="wizardContext.wizard.lockedToUserDisplayName === 'You'" class="valid">Locked to
+                                you</span>
+                            <span *ngIf="wizardContext.wizard.lockedReason"
+                                class="orange">{{wizardContext.wizard.lockedReason}}</span>
+                        </div>
+
+                        <!--Status-->
+                        <div class="wizard-font" style="font-size: 18px;">
+                            <span class="grey"><b>Status&nbsp;</b></span>
+                            <span class="valid">{{wizardContext.wizard.wizardStatusText}}</span>
+                        </div>
+
+                        <!--Disputed/Rejected-->
+                        <div *ngIf="isDisputed || isRejected" class="wizard-font card-title grey">
+                            <span>{{isDisputed ? 'Disputed':'Rejected'}} <b>Comment:</b></span>
+                            <span [ngClass]="{'invalid': lastMessage, 'grey site-font' : !lastMessage}">
+                                {{rejectionComment ? rejectionComment : 'Loading...'}}
+                            </span>
+                        </div><br />
+
+                        <!--Wizard Steps-->
+                        <div class="wizard-font" style="font-size: 18px;display: grid;">
+                            <span class="wizard-font card-title grey"><b>Wizard steps:&nbsp;</b></span>
+                            <span *ngFor="let wizardStep of wizardContext.getActiveWizardComponents()">
+                                <span [ngClass]="{ 'valid': wizardStep.canEdit, 'orange': !wizardStep.canEdit }">
+                                    &nbsp;&nbsp;{{wizardStep.index + 1}}.&nbsp;{{wizardStep.name}}
+                                </span>
+                            </span>
+                            <span *ngIf="wizardContext.wizard.hasApproval" class="valid">
+                                &nbsp;&nbsp;{{wizardContext.getActiveStepCount() + 1}}.&nbsp;Approval
+                            </span>
+                            <span class="valid">
+                                <span
+                                    *ngIf="!wizardContext.wizard.hasApproval">&nbsp;&nbsp;{{wizardContext.getActiveStepCount()
+                                    + 1}}.</span>
+                                <span
+                                    *ngIf="wizardContext.wizard.hasApproval">&nbsp;&nbsp;{{wizardContext.getActiveStepCount()
+                                    + 2}}.</span>
+                                <span>Complete&nbsp;</span>
+                            </span>
+                        </div>
+                    </div>
+                </mat-card-content>
+                <mat-card-actions>
+                    <div class="left-margin" style="padding-bottom: 15px;">
+                        <button *ngIf="!wizardContext.wizard.lockedReason" class="button submit-button"
+                            (click)="start()">
+                            Continue
+                        </button>
+                        <button *ngIf="canCancel()" class="button submit-button " (click)="cancel() ">
+                            Delete
+                        </button>
+                        <button class="button submit-button " (click)="back() ">Back</button>
+                    </div>
+                </mat-card-actions>
+            </mat-card>
+        </div>
+        <!--Completed Wizard-->
+        <div *ngIf="isCompleted || isCancelled || isRejected ">
+            <mat-card>
+                <mat-card-header>
+                    <mat-card-title class="wizard-font card-title grey ">
+                        <h1 *ngIf="isCompleted ">
+                            View a completed {{wizardContext.wizard.wizardConfiguration.displayName}} wizard
+                        </h1>
+                        <h1 *ngIf="isCancelled ">
+                            View a cancelled {{wizardContext.wizard.wizardConfiguration.displayName}} wizard
+                        </h1>
+                        <h1 *ngIf="isRejected ">View a rejected {{wizardContext.wizard.wizardConfiguration.displayName}}
+                            wizard
+                        </h1>
+                    </mat-card-title>
+                    <mat-card-subtitle>
+                        <span class="wizard-font grey ">{{wizardContext.wizard.wizardConfiguration.description}}</span>
+                    </mat-card-subtitle>
+                </mat-card-header>
+
+                <mat-card-content>
+                    <div class="left-margin ">
+                        <div class="wizard-font card-title grey ">Reference: {{wizardContext.wizard.name}}</div>
+                        <div class="wizard-font " style="font-size: 18px; ">
+                            <span class="grey ">Status:&nbsp;</span>
+                            <span *ngIf="isCompleted " class="valid ">Completed by
+                                {{wizardContext.wizard.modifiedByDisplayName}}</span>
+                            <span *ngIf="isCancelled " class="orange ">
+                                Cancelled by
+                                {{wizardContext.wizard.modifiedByDisplayName}}
+                            </span>
+                            <span *ngIf="isRejected " class="invalid ">Rejected by
+                                {{wizardContext.wizard.modifiedByDisplayName}}</span>
+                        </div>
+
+                        <!--Disputed/Rejected-->
+                        <div *ngIf="isDisputed || isRejected " class="wizard-font card-title grey ">
+                            <span>{{isDisputed ? 'Disputed':'Rejected'}} Comment:</span>
+                            <span [ngClass]="{ 'invalid': lastMessage, 'grey site-font' : !lastMessage} ">{{lastMessage
+                                ?
+                                lastMessage.text : 'Loading...'}}</span>
+                        </div>
+                    </div>
+
+                </mat-card-content>
+
+                <mat-card-actions>
+                    <div class="left-margin " style="padding-bottom: 15px; ">
+                        <button class="button submit-button " (click)="start() ">View</button>
+                        <button class="button submit-button " (click)="back() ">Back</button>
+                    </div>
+                </mat-card-actions>
+
+            </mat-card>
+
+        </div>
+
+        <!--Completed Wizard-->
+        <div *ngIf="isAwaitingApproval ">
+
+            <mat-card>
+                <mat-card-header>
+                    <mat-card-title class="wizard-font card-title grey ">
+                        <h1 *ngIf="isAwaitingApproval ">
+                            View a pending approval {{wizardContext.wizard.wizardConfiguration.displayName}} wizard
+                        </h1>
+                    </mat-card-title>
+                </mat-card-header>
+
+                <mat-card-subtitle>
+                    <span class="wizard-font grey "
+                        style="font-size: 18px; margin-left: 10px; ">{{wizardContext.wizard.wizardConfiguration.description}}</span>
+                </mat-card-subtitle>
+
+                <mat-card-content>
+
+                    <div class="left-margin ">
+
+                        <div class="wizard-font card-title grey ">Reference: {{wizardContext.wizard.name}}</div>
+                        <div class="wizard-font " style="font-size: 18px; ">
+                            <span class="grey ">Status:&nbsp;</span>
+                            <span *ngIf="isAwaitingApproval " class="valid ">
+                                Approval requested by
+                                {{wizardContext.wizard.modifiedByDisplayName}}
+                            </span>
+                            <div *ngIf="!wizardContext.wizard.canApprove ">
+                                <span class="grey ">Warning:&nbsp;</span>
+                                <span class="orange ">{{wizardContext.wizard.cantApproveReason}}</span>
+                            </div>
+                        </div>
+                    </div>
+
+                </mat-card-content>
+
+                <mat-card-actions>
+                    <div class="left-margin " style="padding-bottom: 15px; ">
+                        <button class="button submit-button " (click)="start() ">View</button>
+                        <button class="button submit-button " (click)="back() ">Back</button>
+                    </div>
+                </mat-card-actions>
+
+            </mat-card>
+        </div>
+    </div>
+</span>

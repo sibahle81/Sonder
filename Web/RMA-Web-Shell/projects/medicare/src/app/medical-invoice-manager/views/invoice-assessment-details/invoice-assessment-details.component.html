@@ -1,0 +1,20 @@
+<div [hidden]="!(loadingData$ | async)">
+    <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+    Loading...
+</div>
+<div *ngIf="invoiceDetails">
+    <mat-card>
+        <mat-card-content>
+            <div class="grid">
+                <p><b>Claim Ref Number</b>&nbsp;:&nbsp; &nbsp;</p>
+                <p>{{invoiceDetails.claimReferenceNumber}}</p>
+            </div>
+            <div class="grid">
+                <p><b>Health Care Provicer</b>&nbsp;:&nbsp; &nbsp;</p>
+                <p>{{invoiceDetails.healthCareProviderName}}</p>
+            </div>
+            <div><br /><br /><a class="link-edit" (click)="openAssessmentDialog()">Assess</a></div>
+        </mat-card-content>
+    </mat-card>
+
+</div>

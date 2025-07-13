@@ -1,0 +1,75 @@
+<form [formGroup]="form" name="form" class="mat-container details-form" novalidate>
+  <div *ngIf="showSearchProgress">
+    <mat-progress-bar mode="indeterminate"
+      [ngClass]="{ 'loading-main-double-menu-progress': doubleMenu, 'loading-main-single-menu-progress': !doubleMenu }">
+    </mat-progress-bar>
+    <p class="site-font grey">Searching for healthcare provider...</p>
+  </div>
+
+  <div class="summary-container-claim">
+    <br />
+    <h1 class="wizard-font">Declaration</h1>
+    <br />
+    <div>
+      <section>
+        <mat-checkbox id="isDeclarationAccepted" name="isDeclarationAccepted" formControlName="isDeclarationAccepted">
+          <label *ngIf="isAccident" class="mandatory-field">&nbsp;I declare that after my examination of the
+            patient herein, I am satisfied that the injury is work-related and consistent with the injury sustained.</label>
+          <label *ngIf="!isAccident" class="mandatory-field">I certify that I have by examination, satisfied myself that the condition of
+            the employee is the result of the occupational disease as described above.</label>
+        </mat-checkbox>
+        <br />
+        <br />
+        <div *ngIf="!isAccident">
+          <label>IMPORTANT:</label>
+          <ul>
+            <li>All questions must be answered in full</li>
+            <li>Full motivation of diagnosis will prevent unnecessary correspondence and delays in adjudication of claim</li>
+            <li>The form must be forwarded to the employer within 14 days after the specific diagnosis was made. The employer must
+              forward this report to Rand Mutual Assurance</li>
+            <li>Please submit medical accounts separately, and/or attach a copy of this report to your account</li>
+            <li>It is advisable to consult Guidelines for Managing Work Related Upper Limb Disorders* before completing this report</li>
+            <li>The employer must submit a copy of this report to the Provincial Executive Manager of the Department of Labour
+              (Occupational Health and Safety Act) or the Regional Principal Inspector of Mines (Mine Health and Safety Act)</li>
+            <li>The employer must submit a Progress Medical Report and a Resumption Report on a monthly basis to Rand Mutual Assurance
+              or employer individually liable, as the case may be, until the employee’s condition has become stabilised, when a Final
+              Medical Report should be submitted.</li>
+          </ul>
+        </div>
+      </section>
+      <br />
+      <div *ngIf="this.userHealthCareProviders">
+        <mat-form-field class=" mat-form-field">
+          <label class="mat-label other-label mandatory-field">Select the healthcare provider</label>
+          <mat-select formControlName="healthCareProviderList" id="healthCareProviderList" (selectionChange)="selected($event)">
+            <mat-option *ngFor="let userHealthCareProvider of this.userHealthCareProviders"
+              [value]="userHealthCareProvider">
+              {{ userHealthCareProvider.name }} [{{userHealthCareProvider.practiceNumber}}]</mat-option>
+          </mat-select>
+        </mat-form-field>
+        <br />
+        <br />
+      </div>
+      <mat-form-field class=" mat-form-field" *ngIf="disablePracticeNumber">
+        <label class="mat-label other-label mandatory-field">Practice number</label>
+        <input matInput id="healthcareProviderPracticeNumber" name="healthcareProviderPracticeNumber" [value]="form.controls.healthcareProviderPracticeNumber.value" disabled='true'>
+      </mat-form-field>
+      <mat-form-field class=" mat-form-field" *ngIf="disablePracticeNumber === false" [formGroup]="form">
+        <label class="mat-label other-label mandatory-field">Practice number</label>
+        <input matInput id="healthcareProviderPracticeNumber" name="healthcareProviderPracticeNumber"
+          formControlName="healthcareProviderPracticeNumber" (change)="searchHealthCareProvider()"/>
+      </mat-form-field>
+      &nbsp;
+      <mat-form-field class="mat-form-field">
+        <label class="mat-label other-label">Practice name</label>
+        <input matInput id="healthcareProviderName" name="healthcareProviderName" formControlName="healthcareProviderName" />
+      </mat-form-field>
+      <br />
+
+      <mat-form-field class="mat-form-field">
+        <label class="mat-label other-label">Report date</label>
+        <input matInput id="reportDate" name="reportDate" formControlName="reportDate">
+      </mat-form-field>
+    </div>
+  </div>
+</form>

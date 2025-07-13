@@ -1,0 +1,99 @@
+<mat-card *ngIf="isLoading$ | async">
+  <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+  <label class="mat-label other-label"><i>loading...please wait</i></label>
+</mat-card>
+
+<div class="table mat-elevation-z8 custom-table-width">
+  <div class="menu-bar">
+    <span class="material-icons">
+      paid
+    </span>Variable Earnings
+    <span class="material-icons pointer right pulse" matTooltip="more options" (click)="onAdd()">
+      add_circle
+    </span>
+  </div>
+
+  <div *ngIf="!(isLoading$ | async)">
+    <form [formGroup]="formGroup">
+      <div formArrayName="variableEarnings">
+        <mat-table #table mat-table [dataSource]="dataSource">
+          <ng-container matColumnDef="EarningType">
+            <mat-header-cell mat-header-cell *matHeaderCellDef>
+              Earning Type
+            </mat-header-cell>
+            <mat-cell mat-cell *matCellDef="let element" class="data-item">
+              {{ element.earningTypeName }} <span *ngIf="element.earningTypeRequired" class="isRequired">*</span>
+            </mat-cell>
+            <mat-footer-cell *matFooterCellDef><b>Total</b></mat-footer-cell>
+          </ng-container>
+
+          <ng-container [matColumnDef]="column" *ngFor="let column of displayedColumns">
+            <mat-header-cell *matHeaderCellDef> {{column}} </mat-header-cell>
+            <mat-cell *matCellDef="let element; let i = index">
+              <div [formGroupName]="i">
+                <div formArrayName="months">
+                  <div formGroupName="{{ getFormGroupName(column, element) }}">
+                    <mat-form-field appearance="standard" class="custom-mat-form-field">
+                      <input matInput type="number" id="amount" formControlName="amount"
+                        class="form-control row-item" />
+                      <span matSuffix>
+                        <mat-error *ngIf="!assessValidity(i, column, element)">
+                          <mat-icon aria-hidden="false" class="custom-mat-form-field-suffix"
+                            matTooltip="Negative Amount not allowed"> error </mat-icon>
+                        </mat-error>
+                      </span>
+                    </mat-form-field>
+                  </div>
+                </div>
+              </div>
+            </mat-cell>
+            <mat-footer-cell *matFooterCellDef></mat-footer-cell>
+          </ng-container>
+
+          <ng-container matColumnDef="Sub Total">
+            <mat-header-cell *matHeaderCellDef class="cell-head">Sub-Total</mat-header-cell>
+            <mat-cell mat-cell *matCellDef="let element; let i = index" class="data-head">
+              <div [formGroupName]="i" [ngClass]="{
+                      valid: calculateRowTotal(i) >= 0,
+                      invalid: calculateRowTotal(i) < 0
+                    }">
+                <mat-form-field>
+                  <input matInput type="number" id="total" formControlName="total" class="row-total-item" />
+                  <span matSuffix>
+                    <mat-error *ngIf="calculateRowTotal(i) < 0">
+                      <mat-icon aria-hidden="false" class="custom-mat-form-field-suffix"
+                        matTooltip="Total should not be below Zero (0)">
+                        error
+                      </mat-icon>
+                    </mat-error>
+                  </span>
+                </mat-form-field>
+              </div>
+            </mat-cell>
+            <mat-footer-cell *matFooterCellDef>{{getFullTotal()?.toFixed(2)}}</mat-footer-cell>
+          </ng-container>
+
+          <ng-container matColumnDef="Action">
+            <mat-header-cell *matHeaderCellDef>Actions</mat-header-cell>
+            <mat-cell *matCellDef="let item" class="data-cell">
+              <button mat-button class="button submit-button" *ngIf="showRemove(item)" (click)="onRemove(item)"
+                matTooltip="Remove Variable Earning.">
+                Remove
+              </button>
+              <span *ngIf="!showRemove(item)"><i>N/A</i></span>
+            </mat-cell >
+            <mat-footer-cell *matFooterCellDef></mat-footer-cell>
+          </ng-container>
+
+          <mat-header-row *matHeaderRowDef="columnsToDisplay; sticky: true"></mat-header-row>
+          <mat-row *matRowDef="let row; columns: columnsToDisplay"></mat-row>
+          <mat-footer-row *matFooterRowDef="columnsToDisplay"></mat-footer-row>
+        </mat-table>
+      </div>
+    </form>
+  </div>
+
+  <mat-card *ngIf="!(isLoading$ | async) && variableEarnings?.length <= 0">
+    No data available...
+  </mat-card>
+</div>

@@ -1,0 +1,163 @@
+<div *ngIf="selectedPersonEventSearchResultsInput?.length > 0">
+  <div class="container-tables">
+    <div class="items-heading heading-left">
+      <h1>Medical Switch Batch Accident Person Details </h1>
+    </div>
+    <div *ngIf="loading$ | async">
+      <mat-progress-bar mode="indeterminate"
+        [ngClass]="{ 'loading-main-double-menu-progress': doubleMenu, 'loading-main-single-menu-progress': !doubleMenu }">
+      </mat-progress-bar>
+      <p class="site-font grey">Loading Please Wait...</p>
+    </div>
+
+    <div *ngIf="GetPersonEventAccidentDetails$ | async as accidentDetails">
+      <mat-card class="matCard">
+        <div>
+          <div class="grid">
+            <div>
+              <span class="title">Person Name</span>
+              <span class="value">{{ selectedPersonEventSearchResultsInput[0]?.fullFirstname }} </span>
+            </div>
+
+            <div>
+              <span class="title"></span>
+              <span class="value"></span>
+            </div>
+          </div>
+
+          <div class="grid">
+            <div>
+              <span class="title">Description</span>
+              <span class="value">{{ selectedPersonEventSearchResultsInput[0]?.eventDescription }} </span>
+            </div>
+
+            <div>
+              <span class="title"></span>
+              <span class="value"></span>
+            </div>
+          </div>
+
+          <div class="grid">
+            <div>
+              <span class="title">Fatality</span>
+              <span class="value">{{ (selectedPersonEventSearchResultsInput[0]?.isFatal)? 'Yes':'No' }} </span>
+            </div>
+
+            <div>
+              <span class="title">Was this Accident the cause of Death?</span>
+              <span class="value">{{ (selectedPersonEventSearchResultsInput[0]?.isFatal)? 'Yes':'No' }}</span>
+            </div>
+          </div>
+
+          <div class="grid">
+            <div>
+              <span class="title">Injury?</span>
+              <span class="value">{{ (selectedPersonEventSearchResultsInput[0]?.accidentDetailPersonEventId > 0)? 'Yes':'No' }} </span>
+            </div>
+
+            <div>
+              <span class="title">Did Accident occur at Normal WorkPlace</span>
+              <span class="value">{{ (accidentDetails[0]?.IsOccurAtNormalWorkplace)? 'Yes':'No' }}</span>
+            </div>
+          </div>
+
+          <div class="grid">
+            <div>
+              <span class="title">Was this a Road Accident?</span>
+              <span class="value">{{ accidentDetails[0]?.IsRoadAccident? 'Yes':'No' }} </span>
+            </div>
+
+            <div>
+              <span class="title">On Business Travel?</span>
+              <span class="value">{{ accidentDetails[0]?.IsOnBusinessTravel? 'Yes':'No' }}</span>
+            </div>
+          </div>
+
+          <div class="grid">
+            <div>
+              <span class="title">On Training Travel?</span>
+              <span class="value">{{ accidentDetails[0]?.IsTrainingTravel? 'Yes':'No' }} </span>
+            </div>
+
+            <div>
+              <span class="title">Travelling To/From Work?</span>
+              <span class="value">{{ accidentDetails[0]?.IsTravelToFromWork? 'Yes':'No' }}</span>
+            </div>
+          </div>
+
+          <div class="grid">
+            <div>
+              <span class="title">On Call Out?</span>
+              <span class="value">{{ accidentDetails[0]?.IsOnCallout? 'Yes':'No' }} </span>
+            </div>
+
+            <div>
+              <span class="title">On Stand By?</span>
+              <span class="value">{{ accidentDetails[0]?.IsOnStandby? 'Yes':'No' }}</span>
+            </div>
+          </div>
+
+          <div class="grid">
+            <div>
+              <span class="title">On Public Road?</span>
+              <span class="value">{{ accidentDetails[0]?.IsPublicRoad? 'Yes':'No' }} </span>
+            </div>
+
+            <div>
+              <span class="title">On Private Road?</span>
+              <span class="value">{{ accidentDetails[0]?.IsPrivateRoad? 'Yes':'No' }}</span>
+            </div>
+          </div>
+
+          <div class="grid">
+            <div>
+              <span class="title">Employee Vehicle Make</span>
+              <span class="value">{{ accidentDetails[0]?.VehicleMake }} </span>
+            </div>
+
+            <div>
+              <span class="title">Employee Vehicle Reg. No</span>
+              <span class="value">{{ accidentDetails[0]?.VehicleRegNo }}</span>
+            </div>
+          </div>
+
+          <div class="grid">
+            <div>
+              <span class="title">Other Party Vehicle Make</span>
+              <span class="value">{{ accidentDetails[0]?.ThirdPartyVehicleMake }} </span>
+            </div>
+
+            <div>
+              <span class="title">Other Party Vehicle Reg. No</span>
+              <span class="value">{{ accidentDetails[0]?.ThirdPartyVahicleRegNo }}</span>
+            </div>
+          </div>
+
+          <div class="grid">
+            <div>
+              <span class="title">Police Reference No</span>
+              <span class="value">{{ accidentDetails[0]?.policeReferenceNo }} </span>
+            </div>
+
+            <div>
+              <span class="title">Police Station Name</span>
+              <span class="value">{{ accidentDetails[0]?.policeStationName }}</span>
+            </div>
+          </div>
+
+        </div>
+      </mat-card>
+    </div>
+  </div>
+
+  <div class="items-buttons-container">
+    <div class="form-buttons submit-button">
+      <!--revert back to table results - hide and show-->
+      <button type="button" class="button float-button" (click)="onLoadLastQuery()">Last Query</button>
+    </div>
+    <div class="form-buttons submit-button">
+      <button type="button" class="button float-button" (click)="onSelectedAccidentPersonDetailsToMap()">Select</button>
+    </div>
+  </div>
+  <br>
+</div>

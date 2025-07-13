@@ -1,0 +1,13 @@
+<span *ngIf="isLoading$ | async" class="material-icons rotating" matTooltip="loading invoice status">
+    loop
+</span>
+
+<div *ngIf="!(isLoading$ | async)">
+    <div *ngIf="!message">
+        {{invoice && invoice.invoiceStatus ? getInvoiceStatus(invoice.invoiceStatus) : 'N/A'}}
+    </div>
+
+    <div *ngIf="message">
+        {{message}}
+    </div>
+</div>

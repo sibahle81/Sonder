@@ -1,0 +1,56 @@
+<mat-card>
+  <mat-card-content>
+    <h1 class="form-header">Commutation Application</h1>
+
+    <form [formGroup]="form" class="padding-v-30" *ngIf="form">
+      <mat-accordion>
+        <ng-container>
+          <mat-expansion-panel [expanded]="matStep === 0" (opened)="setStep(0)">
+            <mat-expansion-panel-header>
+              <mat-panel-title>
+                <h4>Pensioner Detail</h4>
+              </mat-panel-title>
+            </mat-expansion-panel-header>
+
+            <app-pensioner-details [isWizard]="true" [isReadOnly]="true" [form]="form"></app-pensioner-details>
+
+          </mat-expansion-panel>
+
+          <mat-expansion-panel [expanded]="matStep === 1" (opened)="setStep(1)">
+            <mat-expansion-panel-header>
+              <mat-panel-title>
+                <h4>Recipient Detail</h4>
+              </mat-panel-title>
+            </mat-expansion-panel-header>
+
+            <app-recipeint-details [isWizard]="true" [isReadOnly]="true" [form]="form"></app-recipeint-details>
+
+          </mat-expansion-panel>
+
+          <mat-expansion-panel [expanded]="matStep === 2" (opened)="setStep(2)">
+            <mat-expansion-panel-header>
+              <mat-panel-title>
+                <h4>Commutation Detail</h4>
+              </mat-panel-title>
+            </mat-expansion-panel-header>
+
+            <app-commutation-details [isWizard]="true" [isReadOnly]="false" [form]="form"></app-commutation-details>
+
+          </mat-expansion-panel>
+
+          <mat-expansion-panel [expanded]="matStep === 3" (opened)="setStep(3)">
+            <mat-expansion-panel-header>
+              <mat-panel-title>
+                <h4>Expenditure</h4>
+              </mat-panel-title>
+            </mat-expansion-panel-header>
+
+
+            <app-expenditure #expenditureComponent [isWizard]="true" [isReadOnly]="false" [form]="form" [itemList]="model.commutation.commutationExpenditures"></app-expenditure>
+
+          </mat-expansion-panel>
+        </ng-container>
+      </mat-accordion>
+    </form>
+  </mat-card-content>
+</mat-card>

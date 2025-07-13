@@ -1,0 +1,133 @@
+<div *ngIf="form">
+  <form [formGroup]="form">
+    <section class="top-section">
+      <mat-form-field>
+        <label class="mat-label other-label">Monthly Pension</label>
+        <input matInput maxlength="50" formControlName="monthlyPension" id="monthlyPension" />
+        <mat-error *ngIf="form.get('monthlyPension').hasError('required') && form.get('monthlyPension').touched">
+          Monthly Pension is required
+        </mat-error>
+      </mat-form-field>
+      <mat-form-field class="mat-form-field-right">
+        <label class="mat-label other-labelform.get">New MNP</label>
+        <input matInput maxlength="10" formControlName="newMNP" id="newMNP" />
+        <mat-error *ngIf="form.get('newMNP').hasError('required') && form.get('newMNP').touched">
+          New MNP is required
+        </mat-error>
+      </mat-form-field>
+    </section>
+
+    <section class="top-section">
+      <mat-form-field>
+        <label class="mat-label other-label">Reference/Date Received</label>
+        <input matInput formControlName="dateReceived" id="dateReceived" date="true" [matDatepicker]="dateReceived"
+          readOnly>
+        <mat-datepicker-toggle matSuffix class="mat-toggle-datepicker datePick"
+          [for]="dateReceived"></mat-datepicker-toggle>
+        <mat-datepicker touchUi="true" #dateReceived></mat-datepicker>
+      </mat-form-field>
+
+      <mat-form-field class="mat-form-field-right">
+        <label class="mat-label other-labelform.get">Commutation Amount Requested</label>
+        <input matInput maxlength="10" formControlName="CommutationAmountReq" id="CommutationAmountReq" />
+        <mat-error
+          *ngIf="form.get('CommutationAmountReq').hasError('required') && form.get('CommutationAmountReq').touched">
+          Other Number is required
+        </mat-error>
+      </mat-form-field>
+    </section>
+
+    <section>
+      <mat-form-field>
+        <label class="mat-label other-labelform.get">Updated By</label>
+        <input matInput maxlength="10" formControlName="updatedBy" id="updatedBy" />
+        <mat-error *ngIf="form.get('updatedBy').hasError('required') && form.get('updatedBy').touched">
+          Other Number is required
+        </mat-error>
+      </mat-form-field>
+    </section>
+    <section>
+      <mat-form-field>
+        <label class="mat-label other-label">Commutation Available (Impact)</label>
+        <input matInput maxlength="50" formControlName="availableCommutation" id="availableCommutation" />
+        <mat-error
+          *ngIf="form.get('availableCommutation').hasError('required') && form.get('availableCommutation').touched">
+          Other Number is required
+        </mat-error>
+      </mat-form-field>
+
+      <mat-form-field class="mat-form-field-right">
+        <label class="mat-label other-labelform.get">Current Commutation Impact</label>
+        <input matInput maxlength="10" formControlName="currentCommutation" id="currentCommutation" />
+        <mat-error
+          *ngIf="form.get('currentCommutation').hasError('required') && form.get('currentCommutation').touched">
+          Other Number is required
+        </mat-error>
+      </mat-form-field>
+    </section>
+
+    <section>
+      <mat-form-field>
+        <label class="mat-label other-label">Impact Still Available</label>
+        <input matInput maxlength="50" formControlName="stillAvailable" id="stillAvailable" />
+        <mat-error *ngIf="form.get('stillAvailable').hasError('required') && form.get('stillAvailable').touched">
+          Other Number is required
+        </mat-error>
+      </mat-form-field>
+      <mat-form-field class="mat-form-field-right">
+        <label class="mat-label other-labelform.get">Current Commutation Impact</label>
+        <input matInput maxlength="10" formControlName="currentCommutation" id="currentCommutation" />
+        <mat-error
+          *ngIf="form.get('currentCommutation').hasError('required') && form.get('currentCommutation').touched">
+          Other Number is required
+        </mat-error>
+      </mat-form-field>
+    </section>
+
+    <section>
+      <mat-form-field *ngIf="form.controls['Reason']">
+        <label class="mat-label other-label">Reason</label>
+        <mat-select id="Reason" name="Reason" formControlName="Reason">
+          <mat-option *ngFor="let commutationReason of commutationReasons" [value]="commutationReason.id">
+            {{commutationReason.name}}
+          </mat-option>
+        </mat-select>
+        <mat-error *ngIf="form.get('Reason').hasError('required') && form.get('Reason').touched">
+          Other Number is required
+        </mat-error>
+      </mat-form-field>
+      <mat-form-field class="mat-form-field-right">
+        <label class="mat-label other-labelform.get">Recommended</label>
+        <mat-select id="Recommended" name="Recommended" formControlName="Recommended">
+          <mat-option [value]="true">True</mat-option>
+          <mat-option [value]="false">False</mat-option>
+        </mat-select>
+        <mat-error *ngIf="form.get('Recommended').hasError('required') && form.get('Recommended').touched">
+          Other Number is required
+        </mat-error>
+      </mat-form-field>
+    </section>
+
+    <section>
+      <mat-form-field *ngIf="form.controls['ccSchedule']">
+        <label class="mat-label other-label">CC Schedule </label>
+        <mat-select id="ccSchedule" name="ccSchedule" formControlName="ccSchedule">
+          <mat-option *ngFor="let commutationSchedule of commutationSchedules" [value]="commutationSchedule.id">
+            {{commutationSchedule.name}}
+          </mat-option>
+        </mat-select>
+        <mat-error *ngIf="form.get('ccSchedule').hasError('required') && form.get('ccSchedule').touched">
+          Other Number is required
+        </mat-error>
+      </mat-form-field>
+      <mat-form-field class="mat-form-field-right">
+        <label class="mat-label other-labelform.get">Comments</label>
+        <input matInput maxlength="10" formControlName="comments" id="comments" />
+        <mat-error *ngIf="form.get('comments').hasError('required') && form.get('comments').touched">
+          Other Number is required
+        </mat-error>
+      </mat-form-field>
+    </section>
+  </form>
+
+</div>

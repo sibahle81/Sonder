@@ -1,0 +1,119 @@
+<div class="page-header"></div>
+<div *ngIf="!canAdd">
+    <h1>Forensic Pathologist</h1>
+    <div style="padding-bottom: 15px; color: orange; font-family: 'Oswald', sans-serif;">You do not have sufficient
+        permissions to add a forensic pathologist.</div>
+    <div (click)="back()" class="form-buttons submit-button">
+        <button type="button" class="button float-button">Back</button>
+    </div>
+</div>
+
+<div [hidden]="!canAdd" style="padding-top: 15px;">
+    <mat-card style="margin: 15px 30px 15px 30px">
+
+        <mat-card-content style="margin-left: 10px;">
+            <form [formGroup]="form" class="mat-container" novalidate>
+                <div style="margin-top: 20px;">
+                    <div class="menu-bar">
+                        <!-- Row 0 -->
+                        <section>
+                            <span *ngIf="canEditForm && !showSetting" (click)="cancel()" class="material-icons pointer right" matTooltip="cancel">
+                                close
+                              </span>
+                          
+                              <span *ngIf="form.valid && !form.pristine && canEditForm && !showSetting" (click)="save()"
+                                class="material-icons pointer right pulse greenFont" matTooltip="save">
+                                save
+                              </span>
+                                                  
+                              <span *ngIf="!(isSaving$ | async) && canEditForm && showSetting"
+                                (click)="edit()" class="material-icons pointer right" matTooltip="edit">
+                                settings
+                              </span>
+    
+                        </section>
+                     </div>                 
+                     <br />
+                    <section>
+                        <!--Registration Number-->
+                        <mat-form-field>
+                            <label class="mat-label other-label">Registration Number</label>
+                            <input matInput maxlength="50" formControlName="registrationNumber" (blur)="searchMsp()"
+                                name="registrationNumber">
+                            <span [style.visibility]="isLoading ? 'visible' : 'hidden'">
+                                <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+                                <span class="grey site-font"><i>Searching MSP...please wait</i></span>
+                            </span>
+                        </mat-form-field>
+
+                    </section>
+                    <section>
+                        <!--First name-->
+                        <mat-form-field>
+                            <label class="mat-label other-label">First Name</label>
+                            <input matInput maxlength="50" formControlName="firstName" name="firstName">
+                        </mat-form-field>
+                        <!--Last name-->
+                        <mat-form-field class="mat-form-field-right">
+                            <label class="mat-label other-label">Last Name</label>
+                            <input matInput maxlength="50" formControlName="lastName" name="lastName">
+                        </mat-form-field>
+                    </section>
+                    <section>
+                        <!--Mortuary name-->
+                        <mat-form-field>
+                            <label class="mat-label other-label">Hospital / Mortuary Name</label>
+                            <input matInput maxlength="50" formControlName="mortuaryName" name="mortuaryName">
+                        </mat-form-field>
+                        <!--Contact number-->
+                        <mat-form-field class="mat-form-field-right">
+                            <label class="mat-label other-label">Contact Number</label>
+                            <input matInput minlength="3" maxlength="10" formControlName="contactNumber"
+                                name="contactNumber" NumberOnly="true">
+                            <mat-error *ngIf="form.get('contactNumber').hasError('minlength')">
+                                Contact number must be at least <strong>three digits</strong>
+                            </mat-error>
+                            <mat-error *ngIf="form.get('contactNumber').hasError('maxlength')">
+                                Contact number must be no more then <strong>ten digits</strong>
+                            </mat-error>
+                        </mat-form-field>
+                    </section>
+                    <section>
+                        <!--Body Number-->
+                        <mat-form-field>
+                            <label class="mat-label other-label">ID of Body Number</label>
+                            <input matInput maxlength="50" formControlName="bodyNumber" name="bodyNumber">
+                        </mat-form-field>
+                        <!--Post Mortem Number-->
+                        <mat-form-field class="mat-form-field-right">
+                            <label class="mat-label other-label">Post Mortem Number</label>
+                            <input matInput maxlength="50" formControlName="postMortemNumber" name="postMortemNumber">
+                        </mat-form-field>
+                    </section>
+                    <section>
+                        <!--SAP Case Number-->
+                        <mat-form-field>
+                            <label class="mat-label other-label">SAPS Case Number</label>
+                            <input matInput maxlength="50" formControlName="sapCaseNumber" name="sapCaseNumber">
+                        </mat-form-field>
+                        <mat-form-field class="mat-form-field-right">
+                            <label class="form-label other-label">Date of Post Mortem</label>
+                            <input readonly matInput [min]="minDate" formControlName="dateOfPostMortem"
+                                [matDatepicker]="dateOfPostMortem" id="dateOfPostMortem" name="dateOfPostMortem">
+                            <mat-datepicker-toggle matSuffix [for]="dateOfPostMortem" style="position: absolute;top: 14px;right: 0;"></mat-datepicker-toggle>
+                            <mat-datepicker touchUi="true" #dateOfPostMortem></mat-datepicker>
+                        </mat-form-field>
+                    </section>
+                    <br />
+                    <section class="field-container" style="margin-top: 15px; margin-bottom: 15px;">
+                        <mat-checkbox formControlName="isValid">
+                            <label class="mat-label other-label">Is active?</label>
+                        </mat-checkbox>
+                    </section>
+                </div>
+                <!--Buttons-->
+
+            </form>
+        </mat-card-content>
+    </mat-card>
+</div>

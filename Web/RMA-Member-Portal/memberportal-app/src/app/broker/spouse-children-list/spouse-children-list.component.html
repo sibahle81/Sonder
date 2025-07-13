@@ -1,0 +1,52 @@
+<br /><br />
+<mat-accordion>
+  <mat-expansion-panel>
+    <mat-expansion-panel-header>
+      <mat-panel-title>
+        <h4>Spouse</h4>
+      </mat-panel-title>
+    </mat-expansion-panel-header>
+    <role-player-list #spouse (addPerson)="validateSpouse()" [showVopd]="true" [showBeneficiary]="true"
+      [rolePlayerTypeIds]="[11]" (rolePlayerAdded)="spouseAdded($event)" (rolePlayerRemoved)="spouseRemoved($event)"
+      (rolePlayerModified)="spouseModified($event)" [policyId]="modelPolicyId"
+      (insuredLifeRemoved)="insuredLifeRemoved($event)" (removalNoteAdded)="removalNoteAdded($event)"
+      [modelSpouses]="modelSpouses" [modelPolicyStatus]="modelPolicyStatus"></role-player-list>
+
+    <div [hidden]="!model || model.caseTypeId === 8">
+      <role-player-benefits-spouse #spouseBenefits [title]="'Spouse Benefits'" [caption]="'Spouse'"
+        [coverMemberType]="spouseCoverMemberType">
+      </role-player-benefits-spouse>
+    </div>
+
+  </mat-expansion-panel>
+  <br /><br />
+  <mat-expansion-panel>
+    <mat-expansion-panel-header>
+      <mat-panel-title>
+        <h4>Children</h4>
+      </mat-panel-title>
+    </mat-expansion-panel-header>
+    <role-player-list #children (addPerson)="validateChildren()" [showVopd]="true" [showBeneficiary]="true"
+      [rolePlayerTypeIds]="[32]" (rolePlayerAdded)="childAdded($event)" (rolePlayerRemoved)="childRemoved($event)"
+      (rolePlayerModified)="childModified($event)" [policyId]="modelPolicyId"
+      (insuredLifeRemoved)="insuredLifeRemoved($event)" (removalNoteAdded)="removalNoteAdded($event)"
+      [modelChildren]="modelChildren" [modelPolicyStatus]="modelPolicyStatus">
+    </role-player-list>
+
+    <div [hidden]="!model || model.caseTypeId === 8">
+      <role-player-benefits-child #childBenefits [title]="'Child Benefits'" [caption]="'Child'"
+        [coverMemberType]="childCoverMemberType">
+      </role-player-benefits-child>
+    </div>
+
+  </mat-expansion-panel>
+  <br /><br />
+  <mat-expansion-panel *ngIf="model && model.caseTypeId !== 1">
+    <mat-expansion-panel-header>
+      <h4>Previous Insurance <i>(spouse(s) & children)</i></h4>
+    </mat-expansion-panel-header>
+    <previous-insurer [case]="model" [isEditable]="isWizard && !isReadonly" [context]="roleplayerContext">
+    </previous-insurer>
+  </mat-expansion-panel>
+</mat-accordion>
+<br />

@@ -1,0 +1,18 @@
+<h2 mat-dialog-title>{{action}} Pension Ledger</h2>
+<form [formGroup]="form" *ngIf="this.form">
+  <section class="top-section">
+    <mat-form-field>
+      <label class="mat-label other-label mandatory-field">Reason for {{action | lowercase}}ing Pension Ledger</label>
+      <mat-select id="changeReason" name="changeReason" formControlName="changeReason">
+        <mat-option *ngFor="let changeReason of ledgerStatusChangeReasons" [value]="changeReason.id">
+          {{changeReason.name}}
+        </mat-option>
+      </mat-select>
+    </mat-form-field>
+  </section>
+  <div mat-dialog-actions>
+    <button class="button submit-button" (click)="changeStatus()">Change Status</button>
+    <button class="button submit-button" (click)="cancel()">Cancel</button>
+  </div>
+</form>
+

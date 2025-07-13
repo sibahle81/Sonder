@@ -1,0 +1,133 @@
+<div class="menu-bar">
+    <span class="material-icons">
+        work
+    </span>
+    Employment
+    <span *ngIf="!(isLoading$ | async)" class="material-icons pointer right pulse" (click)="close(false)" matTooltip="close">
+        cancel
+    </span>
+    <span *ngIf="isEdit && !(isLoading$ | async)" class="material-icons pointer right pulse" (click)="edit()" matTooltip="edit">
+        settings
+    </span>
+    <span *ngIf="form.valid && !form.pristine && !(isLoading$ | async)" class="material-icons pointer right pulse" (click)="save()"
+        matTooltip="save">
+        save
+    </span>
+</div>
+
+<mat-card *ngIf="(isLoading$ | async)">
+    <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+    <label class="mat-label other-label"><i>loading...please wait</i></label>
+</mat-card>
+
+<mat-card *ngIf="!(isLoading$ | async)">
+    <form [formGroup]="form" class="mat-container details-form" novalidate>
+        <mat-card>
+            <section>
+                <mat-checkbox (change)="skillLevelChanged($event.checked)" class="mat-form-field" name="isSkilled"
+                    id="isSkilled" formControlName="isSkilled" [disabled]="isReadOnly">
+                    <label class="mat-label other-label mandatory-field">Is Skilled ?</label>
+                </mat-checkbox>
+                <mat-checkbox (change)="traineeLearnerApprenticeChanged($event.checked)" class="mat-form-field-right"
+                    name="isTraineeLearnerApprentice" id="isTraineeLearnerApprentice"
+                    formControlName="isTraineeLearnerApprentice" [disabled]="isReadOnly">
+                    <label class="mat-label other-label mandatory-field">Is Trainee Learner Apprentice ?</label>
+                </mat-checkbox>
+            </section>
+        </mat-card>
+        <br />
+        <span>
+            <mat-form-field class="mat-form-field">
+                <label class="mat-label other-label mandatory-field">Employee Number</label>
+                <input matInput formControlName="employeeNumber" name="employeeNumber" id="employeeNumber" />
+                <mat-error *ngIf="form.get('employeeNumber').hasError('required')">
+                    employee number is <strong>required</strong>
+                </mat-error>
+            </mat-form-field>
+        </span>
+        <section>
+            <mat-form-field class="mat-form-field">
+                <label class="mat-label other-label mandatory-field">RMA Employee Reference Number</label>
+                <input matInput formControlName="rmaEmployeeRefNum" name="rmaEmployeeRefNum" id="rmaEmployeeRefNum" />
+                <mat-error *ngIf="form.get('rmaEmployeeRefNum').hasError('required')">
+                    rma employee reference number is <strong>required</strong>
+                </mat-error>
+            </mat-form-field>
+            <mat-form-field class="mat-form-field-right">
+                <label class="mat-label other-label mandatory-field-right">Employee Industry Number</label>
+                <input matInput formControlName="employeeIndustryNumber" name="employeeIndustryNumber"
+                    id="employeeIndustryNumber" />
+                <mat-error *ngIf="form.get('employeeIndustryNumber').hasError('required')">
+                    employee industry number is <strong>required</strong>
+                </mat-error>
+            </mat-form-field>
+        </section>
+        <section>
+            <mat-form-field class="mat-form-field">
+                <label class="mat-label other-label mandatory-field">Designation Type</label>
+                <mat-select name="designationType" id="designationType" formControlName="designationType">
+                    <mat-option *ngFor="let designationType of designationTypes" [value]="designationType.id">
+                        {{formatLookup(designationType.name)}}
+                    </mat-option>
+                </mat-select>
+                <mat-error *ngIf="form.get('designationType').hasError('required')">
+                    designation type is <strong>required</strong>
+                </mat-error>
+            </mat-form-field>
+            <mat-form-field class="mat-form-field-right">
+                <label class="mat-label other-label mandatory-field">Paterson Grading</label>
+                <mat-select name="patersonGrading" id="patersonGrading"
+                    formControlName="patersonGrading">
+                    <mat-option *ngFor="let patersonGrading of patersonGradings"
+                        [value]="patersonGrading.patersonGradingId">
+                        {{formatLookup(patersonGrading.description)}}
+                    </mat-option>
+                </mat-select>
+                <mat-error *ngIf="form.get('patersonGrading').hasError('required')">
+                    paterson grading is <strong>required</strong>
+                </mat-error>
+                <div *ngIf="(isLoadingPatersonGrading$ | async)">
+                    <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+                    <label class="mat-label other-label"><i>loading...please wait</i></label>
+                </div>
+            </mat-form-field>           
+        </section>
+        <section>
+            <mat-form-field class="mat-form-field">
+                <label class="mat-label other-label mandatory-field">Start Date</label>
+                <input matInput formControlName="startDate" [matDatepicker]="startDate" [max]="maxDate">
+                <mat-datepicker-toggle matSuffix [for]="startDate">
+                </mat-datepicker-toggle>
+                <mat-datepicker touchUi="true" #startDate></mat-datepicker>
+                <mat-error *ngIf="form.get('startDate').hasError('required')">
+                    start date <strong>required</strong>
+                </mat-error>
+            </mat-form-field>
+            <mat-form-field class="mat-form-field-right">
+                <label class="mat-label other-label">End Date</label>
+                <input matInput formControlName="endDate" [matDatepicker]="endDate" [max]="maxDate">
+                <mat-datepicker-toggle matSuffix [for]="endDate">
+                </mat-datepicker-toggle>
+                <mat-datepicker touchUi="true" #endDate></mat-datepicker>
+            </mat-form-field>
+        </section>
+        <section>
+            <mat-form-field class="mat-form-field">
+                <label class="mat-label other-label mandatory-field">Years in Industry</label>
+                <input matInput formControlName="yearsInIndustry" name="yearsInIndustry" id="yearsInIndustry"
+                    NumberOnly />
+                <mat-error *ngIf="form.get('yearsInIndustry').hasError('required')">
+                    years in industry is <strong>required</strong>
+                </mat-error>
+            </mat-form-field>
+            <mat-form-field class="mat-form-field-right">
+                <label class="mat-label other-label mandatory-field">Years in Present Occupation</label>
+                <input matInput formControlName="yearsInPresentOccupation" name="yearsInPresentOccupation"
+                    id="yearsInPresentOccupation" NumberOnly />
+                <mat-error *ngIf="form.get('yearsInPresentOccupation').hasError('required')">
+                    years in present occupation is <strong>required</strong>
+                </mat-error>
+            </mat-form-field>
+        </section>
+    </form>
+</mat-card>

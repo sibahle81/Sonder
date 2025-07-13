@@ -1,0 +1,13 @@
+<div class="menu-bar">
+  <span class="material-icons">
+    request_quote
+  </span>
+  Quotation
+  <span class="material-icons pointer right pulse" (click)="close()" matTooltip="close">
+    cancel
+  </span>
+</div>
+
+<div *ngIf="quoteId && quoteId > 0">
+  <quote-view-V2 [quoteId]="quoteId" (viewLeadClickedEmit)="close()"></quote-view-V2>
+</div>

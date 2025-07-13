@@ -1,0 +1,71 @@
+<div style="margin-bottom:12px;">
+  <div *ngIf="!isGroup">
+    <person-details [showAge]="true" [parentModel]="detailsModel" (isSaIdType)="setIDType($event)"
+      (ageChanged)="onAgeChanged($event)" (birthDateChanged)="onBirthDayChanged($event)"></person-details>
+  </div>
+  <div *ngIf="isGroup">
+    <group-member-detail [parentModel]="detailsModel"></group-member-detail>
+  </div>
+  <form [formGroup]="formMainMember" class="mat-container details-form" novalidate>
+    <section>
+      <mat-form-field class="mat-form-field">
+        <label class="mat-label other-label mandatory-field">Policy Inception Date</label>
+        <label class="mat-label other-label" *ngIf="canBackDate"><i> (back dating is enabled)</i>
+        </label>
+        <input matInput formControlName="policyInceptionDate" [matDatepicker]="policyInceptionDate" required
+          name="policyInceptionDate" readonly [min]="minDate" [matDatepickerFilter]="isFirstDay"
+          (dateChange)="calculateAge()">
+        <mat-datepicker-toggle matSuffix [for]="policyInceptionDate"></mat-datepicker-toggle>
+        <mat-datepicker touchUi="true" #policyInceptionDate></mat-datepicker>
+        <mat-error *ngIf="formMainMember.get('policyInceptionDate').hasError('required')">
+          Policy inception date is required
+        </mat-error>
+      </mat-form-field>
+      <mat-form-field class="mat-form-field-right" [hidden]="!canChangeStartDate">
+        <div class="checkbox-container"><label class="mat-label other-label">&nbsp;</label></div>
+        <input matInput [hidden]="true" formControlName="changeInceptionDate" />
+        <mat-checkbox formControlName="changeInceptionDate" (change)="enableStartDate($event)">
+          <label class="mat-label other-label">Change policy start date?</label>
+        </mat-checkbox>
+      </mat-form-field>
+    </section>
+    <section>
+      <div *ngIf="!isGroup" class="field-container">
+        <mat-form-field class="mat-form-field">
+          <label class="mat-label other-label mandatory-field">Policy Entry Age</label>
+          <input matInput formControlName="joinAge" name="joinAge" id="joinAge" />
+          <mat-error
+            *ngIf="formMainMember.get('joinAge').hasError('required') || formMainMember.get('joinAge').hasError('min')">
+            Could not calculate age at policy inception date
+          </mat-error>
+        </mat-form-field>
+      </div>
+    </section>
+    <section>
+      <div [hidden]="!isSaIdType">
+        <div class="person-checkbox-container"><label class="mat-label other-label">&nbsp;</label></div>
+        <mat-checkbox formControlName="isVopdRequired" name="isVopdRequired" id="isVopdRequired">
+          <label class="mat-label other-label">VOPD Required (RSA ID Only)?</label>
+        </mat-checkbox>
+      </div>
+    </section>
+  </form>
+  <policy-product-options [parentModel]="detailsModel" (productOptionSelected)="onSelectedOption($event)"
+    [isDisabled]="isDisabled" [caseCausesProductsDisabling]="caseCausesProductsDisabling">
+  </policy-product-options>
+  <mat-accordion>
+    <mat-expansion-panel *ngIf="model && (model.caseTypeId !== 1 && model.caseTypeId !== 4 && model.caseTypeId !== 5 )">
+      <mat-expansion-panel-header>
+        <h4>Previous Insurance <i>(main member)</i></h4>
+      </mat-expansion-panel-header>
+      <previous-insurer [case]="model" [isEditable]="isWizard && !isReadonly" [context]="roleplayerContext"
+        [isMainMember]="true"></previous-insurer>
+    </mat-expansion-panel>
+  </mat-accordion>
+  <br />
+  <div class="policyBenefitsDiv">
+    <policy-benefits #mainMemberBenefitsComponent [title]="'Main Member Benefits'" [parentModel]="detailsModel"
+      [selectedProductOption]="selectedProductOption" [coverMemberType]="coverMemberType">
+    </policy-benefits>
+  </div>
+</div>

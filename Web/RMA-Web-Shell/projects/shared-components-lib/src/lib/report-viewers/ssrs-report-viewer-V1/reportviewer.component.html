@@ -1,0 +1,18 @@
+<div *ngIf="isLoading$ | async">
+  <br/>
+  <span *ngIf="isDownload.toLowerCase() === 'false'"><label class="mat-label other-label"><i>loading {{reportName}}...please wait</i></label></span>
+  <span *ngIf="isDownload.toLowerCase() === 'true' && (format.toLowerCase() === 'csv' || format.toLowerCase() === 'excel')"><label class="mat-label other-label"><i>downloading {{reportName}}...please wait</i></label></span>
+</div>
+<div *ngIf="isIE">
+  <p>
+    &nbsp;Dear User, we have detected you are using a legacy browser (IE), please make use of Chrome,
+    Microsoft Edge, Firefox or Safari to enjoy a richer user experience.
+  </p>
+  <p>
+    &nbsp;The file you have requested, can be viewed by clicking on the Save or Open option found at the bottom of the
+    browser window. If the file has not downloaded after a few minutes, please click <a href="javascript:document.location.reload(true);">here</a> to retry
+  </p>
+</div>
+<div *ngIf="!(isLoading$ | async)" class="iframe-container">
+  <iframe *ngIf="!isIE" [src]="source | safeUrl" scrolling="auto" id="iframeContainer" [ngStyle] = "{'top': getTop()}"></iframe>
+</div>

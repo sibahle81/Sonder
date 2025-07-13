@@ -1,0 +1,21 @@
+<mat-card *ngIf="(isLoading$ | async)">
+  <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+  <label class="mat-label other-label"><i>Importing data...</i></label>
+</mat-card>
+
+<mat-card *ngIf="(isLoadingPeriod$ | async)">
+  <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+  <label class="mat-label other-label"><i>Retrieving Periods...</i></label>
+</mat-card>
+<br/>
+  <section>
+    <concurrent-period [showPeriodControl]="showPeriodControl" (periodSelected)="concurrentPeriodSelected($event)" (isValid)="isValidPeriodSelected($event)"
+      [title]="periodTitle"></concurrent-period>
+  </section>
+
+<span *ngIf="!(isLoading$ | async)">
+    <data-exchange [title]="title" [expectedColumnHeadings]="expectedColumnHeadings"
+      (fileDataEmit)="receiveFileData($event)" [invalidRowsForExport]="invalidRowsForExport"
+      (processConfirmedEmit)="submit($event)"></data-exchange>
+    
+</span>

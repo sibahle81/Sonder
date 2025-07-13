@@ -1,0 +1,49 @@
+<h3>Inter-Bank Transfers</h3>
+<div *ngIf="hasPermission; else notAuthorized">
+
+  <form [formGroup]="form" novalidate >
+    <div class="clear-both">
+      <section>
+        <fieldset>
+          <legend class="mat-label other-label mandatory-field">Transfer Type</legend>
+          <mat-radio-group formControlName="TransferType" class="div_main">
+            <mat-radio-button class="radio-group" [value]="fromSuspenseTransferType"
+              (change)="onTransferTypeSelected($event.value)">From Suspence Account
+            </mat-radio-button>
+            <mat-radio-button class="radio-group margin-left" [value]="fromDebtorTransferType"
+              (change)="onTransferTypeSelected($event.value)">From Debtor Account
+            </mat-radio-button>
+          </mat-radio-group>
+        </fieldset>
+      </section>
+    </div>
+  </form>
+  <br>
+  <div *ngIf="interBankTransferType === fromSuspenseTransferType">
+    <mat-card class="card-secondary">
+        <mat-card-content class="margin-left">
+          <section>
+            <app-inter-bank-transfers></app-inter-bank-transfers>
+          </section>
+        </mat-card-content>
+    </mat-card>
+   </div>
+   <div *ngIf="interBankTransferType === fromDebtorTransferType">
+    <mat-card class="card-secondary">
+        <mat-card-content class="margin-left">
+          <section>
+            <app-inter-bank-transfers-from-debtors></app-inter-bank-transfers-from-debtors>
+          </section>
+        </mat-card-content>
+    </mat-card>
+   </div>
+</div>
+
+<ng-template #notAuthorized>
+  <div>
+    <div class="wizard-permissions-error">You do not have sufficient permissions to do Inter-Bank-Transfers</div>
+    <div (click)="back()" class="form-buttons submit-button">
+      <button type="button" class="button float-button">Back</button>
+    </div>
+  </div>
+</ng-template>

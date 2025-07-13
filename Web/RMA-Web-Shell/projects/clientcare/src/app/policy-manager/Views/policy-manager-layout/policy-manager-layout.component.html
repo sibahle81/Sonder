@@ -1,0 +1,121 @@
+<nav class="innertop-nav">
+
+  <button mat-button [routerLink]="['/clientcare/policy-manager']" class='Activebutton'>Home</button>
+
+  <button mat-button [routerLink]="['policy-search']" class='Activebutton'>Search</button>
+
+  <button mat-button [matMenuTriggerFor]="menu1" class='Activebutton'>Case</button>
+  <mat-menu #menu1="matMenu" [overlapTrigger]="false">
+    <button mat-menu-item [matMenuTriggerFor]="funeralcase">
+      Funeral
+    </button>
+    <mat-menu #funeralcase="matMenu">
+      <button mat-menu-item [routerLink]="['new-business']">Create a Case</button>
+      <button *ngIf="canCancelPolicies" mat-menu-item [routerLink]="['bulk-cancel']">
+        Cancel Policies (Bulk Cancel)
+      </button>
+      <button *ngIf="canLapsePolicies" mat-menu-item [routerLink]="['bulk-lapse']">
+        Lapse Policies (Bulk Lapse)
+      </button>
+      <button mat-menu-item [routerLink]="['reinstate']">Reinstate (Data Migration)</button>
+      <button mat-menu-item [routerLink]="['bulk-reinstate']">Reinstate Policies (Bulk Reinstate)</button>
+      <button *ngIf="canSendPolicySchedules" mat-menu-item [routerLink]="['bulk-policy-send']">Send Policy Schedules
+        (Bulk Send)</button>
+    </mat-menu>
+
+    <button mat-menu-item [matMenuTriggerFor]="groupriskcase">
+      Group Risk
+    </button>
+    <mat-menu #groupriskcase="matMenu">
+      <button mat-menu-item (click)="captureGroupRiskPolicy()">Create Group Risk Policies</button>
+      <button mat-menu-item [routerLink]="['update-group-risk-policies']" routerLinkActive="active-list-item">
+        Maintain Group Risk Policies
+      </button>
+    </mat-menu>
+  </mat-menu>
+
+  <button mat-button [matMenuTriggerFor]="menu2" class='Activebutton'>Uploads</button>
+  <mat-menu #menu2="matMenu" [overlapTrigger]="false">
+    <button mat-menu-item [matMenuTriggerFor]="funeraluploads">
+      Funeral
+    </button>
+    <mat-menu #funeraluploads="matMenu">
+      <button mat-menu-item [routerLink]="['upload-premium-listing']">Upload On-boarding File</button>
+      <button mat-menu-item [routerLink]="['upload-consolidated-funeral']">Upload Consolidated Funeral File</button>
+      <button mat-menu-item [routerLink]="['upload-myvalueplus']">Upload My Value Plus File</button>
+      <button mat-menu-item [routerLink]="['upload-premium-payments']">Upload Premium File</button>
+      <button *ngIf="hasUploadBulkPaymentListingPermission" mat-menu-item [routerLink]="['upload-bulk-payment-listing']"
+        routerLinkActive="active-list-item">Bulk
+        Payment Listing</button>
+    </mat-menu>
+
+    <button mat-menu-item [matMenuTriggerFor]="groupriskuploads">
+      Group Risk
+    </button>
+    <mat-menu #groupriskuploads="matMenu">
+      <button mat-menu-item [routerLink]="['upload-group-risk']">Upload Group Risk File</button>
+    </mat-menu>
+  </mat-menu>
+
+  <button mat-button [matMenuTriggerFor]="menu10" class='Activebutton'>Quick Links</button>
+  <mat-menu #menu10="matMenu" [overlapTrigger]="false">
+    <button mat-menu-item [matMenuTriggerFor]="funeralquicklinks">
+      Funeral
+    </button>
+    <mat-menu #funeralquicklinks="matMenu">
+      <button *ngIf="showProcessQlinkPermission" mat-menu-item [matMenuTriggerFor]="menu8" class='Activebutton'>Qlink
+        Transactions</button>
+      <mat-menu #menu8="matMenu" [overlapTrigger]="false">
+        <button mat-menu-item [routerLink]="['manual-qadd']">Process Transaction</button>
+      </mat-menu>
+    </mat-menu>
+
+    <!-- <button mat-menu-item [matMenuTriggerFor]="groupriskquicklinks">
+      COID & VAPS
+    </button>
+    <mat-menu #groupriskquicklinks="matMenu">
+      add menu items for coid and vaps here ...
+    </mat-menu>
+
+    <button mat-menu-item [matMenuTriggerFor]="groupriskquicklinks">
+      Group Risk
+    </button>
+    <mat-menu #groupriskquicklinks="matMenu">
+      add menu items for group risk here ...
+    </mat-menu> -->
+  </mat-menu>
+
+  <button *ngIf="!disable_coid_vaps_e2e_clientcare || enable_grouprisk_policy_reports" mat-button
+    [matMenuTriggerFor]="menu7" class='Activebutton'>Reports</button>
+  <mat-menu #menu7="matMenu" [overlapTrigger]="false">
+    <button *ngIf="!disable_coid_vaps_e2e_clientcare" mat-menu-item [matMenuTriggerFor]="coidreports">
+      COID & VAPS
+    </button>
+    <mat-menu #coidreports="matMenu">
+      <button *ngIf="!disable_coid_vaps_e2e_clientcare" mat-menu-item [routerLink]="['policy-reports']">Policy
+        Reports</button>
+    </mat-menu>
+
+    <button *ngIf="!disable_coid_vaps_e2e_clientcare" mat-menu-item [matMenuTriggerFor]="groupriskreports">
+      Group Risk
+    </button>
+    <mat-menu #groupriskreports="matMenu">
+      <button *ngIf="enable_grouprisk_policy_reports" mat-menu-item [routerLink]="['group-risk-reports']">Group Risk
+        Reports</button>
+    </mat-menu>
+    <button *ngIf="!disable_coid_vaps_e2e_clientcare" mat-menu-item [routerLink]="['referral-reports']">Referral
+      Reports</button>
+  </mat-menu>
+
+  <!-- external partner policies needs to be grouped when we can find the product that owns this...-->
+  <button mat-button [matMenuTriggerFor]="menu9" class='Activebutton'>External Partner Policies</button>
+  <mat-menu #menu9="matMenu" [overlapTrigger]="false">
+    <button mat-menu-item [routerLink]="['upload-external-partner-policies']">Upload External Partner File</button>
+    <button mat-menu-item [routerLink]="['search-external-partner-policies']">Search External Partner
+      Policies</button>
+  </mat-menu>
+
+</nav>
+<div [hidden]="loadingMessage != null || error != null" class="container-padding">
+  <router-outlet></router-outlet>
+</div>

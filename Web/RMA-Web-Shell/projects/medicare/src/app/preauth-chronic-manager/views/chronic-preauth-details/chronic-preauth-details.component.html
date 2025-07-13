@@ -1,0 +1,36 @@
+<div class="mat-header">
+  <h1>Chronic {{chronicPreAuthType}} PreAuthorisation Details</h1>
+  
+  <br />
+</div>
+
+<div *ngIf="preAuthView$ | async as auth">
+  <mat-expansion-panel [expanded]="true">
+    <mat-expansion-panel-header>
+      <mat-panel-title>
+        <div>Chronic PreAuth Details {{auth.preAuthNumber}}</div>
+      </mat-panel-title>
+    </mat-expansion-panel-header>
+    <hr>
+    <preauth-details [auth]="auth" [isInternalUser]="isInternalUser" [bodySides]="bodySides$ | async"></preauth-details>
+  </mat-expansion-panel>
+
+  <div *ngIf="preAuthView$ | async as auth">
+    <mat-expansion-panel>
+      <mat-expansion-panel-header>
+        <mat-panel-title>Chronic {{chronicPreAuthType}} Application Details</mat-panel-title>
+      </mat-expansion-panel-header>
+      <hr>
+     <chronic-form-details [chronicMedicationForms]="auth?.chronicMedicationForms" 
+     [chronicMedicationFormRenewals]="auth?.chronicMedicationFormRenewals"></chronic-form-details>
+    </mat-expansion-panel>   
+     
+    <mat-expansion-panel>
+      <mat-expansion-panel-header>
+        <mat-panel-title>PreAuth Activity</mat-panel-title>
+      </mat-expansion-panel-header>
+      <hr>
+      <preauth-activity [auth]="auth?.preAuthActivities"></preauth-activity>
+    </mat-expansion-panel>
+  </div>
+</div>

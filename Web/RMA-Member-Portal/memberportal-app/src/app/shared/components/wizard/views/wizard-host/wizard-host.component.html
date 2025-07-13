@@ -1,0 +1,95 @@
+﻿<div [hidden]="error != null">
+    <!--Title-->
+    <!-- <div style="margin-top: 15px;" class="wizard-font grey" *ngIf="wizardContext">
+        {{wizardContext.wizard.name}}
+    </div> -->
+
+    <!--Start Step-->
+    <wizard-start-step (onStartClicked)="onStartClicked()" [hidden]="hasStarted">
+    </wizard-start-step>
+
+    <!--Cancel Wizard-->
+    <div [hidden]="!wizardCancelStepComponent || !wizardCancelStepComponent.isCancelConfirm">
+        <wizard-cancel-step></wizard-cancel-step>
+    </div>
+
+    <!--Submit Wizard-->
+    <div>
+        <wizard-submit-step></wizard-submit-step>
+    </div>
+
+    <!--Save Wizard-->
+    <div [hidden]="!wizardSaveStepComponent || !wizardSaveStepComponent.isSaveConfirm">
+        <wizard-save-step></wizard-save-step>
+    </div>
+
+    <!--Wizard Steps-->
+    <div
+        [hidden]="!hasStarted || wizardCancelStepComponent.isCancelConfirm || wizardSubmitStepComponent.isSubmitting
+         || wizardSubmitStepComponent.isApprovalRequested || wizardSubmitStepComponent.isApprovalResolved || wizardSaveStepComponent.isSaveConfirm">
+
+        <!--Messages at the top of the stepper-->
+        <div *ngIf="hasLoaded" class="wizard-font">
+            <!--Wizard is not in approval state-->
+            <div *ngIf="wizardContext.wizard.wizardStatus !== 'Awaiting Approval' && wizardContext.wizard.lockedReason"
+                class="subOrange">
+                {{wizardContext.wizard.lockedReason}}
+            </div>
+            <!--Wizard is in approval state-->
+            <div *ngIf="wizardContext.wizard.wizardStatus === 'Awaiting Approval'">
+                <!--Can approve-->
+                <div *ngIf="wizardContext.wizard.canApprove" class="valid orange">
+                    This wizard is awaiting approval. Approval requested by
+                    {{wizardContext.wizard.modifiedByDisplayName}}
+                </div>
+                <!--Cant approve-->
+                <div *ngIf="!wizardContext.wizard.canApprove && wizardContext.wizard.lockedReason" class="orange">
+                    {{wizardContext.wizard.lockedReason}}
+                </div>
+            </div>
+        </div>
+
+        <mat-horizontal-stepper *ngIf="hasLoaded && wizardContext.wizard.wizardConfiguration">
+            <mat-step *ngFor="let wizardStep of wizardContext.getActiveWizardComponents()" name="wizardStep.name">
+                <ng-template matStepLabel>{{wizardStep.name}}</ng-template>
+                <div>
+                    <!-- <h1>{{wizardStep.name}}</h1> -->
+                    <ng-template #step></ng-template>
+                </div>
+            </mat-step>
+
+            <!--Validation Step-->
+            <mat-step label="Complete">
+                <div
+                    [hidden]="!wizardContext || wizardContext.wizard.wizardStatusId !== awaitingApproval || isApprovalResolved || (wizardContext.hasApprovalStep && wizardContext.wizard.wizardStatusId === awaitingApproval)">
+                    <wizard-approval-step (onBackClick)="previousStep()" (onApprovalSubmit)="onApprovalSubmit($event)">
+                    </wizard-approval-step>
+                </div>
+                <div
+                    [hidden]="!wizardContext || (!wizardContext.hasApprovalStep && wizardContext.wizard.wizardStatusId === awaitingApproval)">
+                    <wizard-validation-step (onNavigate)="onNavigate($event)" (onBackClick)="previousStep()"
+                        (onApprovalSubmit)="onApprovalSubmit($event)"></wizard-validation-step>
+                </div>
+            </mat-step>
+        </mat-horizontal-stepper>
+
+        <div style="margin-left: 38px">
+            <button *ngIf="" class="button submit-button btnResponsive" (click)="cancel()">Cancel Wizard</button>
+            <button *ngIf="showBackButton" class="button submit-button btnResponsive"
+                (click)="previousStep()">Back</button>
+            <button *ngIf="showNextButton" class="button submit-button btnResponsive" (click)="nextStep()">Next</button>
+            <button *ngIf="showFinishButton" class="button submit-button btnResponsive"
+                (click)="finishWizard()">Finish</button>
+            <button *ngIf="showRequestApprovalButton" class="button submit-button btnResponsive"
+                (click)="requestApproval()">Request
+                Approval</button>
+            <button *ngIf="showSaveCloseButton || showRequestApprovalButton" class="button submit-button btnResponsive"
+                (click)="saveAndClose()">Save &amp; Close</button>
+            <button *ngIf="showCloseButton" class="button submit-button btnResponsive" (click)="back()">Close</button>
+            <button
+                *ngIf="isSubscribeToWizardContext && showRejectOnConditionButton && wizardStatusId !== rejectedStatus"
+                class="button submit-button btnResponsive" (click)="rejectWithCondition()">Reject</button>
+            <!-- <button *ngIf="isSubscribeToWizardContext && showfinishRejectionWithConditionButton && RejectOnConditionButtonClicked && wizardStatusId !== rejectedStatus" class="button submit-button" (click)="finishRejectionWithCondition()">Finish</button> -->
+        </div>
+    </div>
+</div>

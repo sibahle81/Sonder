@@ -1,0 +1,57 @@
+<div *ngIf="isLoading">
+  <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+  <label class="mat-label other-label"><i>Loading and calculating outstanding premiums...please wait</i></label>
+</div>
+<div style="color: orange; margin-top: 10px;" *ngIf="!effectiveDateCaptured">{{effectiveDateMessage}}</div>
+
+<form [formGroup]="form" class="mat-container details-form" novalidate>
+  <section>
+    <div class="field-container">
+      <mat-form-field class="mat-form-field">
+        <label class="mat-label other-label mandatory-field">Adhoc Debit Date</label>
+        <input matInput formControlName="adhocDebitDate" [matDatepicker]="adhocDebitDate" name="adhocDebitDate" required readonly>
+        <mat-datepicker-toggle matSuffix [for]="adhocDebitDate"></mat-datepicker-toggle>
+        <mat-datepicker touchUi="true" #adhocDebitDate></mat-datepicker>
+        <mat-error *ngIf="form.get('adhocDebitDate').hasError('adhocDebitNoSet')">
+          Adhoc Debit Date is required
+        </mat-error>
+        <mat-error *ngIf="form.get('adhocDebitDate').hasError('invalidAdhoc')">
+          Adhoc Debit Date cannot be in the past
+        </mat-error>
+      </mat-form-field>
+    </div>
+  </section>
+  <section>
+    <div class="field-container" [hidden]="isLoading">
+      <mat-form-field class="mat-form-field">
+        <label class="mat-label other-label">Total Outstanding (Pending and Unpaid)</label>
+        <input matInput formControlName="totalUnpaid" name="totalUnpaid" id="totalUnpaid"
+          [(ngModel)]="totalAmountOutstanding" readonly />
+      </mat-form-field>
+    </div>
+  </section>
+  <div [hidden]="datasource.data.length === 0">
+    <mat-table #table [dataSource]="datasource" matSort matSortActive="invoiceId" matSortDirection="asc">
+      <ng-container matColumnDef="invoiceNumber">
+        <mat-header-cell *matHeaderCellDef mat-sort-header>InvoiceNumber</mat-header-cell>
+        <mat-cell *matCellDef="let invoice"> {{invoice.invoiceNumber}} </mat-cell>
+      </ng-container>
+      <ng-container matColumnDef="invoiceDate">
+        <mat-header-cell *matHeaderCellDef mat-sort-header>InvoiceDate</mat-header-cell>
+        <mat-cell *matCellDef="let invoice"> {{ getDateFormattedDate(invoice.invoiceDate)}}</mat-cell>
+      </ng-container>
+      <ng-container matColumnDef="totalInvoiceAmount">
+        <mat-header-cell *matHeaderCellDef mat-sort-header>Amount</mat-header-cell>
+        <mat-cell *matCellDef="let invoice">{{invoice.totalInvoiceAmount|number:'1.2-2'}}</mat-cell>
+      </ng-container>
+      <ng-container matColumnDef="invoiceStatus">
+        <mat-header-cell *matHeaderCellDef mat-sort-header>Status</mat-header-cell>
+        <mat-cell *matCellDef="let invoice">{{getInvoiceStatusText(invoice.invoiceStatus)}}</mat-cell>
+      </ng-container>
+      <mat-header-row *matHeaderRowDef="displayedColumns; sticky: true"></mat-header-row>
+      <mat-row *matRowDef="let row; columns: displayedColumns;"></mat-row>
+    </mat-table>
+    <mat-paginator #paginator [length]="rowCount" [pageIndex]="0" [pageSize]="10" [pageSizeOptions]="[5, 10]">
+    </mat-paginator>
+  </div>
+</form>

@@ -1,0 +1,39 @@
+<mat-card>
+    <mat-card-content>
+      <div class="menu-bar" *ngIf="!(isAdditionalDocumentsLoading | async)">
+        <span class="material-icons">
+          checklist
+        </span>&nbsp;Additional Claim Requirements
+      </div>
+      
+      <div *ngIf="(isAdditionalDocumentsLoading | async)">
+        <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+        <label class="mat-label other-label"><i>{{loadingMessages$ | async}}</i></label>
+      </div>
+
+      <mat-card *ngIf="additionalRequiredDocuments.length == 0 &&  !(isAdditionalDocumentsLoading | async)">
+        <i>No additional claim requirements were found</i>
+      </mat-card>
+
+      <table *ngIf="additionalRequiredDocuments.length != 0 && !(isAdditionalDocumentsLoading | async)" class="altRowTable table">
+        <tr>
+          <th>Requirement Category</th>
+          <th>Date Created</th>
+          <th>Date Closed</th>
+          <th>Instruction</th>
+          <th>Last User</th>
+          <th>Member Visibility</th>
+        </tr>
+        <tr *ngFor="let additionalRequiredDocument of additionalRequiredDocuments"
+          [ngStyle]="{'color':  !additionalRequiredDocument.isUploaded ? 'red' : 'black' }">
+          <td>{{additionalRequiredDocument.documentName}}</td>
+          <td>{{additionalRequiredDocument.createdDate | date:'yyyy-MM-dd'}}</td>
+          <td>{{additionalRequiredDocument.dateClosed ? (additionalRequiredDocument.dateClosed | date:'yyyy-MM-dd') :
+          'N/A'}}</td>
+          <td>{{additionalRequiredDocument.requestNote}}</td>
+          <td>{{additionalRequiredDocument.createdBy}}</td>
+          <td>{{additionalRequiredDocument.visibletoMember}}</td>
+        </tr>
+      </table>
+    </mat-card-content>
+</mat-card>

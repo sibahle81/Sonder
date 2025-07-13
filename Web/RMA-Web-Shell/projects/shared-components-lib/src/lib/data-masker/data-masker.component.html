@@ -1,0 +1,13 @@
+<span *ngIf="isLoading$ | async" class="material-icons rotating" matTooltip="masking sensitive data">
+    loop
+</span>
+
+<div *ngIf="!(isLoading$ | async)">
+    <div *ngIf="displayText && displayText.length > 0" matTooltip="masked sensitive data" (mouseover)="removeMask()"
+        (mouseout)="applyMask()">
+        <span *ngIf="this.requiredPermissionToViewMaskedData && !userHasPermission(this.requiredPermissionToViewMaskedData)">{{displayText}}</span>
+        <span *ngIf="!this.requiredPermissionToViewMaskedData || (this.requiredPermissionToViewMaskedData && userHasPermission(this.requiredPermissionToViewMaskedData))"><a>{{displayText}}</a></span>
+    </div>
+
+    <div *ngIf="!displayText"><i>N/A</i></div>
+</div>

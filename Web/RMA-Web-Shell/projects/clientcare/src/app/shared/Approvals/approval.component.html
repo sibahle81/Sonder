@@ -1,0 +1,29 @@
+<form (ngSubmit)="generateQuote()" [formGroup]="formData" class="mat-container" novalidate>
+    <h2 mat-dialog-title>Approval</h2>
+    <mat-dialog-content>
+        <div id="ApprovalContent" [innerHTML]="htmlApprovalContent"></div>
+    </mat-dialog-content>
+    <mat-dialog-actions>
+        <section class="example-section">
+            <mat-form-field class="matformfieldcomment">
+                <label>Notes</label>
+                <textarea matInput formControlName="note"
+                          maxlength="2048" matTextareaAutosize matAutosizeMaxRows="5"
+                          matAutosizeMinRows="3" required></textarea>
+                <mat-error *ngIf="formData.get('note').hasError('required')">
+                    A note is <strong>required.</strong>
+                </mat-error>
+            </mat-form-field>
+            <br />
+            <div class="form-group-button mat-form-button matformgroupbutton" *ngIf="!isSubmitting" style="margin-bottom: 39px;">
+                <button type="button" (click)="approve()" [mat-dialog-close]="1" class="button float-button">Approve</button>
+                <button type="button" (click)="decline()" class="button float-button">Decline</button>
+            </div>
+        </section>
+    </mat-dialog-actions>
+</form>
+<div class="form-group row form-submitting" *ngIf="isSubmitting">
+    <span class="saving-text">Saving {{formData.get('name').value}}...</span>
+    <span><img width="64" height="64" src="../../../../Images/preloader.gif" alt="Saving data..." /></span>
+</div>
+

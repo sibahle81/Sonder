@@ -1,0 +1,112 @@
+<h3>Bad Debt Write-Off</h3>
+
+<div *ngIf="isAuthorized; else notAuthorized">
+  <div *ngIf="(isLoading$ | async)">
+    <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+    <label class="mat-label other-label"><i>Loading...please wait</i></label>
+  </div>
+  <form [formGroup]="form" novalidate >
+
+    <div class="div_actions">
+      <div>&nbsp;      
+      </div>
+    <div *ngIf="!(isLoadingInterest$ | async) && !(isLoadingPremiums$ | async)  && !(isLoadingDebtorNetBalance$ | async) && showSubmit" class="form-buttons">
+      <br /><br />
+      <button class="button float-button submit-button" (click)="openConfirmationDialog()">Submit</button>
+      <button type="button" class="button float-button submit-button" (click)="back()">Back</button>
+    </div>
+  </div>
+    <section *ngIf="writeOffTypeId > 0" class="clear-both">
+      <mat-accordion>
+        <mat-expansion-panel [expanded]="panelOpenState">
+          <mat-expansion-panel-header>
+            <mat-panel-title>
+              <h4>Search</h4>
+            </mat-panel-title>
+          </mat-expansion-panel-header>
+          <app-seach-debtor (itemSelected)="onAccountSelected($event)"></app-seach-debtor>
+        </mat-expansion-panel>
+      </mat-accordion>
+      <br />
+    </section>
+
+    <div *ngIf="rolePlayerId > 0 && writeOffTypeId > 0 && transactionsSearched" class="grid-inputs">
+      <h4>Debtor Account</h4><h4>{{debtorSearchResult.finPayeNumber }} : {{debtorSearchResult.displayName }}</h4>
+    </div>
+
+    <div class="field-container">
+      <section [hidden]="rolePlayerId === 0 && writeOffTypeId === 0 && !transactionsSearched">
+        <concurrent-period [showPeriodControl]="showPeriodControl" (periodSelected)="concurrentPeriodSelected($event)" (isValid)="isValidPeriodSelected($event)"
+          [title]="periodTitle"></concurrent-period>
+      </section>
+    </div> 
+      <div *ngIf="rolePlayerId > 0 && writeOffTypeId > 0 && transactionsSearched" class="field-container-right">    
+          <mat-form-field class="mat-form-field">
+            <label class="mat-label other-label">Write-Off Reason</label>
+            <mat-select [(value)]="selectedReasonId" name="writeOffReason" id="writeOffReason"
+              formControlName="writeOffReason" (selectionChange)="writeOffReasonChanged()">
+              <mat-option *ngFor="let writeOffReason of writeOffReasons" [value]="writeOffReason.id">
+                {{formatLookup(writeOffReason.name)}}
+              </mat-option>
+            </mat-select>
+            <mat-error *ngIf="form.get('writeOffReason').hasError('required')">
+              Write-Off Reason is <strong>required</strong>
+            </mat-error>
+          </mat-form-field>       
+      </div> 
+  </form>
+</div>  
+  <div class="clear-both">
+    <div class="errorMessage" *ngIf="searchFailedMessage.length > 0">{{searchFailedMessage}}</div>
+
+    <div *ngIf="(isLoadingPremiums$ | async)">
+      <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+      <label class="mat-label other-label"><i>Loading premiums...please wait</i></label>
+    </div>
+    <div *ngIf="(isLoadingInterest$ | async)">
+      <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+      <label class="mat-label other-label"><i>Loading interest...please wait</i></label>
+    </div>
+    <div *ngIf="(isLoadingDebtorNetBalance$ | async)">
+      <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+      <label class="mat-label other-label"><i>Loading Debtor Net Balance...please wait</i></label>
+    </div>
+    <div *ngIf="!(isLoadingInterest$ | async) && !(isLoadingPremiums$ | async)  && !(isLoadingDebtorNetBalance$ | async) && datasourceTransactionsSummary && datasourceTransactionsSummary.data && datasourceTransactionsSummary.data.length > 0">
+      <br />
+      <mat-card>
+        <p class="labelParagraph">Unallocated Transactions Summary</p>
+        <mat-table #table [dataSource]="datasourceTransactionsSummary">
+          <ng-container matColumnDef="transactionType">
+            <mat-header-cell *matHeaderCellDef>Transaction Types</mat-header-cell>
+            <mat-cell *matCellDef="let row"> {{row.transactionType}} </mat-cell>
+            <mat-footer-cell *matFooterCellDef></mat-footer-cell>
+          </ng-container>
+
+          <ng-container matColumnDef="amount">
+            <mat-header-cell *matHeaderCellDef>Total Amount</mat-header-cell>
+            <mat-cell *matCellDef="let row" class="right-aligned-amounts"> {{row.amount | currency:'':''}} </mat-cell>
+            <mat-footer-cell *matFooterCellDef>Net Debtor balance</mat-footer-cell>
+          </ng-container>
+          <ng-container matColumnDef="balance">
+            <mat-header-cell *matHeaderCellDef>Total Balance</mat-header-cell>
+            <mat-cell *matCellDef="let row" class="right-aligned-amounts"> {{row.balance | currency:'':''}} </mat-cell>
+            <mat-footer-cell *matFooterCellDef class="footerBold right-aligned-amounts">{{
+             debtorNetBalance | currency:'':''  }}</mat-footer-cell>
+          </ng-container>
+          <mat-header-row *matHeaderRowDef="displayedColumnsTransactionsSummary"></mat-header-row>
+          <mat-row *matRowDef="let row; columns: displayedColumnsTransactionsSummary;"></mat-row>
+          <mat-footer-row class="sticky-footer" *matFooterRowDef="displayedColumnsTransactionsSummary"></mat-footer-row>
+        </mat-table>
+        <mat-paginator #paginatorTransactionsSummary [pageSize]="5" [pageSizeOptions]="[5, 10, 25, 100]">
+        </mat-paginator>
+      </mat-card>
+    </div> 
+  </div>
+<ng-template #notAuthorized>
+  <div>
+    <div class="wizard-permissions-error">You do not have sufficient permissions to do Bad Debt Write-Off</div>
+    <div (click)="back()" class="form-buttons submit-button">
+      <button type="button" class="button float-button">Back</button>
+    </div>
+  </div>
+</ng-template>

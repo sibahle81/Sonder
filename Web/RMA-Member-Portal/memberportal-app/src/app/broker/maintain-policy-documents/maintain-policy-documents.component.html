@@ -1,0 +1,35 @@
+<div *ngIf="!hasCreateCasePermission">
+    <h1>Create New Maintain Case</h1>
+    <div class="permissionDiv">
+        You do not have sufficient permissions to add a new case.
+    </div>
+    <div (click)="back()" class="form-buttons submit-button">
+        <button type="button" class="button float-button">Back</button>
+    </div>
+</div>
+<div>
+    <h1 class="Arabic">Create New Maintain Case</h1>
+    <br />
+    <form [formGroup]="form" class="mat-container" novalidate>
+        <section>
+            <mat-form-field class="caseCode">
+                <label class="mat-label other-label">Case Code</label>
+                <input matInput id="code" name="code" formControlName="code">
+            </mat-form-field>
+        </section>
+    </form>
+    <create-case-documents (changeDocument)="checkDocuments()" [showAdditionalDocuments]="false">
+    </create-case-documents>
+    <div class="form-group-button mat-form-button">
+        <div class="form-buttons submit-button btnSubmit">
+            <button (click)="close()" class="button float-button submit-button">Back</button>
+            <button (click)="navigateToWorkflow()" [disabled]="(isLoading$ | async)"
+                class="button float-button submit-button">Submit</button>
+        </div>
+        <br />
+        <div *ngIf="isLoading$ | async">
+            <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+            <label class="mat-label other-label"><i>creating case...please wait</i></label>
+        </div>
+    </div>
+</div>

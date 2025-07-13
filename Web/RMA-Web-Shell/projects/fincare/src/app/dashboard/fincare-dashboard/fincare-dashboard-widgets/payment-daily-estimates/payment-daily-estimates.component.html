@@ -1,0 +1,83 @@
+<div class="EstimatesChart">
+  <mat-expansion-panel [expanded]="true">
+    <section>
+      <form [formGroup]="form" novalidate (keydown.enter)="$event.preventDefault()">
+        <div class="menu-bar">
+            <span class="material-icons">
+                find_in_page
+            </span>
+            Standard filters
+            <span class="material-icons pointer right" (click)="getData()"
+            matTooltip="apply filters" >
+            save
+            </span>
+        </div>
+          <div>
+              <mat-form-field class="mat-form-field inputDate">
+                  <label class="other-label">From Date</label>
+                  <input readonly matInput [max]="form.get('endDate').value" date="true" time="false" formControlName="startDate"
+                      [matDatepicker]="startDate" id="startDate" />
+                  <mat-datepicker-toggle matSuffix [for]="startDate"></mat-datepicker-toggle>
+                  <mat-datepicker touchUi="true" #startDate></mat-datepicker>       
+              </mat-form-field>
+              &nbsp;
+              <mat-form-field class="mat-form-field inputDate m-l">
+                  <label class="other-label">End Date</label>
+                  <input readonly matInput [min] = "form.get('startDate').value" [max]="maxDate" date="true" time="false" formControlName="endDate"
+                      [matDatepicker]="endDate" id="endDate" />
+                  <mat-datepicker-toggle matSuffix [for]="endDate">
+                  </mat-datepicker-toggle>
+                  <mat-datepicker touchUi="true" #endDate></mat-datepicker>
+              </mat-form-field>
+          </div>
+      </form>     
+  </section>
+    <div>
+      <label class="mat-label other-label"  *ngIf="paginator.length === 0 && !(dataSource.loading$ | async)">
+        <h3 class="wizard-font font" >No Pending Payments to Display at the Moment</h3>
+      </label>
+      
+      <span [hidden]="!(dataSource.loading$ | async)">
+        <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+        <span class="grey site-font"><i>Loading Data...please wait</i></span>
+      </span>
+    </div>
+    <div [hidden]="(this.dataSource.rowCount$ | async) === 0" >
+      <mat-table #table [dataSource]="dataSource" matSort id="tblData" (matSortChange)="getData()" class="table table-responsive">
+        <ng-container matColumnDef="date">
+          <mat-header-cell *matHeaderCellDef mat-sort-header> DATE</mat-header-cell>
+          <mat-cell *matCellDef="let row"> {{row.date | date:'yyyy/MM/dd'}} </mat-cell>
+        </ng-container>
+        <ng-container matColumnDef="product">
+          <mat-header-cell *matHeaderCellDef mat-sort-header> PRODUCT </mat-header-cell>
+          <mat-cell *matCellDef="let row"> {{row.product}} </mat-cell>
+        </ng-container>
+        <ng-container matColumnDef="paymentType">
+          <mat-header-cell *matHeaderCellDef mat-sort-header> PAYMENT TYPE </mat-header-cell>
+          <mat-cell *matCellDef="let row"> {{row.paymentType}} </mat-cell>
+        </ng-container>        
+        <ng-container matColumnDef="senderAccountNo">
+          <mat-header-cell *matHeaderCellDef mat-sort-header> ACCOUNT NUMBER </mat-header-cell>
+          <mat-cell *matCellDef="let row"> {{row.senderAccountNo}} </mat-cell>
+        </ng-container>
+        <ng-container matColumnDef="totalAmount">
+          <mat-header-cell *matHeaderCellDef mat-sort-header> TOTAL AMOUNT </mat-header-cell>
+          <mat-cell *matCellDef="let row"> {{row.totalAmount| currency:'R '}} </mat-cell>
+        </ng-container>
+        <ng-container matColumnDef="noOfPayee">
+          <mat-header-cell *matHeaderCellDef mat-sort-header> NO OF PAYEE</mat-header-cell>
+          <mat-cell *matCellDef="let row"> {{row.noOfPayee}} </mat-cell>
+        </ng-container>
+        <ng-container matColumnDef="noOfTransactions">
+          <mat-header-cell *matHeaderCellDef mat-sort-header> NO OF TRANSACTIONS</mat-header-cell>
+          <mat-cell *matCellDef="let row"> {{row.noOfTransactions}} </mat-cell>
+        </ng-container>
+        <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
+        <mat-row *matRowDef="let row; columns: displayedColumns;"></mat-row>
+      </mat-table>
+      <mat-paginator #paginator [pageIndex]="0" [pageSize]="5" [pageSizeOptions]="[5, 10, 25, 100, 500, 1000]"
+        [length]="this.dataSource.rowCount$ | async" (page)="getData()">
+      </mat-paginator>
+    </div>    
+  </mat-expansion-panel>
+</div>

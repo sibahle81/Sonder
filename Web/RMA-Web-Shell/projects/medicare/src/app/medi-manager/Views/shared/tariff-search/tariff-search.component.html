@@ -1,0 +1,62 @@
+<form [formGroup]="form" name="form" novalidate>
+    <div *ngIf="showSearchProgress">
+        <mat-progress-bar mode="indeterminate"
+            [ngClass]="{ 'loading-main-double-menu-progress': doubleMenu, 'loading-main-single-menu-progress': !doubleMenu }">
+        </mat-progress-bar>
+        <p class="site-font grey">Searching for tariff, please wait till tariff details are populated...</p>
+    </div>
+
+    <mat-card class="mat-card-style">
+        <mat-card-content>
+            <mat-form-field class="mat-form-field-right">
+                <div>
+                    <mat-form-field class="mat-form-field">
+                        <label class="mat-label other-label mandatory-field">Search Tariff Code</label>
+                        <input matInput id="itemCode" name="itemCode" formControlName="itemCode" (change)="search()" />
+                        <mat-icon class="search-icon" *ngIf="isInternalUser" (click)="tariffCodeSearch()" matSuffix>search</mat-icon>
+                    </mat-form-field>
+                </div>
+            </mat-form-field>
+
+            <div *ngIf="isValidTariff">
+                <mat-card>
+                    <mat-card-header>
+                        <!--Tariff Code-->
+                        <mat-card-title>{{ tariffCode }}</mat-card-title>
+                        <mat-card-subtitle>
+                            <!--Tariff Description-->
+                            <p>{{ tariffDescription }}</p>
+                        </mat-card-subtitle>
+                    </mat-card-header>
+                    <mat-card-footer>
+                        <!--Default Quantity-->
+                        <mat-label class="mat-label-header"> Default Quantity : </mat-label>
+                        <mat-label class="mat-label-value">{{ defaultQuantity }}</mat-label>
+                        <!--Tariff Amount-->
+                        <mat-label class="mat-label-header"> Tariff Amount : </mat-label>
+                        <mat-label class="mat-label-value">{{ tariffAmount }}</mat-label>
+                        <!--Tariff Type-->
+                        <mat-label class="mat-label-header"> Tariff Type : </mat-label>
+                        <mat-label class="mat-label-value">{{ tariffType }} / {{ practitionerType }}</mat-label>
+                    </mat-card-footer>
+                </mat-card>
+            </div>
+            <div class="tariffError" *ngIf="tariffSearchErrorMessage">
+                {{tariffSearchErrorMessage}}
+            </div>
+        </mat-card-content>
+    </mat-card>
+
+</form>
+
+<div #tariffModal class="tariffcontainer">
+    <div class="tariffcontent">
+        <div *ngIf="isTariffSearch">
+            <app-medical-tariff [showNavigation]="true" [practitionerName]="practitionerName" (onSearchClose)="onTariffSearchClose($event)"  (onTariffSelect)="onTariffSelect($event)"></app-medical-tariff>
+        </div>
+    </div>
+</div>
+
+
+
+

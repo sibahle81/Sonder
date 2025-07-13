@@ -1,0 +1,137 @@
+<div *ngIf="rolePlayerId">
+  <policy-list [rolePlayerId]="rolePlayerId" [filteredPolicyIds]="filteredPolicyIds" [defaultPolicyId]="defaultPolicyId"
+    [isWizard]="isWizard" (policySelectedEmit)="setSelectedPolicy($event)" (isReadyEmit)="setReady($event)"
+    (policiesEmit)="setPolicies($event)"></policy-list>
+
+  <mat-card *ngIf="selectedPolicy && isReady && hasPolicies">
+    <div class="menu-bar"><span class="material-icons">folder</span>&nbsp;<b>{{selectedPolicy.productOption.name}}</b>
+      ({{selectedPolicy.productOption.code}})
+      {{selectedPolicy.policyNumber}}
+
+      <member-compliance *ngIf="(isCoid || isVaps)" class="right" [policyId]="selectedPolicy.policyId"
+        (complianceResultEmit)="setComplianceResult($event)"></member-compliance>
+
+      <span
+        *ngIf="!(isStartingWizard$ | async) && !(isLoading$ | async) && !isWizard && ((maintenanceInProgressChecked$ | async) && (reviewInProgressChecked$ | async)) && (isCoid || isVaps)">
+        <span
+          *ngIf="userHasPermission(requiredStartCancellationWizardPermission) && selectedPolicy.policyStatus == active || selectedPolicy.policyStatus == pendingFirstPremium"
+          matTooltip="cancel policy" class="material-icons pointer right"
+          (click)="openConfirmationDialog(cancel)">event_busy</span>
+        <span
+          *ngIf="userHasPermission(requiredStartReinstateWizardPermission) && (selectedPolicy.policyStatus == cancelled && memberHasActiveRMAMutualAssurancePolicy) || (selectedPolicy.policyStatus == cancelled && isCoid)"
+          matTooltip="reinstate" class="material-icons pointer right"
+          (click)="openConfirmationDialog(reinstate)">event_available</span> 
+        <span
+          *ngIf="userHasPermission(requiredStartMaintainWizardPermission) && selectedPolicy.policyStatus == active || selectedPolicy.policyStatus == pendingFirstPremium"
+          matTooltip="maintain policy" class="material-icons pointer right"
+          (click)="openConfirmationDialog(maintain)">settings</span>
+      </span>
+
+      <span
+        *ngIf="currentUser?.isInternalUser && !(isStartingWizard$ | async) && !(isLoading$ | async) && !isWizard && !(maintenanceInProgressChecked$ | async) && !(reviewInProgressChecked$ | async) && (isCoid || isVaps)"
+        class="material-icons right rotating" matTooltip="checking active maintenance">
+        loop
+      </span>
+    </div>
+
+    <mat-tab-group animationDuration="500ms" [(selectedIndex)]="tabIndex">
+      <mat-tab *ngIf="!isWizard && (isCoid || isVaps)" label="Account">
+        <mat-tab-group animationDuration="500ms" [(selectedIndex)]="accountTabIndex">
+          <mat-tab label="Submissions">
+            <role-player-policy-declaration-search [policy]="selectedPolicy"></role-player-policy-declaration-search>
+          </mat-tab>
+          <mat-tab label="Collections">
+            <role-player-policy-transaction-search
+              [policyId]="selectedPolicy.policyId"></role-player-policy-transaction-search>
+          </mat-tab>
+          <mat-tab *ngIf="isCoid && !isWizard" label="Letter of Good Standing">
+            <mat-tab-group animationDuration="500ms">
+              <mat-tab label="Letters">
+                <letter-of-good-standing [policy]="selectedPolicy"></letter-of-good-standing>
+              </mat-tab>
+              <mat-tab label="Validation">
+                <validate-letter-of-good-standing></validate-letter-of-good-standing>
+              </mat-tab>
+            </mat-tab-group>
+          </mat-tab>
+        </mat-tab-group>
+      </mat-tab>
+
+      <mat-tab label="Information">
+        <policy-details [policy]="selectedPolicy"></policy-details>
+      </mat-tab>
+
+      <mat-tab *ngIf="currentUser?.isInternalUser && !isWizard" label="Status">
+        <policy-status [policyId]="selectedPolicy.policyId"></policy-status>
+      </mat-tab>
+
+      <mat-tab *ngIf="currentUser?.isInternalUser && !isWizard && (isCoid || isVaps)" label="Cover">
+        <policy-covers [policyId]="selectedPolicy.policyId"></policy-covers>
+      </mat-tab>
+
+      <mat-tab *ngIf="!isWizard && isFuneral && selectedPolicy.policyOwner.company" label="Child Policies">
+        <child-policy-list [policyId]="selectedPolicy.policyId"></child-policy-list>
+      </mat-tab>
+
+      <mat-tab *ngIf="!isWizard && currentUser?.isInternalUser && selectedPolicy.paymentMethodId == governmentSalaryDeduction" label="Qlink">
+        <qlink-transactions [itemType]="'Policy'" [itemId]="selectedPolicy.policyId"></qlink-transactions>
+      </mat-tab>
+
+      <mat-tab label="Insured Lives" *ngIf="!isWizard && isFuneral">
+        <policy-insured-lives [policyId]="selectedPolicy.policyId"></policy-insured-lives>
+      </mat-tab>
+
+      <mat-tab label="Beneficiaries" *ngIf="!isWizard && isFuneral">
+        <roleplayer-policy-relation [rolePlayerId]="selectedPolicy.policyOwnerId" [policyId]="selectedPolicy.policyId" [rolePlayerType]="beneficiary"></roleplayer-policy-relation>
+      </mat-tab>
+
+      <mat-tab *ngIf="isFuneral" label="Claim History">
+        <policy-claims-v2 [policyId]="selectedPolicy.policyId"></policy-claims-v2>
+      </mat-tab>
+
+      <mat-tab *ngIf="currentUser?.isInternalUser" label="Notes">
+        <policy-note [policyId]="selectedPolicy.policyId"></policy-note>
+      </mat-tab>
+
+      <mat-tab label="Documents" *ngIf="!isWizard">
+        <document *ngIf="keyName && keyValue" [systemName]="documentSystemName" [keyName]="keyName"
+          [keyValue]="keyValue" [expiryDate]="selectedPolicy.expiryDate">
+        </document>
+      </mat-tab>
+
+      <mat-tab *ngIf="!isWizard && currentUser?.isInternalUser && !disable_coid_vaps_e2e_clientcare"
+        label="Referrals">
+        <referral-view [targetModuleType]="targetModuleType" [referralItemType]="referralItemType"
+          [itemId]="selectedPolicy.policyId" [referralItemTypeReference]="referralItemTypeReference"></referral-view>
+      </mat-tab>
+
+      <mat-tab *ngIf="currentUser?.isInternalUser && userHasPermission(viewAuditPermission)"
+        label="Communication">
+        <email-audit-search [itemType]="'Policy'" [itemId]="selectedPolicy.policyId"
+        [rolePlayerContactOptions]="rolePlayerContactOptions"></email-audit-search>
+      </mat-tab>
+
+      <mat-tab label="Active Workflows ({{activeWizards && activeWizards.length ? activeWizards.length : '0' }})"
+        *ngIf="currentUser?.isInternalUser && (isCoid || isVaps) && !isWizard">
+        <lib-running-wizards [title]="'Active Policy Maintenance Workflows'" [moduleName]="'clientcare'"
+          [managerName]="'policy-manager'" [linkedItemId]="selectedPolicy.policyId"
+          [wizardTypeCSVs]="'rma-rml-policy-maintanance,rma-rml-policy-cancellation,rma-rml-policy-reinstatement'"
+          (activeWizardsEmit)="setActiveWizard($event)">
+        </lib-running-wizards>
+        <br />
+        <div [hidden]="true">
+          <lib-running-wizards [title]="'Active Member Review Workflows'" [moduleName]="'clientcare'"
+            [managerName]="'policy-manager'" [linkedItemId]="selectedPolicy.policyOwnerId"
+            [wizardTypeCSVs]="'declaration-variance'" (hasWizardsEmit)="setActiveReviewWizard($event)">
+          </lib-running-wizards>
+        </div>
+      </mat-tab>
+
+      <mat-tab *ngIf="!isWizard && userHasPermission(viewSlaPermission) && !disable_coid_vaps_e2e_clientcare && !isFuneral"
+        label="SLA">
+        <paged-sla-status-change-audits [slaItemType]="slaItemType"
+          [currentQuery]="selectedPolicy.policyId"></paged-sla-status-change-audits>
+      </mat-tab>
+    </mat-tab-group>
+  </mat-card>
+</div>

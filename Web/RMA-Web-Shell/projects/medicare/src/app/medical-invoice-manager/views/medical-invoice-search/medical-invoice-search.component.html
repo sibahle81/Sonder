@@ -1,0 +1,104 @@
+<app-medical-invoice-menu></app-medical-invoice-menu>
+
+<div class="mat-header">
+    <h1>Search Medical Invoice</h1>
+</div>
+<a mat-flat-button routerLink="/medicare/medical-invoice-list">
+    <mat-icon>arrow_back</mat-icon>
+    Back
+</a>
+<div>
+    <a mat-flat-button (click)="refreshSearch()">
+      <mat-icon>refresh</mat-icon>
+      Refresh Search Page
+    </a>
+  </div>
+
+<mat-card>
+
+    <div class="items-buttons-container">
+        <div class="form-buttons submit-button">
+            <button type="button" class="button float-button" (click)="onMedicalInvoiceSearch(invoiceSearchEnum.SearchFromForm)">Search</button>
+        </div>
+        <div class="form-buttons submit-button">
+            <button type="button" class="button float-button" (click)="onResetForm()">Clear Search</button>
+        </div>
+    </div>
+    <br>
+
+    <div>
+        <form [formGroup]="form" class="mat-container details-form" novalidate>
+
+            <section>
+                <!--invoiceStatus-->
+                <div class="field-container-right">
+                    <mat-form-field>
+                        <label class="mat-label other-label">invoiceStatus</label>
+                        <mat-select (selectionChange)="onChangeinvoiceStatus($event)" formControlName="invoiceStatus"
+                            id="switcheType" name="switcheType">
+                            <mat-option *ngFor="let invoiceStatus of invoiceStatusEnumArray;let i = index"
+                                [value]="invoiceStatusEnum[invoiceStatus]">
+                                {{invoiceStatus}}</mat-option>
+                        </mat-select>
+                    </mat-form-field>
+                </div>
+
+                <!--practiceNumber-->
+                <div class="field-container-right">
+                    <mat-form-field class="mat-form-field">
+                        <label class="mat-label other-label">practiceNumber</label>
+                        <input matInput id="practiceNumber" name="practiceNumber" formControlName="practiceNumber" />
+                    </mat-form-field>
+                </div>
+
+                <!--claimNumber-->
+                <div class="field-container-right">
+                    <mat-form-field class="mat-form-field">
+                        <label class="mat-label other-label">claimNumber</label>
+                        <input matInput id="claimNumber" name="claimNumber" formControlName="claimNumber" />
+                    </mat-form-field>
+                </div>
+
+                <!--serviceDate-->
+                <div class="field-container-right">
+                    <label class="mat-label other-label">serviceDate</label>
+                    <mat-form-field class="mat-form-field">
+                        <input matInput formControlName="serviceDate" id="serviceDate" name="serviceDate"
+                            [matDatepicker]="serviceDate">
+                        <mat-datepicker-toggle matSuffix [for]="serviceDate" [disabled]="false">
+                        </mat-datepicker-toggle>
+                        <mat-datepicker startView="month" touchUi="true" #serviceDate>
+                        </mat-datepicker>
+                    </mat-form-field>
+                </div>
+
+                <!--invoiceDate-->
+                <div class="field-container-right">
+                    <label class="mat-label other-label">invoiceDate</label>
+                    <mat-form-field class="mat-form-field">
+                        <input matInput formControlName="invoiceDate" id="invoiceDate" name="invoiceDate"
+                            [matDatepicker]="invoiceDate">
+                        <mat-datepicker-toggle matSuffix [for]="invoiceDate" [disabled]="false">
+                        </mat-datepicker-toggle>
+                        <mat-datepicker startView="month" touchUi="true" #invoiceDate>
+                        </mat-datepicker>
+                    </mat-form-field>
+                </div>
+
+            </section>
+        </form>
+    </div>
+</mat-card>
+<br>
+
+<div *ngIf="loading$ | async">
+    <mat-progress-bar mode="indeterminate"
+        [ngClass]="{ 'loading-main-double-menu-progress': doubleMenu, 'loading-main-single-menu-progress': !doubleMenu }">
+    </mat-progress-bar>
+    <p class="site-font grey">Loading searched result...</p>
+</div>
+
+<app-medical-invoice-list [medicalInvoiceDetailsListSearchCrateria]="returnedSearchResults" [previousUrl]="currentUrl"
+    [previousSearchParams]="medicalInvoiceSearchCriteria"
+    (onSortPagingSearchedInvoiceTable)="onSortPagingSearchedInvoiceTable($event)">
+</app-medical-invoice-list>

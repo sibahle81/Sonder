@@ -1,0 +1,15 @@
+<div *ngIf="model">
+    <mat-card *ngIf="!model.numberOfInjuredEmployees || model.numberOfInjuredEmployees <= 0">
+        <i>incident details must captured before employees can be added to this event...</i>
+    </mat-card>
+
+    <div *ngIf="model.numberOfInjuredEmployees && model.numberOfInjuredEmployees > 0">
+        <employee-list [event]="model" [isWizard]="isWizard" [isReadOnly]="inApprovalMode" (emitRefresh)="refresh()"></employee-list>
+
+        <employee-list
+            *ngIf="model.personEvents && model.personEvents?.length > 0 && model.personEvents[0].rolePlayer?.person?.personEmployments?.length > 0 && model.eventType != diseaseType"
+            [event]="model" [isWizard]="isWizard" [isReadOnly]="inApprovalMode" [isInjury]="true"
+            [triggerRefresh]="triggerRefresh">
+        </employee-list>
+    </div>
+</div>

@@ -1,0 +1,336 @@
+
+<mat-tab-group [style.display]="isMember ? 'none' : 'block'">
+  <mat-tab label="Client Search">
+    <div *ngIf="isSearchMode">
+      <account-search [title]="'Client Search'" (itemSelected)="onClientSelected($event)"></account-search>
+    </div>
+    
+    <div *ngIf="!isSearchMode">
+      <button type="button" class="button submit-button" (click)="maintain()" style="margin-left: 10px;">Maintain
+        Policy</button>
+      <mat-icon class="backIcon" matTooltip="Back to search" (click)="back()">close</mat-icon>
+      <app-policy-details-widget></app-policy-details-widget>
+    </div>
+  </mat-tab>
+  <mat-tab *ngIf="showCOIDDashBoardsFeatureFlag" label="Policy Dashboard">
+    
+    <mat-card>
+      <label class="mat-label other-label grey"><b>ROE Status</b></label><br />
+      <!--CLASS XIII-->
+      <br />
+      <mat-card>
+        <label class="mat-label other-label"><b>Class XIII</b>
+          <span class="wide">
+            <span class="right">
+              <span *ngIf="!roeStatusClassXIIIExpanded" class="material-icons" matTooltip="Expand"
+                (click)="toggleRoeStatusClassXIIIPanel()">
+                visibility
+              </span>
+              <span *ngIf="roeStatusClassXIIIExpanded" class="material-icons" matTooltip="Shrink"
+                (click)="toggleRoeStatusClassXIIIPanel()">
+                visibility_off
+              </span>
+            </span>
+          </span>
+        </label>
+        <br /><br />
+    
+        <div>
+          <div *ngIf="roeStatusClassXIIIExpanded">
+            <app-active-number-members-class-xiii-dashboard-widget></app-active-number-members-class-xiii-dashboard-widget>
+            <app-amount-invoiced-class-xiii-dashboard-widget></app-amount-invoiced-class-xiii-dashboard-widget>
+            <app-amount-paid-class-XIII-dashboard-widget></app-amount-paid-class-XIII-dashboard-widget>
+            <app-number-of-lives-class-XIII-dashboard-widget></app-number-of-lives-class-XIII-dashboard-widget>
+          </div>
+        </div>
+      </mat-card>
+    
+      <!--CLASS IV-->
+      <br />
+      <mat-card>
+        <label class="mat-label other-label"><b>Class IV</b>
+          <span class="wide">
+            <span class="right">
+              <span *ngIf="!roeStatusClassIVExpanded" class="material-icons" matTooltip="Expand"
+                (click)="toggleRoeStatusClassIVPanel()">
+                visibility
+              </span>
+              <span *ngIf="roeStatusClassIVExpanded" class="material-icons" matTooltip="Shrink"
+                (click)="toggleRoeStatusClassIVPanel()">
+                visibility_off
+              </span>
+            </span>
+          </span>
+        </label>
+        <br /><br />
+    
+        <div>
+          <div *ngIf="roeStatusClassIVExpanded">
+            <app-active-members-dashboard-widget></app-active-members-dashboard-widget>
+            <app-amount-invoiced-dashboard-widget></app-amount-invoiced-dashboard-widget>
+            <app-amount-paid-class-IV-dashboard-widget></app-amount-paid-class-IV-dashboard-widget>
+            <app-number-of-lives-class-IV-dashboard-widget></app-number-of-lives-class-IV-dashboard-widget>
+          </div>
+        </div>
+      </mat-card>
+    
+    </mat-card>
+    <br />
+    <mat-card>
+      <label class="mat-label other-label grey"><b>Non-COID Members Per Product</b></label><br />
+      <br />
+      <mat-card>
+        <label class="mat-label other-label"><b>Class XIII</b>
+          <span class="wide">
+            <span class="right">
+              <span *ngIf="!nonCOIDMembersPerProductClassXIIIExpanded" class="material-icons" matTooltip="Expand"
+                (click)="toggleNonCOIDMembersPerProductClassXIII()">
+                visibility
+              </span>
+              <span *ngIf="nonCOIDMembersPerProductClassXIIIExpanded" class="material-icons" matTooltip="Shrink"
+                (click)="toggleNonCOIDMembersPerProductClassXIII()">
+                visibility_off
+              </span>
+            </span>
+          </span>
+        </label>
+        <br /><br />
+    
+        <div>
+          <div *ngIf="nonCOIDMembersPerProductClassXIIIExpanded">
+            <app-non-coid-metal-members-per-product-dashboard-widget></app-non-coid-metal-members-per-product-dashboard-widget>
+            <app-non-coid-metal-members-per-month-dashboard-widget></app-non-coid-metal-members-per-month-dashboard-widget>
+          </div>
+        </div>
+      </mat-card>
+      <br />
+      <mat-card>
+        <label class="mat-label other-label"><b>Class IV</b>
+          <span class="wide">
+            <span class="right">
+              <span *ngIf="!nonCOIDMembersPerProductClassIVExpanded" class="material-icons" matTooltip="Expand"
+                (click)="toggleNonCOIDMembersPerProductClassIV()">
+                visibility
+              </span>
+              <span *ngIf="nonCOIDMembersPerProductClassIVExpanded" class="material-icons" matTooltip="Shrink"
+                (click)="toggleNonCOIDMembersPerProductClassIV()">
+                visibility_off
+              </span>
+            </span>
+          </span>
+        </label>
+        <br /><br />
+    
+        <div>
+          <div *ngIf="nonCOIDMembersPerProductClassIVExpanded">
+            <app-non-coid-mining-members-per-product-dashboard-widget></app-non-coid-mining-members-per-product-dashboard-widget>
+            <app-non-coid-mining-members-per-month-dashboard-widget></app-non-coid-mining-members-per-month-dashboard-widget>
+          </div>
+        </div>
+      </mat-card>
+    </mat-card>
+    <br />
+    <mat-card>
+      <label class="mat-label other-label grey"><b>New Business COID Policies</b></label><br />
+      <br />
+      <mat-card>
+        <label class="mat-label other-label"><b>Class XIII</b>
+          <span class="wide">
+            <span class="right">
+              <span *ngIf="!newBusinessCOIDPoliciesClassXIIIExpanded" class="material-icons" matTooltip="Expand"
+                (click)="toggleNewBusinessCOIDPoliciesClassXIII()">
+                visibility
+              </span>
+              <span *ngIf="newBusinessCOIDPoliciesClassXIIIExpanded" class="material-icons" matTooltip="Shrink"
+                (click)="toggleNewBusinessCOIDPoliciesClassXIII()">
+                visibility_off
+              </span>
+            </span>
+          </span>
+        </label>
+        <br /><br />
+    
+        <div>
+          <div *ngIf="newBusinessCOIDPoliciesClassXIIIExpanded">
+            <app-new-business-coid-policies-class-XIII-dashboard-widget></app-new-business-coid-policies-class-XIII-dashboard-widget>
+          </div>
+        </div>
+      </mat-card>
+      <br />
+      <mat-card>
+        <label class="mat-label other-label"><b>Class IV</b>
+          <span class="wide">
+            <span class="right">
+              <span *ngIf="!newBusinessCOIDPoliciesClassIVExpanded" class="material-icons" matTooltip="Expand"
+                (click)="toggleNewBusinessCOIDPoliciesClassIV()">
+                visibility
+              </span>
+              <span *ngIf="newBusinessCOIDPoliciesClassIVExpanded" class="material-icons" matTooltip="Shrink"
+                (click)="toggleNewBusinessCOIDPoliciesClassIV()">
+                visibility_off
+              </span>
+            </span>
+          </span>
+        </label>
+        <br /><br />
+    
+        <div>
+          <div *ngIf="newBusinessCOIDPoliciesClassIVExpanded">
+            <app-new-business-coid-policies-class-IV-dashboard-widget></app-new-business-coid-policies-class-IV-dashboard-widget>
+          </div>
+        </div>
+      </mat-card>
+    </mat-card>
+    <br />
+    <mat-card>
+      <label class="mat-label other-label grey"><b>Cancellations & Active Members Per Sub Class</b></label><br />
+      <br />
+      <mat-card>
+        <label class="mat-label other-label"><b>Class XIII</b>
+          <span class="wide">
+            <span class="right">
+              <span *ngIf="!cancellationsAndActiveMembersPerSubclassClassXIIIExpanded" class="material-icons"
+                matTooltip="Expand" (click)="toggleCancellationsAndActiveMembersPerSubclassClassXIII()">
+                visibility
+              </span>
+              <span *ngIf="cancellationsAndActiveMembersPerSubclassClassXIIIExpanded" class="material-icons"
+                matTooltip="Shrink" (click)="toggleCancellationsAndActiveMembersPerSubclassClassXIII()">
+                visibility_off
+              </span>
+            </span>
+          </span>
+        </label>
+        <br /><br />
+    
+        <div>
+          <div *ngIf="cancellationsAndActiveMembersPerSubclassClassXIIIExpanded">
+            <app-members-per-industry-class-XIII-dashboard-widget></app-members-per-industry-class-XIII-dashboard-widget>
+            <app-cancellations-class-XIII-dashboard-widget></app-cancellations-class-XIII-dashboard-widget>
+          </div>
+        </div>
+      </mat-card>
+      <br />
+      <mat-card>
+        <label class="mat-label other-label"><b>Class IV</b>
+          <span class="wide">
+            <span class="right">
+              <span *ngIf="!cancellationsAndActiveMembersPerSubclassClassIVExpanded" class="material-icons"
+                matTooltip="Expand" (click)="toggleCancellationsAndActiveMembersPerSubclassClassIV()">
+                visibility
+              </span>
+              <span *ngIf="cancellationsAndActiveMembersPerSubclassClassIVExpanded" class="material-icons"
+                matTooltip="Shrink" (click)="toggleCancellationsAndActiveMembersPerSubclassClassIV()">
+                visibility_off
+              </span>
+            </span>
+          </span>
+        </label>
+        <br /><br />
+    
+        <div>
+          <div *ngIf="cancellationsAndActiveMembersPerSubclassClassIVExpanded">
+            <label class="mat-label other-label">No dashboards available</label>
+          </div>
+        </div>
+      </mat-card>
+    </mat-card>
+    <br/>
+  </mat-tab>
+  <mat-tab *ngIf="showCOIDDashBoardsFeatureFlag" label="Quotes Dashboard">
+    <mat-card>
+      <mat-card>
+        <label class="mat-label other-label"><b>Quote Status Overview</b>
+          <span class="wide">
+            <span class="right">
+              <span *ngIf="!quoteStatusOverviewExpanded" class="material-icons"
+                matTooltip="Expand" (click)="toggleQuoteStatusOverView()">
+                visibility
+              </span>
+              <span *ngIf="quoteStatusOverviewExpanded" class="material-icons"
+                matTooltip="Shrink" (click)="toggleQuoteStatusOverView()">
+                visibility_off
+              </span>
+            </span>
+          </span>
+        </label>
+        <br /><br />
+        <div>
+          <div *ngIf="quoteStatusOverviewExpanded">
+            <app-quote-status-overview-dashboard-widget></app-quote-status-overview-dashboard-widget>
+          </div>
+        </div>
+      </mat-card>
+      <br /> 
+      <mat-card>
+        <label class="mat-label other-label"><b>Quote Age Analysis Overview</b>
+          <span class="wide">
+            <span class="right">
+              <span *ngIf="!quoteAgeAnalysisOverviewExpanded" class="material-icons"
+                matTooltip="Expand" (click)="toggleQuoteAgeAnalysisOverView()">
+                visibility
+              </span>
+              <span *ngIf="quoteAgeAnalysisOverviewExpanded" class="material-icons"
+                matTooltip="Shrink" (click)="toggleQuoteAgeAnalysisOverView()">
+                visibility_off
+              </span>
+            </span>
+          </span>
+        </label>
+        <br /><br />
+        <div>
+          <div *ngIf="quoteAgeAnalysisOverviewExpanded">
+            <app-quote-age-analysis-overview-dashboard-widget></app-quote-age-analysis-overview-dashboard-widget>
+          </div>
+        </div>
+      </mat-card>
+    </mat-card>
+  </mat-tab>
+
+  <mat-tab *ngIf="showCOIDDashBoardsFeatureFlag" label="Leads Dashboard">
+    <mat-card>
+      <label class="mat-label other-label"><b>Leads Status Overview</b>
+        <span class="wide">
+          <span class="right">
+            <span *ngIf="!leadStatusOverviewExpanded" class="material-icons"
+              matTooltip="Expand" (click)="toggleLeadStatusOverView()">
+              visibility
+            </span>
+            <span *ngIf="leadStatusOverviewExpanded" class="material-icons"
+              matTooltip="Shrink" (click)="toggleLeadStatusOverView()">
+              visibility_off
+            </span>
+          </span>
+        </span>
+      </label>
+      <br /><br />
+      <div>
+        <div *ngIf="leadStatusOverviewExpanded">
+          <app-lead-status-overview-widget></app-lead-status-overview-widget>
+        </div>
+      </div>
+    </mat-card>
+    <mat-card>
+      <label class="mat-label other-label"><b>Leads Age Analysis Overview</b>
+        <span class="wide">
+          <span class="right">
+            <span *ngIf="!leadAgeAnalysisOverviewExpanded" class="material-icons"
+              matTooltip="Expand" (click)="toggleLeadAgeAnalysisOverView()">
+              visibility
+            </span>
+            <span *ngIf="leadAgeAnalysisOverviewExpanded" class="material-icons"
+              matTooltip="Shrink" (click)="toggleLeadAgeAnalysisOverView()">
+              visibility_off
+            </span>
+          </span>
+        </span>
+      </label>
+      <br /><br />
+  
+      <div>
+        <div *ngIf="leadAgeAnalysisOverviewExpanded">
+          <app-lead-age-analysis-overview-widget></app-lead-age-analysis-overview-widget>
+        </div>
+      </div>
+    </mat-card>
+  </mat-tab>
+</mat-tab-group>

@@ -1,0 +1,65 @@
+<mat-card>
+  <mat-card-content>
+    <h1>Overpayment Form</h1>
+    <div>
+      <form [formGroup]="form" *ngIf="form">
+        <div>
+          <section class="top-section">
+            <mat-form-field>
+              <label class="mat-label other-label mandatory-field">Ledger ID</label>
+              <input matInput maxlength="50" formControlName="ledgerId" name="ledgerId" id="ledgerId" DecimalNumber  [readonly]="isReadOnly" />
+              <mat-error *ngIf="form.get('ledgerId').hasError('required') && form.get('ledgerId').touched">
+                Ledger ID is required
+              </mat-error>
+            </mat-form-field>
+
+            <mat-form-field class="mat-form-field-right">
+              <label class="mat-label other-label mandatory-field">Deceased Name</label>
+              <input matInput maxlength="50" formControlName="deceasedNames" name="deceasedNames" id="deceasedNames" DecimalNumber  [readonly]="isReadOnly" />
+              <mat-error *ngIf="form.get('deceasedNames').hasError('required') && form.get('deceasedNames').touched">
+                Deceased Name is required
+              </mat-error>
+            </mat-form-field>
+          </section>
+
+          <section>
+            <mat-form-field>
+              <label class="mat-label other-label mandatory-field">Date of Death</label>
+              <input matInput maxlength="50" formControlName="dateOfDeath" name="dateOfDeath" id="dateOfDeath" DecimalNumber  [readonly]="isReadOnly" />
+              <mat-error *ngIf="form.get('dateOfDeath').hasError('required') && form.get('dateOfDeath').touched">
+                Date of Death is required
+              </mat-error>
+            </mat-form-field>
+
+            <mat-form-field class="mat-form-field-right">
+              <label class="mat-label other-label mandatory-field">Last Payment Date</label>
+              <input matInput maxlength="50" formControlName="lastPaymentDate" name="lastPaymentDate" id="lastPaymentDate" DecimalNumber  [readonly]="isReadOnly" />
+              <mat-error *ngIf="form.get('lastPaymentDate').hasError('required') && form.get('lastPaymentDate').touched">
+                Last Payment Date is required
+              </mat-error>
+            </mat-form-field>
+          </section>
+
+          <section>
+            <mat-form-field>
+              <label class="mat-label other-label mandatory-field">Normal Monthly Pension</label>
+              <input matInput maxlength="50" formControlName="normalMonthlyPension" name="normalMonthlyPension" id="normalMonthlyPension" DecimalNumber  [readonly]="isReadOnly" />
+              <mat-error *ngIf="form.get('normalMonthlyPension').hasError('required') && form.get('normalMonthlyPension').touched">
+                Normal Monthly Pension is required
+              </mat-error>
+            </mat-form-field>
+
+            <mat-form-field class="mat-form-field-right">
+              <label class="mat-label other-label mandatory-field">Overpayment Amount</label>
+              <input matInput maxlength="50" formControlName="overpaymentAmount" name="overpaymentAmount" id="overpaymentAmount" DecimalNumber  [readonly]="isReadOnly" />
+              <mat-error *ngIf="form.get('overpaymentAmount').hasError('required') && form.get('overpaymentAmount').touched">
+                Overpayment Amount is required
+              </mat-error>
+            </mat-form-field>
+          </section>
+        </div>
+
+      </form>
+    </div>
+  </mat-card-content>
+</mat-card>

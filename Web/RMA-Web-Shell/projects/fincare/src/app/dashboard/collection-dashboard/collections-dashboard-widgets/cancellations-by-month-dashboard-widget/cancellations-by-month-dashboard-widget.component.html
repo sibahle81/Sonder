@@ -1,0 +1,21 @@
+<br />
+<mat-card>
+  <label class="mat-label other-label"><b>Total Monthly Cancellations</b></label>
+  <br/><br/>
+  <div *ngIf="isLoading$ | async">
+    <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+    <label class="mat-label other-label"><i>loading...please wait</i></label>
+  </div>
+
+  <div *ngIf="!(isLoading$ | async)">
+    <div *ngIf="cancellationSummary.length <= 0">
+      <label class="mat-label other-label">No cancellation data available</label>
+    </div>
+
+    <div *ngIf="cancellationSummary.length > 0">
+      <canvas baseChart [legend]="false" [data]="data" [labels]="lables" [colors]="chartColors" [chartType]="'line'"
+        [options]="options">
+      </canvas>
+    </div>
+  </div>
+</mat-card>

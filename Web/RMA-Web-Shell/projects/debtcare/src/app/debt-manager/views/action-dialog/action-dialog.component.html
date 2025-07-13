@@ -1,0 +1,66 @@
+<div *ngIf="data.action == 'delete_signDoc'" class="delete-action-div">
+    <h2>Delete</h2>
+        <p class="ack-que">Do you want delete?</p>
+        <div class="action-buttons-div">
+          <span class="select-action option-yes" (click)="deleteDoc()"> <mat-icon
+             class="action-icon">check</mat-icon> <span class="option">YES CONFIRM</span> </span>
+          <span class="select-action option-no" (click)="closeDialog('closeDelete')"> <mat-icon
+            class="action-icon">close</mat-icon> <span class="option">NO THANKS</span> </span>
+        </div>
+</div>
+
+<div *ngIf="data.action == 'email_confirmation'" class="action">
+
+    <div [ngStyle]="isSpinner ? { 'opacity': '0.5', 'pointer-events': 'none' } : 
+    {'opacity': '1', 'pointer-events': 'auto' }">
+        <h2>Confirmation</h2>
+        <p>Do you want to add the following email address as alternate email?</p>
+
+        <p>
+            dharmesh@gmail.com
+        </p>
+        <div class="center-align">
+
+            <div class="action-div">
+                <span class="select-action action-btns" (click)="onSendEmail()">
+                    <mat-icon class="btn-style">check</mat-icon>
+                    <span>YES PLEASE</span>
+                </span>
+                <span class="select-action action-btns" (click)="closeDialog('closeEmail')">
+                    <mat-icon class="mat-close-icon  btn-style">close</mat-icon>
+                    <span>NO THANKS</span>
+                </span>
+            </div>
+
+        </div>
+    </div>
+
+    <div [hidden]="!isSpinner" class="spinner-view">
+        <mat-spinner *ngIf="isSpinner"></mat-spinner>
+    </div>
+
+</div>
+
+<div *ngIf="data.action == 'show_message'" class="action">
+
+    <div>
+        <p>
+            {{data.dialogData.message}}
+        </p>
+        <div class="center-align text-right">
+
+            <div class="action-div">
+                <span class="select-action action-btns" (click)="closeDialog('closeDebtcareJob')">
+                    <mat-icon class="btn-style">close</mat-icon>
+                    <span>CLOSE</span>
+                </span>
+            </div>
+
+        </div>
+    </div>
+
+    <div [hidden]="!isSpinner" class="spinner-view">
+        <mat-spinner *ngIf="isSpinner"></mat-spinner>
+    </div>
+
+</div>

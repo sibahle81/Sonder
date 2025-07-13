@@ -1,0 +1,61 @@
+<div class="menu-bar">
+  <span class="material-icons">
+    phone
+  </span>
+  User Contact Details
+  <span *ngIf="userContact && userContact.userContactId > 0 && hasAuditPermission"
+    (click)="openAuditDialog(userContact)" class="material-icons pointer right" matTooltip="view audit details">
+    fingerprint
+  </span>
+
+  <span (click)="close()" class="material-icons pointer right">cancel</span>
+
+  <span *ngIf="userContact && userContact.userContactId > 0 && isReadOnly"
+    (click)="toggleReadOnly()" class="material-icons pointer right pulse" matTooltip="edit">
+    settings
+  </span>
+
+  <span *ngIf="(form.valid && !form.pristine)" class="mat-label other-label" (click)="save()"><span
+      class="material-icons pointer right pulse">save</span></span>
+</div>
+
+<mat-card>
+  <form [formGroup]="form" class="mat-container details-form" novalidate>
+    <section>
+      <form [formGroup]="form" class="mat-container details-form" novalidate>
+        <section>
+          <mat-form-field class="mat-form-field">
+            <label class="mat-label other-label">Email</label>
+            <input matInput formControlName="email" id="email">
+            <mat-error *ngIf="form.get('email').hasError('required')">
+              Email is <strong>required</strong>
+            </mat-error>
+          </mat-form-field>
+          <mat-form-field class="mat-form-field-right">
+            <label class="mat-label other-label">Telephone</label>
+            <input matInput formControlName="telephoneNo" id="telephoneNo" maxlength="10" NumberOnly>
+            <mat-error *ngIf="form.get('telephoneNo').hasError('required')">
+              Telephone Number is <strong>required</strong>
+            </mat-error>
+            <mat-error *ngIf="form.get('telephoneNo').hasError('minlength')">
+              Telephone Number must be at least <strong>10 digits</strong>
+            </mat-error>
+          </mat-form-field>
+        </section>
+
+        <section>
+          <mat-form-field class="mat-form-field">
+            <label class="mat-label other-label">Mobile</label>
+            <input matInput formControlName="cellPhoneNo" id="cellPhoneNo" maxlength="10" NumberOnly>
+            <mat-error *ngIf="form.get('cellPhoneNo').hasError('required')">
+              Mobile Number is <strong>required</strong>
+            </mat-error>
+            <mat-error *ngIf="form.get('cellPhoneNo').hasError('minlength')">
+              Mobile Number must be at least <strong>10 digits</strong>
+            </mat-error>
+          </mat-form-field>
+        </section>
+      </form>
+    </section>
+  </form>
+</mat-card>

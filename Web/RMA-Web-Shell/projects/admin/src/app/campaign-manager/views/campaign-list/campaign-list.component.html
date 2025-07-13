@@ -1,0 +1,87 @@
+﻿<mat-card>
+    <mat-card-header>
+        <mat-card-title class="wizard-font card-title grey">
+            <h1 style="padding: 0;">My {{titlePlural}}</h1>
+        </mat-card-title>
+    </mat-card-header>
+    <mat-card-content>
+        <div [hidden]="!isLoading">
+            <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+        </div>
+        <div [hidden]="confirmAction">
+            <div [hidden]="dataSource.data.length === 0 || isLoading">
+                <div class="mat-header">
+                    <div class="search-container search-container-right">
+                        <input type="text" name="search" placeholder="search {{titlePlural | lowercase}}..." #filter (keyup)="filterData($event)">
+                    </div>
+                    <div class="new-button new-button-top" (click)="newItem()" [hidden]="hideAddButton">
+                        <button class="button">Add new {{title | lowercase}}</button>
+                    </div>
+                </div>
+                <div [hidden]="dataSource.filteredData.length === 0">
+                    <mat-table #table [dataSource]="dataSource" matSort>
+                        <!--All standard columns-->
+                        <ng-container *ngFor="let column of columns" [matColumnDef]="column.columnDefinition">
+                            <mat-header-cell mat-sort-header *matHeaderCellDef class="mat-header-cell">{{ column.header }}</mat-header-cell>
+                            <mat-cell *matCellDef="let row" class="mat-cell">{{ column.cell(row) }}</mat-cell>
+                        </ng-container>
+                        <!-- Actions -->
+                        <ng-container *ngIf="!hideActionsLink" matColumnDef="actions">
+                            <mat-header-cell *matHeaderCellDef>Actions</mat-header-cell>
+                            <mat-cell *matCellDef="let row">
+                                <span *ngIf="canEdit"><a role="button" class="link-edit" (click)="onSelect(row)">View / Edit</a></span>
+                                <span *ngIf="!canEdit"><a role="button" class="link-edit" (click)="onSelect(row)">View</a></span>
+                                <span *ngIf="canAdd">&nbsp;|&nbsp;<a role="button" class="link-edit" (click)="confirmCopyCampaign(row)">Copy</a></span>
+                                <span *ngIf="canRemove">&nbsp;|&nbsp;<a role="button" class="link-edit delete-link" (click)="confirmRemoveCampaign(row)">Remove</a></span>
+                            </mat-cell>
+                        </ng-container>
+                        <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
+                        <mat-row *matRowDef="let row; columns: displayedColumns;"></mat-row>
+                    </mat-table>
+                    <mat-paginator #paginator
+                                   [length]="dataSource.data.length"
+                                   [pageIndex]="0"
+                                   [pageSize]="5"
+                                   [pageSizeOptions]="[5, 10, 25, 100]">
+                    </mat-paginator>
+                </div>
+            </div>
+            <div [hidden]="dataSource.data.length > 0 || isLoading" style="margin-left: 20px;">
+                <p class="grey">You are not the owner of any {{titlePlural | lowercase}}.</p>
+            </div>
+            <div [hidden]="dataSource.filteredData.length > 0 || dataSource.data.length === 0" class="no-search-results-add-button">
+                <div class="site-font grey">
+                    <p class="grey">
+                        Your search - <strong>{{filter.value}}</strong> - did not match any {{titlePlural | lowercase}}.
+                    </p>
+                    <span>Suggestions: </span>
+                    <ul>
+                        <li>Make sure that all words are spelled correctly.</li>
+                        <li>Try different keywords.</li>
+                        <li>Try more general keywords.</li>
+                        <li>Try fewer keywords.</li>
+                    </ul>
+                </div>
+                <div class="new-button" (click)="clearFilter()">
+                    <button class="button">Clear search</button>
+                </div>
+            </div>
+        </div>
+        <div *ngIf="isCopying">
+            <h1>Copy campaign confirmation</h1>
+            <p class="grey site-font">Are you sure you want to create a copy of {{ campaign.name }}?</p>
+            <div class="form-group-buttons">
+                <button (click)="copyCampaign()" class="button submit-button">Yes, copy campaign</button>
+                <button (click)="cancelCampaignAction()" class="button submit-button">No, don't copy</button>
+            </div>
+        </div>
+        <div *ngIf="isDeleting">
+            <h1>Remove campaign confirmation</h1>
+            <p class="grey site-font">Are you sure you want to remove {{ campaign.name }}?</p>
+            <div class="form-group-buttons">
+                <button (click)="removeCampaign()" class="button submit-button">Yes, remove campaign</button>
+                <button (click)="cancelCampaignAction()" class="button submit-button">No, don't remove</button>
+            </div>
+        </div>
+    </mat-card-content>
+</mat-card>

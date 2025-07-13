@@ -1,0 +1,230 @@
+<mat-card-header>
+    <mat-card-title class="wizard-font card-title grey">
+      <h3>Inter Policy Debtor Transfers</h3>
+    </mat-card-title>
+  </mat-card-header>
+  <mat-expansion-panel [expanded]="true">
+     <mat-expansion-panel-header>
+            <mat-panel-title>
+              <h4>Debtor Account Search</h4>
+            </mat-panel-title>
+          </mat-expansion-panel-header>
+      <account-search (itemSelected)="onDedtorSelected($event)"></account-search>
+  </mat-expansion-panel>
+  
+  <p *ngIf="isLoadingDebtorPolicies$ | async">
+    <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+    <label class="mat-label other-label"><i>loading debtor policies...please wait</i></label>
+  </p>
+  <div *ngIf="debtorPolicies !== null && debtorPolicies.length > 0">
+    <form [formGroup]="form" class="mat-container details-form" novalidate >  
+        <section>
+               <div class="flex-parent-element">
+                  <div class="flex-child-element">
+                    <table class="altRowTable">
+                      <tr>
+                        <td><b> Employer </b></td>
+                        <td><b>{{selectedDebtor.displayName}}, {{selectedDebtor.finPayeNumber}}</b></td>
+                      </tr>
+                    </table>
+                  </div>
+            </div>
+        </section>
+        <br />
+        <section>
+            <mat-form-field>
+              <label class="mat-label other-label mandatory-field">From Policy Debtor Number</label>
+              <mat-select name="fromPolicyDebtorNumber" id="fromPolicyDebtorNumber"  formControlName="fromPolicyDebtorNumber">
+                <mat-option *ngFor="let item of debtorPolicies" [value]="item.policyId">
+                  {{ item.policyNumber}}
+                </mat-option>
+              </mat-select>
+              <mat-error *ngIf="form.get('fromPolicyDebtorNumber').hasError('required')">
+                Please select a policy debtor account to transfer payment to
+              </mat-error>
+            </mat-form-field>
+          </section>
+        <br />
+        <section>
+    
+            <mat-form-field  class="date-picker-field date-picker-container-css">
+                <label class="mat-label other-label mandatory-field">From Billing Month</label>
+                <input matInput [matDatepicker]="fromPicker" formControlName="fromBillingMonth" name="fromBillingMonth" id="fromBillingMonth"/>
+                <mat-datepicker-toggle matSuffix [for]="fromPicker" class="date-picker-toggle-css"></mat-datepicker-toggle>
+                <mat-datepicker #fromPicker 
+                startView="year" 
+                [startAt]="startDate" 
+               
+                panelClass="example-month-picker">
+    
+                </mat-datepicker>
+                <mat-error *ngIf="form.get('fromBillingMonth').hasError('required')">
+                    Please select billing month to transfer payment from
+                  </mat-error>
+              </mat-form-field>
+    
+          </section>
+          <br/>
+         
+           <div *ngIf="currentPolicyBilling !== null">
+          <section>
+  <div class="flex-parent-element">
+        <div class="flex-child-element">
+          <table class="altRowTable">
+            <tr>
+              <td><b>Policy Number </b></td>
+              <td><b> Available Balance</b></td>
+              <td><b>Billing Month </b></td>
+            </tr>
+            <tr>
+              <td>{{currentPolicyBilling.policyNumber}}</td>
+              <td>{{currentPolicyBilling.balance | currency: 'R'}}</td>
+              <td>{{currentPolicyBilling.billingMonth | date:'MMMM yyyy'}}</td>
+            </tr>
+          
+           
+          </table>
+        </div>
+  </div>
+  </section>
+           <br/>
+             <section>
+
+         
+        <div [hidden]="transferableTransactions?.length == 0">
+          <section>
+ <table mat-table [dataSource]="transferableTransactions" class="mat-elevation-z8" >
+                <ng-container matColumnDef="createdDate">
+                  <th mat-header-cell *matHeaderCellDef> Created Date </th>
+                  <td mat-cell *matCellDef="let element"> {{element.createdDate| date:'yyyy-MM-dd HH:mm:ss'}} </td>
+                </ng-container>
+    
+                <ng-container matColumnDef="createdBy">
+                    <th mat-header-cell *matHeaderCellDef> Created By </th>
+                    <td mat-cell *matCellDef="let element"> {{element.createdBy}} </td>
+                  </ng-container>
+                
+              
+                <!-- Name Column -->
+                <ng-container matColumnDef="amount">
+                  <th mat-header-cell *matHeaderCellDef> Amount </th>
+                  <td mat-cell *matCellDef="let element"> {{element.amount | currency:'R'}} </td>
+                </ng-container>
+    
+                <ng-container matColumnDef="transactionType">
+                    <th mat-header-cell *matHeaderCellDef> Transaction Type </th>
+                    <td mat-cell *matCellDef="let element" [ngClass]="element.transactionTypeLinkId === 1 ? 'debit' : 'credit'"> {{element.transactionTypeLinkId === 1 ? 'Debit' : 'Credit'  }} </td>
+                  </ng-container>
+    
+                  <ng-container matColumnDef="reason">
+                    <th mat-header-cell *matHeaderCellDef> Transaction Reason </th>
+                    <td mat-cell *matCellDef="let element" > {{mapBillingAllocationType(element.billingAllocationType)}} </td>
+                  </ng-container>
+                    <ng-container matColumnDef="select">
+                    <th mat-header-cell  *matHeaderCellDef></th>
+                    <td mat-cell *matCellDef="let element;let i = index">
+                        <mat-checkbox
+                             [formControl]="getControl(i,'isSelected')"
+                             (change) ="checked($event,i)"
+                      ></mat-checkbox>
+                    </td>
+                  </ng-container>
+              
+                <!-- Weight Column -->
+           
+              
+                <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+                <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+              </table>
+          </section>
+           
+
+ <section>
+   <mat-form-field class="mat-form-field">
+              <label class="mat-label other-label">Selected Transaction Balance</label>
+              <input matInput formControlName="fromTransaction" name="fromTransaction" id="fromTransaction"   type="number"/>
+            <mat-error *ngIf="form.get('fromTransaction').hasError('required')">
+              Transaction to transfer from is required.
+            </mat-error>
+            </mat-form-field>
+ </section>
+           
+
+        </div>
+        </section>
+        <br />  
+       
+        <section>
+          <mat-form-field class="mat-form-field">
+            <label class="mat-label other-label mandatory-field">Transfer Amount</label>
+            <input matInput formControlName="transferAmount" name="transferAmount" id="transferAmount" />
+            <mat-error *ngIf="form.get('transferAmount').hasError('required')">
+              Transfer amount is <strong>required</strong>
+            </mat-error>
+          </mat-form-field>
+        </section>
+        <br />
+        <section>
+            <mat-form-field>
+              <label class="mat-label other-label mandatory-field">To Policy Debtor Number</label>
+              <mat-select name="toPolicyDebtorNumber" id="toPolicyDebtorNumber" formControlName="toPolicyDebtorNumber"> 
+                <mat-option *ngFor="let item of debtorPolicies" [value]="item.policyId">
+                  {{ item.policyNumber}}
+                </mat-option>
+              </mat-select>
+              <mat-error *ngIf="form.get('toPolicyDebtorNumber').hasError('required')">
+                Please select a policy debtor account to transfer payment to
+              </mat-error>
+            </mat-form-field>
+          </section>
+          <br/>
+          <section>
+            <mat-form-field  class="date-picker-field date-picker-container-css">
+                <label class="mat-label other-label mandatory-field">To Billing Month</label>
+                <input matInput [matDatepicker]="toPicker" formControlName="toBillingMonth" name="toBillingMonth" id="toBillingMonth"/>
+                <mat-datepicker-toggle matSuffix [for]="toPicker" class="date-picker-toggle-css"></mat-datepicker-toggle>
+                <mat-datepicker #toPicker 
+                startView="year" 
+                [startAt]="startDate" 
+               
+                panelClass="example-month-picker">
+    
+                </mat-datepicker>
+                <mat-error *ngIf="form.get('toBillingMonth').hasError('required')">
+                    Please select billing month to transfer payment to.
+                  </mat-error>
+              </mat-form-field>
+          </section>
+          <br />  
+       
+          <section>
+            <mat-form-field class="mat-form-field">
+              <label class="mat-label other-label">Notes</label>
+              <input matInput formControlName="notes" name="notes" id="notes" />
+             
+            </mat-form-field>
+          </section>
+          <br />
+          <section>
+          <document-uploader [documentSet]="documentSet" [systemName]="documentSystemName" [keyName]="'RolePlayerId'"
+          [keyValue]="selectedDebtor.rolePlayerId" 
+          (documentUploadingEmit)="documentUploading($event)"
+          >
+        </document-uploader>  
+              </section>
+              <br />
+              <section>
+              <div class="form-buttons submit-button">
+                <button
+                  class="button submit-button margin_top" (click)="onSubmitClicked()"  [diabled]="!form.valid">Submit</button>
+              </div>
+            </section>
+           </div>
+      
+    </form>
+  </div>
+  <p *ngIf="isProcessingPaymentTransfer$ | async">
+    <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+    <label class="mat-label other-label"><i>Processing policy payment transfer ...please wait</i></label>
+  </p>
+ 

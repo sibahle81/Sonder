@@ -1,0 +1,71 @@
+<mat-table #table *ngIf="compensationDataSource"
+  [dataSource]="compensationDataSource" matSort>
+
+  <ng-container matColumnDef="beneficiaryTypeDescription">
+    <mat-header-cell *matHeaderCellDef> Beneficiary Type </mat-header-cell>
+    <mat-cell *matCellDef="let row"> {{row.beneficiaryTypeDescription}} </mat-cell>
+  </ng-container>
+
+  <ng-container matColumnDef="beneficiaryNameAndSurname">
+    <mat-header-cell *matHeaderCellDef> Name </mat-header-cell>
+    <mat-cell *matCellDef="let row"> {{row.beneficiaryNameAndSurname}} </mat-cell>
+  </ng-container>
+
+
+  <ng-container matColumnDef="dateOfBirth">
+    <mat-header-cell *matHeaderCellDef> Date of Birth </mat-header-cell>
+    <mat-cell *matCellDef="let row">
+      <ng-container *ngIf="row.dateOfBirth !== '0001-01-01T00:00:00'">{{row.dateOfBirth | date:'yyyy/MM/dd'}}</ng-container>
+    </mat-cell>
+  </ng-container>
+
+  <ng-container matColumnDef="age">
+    <mat-header-cell *matHeaderCellDef> Age </mat-header-cell>
+    <mat-cell *matCellDef="let row"> {{row.age}}
+    </mat-cell>
+  </ng-container>
+
+  <ng-container matColumnDef="productCode">
+    <mat-header-cell *matHeaderCellDef> Product </mat-header-cell>
+    <mat-cell *matCellDef="let row"> {{row.productCode}}
+    </mat-cell>
+  </ng-container>
+
+  <ng-container matColumnDef="benefit">
+    <mat-header-cell *matHeaderCellDef> Benefit </mat-header-cell>
+    <mat-cell *matCellDef="let row"> {{row.benefitCode}}
+    </mat-cell>
+  </ng-container>
+
+  <ng-container matColumnDef="av">
+    <mat-header-cell *matHeaderCellDef> AV </mat-header-cell>
+    <mat-cell *matCellDef="let row"> {{row.av}}
+    </mat-cell>
+  </ng-container>
+
+  <ng-container matColumnDef="cv">
+    <mat-header-cell *matHeaderCellDef> CV </mat-header-cell>
+    <mat-cell *matCellDef="let row"> {{row.cv | currency : 'R '}}
+    </mat-cell>
+  </ng-container>
+
+  <ng-container>
+    <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
+  </ng-container>
+  <mat-row *matRowDef="let row; columns: displayedColumns"></mat-row>
+</mat-table>
+
+<table class="altRowTable" style="width:50%;">
+  <tr>
+      <td><b>Children Capitalized Value:</b> {{response.childrenCv | currency: 'R'}}</td>
+  </tr>
+  <tr>
+    <td><b>Widow Capitalized Value:</b> {{response.widowCv | currency: 'R'}}</td>
+  </tr>
+  <tr>
+    <td><b>Pensioner Capitalized Value:</b> {{response.pensionerCv | currency: 'R'}}</td>
+  </tr>
+  <tr>
+    <td><b>CV:</b> {{response.cvTotal | currency: 'R'}}</td>
+  </tr>
+</table>

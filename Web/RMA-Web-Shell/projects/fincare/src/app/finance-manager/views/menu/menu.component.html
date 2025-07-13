@@ -1,0 +1,18 @@
+<div class="content">
+  <nav active-menu>
+            <button mat-button [matMenuTriggerFor]="menu2">Charts</button>
+            <mat-menu #menu2="matMenu" [overlapTrigger]="false">
+                <button mat-menu-item [routerLink]="['manage-charts']">Manage Charts</button>
+            </mat-menu>
+            <button mat-button [matMenuTriggerFor]="menu3">GL Posting</button>
+            <mat-menu #menu3="matMenu" [overlapTrigger]="false">
+                <button mat-menu-item [routerLink]="['ability-posting-list']">Ability Posting</button>
+                <button mat-menu-item [routerLink]="['recovery-posting-list']">Claim Recovery Posting</button>
+            </mat-menu>
+            
+
+        </nav>
+    </div>
+    <div [hidden]="loadingMessage != null || error != null" class="container-padding">
+        <router-outlet></router-outlet>
+    </div>

@@ -1,0 +1,89 @@
+<form [formGroup]="form" name="form" class="mat-container details-form" novalidate>
+    <div *ngIf="isLoadingCategories">
+        <mat-progress-bar mode="indeterminate" [ngClass]="{ 'loading-main-double-menu-progress': doubleMenu, 'loading-main-single-menu-progress': !doubleMenu }">
+        </mat-progress-bar>
+        <p class="site-font grey">Loading categories...</p>
+    </div>
+
+    <section>
+        <div class="field-container">
+            <div><label class="mat-label other-label mandatory-field">Is Use Of Glasses Necessary</label></div>
+            <mat-select formControlName="glassesNecessary" id="glassesNecessary" name="glassesNecessary">
+                <mat-option value="Yes">Yes</mat-option>
+                <mat-option value="No">No</mat-option>
+            </mat-select>
+        </div>
+        <div class="field-container-right">
+            <div><label class="mat-label other-label">Reason Glasses Not Prescribed</label></div>
+            <mat-form-field>
+                <textarea maxlength="1000" formControlName="reasonGlasses" id="reasonGlasses" name="reasonGlasses"
+                    matInput placeholder="Reason of Glasses Description..."></textarea>
+            </mat-form-field>
+        </div>
+    </section>
+
+    <section>
+        <div class="field-container">
+            <div><label class="mat-label other-label mandatory-field">Were Any Operations Performed</label></div>
+            <mat-select formControlName="anyOperationsPerformed" id="anyOperationsPerformed" name="anyOperationsPerformed">
+                <mat-option value="Yes">Yes</mat-option>
+                <mat-option value="No">No</mat-option>
+            </mat-select>
+        </div>
+        <div class="field-container-right">
+            <div><label class="mat-label other-label">Fit For Normal Work Since</label></div>
+            <mat-form-field>
+                <input matInput formControlName="fitForNormalWorkSince" [matDatepicker]="FitForNormalWorkSince" id="fitForNormalWorkSince" name="fitForNormalWorkSince">
+                <mat-datepicker-toggle matSuffix [for]="FitForNormalWorkSince" [disabled]="true"></mat-datepicker-toggle>
+                <mat-datepicker touchUi="true" #FitForNormalWorkSince></mat-datepicker>
+            </mat-form-field>
+        </div>
+    </section>
+
+    <section>
+        <div class="field-container">
+            <div><label class="mat-label other-label">Date Can Resume Normal Work</label></div>
+            <mat-form-field>
+                <input matInput formControlName="resumeNormalWork" [matDatepicker]="ResumeNormalWork" id="resumeNormalWork" name="resumeNormalWork">
+                <mat-datepicker-toggle matSuffix [for]="ResumeNormalWork" [disabled]="true"></mat-datepicker-toggle>
+                <mat-datepicker touchUi="true" #ResumeNormalWork></mat-datepicker>
+            </mat-form-field>
+        </div>
+        <div class="field-container-right">
+            <div><label class="mat-label other-label mandatory-field">Loss Of Field Of Vision</label></div>
+            <mat-select formControlName="lossFieldVision" id="lossFieldVision" name="lossFieldVision">
+                <mat-option value="Yes">Yes</mat-option>
+                <mat-option value="No">No</mat-option>
+            </mat-select>
+        </div>
+    </section>
+
+    <section>
+        <div class="field-container">
+            <div><label class="mat-label other-label">Percentage Loss FOV RightEye</label></div>
+            <mat-form-field>
+                <input matInput formControlName="percentageLossFOVRightEye" id="percentageLossFOVRightEye" name="percentageLossFOVRightEye">
+            </mat-form-field>
+        </div>
+        <div class="field-container-right">
+            <div><label class="mat-label other-label">Percentage Loss FOV LeftEye</label></div>
+            <mat-form-field>
+                <input matInput formControlName="percentageLossFOVLeftEye" id="percentageLossFOVLeftEye" name="percentageLossFOVLeftEye">
+            </mat-form-field>
+        </div>
+    </section>
+   
+    <section>
+        <div class="field-container">
+            <div><label class="mat-label other-label mandatory-field">Loss Of Motility</label></div>
+            <mat-select formControlName="lossOfMotility" id="lossOfMotility" name="lossOfMotility">
+                <mat-option value="Yes">Yes</mat-option>
+                <mat-option value="No">No</mat-option>
+            </mat-select>
+        </div>
+        <div class="field-container-right">
+           
+        </div>
+    </section>
+    
+</form>

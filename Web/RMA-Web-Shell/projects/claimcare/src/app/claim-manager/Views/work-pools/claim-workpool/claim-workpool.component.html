@@ -1,0 +1,255 @@
+<div [hidden]="!(dataSource.loading$ | async) || isCadPool || isCmcPool || isInvestigationPool || isEarningsAssessorPool">
+    <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+    <span class="site-font grey" style="margin-top: 15px;"><i>Loading WorkPools...</i></span>
+</div>
+
+<div [hidden]="dataSource.loading$ | async" >
+    <mat-card style=" margin: 15px 30px 15px 30px">
+        <div class="menu-bar">
+            <span class="material-icons">
+                format_list_numbered_rtl
+            </span>&nbsp;Claim Work Pool
+        </div>
+
+        <form [formGroup]="form" class="mat-container" style="display:contents;" novalidate>
+            <mat-form-field style="width: 20%;" class="mat-form-field" *ngIf = "canSelectWorkPool" >
+                <label class="mat-label other-label">Work-Pool</label>
+                <mat-select id="filterWorkPoolId" name="filterWorkPoolId" matInput
+                    formControlName="filterWorkPoolId" (selectionChange)="selectedWorkPoolChanged($event)">
+                    <mat-option *ngFor="let workPool of workPoolsForUser" [value]="workPool.workPoolId" >
+                        {{workPool.workPoolName}}
+                    </mat-option>
+                </mat-select>
+            </mat-form-field>
+
+            <mat-form-field style="width: 20%;" class="mat-form-field" class="mat-form-field-right" *ngIf = "canSelectUser" >
+                <label class="mat-label other-label">Users</label>
+                <mat-select id="filterUserId" name="filterUserId" matInput
+                    formControlName="filterUserId" (selectionChange)="selectedUserChanged($event)">
+                    <mat-option [value]="0">All Users</mat-option>
+                    <mat-option *ngFor="let user of UsersForWorkPool" [value]="user.userId">
+                        {{user.userName}}
+                    </mat-option>
+                </mat-select>
+            </mat-form-field>
+</form>
+<app-search-input (searchcriteria)="searchData($event)" [placeHolder]="placeHolder" *ngIf = "canSearchSortFilterPermission"></app-search-input>
+        <div
+            [hidden]="!(dataSource.loading$ | async) || isCadPool || isCmcPool || isInvestigationPool || isEarningsAssessorPool">
+            <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+            <span class="site-font grey" style="margin-top: 15px;"><i>Loading WorkPools...</i></span>
+        </div>
+        <div *ngIf="isPolicyCancellationLoading">
+            <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+            <span *ngIf="isPolicyCancellationLoading" class="site-font grey" style="margin-top: 15px;"><i>Loading policy
+                    Cancellation...</i></span>
+        </div>
+        <br/>
+        <div
+            [hidden]="!dataSource.data  && isPolicyCancellationLoading || isCadPool || isCmcPool || isInvestigationPool || isEarningsAssessorPool">
+            <div class="mat-container mat-elevation-z8 x-overflow " [hidden]="dataSource.loading$ | async">
+                <div [hidden]="!dataSource.data">
+                    <mat-table #table [dataSource]="dataSource" matSort (matSortChange)="getSortedData()" id="tblData">
+                        <!-- Check Box  -->
+
+                        <ng-container matColumnDef="select" >
+                            <mat-header-cell *matHeaderCellDef>
+                            </mat-header-cell>
+                            <mat-cell *matCellDef="let row; let i = index"  (click)="$event.stopPropagation()">
+                                <div >
+                                    <mat-checkbox  id="chk_{{row.personEventReference}}_{{row.policyNumber}}"
+                                    (change)="AddCheckedItems($event, row)">
+                                </mat-checkbox>
+                                </div>
+                            </mat-cell>
+                        </ng-container>
+                        <!--Date -->
+                        <ng-container matColumnDef="[PE].[CreatedDate]">
+                            <mat-header-cell *matHeaderCellDef mat-sort-header [disabled]="!canSearchSortFilterPermission" > Date </mat-header-cell>
+                            <mat-cell *matCellDef="let row"> {{row.dateCreated | date:"yyyy-MM-dd "}} </mat-cell>
+                        </ng-container>
+                        <!--Policy -->
+                        <ng-container matColumnDef="[P].[PolicyNumber]">
+                            <mat-header-cell *matHeaderCellDef mat-sort-header [disabled]="!canSearchSortFilterPermission"> Policy </mat-header-cell>
+                            <mat-cell *matCellDef="let row"> {{row.policyNumber}} </mat-cell>
+                        </ng-container>
+                        <!--Claim Ref -->
+                        <ng-container matColumnDef="[PE].[PersonEventId]">
+                            <mat-header-cell *matHeaderCellDef mat-sort-header [disabled]="!canSearchSortFilterPermission"> Claim Number</mat-header-cell>
+                            <mat-cell *matCellDef="let row"> {{row.claimUniqueReference}} </mat-cell>
+                        </ng-container>
+                        <!--Life Assured -->
+                        <ng-container matColumnDef="[RP].[DisplayName]">
+                            <mat-header-cell *matHeaderCellDef mat-sort-header [disabled]="!canSearchSortFilterPermission"> Life Assured </mat-header-cell>
+                            <mat-cell *matCellDef="let row"> {{row.lifeAssured}} </mat-cell>
+                        </ng-container>
+                        <!--Claim Status -->
+                        <ng-container matColumnDef="[ClaimStatus]">
+                            <mat-header-cell *matHeaderCellDef mat-sort-header [disabled]="!canSearchSortFilterPermission"> Claim Status </mat-header-cell>
+                            <mat-cell *matCellDef="let row">
+                                {{row.claimStatus}} </mat-cell>
+                        </ng-container>
+
+                        <ng-container matColumnDef="[ClaimStatusDisplayName]">
+                            <mat-header-cell *matHeaderCellDef mat-sort-header [disabled]="!canSearchSortFilterPermission"> Reason </mat-header-cell>
+                            <mat-cell *matCellDef="let row">
+                                {{row.claimStatusDisplayName}} </mat-cell>
+                        </ng-container>
+
+                        <!--Event Created By -->
+                        <ng-container matColumnDef="[E].[CreatedBy]">
+                            <mat-header-cell *matHeaderCellDef mat-sort-header [disabled]="!canSearchSortFilterPermission"> Created By </mat-header-cell>
+                            <mat-cell *matCellDef="let row">
+                                <div style="display: block; overflow: hidden;">{{row.eventCreatedBy}}</div>
+                            </mat-cell>
+                        </ng-container>
+
+                        <!--User Name -->
+                        <ng-container matColumnDef="[UserName]">
+                            <mat-header-cell *matHeaderCellDef mat-sort-header [disabled]="!canSearchSortFilterPermission"> User Name </mat-header-cell>
+                            <mat-cell *matCellDef="let row">
+                                <div style="display: block; overflow: hidden;">{{row.userName}}</div>
+                            </mat-cell>
+                        </ng-container>
+
+                        <!--User SLA -->
+                        <ng-container matColumnDef="[UserSLAHours]">
+                            <mat-header-cell *matHeaderCellDef mat-sort-header [disabled]="!canSearchSortFilterPermission"> User SLA </mat-header-cell>
+                            <mat-cell *matCellDef="let row"
+                                [ngClass]="row.nUserSLA == '-1' ? 'greenSLA' : row.nUserSLA == '1' ? 'redSLA' : row.nUserSLA == '0' ? 'greenSLA' : row.nUserSLA == '-3' ? 'amberSLA': row.nUserSLA == '-2' ? 'greenSLA' : ''">
+                                {{row.userSLAHours}} </mat-cell>
+                            <!-- -1 : userSLA less than standar, 0: userSLA equal to standard, 1: userSLA more than standard, -2: not assigned to any user, so no userSLA -->
+                            <!-- <mat-cell *matCellDef="let row" style="background-color:red"> {{row.userSLA}} </mat-cell> -->
+                        </ng-container>
+
+                        <!--Overall SLA -->
+                        <ng-container matColumnDef="[OverAllSLAHours]">
+                            <mat-header-cell *matHeaderCellDef mat-sort-header [disabled]="!canSearchSortFilterPermission"> Overall SLA </mat-header-cell>
+                            <mat-cell *matCellDef="let row"
+                                [ngClass]="row.nOverAllSLA == '1' ? 'greenSLA' : row.nOverAllSLA == '3' ? 'redSLA' : row.nOverAllSLA == '0' ? 'greenSLA' : row.nOverAllSLA == '2' ? 'amberSLA' : ''">
+                                {{row.overAllSLAHours}} </mat-cell>
+                        </ng-container>
+
+                        <!-- Last Worked On  -->
+                        <ng-container matColumnDef="[CWU].[DisplayName]">
+                            <mat-header-cell *matHeaderCellDef mat-sort-header [disabled]="!canSearchSortFilterPermission"> Last Worked On </mat-header-cell>
+                            <mat-cell *matCellDef="let row"> {{row.lastWorkedOn}} </mat-cell>
+                        </ng-container>
+
+                        <!-- Case Id  -->
+                        <ng-container matColumnDef="caseId">
+                            <mat-header-cell *matHeaderCellDef mat-sort-header [disabled]="!canSearchSortFilterPermission"> Case ID </mat-header-cell>
+                            <mat-cell *matCellDef="let row"> {{row.caseId}} </mat-cell>
+                        </ng-container>
+
+                        <!-- Claim Id  -->
+                        <ng-container matColumnDef="claimId">
+                            <mat-header-cell *matHeaderCellDef mat-sort-header [disabled]="!canSearchSortFilterPermission"> Claim ID </mat-header-cell>
+                            <mat-cell *matCellDef="let row"> {{row.claimId}} </mat-cell>
+                        </ng-container>
+                        <!-- Claim Type Id  -->
+                        <ng-container matColumnDef="claimTypeId">
+                            <mat-header-cell *matHeaderCellDef mat-sort-header [disabled]="!canSearchSortFilterPermission"> Claim Type ID </mat-header-cell>
+                            <mat-cell *matCellDef="let row"> {{row.claimTypeId}} </mat-cell>
+                        </ng-container>
+                        <!-- Claim Status Id  -->
+                        <ng-container matColumnDef="claimStatusId">
+                            <mat-header-cell *matHeaderCellDef mat-sort-header [disabled]="!canSearchSortFilterPermission"> Claim Status ID </mat-header-cell>
+                            <mat-cell *matCellDef="let row"> {{row.claimStatusId}} </mat-cell>
+                        </ng-container>
+                        <!-- Policy Id  -->
+                        <ng-container matColumnDef="policyId">
+                            <mat-header-cell *matHeaderCellDef mat-sort-header [disabled]="!canSearchSortFilterPermission"> Policy ID </mat-header-cell>
+                            <mat-cell *matCellDef="let row"> {{row.policyId}} </mat-cell>
+                        </ng-container>
+                        <!-- assignedToUserId  -->
+                        <ng-container matColumnDef="assignedToUserId">
+                            <mat-header-cell *matHeaderCellDef mat-sort-header [disabled]="!canSearchSortFilterPermission"> Assigned To UserId </mat-header-cell>
+                            <mat-cell *matCellDef="let row"> {{row.assignedToUserId}} </mat-cell>
+                        </ng-container>
+
+                        <!-- workPoolId  -->
+                        <ng-container matColumnDef="workPoolId">
+                            <mat-header-cell *matHeaderCellDef mat-sort-header [disabled]="!canSearchSortFilterPermission"> Work Pool Id </mat-header-cell>
+                            <mat-cell *matCellDef="let row"> {{row.workPoolId}} </mat-cell>
+                        </ng-container>
+                        <!-- userID  -->
+                        <ng-container matColumnDef="userID">
+                            <mat-header-cell *matHeaderCellDef mat-sort-header [disabled]="!canSearchSortFilterPermission"> User Id </mat-header-cell>
+                            <mat-cell *matCellDef="let row"> {{row.userID}} </mat-cell>
+                        </ng-container>
+
+                        <!-- startDateAndTime  -->
+                        <ng-container matColumnDef="startDateAndTime">
+                            <mat-header-cell *matHeaderCellDef mat-sort-header [disabled]="!canSearchSortFilterPermission"> start DateAndTime </mat-header-cell>
+                            <mat-cell *matCellDef="let row"> {{row.startDateAndTime}} </mat-cell>
+                        </ng-container>
+                        <!-- endDateAndTime  -->
+                        <ng-container matColumnDef="endDateAndTime">
+                            <mat-header-cell *matHeaderCellDef mat-sort-header [disabled]="!canSearchSortFilterPermission"> end DateAndTime </mat-header-cell>
+                            <mat-cell *matCellDef="let row"> {{row.endDateAndTime}} </mat-cell>
+                        </ng-container>
+
+                        <!-- Actions -->
+                            <ng-container matColumnDef="actions">
+                                <mat-header-cell *matHeaderCellDef>Action</mat-header-cell>
+                                <mat-cell *matCellDef="let row; let i = index" [matMenuTriggerFor]="menu" (click)="filterMenu(row)">
+                                    <span class="material-icons pointer right">more_vert</span>
+                                    <mat-menu #menu="matMenu" >
+                                        <div *ngFor="let menu of menus" >
+                                        <button mat-menu-item *ngIf=menu.hasPermission
+                                            (click)="onMenuSelect(row, menu.title)" 
+                                            disabled={{menu.disable}}>{{menu.title}}</button>
+                                        </div>
+                                    </mat-menu>
+                                </mat-cell>
+                            </ng-container>
+                       
+
+                        <mat-header-row *matHeaderRowDef="getDisplayedColumns();"></mat-header-row>
+                        <!-- <mat-row *matRowDef="let row; " (click)="GoToClaimWizrd(row)"></mat-row> -->
+                        <!-- <mat-row *matRowDef="let row; columns: getDisplayedColumns();" (click)="GoToClaimWizrd(row)"></mat-row> -->
+                        <mat-row *matRowDef="let row; columns: getDisplayedColumns();"></mat-row>
+                    </mat-table>
+
+                    <mat-paginator #paginator [length]="dataSource.rowCount$ | async" (page)="getData()" [pageIndex]="0" [pageSize]="5"
+                        [pageSizeOptions]="[5, 10, 25, 100]">
+                    </mat-paginator>
+                    
+                </div>
+            </div>
+        </div>
+
+        <div *ngIf="isCadPool">
+            <app-cad-pool></app-cad-pool>
+        </div>
+
+        <div *ngIf="isCmcPool">
+            <app-cmc-pool></app-cmc-pool>
+        </div>
+
+        <div *ngIf="isInvestigationPool">
+            <app-investigation-pool></app-investigation-pool>
+        </div>
+
+        <div *ngIf="isEarningsAssessorPool">
+            <app-earnings-assessor-pool></app-earnings-assessor-pool>
+        </div>
+
+        <div [hidden]="dataSource.data && dataSource.data.data.length > 0  || ( dataSource.loading$ | async)"
+            style="margin-left: 20px;">
+            <span class="grey site-font">No records found...</span>
+        </div>
+
+        <div class="form-group-button mat-form-button action-buttons"
+            [hidden]="isCadPool || isCmcPool || isInvestigationPool || isEarningsAssessorPool">
+            <button type="button" *ngIf="canAllocateToUserPermission" (click)="openAllocateToUsersPopup()"
+                class="button float-button">Allocate</button>
+            <button type="button" *ngIf="canReAllocateToUserPermission" (click)="openReAllocateToUsersPopup()"
+                class="button float-button">Re-Allocate</button>
+            <button type="button" *ngIf="canManageUserPermission" (click)="openManageUsersPopup()"
+                class="button float-button">Manage User</button>
+        </div>
+    </mat-card>
+   
+</div>

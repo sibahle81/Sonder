@@ -1,0 +1,16 @@
+<div class="content">
+  <nav active-menu>
+    <button mat-button [routerLink]="['/fincare/reports-manager/finance/finance-report']">Home</button> 
+    <button mat-button (click)="setReportSelection(financeReportType)">Finance Manager</button>
+    <button mat-button (click)="setReportSelection(billingReportType)">Billing Manager</button> 
+    <button mat-button (click)="setReportSelection(commissionReportType)">Commission Manager</button>
+    <div><app-tabbed-report-menu-layout  *ngIf="isCommission" [menuItems]="commissionMenuItems" (menuSelectedHandler)="childMenuClicked($event)"></app-tabbed-report-menu-layout>
+    <app-tabbed-report-menu-layout *ngIf="isBilling" [menuItems]="billingMenuItems" (menuSelectedHandler)="childMenuClicked($event)"></app-tabbed-report-menu-layout>
+    <app-tabbed-report-menu-layout *ngIf="isFinance" [menuItems]="financeMenuItems" (menuSelectedHandler)="childMenuClicked($event)"></app-tabbed-report-menu-layout>
+    
+    </div>
+  </nav>
+  <div [hidden]="loadingMessage != null || error != null ||isMenuVisible" class="container-padding">
+    <router-outlet></router-outlet>
+  </div>
+</div>

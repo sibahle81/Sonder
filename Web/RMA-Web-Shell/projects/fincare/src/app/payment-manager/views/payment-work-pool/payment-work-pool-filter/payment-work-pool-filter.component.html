@@ -1,0 +1,47 @@
+<div *ngIf="(isLoading$ | async)" class="loadingDiv">
+    <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+    <label class="mat-label other-label"><i>loading work pools...please wait</i></label>
+</div>
+
+<form [formGroup]="form" novalidate [hidden]="(isLoading$ | async)">
+    <mat-card>
+        <div class="menu-bar">
+            <span class="material-icons">
+                waves
+            </span>&nbsp;Work Pools
+        </div>
+        <br />
+        <div>
+            <mat-form-field class="mat-form-field controlSize">
+                <label class="mat-label other-label">Work-Pool</label>
+                <mat-select id="filter" name="filter" matInput formControlName="filter"
+                    (selectionChange)="selectedWorkPoolChanged($event)">
+                    <mat-option *ngFor="let workPool of filteredPools" [value]="workPool">
+                        {{(getWorkPoolType(workPool))}}
+                    </mat-option>
+                </mat-select>
+            </mat-form-field>
+
+            <mat-form-field class="mat-form-field-right controlSize"
+                *ngIf="userHasPermission('Work Pool Re-Allocate User')">
+                <label class="mat-label other-label">Users</label>
+                <mat-select id="filterUser" name="filterUser" matInput formControlName="filterUser"
+                    (selectionChange)="filterByUserName($event)">
+                    <mat-option [value]="0">Select User</mat-option>
+                    <mat-option *ngFor="let user of users" [value]="user.id">
+                        {{user.displayName}}
+                    </mat-option>
+                </mat-select>
+            </mat-form-field>
+            <br />
+        </div>
+
+        <payments-work-pool *ngIf="users" 
+            [selectedWorkPool]="selectedWorkPoolType" 
+            [userLoggedIn]="user"
+            [workPoolUsers]="users" 
+            [currentQuery]="currentQuery" 
+            (refreshLoading)="refreshLoading($event)">
+        </payments-work-pool>
+    </mat-card>
+</form>

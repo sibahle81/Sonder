@@ -1,0 +1,167 @@
+﻿<div class="page-header"></div>
+<div *ngIf="!canAdd">
+    <h1>Address Details</h1>
+    <div style="padding-bottom: 15px; color: orange; font-family: 'Oswald', sans-serif;">You do not have sufficient permissions to add a new address.</div>
+    <div (click)="back()" class="form-buttons submit-button">
+        <button type="button" class="button float-button">Back</button>
+    </div>
+</div>
+
+<div [hidden]="!canAdd" style="padding-top: 15px;">
+
+    <mat-tab-group>
+        <mat-tab label="Address Details">
+
+            <mat-card style="margin: 15px 30px 15px 30px">
+                <mat-card-header>
+                    <mat-card-title class="wizard-font card-title grey">
+                        <h1 class="wizard-font" style="padding: 0;">Address Details</h1>
+                    </mat-card-title>
+                </mat-card-header>
+
+                <mat-card-content style="margin-left: 10px;">
+
+                    <form [formGroup]="form" (ngSubmit)="save()" class="mat-container" novalidate>
+
+                        <div style="margin-top: 20px;">
+
+                            <section>
+
+                                <!--Street address 1-->
+                                <mat-form-field>
+                                    <label class="mat-label other-label mandatory-field">Street address 1</label>
+                                    <input matInput maxlength="50" formControlName="addressLine1" name="addressLine1">
+                                    <mat-error *ngIf="form.get('addressLine1').hasError('required') ">
+                                        Street address 1 is <strong>required</strong>
+                                    </mat-error>
+                                </mat-form-field>
+
+                                <!--Postal address-->
+                                <mat-form-field class="mat-form-field-right">
+                                    <label class="mat-label other-label mandatory-field">Postal address</label>
+                                    <input matInput maxlength="50" name="postalAddress" formControlName="postalAddress">
+                                    <mat-error *ngIf="form.get('postalAddress').hasError('required')">
+                                        Postal address is <strong>required</strong>
+                                    </mat-error>
+                                </mat-form-field>
+
+                            </section>
+
+                            <section>
+
+                                <!--Street address 2-->
+                                <mat-form-field>
+                                    <label class="mat-label other-label">Street address 2 (optional)</label>
+                                    <input matInput maxlength="50" formControlName="addressLine2" name="addressLine2">
+                                </mat-form-field>
+
+                                <!--Postal code-->
+                                <mat-form-field class="mat-form-field-right">
+                                    <label class="mat-label other-label mandatory-field">Postal code</label>
+                                    <input matInput maxlength="4" name="postalCode" formControlName="postalCode" NumberOnly="true">
+                                    <mat-error *ngIf="form.get('postalCode').hasError('required')">
+                                        Postal code is <strong>required</strong>
+                                    </mat-error>
+                                    <mat-error *ngIf="form.get('postalCode').hasError('minlength')">
+                                        Postal code must <strong> be four characters</strong>
+                                    </mat-error>
+
+                                </mat-form-field>
+
+                            </section>
+
+                            <section>
+
+                                <!--Area code-->
+                                <mat-form-field>
+                                    <label class="mat-label other-label mandatory-field">Street postal code</label>
+                                    <input matInput minlength="4" maxlength="4" name="addressPostalCode" formControlName="addressPostalCode" NumberOnly="true">
+                                    <mat-error *ngIf="form.get('addressPostalCode').hasError('required')">
+                                        Street postal code must <strong> be four characters</strong>
+                                    </mat-error>
+                                    <mat-error *ngIf="form.get('addressPostalCode').hasError('minlength')">
+                                        Street postal code must <strong> be four characters</strong>
+                                    </mat-error>
+                                </mat-form-field>
+
+                                <!--Country-->
+                                <mat-form-field class="mat-form-field-right">
+                                    <label class="mat-label other-label mandatory-field">Country</label>
+                                    <mat-select name="country" id="country" #country formControlName="country" [(value)]="countryId" required>
+                                        <mat-option *ngFor="let country of countries" [value]="country.id">{{country.name}}</mat-option>
+                                    </mat-select>
+                                    <mat-error *ngIf="country.errorState && form.get('country').hasError('required')">
+                                        Country is <strong>required</strong>
+                                    </mat-error>
+
+                                </mat-form-field>
+
+                            </section>
+
+                            <section>
+
+                                <!--Province-->
+                                <mat-form-field>
+                                    <label class="mat-label other-label mandatory-field">Province</label>
+                                    <mat-select name="stateProvince" id="Province" #province formControlName="stateProvince" [(value)]="ProvinceId" (selectionChange)="locationChanged($event)" required>
+                                        <mat-option *ngFor="let stateProvince of stateProvinces" [value]="stateProvince.id">{{stateProvince.name}}</mat-option>
+                                    </mat-select>
+                                    <mat-error *ngIf="province.errorState && form.get('stateProvince').hasError('required')">
+                                        Province is <strong>required</strong>
+                                    </mat-error>
+                                </mat-form-field>
+
+                                <!--City-->
+                                <mat-form-field class="mat-form-field-right">
+                                    <label class="mat-label other-label mandatory-field">City / Town / Suburb</label>
+                                    <input [hidden]="isLoadingCities" matInput [matAutocomplete]="auto" formControlName="city" required>
+                                    <div [hidden]="!isLoadingCities" class="mat-label other-label" style="margin-top: 10px;">
+                                        <i>Updating cities...</i>
+                                    </div>
+                                    <mat-autocomplete #auto="matAutocomplete">
+                                        <mat-option *ngFor="let city of filterCitiesData | async" [value]="city.name"><span>{{city.name}}</span></mat-option>
+                                    </mat-autocomplete>
+                                    <mat-error *ngIf="form.get('city').hasError('required')">
+                                        City is <strong>required</strong>
+                                    </mat-error>
+                                </mat-form-field>
+
+                            </section>
+
+                        </div>
+
+                        <last-modified-by type="Address"></last-modified-by>
+
+                        <div *ngIf="showButtons" class="form-group-button mat-form-button">
+
+                            <div *ngIf="showSaveButton" class="form-buttons" matTooltip="No changes have been made" [matTooltipDisabled]="!form.pristine">
+                                <button [disabled]="form.pristine" class="button float-button submit-button">Save</button>
+                            </div>
+
+                            <div *ngIf="showEditButton" (click)="edit()" class="form-buttons submit-button">
+                                <button type="button" class="button float-button">Edit</button>
+                            </div>
+
+                            <div (click)="back()" class="form-buttons submit-button">
+                                <button type="button" class="button float-button">Back</button>
+                            </div>
+                        </div>
+
+                    </form>
+
+                </mat-card-content>
+
+            </mat-card>
+
+        </mat-tab>
+
+        <mat-tab label="Notes">
+            <notes name="address"></notes>
+        </mat-tab>
+
+        <mat-tab label="Audit Log">
+            <audit-log name="address"></audit-log>
+        </mat-tab>
+
+    </mat-tab-group>
+</div>

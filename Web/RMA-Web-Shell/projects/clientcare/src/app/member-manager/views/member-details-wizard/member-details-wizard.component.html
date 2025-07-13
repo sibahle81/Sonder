@@ -1,0 +1,15 @@
+<div *ngIf="(isLoading$ | async)">
+  <mat-card style="margin-left: 10px; margin-right: 10px;">
+    <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+    <label class="mat-label other-label"><i>loading...please wait</i></label>
+  </mat-card>
+</div>
+
+<div *ngIf="!(isLoading$ | async)">
+  <member-view [rolePlayerId]="rolePlayerId" [expanded]="true"
+    [isWizard]="false" [isReadOnly]="inApprovalMode"></member-view>
+
+  <document-uploader [documentSet]="documentSet" [systemName]="documentSystemName" [keyName]="'MemberId'"
+    [keyValue]="rolePlayerId" [isReadOnly]="inApprovalMode" [forceRequiredDocumentTypeFilter]="forceRequiredDocumentTypeFilter"
+    (requiredDocumentsUploadedEmit)="isRequiredDocumentsUploaded($event)"></document-uploader>
+</div>

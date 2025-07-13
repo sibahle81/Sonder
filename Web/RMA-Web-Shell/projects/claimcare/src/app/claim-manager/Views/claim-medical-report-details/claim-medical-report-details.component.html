@@ -1,0 +1,104 @@
+<div *ngIf="isViewMode">
+  <mat-card>
+    <div class="expansionTitle"><span class="material-icons">medical_services</span>&nbsp;Medical Report Details<span
+        *ngIf="!isWizard" (click)="view()" class="material-icons pointer right"
+        matTooltip="Close Medical Report Details">
+        close
+      </span>
+    </div>
+    <div *ngIf="(isSaving$ | async)">
+      <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+      <span *ngIf="(isSaving$ | async)" class="site-font grey" style="margin-top: 15px;"><i>loading, please
+          wait...</i></span>
+    </div>
+
+    <div *ngIf="!(isSaving$ | async)">
+      <form [formGroup]="form" class="mat-container details-form" novalidate>
+        <section>
+          <!--Practice Number-->
+          <mat-form-field class="mat-form-field">
+            <label class="mat-label other-label">Practice Number</label>
+            <input matInput id="practiceNumber" name="practiceNumber" formControlName="practiceNumber" />
+          </mat-form-field>
+
+          <!--Practice Name-->
+          <mat-form-field class="mat-form-field-right">
+            <label class="mat-label other-label">Practice Name</label>
+            <input matInput id="practiceName" name="practiceName" formControlName="practiceName" />
+          </mat-form-field>
+        </section>
+
+        <section>
+          <!--Report Date-->
+          <mat-form-field class="mat-form-field">
+            <label class="mat-label other-label">Report Date</label>
+            <input matInput formControlName="reportDate" [matDatepicker]="reportDate" id="reportDate" name="reportDate">
+            <mat-datepicker-toggle matSuffix [for]="reportDate" [disabled]="false"></mat-datepicker-toggle>
+            <mat-datepicker [startAt]="startDate" touchUi="true" #reportDate></mat-datepicker>
+          </mat-form-field>
+
+          <!--Treatment Date-->
+          <mat-form-field class="mat-form-field-right">
+            <label class="mat-label other-label">Treatment Date</label>
+            <input matInput formControlName="treatmentDate" [matDatepicker]="treatmentDate" id="treatmentDate"
+              name="treatmentDate">
+            <mat-datepicker-toggle matSuffix [for]="treatmentDate" [disabled]="false"></mat-datepicker-toggle>
+            <mat-datepicker [startAt]="startDate" touchUi="true" #treatmentDate></mat-datepicker>
+          </mat-form-field>
+        </section>
+
+        <section>
+          <!--Medical Report Id-->
+          <mat-form-field class="mat-form-field">
+            <label class="mat-label other-label">Medical Report Id</label>
+            <input matInput id="medicalReportId" name="medicalReportId" formControlName="medicalReportId" />
+          </mat-form-field>
+
+          <!--Teba Invoice Number-->
+          <mat-form-field class="mat-form-field-right">
+            <label class="mat-label other-label">Teba Invoice Number</label>
+            <input matInput id="tebaInvoiceNumber" name="tebaInvoiceNumber" formControlName="tebaInvoiceNumber" />
+          </mat-form-field>
+        </section>
+
+        <section>
+          <!--Box Number-->
+          <mat-form-field class="mat-form-field">
+            <label class="mat-label other-label">Box Number</label>
+            <input matInput id="boxNumber" name="boxNumber" formControlName="boxNumber" />
+          </mat-form-field>
+
+          <!--Tracking Number-->
+          <mat-form-field class="mat-form-field-right">
+            <label class="mat-label other-label">Tracking Number</label>
+            <input matInput id="trackingNumber" name="trackingNumber" formControlName="trackingNumber" />
+          </mat-form-field>
+        </section>
+
+        <section>
+          <!--Date Received-->
+          <mat-form-field class="mat-form-field">
+            <label class="mat-label other-label">Date Received</label>
+            <input matInput id="dateReceived" name="dateReceived" formControlName="dateReceived" />
+          </mat-form-field>
+        </section>
+
+        <section>
+          <!--ICD10 Codes-->
+          <mat-form-field class="mat-form-field">
+            <label class="mat-label other-label">ICD10 Codes</label>
+            <input matInput id="icd10Codes" name="icd10Codes" formControlName="icd10Codes" />
+          </mat-form-field>
+        </section>
+      </form>
+    </div>
+  </mat-card>
+</div>
+<div *ngIf="!isViewMode">
+  <mat-card>
+    <div class="expansionTitle"><span class="material-icons">medical_services</span>Medical Report Details<span (click)="view()"
+        class="material-icons pointer right" matTooltip="View Medical Report Details">
+        expand_more
+      </span></div>
+  </mat-card>
+</div>

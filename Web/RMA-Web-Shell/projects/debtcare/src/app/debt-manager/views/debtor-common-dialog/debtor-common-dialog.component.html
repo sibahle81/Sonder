@@ -1,0 +1,954 @@
+<section class="mat-form-data-fields">
+  <div *ngIf="data.action == 'acknowledge'" [attr.disabled]="isDialogDisabled ? true : null" class="acknowledgement-div padding-10">
+    <h2>Acknowledge</h2>
+    <p class="ack-que">Do you want to re-assign agent ?</p>
+    <div class="action-div">
+      <span class="select-action option-yes"  [mat-dialog-close]="true" cdkFocusInitial> <mat-icon
+         class="action-icon">check</mat-icon> <span class="option">YES CONFIRM</span> </span>
+      <span class="select-action option-no" (click)="onNoClick()"> <mat-icon
+        class="action-icon">close</mat-icon> <span class="option">NO THANKS</span> </span>
+    </div>
+      </div>
+    <div class="update-status-box" *ngIf="data.action == 'Update Status'">
+      <mat-icon class="close-icon-update-status" (click)="closeDialog()">close</mat-icon>
+      <div class="heading-text-div email-header-padding">
+        <div>
+          <h2 class="heading-text">Update Status</h2>
+        </div>
+      </div>
+
+    <div [ngClass]="isCommonSpinner ? 'disabled-view' : 'enabled-view' ">
+      <form [formGroup]="updateStatusForm" class="hide-calendar-date">
+
+        <div class="borderCss">
+          <div class="question-div question-div-legal">
+            <div class="legal-add-payment-field">
+              <p>Collection Status</p>
+                <mat-form-field appearance="outline" class="multi-agent-list-dropdown mat-field-width">
+                  <input #updateStatus  matInput [matAutocomplete]="auto" (input)="searchValueStatus(updateStatus.value)" formControlName="collectionStatus"
+                  class="search-input border-none-imp search-input-agent" (click)="enableDropdownOptions()">
+                  <mat-autocomplete #auto="matAutocomplete" class="update-status-field">
+                    <mat-option *ngFor="let item of selectedStatusoption || []" [value]="item?.statusCategoryName" (click)="onSelectCollectionStatus(item,false)"> {{item.statusCategoryName}}</mat-option>
+                  </mat-autocomplete>
+                  <button mat-button matSuffix mat-icon-button aria-label="Toggle dropdown" (click)="enableDropdownOptions()">
+                    <mat-icon>arrow_drop_down</mat-icon>
+                  </button>
+                </mat-form-field>  
+
+                <mat-error class="error-text-color"
+                *ngIf="formSubmitted && (updateStatusForm.get('collectionStatus').hasError('required') ||  updateStatusForm.get('collectionStatus').invalid)">Please
+                select collection status</mat-error>
+
+            </div>
+          </div>
+
+          <div *ngIf="selectedCollectionStatus && selectedCollectionStatus.transferToDepartmentId"
+            class="display-row-content">
+            <div class="question-div question-div-legal">
+              <p>Department</p>
+              <mat-form-field class="status-update-mff" appearance="outline">
+                <mat-select formControlName="department" placeholder="Select" class="dropdown-list" [panelClass]="'custom-dropdown'" disabled>
+                  <ng-container *ngFor="let option of DepartmentList">
+                    <mat-option [value]="option.departmentId" (click)="onSelectDept(option,option.departmentId)">
+                      {{option.departmentName}}
+                    </mat-option>
+                  </ng-container>
+                </mat-select>
+              </mat-form-field>
+              <mat-error class="error-text-color"
+                *ngIf="formSubmitted  && (updateStatusForm.get('department').invalid)">Please select
+                department</mat-error>
+
+            </div>
+
+
+            <div class="question-div question-div-legal">
+              <p>Transfer To<span class="span-text-css">(Optional)</span></p>
+              <mat-form-field class="status-update-mff" appearance="outline">
+                <mat-select formControlName="transferTo" placeholder="Select" class="dropdown-list" [panelClass]="'custom-dropdown'"
+                  [disabled]="updateStatusForm.get('department').hasError('required') || TransferToList?.length == 0">
+                  <ng-container *ngFor="let option of TransferToList">
+                    <mat-option [value]="option.id" (selectionChange)="onSelectTransferTo(option.id)">
+                      {{option.displayName}}
+                    </mat-option>
+                  </ng-container>
+                </mat-select>
+              </mat-form-field>
+              <mat-error class="error-text-color"
+                *ngIf="formSubmitted &&  updateStatusForm.get('transferTo').invalid ">Please select option
+              </mat-error>
+            </div>
+          </div>
+          <div *ngIf="showDateTime" class="display-row-content action-data">
+            <div
+              class="date-picker-upadte-status status-update-mff legal-add-payment-field question-div question-div-legal">
+              <p>Date</p>
+              <mat-form-field appearance="outline" class="date-picker-field">
+                <input matInput [min]="dateToday" [matDatepicker]="picker" formControlName="dateAndTime" readonly
+                  (click)="picker.open()" (dateChange)="onUpdateStatusDateChange($event)" class="dropdown-list">
+                <mat-datepicker-toggle matIconSuffix [for]="picker" class="icon-css"></mat-datepicker-toggle>
+                <mat-datepicker #picker></mat-datepicker>
+              </mat-form-field>
+              <mat-error class="error-text-color"
+                *ngIf="formSubmitted && isUpdateStatusDateRequired && updateStatusForm.get('dateAndTime').invalid">Please select date</mat-error>
+            </div>
+            <div class="question-div date-picker-upadte-status">
+              <p>Time</p>
+
+              <div class="time-field-data">
+              <div class="time-input">
+              <mat-form-field appearance="outline" class="date-form-input">
+                  <mat-select class="dropdown-list" placeholder="HH" formControlName="timeHours">
+                    <ng-container *ngFor="let hour of hoursList">
+                      <mat-option [value]="hour" (click)="onSelectHour(hour)">{{hour}}</mat-option>
+                    </ng-container>
+                  </mat-select>
+
+              </mat-form-field>
+              <span class="time-text">Hr</span>
+              </div>
+
+              <div class="time-input">
+              <mat-form-field appearance="outline" class="date-form-input">
+                  <mat-select class="dropdown-list" placeholder="MM" formControlName="timeMinutes"> 
+                    <ng-container *ngFor="let min of minuteList">
+                      <mat-option [value]="min" (click)="onSelectMinute(min)">{{min}}</mat-option>
+                    </ng-container>
+                  </mat-select>
+              </mat-form-field>
+              <span class="time-text">Min</span>
+              </div>
+
+              </div>
+
+              <mat-error *ngIf="isTimeSelectError && updateStatusForm.get('updateStatusTime').invalid && formSubmitted"
+              class="error-text-color" >Please Select Time</mat-error>
+            </div>
+
+
+          </div>
+          <div class="acknowledgement-div question-div question-div-legal question-div" >
+            <p>Add Notes</p>
+            <div class="message-box">
+              <textarea class="message-textarea" (ngModelChange)="onCheckNotesCount($event)" formControlName="addNotes" cols="30" rows="5" 
+                [ngClass]="{
+                  'invalid-input': formSubmitted && updateStatusForm.get('addNotes').invalid }"></textarea>
+            </div>
+            <p>Characters - {{updateStatusNotesLength}}/8000</p>
+            <div *ngIf="formSubmitted && updateStatusForm.get('addNotes').hasError">
+            <mat-error *ngIf="updateStatusForm.get('addNotes').hasError('required')"
+            class="error-text-color">Please add notes</mat-error>
+            <mat-error *ngIf="updateStatusForm.get('addNotes').hasError('maxlength')" class="error-text-color">
+              Maximum 8000 characters allowed
+            </mat-error>
+            </div>
+          </div>
+          
+        </div>
+
+        <div [hidden]="!isLoading" [ngClass]="isLoading ? 'progress-bar-container' : '' " class="loading-css">
+          <mat-progress-bar *ngIf="isLoading" mode="indeterminate"></mat-progress-bar>
+        </div>
+
+        <div class="action-div action-btn-right" class="update-status-btn">
+          <span class="select-action action-btns" (click)="closeDialog()"> <mat-icon
+              class="close-btn-css-class">close</mat-icon> <span>CANCEL</span> </span>
+          <button class="select-action action-submit"
+            [ngStyle]="isLoading ? { 'pointer-events': 'none', 'opacity': '0.5' } : { 'pointer-events': 'auto','opacity': '1' }"
+            (click)="onSubmitUpdateStatus()">SUBMIT</button>
+        </div>
+
+      </form>
+    </div>
+
+
+
+    </div>
+
+    <div *ngIf="data.action == 'Invoices'">
+
+    <div *ngIf="invoicesAction == 'invoices_details'">
+      <div class="heading-text-div ">
+        <div>
+          <h2 class="heading-text">Invoices</h2>
+        </div>
+      </div>
+      <div [ngStyle]="isSpinner ? { 'opacity': '0.5' } : { 'opacity': '1' }" class="debtor-collection-container">
+        <div *ngIf="!isLoading" class="debtor-collection-table">
+          
+      <div class="search-container-css">
+        <div class="search-container-data">
+            <span matPrefix>
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none">
+                    <path
+                        d="M19 11C19 12.5823 18.5308 14.129 17.6518 15.4446C16.7727 16.7602 15.5233 17.7856 14.0615 18.3911C12.5997 18.9966 10.9911 19.155 9.43928 18.8463C7.88743 18.5376 6.46197 17.7757 5.34315 16.6569C4.22433 15.5381 3.4624 14.1126 3.15372 12.5608C2.84504 11.0089 3.00347 9.40038 3.60897 7.93857C4.21447 6.47676 5.23985 5.22733 6.55544 4.34828C7.87103 3.46923 9.41775 3.00004 11 3.00004C12.0515 2.99674 13.0933 3.20141 14.0654 3.60228C15.0375 4.00315 15.9207 4.5923 16.6642 5.33582C17.4077 6.07935 17.9969 6.96257 18.3978 7.93467C18.7986 8.90677 19.0033 9.94854 19 11Z"
+                        stroke="#292929" stroke-linecap="round" stroke-linejoin="round" />
+                    <path d="M20.9993 21L16.6562 16.657" stroke="#292929" stroke-linecap="round"
+                        stroke-linejoin="round" />
+                </svg>
+            </span>
+            <input matInput (keyup)="applyFilter($event)" placeholder="Search here..." #input
+                class="search-input">
+        </div>
+        </div>
+      <div *ngIf="dataSource.data?.length > 0"
+        class="question-div question-div-legal invoices-table debtor-invoice-table padding-0">
+       
+        <table mat-table [dataSource]="dataSource" matSort class="invoiceTblData" (matSortChange)="getInvoiceDetails()">
+          <ng-container matColumnDef="invoiceNumber">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header> Invoice Number </th>
+            <td mat-cell *matCellDef="let row">
+              <span class="select-td">
+                <span class="select-text">{{row.invoiceNumber}}
+                </span>
+              </span>
+            </td>
+          </ng-container>
+          <ng-container matColumnDef="createdDate">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header>Date</th>
+            <td mat-cell *matCellDef="let row">
+              <span class="select-td">
+                <span class="select-text">{{row.createdDate.split('T')[0]}}</span>
+              </span>
+            </td>
+          </ng-container>
+          <ng-container matColumnDef="totalInvoiceAmount">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header> Amount </th>
+            <td mat-cell *matCellDef="let row">
+              <span class="select-td">
+                <span class="select-text">{{row.totalInvoiceAmount}}</span>
+              </span>
+            </td>
+          </ng-container> <ng-container matColumnDef="invoiceDate">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header> Due Date </th>
+            <td mat-cell *matCellDef="let row">
+              <span class="select-td">
+                <span class="select-text">{{row.invoiceDate | date: 'yyyy-MM-dd'}}</span>
+              </span>
+            </td>
+          </ng-container> <ng-container matColumnDef="status">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header>Status </th>
+            <td mat-cell *matCellDef="let row">
+              <span class="select-td status-text-name">
+
+
+                <span class="select-text statusText"
+                  [ngStyle]="{'background-color': row.invoiceStatusName && row.invoiceStatusName == 'Paid' ? '#33C601' :
+                  row.invoiceStatusName && row.invoiceStatusName == 'Unpaid' ? '#FF0000' : 
+                  row.invoiceStatusName && row.invoiceStatusName == 'Pending' ? '#FEBE10' :  
+                  row.invoiceStatusName && row.invoiceStatusName == 'Partially' ? '#EF6D21' : 'red' }">
+                  {{row.invoiceStatusName ? row.invoiceStatusName : '-' }}</span>
+              </span>
+            </td>
+          </ng-container>
+          <ng-container matColumnDef="dueByDay">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header> Due By </th>
+            <td mat-cell *matCellDef="let row">
+              <span class="select-td">
+                <span class="select-text">{{row.dueByDay>=0?row.dueByDay:-row.dueByDay}}</span>
+              </span>
+            </td>
+          </ng-container>
+          <ng-container matColumnDef="action">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header> Action </th>
+            <td mat-cell *matCellDef="let row" class="td-inside td-inside-action">
+              <span><mat-icon matTooltip="Download" (click)="downloadInvoiceFile(row.invoiceId)">download</mat-icon></span>
+              <span (click)="getInvoiceByteFile(row)" matTooltip="Send Email"><mat-icon> email</mat-icon></span>
+              <span class="select-td">
+
+              </span>
+            </td>
+          </ng-container>
+          <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+          <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+
+        </table>   
+        <mat-paginator #paginator class="demo-paginator padding-tp" (page)="handlePageinatorEventInvoice($event)"
+        [hidePageSize]="false" [length]="totalItems" [pageIndex]="page - 1" [pageSize]="pageSize"
+        [pageSizeOptions]="pageSizeOptions" [showFirstLastButtons]="false">
+      </mat-paginator>    
+      </div>
+   
+
+      <div *ngIf="dataSource.data.length == 0 && !isInvoiceLoading && !dataSource.data?.length">
+        <h3 class="no-data-text">No data available</h3>
+      </div>
+    </div>
+  </div>
+      <div [hidden]="!isInvoiceLoading" [ngClass]="isInvoiceLoading ? 'progress-bar-container' : '' ">
+        <mat-progress-bar *ngIf="isInvoiceLoading" mode="indeterminate"></mat-progress-bar>
+      </div>
+
+
+      <div class="acknowledgement-div acknowledgement-div-padding">
+        <div class="action-div action-btn-right action-btn-right-close">
+          <button class="select-action action-submit" (click)="closeDialog()">CLOSE</button>
+        </div>
+      </div>
+    </div>
+
+    </div>
+
+    <div *ngIf="invoicesAction == 'send-email' || data.action == 'Send Email'" class="debtcare-send-email">
+
+    <div [ngClass]="isSpinner ? 'disabled-view' : 'enabled-view'" class="send-email-container">
+
+      <div class="heading-text-div email-header-padding">
+        <span *ngIf="data.action != 'Send Email'">
+          <mat-icon class="back-icon" (click)="invoicesAction = 'invoices_details'">arrow_back</mat-icon>
+        </span>
+        <h2 class="heading-text">Send Email</h2>
+      </div>
+
+      <div class="question-div question-div-legal legal-add-payment-field">
+
+        <form [formGroup]="sendEmailForm" class="sendMailForm">
+          <div class="collections-send-email-div-type legal-mat-chips">
+            <div class="input-container">
+              <mat-form-field appearance="outline" class="example-chip-list mat-field-width">
+                <mat-chip-list #chipList formControlName="sendTo">
+                  <mat-chip *ngFor="let item of emailList; let i=index" [color]="(item.invalid)?'warn':''" selected
+                    [selectable]="true" [removable]="removable" (removed)="removeEmail(item)"
+                    class="mat-chip-list-input">
+                    {{item.value}}
+                    <mat-icon *ngIf="removable" matChipRemove>cancel</mat-icon>
+                  </mat-chip>
+                  <input formControlName="sendTo" class="sendMailTOCC mat-chip-list-input" class="dropdown-list"
+                    [matChipInputFor]="chipList" [matChipInputSeparatorKeyCodes]="separatorKeysCodes "
+                    [matChipInputAddOnBlur]="true " (matChipInputTokenEnd)="addTab($event) " matInput required
+                    [ngClass]="{'invalid-input': sendEmailForm.get('sendTo').invalid && sendEmailForm.get('sendTo').touched}" />
+                </mat-chip-list>
+                <span class="labelTextCss" matPrefix>TO</span>
+                            </mat-form-field>
+                            <mat-error class="mat-chip-email-error"
+                            *ngIf="sendEmailForm.get('sendTo').touched && sendEmailForm.get('sendTo').hasError('required') && formSubmitted">Please
+                            enter an email address</mat-error>
+                          <mat-error class="mat-chip-email-error" *ngIf="sendEmailForm.get('sendTo').hasError('pattern')">Please
+                            enter valid email</mat-error>
+                          <mat-error class="mat-chip-email-error"
+                            *ngIf="sendEmailForm.get('sendTo').hasError('incorrectEmail')">Invalid email id</mat-error>
+            </div>
+
+
+          </div>
+
+          <div class="collections-send-email-div-type legal-mat-chips">
+
+            <div class="input-container">
+              <mat-form-field appearance="outline" class="example-chip-list mat-field-width">
+                <mat-chip-list #chipListCC formControlName="sendToCc">
+                  <mat-chip selected *ngFor="let item of emailListCC; let i=index" [selectable]="true"
+                    [removable]="removable" (removed)="removeEmail(item)" required name="chipsCC"
+                    class="mat-chip-list-input">
+                    {{item.value}}
+                    <mat-icon matChipRemove *ngIf="removable">cancel</mat-icon>
+                  </mat-chip>
+                  <input formControlName="sendToCc" class="sendMailTOCC mat-chip-list-input" class="dropdown-list"
+                    [matChipInputFor]="chipListCC" [matChipInputSeparatorKeyCodes]="separatorKeysCodes "
+                    [matChipInputAddOnBlur]="true " (matChipInputTokenEnd)="addTabCC($event) "
+                    [ngClass]="{'invalid-input':sendEmailForm.get('sendToCc').invalid && sendEmailForm.get('sendToCc').touched}" />
+                </mat-chip-list>
+                <span class="labelTextCss" matPrefix>CC</span>
+               
+              </mat-form-field>
+              <mat-error class="mat-chip-email-error" *ngIf="sendEmailForm.get('sendToCc').hasError('pattern')">Please
+                enter an email address</mat-error>
+              <mat-error class="mat-chip-email-error"
+                *ngIf="sendEmailForm.get('sendToCc').hasError('incorrectEmail')">Invalid email id</mat-error>
+
+            </div>
+
+          </div>
+
+          <div class="collections-send-email-div-type legal-mat-chips">
+
+            <div class="input-container">
+              <mat-form-field appearance="outline" class="example-chip-list mat-field-width">
+                <mat-chip-list #chipListBCC formControlName="sendToBcc">
+                  <mat-chip selected *ngFor="let item of emailListBCC; let i=index" [selectable]="true"
+                    [removable]="removable" (removed)="removeEmailBcc(item)" required name="chipsCC"
+                    class="mat-chip-list-input">
+                    {{item.value}}
+                    <mat-icon matChipRemove *ngIf="removable">cancel</mat-icon>
+                  </mat-chip>
+                  <input formControlName="sendToBcc" class="sendMailTOCC mat-chip-list-input" class="dropdown-list"
+                    [matChipInputFor]="chipListBCC" [matChipInputSeparatorKeyCodes]="separatorKeysCodes "
+                    [matChipInputAddOnBlur]="true " (matChipInputTokenEnd)="addTabBCC($event) "
+                    [ngClass]="{'invalid-input':sendEmailForm.get('sendToBcc').invalid && sendEmailForm.get('sendToBcc').touched}" />
+                </mat-chip-list>
+                <span class="labelTextCss" matPrefix>BCC</span>
+               
+              </mat-form-field>
+              <mat-error class="mat-chip-email-error" *ngIf="sendEmailForm.get('sendToBcc').hasError('pattern')">Please
+                enter an email address</mat-error>
+              <mat-error class="mat-chip-email-error"
+                *ngIf="sendEmailForm.get('sendToBcc').hasError('incorrectEmail')">Invalid email id</mat-error>
+
+            </div>
+
+          </div>
+
+          <div class="collections-send-email-div-type legal-mat-chips">
+
+            <div class="subject-field-css">
+              <mat-label class="labelTextCssSubject">Subject</mat-label>
+              <mat-form-field class="example-chip-list mat-field-width">
+                <input matInput formControlName="subject" class="subject-field"
+                  [ngClass]="{'invalid-input':sendEmailForm.get('subject').invalid && formSubmitted }" />
+               
+              </mat-form-field>
+              <mat-error class="mat-chip-email-error"
+              *ngIf="sendEmailForm.get('subject').hasError('required') && formSubmitted">Please
+              add subject</mat-error>
+            </div>
+
+          </div>
+
+          <div class="collections-send-email-div-type legal-mat-chips">
+
+            <div>
+              <textarea formControlName="emailBody" matInput rows="12" cols="10"
+                [ngClass]="{'invalid-input':sendEmailForm.get('emailBody').invalid && sendEmailForm.get('emailBody').touched && formSubmitted}"></textarea>
+              <span class="mat-chip-email-error"
+                *ngIf="sendEmailForm.get('emailBody').hasError('required') && formSubmitted">Please
+                Add Email Body</span>
+              <span class="mat-chip-email-error"
+                *ngIf="sendEmailForm.get('emailBody').hasError('incorrectEmail')">Invalid email ID</span>
+            </div>
+
+          </div>
+
+          <div>
+
+
+            <div *ngIf="uploadedFileList && uploadedFileList.length > 0" class="flex-view uploaded-doc-list">
+              <ng-container *ngFor="let item of uploadedFileList;let i = index">
+                  <div *ngIf="item" class="file-name-text">
+                    <span class="file-details-content">{{ item?.fileName }}&nbsp;</span>
+                    <span> <mat-icon class="file-details-content" matTooltip="Remove" (click)="removeAddedDocument(i,item?.size)">close</mat-icon></span>  
+                  </div>
+              </ng-container>
+            </div>
+
+
+            
+            <div class="file-select-btn">
+              <input type="file" class="doc-file-input" #fileInput (change)="onFileSelectInfo($event,1)" />
+              <div class="flex-view upload-data-div">
+              <button [ngClass]="(formSubmitted && invalidTotalAttchments) ? 'file-invalid' : 'file-valid' " class="file-upload-button" (click)="fileInput.click()">
+              UPLOAD
+              <mat-icon class="upload-padding-left">arrow_upward</mat-icon>
+              </button>
+              <div class="attachment-error-msg">
+                <span>Attchment Total Size: {{attachedFileSize | number : '1.2-2'}} MB</span>
+                <span *ngIf="formSubmitted && invalidTotalAttchments" class="total-attachment-error">Total attachment size should be less than 6 MB</span>
+              </div>
+
+              </div>
+              
+            </div>
+
+          </div>
+        </form>
+
+      </div>
+
+      <div class="flex-view action-btn-right">
+        <span class="select-action action-btns" (click)="closeDialog()">
+          <mat-icon class="icon-css-class">close</mat-icon> <span>CANCEL</span> </span>
+        <button class="select-action action-submit" (click)="onSendEmailDebtcare()">SEND EMAIL</button>
+      </div>
+
+      <div [hidden]="!isSpinner" class="spinner-view">
+        <mat-spinner *ngIf="isSpinner"></mat-spinner>
+      </div>
+
+    </div>
+
+    </div>
+
+    <div *ngIf="data.action == 'Sign Documents'">
+    <div *ngIf="signDocumentsAction == 'invoices_details'">
+      <div class="heading-text-div popup-heading-css">
+        <div>
+          <h2 class="heading-text">Sign Documents</h2>
+        </div>
+        <div class="width-display-flex">
+          <span (click)="signDocumentsAction = 'upload_documents'" class="cursor-display">
+            <span class="margin-border">
+              <mat-icon>arrow_upward</mat-icon></span>
+            <span class="color">Upload Document</span>
+          </span>
+        </div>
+
+      </div>
+      <div *ngIf="signDocsDetails?.length > 0 && !isSignDocsLoading" class="question-div question-div-legal  padding">
+        <div class="table-content">
+        <table class="table-inside">
+          <tr class="heading-row" [ngClass]=" isCommonSpinner ? 'head-data-value-fixed' : 'head-data-value'">
+            <th class="th-inside row-one">Document Name</th>
+            <th class="th-inside row-one">Type</th>
+            <th class="th-inside row-one">Signed On</th>
+            <th class="th-inside row-one">Signed By</th>
+            <th class="th-inside row-one">Action</th>
+          </tr>
+          <ng-container *ngFor="let item of signDocsDetails">
+            <tr class="content-row">
+              <td class="td-inside row-one">
+                <span class="align-center-td">
+                  <span *ngIf="item" class="class-pedding-left-5">
+                    {{item.documentName?.length > 0 ? item.documentName : '-'}}</span>
+                </span>
+              </td>
+              <td class="td-inside"><span *ngIf="item">{{item.type?.length > 0 ? item.type : '-'}}</span></td>
+              <td class="td-inside"><span *ngIf="item">{{item.signedOn}}</span></td>
+              <td class="td-inside"><span *ngIf="item">{{item.signedBy}}</span></td>
+              <td class="td-inside td-inside-action">
+                <span *ngIf="item" (click)="openActionDialog('delete_signDoc',item,'30vw')">
+                  <mat-icon matTooltip="Delete">delete</mat-icon></span>
+                <span><mat-icon (click)="downloadSignDocument(item?.documentId)" matTooltip="Download">arrow_downward</mat-icon></span>
+              </td>
+            </tr>
+          </ng-container>
+
+        </table>
+        </div>
+
+    
+        </div>
+
+        <div *ngIf="signDocsDetails?.length == 0 && !isSignDocsLoading">
+          <h3 class="no-data-text">No data available</h3>
+        </div>
+
+        <div [hidden]="!isSignDocsLoading"  [ngClass]="isSignDocsLoading ? 'progress-bar-container' : '' ">
+          <mat-progress-bar *ngIf="isSignDocsLoading" mode="indeterminate"></mat-progress-bar>
+        </div>
+
+        <div class="acknowledgement-div acknowledgement-div-padding">
+          <div class="action-div action-btn-right action-btn-right-close justify-right">
+            <button class="select-action action-submit" (click)="closeDialog()">CLOSE</button>
+          </div>
+        </div>
+        
+      </div>
+
+    <div *ngIf="signDocumentsAction == 'upload_documents'">
+
+      <div class="heading-text-div select-action">
+        <span>
+          <mat-icon class="back-icon" (click)="signDocumentsAction = 'invoices_details'">arrow_back</mat-icon>
+        </span>
+        <h2 class="heading-text">Sign Documents</h2>
+      </div>
+
+
+
+      <div class="upload-doc-div">
+        <div class="upload-from-local-div">
+          <h2 class="upload-heding  color">Upload Document</h2>
+          <div class="align-center">
+            <svg xmlns="http://www.w3.org/2000/svg" width="80" height="80" viewBox="0 0 80 80" fill="none">
+              <path
+                d="M21.6795 63.3485C18.0667 63.3513 14.5744 62.0501 11.8442 59.684C9.11407 57.318 7.32959 54.0461 6.81873 50.4696C6.30787 46.8932 7.10495 43.2525 9.06349 40.2167C11.022 37.181 14.0104 34.954 17.4795 33.9452C18.9513 28.469 22.3669 23.7161 27.088 20.575C31.8091 17.4338 37.5125 16.1194 43.1322 16.8774C48.7519 17.6354 53.9032 20.414 57.6234 24.6937C61.3435 28.9734 63.3779 34.4614 63.3461 40.1319C66.2698 40.5485 68.9267 42.0583 70.7809 44.3569C72.6352 46.6554 73.5487 49.5716 73.3372 52.5173C73.1257 55.4629 71.8051 58.2187 69.6415 60.2289C67.478 62.239 64.6327 63.3539 61.6795 63.3485H21.6795Z"
+                stroke="#006586" stroke-linejoin="round" />
+              <path d="M46.681 36.6823L40.0143 30.0156M40.0143 30.0156L33.3477 36.6823M40.0143 30.0156V50.0156"
+                stroke="#006586" stroke-linecap="round" stroke-linejoin="round" />
+            </svg>
+          </div>
+          <div class="upload-mssage">
+            <div class="drag-file-div">
+              <input type="file" class="hide-element" accept=".pdf" #browseInputFile (change)="onPdfFileSelect($event,0)" id="upload-doc" />
+              <button class="file-upload-button  btn-background" (click)="browseInputFile.click()">
+                <span>Browse</span>
+              </button>
+              <span class="margin-tp-5">{{selectedFileName}}</span>
+            </div>
+
+            <div class="padding-btm">
+              <span *ngIf="invalideFileSize" class="error-text-color">File is too big, maximum file size should be 6
+                MB</span><br>
+              <span *ngIf="isInvalidDocType" class="error-text-color">Invalid file type, file should be in PDF
+                format</span>
+            </div>
+            <div>
+            </div>
+
+            <div>
+              <mat-tab label="Documents">
+                <document [systemName]="systemname" [keyName]="keyName" [keyValue]="keyValue">
+                </document>
+              </mat-tab>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+      <div class="debtcare-send-email  display-flex-padding">
+        <form [formGroup]="signDocPTPForm" class="width-80">
+          <div class="doc-name-div">
+            <mat-label class="padding-right">Document Name</mat-label>
+            <mat-form-field appearance="outline">
+              <input matInput formControlName="ptpFileName" class="border-none-imp  font-size-imp">
+              <mat-error class="mat-chip-email-error">Enter File Name</mat-error>
+            </mat-form-field>
+          </div>
+
+        </form>
+
+      </div>
+      <div class="proceed-btn">
+        <button [ngClass]="(!signDocPTPForm.valid || invalideFileSize || isInvalidDocType || !selectedFileName) ? 
+        'disabled-view' : '' "
+        (click)="uploadAndProceedSignDoc()" class="action-submit btn-background disabled">
+        <span>PROCEED</span>
+      </button>
+      </div>
+      <div *ngIf="enableProgreeBar">
+        <div class="display-flex-padgn">
+          <mat-progress-bar class="width-80" mode="determinate" [value]="40"></mat-progress-bar>
+        </div>
+        <div class="progress-div">
+          <div class="width-80">
+            <span>Progree: 40%</span>
+          </div>
+        </div>
+      </div>
+
+
+
+
+    </div>
+
+    <div *ngIf="signDocumentsAction == 'save_sign_doc'"
+    [ngClass]="{'disabled-field': signatureContainer}"
+      [ngStyle]="isSaveExitSpinner ? { 'height': '80vh' } : {'height': 'auto'}" class="class-pos-rel">
+      <div class="heading-text-div select-action ">
+        <span>
+          <mat-icon [ngClass]="!isSaveExitSpinner ? 'enabled-field' : 'disabled-field'" class="back-icon"
+            (click)="signDocumentsAction = 'upload_documents'">arrow_back</mat-icon>
+        </span>
+        <h2 class="heading-text  margin-left">Sign Documents</h2>
+      </div>
+      <div [ngClass]="!isSaveExitSpinner ? 'enabled-view' : 'disabled-view'" class="container-sign-doc">
+        <div class="left_container">
+
+          <div class="pdfView display-pdf">
+
+            <div class="pdf-container top-margin  width-position"
+              [ngStyle]="isSpinner ? { 'height': '40vh' } : {'height': 'auto'}">
+              <iframe *ngIf="!isSpinner && fileSource != null" [src]="fileSource" id="pdfViewer" width="100%" height="400"></iframe>
+
+              <div [hidden]="!isSpinner" class="spinner-view">
+                <mat-spinner *ngIf="isSpinner"></mat-spinner>
+              </div>
+              <div class="padding-tp">
+                <span class="font-size">{{ptpFileText}}</span>
+              </div>
+            </div>
+
+
+
+
+
+
+          </div>
+
+        </div>
+        <div class="btnContainer">
+          <div class="example-button-row">
+            <input type="file" class="myFileInput" (change)="onImageUpload($event)" accept="image/png"
+              #signatureImageFile>
+            <button class="insert-signature-btn" (click)="signatureImageFile.click()">Insert Signature
+              <mat-icon>add</mat-icon> </button>
+            <button
+              [ngStyle]=" isSaveDocButtonEnabled ? { 'opacity': '1','pointer-events': 'auto' } : { 'opacity': '0.5', 'pointer-events': 'none' } "
+              class="sign-doc-save-exit" (click)="saveSignDocument('save_exit')">SAVE & EXIT</button>
+            <button
+              [ngStyle]=" isSaveDocButtonEnabled ? { 'opacity': '1','pointer-events': 'auto' } : { 'opacity': '0.5', 'pointer-events': 'none' } "
+              class="sign-doc-save-send-email" (click)="saveSignDocument('save_send_email')">SAVE & SEND MAIL</button>
+          </div>
+        </div>
+      </div>
+
+      <div [hidden]="!isSaveExitSpinner" class="spinner-view">
+        <mat-spinner *ngIf="isSaveExitSpinner"></mat-spinner>
+      </div>
+
+    </div>
+
+  </div>
+
+    <div *ngIf="data.action == 'Send SMS'">
+    <div *ngIf="currentMessageType == 'list'">
+      <div class="heading-text-div heading-text-css">
+        <div>
+          <h2 class="heading-text">Send SMS</h2>
+        </div>
+        <div>
+          <span class="new-message-1" (click)="navigateToNewMessage();currentMessageType = 'new_message'">
+            <span class="mat-add-icon-css"><mat-icon>add</mat-icon></span>
+            <span class="new-msg">New Message</span>
+          </span>
+        </div>
+      </div>
+
+      <div class="message-div">
+        <div *ngIf="!isLogsLoading && conversationList?.length > 0">
+          <div *ngFor="let conversation of conversationList" class="message-div-content">
+            <div (click)="viewChat(conversation)" class="message-div-inner-content">
+              <svg xmlns="http://www.w3.org/2000/svg" width="34" height="34" viewBox="0 0 34 34" fill="none">
+                <path
+                  d="M33 17C33 20.3012 32.0002 23.3689 30.287 25.9168C27.4142 30.1891 22.5354 33 17 33C11.4646 33 6.58582 30.1891 3.71305 25.9168C1.99977 23.3689 1 20.3012 1 17C1 8.16344 8.16344 1 17 1C25.8366 1 33 8.16344 33 17Z"
+                  stroke="#292929" />
+                <path
+                  d="M20.5564 11.6669C20.5564 13.6306 18.9645 15.2224 17.0009 15.2224C15.0372 15.2224 13.4453 13.6306 13.4453 11.6669C13.4453 9.7032 15.0372 8.11133 17.0009 8.11133C18.9645 8.11133 20.5564 9.7032 20.5564 11.6669Z"
+                  stroke="#292929" />
+                <path
+                  d="M17.0011 33.0007C12.1405 33.0007 7.78599 30.8332 4.85156 27.4121C5.72618 24.4753 8.44693 22.334 11.6678 22.334H22.3345C25.5554 22.334 28.2761 24.4753 29.1507 27.4121C26.2163 30.8332 21.8618 33.0007 17.0011 33.0007Z"
+                  stroke="#292929" />
+              </svg>
+            </div>
+            <div (click)="viewChat(conversation)" class="message-div-text-number-content">
+              <span class="message-div-text-number-content-span">+{{conversation?.clientNumber}}</span>
+              <span class="message-div-text-content-span">{{conversation?.smstxt}}</span>
+              <span class="message-div-date-content-span">{{conversation?.lastMessageDateTime | date: 'yyyy-MM-dd'}} | {{conversation?.lastMessageDateTime | date: 'hh:mm'}}</span>
+            </div>
+            <div *ngIf="conversationList?.length == 0">
+              <h3>N0 SMS</h3>
+            </div>
+          </div>
+        </div>
+        <div *ngIf="!isLogsLoading && conversationList?.length == 0">
+          <h3 class="no-data-text">No data available</h3>
+          <div class="acknowledement-div acknowledement-div-padding">
+            <div class="action-div action-btn-right action-btn-right-padding-4 action-btn-right-close">
+              <button class="select-action action-submit" (click)="closeDialog()">CLOSE</button>
+            </div>
+          </div>
+        </div>
+
+        <div [hidden]="!isLogsLoading" [ngClass]="isLogsLoading ? 'progress-bar-container' : '' ">
+          <mat-progress-bar *ngIf="isLogsLoading" mode="indeterminate"></mat-progress-bar>
+        </div>
+      </div>
+
+    </div>
+    
+      <div *ngIf="currentMessageType == 'new_message' && isOpenConversation">
+
+        <div *ngIf="!isLogsLoading && conversationList?.length == 0"> 
+          <h3 class="no-data-text">No data available</h3>
+          <div class="acknowledgement-div acknowledgement-div-padding">
+            <div class="action-div action-btn-right action-btn-right-padding-4 action-btn-right-close">
+              <button class="select-action action-submit" (click)="closeDialog()">CLOSE</button>
+            </div>
+          </div>
+        </div>
+
+        <div>
+          <div class="close-box-icon">
+            <span class="box-close"><mat-icon (click)="closeDialog()">close</mat-icon></span>
+          </div>
+          <div class="question-div">
+          <form [formGroup]="sendSMSForm">
+
+            <div class="collections-send-email-div-type legal-mat-chips borderCss">
+              <mat-form-field appearance="outline" class="example-chip-list mat-field-width">
+                <span matPrefix>TO</span>
+                <input type="tel" matInput formControlName="contactNumber"
+                  [ngClass]="{'has-error': sendSMSForm.get('contactNumber').invalid && sendSMSForm.get('contactNumber').touched && formSubmitted}"
+                  class="email-input email-input-send-to" />
+              </mat-form-field>
+              <mat-error class="error-text-color"
+                *ngIf="sendSMSForm.get('contactNumber').touched && (sendSMSForm.get('contactNumber').hasError('required') ||  sendSMSForm.get('contactNumber').invalid) && formSubmitted">
+                Please add contact number</mat-error>
+            </div>
+
+            <div class="collections-send-email-div-type legal-mat-chips">
+              <mat-card class="mat-card-sms-body">
+                <mat-card-content>
+                  <div *ngFor="let sms of coversationChat" class="card-body msg_card_body">
+                    <div class="div_space sender">
+                      <div class="msg_cotainer">
+                        {{sms?.smsText}}
+                      </div>
+                    </div>
+                    <div class="div_space sentTime">
+                      <span class="msg_time">{{sms?.createdDate | date:"
+                        EEEE MMM dd | hh:mm a"}}</span>
+                    </div>
+                  </div>
+                </mat-card-content>
+              </mat-card>
+            </div>
+
+            <div class="collections-send-email-div-type legal-mat-chips borderCss question-div">
+              <mat-form-field appearance="outline" class="example-chip-list mat-field-width sendSMSContent"
+                [ngClass]="{'has-error': sendSMSForm.get('message').invalid && sendSMSForm.get('message').touched && formSubmitted}">
+                <textarea matInput class="email-input email-input-send-to  send-sms-message" formControlName="message" placeholder="Type Here"
+                rows="4" cols="50" (ngModelChange)="onMessageType($event)"></textarea>
+                <span *ngIf="!isSMSTyped" matSuffix>
+                  <svg  xmlns="http://www.w3.org/2000/svg" width="21" height="20" viewBox="0 0 21 20" fill="none">
+                    <path d="M2 10L1 1L20 10L1 19L2 10ZM2 10H9" stroke="#292929" stroke-linecap="round"
+                      stroke-linejoin="round" />
+                  </svg>
+                  </span>
+                  <span *ngIf="isSMSTyped" matSuffix (click)="sendSMS()">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="21" height="20" viewBox="0 0 21 20" fill="none">
+                    <path d="M2 10L1 1L20 10L1 19L2 10ZM2 10H9" stroke="#346FE2" stroke-linecap="round"
+                      stroke-linejoin="round" />
+                  </svg>
+                </span>
+              </mat-form-field>
+              <div>
+              <mat-error class="error-text-color"
+                *ngIf="sendSMSForm.get('message').touched && sendSMSForm.get('message').hasError('required') && formSubmitted">Please
+                add messege body</mat-error>
+              <mat-error class="error-text-color"
+                *ngIf="sendSMSForm.get('message').touched && sendSMSForm.get('message').hasError('maxlength') && formSubmitted">Maximum
+                1200 characters allowed </mat-error>  
+               </div> 
+            </div>
+
+          </form>
+          </div>
+        </div>
+
+        
+        <div [hidden]="!isSpinner" class="spinner-view">
+          <mat-spinner *ngIf="isSpinner"></mat-spinner>
+        </div>
+
+        <div [hidden]="!isLogsLoading" [ngClass]="isLogsLoading ? 'progress-bar-container' : '' ">
+          <mat-progress-bar *ngIf="isLogsLoading" mode="indeterminate"></mat-progress-bar>
+        </div>
+      </div>
+
+    <div *ngIf="currentMessageType == 'new_message' && !isOpenConversation" class="new-message" [style.height.px]="popupHeight">
+      <div [ngClass]="isSpinner ? 'disabled-field' : 'enabled-field'" class="class-pos-rel">
+        <div class="class-pos-rel">
+          <div>
+            <span class="send-sms-heading-css">
+              <span *ngIf="data.action != 'Send Email'">
+                <mat-icon class="back-icon" (click)="currentMessageType = 'list'">arrow_back</mat-icon>
+              </span>
+              <span class="heading-text send-sms-text-heading">Send SMS</span>
+            </span>
+            <span class="icon-close">
+              <mat-icon (click)="closeDialog()">close</mat-icon>
+            </span>
+            <div class="send-message question-div" class="class-padding-8">
+
+              <form [formGroup]="sendSMSForm">
+
+                <div class="collections-send-email-div-type legal-mat-chips borderCss">
+                  <mat-form-field appearance="outline" class="example-chip-list mat-field-width"
+                    [ngClass]="{'has-error': sendSMSForm.get('contactNumber').invalid && sendSMSForm.get('contactNumber').touched && formSubmitted}">
+                    <span class="text-style" matPrefix>TO</span>
+                    <input matInput type="tel" formControlName="contactNumber"
+                      class="email-input email-input-send-to" />
+                    <mat-error class="error-text-color"
+                      *ngIf="(sendSMSForm.get('contactNumber').hasError('required') ||  sendSMSForm.get('contactNumber').invalid) && formSubmitted">Please
+                      add contact number</mat-error>
+                  </mat-form-field>
+                </div>
+
+                <div class="collections-send-email-div-type legal-mat-chips">
+                  <mat-card class="mat-card-sms-body">
+                    <mat-card-content>
+                      <div class="card-body msg_card_body" *ngFor="let sms of sendMessageConversation">
+                        <div class="div_space sender">
+                          <div class="msg_cotainer">
+                            {{sms?.smsText}}
+                          </div>
+                        </div>
+                        <div class="div_space sentTime">
+                          <span class="msg_time">{{sms?.smsDate | date:"
+                            EEEE MMM dd | hh:mm a"}}</span>
+                        </div>
+                      </div>
+                    </mat-card-content>
+                  </mat-card>
+
+                </div>
+
+                <div class="collections-send-email-div-type legal-mat-chips borderCss">
+                  <mat-form-field appearance="outline"
+                    class="example-chip-list mat-field-width send-sms-submit-container sendSMSContent"
+                    [ngClass]="{'has-error': sendSMSForm.get('message').invalid && sendSMSForm.get('message').touched && formSubmitted}">
+                
+                    <div class="send-message-content-css">
+                
+                      <textarea matInput class="email-input email-input-send-to message-content-padding" formControlName="message" cols="30" rows="10"
+                        placeholder="Type Here" id="messageBody" rows="3" cols="50" (ngModelChange)="onMessageType($event)" >
+                      </textarea>
+                
+                      <span class="sms" *ngIf="!isSMSTyped" matSuffix>
+                        <svg xmlns="http://www.w3.org/2000/svg" width="21" height="20" viewBox="0 0 21 20" fill="none">
+                          <path d="M2 10L1 1L20 10L1 19L2 10ZM2 10H9" stroke="#292929" stroke-linecap="round"
+                            stroke-linejoin="round" />
+                        </svg>
+                      </span>
+                
+                      <span class="send-message-btn" *ngIf="isSMSTyped" matSuffix (click)="sendSMS()">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="21" height="20" viewBox="0 0 21 20" fill="none">
+                          <path d="M2 10L1 1L20 10L1 19L2 10ZM2 10H9" stroke="#346FE2" stroke-linecap="round"
+                            stroke-linejoin="round" />
+                        </svg>
+                      </span>
+                
+                    </div>
+                
+                    <mat-error class="error-text-color"
+                      *ngIf="(sendSMSForm.get('message').hasError('required') ||  sendSMSForm.get('message').invalid) && formSubmitted">Please
+                      add message body</mat-error>
+                  </mat-form-field>
+                </div>
+                
+
+              </form>
+
+            </div>
+
+            <div [hidden]="!isSpinner" class="spinner-view">
+              <mat-spinner *ngIf="isSpinner"></mat-spinner>
+            </div>
+
+          </div>
+        </div>
+
+        <div [hidden]="!isLogsLoading" [ngClass]="isLogsLoading ? 'progress-bar-container' : '' ">
+          <mat-progress-bar *ngIf="isLogsLoading" mode="indeterminate"></mat-progress-bar>
+        </div>
+      </div>
+    </div>
+
+    </div>
+
+    <div *ngIf="data.action == 'Upload Documents'">
+
+    <div>
+      <h1>Upload Document</h1>
+    </div>
+
+    <div>
+      <mat-tab-group>
+        <mat-tab label="Documents">
+          <document-uploader [documentSet]="'0'" [systemName]="'debtors'" [keyName]="'DebtorsInvoiceId'"
+            [keyValue]="'123'"></document-uploader>
+        </mat-tab>
+      </mat-tab-group>
+    </div>
+    </div>
+
+    <div [hidden]="!isCommonSpinner" class="spinner-view">
+      <mat-spinner *ngIf="isCommonSpinner"></mat-spinner>
+    </div>
+
+    <div [hidden]="!isCommonProgressBar" [ngClass]="isCommonProgressBar ? 'progress-bar-container' : '' ">
+      <mat-progress-bar *ngIf="isCommonProgressBar" mode="indeterminate"></mat-progress-bar>
+    </div>
+
+</section>

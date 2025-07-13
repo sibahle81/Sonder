@@ -1,0 +1,73 @@
+<mat-table #table *ngIf="compensationDataSource"
+  [dataSource]="compensationDataSource" matSort>
+
+  <ng-container matColumnDef="beneficiaryTypeDescription">
+    <mat-header-cell *matHeaderCellDef> Beneficiary type </mat-header-cell>
+    <mat-cell *matCellDef="let row"> {{row.beneficiaryTypeDescription}} </mat-cell>
+  </ng-container>
+
+  <ng-container matColumnDef="beneficiaryNameAndSurname">
+    <mat-header-cell *matHeaderCellDef> Name </mat-header-cell>
+    <mat-cell *matCellDef="let row"> {{row.beneficiaryNameAndSurname}} </mat-cell>
+  </ng-container>
+
+  <ng-container matColumnDef="dateOfBirth">
+    <mat-header-cell *matHeaderCellDef> Date of Birth </mat-header-cell>
+    <mat-cell *matCellDef="let row">
+      <ng-container *ngIf="row.dateOfBirth !== '0001-01-01T00:00:00'">{{row.dateOfBirth | date:'yyyy/MM/dd'}}</ng-container>
+    </mat-cell>
+  </ng-container>
+
+  <ng-container matColumnDef="age">
+    <mat-header-cell *matHeaderCellDef> Age </mat-header-cell>
+    <mat-cell *matCellDef="let row"> {{row.age}}
+    </mat-cell>
+  </ng-container>
+
+  <ng-container matColumnDef="benefit">
+    <mat-header-cell *matHeaderCellDef> Benefit </mat-header-cell>
+    <mat-cell *matCellDef="let row"> {{row.benefitCode}}
+    </mat-cell>
+  </ng-container>
+
+  <ng-container matColumnDef="productCode">
+    <mat-header-cell *matHeaderCellDef> Product </mat-header-cell>
+    <mat-cell *matCellDef="let row"> {{row.productCode}}
+    </mat-cell>
+  </ng-container>
+
+  <ng-container matColumnDef="cvPercentage">
+    <mat-header-cell *matHeaderCellDef>  % CV </mat-header-cell>
+    <mat-cell *matCellDef="let row"> {{row.cvPercentage * 100}}
+    </mat-cell>
+  </ng-container>
+
+  <ng-container matColumnDef="compensation">
+    <mat-header-cell *matHeaderCellDef> Compensation </mat-header-cell>
+    <mat-cell *matCellDef="let row"> {{row.compensation === 0 ? '' : row.compensation | currency: 'R'}}
+    </mat-cell>
+  </ng-container>
+
+  <ng-container matColumnDef="percentageIncrease">
+    <mat-header-cell *matHeaderCellDef> % increase </mat-header-cell>
+    <mat-cell *matCellDef="let row"> {{row.percentageIncrease * 100}}
+    </mat-cell>
+  </ng-container>
+
+  <ng-container matColumnDef="increase">
+    <mat-header-cell *matHeaderCellDef> Increase </mat-header-cell>
+    <mat-cell *matCellDef="let row"> {{row.increase | currency: 'R'}}
+    </mat-cell>
+  </ng-container>
+
+  <ng-container matColumnDef="totalCompensation">
+    <mat-header-cell *matHeaderCellDef> Total  </mat-header-cell>
+    <mat-cell *matCellDef="let row"> {{row.totalCompensation| currency: 'R'}}
+    </mat-cell>
+  </ng-container>
+
+  <ng-container>
+    <mat-header-row *matHeaderRowDef="displayColumns"></mat-header-row>
+  </ng-container>
+  <mat-row *matRowDef="let row; columns: displayColumns"></mat-row>
+</mat-table>

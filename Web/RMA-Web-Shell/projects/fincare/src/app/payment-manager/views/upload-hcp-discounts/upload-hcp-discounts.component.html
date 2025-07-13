@@ -1,0 +1,20 @@
+<mat-card>
+    <div>
+        <div class="title">
+            <h1 class="Arabic">Discount File Upload</h1>
+        
+            <upload-control #uploadControl [acceptedTypes]="'.xlsx'" [isSingleInput]="false" [allowDelete]="true"
+                [isReadOnly]="false" [label]="title" (fileSelected)="fileSelected($event)"></upload-control>
+        </div>
+        <br />
+        <div *ngIf="(isSubmitting$ | async)" class="loadingDiv">
+            <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+            <span class="site-font">Uploading large files may take several minutes...please wait</span>
+        </div>
+        <br />
+        <div class="form-group-button mat-form-button action-buttons">
+            <button type="button" (click)="save()" class="button float-button">Upload File</button>
+            <button type="button" (click)="back()" class="button float-button">Close</button>
+        </div>
+    </div>
+</mat-card>

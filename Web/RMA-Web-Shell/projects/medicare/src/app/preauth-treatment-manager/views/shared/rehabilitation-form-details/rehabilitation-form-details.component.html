@@ -1,0 +1,50 @@
+
+<div class="mat-header">
+    <h1>Rehabilitation Form Details</h1>
+  </div>
+  <div  *ngFor="let rehabItem of rehabDetails$ | async">
+  <mat-card>
+    <mat-card-content>
+      <div class="grid">
+        <div>
+          <span class="title">Initial Consultation Date</span>
+          <span class="value">{{ rehabItem?.initialConsultationDate   | date: "d MMM y" }} </span>
+        </div>
+        <div>
+          <span class="title">therapistName</span>
+          <span class="value">{{ rehabItem?.therapistName }}</span>
+        </div>
+      </div>
+      <div class="grid">
+        <div>
+          <span class="title">treatmentFrequency</span>
+          <span class="value">{{ rehabItem?.treatmentFrequency }} </span>
+        </div>
+        <div>
+          <span class="title">treatmentDuration</span>
+          <span class="value"> {{ rehabItem?.treatmentDuration }} </span>
+        </div>
+      </div>
+      <div class="grid">
+        <div>
+          <span class="title">treatmentSessionCount</span>
+          <span class="value">{{ rehabItem?.treatmentSessionCount }} </span>
+        </div>
+        <div>
+          <span class="title">rehabilitationGoal</span>
+          <span class="value">{{ rehabItem?.rehabilitationGoal }}</span>
+        </div>
+      </div>
+      <div class="grid">
+        <div>
+          <span class="title">Referring Doctor</span>
+          <span class="value">{{ rehabItem?.healthCareProviderName }} </span>
+        </div>
+        <div>
+            <span class="title">referringDoctorContact</span>
+            <span class="value">{{ rehabItem?.referringDoctorContact }} </span>
+          </div>
+      </div>        
+    </mat-card-content>
+  </mat-card>
+</div>

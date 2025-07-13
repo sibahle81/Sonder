@@ -1,0 +1,79 @@
+
+
+<div class="mat-container mat-elevation-z8">
+    <div class="mat-header">
+      <h1>CompCare STP Messages</h1>
+    </div><br />
+  
+    <div class="search-container search-container-right">
+      <input type="text" name="search" (keyup)="applyFilter($event.target.value)" placeholder="search here...">
+  </div>
+  
+  <div *ngIf="isLoadingSTPMessages$ | async">
+    <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+    <label class="mat-label other-label"><i>loading compcare stp messages...please wait</i></label>
+  </div>
+  
+  <div *ngIf="dataSource && dataSource.data.length >0 && !(isLoadingSTPMessages$ | async )">
+    <mat-table #table [dataSource]="dataSource" matSort>
+  
+      <ng-container matColumnDef="from">
+        <mat-header-cell *matHeaderCellDef mat-sort-header>FROM</mat-header-cell>
+        <mat-cell *matCellDef="let row"> {{row.from}}</mat-cell>
+      </ng-container>
+  
+      <ng-container matColumnDef="to">
+        <mat-header-cell *matHeaderCellDef mat-sort-header>TO</mat-header-cell>
+        <mat-cell *matCellDef="let row"> {{row.to}}</mat-cell>
+      </ng-container>
+  
+      <ng-container matColumnDef="environment">
+        <mat-header-cell *matHeaderCellDef mat-sort-header>ENVIRONMENT</mat-header-cell>
+        <mat-cell *matCellDef="let row"> {{row.environment}}</mat-cell>
+      </ng-container>
+  
+      <ng-container matColumnDef="enqueuedTime">
+        <mat-header-cell *matHeaderCellDef mat-sort-header>ENQUEUED TIME</mat-header-cell>
+        <mat-cell *matCellDef="let row"> {{row.enqueuedTime}}</mat-cell>
+      </ng-container>
+
+      <ng-container matColumnDef="messageProcessedTime">
+        <mat-header-cell *matHeaderCellDef mat-sort-header>MESSAGE PROCESSED TIME</mat-header-cell>
+        <mat-cell *matCellDef="let row"> {{row.messageProcessedTime}}</mat-cell>
+      </ng-container>
+  
+      <!-- actions -->
+      <ng-container matColumnDef="actions">
+        <mat-header-cell *matHeaderCellDef mat-sort-header> ACTIONS </mat-header-cell>
+  
+        <mat-cell *matCellDef="let row; let i=index;">
+          <button mat-icon-button color="accent" (click)="processSTP(row)">
+            <mat-icon aria-label="Process">restore_page</mat-icon>
+          </button>
+        </mat-cell>
+      </ng-container>
+  
+      <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
+      <mat-row *matRowDef="let row; columns: displayedColumns;"></mat-row>
+    </mat-table>
+    <mat-paginator #paginator
+                   [length]="dataSource.data.length"
+                   [pageIndex]="0"
+                   [pageSize]="10"
+                   [pageSizeOptions]="[5, 10, 25, 100]">
+    </mat-paginator>
+  </div><br/>
+  <div class="no-results" [style.display]="!(isLoadingSTPMessages$ | async ) && dataSource.data.length == 0 ? '' : 'none'">
+    <span class="grey site-font">No records found...</span>
+  </div>
+  
+  </div>
+  <div><br/>
+    <div class="form-group-buttons">
+        <button type="button" (click)="clear()" [disabled]="isProcessing" class="button float-button">Back</button>
+    </div>
+  </div><br/>
+  <div *ngIf="isProcessing">
+    <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+    <label class="mat-label other-label"><i>{{processMessage}}</i></label>
+    </div>

@@ -1,0 +1,52 @@
+<div class="menu-container">
+    <mat-tab-group>
+        <mat-tab [label]="brokerageTitle">
+            <brokerage-details></brokerage-details>
+        </mat-tab>
+        <mat-tab label="Banking Details">
+            <app-brokerage-banking-details></app-brokerage-banking-details>
+        </mat-tab>
+        <mat-tab label="Contact Details">
+            <brokerage-contact-details></brokerage-contact-details>
+        </mat-tab>
+        <mat-tab label="Address Details">
+            <brokerage-address-list></brokerage-address-list>
+        </mat-tab>
+        <mat-tab label="Categories">
+            <brokerage-categories-list></brokerage-categories-list>
+        </mat-tab>
+        <mat-tab label="Consultants Details">
+            <brokerage-consultant></brokerage-consultant>
+        </mat-tab>
+        <mat-tab label="Contract Options">
+            <brokerage-product-options></brokerage-product-options>
+        </mat-tab>
+        <mat-tab label="Configuration">
+            <product-option-configuration></product-option-configuration>
+        </mat-tab>
+        <mat-tab label="Brokerage Checks">
+            <brokerage-checks></brokerage-checks>
+        </mat-tab>
+        <mat-tab label="Documents">
+            <brokerage-documents></brokerage-documents>
+        </mat-tab>
+        <mat-tab label="Authorized Representatives">
+        <brokerage-authorized-representative></brokerage-authorized-representative>
+        </mat-tab>
+        <mat-tab label="Notes">
+            <brokerage-notes name="brokerage"></brokerage-notes>
+        </mat-tab>
+        <mat-tab label="Audit Log">
+            <audit-log name="brokerage"></audit-log>
+        </mat-tab>
+    </mat-tab-group>
+    <!--Buttons-->
+    <div class="form-group-button mat-form-button">
+        <div (click)="edit()" *ngIf="canEdit" class="form-buttons submit-button">
+            <button type="button" class="button float-button">Edit</button>
+        </div>
+        <div (click)="back()" class="form-buttons submit-button">
+            <button type="button" class="button float-button">Back</button>
+        </div>
+    </div>
+</div>

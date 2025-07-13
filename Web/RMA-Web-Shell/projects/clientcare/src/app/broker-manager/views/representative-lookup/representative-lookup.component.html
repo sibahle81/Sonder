@@ -1,0 +1,93 @@
+<div class="page-header"></div>
+<div *ngIf="!canEdit">
+    <h1>Agent Search</h1>
+    <div style="padding-bottom: 15px; color: orange; font-family: 'Oswald', sans-serif;">
+        You do not have sufficient permissions to link / delink agents.
+    </div>
+</div>
+<div [hidden]="!canEdit" style="padding-top: 10px;padding-bottom:20px;">
+    <div [hidden]="hideSearch">
+        <form [formGroup]="form" class="mat-container details-form" novalidate>
+            <section>
+                <div class="field-container">
+                    <mat-form-field>
+                        <label class="mat-label other-label mandatory-field">Representative Search</label>
+                        <input matInput (keyup)="search($event)" name="filter" id="filter" formControlName="filter" />
+                        <mat-icon class="search-icon" (click)="search($event)" matSuffix>search</mat-icon>
+                        <div class="link-error" *ngIf="errors.length > 0">
+                            <ng-container *ngFor="let error of errors">
+                                <mat-error>{{error}}</mat-error>
+                            </ng-container>
+                        </div>
+                        <mat-error *ngIf="form.get('filter').hasError('required') || form.get('filter').hasError('minLength')">
+                            Search string must be at least 3 characters long
+                        </mat-error>
+                    </mat-form-field>
+                </div>
+                <div class="field-container-right">
+                    <mat-form-field>
+                        <label class="mat-label other-label mandatory-field">Select Representative</label>
+                        <div *ngIf="isSearching">
+                            <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+                        </div>
+                        <div [hidden]="isSearching">
+                            <mat-select formControlName="agentId" (selectionChange)="selectRepresentative($event)">
+                                <mat-option *ngFor="let rep of representatives" [value]="rep.id">{{ rep.code }} - {{ rep.name }}
+                                </mat-option>
+                            </mat-select>
+                            <mat-error *ngIf="hasRepresentatives && (form.get('agentId').hasError('required') || form.get('agentId').hasError('min'))">
+                                Please select a representative
+                            </mat-error>
+                        </div>
+                    </mat-form-field>
+                </div>
+            </section>
+        </form>
+    </div>
+    <div [hidden]="!agentSelected">
+        <form [formGroup]="detailForm" class="mat-container details-form shift-form" novalidate>
+            <section>
+                <mat-form-field>
+                    <label class="mat-label other-label mandatory-field">code</label>
+                    <input matInput id="Code" formControlName="code" name="Code"  />
+                </mat-form-field>
+                <mat-form-field class="mat-form-field-right">
+                    <label class="mat-label other-label mandatory-field">Name</label>
+                    <input matInput id="name" formControlName="name" name="name" />
+                </mat-form-field>
+            </section>
+            <section>
+                <mat-form-field>
+                    <label class="mat-label other-label mandatory-field">ID Type</label>
+                    <mat-select formControlName="idType">
+                        <mat-option *ngFor="let type of idTypes" [value]="type.id">
+                            {{type.name}}
+                        </mat-option>
+                    </mat-select>
+                </mat-form-field>
+                <mat-form-field class="mat-form-field-right">
+                    <label class="mat-label other-label mandatory-field">ID Number</label>
+                    <input matInput id="idNumber" formControlName="idNumber" name="idNumber" />
+                </mat-form-field>
+            </section>
+        </form>
+        <form [formGroup]="form" class="mat-container details-form shift-form" novalidate>
+            <section>
+                <mat-form-field>
+                    <label class="mat-label other-label">Contact Number</label>
+                    <input matInput id="contactNumber" formControlName="contactNumber" name="contactNumber" />
+                    <mat-error *ngIf="form.get('contactNumber').invalid">
+                        A valid phone number is required
+                    </mat-error>
+                </mat-form-field>
+                <mat-form-field class="mat-form-field-right">
+                    <label class="mat-label other-label">Email</label>
+                    <input matInput id="email" formControlName="email" name="email" />
+                    <mat-error *ngIf="form.get('email').invalid">
+                        A valid email address is required
+                    </mat-error>
+                </mat-form-field>
+            </section>
+        </form>
+    </div>
+</div>

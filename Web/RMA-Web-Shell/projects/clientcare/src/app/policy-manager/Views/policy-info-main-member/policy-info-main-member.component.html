@@ -1,0 +1,19 @@
+<div *ngIf="!isGroup">
+  <person-details [showAge]="true" [parentModel]="detailsModel" (ageChanged)="onAgeChanged($event)"></person-details>
+
+  <mat-accordion>
+    <mat-expansion-panel>
+      <mat-expansion-panel-header>
+        <h4>Previous Insurance <i>(main member)</i></h4>
+      </mat-expansion-panel-header>
+      <previous-insurer [case]="model" [isEditable]="isWizard && !isReadonly" [context]="roleplayerContext"></previous-insurer>
+    </mat-expansion-panel>
+  </mat-accordion>
+  <br />
+</div>
+<div *ngIf="isGroup">
+  <group-member-detail [parentModel]="detailsModel"></group-member-detail>
+</div>
+
+<policy-benefits [title]="'Main Member Benefits'" [parentModel]="detailsModel"
+  [selectedProductOption]="selectedProductOption" [coverMemberType]="coverMemberType"></policy-benefits>

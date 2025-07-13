@@ -1,0 +1,263 @@
+<div *ngIf="isLoading">
+    <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+    <span *ngIf="isLoading" class="site-font grey" style="margin-top: 15px;"><i>Processing, please
+            wait...</i></span>
+</div>
+<br>
+<h2> {{title}} </h2>
+<h4 class="red-text-status-message">
+    {{(isReadOnly)? 'Editing is currently disabled because a workflow is in progress.': ''}}
+</h4>
+<br>
+<div *ngIf="!isLoading  && rolePlayer">
+
+    <mat-horizontal-stepper [linear]="isLinear" #stepper>
+        <mat-step [stepControl]="formNameGroup" label="HCP Details"
+            [completed]="isStep1HCPDetailsComplete || !checkStepValidations">
+            <form [formGroup]="formNameGroup">
+                <h4 class="red-text-status-message" *ngIf="checkStepValidations">
+                    {{!completeStep1HCPDetailsValidation()? 'Practice details must be fully completed before advancing
+                    to the
+                    next
+                    step.': ''}}
+                </h4>
+                <section>
+                    <mat-form-field class="mat-form-field">
+                        <label class="mat-label other-label mandatory-field">Healthcare Provider Name</label>
+                        <input matInput type="text" formControlName="name" name="name" id="name" />
+                    </mat-form-field>
+                    <mat-error *ngIf="formNameGroup.get('name').hasError('required')">
+                        Healthcare Provider Name is required
+                    </mat-error>
+                    <mat-form-field class="mat-form-field-right">
+                        <label class="mat-label other-label mandatory-field">Description</label>
+                        <input matInput type="text" formControlName="description" name="description" id="description" />
+                    </mat-form-field>
+                </section>
+
+                <section>
+                    <mat-form-field class="mat-form-field">
+                        <label class="mat-label other-label mandatory-field">Practice Number</label>
+                        <input matInput type="text" formControlName="practiceNumber" name="practiceNumber"
+                            id="practiceNumber" />
+                    </mat-form-field>
+                    <mat-error *ngIf="formNameGroup.get('practiceNumber').hasError('required')">
+                        Practice Numberis required
+                    </mat-error>
+                    <mat-form-field class="mat-form-field-right">
+                        <label class="mat-label other-label mandatory-field">Dispensing License Number</label>
+                        <input matInput type="text" formControlName="dispensingLicenseNumber"
+                            name="dispensingLicenseNumber" id="dispensingLicenseNumber" />
+                    </mat-form-field>
+                </section>
+
+                <section>
+                    <div class="field-container">
+                        <mat-form-field class="mat-form-field">
+                            <label class="mat-label other-label mandatory-field">Date Practice Started</label>
+                            <input matInput formControlName="datePracticeStarted" id="datePracticeStarted"
+                                name="datePracticeStarted" [matDatepicker]="datePracticeStarted">
+                            <mat-datepicker-toggle matSuffix [for]="datePracticeStarted"></mat-datepicker-toggle>
+                            <mat-datepicker touchUi="true" #datePracticeStarted></mat-datepicker>
+                            <mat-error *ngIf="formNameGroup.get('datePracticeStarted').hasError('required')">
+                                Date Practice Started date is required
+                            </mat-error>
+                        </mat-form-field>
+                    </div>
+
+                    <div class="field-container-right">
+                        <mat-form-field class="mat-form-field-right">
+                            <label class="mat-label other-label">Date Practice Closed</label>
+                            <input matInput formControlName="datePracticeClosed" id="datePracticeClosed"
+                                name="datePracticeClosed" [matDatepicker]="datePracticeClosed">
+                            <mat-datepicker-toggle matSuffix [for]="datePracticeClosed"></mat-datepicker-toggle>
+                            <mat-datepicker touchUi="true" #datePracticeClosed></mat-datepicker>
+                        </mat-form-field>
+                    </div>
+                </section>
+
+                <div class="clear">&nbsp;</div>
+                <section>
+                    <mat-label class="other-label mandatory-field">Agreement Date?</mat-label><br />
+                    <mat-radio-group aria-label="agreement Type? " name="agreementType" formControlName="agreementType"
+                        id="agreementType">
+                        <mat-radio-button *ngFor="let agreementType of agreementTypes" [value]="agreementType.value">
+                            {{agreementType.text}} &nbsp;&nbsp;
+                        </mat-radio-button>
+                    </mat-radio-group>
+                </section>
+                <div class="clear">&nbsp;</div>
+                <section>
+                    <mat-form-field class="mat-form-field">
+                        <label class="mat-label other-label">Service Provider Type</label>
+                        <mat-select name="serviceProviderType" id="serviceProviderType"
+                            formControlName="serviceProviderType">
+                            <mat-option *ngFor="let serviceProviderType of serviceProviderTypes"
+                                [value]="serviceProviderType">
+                                {{formatLookup(serviceProviderType)}}
+                            </mat-option>
+                        </mat-select>
+                        <mat-error *ngIf="formNameGroup.get('serviceProviderType').hasError('required')">
+                            provider type is <strong>required</strong>
+                        </mat-error>
+                    </mat-form-field>
+
+                    <mat-form-field class="mat-form-field-right">
+                        <label class="mat-label other-label">Chain Group</label>
+                        <mat-select name="hcpChainGroup" id="hcpChainGroup" formControlName="hcpChainGroup">
+                            <mat-option *ngFor="let healthCareProviderGroupType of healthCareProviderGroupTypes"
+                                [value]="healthCareProviderGroupType">
+                                {{formatLookup(healthCareProviderGroupType)}}
+                            </mat-option>
+                        </mat-select>
+                        <mat-error *ngIf="formNameGroup.get('hcpChainGroup').hasError('required')">
+                            group chain type is <strong>required</strong>
+                        </mat-error>
+                    </mat-form-field>
+                </section>
+
+                <section>
+                    <mat-form-field class="mat-form-field">
+                        <label class="mat-label other-label">Vat Registation Number</label>
+                        <input matInput type="text" formControlName="vatRegistationNumber" name="vatRegistationNumber"
+                            id="vatRegistationNumber" />
+                    </mat-form-field>
+                </section>
+
+                <section>
+                    <mat-form-field class="mat-form-field">
+                        <label class="mat-label other-label">Vat Registered</label>
+                        <mat-select name="vatRegistered" id="vatRegistered" formControlName="vatRegistered">
+                            <mat-option *ngFor="let selectionType of selectionTypes" [value]="selectionType.value">
+                                {{selectionType.text}}
+                            </mat-option>
+                        </mat-select>
+                        <mat-error *ngIf="formNameGroup.get('vatRegistered').hasError('required')">
+                            group chain type is <strong>required</strong>
+                        </mat-error>
+                    </mat-form-field>
+
+                    <mat-form-field class="mat-form-field-right">
+                        <label class="mat-label other-label">Need Treatments</label>
+                        <mat-select name="needTreatments" id="needTreatments" formControlName="needTreatments">
+                            <mat-option *ngFor="let selectionType of selectionTypes" [value]="selectionType.value">
+                                {{selectionType.text}}
+                            </mat-option>
+                        </mat-select>
+                        <mat-error *ngIf="formNameGroup.get('needTreatments').hasError('required')">
+                            group chain type is <strong>required</strong>
+                        </mat-error>
+                    </mat-form-field>
+                </section>
+
+                <section>
+                    <mat-checkbox id="isPreferred" name="isPreferred" formControlName="isPreferred"
+                        class="example-margin">
+                        Is Preferred
+                    </mat-checkbox>
+                </section>
+
+                <section>
+                    <mat-checkbox id="isActive" name="isActive" formControlName="isActive" class="example-margin">
+                        Is Active
+                    </mat-checkbox>
+                </section>
+
+                <section>
+                    <mat-checkbox id="isMineHospital" name="isMineHospital" formControlName="isMineHospital"
+                        class="example-margin">
+                        Is Mine Hospital
+                    </mat-checkbox>
+                </section>
+
+                <section>
+                    <mat-checkbox id="allowSameDayTreatment" name="allowSameDayTreatment"
+                        formControlName="allowSameDayTreatment" class="example-margin">
+                        Allow Same-day Treatment
+                    </mat-checkbox>
+                </section>
+
+                <br />
+                <div *ngIf="documentSet && documentSystemName && key && (rolePlayer.rolePlayerId > 0 || linkedId > 0)">
+                    <document-uploader [documentSet]="documentSet" [systemName]="documentSystemName" [keyName]="key"
+                        [keyValue]="rolePlayer.rolePlayerId > 0 ? rolePlayer.rolePlayerId:linkedId " [canDelete]="true"
+                        (requiredDocumentsUploadedEmit)="isRequiredDocumentsUploaded($event)"></document-uploader>
+                </div><br />
+
+                <div class="form-group-buttons" *ngIf="showActionBtn">
+                    <button type="button" class="button float-button" *ngIf="!rolePlayerSaved && showActionBtn"
+                        (click)="saveRolePlayerAndHCPDetails()">Save HCP Data</button>
+                    <button mat-raised-button color="primary" *ngIf="rolePlayerSaved"
+                        (click)="completeStep1HCPDetailsValidation()" matStepperNext>Next</button>
+                </div><br />
+            </form>
+        </mat-step>
+
+        <mat-step label="Address Details" [completed]="isStep2AddressDetailsComplete || !checkStepValidations"
+            *ngIf="rolePlayer?.healthCareProvider?.practiceNumber">
+            <h4 class="red-text-status-message" *ngIf="checkStepValidations">
+                {{!completeStep2AddressDetailsValidation()? 'Address details must be fully completed before advancing to
+                the
+                next
+                step.': ''}}
+            </h4>
+            <role-player-address-list *ngIf="this.rolePlayer" [rolePlayer]="rolePlayer"
+                (rolePlayerAddressEditedEmit)="isAddressEdited($event)" [isReadOnly]="isReadOnly"
+                [isWizard]="isWizard"></role-player-address-list>
+            <button mat-raised-button color="primary" *ngIf="showActionBtn"
+                (click)="completeStep2AddressDetailsValidation()" matStepperNext>Next</button>
+        </mat-step>
+
+        <mat-step label="Contacts Details" [completed]="isStep3ContactsDetailsComplete || !checkStepValidations"
+            *ngIf="rolePlayer?.healthCareProvider?.practiceNumber">
+            <h4 class="red-text-status-message" *ngIf="checkStepValidations">
+                {{!completeStep3ContactsDetailsValidation()? 'Contacts details must be fully completed before advancing
+                to the
+                next
+                step.': ''}}
+            </h4>
+            <member-contacts *ngIf="this.rolePlayer" (emitContacts)="setContacts($event)"
+                (rolePlayerContactsEditedEmit)="isContactsEdited($event)" [member]="rolePlayer"
+                [isReadOnly]="isReadOnly" [isWizard]="isWizard"></member-contacts>
+            <button mat-raised-button color="primary" *ngIf="showActionBtn"
+                (click)="completeStep3ContactsDetailsValidation()" matStepperNext>Next</button>
+        </mat-step>
+
+        <mat-step label="Banking Details" [completed]="isStep4BankingDetailsComplete || !checkStepValidations"
+            *ngIf="rolePlayer?.healthCareProvider?.practiceNumber">
+            <h4 class="red-text-status-message" *ngIf="checkStepValidations">
+                {{!completeStep4BankingDetailsValidation()? 'Contacts details must be fully completed before advancing
+                to the
+                next
+                step.': ''}}
+            </h4>
+            <role-player-banking-list *ngIf="this.rolePlayer" (rolePlayerBankingSelectedEmit)="setBankAccount($event)"
+                (rolePlayerBankingEditedEmit)="isBankAccountEdited($event)" [rolePlayer]="rolePlayer"
+                [verifyAccount]="true" [isReadOnly]="isReadOnly" [isWizard]="isWizard"></role-player-banking-list>
+            <button mat-raised-button color="primary" *ngIf="showActionBtn"
+                (click)="completeStep4BankingDetailsValidation()" matStepperNext>Next</button>
+        </mat-step>
+
+        <mat-step
+            *ngIf="(showActionBtn || editHCPDemographicsActionBtn || editHCPBankingDetailsActionBtn) && rolePlayer?.healthCareProvider?.practiceNumber">
+            <ng-template matStepLabel>Review</ng-template>
+            <h5>You are now done, click submit to request approval.</h5>
+            <div>
+                <button mat-raised-button color="primary" matStepperPrevious>Back</button> &nbsp; &nbsp;
+                <button mat-raised-button color="accent"
+                    *ngIf="showActionBtn || (editHCPDemographicsActionBtn && editHCPBankingDetailsActionBtn)"
+                    (click)="createHCPWorkflowWizard()">Submit</button> &nbsp;
+                <button type="button" class="button float-button"
+                    *ngIf="editHCPDemographicsActionBtn && editHCPBankingDetailsActionBtn == false"
+                    (click)="editHCPDemographicsWorkflowWizard()">Submit Edit HCP
+                    Demographics</button> &nbsp;
+                <button type="button" class="button float-button"
+                    *ngIf="editHCPBankingDetailsActionBtn && editHCPDemographicsActionBtn == false"
+                    (click)="editHCPBankingDetailsWorkflowWizard()">Submit Edit HCP
+                    Banking</button> &nbsp;
+                &nbsp;
+            </div>
+        </mat-step>
+
+    </mat-horizontal-stepper>
+</div>

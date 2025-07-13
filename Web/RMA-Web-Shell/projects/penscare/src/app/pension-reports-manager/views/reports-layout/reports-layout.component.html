@@ -1,0 +1,13 @@
+<div>
+  <div>
+    <nav class="innertop-nav">
+      <button mat-button [matMenuTriggerFor]="reportsMenu">Reports</button>
+      <mat-menu #reportsMenu="matMenu" [overlapTrigger]="false">
+        <button mat-menu-item [routerLink]="['monthend-reports']">Monthend Reports</button>
+      </mat-menu>
+    </nav>
+  </div>
+  <div [hidden]="loadingMessage != null || error != null" class="container-padding">
+    <router-outlet></router-outlet>
+  </div>
+</div>

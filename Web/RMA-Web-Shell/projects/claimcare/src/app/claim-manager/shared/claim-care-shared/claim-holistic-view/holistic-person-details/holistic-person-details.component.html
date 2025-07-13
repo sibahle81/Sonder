@@ -1,0 +1,218 @@
+<mat-card *ngIf="isLoading$ | async">
+    <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+    <label class="mat-label other-label"><i>loading person details...please wait</i></label>
+</mat-card>
+
+<div *ngIf="!(isLoading$ | async)">
+    <mat-tab-group animationDuration="500ms">
+        <mat-tab label="Details">
+            <div class="menu-bar" *ngIf="!(isLoading$ | async)">
+                <span class="material-icons">
+                    account_circle
+                </span>&nbsp;{{title}}
+                <span *ngIf="hasAuditPermission && personEvent.rolePlayer && personEvent.rolePlayer.rolePlayerId > 0"
+                    (click)="openAuditDialog(rolePlayer)" matTooltip="audit" class="material-icons pointer right">
+                    fingerprint
+                </span>
+                <span *ngIf="!isReadOnly && mode != editMode && ((personEvent.rolePlayer && isWizard) || (personEvent.rolePlayer && personEvent.rolePlayer.rolePlayerId > 0 && !isWizard))" (click)="edit()"
+                    class="material-icons pointer right" matTooltip="edit">
+                    settings
+                </span>
+                <span *ngIf="form.valid && !form.pristine && !isReadOnly" (click)="save(false)"
+                    class="material-icons pointer right" matTooltip="save">
+                    save
+                </span>
+            </div>
+            <mat-card>
+                <form [formGroup]="form" class="mat-container" novalidate>
+                    <section>
+                        <mat-form-field class="mat-form-field">
+                            <label class="mat-label other-label mandatory-field">ID Type</label>
+                            <mat-select name="idType" id="idType" formControlName="idType"
+                                (selectionChange)="idTypeChanged($event)">
+                                <mat-option *ngFor="let idType of idTypes" [value]="idType.id">
+                                    {{idType.name}}
+                                </mat-option>
+                            </mat-select>
+                            <mat-error *ngIf="form.get('idType').hasError('required') && form.get('idType').touched">
+                                ID Type is <strong>required</strong>
+                            </mat-error>
+                        </mat-form-field>
+                        <mat-form-field class="mat-form-field-right">
+                            <label class="mat-label other-label mandatory-field">ID/ Passport number</label>
+                            <input maxlength="13" id="idNumber" name="idNumber" matInput formControlName="idNumber"
+                                (blur)="search()" />
+                            <div [hidden]="!(isIdLoading$ | async)">
+                                <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+                                <label class="mat-label other-label"><i>checking existing employee...please
+                                        wait</i></label>
+                            </div>
+                            <mat-error
+                                *ngIf="form.get('idNumber').hasError('idNumber') && form.get('idNumber').touched">
+                                <strong>Invalid</strong> Identification number
+                            </mat-error>
+                            <mat-error
+                                *ngIf="form.get('idNumber').hasError('required') && form.get('idNumber').touched">
+                                Identification number is <strong>required</strong>
+                            </mat-error>
+                            <mat-error
+                                *ngIf="form.get('idNumber').hasError('minlength') && form.get('idNumber').touched">
+                                Identification number must be at least 3 characters
+                            </mat-error>
+                        </mat-form-field>
+                    </section>
+
+                    <section>
+                        <mat-form-field class="mat-form-field">
+                            <label class="mat-label other-label">Title</label>
+                            <mat-select name="title" id="title" formControlName="title">
+                                <mat-option *ngFor="let title of titles" [value]="title">
+                                    {{title}}
+                                </mat-option>
+                            </mat-select>
+                            <mat-error *ngIf="form.get('title').hasError('required') && form.get('title').touched">
+                                Title is <strong>required</strong>
+                            </mat-error>
+                        </mat-form-field>
+
+                        <mat-form-field class="mat-form-field-right">
+                            <label class="mat-label other-label mandatory-field">Name</label>
+                            <input matInput id="firstName" name="firstName" formControlName="firstName" />
+                            <label *ngIf="isSAIdentity" class="lbl-confirm">(Capture first name as it appear on ID
+                                Document)</label>
+                            <mat-error
+                                *ngIf="form.get('firstName').hasError('required')  && form.get('firstName').touched">
+                                name is <strong>required</strong>
+                            </mat-error>
+                        </mat-form-field>
+                    </section>
+
+                    <section>
+                        <mat-form-field class="mat-form-field">
+                            <label class="mat-label other-label mandatory-field">Surname</label>
+                            <input matInput id="surname" name="surname" formControlName="surname" />
+                            <label *ngIf="isSAIdentity" class="lbl-confirm">(Capture surname as it appear on ID
+                                Document)</label>
+                            <mat-error *ngIf="form.get('surname').hasError('required')  && form.get('surname').touched">
+                                Surname is <strong>required</strong>
+                            </mat-error>
+                        </mat-form-field>
+
+                        <mat-form-field class="mat-form-field-right">
+                            <label class="mat-label other-label mandatory-field">Date of Birth</label>
+                            <input matInput formControlName="dateOfBirth" [matDatepicker]="dateOfBirth" id="dateOfBirth"
+                                name="dateOfBirth" readonly [max]="maxDate" (dateChange)="dobChange()">
+                            <label *ngIf="isSAIdentity" class="lbl-confirm">(Verify that Date of birth matches the one
+                                on ID
+                                Document)</label>
+                            <mat-datepicker-toggle matSuffix [for]="dateOfBirth"></mat-datepicker-toggle>
+                            <mat-datepicker touchUi="true" #dateOfBirth></mat-datepicker>
+                            <mat-error
+                                *ngIf="form.get('dateOfBirth').hasError('required')  && form.get('dateOfBirth').touched">
+                                Date of Birth is <strong>required</strong>
+                            </mat-error>
+                        </mat-form-field>
+                    </section>
+
+                    <section>
+                        <mat-form-field class="mat-form-field">
+                            <label class="mat-label other-label">Gender</label>
+                            <mat-select name="gender" id="gender" formControlName="gender">
+                                <mat-option *ngFor="let gender of genderTypes" [value]="gender">
+                                    {{gender}}
+                                </mat-option>
+                            </mat-select>
+                            <mat-error *ngIf="form.get('gender').hasError('required') && form.get('gender').touched">
+                                Gender is <strong>required</strong>
+                            </mat-error>
+                        </mat-form-field>
+
+                        <mat-form-field class="mat-form-field-right">
+                            <label class="mat-label other-label mandatory-field">Marital Status</label>
+                            <mat-select name="maritalStatus" id="maritalStatus" formControlName="maritalStatus"
+                                (selectionChange)="maritalStatusChanged($event.value)">
+                                <mat-option *ngFor="let maritalStatus of maritalStatusTypes" [value]="maritalStatus">
+                                    {{maritalStatus}}
+                                </mat-option>
+                            </mat-select>
+                            <mat-error
+                                *ngIf="form.get('maritalStatus').hasError('required') && form.get('maritalStatus').touched">
+                                Marital Status is <strong>required</strong>
+                            </mat-error>
+                        </mat-form-field>
+                    </section>
+                    <section *ngIf="isMarried">
+                        <mat-form-field class="mat-form-field">
+                            <label id="lblMarriageType"
+                                [ngClass]="!isMarried ? 'mat-label other-label' : 'mat-label other-label'">Marriage
+                                Type</label>
+                            <mat-select id="marriageType" name="marriageType" formControlName="marriageType">
+                                <mat-option *ngFor="let marriageType of marriageTypes" [value]="marriageType">
+                                    {{getMarriageType(marriageType)}}
+                                </mat-option>
+                            </mat-select>
+                        </mat-form-field>
+
+                        <mat-form-field class="mat-form-field-right">
+                            <label id="lblMarriageDate"
+                                [ngClass]="!isMarried ? 'mat-label other-label' : 'mat-label other-label'">Marriage
+                                Date</label>
+                            <input matInput formControlName="marriageDate" readonly [max]="maxDate"
+                                [matDatepicker]="marriageDate" id="marriageDate" name="marriageDate">
+                            <mat-datepicker-toggle matSuffix [for]="marriageDate"
+                                [disabled]="false"></mat-datepicker-toggle>
+                            <mat-datepicker touchUi="true" #marriageDate></mat-datepicker>
+                        </mat-form-field>
+                    </section>
+
+                    <section>
+                        <mat-form-field class="mat-form-field">
+                            <label class="mat-label other-label mandatory-field">Nationality</label>
+                            <mat-select name="nationality" id="nationality" formControlName="nationality">
+                                <input matInput (keyup)="onNationalityKey($event.target.value)">
+                                <mat-option *ngFor="let nationality of filteredNationalities" [value]="nationality.id">
+                                    {{nationality.name}}
+                                </mat-option>
+                            </mat-select>
+                            <mat-error
+                                *ngIf="form.get('nationality').hasError('required') && form.get('nationality').touched">
+                                Nationality is required
+                            </mat-error>
+                        </mat-form-field>
+
+                        <mat-form-field class="mat-form-field-right">
+                            <label class="mat-label other-label mandatory-field">Country</label>
+                            <mat-select name="country" id="country" formControlName="country">
+                                <input matInput (keyup)="onCountryKey($event.target.value)">
+                                <mat-option *ngFor="let country of filteredCountries" [value]="country.id">
+                                    {{country.name}}
+                                </mat-option>
+                            </mat-select>
+
+                            <mat-error *ngIf="form.get('country').hasError('required') && form.get('country').touched">
+                                Country is required
+                            </mat-error>
+                        </mat-form-field>
+                    </section>
+                </form>
+            </mat-card>
+        </mat-tab>
+
+        <mat-tab *ngIf="personEvent.rolePlayer">
+            <ng-template mat-tab-label>
+                <span
+                    [ngClass]="{'greenLabel': isWizard && isContactValid() , 'outstandingLabel': isWizard && !isContactValid()}">Contacts</span>
+            </ng-template>
+            <member-contacts [member]="personEvent.rolePlayer" [isReadOnly]="isReadOnly" [isWizard]="isWizard"
+                [filteredCommunicationTypes]="filteredCommunicationTypes"
+                [filteredInformationTypes]="filteredInformationTypes"
+                [filteredDesignationTypes]="filteredDesignationTypes" [mode]="mode"
+                (emitContacts)="setContacts($event)"></member-contacts>
+        </mat-tab>
+
+        <mat-tab *ngIf="personEvent.rolePlayer" label="Addresses">
+            <role-player-address-list [rolePlayer]="personEvent.rolePlayer" [isReadOnly]="isReadOnly"
+                [isWizard]="isWizard"></role-player-address-list>
+        </mat-tab>
+    </mat-tab-group>
+</div>

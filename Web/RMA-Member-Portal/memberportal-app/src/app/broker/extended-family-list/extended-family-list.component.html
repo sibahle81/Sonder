@@ -1,0 +1,28 @@
+<br /><br />
+<mat-accordion>
+  <mat-expansion-panel>
+    <mat-expansion-panel-header>
+      <h4>Extended Family</h4>
+    </mat-expansion-panel-header>
+    <role-player-list #family (addPerson)="validateFamily()" [showVopd]="true" [showBeneficiary]="true"
+      [rolePlayerTypeIds]="[12, 13, 14, 15, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 34, 38, 40, 42, 44, 45]"
+      (rolePlayerAdded)="rolePlayerAdded($event)" (rolePlayerRemoved)="rolePlayerRemoved($event)"
+      (rolePlayerModified)="rolePlayerModified($event)" (isWizard)="checkWizard()" [policyId]="modelPolicyId"
+      [modelExtendedFamily]="modelExtendedFamily" [modelPolicyStatus]="modelPolicyStatus">
+    </role-player-list>
+    <br /><br />
+    <div [hidden]="!model || model.caseTypeId === 8">
+      <role-player-benefits-extended #spouseBenefits [title]="'Extended Family'" [caption]="'Member'"
+        [coverMemberType]="coverMemberType">
+      </role-player-benefits-extended>
+    </div>
+  </mat-expansion-panel>
+  <br /><br />
+  <mat-expansion-panel *ngIf="model && model.caseTypeId !== 1">
+    <mat-expansion-panel-header>
+      <h4>Previous Insurance <i>(extended family)</i></h4>
+    </mat-expansion-panel-header>
+    <previous-insurer [case]="model" [isEditable]="isWizard && !isReadonly" [context]="roleplayerContext"></previous-insurer>
+  </mat-expansion-panel>
+</mat-accordion>
+<br />

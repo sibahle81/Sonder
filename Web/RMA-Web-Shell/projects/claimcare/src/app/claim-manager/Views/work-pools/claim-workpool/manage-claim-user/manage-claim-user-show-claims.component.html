@@ -1,0 +1,28 @@
+<style type="text/css">
+    tr:nth-child(even) {background: #dee3eb;}
+    tr:nth-child(odd) {background: #ffffff;}
+</style>
+
+<h1 mat-dialog-title style="width:500px;background-color:#2DAAE1;padding-left:10px;padding-top:10px;padding-bottom:10px;color:white">Claims</h1>
+<div mat-dialog-content style="width:500px;text-align:center;padding-bottom:40px;">
+    <form [formGroup]="form" class="mat-container" style="display:contents;" novalidate>
+        The selected user for time-off is assigned with following claims <br><br>
+        <table style="margin:15px;display:flex;flex-direction:column;min-width:200px;padding:5px;">
+            <thead style="background-color:#7DC0DA;color: white; padding: 10px;"><td style="border: none;">Claim Reference</td></thead>
+            <div *ngFor="let result of checkedClaimsToAllocate" class="divHeight" style="padding:5px;">
+                <tr><td style="padding:2px;">
+                    {{ result.claimUniqueReference }}
+                </td></tr>
+            </div>
+        </table>
+
+        <table class="button-container">
+            <tr>
+                <td>
+                    <button type="button" class="button float-button" (click)="proceedClick('Proceed')">Proceed</button>
+                    <button type="button" style="margin-left: 15px;margin-right: 0;" class="button float-button" (click)="onNoClick('Cancel')">Cancel</button>
+                </td>
+            </tr>
+        </table>
+    </form>
+</div>

@@ -1,0 +1,62 @@
+<div>
+  <div style="display: inline-flex; width:100%; border:1px solid #E6E7E8; padding:10px">
+    <section style="width:50% ;border-right:1px solid #E6E7E8; padding-right:10px">
+      <div>xxxyeeeeeeey</div>
+    </section>
+    <section style="width:25%; padding-left:10px">
+      <div>Policy Details</div>
+
+      <table *ngIf="!isLoading && policy">
+        <tr>
+          <td class="table-label">Policy No: </td>
+          <td>{{policy.policyNumber}}</td>
+        </tr>
+        <tr>
+          <td class="table-label">Status: </td>
+          <td>{{policy.policyStatus}}</td>
+        </tr>
+        <tr>
+          <td class="table-label">ProductOption:</td>
+          <td>{{policy.productOption.name}}</td>
+        </tr>
+        <tr>
+          <td class="table-label">Description:</td>
+          <td>{{policy.productOption.description}}</td>
+        </tr>
+        <tr>
+          <td class="table-label">Premium: </td>
+          <td>
+            {{policy.installmentPremium}}
+          </td>
+        </tr>
+        <tr>
+          <td class="table-label">Start Date: </td>
+          <td>{{policy.policyInceptionDate | date:'mediumDate'}}</td>
+        </tr>
+        <tr>
+          <td class="table-label">First Installment Date: </td>
+          <td>{{policy.firstInstallmentDate | date:'mediumDate' }}</td>
+        </tr>
+        <tr>
+          <td class="table-label">Commission %: </td>
+          <td>{{policy.commissionPercentage}}</td>
+        </tr>
+      </table>
+      <div>
+        <mat-form-field>
+          <mat-select placeholder="Action">
+            <mat-option *ngFor="let type of managePolicyTypes" [value]="type.id"
+              (onSelectionChange)="setSelectedManageType($event)">
+              {{type.name}}
+            </mat-option>
+          </mat-select>
+        </mat-form-field>
+        <button *ngIf="policy" (click)="managePolicy(policy.policyId)" class="button float-button submit-button">Manage
+          Policy</button>
+      </div>
+    </section>
+    <section style="width:25%;border-right:1px solid #E6E7E8; padding:10px">
+      <div>yyytyyyy hsdhyeryeye</div>
+    </section>
+  </div>
+</div>

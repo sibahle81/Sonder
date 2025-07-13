@@ -1,0 +1,21 @@
+<div class="menu-bar">
+    <span *ngIf="title">{{title}}</span>    
+    <span (click)="confirm()" class="material-icons pointer right" matTooltip="close">
+        check
+      </span>
+    <span (click)="cancel()" class="material-icons pointer right" matTooltip="close">
+      close
+    </span>
+  </div>
+  <form [formGroup]="form" class="mat-container details-form" novalidate>
+
+    <mat-form-field class="mat-form-field controlSize">
+        <label class="mat-label">Role</label>
+        <mat-select name="role" id="role" (selectionChange)="roleChanged($event)" formControlName="role">
+          <mat-option *ngFor="let role of roles" [value]="role.id">
+            {{role.name}}
+          </mat-option>
+        </mat-select>
+      </mat-form-field>
+
+</form>

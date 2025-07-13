@@ -1,0 +1,110 @@
+<div class="page-header">
+    <h1>Client Selection</h1>
+</div>
+
+<div>
+    <form [formGroup]="form" class="mat-container" novalidate>
+
+        <!--Query-->
+        <mat-form-field>
+            <input matInput maxlength="50" formControlName="query" name="query" width="300" minLength="3" matTooltip="Search by name, surname, description, VAT, reference, idnumber, passport, email!" matTooltipShowDelay="1000">
+            <mat-icon class="search-icon" (click)="search()" matSuffix>search</mat-icon>
+            <mat-error *ngIf="form.get('query').hasError('required')">
+                Please enter a search term.
+            </mat-error>
+            <mat-error *ngIf="form.get('query').hasError('minlength')">
+                Please enter a search term longer than <strong>3 characters</strong>
+            </mat-error>
+            <button style="visibility: hidden;" class="button submit-button" (click)="search()" matTooltip="Search by name, surname, description, VAT, reference, idnumber, passport, email!" matTooltipShowDelay="1000">Search</button>
+        </mat-form-field>
+
+        <div *ngIf="dataSource.loading$ | async">
+            <mat-progress-bar mode="indeterminate" [ngClass]="{ 'loading-main-double-menu-progress': doubleMenu, 'loading-main-single-menu-progress': !doubleMenu }"></mat-progress-bar>
+            <p class="site-font grey">Searching...</p>
+        </div>
+
+        <div [hidden]="paginator.length == 0">
+            <mat-table #table [dataSource]="dataSource" matSort matSortActive="Name" matSortDirection="asc"
+                matSortDisableClear>
+
+                <!-- Name -->
+                <ng-container matColumnDef="name">
+                    <mat-header-cell *matHeaderCellDef mat-sort-header> Name </mat-header-cell>
+                    <mat-cell *matCellDef="let row"> {{row.name}} </mat-cell>
+                </ng-container>
+
+                <!-- Name -->
+                <ng-container matColumnDef="referenceNumber">
+                    <mat-header-cell *matHeaderCellDef mat-sort-header> Reference Number </mat-header-cell>
+                    <mat-cell *matCellDef="let row"> {{row.referenceNumber}} </mat-cell>
+                </ng-container>
+
+                <!-- Name -->
+                <ng-container matColumnDef="description">
+                    <mat-header-cell *matHeaderCellDef mat-sort-header> Description </mat-header-cell>
+                    <mat-cell *matCellDef="let row"> {{row.description}} </mat-cell>
+                </ng-container>
+
+                <!-- Actions -->
+                <ng-container matColumnDef="actions">
+                    <mat-header-cell *matHeaderCellDef mat-sort-header>Actions</mat-header-cell>
+                    <mat-cell *matCellDef="let row"><a role="button" class="link-edit" (click)="onSelect(row)">Select</a></mat-cell>
+                </ng-container>
+
+                <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
+                <mat-row *matRowDef="let row; columns: displayedColumns;"></mat-row>
+            </mat-table>
+
+            <mat-paginator #paginator [length]="dataSource.rowCount$" [pageSize]="5"
+            [pageSizeOptions]="[5, 10, 25, 100]">
+        </mat-paginator>
+        </div>
+
+        <div [hidden]="paginator.length > 0 || !currentQuery || currentQuery == ''"
+            class="no-search-results-add-button">
+            <div class="site-font grey">
+                <p class="grey">Your search - <strong>{{currentQuery}}</strong> - did not match any products.</p>
+                <span>Suggestions: </span>
+                <ul>
+                    <li>Make sure that all words are spelled correctly.</li>
+                    <li>Try different keywords.</li>
+                    <li>Try more general keywords.</li>
+                    <li>Try fewer keywords.</li>
+                </ul>
+            </div>
+        </div>
+
+    </form>
+</div>
+
+<div [hidden]="!isSelected">
+    <br />
+    <h1 style="margin-bottom: -30px;">Client Details</h1>
+    <client-wizard #clientDetails></client-wizard>
+</div>
+<style>
+    mat-form-field {
+        width: 100%;
+    }
+    
+    input.mat-input-element {
+        height: 50px;
+        border-radius: 22px !important;
+        margin-top: 27px !important;
+    }
+    
+    mat-error {
+        text-align: center;
+    }
+    
+    .search-icon {
+        position: absolute;
+        right: 16px;
+        top: 29px;
+        color: #33BFE6;
+    }
+    
+    .search-icon:hover {
+        cursor: pointer
+    }
+</style>

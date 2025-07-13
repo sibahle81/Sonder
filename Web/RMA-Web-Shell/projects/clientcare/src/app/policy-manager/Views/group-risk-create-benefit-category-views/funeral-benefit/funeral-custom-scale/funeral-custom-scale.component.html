@@ -1,0 +1,63 @@
+<div>
+  <mat-card class="wizard-mat-card wizard-mat-table">
+    <!--<mat-card-header>-->
+      <div class="menu-bar">
+        <span class="material-icons">
+          work
+        </span>
+        Funeral Custom Scale
+
+        <span *ngIf="!isDisabled" class="material-icons pointer right pulse" matTooltip="add" (click)="add()">
+          add
+        </span>
+      </div>
+    <!--</mat-card-header>
+    <mat-card-content>-->
+      <mat-table #funeralScalesTable [dataSource]="funeralScalesDataSource">
+        <ng-container matColumnDef="funeralInsuredTypeId">
+          <mat-header-cell *matHeaderCellDef> Insured Type</mat-header-cell>
+          <mat-cell *matCellDef="let funeralScale">
+            <mat-form-field>
+              <mat-select [(ngModel)]="funeralScale.funeralInsuredTypeId" [disabled]="!canEditEffectiveDate(funeralScale) || isDisabled">
+                <mat-option *ngFor="let insuredType of insuredTypes"
+                            [value]="insuredType.id">
+                  {{insuredType.name}}
+                </mat-option>
+              </mat-select>
+            </mat-form-field>
+          </mat-cell>
+        </ng-container>
+        <ng-container matColumnDef="effectiveDate">
+          <mat-header-cell *matHeaderCellDef>Effective Date</mat-header-cell>
+          <mat-cell *matCellDef="let funeralScale">
+            <mat-form-field>
+              <div class="date-input-col">
+                <input matInput [matDatepicker]="effectiveDatePicker" [(ngModel)]="funeralScale.effectiveDate" [disabled]="!canEditEffectiveDate(funeralScale) || isDisabled">
+                <mat-datepicker-toggle matSuffix [for]="effectiveDatePicker" [disabled]="!canEditEffectiveDate(funeralScale) || isDisabled"></mat-datepicker-toggle>
+              </div>
+              <mat-datepicker touchUi #effectiveDatePicker></mat-datepicker>
+            </mat-form-field>
+          </mat-cell>
+        </ng-container>
+        <ng-container matColumnDef="coverAmount">
+          <mat-header-cell *matHeaderCellDef>Cover Amount</mat-header-cell>
+          <mat-cell *matCellDef="let funeralScale">
+            <mat-form-field>
+              <input matInput DecimalNumber [(ngModel)]="funeralScale.coverAmount" [disabled]="isDisabled">
+            </mat-form-field>
+          </mat-cell>
+        </ng-container>
+        <ng-container matColumnDef="actions">
+          <mat-header-cell mat-header-cell *matHeaderCellDef>Actions</mat-header-cell>
+          <mat-cell *matCellDef="let funeralScale; let i = index"><a *ngIf="!isDisabled" role="button" class="link-edit action-link" (click)="delete(funeralScale, i)">Delete</a></mat-cell>
+        </ng-container>
+        <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
+        <mat-row *matRowDef="let row; columns: displayedColumns;"></mat-row>
+      </mat-table>
+    <!--</mat-card-content>-->
+
+    <div *ngIf="!(funeralScalesDataSource.data && funeralScalesDataSource.data.length > 0)">
+      <label class="mat-label other-label"><i>No custom scale defined...</i></label>
+    </div>
+ </mat-card>
+</div>

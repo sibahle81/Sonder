@@ -1,0 +1,118 @@
+﻿<div>
+  <div *ngIf="!isActiveWizard">
+    <h1 style="margin-bottom: 15px; margin-top: 50px; ">Wizard Validation</h1>
+    <div class="wizard-font grey wizard-font-height"><i>The wizard final step is not available on in-active wizards</i>
+    </div>
+  </div>
+
+  <div *ngIf="isActiveWizard">
+    <mat-card>
+      <mat-card-header>
+        <mat-card-title class="wizard-font card-title grey">Form Validation</mat-card-title>
+        <mat-card-subtitle>
+          <span *ngIf="areFormsValid" class="wizard-font valid">Validation Passed</span>
+          <span *ngIf="!areFormsValid && !hasPendingResults" class="wizard-font invalid">Validation Failed</span>
+          <span *ngIf="!areFormsValid && hasPendingResults" class="wizard-font pending">Validation has pending results,
+            please wait..</span>
+        </mat-card-subtitle>
+      </mat-card-header>
+      <mat-card-content>
+        <p *ngIf="!areFormsValid && !(wizardContext && wizardContext.wizard.wizardStatusId === awaitingApproval && wizardContext.hasApprovalStep)"
+          class="left-padding wizard-font grey">
+          <i>Click on a step below to fix validation errors. Once all validations have passed, the Request Approval
+            button will be available.</i>
+        </p>
+        <p *ngIf="!areFormsValid && (wizardContext && wizardContext.wizard.wizardStatusId === awaitingApproval && wizardContext.hasApprovalStep)"
+          class="left-padding wizard-font grey">
+          <i>Click on a step below to fix validation errors. Once all validations have passed, the Approval
+            button will be available.</i>
+        </p>
+
+        <div *ngIf="validationResults">
+          <mat-list>
+            <mat-list-item *ngFor="let validationResult of validationResults; let i = index" (click)="navigate(i)"
+              class="list-pointer">
+              <mat-icon class="grey-icon" style="margin-top: -22px" mat-list-icon>folder</mat-icon>
+              <h4
+                [ngClass]="{ 'valid': validationResult.valid, 'invalid': !validationResult.valid && !validationResult.isPending, 'pending': validationResult.isPending}"
+                mat-line>{{validationResult.name}}</h4>
+              <p class="valid" *ngIf="validationResult.valid" mat-line>Validation Passed</p>
+              <p class="invalid"
+                *ngIf="!validationResult.valid && validationResult.errors < 2 && !validationResult.isPending" mat-line>
+                Validation Failed (1 error)</p>
+              <p class="invalid"
+                *ngIf="!validationResult.valid && validationResult.errors >= 2 && !validationResult.isPending" mat-line>
+                Validation Failed ({{validationResult.errors}} errors)</p>
+              <p class="pending" *ngIf="!validationResult.valid && validationResult.isPending" mat-line>Checking, please
+                wait...</p>
+
+              <!-- <p *ngIf="!validationResult.valid && !validationResult.isPending && validationResult.errorMessages !== undefined && validationResult.errorMessages.length > 0" mat-line>{{validationResult.errorMessage}}</p> -->
+              <p matLine *ngFor="let errorMessage of validationResult.errorMessages">{{errorMessage}}</p>
+            </mat-list-item>
+          </mat-list>
+        </div>
+      </mat-card-content>
+    </mat-card>
+
+    <p class="left-padding wizard-font grey" *ngIf="!areFormsValid">
+      <i>Rules will execute once the form validation has passed</i>
+    </p>
+
+    <mat-card *ngIf="areFormsValid">
+      <mat-card-header>
+        <mat-card-title class="wizard-font card-title grey">Rule Validation</mat-card-title>
+        <mat-card-subtitle *ngIf="ruleRequestResult">
+          <span *ngIf="ruleRequestResult.overallSuccess && ruleRequestResult.ruleResults.length > 0"
+            class="wizard-font valid">Validation Passed</span>
+          <span *ngIf="ruleRequestResult.overallSuccess && ruleRequestResult.ruleResults.length === 0"
+            class="wizard-font">There were no rules found to execute.</span>
+
+          <span *ngIf="!ruleRequestResult.overallSuccess" class="wizard-font invalid">Validation Failed</span>
+        </mat-card-subtitle>
+      </mat-card-header>
+      <mat-card-content>
+        <div *ngIf="!ruleRequestResult">
+          <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+          <p class="left-padding wizard-font grey">
+            Executing rules, this shouldn't take long...
+          </p>
+        </div>
+        <div *ngIf="ruleRequestResult && ruleRequestResult.ruleResults">
+          <div *ngIf="ruleRequestResult.ruleResults.length > 0">
+            <ng-container *ngFor="let ruleResult of ruleRequestResult.ruleResults">
+              <table style="border-collapse:collapse;border:0;">
+                <tr>
+                  <td style="padding-left:20px;padding-right:20px;margin-bottom:-10px">
+                    <mat-icon style="color: rgba(0, 0, 0, .54) !important;" mat-list-icon>folder</mat-icon>
+                  </td>
+                  <td>
+                    <h4 [ngClass]="{ 'valid': ruleResult.passed, 'invalid': !ruleResult.passed}" mat-line>
+                      {{ruleResult.ruleName}}
+                    </h4>
+                  </td>
+                </tr>
+                <tr>
+                  <td>&nbsp;</td>
+                  <td *ngIf="ruleResult.passed" class="valid">Rule passed</td>
+                  <td *ngIf="!ruleResult.passed" class="invalid">
+                    <ng-container *ngFor="let message of ruleResult.messageList">
+                      <div>Rule Failed - {{message}}</div>
+                    </ng-container>
+                  </td>
+                </tr>
+              </table>
+            </ng-container>
+          </div>
+        </div>
+      </mat-card-content>
+    </mat-card>
+    <mat-card>
+      <mat-card-content>
+        <div
+          *ngIf="wizardContext && wizardContext.wizard.wizardStatusId === awaitingApproval && wizardContext.hasApprovalStep && areFormsValid">
+          <wizard-approval-step (onBackClick)="back()" (onApprovalSubmit)="approve($event)"></wizard-approval-step>
+        </div>
+      </mat-card-content>
+    </mat-card>
+  </div>
+</div>

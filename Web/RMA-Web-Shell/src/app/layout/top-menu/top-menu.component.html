@@ -1,0 +1,13 @@
+<div class="top-menu-bar">
+  <div class="margin-right"><user-reminders class="right" [userId]="user.id"></user-reminders></div>
+
+  <div *ngIf="user?.isInternalUser" class="margin-right">
+    <span (click)="landingPageURLChanged()" class="material-icons pointer right align" [matTooltip]="userPreference?.landingPageURL 
+        ? 'update default landing page: ('+ userPreference.landingPageURL +')'
+        : 'set default landing page: (none)'">
+      person_pin_circle
+    </span>
+  </div>
+
+</div>
+<div class="menu-spacer"></div>

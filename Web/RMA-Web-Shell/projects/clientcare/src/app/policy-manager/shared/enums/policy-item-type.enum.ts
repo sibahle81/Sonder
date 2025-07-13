@@ -1,0 +1,15 @@
+﻿export enum PolicyItemTypeEnum {
+    Beneficiary = 1,
+    BeneficiaryPolicyProduct = 2,
+    BeneficiaryType = 3,
+    InsuredLife = 4,
+    InsuredLifePolicyProduct = 5,
+    Policy = 6,
+    PolicyDocument = 7,
+    PolicyNote = 8,
+    PolicyProduct = 9,
+    PolicyStatus = 10,
+    ClientCover = 11,
+    Premium = 12,
+    PolicyCover = 13,
+}

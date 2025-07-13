@@ -1,0 +1,38 @@
+<div class="menu-bar">
+  <span class="material-icons">calculate</span>
+  Manual Capture
+  <span (click)="close()" class="material-icons pointer right" matTooltip="close">
+    close
+  </span>
+  <span *ngIf="form.valid && !form.pristine && !(isLoading$ | async) && (allRequiredDocumentsUploaded && (data.documentSystemName && data.documentSet && data.personEventId))" (click)="save()"
+    class="material-icons pointer right" matTooltip="save">
+    save
+  </span>
+</div>
+
+<mat-card *ngIf="(isLoading$ | async)">
+  <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+  <label class="mat-label other-label"><i>loading...please wait</i></label>
+</mat-card>
+
+<mat-card *ngIf="!(isLoading$ | async)">
+  <form [formGroup]="form" class="mat-container details-form" novalidate>
+    <section>
+      <mat-form-field class="mat-form-field">
+        <label class="mat-label other-label"><span
+            *ngIf="claimEstimate.estimateType">{{getEstimateType(claimEstimate.estimateType)}}&nbsp;</span>Amount</label>
+        <input NumberOnly matInput formControlName="amount" name="amount" id="amount" />
+        <mat-error *ngIf="form.get('amount').hasError('required')">
+          amount is <strong>required</strong>
+      </mat-error>
+      </mat-form-field>
+    </section>
+  </form>
+
+  <document-uploader *ngIf="data.documentSystemName && data.documentSet && data.personEventId" [documentSet]="data.documentSet" [systemName]="data.documentSystemName"
+    [keyName]="'PersonEventId'"
+    [keyValue]="data.personEventId"
+    [forceRequiredDocumentTypeFilter]="data.forceRequiredDocumentTypeFilter"
+    (requiredDocumentsUploadedEmit)="isRequiredDocumentsUploaded($event)">
+  </document-uploader>
+</mat-card>

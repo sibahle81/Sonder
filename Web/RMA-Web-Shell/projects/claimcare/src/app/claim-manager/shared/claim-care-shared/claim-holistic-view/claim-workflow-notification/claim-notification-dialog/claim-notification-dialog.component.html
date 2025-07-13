@@ -1,0 +1,42 @@
+<div class="menu-bar">
+  <span class="material-icons"> insert_comment </span>
+  My Notifications
+  <span
+    (click)="cancel()"
+    class="material-icons pointer right"
+    matTooltip="close referral"
+  >
+    cancel
+  </span>
+</div>
+
+<mat-card>
+  <div>
+    {{ selectedUserReminder?.text }}
+    <br /><br />
+    <div
+      *ngIf="
+        selectedUserReminder?.linkUrl && selectedUserReminder?.linkUrl != ''
+      "
+    >
+      <a href="{{ selectedUserReminder?.linkUrl }}"
+        ><span class="material-icons"> saved_search </span>Click <b>HERE</b> to
+        navigate to the
+        {{
+          getUserReminderItemType(selectedUserReminder?.userReminderItemType)
+        }}</a
+      >
+    </div>
+    <br />
+    <div class="menu-bar">
+      <label class="mat-label other-label"
+        ><i>
+          <user-display-name
+            [userName]="selectedUserReminder?.createdBy"
+          ></user-display-name>
+          {{ selectedUserReminder?.modifiedDate | date : "yyyy-MM-dd h:mm:ss" }}
+        </i></label
+      >
+    </div>
+  </div>
+</mat-card>

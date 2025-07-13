@@ -1,0 +1,118 @@
+﻿<div class="page-header"></div>
+
+<label [hidden]="canView" style="padding-top: 15px;">
+<br>
+   You don't have permission(s) to view product.
+</label>
+
+<label [hidden]="!canView" style="padding-top: 15px;">
+  <form [formGroup]="form" class="mat-container details-form" novalidate>
+    <section>
+      <!--Underwriter-->
+      <mat-form-field>
+        <label class="mat-label other-label mandatory-field">Underwriter</label>
+        <mat-select (selectionChange)="setProductClass()" name="underwriter" id="underwriter" formControlName="underwriter">
+          <mat-option *ngFor="let underwriter of underwriters"  [value]="underwriter.id">{{underwriter.name}}
+          </mat-option>
+        </mat-select>
+        <mat-error *ngIf="form.get('underwriter').hasError('required') || form.get('underwriter').hasError('min')">
+          Underwriter is <strong>required</strong>
+        </mat-error>
+      </mat-form-field>
+      <!--Product Class-->
+      <mat-form-field class="mat-form-field-right">
+        <label class="mat-label other-label mandatory-field">Product Class</label>
+        <mat-select name="productClass" id="Class" formControlName="productClass">
+          <mat-option *ngFor="let productClass of productClasses"   [value]="productClass.id">{{productClass.name}}
+          </mat-option>
+        </mat-select>
+        <mat-error *ngIf="form.get('productClass').hasError('required') || form.get('productClass').hasError('min')">
+          Product class is <strong>required</strong>
+        </mat-error>
+      </mat-form-field>
+    </section>
+    <section>
+      <!--Product Code-->
+      <mat-form-field class="mat-form-field">
+        <label class="mat-label other-label mandatory-field"> Product Code</label>
+        <input matInput minlength="3" maxlength="10" id="code" name="code" formControlName="code" unique-validator
+          [table]="'Product'" [field]="'Code'" [serviceType]="2">
+        <mat-error *ngIf="form.get('code').hasError('required')">
+          Product code is <strong>required</strong>
+        </mat-error>
+        <mat-error *ngIf="form.get('code').hasError('minlength')">
+          Product code must be at least <strong>three characters</strong>
+        </mat-error>
+        <mat-error *ngIf="form.get('code').hasError('isTaken')">
+          This product code <strong>already exists</strong>
+        </mat-error>
+      </mat-form-field>
+      <!--Product Name-->
+      <mat-form-field class="mat-form-field-right">
+        <label class="mat-label other-label mandatory-field">Product Name</label>
+        <input matInput minlength="3" maxlength="50" id="name" name="name" formControlName="name" unique-validator
+          [table]="'Product'" [field]="'Name'" [serviceType]="2">
+        <mat-error *ngIf="form.get('name').hasError('required')">
+          Product name is <strong>required</strong>
+        </mat-error>
+        <mat-error *ngIf="form.get('name').hasError('minlength')">
+          Product name must be at least <strong>three characters</strong>
+        </mat-error>
+        <mat-error *ngIf="form.get('name').hasError('isTaken')">
+          This product name <strong>already exists</strong>
+        </mat-error>
+      </mat-form-field>
+    </section>
+    <section>
+      <!--Product Start Date-->
+      <div class="field-container">
+        <div><label class="mat-label other-label mandatory-field">Product Start Date</label></div>
+        <mat-form-field>
+          <input matInput formControlName="startDate" [matDatepicker]="startDate" id="startDate" name="startDate"
+            (dateChange)="validateDates()">
+          <mat-datepicker-toggle matSuffix [for]="startDate" [disabled]="form.disabled"></mat-datepicker-toggle>
+          <mat-datepicker touchUi="true" #startDate></mat-datepicker>
+          <mat-error *ngIf="form.get('startDate').hasError('min')">
+            Product start date cannot be <strong>after</strong> the end date
+          </mat-error>
+          <mat-error *ngIf="form.get('startDate').hasError('required')">
+            Product start date is <strong>required</strong>
+          </mat-error>
+          <mat-error *ngIf="form.get('startDate').hasError('min-today')">
+            Please select a start date in the <strong>future</strong>
+          </mat-error>
+          <mat-error *ngIf="form.get('startDate').hasError('invalid')">
+            Invalid date format, use <strong>yyyy/mm/dd</strong>
+          </mat-error>
+        </mat-form-field>
+      </div>
+      <!--Product End Date-->
+      <div class="field-container-right">
+        <div><label class="mat-label other-label">Product End Date</label></div>
+        <mat-form-field>
+          <input matInput formControlName="endDate" [matDatepicker]="endDate" id="endDate" name="endDate"
+            (dateChange)="validateDates()">
+          <mat-datepicker-toggle matSuffix [for]="endDate" [disabled]="form.disabled"></mat-datepicker-toggle>
+          <mat-datepicker touchUi="true" #endDate></mat-datepicker>
+          <mat-error *ngIf="form.get('endDate').hasError('min')">
+            Product end date cannot be <strong>before</strong> the start date
+          </mat-error>
+        </mat-form-field>
+      </div>
+    </section>
+    <section>
+      <!--Product Description-->
+      <mat-form-field>
+        <label class="mat-label other-label"> Product Description (Optional)</label>
+        <input matInput maxlength="50" id="description" name="description" formControlName="description">
+      </mat-form-field>
+      <!--Product status-->
+      <mat-form-field class="mat-form-field-right">
+        <label class="mat-label other-label mandatory-field">Product Status</label>
+        <mat-select formControlName="productStatus">
+          <mat-option *ngFor="let status of productStatuses" [value]="status.id">{{status.name}}</mat-option>
+        </mat-select>
+      </mat-form-field>
+    </section>
+  </form>
+</label>

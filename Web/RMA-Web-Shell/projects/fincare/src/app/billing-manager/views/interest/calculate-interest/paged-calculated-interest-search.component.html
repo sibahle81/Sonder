@@ -1,0 +1,228 @@
+<mat-card>
+    <div class="menu-bar">
+        <span class="material-icons">
+            price_change
+        </span>
+        Manage Interest
+        <span *ngIf="!(dataSource.loading$ | async) && !(isLoading$ | async)">
+            <span *ngIf="!isEditMode" (click)="reset(false)" class="material-icons pointer right" matTooltip="reset">
+                restart_alt
+            </span>
+
+            <span *ngIf="!isReadOnly">
+                <span *ngIf="!isEditMode && (dataSource.rowCount$ | async) > 0 && canGenerate()" (click)="toggleMode()"
+                    class="material-icons pointer right pulse" matTooltip="edit">
+                    settings
+                </span>
+                <span *ngIf="isEditMode">
+                    <span (click)="reset(true)" class="material-icons pointer right" matTooltip="cancel">
+                        cancel
+                    </span>
+                    <span *ngIf="canSave()" (click)="save()" class="material-icons pointer right pulse"
+                        matTooltip="save">
+                        save
+                    </span>
+                </span>
+
+                <span *ngIf="!isEditMode && canGenerate()" (click)="openGenerateConfirmationDialog()"
+                    class="material-icons pointer right pulse"
+                    matTooltip="{{canProcess() ? 're-generate interest' : 'generate interest'}}">
+                    add_task
+                </span>
+                <span *ngIf="!isEditMode && canProcess()" (click)="openProcessConfirmationDialog()"
+                    class="material-icons pointer right pulse" matTooltip="process interest">
+                    play_arrow
+                </span>
+            </span>
+        </span>
+    </div>
+
+    <mat-card *ngIf="!isReadOnly && !canGenerate()">
+        <label class="mat-label other-label">
+            <span class="material-icons info">info</span>&nbsp;
+            <i><b>Industry Class</b>, <b>Product Category Type</b> & <b>Period</b> filters must be selected before
+                generating, editing and
+                processing options are made available</i></label>
+    </mat-card>
+    <br />
+    <mat-expansion-panel [(expanded)]='standardFiltersExpanded'>
+        <mat-expansion-panel-header>
+            <mat-panel-title>
+                Standard Filters
+            </mat-panel-title>
+        </mat-expansion-panel-header>
+
+        <form [formGroup]="form" class="mat-container details-form" novalidate>
+            <section>
+                <mat-form-field class="mat-form-field controlSize">
+                    <label class="mat-label other-label">Industry Class</label>
+                    <mat-select name="industryClassFilter" id="industryClassFilter"
+                        formControlName="industryClassFilter"
+                        (selectionChange)="industryClassFilterChanged($event.value)">
+                        <mat-option [value]="'All'">All</mat-option>
+                        <mat-option *ngFor="let industryClass of industryClasses" [value]="industryClass">
+                            {{formatLookup(industryClass)}}
+                        </mat-option>
+                    </mat-select>
+                </mat-form-field>
+
+                <mat-form-field class="mat-form-field-right controlSize">
+                    <label class="mat-label other-label">Product Category Type</label>
+                    <mat-select name="productCategoryTypeFilter" id="productCategoryTypeFilter"
+                        formControlName="productCategoryTypeFilter"
+                        (selectionChange)="productCategoryTypeFilterChanged($event.value)">
+                        <mat-option [value]="'All'">All</mat-option>
+                        <mat-option *ngFor="let productCategoryType of productCategoryTypes"
+                            [value]="productCategoryType">
+                            {{formatLookup(productCategoryType)}}
+                        </mat-option>
+                    </mat-select>
+                </mat-form-field>
+            </section>
+
+            <section>
+                <financial-period-filter [triggerReset]="triggerReset"
+                    (parameterEmit)="periodFilterChanged($event)"></financial-period-filter>
+            </section>
+        </form>
+
+    </mat-expansion-panel>
+    <br />
+    <mat-expansion-panel [(expanded)]='advancedFiltersExpanded'>
+        <mat-expansion-panel-header>
+            <mat-panel-title>
+                Advanced Filters
+            </mat-panel-title>
+            <mat-panel-description *ngIf="dataSource.rolePlayerFilter"><span class="material-icons"
+                    matTooltip="pinned filters">
+                    push_pin
+                </span>
+                <span *ngIf="dataSource.rolePlayerFilter"><b>(Debtor):</b> {{dataSource.rolePlayerFilter.displayName + '
+                    (' + dataSource.rolePlayerFilter.finPayee.finPayeNumber + ')'}}</span>
+            </mat-panel-description>
+        </mat-expansion-panel-header>
+
+        <debtor-search [industryClassId]="dataSource?.industryClassFilter"
+            (debtorSelectedEmit)="setDebtorFilter($event)"></debtor-search>
+
+    </mat-expansion-panel>
+</mat-card>
+
+<mat-card *ngIf="(dataSource.loading$ | async) || (isLoading$ | async)">
+    <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+    <label class="mat-label other-label"><i>{{(loadingMessage$ | async)}}</i></label>
+</mat-card>
+
+<div [hidden]="(dataSource.loading$ | async) || (isLoading$ | async)">
+    <mat-card>
+        <div [hidden]="!(dataSource.data && dataSource.data.data && dataSource.data.data.length > 0)">
+            <mat-table #table [dataSource]="dataSource" matSort id="tblData" (matSortChange)="getData()">
+
+                <ng-container matColumnDef="industryClass">
+                    <mat-header-cell *matHeaderCellDef> Industry Class </mat-header-cell>
+                    <mat-cell *matCellDef="let row">{{row.industryClass ? getIndustryClass(row.industryClass) :
+                        'N/A'}}</mat-cell>
+                </ng-container>
+
+                <ng-container matColumnDef="rolePlayerId">
+                    <mat-header-cell *matHeaderCellDef> Debtor </mat-header-cell>
+                    <mat-cell *matCellDef="let row">
+                        <role-player-display-name
+                            [rolePlayerId]="row.rolePlayerId"></role-player-display-name></mat-cell>
+                </ng-container>
+
+                <ng-container matColumnDef="productCategoryId">
+                    <mat-header-cell *matHeaderCellDef> Category </mat-header-cell>
+                    <mat-cell *matCellDef="let row">{{row.productCategoryId ?
+                        getProductCategoryType(row.productCategoryId) :
+                        'N/A'}}</mat-cell>
+                </ng-container>
+
+                <ng-container matColumnDef="balance">
+                    <mat-header-cell *matHeaderCellDef> Balance </mat-header-cell>
+                    <mat-cell *matCellDef="let row">{{row.balance ? (row.balance | number:'1.2-2') :
+                        'N/A'}}</mat-cell>
+                </ng-container>
+
+                <ng-container matColumnDef="calculatedInterestAmount">
+                    <mat-header-cell *matHeaderCellDef> Interest </mat-header-cell>
+                    <mat-cell [ngClass]="{'excluded': isExcluded(row)}"
+                        *matCellDef="let row">{{row.calculatedInterestAmount ? (row.calculatedInterestAmount |
+                        number:'1.2-2') :
+                        'N/A'}}</mat-cell>
+                </ng-container>
+
+                <ng-container matColumnDef="adjustedInterestAmount">
+                    <mat-header-cell *matHeaderCellDef> Interest Override </mat-header-cell>
+                    <mat-cell *matCellDef="let row" [ngClass]="{ 'edited-cell': isEdited(row) && !isDeleted(row) }">
+
+                        <span *ngIf="!isEditMode || isDeleted(row)">
+                            <span *ngIf="row.adjustedInterestAmount != null">
+                                {{ row.adjustedInterestAmount | number:'1.2-2' }}
+                            </span>
+                            <span *ngIf="row.adjustedInterestAmount == null">N/A</span>
+                        </span>
+
+                        <span *ngIf="isEditMode && !isDeleted(row)">
+                            <input DecimalNumber [ngClass]="{ 'invalid': !isValid(row) }"
+                                class="input-width-adjustedInterestAmount" matInput
+                                [(ngModel)]="row.adjustedInterestAmount" (ngModelChange)="onInterestChanged(row)"
+                                placeholder="Enter value" />
+                        </span>
+
+                    </mat-cell>
+                </ng-container>
+
+                <ng-container matColumnDef="comment">
+                    <mat-header-cell *matHeaderCellDef> Comment </mat-header-cell>
+                    <mat-cell *matCellDef="let row" [ngClass]="{ 'edited-cell': isEdited(row) && !isDeleted(row) }">
+
+                        <span *ngIf="!isEditMode || isDeleted(row)">
+                            <span *ngIf="row.comment">
+                                {{row.comment}}
+                            </span>
+                            <span *ngIf="!row.comment">N/A</span>
+                        </span>
+
+                        <span *ngIf="isEditMode && !isDeleted(row)">
+                            <input [ngClass]="{ 'invalid': !isValid(row) }" class="input-width-comment" matInput
+                                [(ngModel)]="row.comment" maxlength="250" (ngModelChange)="onInterestChanged(row)"
+                                placeholder="Enter value (250 characters)" />
+                        </span>
+
+                    </mat-cell>
+                </ng-container>
+
+                <ng-container matColumnDef="interestStatus">
+                    <mat-header-cell *matHeaderCellDef> Status </mat-header-cell>
+                    <mat-cell *matCellDef="let row">{{!isDeleted(row) ?
+                        getInterestStatus(row.interestStatus) : '*Excluded'}}</mat-cell>
+                </ng-container>
+
+                <ng-container matColumnDef="actions">
+                    <mat-header-cell *matHeaderCellDef>Actions</mat-header-cell>
+                    <mat-cell *matCellDef="let row">
+                        <span *ngIf="!isDeleted(row)" (click)="delete(row)"
+                            class="material-icons icn pointer icn-button" matTooltip="exclude">delete</span>
+
+                        <span *ngIf="isDeleted(row)" (click)="delete(row)" class="material-icons icn pointer icn-button"
+                            matTooltip="include">undo</span>
+                    </mat-cell>
+                </ng-container>
+
+                <mat-header-row *matHeaderRowDef="getDisplayedColumns()"></mat-header-row>
+                <mat-row [ngClass]="{'deleted': isDeleted(row)}"
+                    *matRowDef="let row; columns: getDisplayedColumns();"></mat-row>
+            </mat-table>
+
+            <mat-paginator #paginator [pageIndex]="0" [pageSize]="5" [pageSizeOptions]="[5, 10, 25, 100]"
+                [length]="dataSource.rowCount$ | async" (page)="getData()">
+            </mat-paginator>
+        </div>
+
+        <div
+            *ngIf="!(dataSource.data && dataSource.data.data && dataSource.data.data.length > 0 || (dataSource.loading$ | async) || (isLoading$ | async))">
+            <label class="mat-label other-label"><i>no calculated interest records found...</i></label>
+        </div>
+    </mat-card>
+</div>

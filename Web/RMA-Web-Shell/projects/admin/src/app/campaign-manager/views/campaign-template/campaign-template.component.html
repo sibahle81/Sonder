@@ -1,0 +1,92 @@
+﻿<mat-card>
+  <mat-card-header>
+    <mat-card-title class="wizard-font card-title grey">
+      <h1 style="padding: 0;">Campaign Template</h1>
+    </mat-card-title>
+  </mat-card-header>
+  <mat-card-content>
+    <div *ngIf="isLoading">
+      <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+    </div>
+    <div *ngIf="!campaign || campaign.id === 0" style="margin-left: 20px;">
+      <p class="grey"><i>Template can be added after the campaign has been added.</i></p>
+    </div>
+    <div class="mat-container mat-elevation-z8">
+      <div [hidden]="!showEditButtons" style="margin-bottom: 10px;">
+        <div *ngIf="templates && hasTemplate" (click)="reloadTemplate()" class="form-buttons submit-button">
+          <button class="button float-button">Reload template</button>
+        </div>
+        <div *ngIf="canEdit && template" (click)="changeTemplate()" class="form-buttons">
+          <button class="button float-button">Change template</button>
+        </div>
+        <div *ngIf="canEdit && template" (click)="clearTemplate()" class="form-buttons">
+          <button class="button float-button">Clear template</button>
+        </div>
+        <div *ngIf="canAdd && templates && templateId" (click)="selectTemplate()" class="form-buttons submit-button">
+          <button class="button float-button">Select template</button>
+        </div>
+        <div *ngIf="canEdit && template" (click)="saveTemplate()" class="form-buttons submit-button">
+          <button class="button float-button">Save template</button>
+        </div>
+        <div *ngIf="canEdit && template" style="padding-top: 1px; padding-left: 60px; display: inline-block">
+          <div style="float: left; padding-top: 12px; margin-right: 7px">
+            <span>Saved Tokens</span>
+          </div>
+          <div style="float: right">
+              <mat-select style="width: 250px">
+                  <mat-option *ngFor="let token of tokens" value="token.tokenKey" style="padding-top: 3px">
+                    <div style="float:left;">{{ token.tokenKey }}</div>
+                    <div style="float:right;margin-top:3px;"><img src="assets/images/delete-medium.png" class="delete-token" title="Clear token" (click)="clearTemplateToken(token)" /></div>
+                  </mat-option>
+                </mat-select>
+          </div>
+        </div>
+      </div>
+      <div class="edit-container">
+        <div id="templateContainer" *ngIf="template" class="template-container" (window:resize)="resizeContainers()">
+          <div [innerHtml]="template.template | safeHtml" (dblclick)="editToken($event)" (dragenter)="dragEnter($event)"
+            (dragover)="dragOver($event)" (drop)="dropToken($event)" (dragleave)="dragLeave($event)"
+            onclick="return false">
+          </div>
+        </div>
+        <div id="tokenContainer" *ngIf="showEditBox" class="token-container">
+          <div
+            style="font-size: medium; font-weight: bold; text-align: center; padding-bottom: 5px; border-bottom: 1px solid #005A7C;">
+            [{{token}}]
+          </div>
+          <div style="padding-top: 5px; padding-right: 6px">
+            <textarea style="width: 100%; min-width: 100%; max-width: 100%; min-height: 150px"
+              [(ngModel)]="tokenValue"></textarea>
+          </div>
+          <div *ngIf="linkSelected">
+            <div
+              style="font-size: medium; font-weight: bold; text-align: center; padding-bottom: 5px; border-bottom: 1px solid #005A7C;">
+              [{{link}}]</div>
+            <div style="padding-top: 5px; padding-right: 6px">
+              <textarea style="width: 100%; min-width: 100%; max-width: 100%; min-height: 100px"
+                [(ngModel)]="linkValue"></textarea>
+            </div>
+          </div>
+          <div>
+            <button class="button float-button" style="width: 80px !important" (click)="saveTokens()">Add</button>
+          </div>
+        </div>
+      </div>
+      <div *ngIf="templates" class="grid-container">
+        <div *ngFor="let template of templates;">
+          <div [hidden]="!canAdd" style="padding: 3px 0 5px 0; background-color: #D3D3D3;">
+            <mat-radio-button (change)="setSelectedTemplate($event)" style="padding: 0; margin-left: 7px;"
+              value="{{template.id}}">{{ template.name }}</mat-radio-button>
+          </div>
+
+
+          <!-- <iframe><div class="{{itemStyle}}" [innerHtml]="template.template | safeHtml"></div></iframe> -->
+          <!-- <iframe class="{{itemStyle}}" [innerHtml]="template.template | safeHtml"></iframe> -->
+          <div class="{{itemStyle}}" [innerHtml]="template.template | safeHtml"></div>
+
+
+        </div>
+      </div>
+    </div>
+  </mat-card-content>
+</mat-card>

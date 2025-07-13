@@ -1,0 +1,18 @@
+<div>
+    <form [formGroup]="form" class="mat-container details-form" novalidate>
+        <section>
+            <span>
+                <mat-form-field class="mat-form-field">
+                    <label class="mat-label other-label">Payment Type</label><br />
+                    <mat-select class="control" (selectionChange)="readForm()"
+                        formControlName="paymentType" name="paymentType" id="paymentType">
+                        <mat-option [value]="'all'">All</mat-option>
+                        <mat-option *ngFor="let paymentType of paymentTypes" [value]="paymentType">
+                            {{formatLookup(paymentType)}}
+                        </mat-option>
+                    </mat-select>
+                </mat-form-field>
+            </span>
+        </section>
+    </form>
+</div>

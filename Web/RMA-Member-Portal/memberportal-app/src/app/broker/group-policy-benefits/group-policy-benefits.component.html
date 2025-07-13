@@ -1,0 +1,51 @@
+<div class="benefit-container">
+  <h4>{{title}}</h4>
+  <div *ngIf="dataSource.data.length === 0 && !(isLoading$ | async)">
+    <span class="red site-font">No benefits found for selected product option.</span>
+  </div>
+  <div *ngIf="(isLoading$ | async)">
+    <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+  </div>
+  <div [hidden]="(!(dataSource && dataSource.data && dataSource.data.length > 0) || (isLoading$ | async))">
+    <mat-table #table [dataSource]="dataSource" matSort>
+      <ng-container matColumnDef="selected">
+        <mat-header-cell *matHeaderCellDef>Action</mat-header-cell>
+        <mat-cell *matCellDef="let benefit">
+          <mat-checkbox [checked]="benefit.selected" [disabled]="true" [(ngModel)]="benefit.selected"></mat-checkbox>
+        </mat-cell>
+      </ng-container>
+      <ng-container matColumnDef="benefitType">
+        <mat-header-cell *matHeaderCellDef mat-sort-header>Benefit Type</mat-header-cell>
+        <mat-cell *matCellDef="let benefit"> {{this.getBenefitTypeDesc(benefit.benefitType)}} </mat-cell>
+      </ng-container>
+      <ng-container matColumnDef="coverMemberType">
+        <mat-header-cell *matHeaderCellDef mat-sort-header>Cover Member Type</mat-header-cell>
+        <mat-cell *matCellDef="let benefit"> {{this.getCoverMemberTypeDesc(benefit.coverMemberType)}} </mat-cell>
+      </ng-container>
+      <ng-container matColumnDef="code">
+        <mat-header-cell *matHeaderCellDef mat-sort-header>Benefit</mat-header-cell>
+        <mat-cell *matCellDef="let benefit"> {{benefit.code}} </mat-cell>
+      </ng-container>
+      <ng-container matColumnDef="name">
+        <mat-header-cell *matHeaderCellDef mat-sort-header>Benefit Name</mat-header-cell>
+        <mat-cell *matCellDef="let benefit"> {{benefit.name}} </mat-cell>
+      </ng-container>
+      <ng-container matColumnDef="benefitBaseRateLatest">
+        <mat-header-cell *matHeaderCellDef mat-sort-header>Premium</mat-header-cell>
+        <mat-cell *matCellDef="let benefit"> {{benefit.benefitBaseRateLatest}} </mat-cell>
+      </ng-container>
+      <ng-container matColumnDef="benefitRateLatest">
+        <mat-header-cell *matHeaderCellDef mat-sort-header>Amount</mat-header-cell>
+        <mat-cell *matCellDef="let benefit"> {{benefit.benefitRateLatest}} </mat-cell>
+      </ng-container>
+
+
+      <mat-header-row *matHeaderRowDef="displayedColumns; sticky: true"></mat-header-row>
+      <mat-row *matRowDef="let row; columns: displayedColumns;"></mat-row>
+
+    </mat-table>
+    <mat-paginator #paginator [length]="dataSource.data ? dataSource.data.length : 0" [pageIndex]="0" [pageSize]="10"
+      [pageSizeOptions]="[5, 10]">
+    </mat-paginator>
+  </div>
+</div>

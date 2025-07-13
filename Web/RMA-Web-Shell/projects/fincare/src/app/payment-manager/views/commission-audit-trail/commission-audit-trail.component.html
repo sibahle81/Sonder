@@ -1,0 +1,175 @@
+<div *ngIf="isAuthorized">
+    <div style="width:100%">
+        <section style="width:100%">
+            <div style="display:inline-block;">
+                <form [formGroup]="form" class="mat-container details-form" novalidate>
+
+
+                    <section style="margin-bottom: 15px;">
+                        <div  class="field-container" style="word-wrap: normal;">
+                            <div><label class="mat-label other-label mandatory-field">Start Date</label>
+                            </div>
+                            <mat-form-field>
+                                <input matInput [min]="minDate" formControlName="startDate" [matDatepicker]="startDate" (dateChange)="validateDates()" required>
+                                <mat-datepicker-toggle matSuffix [for]="startDate"></mat-datepicker-toggle>
+                                <mat-datepicker touchUi="true" #startDate></mat-datepicker>
+                                <mat-error *ngIf="form.get('startDate').hasError('required')">
+                                    start date is <strong>required</strong>
+                                </mat-error>
+                                <mat-error *ngIf="form.get('startDate').hasError('min')">
+                                    start date cannot be <strong>after</strong> the end date
+                                </mat-error>
+                            </mat-form-field>
+                        </div>
+
+                        <div class="field-container-right">
+                            <div><label class="mat-label other-label">End Date</label></div>
+                            <mat-form-field>
+                                <input matInput formControlName="endDate" [matDatepicker]="endDate" (dateChange)="validateDates()">
+                                <mat-datepicker-toggle matSuffix [for]="endDate"></mat-datepicker-toggle>
+                                <mat-datepicker touchUi="true" #endDate></mat-datepicker>
+                                <mat-error *ngIf="form.get('endDate').hasError('min')">
+                                    End date cannot be <strong>before</strong> the start date
+                                </mat-error>
+                            </mat-form-field>
+                        </div>
+                    </section>
+                    <section>
+                        <div class="field-container">
+                            <div>
+                                <label class="mat-label other-label">Search(Optional)</label>
+                            </div>
+                            <mat-form-field [floatLabel]="'never'">
+                                <input matInput maxlength="50" formControlName="filterAccount" id="filterAccount" formControlName="filterAccount" #filter width="300" minLength="3" (keyup)="searchCommissionAccounts($event)" matTooltip="Search by Broker/Juristic Code or by Broker/Juristic Name"
+                                    matTooltipShowDelay="1000">
+
+                                <mat-icon class="search-icon" (click)="searchCommissionAccounts($event)" matSuffix>search</mat-icon>
+                                <mat-error *ngIf="form.get('filterAccount').hasError('minlength')">
+                                    Search string must be at least <strong>three characters</strong>
+                                </mat-error>
+                                <mat-placeholder class="placeholder">Broker/Juristic Code/Name
+                                </mat-placeholder>
+                            </mat-form-field>
+                        </div>
+                        <div   class="field-container-right">
+                            <mat-form-field class="mat-form-field">
+                                <label class="mat-label other-label">Brokerage/Intermediary</label>
+                                <input matInput formControlName="searchedBrokerage">
+                            </mat-form-field>
+                        </div>
+                    </section>
+                </form>
+            </div>
+            <div style="display:inline-block;margin-left:15px " *ngIf="hasPrintCommissionPermission && reportDataAvailable">
+                <input type="image" alt="Dowload" (click)="downloadReport()" src="/assets/images/downloads-icon.png" width="40" height="40"></div>
+            <div *ngIf="isDownloading" style="display:inline-block;margin-left:10px; width: 250px; ">
+                <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+                <label class="mat-label other-label"><i>downloading report...</i></label>
+            </div>
+        </section>
+
+        <section>
+            <div [hidden]="hideBrokerages">
+                <mat-table #table [dataSource]="datasourceAccounts">
+                    <ng-container matColumnDef="accountName">
+                        <mat-header-cell *matHeaderCellDef>Brokerage/Intermediary</mat-header-cell>
+                        <mat-cell *matCellDef="let row"> {{row.accountName}} </mat-cell>
+                    </ng-container>
+                    <ng-container matColumnDef="actions">
+                        <mat-header-cell *matHeaderCellDef>Actions</mat-header-cell>
+                        <mat-cell *matCellDef="let row">
+                            <span><a role="button" (click)="selectSearchedBrokerages(row)">Select</a></span>
+                        </mat-cell>
+                    </ng-container>
+                    <mat-header-row *matHeaderRowDef="displayedBrokeragesColumns"></mat-header-row>
+                    <mat-row *matRowDef="let row; columns: displayedBrokeragesColumns;"></mat-row>
+                </mat-table>
+            </div>
+        </section>
+        <div *ngIf="isLoading">
+            <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+            <label class="mat-label other-label"><i>Loading audit trail...please wait</i></label>
+        </div>
+        <div [hidden]="datasource.data.length === 0">
+            <mat-table #table [dataSource]="datasource" matSort>
+                <!-- <ng-container matColumnDef="period">
+                    <mat-header-cell *matHeaderCellDef mat-sort-header>Period</mat-header-cell>
+                    <mat-cell *matCellDef="let row" class="right-aligned-amounts"><span *ngIf="row.period; else noPeriod">{{getMonthName(row.period.mm)}}&nbsp;&nbsp;{{row.period.yyyy}}</span>
+                        <ng-template #noPeriod>
+                            <span>N/A</span>
+                        </ng-template>
+                    </mat-cell>
+                </ng-container> -->
+                <ng-container matColumnDef="recepientName">
+                    <mat-header-cell *matHeaderCellDef mat-sort-header>Broker/Intermediary</mat-header-cell>
+                    <mat-cell *matCellDef="let row">{{row.recepientName}}</mat-cell>
+                </ng-container>
+                <ng-container matColumnDef="action">
+                    <mat-header-cell *matHeaderCellDef mat-sort-header>Status</mat-header-cell>
+                    <mat-cell *matCellDef="let row">{{getStatusText(row.headerStatusId)}}</mat-cell>
+                </ng-container>
+                <ng-container matColumnDef="amount">
+                    <mat-header-cell *matHeaderCellDef mat-sort-header>Amount</mat-header-cell>
+                    <mat-cell *matCellDef="let row" class="right-aligned-amounts">
+                        {{row.totalHeaderAmount|number:'1.2-2'}}</mat-cell>
+                </ng-container>
+                <ng-container matColumnDef="modifiedDate">
+                    <mat-header-cell *matHeaderCellDef mat-sort-header>Modified Date</mat-header-cell>
+                    <mat-cell *matCellDef="let row" class="right-aligned-amounts">{{row.modifiedDate | date:'yyyy-MM-dd h:mm:ss'}}
+                    </mat-cell>
+                </ng-container>
+                <ng-container matColumnDef="modifiedBy">
+                    <mat-header-cell *matHeaderCellDef mat-sort-header>User</mat-header-cell>
+                    <mat-cell *matCellDef="let row">{{row.modifiedBy}}</mat-cell>
+                </ng-container>
+                <ng-container matColumnDef="isFitAndProper">
+                    <mat-header-cell *matHeaderCellDef mat-sort-header>Fit &amp; Proper</mat-header-cell>
+                    <mat-cell *matCellDef="let row">{{row.isFitAndProper}}</mat-cell>
+                </ng-container>
+                <ng-container matColumnDef="fitAndProperCheckDate">
+                    <mat-header-cell *matHeaderCellDef mat-sort-header>Fit &amp; Proper Check Date</mat-header-cell>
+                    <mat-cell *matCellDef="let row" class="right-aligned-amounts">
+                        {{row.fitAndProperCheckDate | date:'yyyy-MM-dd'}}</mat-cell>
+                </ng-container>
+                <ng-container matColumnDef="reason">
+                    <mat-header-cell *matHeaderCellDef mat-sort-header>Reasons</mat-header-cell>
+                    <mat-cell *matCellDef="let row">
+                        <ul>
+                            <li *ngFor="let reason of row.reasons">{{reason}}</li>
+                        </ul>
+                    </mat-cell>
+                </ng-container>
+
+                <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
+                <mat-row *matRowDef="let row; columns: displayedColumns;"></mat-row>
+            </mat-table>
+            <mat-paginator [pageSize]="10" #paginator [pageSizeOptions]="[5, 10, 25, 100]">
+            </mat-paginator>
+
+        </div>
+        <div style="width:100%; clear: both;">
+            <div [hidden]="!formIsValid" (click)="getAuditDetails()" class="form-buttons submit-button" style="margin-left: 10px;">
+                <button type="button" class="button submit-button">View</button>
+            </div>
+            <div style="display:inline-block;margin-left:15px">
+                <div class="form-buttons" (click)="navigateBack()" style="margin-left: 10px">
+                    <button class="button submit-button">Back</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <div style="width:100%" [hidden]="true">
+        <ssrs-reportviewer [reportserver]="reportServerAudit" [reporturl]="reportUrlAudit" [showparameters]="showParametersAudit" [parameters]="parametersAudit" [language]="languageAudit" [width]="widthAudit" [height]="heightAudit" [toolbar]="toolbarAudit" [format]="'EXCEL'"
+            [isDownload]="isDownload" [reportName]="'Commission_Audit_Trail'">
+        </ssrs-reportviewer>
+    </div>
+    <ng-template #notAuthorized>
+        <div class="wizard-permissions-error">You do not have sufficient permissions to view commission statements.</div>
+        <div style="display:inline-block">
+            <div class="form-buttons" (click)="navigateBack()">
+                <button class="button submit-button">Back</button>
+            </div>
+        </div>
+    </ng-template>

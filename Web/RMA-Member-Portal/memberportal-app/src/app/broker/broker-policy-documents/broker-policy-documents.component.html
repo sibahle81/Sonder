@@ -1,0 +1,57 @@
+<div>
+  <mat-dialog-content>
+    <section>
+      <mat-card>
+
+        <mat-card-header class="margin" [hidden]="isViewCommission">
+          <mat-card-title class="TitleDiv">
+            <h1 class="title">Policy Documents</h1>
+          </mat-card-title>
+          <mat-card-subtitle>
+            <div *ngIf="reportTitle">{{reportTitle}}</div>
+          </mat-card-subtitle>
+        </mat-card-header>
+        <mat-card-header class="margin" [hidden]="!isViewCommission">
+          <mat-card-title class="wizard-font card-title grey">
+            <h1 class="title">Commission Statement Report</h1>
+          </mat-card-title>
+        </mat-card-header>
+        <mat-card-content>
+          <div class="form margin" [hidden]="isViewCommission">
+            <form>
+              <section>
+                <mat-form-field class="select">
+                  <label class="mat-label other-label">Select a document to view</label>
+                  <mat-select name="reportTypes" id="reportTypes" (selectionChange)="reportTypeChanged($event)">
+                    <mat-option *ngFor="let reportType of reportTypes" [value]="reportType">{{ reportType.name}}
+                    </mat-option>
+                  </mat-select>
+                </mat-form-field>
+              </section>
+            </form>
+          </div>
+
+          <div *ngIf="isLoading$ | async">
+            <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+            <label class="other-label"><i>loading document...please wait</i></label>
+          </div>
+
+          <div [hidden]="!showReport">
+            <mat-card-content>
+              <section>
+                <div [hidden]="!showReport" class="report">
+                  <!-- width: 100vh; -->
+                  <ssrs-reportviewer [reportserver]="reportServerAudit" [reporturl]="reportUrlAudit"
+                    [showparameters]="showParametersAudit" [parameters]="parametersAudit" [language]="languageAudit"
+                    [width]="widthAudit" [height]="heightAudit" [toolbar]="toolbarAudit">
+                  </ssrs-reportviewer>
+                </div>
+              </section>
+            </mat-card-content>
+          </div>
+          <button type="button" (click)="close()" class="button">Cancel</button>
+        </mat-card-content>
+      </mat-card>
+    </section>
+  </mat-dialog-content>
+</div>

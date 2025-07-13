@@ -1,0 +1,119 @@
+<mat-card-header>
+  <mat-card-title class="wizard-font card-title grey">
+    <h3>Payment Allocation</h3>
+  </mat-card-title>
+</mat-card-header>
+
+<div *ngIf="!hasPermission && !hasclaimRecoveryAllocationPermission">
+  <div style="padding: 15px 0; color: orange; font-family: 'Oswald', sans-serif;">
+    You do not have sufficient permissions to perform payment allocations.
+  </div>
+  <div (click)="back()" class="form-buttons submit-button">
+    <button type="button" class="button float-button">Back</button>
+  </div>
+</div>
+
+<div [hidden]="!isAuthorized">
+  <form [formGroup]="form" class="mat-container details-form" novalidate>
+    <mat-card>
+      <section>
+        <div *ngIf="hasPermission && showAllocationTypeSelector">
+          <mat-radio-group aria-label="Select an option">
+            <mat-radio-button value="INV" (change)="toggle($event.value)">Allocate payments to invoices OR debtors
+              account
+            </mat-radio-button>
+            <span class="material-icons md-18" style="color: lightseagreen;"
+              matTooltip="Allocate unallocated payments to unpaid and/or partially paid invoices OR to a debtors account">info</span>
+            <br />
+            <mat-radio-button value="DBT" (change)="toggle($event.value)">Manage debtor account
+            </mat-radio-button><span class="material-icons md-18" style="color: lightseagreen;"
+              matTooltip="Allocate positive account balances for a selected debtors account to their unpaid and/or partially paid invoices">info</span>
+          </mat-radio-group>
+        </div>
+        <div *ngIf="hasclaimRecoveryAllocationPermission && !hasPermission">
+          <mat-radio-group aria-label="Select an option">
+            <mat-radio-button value="INV" (change)="toggle($event.value)">Allocate payments to invoices
+            </mat-radio-button>
+            <span class="material-icons md-18" style="color: lightseagreen;"
+              matTooltip="Allocate unallocated payments to unpaid and/or partially paid invoices">info</span>
+          </mat-radio-group>
+        </div>
+      </section>
+      <br />
+      <button *ngIf="!(allocationType =='INV' || allocationType == 'DBT')" type="button" class="button submit-button"
+        (click)="back()" style="margin-top: 5px;">Back</button>
+    </mat-card>
+
+    <br />
+
+    <mat-card *ngIf="hideSearch">
+      <section>
+        <span (click)="toggleSearch(false)" class="material-icons pointer">search</span>
+      </section>
+    </mat-card>
+
+    <div *ngIf="allocationType === 'INV'">
+      <app-unallocated-payments [showExportButton]="false"></app-unallocated-payments>
+    </div>
+
+    <div [hidden]="hideSearch" *ngIf="allocationType === 'DBT'">
+      <account-search [title]="'Debtor Account Search'" (itemSelected)="onAccountSelected($event)"></account-search>
+    </div>
+
+    <br />
+
+    <mat-card>
+      <div [hidden]="allocationType !=='' &&  allocationType !== 'DBT'">
+        <div *ngIf="(isLoadingTransactions$ | async)">
+          <div>
+            <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+            <label class="mat-label other-label"><i>calculating account balance for
+                {{ selectedDebtor.finPayeNumber === null ? '' : selectedDebtor.finPayeNumber}}...please wait</i></label>
+          </div>
+        </div>
+
+        <div [hidden]="(isLoadingTransactions$ | async) || dataSource.data.length === 0">
+          <mat-table #table [dataSource]="dataSource" matSort>
+            <ng-container matColumnDef="bankReference">
+              <mat-header-cell *matHeaderCellDef mat-sort-header> Document Number</mat-header-cell>
+              <mat-cell *matCellDef="let row"> {{row.bankReference}} </mat-cell>
+            </ng-container>
+            <ng-container matColumnDef="transactionDate">
+              <mat-header-cell *matHeaderCellDef mat-sort-header> Document Date</mat-header-cell>
+              <mat-cell *matCellDef="let row"> {{row.createdDate | date: 'yyyy/MM/dd' }} </mat-cell>
+            </ng-container>
+            <ng-container matColumnDef="transactionType" class="mat-column-claimNumber">
+              <mat-header-cell *matHeaderCellDef mat-sort-header> Type</mat-header-cell>
+              <mat-cell *matCellDef="let row"> {{getTransactionTypeName(row.transactionType)}} </mat-cell>
+            </ng-container>
+            <ng-container matColumnDef="amount" class="mat-column-created">
+              <mat-header-cell *matHeaderCellDef mat-sort-header> Amount</mat-header-cell>
+              <mat-cell *matCellDef="let row" class="right-aligned-amounts"> {{row.amount | currency:'':''}} </mat-cell>
+            </ng-container>
+
+            <ng-container matColumnDef="balance" class="mat-column-created">
+              <mat-header-cell *matHeaderCellDef mat-sort-header> Unallocated Balance</mat-header-cell>
+              <mat-cell *matCellDef="let row" class="right-aligned-amounts"> {{row.unallocatedAmount | currency:'':''}} </mat-cell>
+            </ng-container>
+            <ng-container matColumnDef="actions" class="mat-column-action">
+              <mat-header-cell *matHeaderCellDef class="Action">Action
+              </mat-header-cell>
+              <mat-cell *matCellDef="let row">
+                <a
+                  href="fincare/billing-manager/manual-allocation-allocate-payment/{{row.rolePlayerId}}/{{allocationType}}/{{row.transactionId}}">select</a>
+              </mat-cell>
+            </ng-container>
+            <mat-header-row *matHeaderRowDef="displayedColumns;"></mat-header-row>
+            <mat-row *matRowDef="let row; columns: displayedColumns;"></mat-row>
+          </mat-table>
+          <mat-paginator #paginator [length]="dataSource.data ? dataSource.data.length : 0" [pageIndex]="0"
+            [pageSize]="5" [pageSizeOptions]="[5, 10, 25, 100]">
+          </mat-paginator>
+        </div>
+        <div *ngIf="(transactionsSearchDone$ | async) && dataSource.data.length === 0 && hideSearch">
+          There are no over payments for the selected account
+        </div>
+      </div>
+    </mat-card>
+  </form>
+</div>

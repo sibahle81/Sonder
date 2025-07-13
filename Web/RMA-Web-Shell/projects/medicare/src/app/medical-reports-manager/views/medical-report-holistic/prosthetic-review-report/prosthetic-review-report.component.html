@@ -1,0 +1,207 @@
+<mat-card>
+    <div class="menu-bar">
+      <span class="material-icons">
+        assignment
+      </span>
+      Prosthetic Review
+      <span *ngIf="form && form.valid" (click)="save()" class="material-icons pointer right pulseGreen" matTooltip="save">
+          save
+      </span>
+    </div>
+    <br />
+    <mat-card-content>
+        <form [formGroup]="form" name="form" class="mat-container details-form" novalidate>
+            <div *ngIf="isLoadingCategories">
+                <mat-progress-bar mode="indeterminate" [ngClass]="{ 'loading-main-double-menu-progress': doubleMenu, 'loading-main-single-menu-progress': !doubleMenu }">
+                </mat-progress-bar>
+                <p class="site-font grey">Loading categories...</p>
+            </div>
+
+            <section>
+                <mat-form-field class="mat-form-field" color="accent">
+                    <label class="mat-label other-label">PreAuthorisation Number</label>
+                    <input [hidden]="true" matInput formControlName="preAuthorisationNumber"/>
+                    <mat-select formControlName="preAuthorisationNumber" id="preAuthorisationNumber" name="preAuthorisationNumber">
+                        <mat-option value="346452" title="PPAC035763">PPAC035763</mat-option>
+                    </mat-select>
+                </mat-form-field>
+                <mat-form-field class="mat-form-field-right" color="accent">
+                    <label class="mat-label other-label">Prosthetic Item Number</label>
+                    <input [hidden]="true" matInput formControlName="prostheticItemNumber"/>
+                    <mat-select formControlName="prostheticItemNumber" id="prostheticItemNumber" name="prostheticItemNumber">
+                        <mat-option value="1" title="Lumbar Spine">Lumbar Spine</mat-option>
+                        <mat-option value="2" title="Cervical Spine">Cervical Spine</mat-option>
+                        <mat-option value="3" title="Thoracic Spine">Thoracic Spine</mat-option>
+                    </mat-select>
+                </mat-form-field>
+            </section>
+
+            <section>
+                <mat-form-field class="mat-form-field" color="accent">
+                    <label class="mat-label other-label">Prosthetic Service Type</label>
+                    <input [hidden]="true" matInput formControlName="prostheticServiceType"/>
+                    <mat-select formControlName="prostheticServiceType" id="prostheticServiceType" name="prostheticServiceType">
+                        <mat-option value="1" title="Refit">Refit</mat-option>
+                        <mat-option value="2" title="Repair">Repair</mat-option>
+                        <mat-option value="3" title="Replace">Replace</mat-option>
+                        <mat-option value="4" title="Sundries">Sundries</mat-option>
+                        <mat-option value="5" title="New">New</mat-option>
+                    </mat-select>
+                </mat-form-field>
+                <mat-form-field class="mat-form-field-right" color="accent">
+                    <label class="mat-label other-label mandatory-field">Remarks</label>
+                    <textarea matInput cdkTextareaAutosize cdkAutosizeMinRows="3" cdkAutosizeMaxRows="5" id="remarks"
+                        formControlName="remarks" class="mat-input-element" maxlength="1000"></textarea>
+                </mat-form-field>
+            </section>
+
+            <section>
+                <mat-form-field class="mat-form-field" color="accent">
+                    <label class="mat-label other-label mandatory-field">Date Last Prosthesis Issued</label>
+                    <input matInput [matDatepicker]="dateLastProthesisIssued" formControlName="dateLastProthesisIssued" id="dateLastProthesisIssued">
+                    <mat-datepicker-toggle matSuffix [for]="dateLastProthesisIssued"></mat-datepicker-toggle>
+                    <mat-datepicker #dateLastProthesisIssued></mat-datepicker>
+                </mat-form-field>
+                <mat-form-field class="mat-form-field-right" color="accent">
+                    <label class="mat-label other-label mandatory-field">Amputation Level</label>
+                    <input [hidden]="true" matInput formControlName="amputationLevel"/>
+                    <mat-select formControlName="amputationLevel" id="amputationLevel" name="amputationLevel">
+                        <mat-option value="3003" title="Above Elbow">Above Elbow</mat-option>
+                        <mat-option value="3000" title="Above Knee">Above Knee</mat-option>
+                        <mat-option value="3004" title="Below Elbow">Below Elbow</mat-option>
+                        <mat-option value="3001" title="Below Knee">Below Knee</mat-option>
+                        <mat-option value="3007" title="Chopart">Chopart</mat-option>
+                        <mat-option value="3008" title="Midfoot">Midfoot</mat-option>
+                        <mat-option value="3005" title="None">None</mat-option>
+                        <mat-option value="3006" title="Symes">Symes</mat-option>
+                        <mat-option value="3706" title="Through Hip">Through Hip</mat-option>
+                        <mat-option value="3010" title="Through the elbow">Through the elbow</mat-option>
+                        <mat-option value="3002" title="Through the Knee">Through the Knee</mat-option>
+                        <mat-option value="3009" title="Through the shoulder">Through the shoulder</mat-option>
+                        <mat-option value="3011" title="Through Wrist">Through Wrist</mat-option>
+                    </mat-select>
+                </mat-form-field>
+            </section>
+
+            <section>
+                <mat-form-field class="mat-form-field" color="accent">
+                    <label class="mat-label other-label mandatory-field">Amputation Side</label>
+                    <input [hidden]="true" matInput formControlName="amputationSide"/>
+                    <mat-select formControlName="amputationSide" id="amputationSide" name="amputationSide">
+                        <mat-option value="3102" title="Bilateral">Bilateral</mat-option>
+                        <mat-option value="3100" title="Left">Left</mat-option>
+                        <mat-option value="3101" title="Right">Right</mat-option>
+                    </mat-select>
+                </mat-form-field>
+                <mat-form-field class="mat-form-field-right" color="accent">
+                    <label class="mat-label other-label mandatory-field">Prosthetic Activity Level</label>
+                    <input [hidden]="true" matInput formControlName="prostheticAmputationLevel"/>
+                    <mat-select formControlName="prostheticAmputationLevel" id="prostheticAmputationLevel" name="prostheticAmputationLevel">
+                        <mat-option value="1300" title="1">1</mat-option>
+                        <mat-option value="1301" title="2">2</mat-option>
+                        <mat-option value="1302" title="3">3</mat-option>
+                        <mat-option value="1303" title="4">4</mat-option>
+                        <mat-option value="1304" title="5">5</mat-option>
+                    </mat-select>
+                </mat-form-field>
+            </section>
+
+            <section>
+                <mat-form-field class="mat-form-field" color="accent">                
+                    <label class="mat-label other-label">Stump Distal Circumference in cm</label>
+                    <input matInput formControlName="stumpDistalCircumference" id="stumpDistalCircumference" name="stumpDistalCircumference">
+                </mat-form-field>
+                <mat-form-field class="mat-form-field-right" color="accent">                
+                    <label class="mat-label other-label">Stump Proximal Circumference in cm</label>
+                    <input matInput formControlName="stumpProximalCircumference" id="stumpProximalCircumference" name="stumpProximalCircumference">
+                </mat-form-field>
+            </section>
+
+            <section>
+                <mat-form-field class="mat-form-field" color="accent">
+                    <label class="mat-label other-label">Prosthetic Description</label>
+                    <input [hidden]="true" matInput formControlName="prostheticDescription"/>
+                    <mat-select formControlName="prostheticDescription" id="prostheticDescription" name="prostheticDescription">
+                        <mat-option value="3003" title="Above Elbow">Above Elbow</mat-option>
+                        <mat-option value="3000" title="Above Knee">Above Knee</mat-option>
+                        <mat-option value="3004" title="Below Elbow">Below Elbow</mat-option>
+                        <mat-option value="3001" title="Below Knee">Below Knee</mat-option>
+                        <mat-option value="3007" title="Chopart">Chopart</mat-option>
+                        <mat-option value="3008" title="Midfoot">Midfoot</mat-option>
+                        <mat-option value="3005" title="None">None</mat-option>
+                        <mat-option value="3006" title="Symes">Symes</mat-option>
+                        <mat-option value="3706" title="Through Hip">Through Hip</mat-option>
+                        <mat-option value="3010" title="Through the elbow">Through the elbow</mat-option>
+                        <mat-option value="3002" title="Through the Knee">Through the Knee</mat-option>
+                        <mat-option value="3009" title="Through the shoulder">Through the shoulder</mat-option>
+                        <mat-option value="3011" title="Through Wrist">Through Wrist</mat-option>
+                    </mat-select>
+                </mat-form-field>
+                <mat-form-field class="mat-form-field-right" color="accent">
+                    <label class="mat-label other-label">Prosthetic Serial No</label>
+                    <input matInput formControlName="prostheticSerialNo" id="prostheticSerialNo" name="prostheticSerialNo">
+                </mat-form-field>
+            </section>
+
+            <section>
+                <mat-form-field class="mat-form-field" color="accent">
+                    <label class="mat-label other-label">Foot Size</label>
+                    <input matInput formControlName="footSize" id="footSize" name="footSize">
+                </mat-form-field>
+                <mat-form-field class="mat-form-field-right" color="accent">
+                    <label class="mat-label other-label">Stump socks</label>
+                    <input [hidden]="true" matInput formControlName="stumpsocks"/>
+                    <mat-select formControlName="stumpsocks" id="stumpsocks" name="stumpsocks">
+                        <mat-option value="Yes">Yes</mat-option>
+                        <mat-option value="No">No</mat-option>
+                    </mat-select>
+                </mat-form-field>
+            </section>
+
+            <section>
+                <mat-form-field class="mat-form-field" color="accent">
+                    <label class="mat-label other-label">Suspension Option</label>
+                    <input [hidden]="true" matInput formControlName="suspensionOption"/>
+                    <mat-select formControlName="suspensionOption" id="suspensionOption" name="suspensionOption">
+                        <mat-option value="3505" title="AK Neoprene suspension belt">AK Neoprene suspension belt</mat-option>
+                        <mat-option value="3502" title="AK Shoulder belt">AK Shoulder belt</mat-option>
+                        <mat-option value="3503" title="AK Silesian strap">AK Silesian strap</mat-option>
+                        <mat-option value="3504" title="AK Waist belt">AK Waist belt</mat-option>
+                        <mat-option value="3500" title="P.T.B Strap Leather">P.T.B Strap Leather</mat-option>
+                        <mat-option value="3506" title="Silicone suspension belt">Silicone suspension belt</mat-option>
+                        <mat-option value="3501" title="Waist belt leather B.K">Waist belt leather B.K</mat-option>
+                    </mat-select>
+                </mat-form-field>
+                <mat-form-field class="mat-form-field-right" color="accent">
+                    <label class="mat-label other-label">Other</label>
+                    <input matInput formControlName="other" id="other" name="other">
+                </mat-form-field>
+            </section>          
+
+            <section>
+                <mat-form-field class="mat-form-field" color="accent">                
+                    <label class="mat-label other-label mandatory-field">Comments</label>
+                    <textarea matInput cdkTextareaAutosize cdkAutosizeMinRows="3" cdkAutosizeMaxRows="5" id="comments"
+                        formControlName="comments" class="mat-input-element" maxlength="1000"></textarea>
+                </mat-form-field>
+                <mat-form-field class="date-field mat-form-field-right" color="accent">
+                    <label class="mat-label other-label mandatory-field">Date of Prosthesis Reviewed</label>
+                    <input matInput [matDatepicker]="prothesisReviewDate" formControlName="prothesisReviewDate" id="prothesisReviewDate">
+                    <mat-datepicker-toggle matSuffix [for]="prothesisReviewDate"></mat-datepicker-toggle>
+                    <mat-datepicker #prothesisReviewDate></mat-datepicker>
+                </mat-form-field>
+            </section>
+
+            <section>
+                <mat-form-field class="mat-form-field" color="accent">
+                    <label class="mat-label other-label mandatory-field">Orthotist</label>
+                    <input matInput formControlName="orthotist" id="orthotist" name="orthotist">
+                </mat-form-field>
+                <mat-form-field class="mat-form-field-right" color="accent">
+                    <label class="mat-label other-label mandatory-field">Reviewed By</label>
+                    <input matInput formControlName="reviewedBy" id="reviewedBy" name="reviewedBy">
+                </mat-form-field>
+            </section>
+        </form>
+    </mat-card-content>
+</mat-card>

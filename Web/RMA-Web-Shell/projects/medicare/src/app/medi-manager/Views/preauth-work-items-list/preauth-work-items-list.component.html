@@ -1,0 +1,192 @@
+<div class="page-header"></div>
+<div class="mat-container mat-elevation-z8">
+  <div>
+    <h1>{{title}}</h1>
+    <br />
+
+    <div *ngIf="dataSource.loading$ | async">
+      <mat-progress-bar mode="indeterminate"
+        [ngClass]="{ 'loading-main-double-menu-progress': doubleMenu, 'loading-main-single-menu-progress': !doubleMenu }">
+      </mat-progress-bar>
+      <p class="site-font grey">Searching...</p>
+    </div>
+
+    <form style="display: flex" [formGroup]="filterForm">
+      <section>
+        <!--containsText-->
+        <div class="field-container-right">
+          <div><label class="mat-label other-label">Contains Text</label></div>
+          <mat-form-field>
+            <input matInput formControlName="containsText">
+          </mat-form-field>
+        </div>
+        <!--temporaryReferenceNo-->
+        <div class="field-container-right">
+          <div><label class="mat-label other-label">Temporary Reference No.</label></div>
+          <mat-form-field>
+            <input matInput formControlName="temporaryReferenceNo">
+          </mat-form-field>
+        </div>
+        <!--containsDate-->
+        <div class="field-container-right">
+          <mat-form-field>
+            <label class="mat-label other-label">Contains Date</label>
+            <input formControlName="containsDate" matInput [matDatepicker]="picker">
+            <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+            <mat-datepicker touchUi="true" #picker></mat-datepicker>
+          </mat-form-field>
+        </div>
+        <!--healthCareProviderName-->
+        <div class="field-container-right">
+          <div><label class="mat-label other-label">HealthCare Provider Name</label></div>
+          <mat-form-field>
+            <input matInput formControlName="healthCareProviderName">
+          </mat-form-field>
+        </div>
+      </section>
+    </form>
+
+    <div class="form-buttons submit-button">
+      <button type="button" class="button float-button" (click)="onFilterSearch()">Search</button>
+      <button type="button" class="button float-button" (click)="onFilterClear()">Clear Filter</button>
+    </div>
+
+    <div class="clear">&nbsp;</div>
+    <br>
+    <br>
+
+    <div [hidden]="paginator.length == 0">
+      <mat-table #table [dataSource]="dataSource" matSort>
+        <!-- Check Box  -->
+        <ng-container *ngIf="showIfReallocate" matColumnDef="select">
+          <mat-header-cell *matHeaderCellDef> Select </mat-header-cell>
+          <mat-cell *matCellDef="let row" class="select-align">
+            <mat-checkbox id="{{row.id}}" (change)="AddCheckedItems($event, row)">
+            </mat-checkbox>
+          </mat-cell>
+        </ng-container>
+
+        <!-- Name -->
+        <ng-container matColumnDef="name">
+          <mat-header-cell *matHeaderCellDef mat-sort-header> Name </mat-header-cell>
+          <mat-cell *matCellDef="let row"> {{row.name}} </mat-cell>
+        </ng-container>
+
+        <!-- Type -->
+        <ng-container matColumnDef="type">
+          <mat-header-cell *matHeaderCellDef mat-sort-header> Type </mat-header-cell>
+          <mat-cell *matCellDef="let row" matTooltip="{{row.wizardConfiguration.description}}">
+            {{row.type}} </mat-cell>
+        </ng-container>
+
+        <!-- temporaryReferenceNo -->
+        <ng-container matColumnDef="claimNumber">
+          <mat-header-cell *matHeaderCellDef mat-sort-header> Claim Number </mat-header-cell>
+          <mat-cell *matCellDef="let row; let i = index">
+            <span>{{getWorkItemDataTestMethod(row,i,'temporaryReferenceNo') }}</span>
+          </mat-cell>
+        </ng-container>
+        <!-- requestComments -->
+        <ng-container matColumnDef="requestComments">
+          <mat-header-cell *matHeaderCellDef mat-sort-header> Request Comments </mat-header-cell>
+          <mat-cell *matCellDef="let row">
+            <span>{{getWorkItemDataTestMethod(row,i,'requestComments')}}</span>
+          </mat-cell>
+        </ng-container>
+        <!-- dateAuthorisedFrom -->
+        <ng-container matColumnDef="authorizationFrom">
+          <mat-header-cell *matHeaderCellDef mat-sort-header> Authorization From </mat-header-cell>
+          <mat-cell *matCellDef="let row">
+            <span>{{getWorkItemDataTestMethod(row,i,'dateAuthorisedFrom') | date:'yyyy-MM-dd'}}</span>
+          </mat-cell>
+        </ng-container>
+        <!-- dateAuthorisedTo -->
+        <ng-container matColumnDef="authorizationTo">
+          <mat-header-cell *matHeaderCellDef mat-sort-header> Authorization To </mat-header-cell>
+          <mat-cell *matCellDef="let row">
+            <span>{{getWorkItemDataTestMethod(row,i,'dateAuthorisedTo') | date:'yyyy-MM-dd'}}</span>
+          </mat-cell>
+        </ng-container>
+        <!-- healthCareProviderName -->
+        <ng-container matColumnDef="healthcareProvider">
+          <mat-header-cell *matHeaderCellDef mat-sort-header> Healthcare Provider </mat-header-cell>
+          <mat-cell *matCellDef="let row">
+            <span>{{getWorkItemDataTestMethod(row,i,'healthCareProviderName') }}</span>
+          </mat-cell>
+        </ng-container>
+
+        <!-- Created By -->
+        <ng-container matColumnDef="createdBy">
+          <mat-header-cell *matHeaderCellDef mat-sort-header> Created By </mat-header-cell>
+          <mat-cell *matCellDef="let row" class="main-title">
+            <span title="{{row.createdBy}}">{{row.createdBy}}</span>
+          </mat-cell>
+        </ng-container>
+
+        <!-- Locked status -->
+        <ng-container matColumnDef="lockedStatus" class="mat-column-overflow">
+          <mat-header-cell *matHeaderCellDef mat-sort-header>Locked Status</mat-header-cell>
+          <mat-cell  *matCellDef="let row">
+            <span *ngIf="!row.lockedToUser"><span class="material-icons">lock_open</span></span>
+            <span *ngIf="row.lockedToUser"><span class="material-icons"
+                matTooltip="Locked to {{row.lockedToUserDisplayName}}">lock</span></span>
+          </mat-cell>
+        </ng-container>
+
+        <!-- Wizard status -->
+        <ng-container matColumnDef="wizardStatusText">
+          <mat-header-cell *matHeaderCellDef mat-sort-header> Status </mat-header-cell>
+          <mat-cell *matCellDef="let row">
+            {{row.createdDate === row.modifiedDate ? 'New' : row.wizardStatusText}} </mat-cell>
+        </ng-container>
+
+        <!--Overall SLA -->
+        <ng-container matColumnDef="overAllSLAHours">
+          <mat-header-cell *matHeaderCellDef mat-sort-header> Overall SLA </mat-header-cell>
+          <mat-cell *matCellDef="let row"
+            [ngClass]="row.slaRAGIndicatorId == '1' ? 'greenSLA' : row.slaRAGIndicatorId == '3' ? 'redSLA' : row.slaRAGIndicatorId == '0' ? 'greenSLA' : row.slaRAGIndicatorId == '2' ? 'amberSLA'  : ''">
+            <span class="material-icons">av_timer</span>
+            {{row.overAllSLAHours}}
+          </mat-cell>
+        </ng-container>
+
+        <!-- Actions -->
+        <ng-container matColumnDef="actions">
+          <mat-header-cell *matHeaderCellDef mat-sort-header> Actions </mat-header-cell>
+          <mat-cell  *matCellDef="let row">
+            <a role="button" class="link-edit" (click)="onSelect(row)">open</a>
+          </mat-cell>
+        </ng-container>
+
+        <!-- Delete Wizard -->
+        <ng-container matColumnDef="delete">
+          <mat-header-cell *matHeaderCellDef mat-sort-header> Delete </mat-header-cell>
+          <mat-cell  *matCellDef="let row">
+            <a role="button" class="link-edit" (click)="onDeleteWizard(row)">delete</a>
+          </mat-cell>
+        </ng-container>
+
+        <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
+        <mat-row *matRowDef="let row; columns: displayedColumns;"></mat-row>
+      </mat-table>
+
+      <mat-paginator #paginator [length]="pageLength" [pageIndex]="0" [pageSize]="5"
+        [pageSizeOptions]="[5, 10, 25, 100]">
+      </mat-paginator>
+    </div>
+
+    <div [hidden]="paginator.length > 0" class="no-search-results-add-button">
+      <div class="site-font grey">
+        <p class="grey">There are no results for your search.</p>
+        <span>Suggestions: </span>
+        <ul>
+          <li>Make sure that all words are spelled correctly.</li>
+          <li>Try different keywords.</li>
+          <li>Try more general keywords.</li>
+          <li>Try fewer keywords.</li>
+        </ul>
+      </div>
+    </div>
+
+  </div>
+</div>

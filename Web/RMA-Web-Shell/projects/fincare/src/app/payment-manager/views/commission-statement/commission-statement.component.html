@@ -1,0 +1,115 @@
+<div *ngIf="isAuthorized">
+    <section style="width:100%">
+        <table style="display:inline-block;">
+            <tr>
+                <td style="width: 200px;" colspan="2" style="text-align: center;">STATEMENT</td>
+            </tr>
+            <tr>
+                <td>ACCOUNT NAME</td>
+                <td>
+                    <div style="word-wrap: break-word;">{{accountName}}</div>
+                </td>
+            </tr>
+            <tr>
+                <td>ACCOUNT CODE</td>
+                <td>{{accountCode}}</td>
+            </tr>
+        </table>
+        <div style="display:inline-block;margin-left:15px " *ngIf="hasPrintCommissionPermission && reportDataAvailable"><input type="image" alt="Dowload" (click)="downloadReport()" src="/assets/images/downloads-icon.png" width="40" height="40"></div>
+        <div *ngIf="isDownloading" style="display:inline-block;margin-left:10px; width: 250px; ">
+            <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+            <label class="mat-label other-label"><i>downloading statement...</i></label>
+        </div>
+    </section>
+    <div *ngIf="isAuthorized">
+        <div style="width:100%">
+            <form [formGroup]="form" class="mat-container details-form" novalidate>
+                <div *ngIf="isLoadingPeriods" style="width:400px; margin-bottom: 15px;">
+                    <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+                    <label class="mat-label other-label"><i>Loading periods...please wait</i></label>
+                </div>
+                <div class="field-container">
+                    <mat-form-field>
+                        <label class="mandatory-field">Period</label>
+                        <mat-select id="period" name="period" formControlName="period" (selectionChange)="onPeriodSelect($event)">
+                            <mat-option *ngFor="let period of periods" [value]="period.periodId">
+                                {{getMonthName(period.mm)}}&nbsp;-&nbsp;{{period.yyyy}}
+                            </mat-option>
+                        </mat-select>
+                        <mat-error *ngIf="form.get('period').hasError('required')">
+                            Period<strong> is required</strong>
+                        </mat-error>
+                    </mat-form-field>
+                </div>
+            </form>
+            <div *ngIf="isLoading">
+                <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+                <label class="mat-label other-label"><i>Loading commission transactions...please wait</i></label>
+            </div>
+            <div [hidden]="datasource.data.length === 0">
+                <mat-table #table [dataSource]="datasource" matSort>
+                    <ng-container matColumnDef="transactionDate">
+                        <mat-header-cell *matHeaderCellDef mat-sort-header>Transaction Date</mat-header-cell>
+                        <mat-cell *matCellDef="let row">{{row.transactionDate | date:'yyyy-MM-dd'}}</mat-cell>
+                    </ng-container>
+                    <ng-container matColumnDef="transactionReference">
+                        <mat-header-cell *matHeaderCellDef mat-sort-header>Transaction Reference</mat-header-cell>
+                        <mat-cell *matCellDef="let row">{{row.transactionReference}}</mat-cell>
+                    </ng-container>
+                    <ng-container matColumnDef="transactionType">
+                        <mat-header-cell *matHeaderCellDef mat-sort-header>Transaction Type</mat-header-cell>
+                        <mat-cell *matCellDef="let row">{{row.transactionType}}</mat-cell>
+                    </ng-container>
+                    <ng-container matColumnDef="amount">
+                        <mat-header-cell *matHeaderCellDef>Amount</mat-header-cell>
+                        <mat-cell *matCellDef="let row">{{row.amount|number:'1.2-2'}}</mat-cell>
+                    </ng-container>
+                    <mat-header-row *matHeaderRowDef="displayedColumns; sticky: true"></mat-header-row>
+                    <mat-row *matRowDef="let row; columns: displayedColumns;"></mat-row>
+                </mat-table>
+                <mat-paginator [pageSize]="10" [pageSizeOptions]="[5, 10, 25, 100]">
+                </mat-paginator>
+                <table style="margin-top: 15px; float: right; clear: both;">
+                    <tr>
+                        <td style="width:150px; text-align:left;">BALANCE</td>
+                        <td style="width:250px; text-align:right;">{{getStatementTotal()|number:'1.2-2'}}</td>
+                    </tr>
+                </table>
+            </div>
+            <div style="width:100%; clear: both;">
+                <div [hidden]="!formIsValid" (click)="getStatementDetails()" class="form-buttons submit-button margin-left-10">
+                    <button type="button" class="button submit-button">View</button>
+                </div>
+                <div [hidden]="hideEmailAudit" (click)="showSentEmailsDialog()" class="form-buttons submit-button margin-left-10">
+                    <button type="button" class="button submit-button">Email Audit</button>
+                </div>
+                <div [hidden]="hideShareToBroker" class="form-buttons submit-button margin-left-10">
+                    <button type="button" class="button submit-button" (click)="openEmailDialog()"
+                      [disabled]="isShareToBrokerDisabled">
+                      <span class="material-icons">send</span>
+                      Share to Broker
+                    </button>
+                </div>
+                <div class="form-buttons margin-left-10" (click)="navigateBack()">
+                    <button class="button submit-button">Back</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div *ngIf="noStatementFound  && periodId > 0">
+        <p style="font-weight:bold; color:orange">No statement data found for {{accountName}} for selected period</p>
+    </div>
+    <div style="width:100%" [hidden]="true">
+        <hr>
+        <ssrs-reportviewer [reportserver]="reportServerAudit" [reporturl]="reportUrlAudit" [showparameters]="showParametersAudit" [parameters]="parametersAudit" [language]="languageAudit" [width]="widthAudit" [height]="heightAudit" [toolbar]="toolbarAudit" [format]="'pdf'"
+            [isDownload]="'true'" [reportName]="'Brokerage_Commission_Statement'">
+        </ssrs-reportviewer>
+    </div>
+    <ng-template #notAuthorized>
+        <div class="wizard-permissions-error">You do not have sufficient permissions to view commission statements.</div>
+        <div style="display:inline-block">
+            <div class="form-buttons" (click)="navigateBack()">
+                <button class="button submit-button">Back</button>
+            </div>
+        </div>
+    </ng-template>

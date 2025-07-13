@@ -1,0 +1,39 @@
+<div *ngIf="isLoading">
+  <div style="margin-right: 15px;">
+    <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+  </div>
+  <span style="color: grey">Loading...</span>
+</div>
+
+<div class="menu-container" [hidden]="isLoading">
+  <mat-tab-group>
+    <mat-tab label="Spouse &amp; Children">
+      <spouse-children-list #spouseChildren></spouse-children-list>
+    </mat-tab>
+    <mat-tab label="Extended Family">
+      <extended-family-list #extendedFamily></extended-family-list>
+    </mat-tab>
+    <mat-tab label="Banking Details">
+      <lib-role-player-banking-detail></lib-role-player-banking-detail>
+    </mat-tab>
+    <mat-tab label="Address Details">
+      <lib-role-player-address-detail></lib-role-player-address-detail>
+    </mat-tab>
+    <mat-tab label="Main Member Details">
+        <main-member-details #mainMemberDetails></main-member-details>
+      </mat-tab>
+    
+    <mat-tab label="Notes">
+      <role-player-notes name="roleplayer"></role-player-notes>
+    </mat-tab>
+  </mat-tab-group>
+  <!--Buttons-->
+  <div class="form-group-button mat-form-button">
+    <div (click)="edit()" *ngIf="canEdit" class="form-buttons submit-button">
+      <button type="button" class="button float-button">Edit</button>
+    </div>
+    <div (click)="back()" class="form-buttons submit-button">
+      <button type="button" class="button float-button">Back</button>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,43 @@
+<div class="menu-bar">
+  <span class="material-icons">flaky</span>
+  Liability Decision
+  <span (click)="cancel()" class="material-icons pointer right" matTooltip="close">
+    close
+  </span>
+  <span *ngIf="selectedLiabilityStatus && noteCaptured" (click)="save()" class="material-icons pointer right"
+    matTooltip="save">
+    save
+  </span>
+</div>
+
+<mat-card>
+  <form [formGroup]="form" class="mat-container details-form" novalidate>
+    <section>
+      <mat-form-field *ngIf="claimLiabilityStatuses && claimLiabilityStatuses.length > 0" class="mat-form-field">
+        <label class="mat-label other-label">Liability Decision</label><br />
+        <mat-select class="control" (selectionChange)="readForm()" formControlName="claimLiabilityStatus"
+          name="claimLiabilityStatus" id="claimLiabilityStatus">
+          <mat-option *ngFor="let claimLiabilityStatus of claimLiabilityStatuses" [value]="claimLiabilityStatus">
+            {{getClaimLiabilityStatus(claimLiabilityStatus)}}
+          </mat-option>
+        </mat-select>
+      </mat-form-field>
+    </section>
+  </form>
+
+  <span *ngIf="selectedLiabilityStatus">
+    <div class="margin-bottom" *ngIf="!noteCaptured">
+      <label class="mat-label other-label">
+        <mat-card>
+          <span class="material-icons info">
+            info
+          </span>
+          A note detailing the reason for the <b>{{getClaimLiabilityStatus(selectedLiabilityStatus)}}</b> liability decision is required
+        </mat-card>
+      </label>
+    </div>
+
+    <common-notes *ngIf="data.personEvent" [moduleType]="moduleType" [noteItemType]="noteItemType" [itemId]="data.personEvent.personEventId" (noteCapturedEmit)="setNoteCaptured($event)"></common-notes>
+  </span>
+
+</mat-card>

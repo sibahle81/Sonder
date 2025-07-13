@@ -1,0 +1,85 @@
+<div>
+  <div>
+    <nav class="innertop-nav">
+      <button mat-button [routerLink]="['/clientcare/member-manager']" class='Activebutton'>Home</button>
+
+      <button *ngIf="!disable_coid_vaps_e2e_clientcare" mat-button [matMenuTriggerFor]="menu1" class='Activebutton'>Onboarding</button>
+      <mat-menu #menu1="matMenu" [overlapTrigger]="false">
+        <button mat-menu-item [matMenuTriggerFor]="coidonboarding">
+          COID & VAPS
+        </button>
+        <mat-menu #coidonboarding="matMenu">
+          <button mat-menu-item  [routerLink]="['/clientcare/lead-manager']">Onboard</button>
+        </mat-menu>
+
+         <button mat-menu-item [matMenuTriggerFor]="grouplifeonboarding">
+          Group Life
+        </button>
+        <mat-menu #grouplifeonboarding="matMenu">
+          <button mat-menu-item (click)="onboardGroupLifeRolePlayer()">Onboard</button>
+        </mat-menu>
+      </mat-menu>
+
+      <button mat-button [routerLink]="['/clientcare/member-manager/member-search']"
+        class='Activebutton'>Search</button>
+
+      <button *ngIf="!disable_coid_vaps_e2e_clientcare || enable_grouprisk_renewals" mat-button
+        [matMenuTriggerFor]="menu4" class='Activebutton'>Renewals</button>
+      <mat-menu #menu4="matMenu" [overlapTrigger]="false">
+        <button *ngIf="!disable_coid_vaps_e2e_clientcare" mat-menu-item [matMenuTriggerFor]="coidrenewals">
+          COID & VAPS
+        </button>
+        <mat-menu #coidrenewals="matMenu">
+          <button *ngIf="!disable_coid_vaps_e2e_clientcare" mat-menu-item [routerLink]="['staged-member-rates']">Open
+            Renewal Period</button>
+          <button *ngIf="!disable_coid_vaps_e2e_clientcare" mat-menu-item [routerLink]="['close-renewal-period']">Close
+            Renewal Period</button>
+          <button *ngIf="!disable_coid_vaps_e2e_clientcare && userHasPermission('Upload Rates File')" mat-menu-item
+            [routerLink]="['/clientcare/member-manager/upload-rates']">Upload Client Rates</button>
+          <button mat-menu-item *ngIf="!disable_coid_vaps_e2e_clientcare"
+            [routerLink]="['/clientcare/member-manager/manage-industry-class-declaration-configuration']">Configuration</button>
+        </mat-menu>
+
+        <!--Inserting menu for group risk premuim rates-->
+        <button *ngIf="enable_grouprisk_renewals" mat-menu-item [matMenuTriggerFor]="groupriskpremiumrates">
+          GR Premium Rates
+        </button>
+        <mat-menu #groupriskpremiumrates="matMenu">
+          <button mat-menu-item [routerLink]="['create-group-risk-premium-rates']" routerLinkActive="active-list-item">
+            Create Premium Rates
+          </button>
+          <button mat-menu-item [routerLink]="['create-group-risk-premium-rates']" routerLinkActive="active-list-item">
+            Update Premium Rates
+          </button>
+        </mat-menu>
+      </mat-menu>
+
+      <button *ngIf="!disable_coid_vaps_e2e_clientcare" mat-button [matMenuTriggerFor]="menu6"
+        class='Activebutton'>Collections</button>
+      <mat-menu #menu6="matMenu" [overlapTrigger]="false">
+        <button *ngIf="!disable_coid_vaps_e2e_clientcare" mat-menu-item [matMenuTriggerFor]="coidcollections">
+          COID & VAPS
+        </button>
+        <mat-menu #coidcollections="matMenu">
+          <button mat-menu-item [routerLink]="['bulk-invoice-release']">Bundle Raise</button>
+        </mat-menu>
+      </mat-menu>
+
+      <button *ngIf="!disable_coid_vaps_e2e_clientcare" mat-button [matMenuTriggerFor]="menu7"
+        class='Activebutton'>Reports</button>
+      <mat-menu #menu7="matMenu" [overlapTrigger]="false">
+        <button *ngIf="!disable_coid_vaps_e2e_clientcare" mat-menu-item [matMenuTriggerFor]="coidreports">
+          COID & VAPS
+        </button>
+        <mat-menu #coidreports="matMenu">
+          <button mat-menu-item [routerLink]="['member-renewal-reports']">Renewal Reports</button>
+          <button mat-menu-item [routerLink]="['member-collection-reports']">Collections Reports</button>
+        </mat-menu>
+        <button mat-menu-item [routerLink]="['referral-reports']">Referral Reports</button>
+      </mat-menu>
+    </nav>
+  </div>
+  <div [hidden]="loadingMessage != null" class="container-padding">
+    <router-outlet></router-outlet>
+  </div>
+</div>

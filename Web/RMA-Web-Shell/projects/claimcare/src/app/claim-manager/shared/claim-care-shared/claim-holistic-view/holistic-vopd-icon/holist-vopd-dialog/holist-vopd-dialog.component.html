@@ -1,0 +1,47 @@
+<mat-card>
+    <div class="menu-bar">
+        <span class="material-icons">
+            verified
+        </span>&nbsp;Latest VOPD Results
+        <span (click)="close()" class="material-icons pointer right" matTooltip="close">
+            close
+        </span>
+        <span (click)="reCheckVopdStatus()" matTooltip="Check VOPD Status" class="material-icons pointer right">
+            cached
+        </span>
+
+    </div>
+    <mat-card-content>
+        <div *ngIf="(isLoading$ | async)">
+            <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+            <label class="mat-label other-label"><i>getting VOPD result ...please wait</i></label>
+        </div>
+
+        <mat-card *ngIf="clientVopdResponses.length <= 0 &&  !(isLoading$ | async)">
+            No VOPD results were found
+        </mat-card>
+
+        <table *ngIf="clientVopdResponses.length > 0 && !(isLoading$ | async)" class="altRowTable table">
+            <tr>
+                <th>Status</th>
+                <th>Dead/Alive</th>
+                <th>Surname Match</th>
+                <th>Is Verified</th>
+                <th>Reason</th>
+                <th>Override VOPD</th>
+            </tr>
+            <tr *ngFor="let row of clientVopdResponses">
+                <td>{{row.vopdStatus ? getVOPDStatus(row.vopdStatus) : 'Not Applicable'}}</td>
+                <td>{{row.vopdStatus && !isProcessed ? 'Pending' : deadAlive}}</td>
+                <td>{{row.vopdStatus && row.vopdStatus == vopdProcessed ? surnameMatch :
+                    'Pending'}}</td>
+                <td>{{row.vopdStatus && row.vopdStatus == vopdProcessed || row.vopdStatus == manualVerification ? 'Yes' : 'Pending'}}</td>
+                <td>{{row.vopdStatus && !isProcessed ? 'Pending' : row.reason && row.reason != '' ?
+                    row.reason : 'N/A'}}</td>
+                <td> 
+                    <mat-radio-button (click)="overrideVOPD($event)" class="show-pointer" type="radio" matTooltip="Override VOPD"></mat-radio-button>
+                </td>
+            </tr>
+        </table>
+    </mat-card-content>
+</mat-card>

@@ -1,0 +1,191 @@
+<app-medicare-search-menus></app-medicare-search-menus>
+<div *ngIf="!showSwitchBatchList">
+  <div class="items-heading heading-left">
+    <h1>{{(switchBatchType == switchBatchTypeEnum.MedEDI) ? "Search Medical Invoice Batches" :"Search Teba Invoice Batches"}} </h1>
+  </div>
+<mat-card>
+  <div>
+    <form [formGroup]="form" class="mat-container details-form" novalidate>
+      <section>
+        <!--switcheType-->
+          <mat-form-field>
+            <label class="mat-label other-label">Switch Type</label>
+            <mat-select (selectionChange)="onChangeSwitcheType($event)"
+              formControlName="switcheType" id="switcheType" name="switcheType">
+              <mat-option *ngFor="let switchType of switchTypes"
+                [value]="switchType.name">
+                {{switchType.name}}</mat-option>
+            </mat-select>
+          </mat-form-field>
+      </section>
+
+      <section>
+        <!--batchNumber-->
+        <mat-form-field class="mat-form-field">
+          <label class="mat-label other-label">Switch BatchId</label>
+          <input matInput id="switchBatchId" name="switchBatchId" formControlName="switchBatchId" />
+        </mat-form-field>
+      </section>
+
+      <section>
+        <!--batchNumber-->
+        <mat-form-field class="mat-form-field">
+          <label class="mat-label other-label">Batch Number</label>
+          <input matInput id="batchNumber" name="batchNumber" formControlName="batchNumber" />
+        </mat-form-field>
+      </section>
+
+      <section>
+        <!--dateSubmitted-->
+        <mat-form-field class="mat-form-field">
+          <label class="mat-label other-label">Date Submitted</label>
+          <input matInput formControlName="dateSubmitted" id="dateSubmitted" name="dateSubmitted" [matDatepicker]="dateSubmitted">
+          <mat-datepicker-toggle matSuffix [for]="dateSubmitted" [disabled]="false"></mat-datepicker-toggle>
+          <mat-datepicker startView="month" [startAt]="startDate" touchUi="true" #dateSubmitted></mat-datepicker>
+        </mat-form-field>
+      </section>
+      <section>
+        <!--dateSwitched-->
+        <mat-form-field class="mat-form-field">
+          <label class="mat-label other-label">Date Switched</label>
+          <input matInput formControlName="dateSwitched" id="dateSwitched" name="dateSwitched"  [matDatepicker]="dateSwitched">
+          <mat-datepicker-toggle matSuffix [for]="dateSwitched" [disabled]="false"></mat-datepicker-toggle>
+          <mat-datepicker startView="month" [startAt]="startDate" touchUi="true" #dateSwitched></mat-datepicker>
+        </mat-form-field>
+      </section>
+      <section>
+        <!--dateRecieved-->
+        <mat-form-field class="mat-form-field">
+          <label class="mat-label other-label">Date Received</label>
+          <input matInput formControlName="dateRecieved" id="dateRecieved" name="dateRecieved"  [matDatepicker]="dateRecieved">
+          <mat-datepicker-toggle matSuffix [for]="dateRecieved" [disabled]="false"></mat-datepicker-toggle>
+          <mat-datepicker startView="month" [startAt]="startDate" touchUi="true" #dateRecieved></mat-datepicker>
+        </mat-form-field>
+      </section>
+      <section>
+       <!--assignedToUser-->
+       <mat-form-field>
+        <label class="mat-label other-label">Assigned To User</label>
+        <mat-select (selectionChange)="onChangeAssignedUser($event)"
+          formControlName="assignedToUser" id="assignedToUser" name="assignedToUser">
+          <mat-option *ngFor="let assignedToUser of switchBatchAssignToUsersList"
+            [value]="assignedToUser.id">
+            {{assignedToUser.name}}</mat-option>
+        </mat-select>
+      </mat-form-field>
+      </section>
+      <section>
+        <mat-checkbox id="isCompleteBatches" name="isCompleteBatches" formControlName="isCompleteBatches" (change)="selectIsCompleteBatches($event)">Include Complete Batches
+        </mat-checkbox>
+      </section>
+    </form>
+  </div>
+</mat-card>
+</div>
+<br>
+<!--invoice-switch-batch-list -->
+<div [hidden]="!showSwitchBatchList">
+  <div class="container-tables">
+    <mat-card>
+      <div class="items-heading-center">
+        <h1>{{(switchBatchType == switchBatchTypeEnum.MedEDI) ? "Electronic Medical Invoice Batches" :"Electronic Teba Invoice Batches"}} </h1>
+      </div>
+      <div *ngIf="dataSourceSwitchBatchSearchList.isLoading">
+        <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+        <span *ngIf="dataSourceSwitchBatchSearchList.isLoading" class="site-font grey">
+          {{dataSourceSwitchBatchSearchList.statusMsg}}</span>
+      </div>
+      <div class="items-list-table">
+        <div [hidden]="paginator.length=== 0">
+        <mat-table #table [dataSource]="dataSourceSwitchBatchSearchList" matSort class="mat-elevation-z8">
+  
+          <ng-container matColumnDef="description">
+            <mat-header-cell *matHeaderCellDef mat-sort-header> Switch Name </mat-header-cell>
+            <mat-cell *matCellDef="let element" matTooltip="{{element.description}}"> {{element.description}} </mat-cell>
+          </ng-container>
+          <!-- switchBatchNumber Column -->
+          <ng-container matColumnDef="switchBatchNumber">
+            <mat-header-cell *matHeaderCellDef mat-sort-header> Switch BatchNumber </mat-header-cell>
+            <mat-cell *matCellDef="let element" matTooltip="{{element.switchBatchNumber}}"> {{element.switchBatchNumber}} </mat-cell>
+          </ng-container>
+          <!-- dateSubmitted Column -->
+          <ng-container matColumnDef="dateSubmitted">
+            <mat-header-cell *matHeaderCellDef mat-sort-header> Date Submitted </mat-header-cell>
+            <mat-cell *matCellDef="let element"> {{element.dateSubmitted | date:'yyyy-MM-dd'}}
+            </mat-cell>
+          </ng-container>
+          <!-- dateReceived Column -->
+          <ng-container matColumnDef="dateReceived">
+            <mat-header-cell *matHeaderCellDef mat-sort-header> Date Received </mat-header-cell>
+            <mat-cell *matCellDef="let element"> {{element.dateReceived | date:'yyyy-MM-dd'}} </mat-cell>
+          </ng-container>
+          <!-- dateCompleted Column -->
+          <ng-container matColumnDef="dateCompleted">
+            <mat-header-cell *matHeaderCellDef mat-sort-header> Date Completed </mat-header-cell>
+            <mat-cell *matCellDef="let element"> {{element.dateCompleted | date:'yyyy-MM-dd'}} </mat-cell>
+          </ng-container>
+          <!-- invoicesCounted Column -->
+          <ng-container matColumnDef="invoicesCounted">
+            <mat-header-cell *matHeaderCellDef mat-sort-header> Invoices Counted </mat-header-cell>
+            <mat-cell *matCellDef="let element"> {{element.invoicesCounted }} </mat-cell>
+          </ng-container>
+          <!-- invoicesProcessed Column -->
+          <ng-container matColumnDef="invoicesProcessed">
+            <mat-header-cell *matHeaderCellDef mat-sort-header> Invoices Processed </mat-header-cell>
+            <mat-cell *matCellDef="let element"> {{element.invoicesProcessed }} </mat-cell>
+          </ng-container>
+          <!-- amountCountedInclusive Column -->
+          <ng-container matColumnDef="amountCountedInclusive">
+            <mat-header-cell *matHeaderCellDef mat-sort-header> Amount Counted Inclusive </mat-header-cell>
+            <mat-cell *matCellDef="let element"> R{{ element.amountCountedInclusive | currency:'ZAR':'' | replace:',':' ' }} </mat-cell>
+            
+          </ng-container>
+          <!-- assignedUserId Column -->
+          <ng-container matColumnDef="assignedUser">
+            <mat-header-cell *matHeaderCellDef mat-sort-header> Assigned User </mat-header-cell>
+            <mat-cell *matCellDef="let element" matTooltip="{{element.assignedUser}}"> {{element.assignedUser}} </mat-cell>
+            <mat-footer-cell *matFooterCellDef> </mat-footer-cell>
+          </ng-container>
+          <!-- switchFileName Column -->
+          <ng-container matColumnDef="switchFileName">
+            <mat-header-cell *matHeaderCellDef mat-sort-header> Switch File Name </mat-header-cell>
+            <mat-cell *matCellDef="let element" matTooltip="{{element.switchFileName}}"> {{element.switchFileName}} </mat-cell>
+          </ng-container>
+          <!-- View Column -->
+          <ng-container matColumnDef="viewInvoice">
+            <mat-header-cell *matHeaderCellDef> View Invoice </mat-header-cell>
+            <mat-cell *matCellDef="let element">
+              <a role="button" class="link-edit" (click)="onClickView(element.switchBatchId)">View</a>
+            </mat-cell>
+          </ng-container>
+          <mat-header-row *matHeaderRowDef="displayedColumnsSwitchBatchSearchList"></mat-header-row>
+          <mat-row *matRowDef="let row; columns: displayedColumnsSwitchBatchSearchList;" class="element-row"></mat-row>
+         </mat-table>
+        </div>
+        <div [hidden]="dataSourceSwitchBatchSearchList.isLoading">
+          <mat-paginator #paginator [length]="dataSourceSwitchBatchSearchList.rowCount$" [pageSize]="10"
+            [pageSizeOptions]="[5, 10, 25, 50, 100]">
+          </mat-paginator>
+        </div>
+        <div [hidden]="(dataSourceSwitchBatchSearchList.data && dataSourceSwitchBatchSearchList.data.data && dataSourceSwitchBatchSearchList.data.data.length > 0) || dataSourceSwitchBatchSearchList.isLoading">
+          <span class="grey site-font">No batches found. Please ensure that you have appropriate permissions.</span>
+        </div>
+      </div>
+    </mat-card>
+  </div>
+</div>
+
+<div class="items-buttons-container">
+  <div class="form-buttons submit-button" [hidden]="showNewSearchBtn || paginator.length > 0 || dataSourceSwitchBatchSearchList.isLoading">
+    <button type="button" class="button float-button"
+    (click)="onBatchInvoiceSearch()">Search</button>
+  </div>
+  <div class="form-buttons submit-button" [hidden]="showNewSearchBtn || paginator.length > 0 || dataSourceSwitchBatchSearchList.isLoading">
+    <button type="button" class="button float-button"
+    (click)="onResetForm()">Reset Search</button>
+  </div>
+  <div class="form-buttons submit-button" [hidden]="!showNewSearchBtn || dataSourceSwitchBatchSearchList.isLoading">
+    <button type="button" class="button float-button"
+    (click)="onNewSearch()">New Search</button>
+  </div>
+</div>

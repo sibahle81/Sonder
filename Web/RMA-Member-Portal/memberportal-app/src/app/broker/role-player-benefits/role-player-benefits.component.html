@@ -1,0 +1,54 @@
+<h4>{{title}}</h4>
+<div *ngIf="(isLoading$ | async)">
+  <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+  <label class="mat-label other-label"><i>Loading benefits. Please wait...</i></label>
+</div>
+<div [hidden]="(isLoading$ | async)">
+  <mat-table #table [dataSource]="dataSource" matSort>
+    <ng-container matColumnDef="selected">
+      <mat-header-cell *matHeaderCellDef>&nbsp;</mat-header-cell>
+      <mat-cell *matCellDef="let benefit">
+        <mat-checkbox [checked]="benefit.selected" [disabled]="!enableSelection" [(ngModel)]="benefit.selected"
+          (change)="updateBenefit($event, benefit)">
+        </mat-checkbox>
+      </mat-cell>
+    </ng-container>
+    <ng-container matColumnDef="rolePlayerName">
+      <mat-header-cell *matHeaderCellDef>{{caption}}</mat-header-cell>
+      <mat-cell *matCellDef="let benefit"> {{benefit.rolePlayerName}} </mat-cell>
+    </ng-container>
+    <ng-container matColumnDef="age">
+      <mat-header-cell *matHeaderCellDef>Join Age</mat-header-cell>
+      <mat-cell *matCellDef="let benefit"> {{benefit.age}} </mat-cell>
+    </ng-container>
+    <ng-container matColumnDef="benefitType">
+      <mat-header-cell *matHeaderCellDef>Benefit Type</mat-header-cell>
+      <mat-cell *matCellDef="let benefit">{{getBenefitType(benefit.benefitType)}}</mat-cell>
+    </ng-container>
+    <ng-container matColumnDef="coverMemberType">
+      <mat-header-cell *matHeaderCellDef>Cover Type</mat-header-cell>
+      <mat-cell *matCellDef="let benefit"> {{getCoverMemberType(benefit.coverMemberType)}} </mat-cell>
+    </ng-container>
+    <ng-container matColumnDef="code">
+      <mat-header-cell *matHeaderCellDef>Benefit</mat-header-cell>
+      <mat-cell *matCellDef="let benefit"> {{benefit.code}}</mat-cell>
+    </ng-container>
+    <ng-container matColumnDef="name">
+      <mat-header-cell *matHeaderCellDef>Benefit Name</mat-header-cell>
+      <mat-cell *matCellDef="let benefit"> {{benefit.name}} </mat-cell>
+    </ng-container>
+    <ng-container matColumnDef="premium">
+      <mat-header-cell *matHeaderCellDef>Premium</mat-header-cell>
+      <mat-cell *matCellDef="let benefit">{{benefit.benefitBaseRateLatest|number:'1.2-2'}}</mat-cell>
+    </ng-container>
+    <ng-container matColumnDef="benefitAmount">
+      <mat-header-cell *matHeaderCellDef>Cover Amount</mat-header-cell>
+      <mat-cell *matCellDef="let benefit">{{benefit.benefitRateLatest|number:'1.2-2'}}</mat-cell>
+    </ng-container>
+    <mat-header-row *matHeaderRowDef="displayedColumns; sticky: true"></mat-header-row>
+    <mat-row *matRowDef="let row; columns: displayedColumns;"></mat-row>
+  </mat-table>
+  <mat-paginator #paginator [length]="dataSource.data ? dataSource.data.length : 0" [pageIndex]="0" [pageSize]="10"
+    [pageSizeOptions]="[5, 10, 15]">
+  </mat-paginator>
+</div>

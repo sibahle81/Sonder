@@ -1,0 +1,102 @@
+<div *ngIf="isLoading$ | async">
+  <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+  <label class="mat-label other-label"><i>{{loadingMessages$ | async}}</i></label>
+</div>
+  <div *ngIf="!(isLoading$ | async)">
+    <mat-card>
+      <div class="menu-bar">
+        <span class="material-icons">
+          receipt_long
+        </span>&nbsp;
+        <label>Add travel authorisation to Claim: {{claims.claimReferenceNumber}}</label>
+        <span *ngIf="formValid()" (click)="save()" class="material-icons menu-button">
+          save
+        </span>
+      </div>
+      <br />
+
+      <form [formGroup]="form" class="mat-container" novalidate *ngIf="!(isLoading$ | async)">
+        <section>
+            <mat-form-field class="mat-form-field">
+              <label class="mat-label other-label mandatory-field">Authorised Party</label>
+              <mat-select name="authorisedParty" id="authorisedParty" formControlName="authorisedParty">
+                <mat-option *ngFor="let authorisedParty of authorisedParties" [value]="authorisedParty.travelAuthorisedPartyId">
+                  {{authorisedParty.description}}
+                </mat-option>
+              </mat-select>
+            </mat-form-field>
+            <mat-form-field class="mat-form-field-right">
+                <label class="mat-label other-label mandatory-field">Date authorised from</label>
+                <input matInput formControlName="dateAuthorisedFrom" [matDatepicker]="dateAuthorisedFrom" readonly [min]="minDate" [max]="maxDate" date="true" time="false">
+                <mat-datepicker-toggle matSuffix [for]="dateAuthorisedFrom">
+                </mat-datepicker-toggle>
+                <mat-datepicker touchUi="true" #dateAuthorisedFrom></mat-datepicker>
+                <mat-error *ngIf="form.get('dateAuthorisedFrom').hasError('required')">
+                  Date authorised from date is <strong>required</strong>
+                </mat-error>
+            </mat-form-field> 
+        </section>
+
+        <section>
+            <mat-form-field class="mat-form-field">
+              <label class="mat-label other-label mandatory-field">Date authorised to</label>
+              <input matInput formControlName="dateAuthorisedTo" [matDatepicker]="dateAuthorisedTo" readonly [min]="minDate" [max]="maxDate" date="true" time="false">
+              <mat-datepicker-toggle matSuffix [for]="dateAuthorisedTo">
+              </mat-datepicker-toggle>
+              <mat-datepicker touchUi="true" #dateAuthorisedTo></mat-datepicker>
+              <mat-error *ngIf="form.get('dateAuthorisedTo').hasError('required')">
+                Date authorised To date is <strong>required</strong>
+              </mat-error>
+            </mat-form-field>
+            <mat-form-field class="mat-form-field-right controlSize">
+              <label class="mat-label other-label">Authorised Km's</label>
+                  <input matInput formControlName="authorisedKms" name="authorisedKms" id="authorisedKms" type="number" />
+                  <mat-error *ngIf="form.get('authorisedKms').hasError('required')">
+                    Authorised Km's is <strong>required</strong>
+                </mat-error>
+        </mat-form-field>
+        </section>
+        <section>
+          <mat-form-field class="mat-form-field">
+            <label class="mat-label other-label mandatory-field">Type Rate</label>
+            <mat-select name="typeRate" id="typeRate" formControlName="typeRate">
+              <mat-option *ngFor="let typeRate of typeRates" [value]="typeRate.travelRateTypeId">
+                {{typeRate.description}}
+              </mat-option>
+            </mat-select>
+          </mat-form-field>
+          <mat-form-field class="mat-form-field-right controlSize">
+            <label class="mat-label other-label">Authorised Rate</label>
+                <input matInput formControlName="authorisedRate" name="authorisedRate" id="authorisedRate" type="number" />
+                <mat-error *ngIf="form.get('authorisedRate').hasError('required')">
+                  authorised rate is <strong>required</strong>
+              </mat-error>
+          </mat-form-field>
+        </section>
+        <section>
+          <mat-form-field class="mat-form-field">
+            <label class="mat-label other-label">Authorised amount R</label>
+                <input matInput formControlName="authorisedAmount" name="authorisedAmount" id="authorisedAmount" type="number" />
+                <mat-error *ngIf="form.get('authorisedAmount').hasError('required')">
+                  authorised amount is <strong>required</strong>
+              </mat-error>
+          </mat-form-field>
+          <mat-form-field class="mat-form-field-right controlSize">
+              <label class="mat-label other-label">Description</label>
+              <input matInput formControlName="description" name="description" id="description" />
+          </mat-form-field>
+        </section>
+        <section>
+          <mat-form-field class="mat-form-field">
+            <div class="field-container check-box">
+              <label class="mat-label other-label">&nbsp;</label>
+              <input [hidden]="true" matInput formControlName="isPreAuthorised" />
+              <mat-checkbox formControlName="isPreAuthorised">
+                  <label class="mat-label other-label">Is pre Authorised?</label>
+              </mat-checkbox>
+          </div>
+          </mat-form-field>
+        </section>
+      </form>
+    </mat-card>
+  </div>

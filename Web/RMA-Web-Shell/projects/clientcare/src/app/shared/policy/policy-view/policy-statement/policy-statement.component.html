@@ -1,0 +1,38 @@
+<mat-card class="pad" *ngIf="(dataSource.loading$ | async)">
+  <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+  <label class="mat-label other-label"><i>loading transactions...please wait</i></label>
+</mat-card>
+
+<div class="pad" [hidden]="(dataSource.loading$ | async)">
+    <div [hidden]="!(dataSource.data && dataSource.data.data && dataSource.data.data.length > 0)">
+      <mat-table #table [dataSource]="dataSource" matSort id="tblData">
+        <ng-container matColumnDef="transactionDate">
+          <mat-header-cell *matHeaderCellDef> Transaction Date </mat-header-cell>
+          <mat-cell *matCellDef="let row">{{row.transactionDate | date:'yyyy/MM/dd'}}</mat-cell>
+        </ng-container>
+        <ng-container matColumnDef="description">
+          <mat-header-cell *matHeaderCellDef> Description </mat-header-cell>
+          <mat-cell *matCellDef="let row">{{row.description}}</mat-cell>
+        </ng-container>
+        <ng-container matColumnDef="debitAmount">
+          <mat-header-cell *matHeaderCellDef> Debit Amount </mat-header-cell>
+          <mat-cell *matCellDef="let row">{{row.debitAmount.toFixed(2)}}</mat-cell>
+        </ng-container>
+        <ng-container matColumnDef="creditAmount">
+          <mat-header-cell *matHeaderCellDef> Credit Amount </mat-header-cell>
+          <mat-cell *matCellDef="let row">{{row.creditAmount.toFixed(2)}}</mat-cell>
+        </ng-container>
+
+        <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
+        <mat-row *matRowDef="let row; columns: displayedColumns;"></mat-row>
+      </mat-table>
+
+      <mat-paginator #paginator [pageIndex]="0" [pageSize]="5" [pageSizeOptions]="[5, 10, 25, 100]"
+        [length]="this.dataSource.rowCount$ | async" (page)="getData()">
+      </mat-paginator>
+    </div>
+
+    <mat-card *ngIf="!(dataSource.data && dataSource.data.data && dataSource.data.data.length > 0 || (dataSource.loading$ | async))">
+      <label class="mat-label other-label"><i>No transactions found...</i></label>
+    </mat-card>
+</div>

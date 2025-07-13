@@ -1,0 +1,115 @@
+<div *ngIf="userHasPermission(addQuotePermission)">
+  <mat-card *ngIf="(isLoading$ | async)">
+    <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+    <label class="mat-label other-label"><i>{{loadingMessage$ | async}}</i></label>
+  </mat-card>
+
+  <div
+    *ngIf="!(isLoading$ | async) && lead && lead.company && lead.company.industryClass && lead.company.industryTypeId && lead.leadClientStatus != declined">
+    <mat-card>
+      <form [formGroup]="form" class="mat-container details-form" novalidate>
+        <div class="menu-bar">
+          <span class="material-icons">
+            assignment_add
+          </span>
+          Product Offering <label class="mat-label other-label"><i>(show interest in a product)</i></label>
+          <span *ngIf="form.valid && !form.pristine && selectedProductOption" (click)="reset()"
+            class="material-icons pointer right" matTooltip="reset">
+            close
+          </span>
+          <span *ngIf="form.valid && !form.pristine && selectedProductOption" (click)="addQuote()"
+            class="material-icons pointer right pulseGreen" matTooltip="add to cart">
+            add_shopping_cart
+          </span>
+        </div>
+        <section *ngIf="supportedProducts && supportedProducts?.length > 0">
+          <mat-form-field class="mat-form-field-right">
+            <label class="mat-label other-label">Available Products</label>
+            <mat-select name="products" id="products" formControlName="products">
+              <mat-option (click)="productSelected(product)" *ngFor="let product of supportedProducts"
+                [value]="product">
+                {{product?.name}} ({{product?.code}})</mat-option>
+            </mat-select>
+          </mat-form-field>
+
+          <mat-form-field *ngIf="selectedProduct && filteredProductOptions && filteredProductOptions?.length > 0"
+            class="mat-form-field-right">
+            <label class="mat-label other-label">Product Options</label>
+            <mat-select name="productOptions" id="productOptions" formControlName="productOptions">
+              <mat-option (click)="productOptionSelected(productOption)"
+                *ngFor="let productOption of filteredProductOptions" [value]="productOption">
+                {{productOption?.name}} {{productOption?.name.includes('+') ? '' : '(' + productOption?.code + ')'}}
+              </mat-option>
+            </mat-select>
+            <span class="info" *ngIf="selectedProduct && filteredProductOptions && filteredProductOptions?.length <= 0">
+              There are no product options available for the selected product. Either there are none configured OR this
+              lead already has all the available product options for this product
+            </span>
+          </mat-form-field>
+        </section>
+        <span *ngIf="!supportedProducts || (supportedProducts && supportedProducts?.length <= 0)">
+          <label class="mat-label other-label"><i>no products available...please try again later</i></label>
+        </span>
+      </form>
+    </mat-card>
+
+    <div *ngIf="documentTypeFilter && documentTypeFilter?.length > 0">
+      <document-uploader [documentSet]="documentSet" [systemName]="documentSystemName" [keyName]="'MemberId'"
+        [keyValue]="lead.rolePlayerId" [documentTypeFilter]="documentTypeFilter"
+        [forceRequiredDocumentTypeFilter]="documentTypeFilter"
+        (requiredDocumentsUploadedEmit)="setRequiredDocumentsUploaded($event)"
+        (documentComponentReadyEmit)="setDocumentComponentReady($event)"
+        (documentUploadingEmit)="setDocumentComponentReady(!$event)"></document-uploader>
+    </div>
+  </div>
+
+  <div *ngIf="lead && lead.leadClientStatus == declined">
+    <mat-card>
+      <label class="mat-label other-label"><i>Leads in <b>declined</b> status cannot select products</i></label>
+    </mat-card>
+  </div>
+
+  <div *ngIf="!(isLoading$ | async) && (newQuotes && newQuotes?.length > 0) && documentComponentReady">
+    <mat-card>
+      <div class="menu-bar">
+        <span class="material-icons">
+          shopping_cart
+        </span>
+        Shopping Cart <label class="mat-label other-label"><i>(you have selected the following products)</i></label>
+        <span (click)="openConfirmationDialog()" class="material-icons pointer right pulse greenFont"
+          matTooltip="show interest in the selected products">
+          thumb_up
+        </span>
+      </div>
+
+      <div class="scrollTable">
+        <table class="altRowTable table">
+          <tr>
+            <th>Product</th>
+            <th>Product Option</th>
+            <th>Description</th>
+            <th>Action</th>
+          </tr>
+          <tr *ngFor="let newQuote of newQuotes">
+            <td>{{getProductName(newQuote.productId)}}</td>
+            <td>{{getProductOptionNames(newQuote.quoteDetailsV2)}}</td>
+            <td>A notification of interest will be generated on submit</td>
+            <td>
+              <span (click)="deleteQuote(newQuote)" matTooltip="delete" class="material-icons pointer">
+                delete
+              </span>
+            </td>
+          </tr>
+        </table>
+      </div>
+    </mat-card>
+  </div>
+</div>
+
+<div *ngIf="!userHasPermission(addQuotePermission)">
+  <access-denied></access-denied>
+</div>
+
+<mat-card *ngIf="!lead && !(isLoading$ | async)">
+  <label class="mat-label other-label"><i>no lead found...</i></label>
+</mat-card>

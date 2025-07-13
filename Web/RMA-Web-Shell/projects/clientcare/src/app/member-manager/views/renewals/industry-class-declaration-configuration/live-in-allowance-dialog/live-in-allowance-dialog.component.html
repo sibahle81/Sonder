@@ -1,0 +1,85 @@
+<div class="menu-bar">
+  <span class="material-icons">night_shelter</span>
+  Live In Allowance (LIA)
+  <span *ngIf="hideForm" (click)="cancelDialog()" class="material-icons pointer right" matTooltip="close">
+    close
+  </span>
+
+  <span *ngIf="!hideForm" (click)="cancelForm()" class="material-icons pointer right" matTooltip="cancel">
+    cancel
+  </span>
+
+  <span *ngIf="!hideForm && form.valid && !form.pristine" (click)="add()" class="material-icons pointer right"
+    matTooltip="confirm">
+    save
+  </span>
+
+  <span (click)="showForm()" *ngIf="(!isReadOnly && isWizard) && hideForm" class="material-icons pointer right"
+    matTooltip="add">add_circle</span>
+</div>
+
+<mat-card *ngIf="isLoading$ | async">
+  <mat-progress-bar style="width: 300px;" mode="indeterminate"></mat-progress-bar>
+  <label class="mat-label other-label"><i>loading...please wait</i></label>
+</mat-card>
+
+<mat-card *ngIf="!(isLoading$ | async)">
+  <div
+    *ngIf="((industryClassDeclarationConfig && industryClassDeclarationConfig.liveInAllowances && industryClassDeclarationConfig.liveInAllowances.length <= 0 && hideForm) || (!industryClassDeclarationConfig.liveInAllowances && hideForm))">
+    <i>No live in allowances configured...</i>
+  </div>
+
+  <div class="scrollTable"
+    *ngIf="industryClassDeclarationConfig && industryClassDeclarationConfig.liveInAllowances && industryClassDeclarationConfig.liveInAllowances.length > 0 && hideForm">
+    <table class="altRowTable table">
+      <tr>
+        <th>Allowance</th>
+        <th>Effective From</th>
+        <th>Effective To</th>
+        <th *ngIf="(!isReadOnly && isWizard)">Action</th>
+      </tr>
+      <tr *ngFor="let liveInAllowance of industryClassDeclarationConfig.liveInAllowances">
+        <td>{{liveInAllowance.allowance ? formatMoney(liveInAllowance.allowance.toFixed(2)) :
+          'N/A'}}</td>
+        <td>{{liveInAllowance.effectiveFrom | date:'yyyy/MM/dd'}}</td>
+        <td *ngIf="liveInAllowance.effectiveTo">{{liveInAllowance.effectiveTo | date:'yyyy/MM/dd'}}</td>
+        <td *ngIf="!liveInAllowance.effectiveTo"><span class="green">Current</span></td>
+        <td *ngIf="(!isReadOnly && isWizard)">
+          <span><a role="button" class="link-edit" (click)="edit(liveInAllowance)"><span class="material-icons pointer"
+                matTooltip="Edit">settings</span></a></span>
+          <span *ngIf="!liveInAllowance.liveInAllowanceId || liveInAllowance.liveInAllowanceId <= 0"><a
+              role="button" class="link-edit" (click)="delete(liveInAllowance)"><span class="material-icons pointer"
+                matTooltip="Delete">delete</span></a></span>
+        </td>
+      </tr>
+    </table>
+  </div>
+
+  <div *ngIf="!hideForm">
+    <form [formGroup]="form" class="mat-container details-form" novalidate>
+      <section>
+        <mat-form-field class="mat-form-field">
+          <label class="mat-label other-label mandatory">Allowance</label>
+          <input matInput NumberOnly formControlName="allowance" name="allowance"
+            id="allowance" />
+          <mat-error *ngIf="form.get('allowance').hasError('required')">
+            allowance is <strong>required</strong>
+          </mat-error>
+        </mat-form-field>
+      </section>
+
+      <section>
+        <mat-form-field class="mat-form-field">
+          <label class="mat-label other-label">Effective From</label>
+          <input matInput formControlName="effectiveFrom" [matDatepicker]="effectiveFrom" [min]="minDate">
+          <mat-datepicker-toggle matSuffix [for]="effectiveFrom">
+          </mat-datepicker-toggle>
+          <mat-datepicker touchUi="true" #effectiveFrom></mat-datepicker>
+          <mat-error *ngIf="form.get('effectiveFrom').hasError('required')">
+            effective from is <strong>required</strong>
+          </mat-error>
+        </mat-form-field>
+      </section>
+    </form>
+  </div>
+</mat-card>

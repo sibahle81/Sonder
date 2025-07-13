@@ -1,0 +1,34 @@
+<div>
+    <h3>Allocation File Validations</h3>
+    <br>
+</div>
+<div>
+    <div>
+        <div>
+            <upload-control #uploadControl [acceptedTypes]="'.xlsx'" [isSingleInput]="false" [allowDelete]="true"
+                [isReadOnly]="false">
+            </upload-control>
+        </div>
+        <section>
+            <p *ngIf="isLoadingSubmittingAllocations$ | async">
+                <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+                <label class="mat-label other-label"><i>loading validating file...please wait</i></label>
+            </p>
+        </section>
+        <br />         
+        <div [hidden]="!isFileValidated" *ngIf="!isValidatedOnly">Validation Completed. Please proceed with allocations.<br /><br /></div>
+        <div class="form-buttons">
+            <button class="button float-button submit-button" [disabled]="uploadControlComponent.isUploading"
+                (click)="save()">Upload
+                File</button>
+            <button class="button float-button submit-button" [disabled]="!isFileValidated" *ngIf="!isValidatedOnly"
+                (click)="allocate()">Continue</button>
+            <button class="button float-button submit-button" (click)="cancel()">Cancel</button>
+        </div>
+        <br />
+        <div [hidden]="!hasErrors" *ngIf="isValidatedOnly">
+            <div class="error-message">Exceptions found.</div>
+            <br />
+            <a class="link-edit" (click)="viewExceptions()">view full exception details</a>
+        </div>
+    </div>

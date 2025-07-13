@@ -1,0 +1,44 @@
+<form [formGroup]="form" class="select-options">
+  <div class="display borderCss">
+    <div class="width">
+      <mat-form-field appearance="outline" [ngClass]="{
+              'has-error': validateEntity() && isFormSubmited}">
+        <mat-select class="border-none-important" placeholder="Entity" formControlName="entity"
+          panelClass="selectStyle">
+          <mat-option *ngFor="let item of entityDropdownValue" [value]="item.entityName"
+            (click)="onInputChange(item.entityName,index)">{{item.entityName}}</mat-option>
+        </mat-select>
+      </mat-form-field>
+      <mat-error class="color-red" *ngIf="form.get('entity').invalid && isFormSubmited">Please select entity</mat-error>
+      <mat-error class="color-red" *ngIf="form.get('entity').value.trim() == 'Select'">Please select valid
+        option</mat-error>
+
+    </div>
+
+    <div class="width">
+      <mat-form-field appearance="outline" [ngClass]="{
+              'has-error':validateonditionOperator() && isFormSubmited}">
+        <mat-select class="border-none-important" placeholder="Condition Operator" disableRipple
+          formControlName="conditionOperator" [value]="form.get('conditionOperator').value">
+          <mat-option [value]="item" *ngFor="let item of conditionDropDownOperators">{{item}}</mat-option>
+        </mat-select>
+      </mat-form-field>
+      <mat-error class="color-red" *ngIf="form.get('conditionOperator').invalid && isFormSubmited">Please select condition operator</mat-error>
+
+    </div>
+
+    <div class="width">
+      <mat-form-field appearance="outline" [ngClass]="{
+              'has-error':validateValue() && isFormSubmited && !isAgeSelected}">
+        <mat-select class="border-none-important" placeholder="Value" disableRipple
+          formControlName="value" *ngIf="!isAgeSelected">
+          <mat-option [value]="item.entityName" *ngFor="let item of valueArr">{{item.entityName}}</mat-option>
+        </mat-select>
+          <input class="border-none-important" matInput type="text" *ngIf="isAgeSelected" (input)="checkAge($event)" formControlName="value">
+      </mat-form-field>
+      <mat-error class="color-red" *ngIf="form.get('value').invalid && isFormSubmited && !isAgeSelected">Please select value</mat-error>
+      <mat-error class="color-red" *ngIf="form.get('value').invalid && isFormSubmited && isAgeSelected">Please add age</mat-error>
+    
+    </div>
+  </div>
+</form>

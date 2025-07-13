@@ -1,0 +1,13 @@
+<form [formGroup]="form" class="mat-container details-form" novalidate>
+    <section>
+        <mat-form-field class="mat-form-field">
+            <label class="mat-label other-label">Month</label><br />
+            <mat-select class="control" (selectionChange)="readForm()" formControlName="month" name="month" id="month">
+                <mat-option [value]="'all'">All</mat-option>
+                <mat-option *ngFor="let month of months" [value]="month">
+                    {{formatLookup(month)}}
+                </mat-option>
+            </mat-select>
+        </mat-form-field>
+    </section>
+</form>

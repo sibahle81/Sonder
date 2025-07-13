@@ -1,0 +1,73 @@
+<mat-card *ngIf="isLoading$ | async">
+  <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+  <label class="mat-label other-label"><i>loading...please wait</i></label>
+</mat-card>
+
+<div [hidden]="(isLoading$ | async)">
+  <div class="menu-bar">
+    <span class="material-icons">
+      paid
+    </span>Non-Variable Earnings
+    <span class="material-icons pointer right pulse" matTooltip="more options" (click)="onAdd()">
+      add_circle
+    </span>
+  </div>
+
+  <form [formGroup]="formGroup">
+    <div formArrayName="nonVariableEarnings">
+      <mat-table #table [dataSource]="dataSource">
+
+        <ng-container matColumnDef="earningTypeName">
+          <mat-header-cell *matHeaderCellDef>
+            Earning Type
+          </mat-header-cell>
+          <mat-cell *matCellDef="let element">
+            {{ element.earningTypeName }} <span *ngIf="element.earningTypeRequired" class="isRequired">*</span>
+          </mat-cell>
+          <mat-footer-cell *matFooterCellDef><b>Total</b></mat-footer-cell>
+        </ng-container>
+
+        <ng-container matColumnDef="nonVariableAmount">
+          <mat-header-cell *matHeaderCellDef>
+            Accident / Disease Earnings
+          </mat-header-cell>
+          <mat-cell *matCellDef="let element; let i = index">
+            <div [formGroupName]="i">
+              <mat-form-field appearance="standard">
+                <input matInput type="number" id="nonVariableAmount" formControlName="nonVariableAmount"
+                  class="form-control row-item" />
+                <span matSuffix>
+                  <mat-error *ngIf="assessValidity(i, 'nonVariableAmount')">
+                    <mat-icon aria-hidden="false" class="custom-mat-form-field-suffix "
+                      matTooltip="Negative Amount not allowed"> error </mat-icon>
+                  </mat-error>
+                </span>
+              </mat-form-field>
+            </div>
+          </mat-cell>
+          <mat-footer-cell *matFooterCellDef>{{getSubTotal()?.toFixed(2)}}</mat-footer-cell>
+        </ng-container>
+
+        <ng-container matColumnDef="remove">
+          <mat-header-cell *matHeaderCellDef class="cell-head-remove">Actions</mat-header-cell>
+          <mat-cell *matCellDef="let item" class="data-cell">
+            <button mat-button class="button submit-button" *ngIf="showRemove(item)" (click)="onRemove(item)"
+              matTooltip="Remove Non-Variable Earning.">
+              Remove
+            </button>
+            <span *ngIf="!showRemove(item)"><i>N/A</i></span>
+          </mat-cell>
+          <mat-footer-cell *matFooterCellDef></mat-footer-cell>
+        </ng-container>
+
+        <mat-header-row mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
+        <mat-row *matRowDef="let row; columns: displayedColumns;"></mat-row>
+        <mat-footer-row mat-footer-row *matFooterRowDef="displayedColumns"></mat-footer-row>
+      </mat-table>
+    </div>
+  </form>
+
+  <mat-card *ngIf="!(isLoading$ | async) && nonVariableEarnings?.length <= 0">
+    No data available...
+  </mat-card>
+</div>

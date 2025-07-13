@@ -1,0 +1,46 @@
+<mat-tab-group>
+  <mat-tab label="Invoice Details">
+    <div *ngIf="!showInvoice">
+      <policy-invoice-search (resultEmit)="policySearchChangeHandler($event)" [title]="'Search Invoice'">
+      </policy-invoice-search>
+    </div>
+    <br />
+    <mat-card *ngIf="isLoading$ | async">
+      <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+      <label class="mat-label other-label"><i>loading...please wait</i></label>
+    </mat-card>
+<div  *ngIf="showInvoice">
+  <div *ngIf="isSending$ | async">
+    <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+    <label class="mat-label other-label"><i>sending email...please wait</i></label>
+  </div>
+  <div class="field-container">
+    <mat-form-field >
+      <label class="mat-label other-label">Recipient Email Address<br />
+        <i><span style="font-size: x-small;">Use colon(;) separated email addresses for multiple
+            recipients</span></i></label>
+      <input matInput maxlength="300" matTooltip="Use colon(;) separated email addresses for multiple recipients"
+        (input)="onEmailChange($event.target.value)" name="ownerEmail" id="ownerEmail" value="{{recipientEmail}}">
+    </mat-form-field> 
+  </div>
+  
+    <div class="clear-both">
+      <button matTooltip="send email" class="button submit-button" [disabled]="(isSending$ | async)"
+        (click)="sendInvoice()">Send</button>
+        <button class="button submit-button"
+      (click)="clear()">Back</button>
+    </div>
+</div>
+  <div *ngIf="showInvoice" class="clear-both">
+    <br />
+    <div [hidden]="isLoading$ | async" >
+      <div id="InvoiceDocument">
+        <ssrs-reportviewer [hidden]="!showReport" [reportserver]="reportServerAudit" [reporturl]="reportUrlAudit"
+          [showparameters]="showParametersAudit" [parameters]="parametersAudit" [language]="languageAudit"
+          [width]="widthAudit" [height]="heightAudit" [toolbar]="toolbarAudit">
+        </ssrs-reportviewer>
+      </div>
+    </div>
+  </div>
+  </mat-tab>
+</mat-tab-group>

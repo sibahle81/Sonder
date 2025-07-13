@@ -1,0 +1,150 @@
+<div class="main-content">
+  <div>
+    <form [formGroup]="formPolicyDetails" class="mat-container details-form" novalidate>
+      <section>
+        <div class="field-container" [hidden]="!isMaintainPolicyChanges">
+          <mat-form-field class="mat-form-field-left">
+            <label class="mat-label other-label">Old Policy Number</label>
+            <input matInput maxlength="50" name="oldPolicyNumber" id="oldPolicyNumber" formControlName="oldPolicyNumber"
+              (blur)="clientReferenceExists($event)">
+            <div *ngIf="searchingClientReferenceDuplicates">
+              <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+              <label class="mat-label other-label"><i>checking duplicates...please wait</i></label>
+            </div>
+            <mat-error *ngIf="form && form.controls['oldPolicyNumber'].hasError('exists')">
+              Policy Number <strong>already exists</strong>
+            </mat-error>
+          </mat-form-field>
+        </div>
+        <div [hidden]="!showPolicyNumber">
+          <div
+            [ngClass]="{'field-container': !isMaintainPolicyChanges, 'field-container-right': isMaintainPolicyChanges}">
+            <mat-form-field class="mat-form-field">
+              <label class="mat-label other-label">Policy Number</label>
+              <input matInput formControlName="mainMemberPolicyNumber">
+            </mat-form-field>
+          </div>
+        </div>
+      </section>
+    </form>
+  </div>
+  <div *ngIf="!isGroup">
+    <person-details [showAge]="true" [parentModel]="detailsModel" (isSaIDtype)="setIDType($event)"
+      (ageChanged)="onAgeChanged($event)" (birthDateChanged)="onBirthDayChanged($event)"></person-details>
+    <europ-assist *ngIf="model" [policy]="model.mainMember.policies[0]"></europ-assist>
+  </div>
+  <div *ngIf="isGroup">
+    <group-member-detail [parentModel]="detailsModel"></group-member-detail>
+  </div>
+  <form [formGroup]="formMainMember" class="mat-container details-form" novalidate>
+    <section>
+      <div class="field-container">
+        <mat-form-field class="mat-form-field">
+          <label class="mat-label other-label mandatory-field">
+            Policy Inception Date
+            <span *ngIf="canBackDate"><i> (back dating is enabled)</i></span>
+          </label>
+          <input matInput formControlName="policyInceptionDate" [matDatepicker]="policyInceptionDate" required
+            name="policyInceptionDate" readonly [matDatepickerFilter]="isFirstDay" (dateChange)="calculateAge()">
+          <mat-datepicker-toggle matSuffix [for]="policyInceptionDate"></mat-datepicker-toggle>
+          <mat-datepicker touchUi="true" #policyInceptionDate></mat-datepicker>
+          <mat-error *ngIf="formMainMember.get('policyInceptionDate').hasError('required')">
+            Policy inception date is required
+          </mat-error>
+        </mat-form-field>
+      </div>
+      <div class="field-container-right">
+        <mat-form-field class="mat-form-field">
+          <div class="checkbox-container"><label class="mat-label other-label">&nbsp;</label></div>
+          <input matInput [hidden]="true" formControlName="changeInceptionDate" />
+          <mat-checkbox formControlName="changeInceptionDate" (change)="enableStartDate($event)">
+            <label class="mat-label other-label">Change policy start date?</label>
+          </mat-checkbox>
+        </mat-form-field>
+      </div>
+    </section>
+    <section>
+      <div *ngIf="!isGroup" class="field-container">
+        <mat-form-field class="mat-form-field">
+          <label class="mat-label other-label mandatory-field">Policy Entry Age</label>
+          <input matInput formControlName="joinAge" name="joinAge" id="joinAge" />
+          <mat-error
+            *ngIf="formMainMember.get('joinAge').hasError('required') || formMainMember.get('joinAge').hasError('min')">
+            Could not calculate age at policy inception date
+          </mat-error>
+        </mat-form-field>
+      </div>
+    </section>
+    <section>
+      <div [hidden]="!isSaIDtype">
+        <div class="person-checkbox-container"><label class="mat-label other-label">&nbsp;</label></div>
+        <mat-checkbox formControlName="isVopdRequired" name="isVopdRequired" id="isVopdRequired">
+          <label class="mat-label other-label">VOPD Required (RSA ID Only)?</label>
+        </mat-checkbox>
+      </div>
+    </section>
+    <div *ngIf="isReinstatementCase">
+      <div class="field-container">
+        <mat-form-field class="mat-form-field">
+          <label class="mat-label other-label mandatory-field">Reinstate Effective Date</label>
+          <input matInput formControlName="reinstatementDate">
+        </mat-form-field>
+      </div>
+      <div class="field-container-right">
+        <div class="mat-form-field edit-capture">
+          <a *ngIf="!(isDisabled) && isReinstatementCase" role="button" (click)="onEditReinstate()"
+            class="link-edit">Edit / Capture</a>
+        </div>
+      </div>
+    </div>
+  </form>
+
+  <policy-product-options [parentModel]="detailsModel" (productOptionSelected)="onSelectedOption($event)"
+    [isDisabled]="isDisabled" [caseCausesProductsDisabling]="caseCausesProductsDisabling">
+  </policy-product-options>
+
+  <div class="cooling-off"
+    *ngIf="!(isDisabled) && isCancelCase && !(model.mainMember.policies[0].policyCancelReason > 0)">
+    <section><button class="button submit-button" (click)="cancelPolicyWithNote()">Cancel Policy</button></section>
+    <div *ngIf="isWithinCoolingOfPeriod">
+      <h4 class="red">Policy is within cooling off period.&nbsp;Banking details must be verified</h4>
+    </div>
+  </div>
+  <div *ngIf="isCancelCase && model.mainMember.policies[0].policyCancelReason > 0">
+    <div [hidden]="datasource.cancellationReason===''">
+      <h4>Cancellation Reason</h4>
+      <mat-table #table [dataSource]="datasource" matSort>
+        <ng-container matColumnDef="cancellationReason">
+          <mat-header-cell *matHeaderCellDef mat-sort-header>Cancellation Reason</mat-header-cell>
+          <mat-cell *matCellDef="let row"> {{row.cancellationReason}} </mat-cell>
+        </ng-container>
+        <ng-container matColumnDef="cancellationDate">
+          <mat-header-cell *matHeaderCellDef mat-sort-header>Cancellation Date</mat-header-cell>
+          <mat-cell *matCellDef="let row"> {{row.cancellationDate | date:'yyyy-MM-dd'}} </mat-cell>
+        </ng-container>
+        <ng-container matColumnDef="action" class="mat-column-action">
+          <mat-header-cell *matHeaderCellDef mat-sort-header class="Action">Action</mat-header-cell>
+          <mat-cell *matCellDef="let row">
+            <a role="button" (click)="onEditCancellation(row)" class="link-edit">Edit</a>
+          </mat-cell>
+        </ng-container>
+        <mat-header-row *matHeaderRowDef="displayedColumns; sticky: true"></mat-header-row>
+        <mat-row *matRowDef="let row; columns: displayedColumns;"></mat-row>
+      </mat-table>
+    </div>
+  </div>
+  <mat-accordion>
+    <mat-expansion-panel *ngIf="model && (model.caseTypeId !== 1 && model.caseTypeId !== 4 && model.caseTypeId !== 5 )">
+      <mat-expansion-panel-header>
+        <h4>Previous Insurance <i>(main member)</i></h4>
+      </mat-expansion-panel-header>
+      <previous-insurer [case]="model" [isEditable]="isWizard && !isReadonly" [context]="roleplayerContext"
+        [isMainMember]="true">
+      </previous-insurer>
+    </mat-expansion-panel>
+  </mat-accordion>
+  <br />
+  <policy-benefits [title]="'Main Member Benefits'" [parentModel]="detailsModel"
+    [selectedProductOption]="selectedProductOption" [coverMemberType]="coverMemberType">
+  </policy-benefits>
+</div>

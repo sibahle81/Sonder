@@ -1,0 +1,27 @@
+<div class="menu-bar">
+    <span class="material-icons">payments</span>
+    Refund Partial Amount
+    <span (click)="close()" class="material-icons pointer right icon-cancel" matTooltip="close">
+      close
+    </span>
+    <span (click)="submit()" class="material-icons pointer right icon-confirm" matTooltip="submit">
+      check_circle
+    </span>
+  </div>   
+  <mat-card>
+  <div class="grid-inputs">
+    <h4>Max Amount</h4><h4>{{balance}}</h4>
+  </div>    
+  </mat-card>
+  <mat-card>
+  <form [formGroup]="form" class="mat-container details-form" novalidate>
+    <section>
+        <div class="error-message" *ngIf="showMessage">Amount must be between 1 and
+            {{balance | currency:'':''}}<br /></div>
+      <mat-form-field class="mat-form-field">
+        <label class="mat-label other-label mandatory-field">Amount</label>
+        <input matInput formControlName="partialAmount" name="partialAmount" id="partialAmount" DecimalNumber
+          min="1" max="{{balance}}" />        
+      </mat-form-field>
+    </section>    
+  </form></mat-card>

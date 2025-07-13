@@ -1,0 +1,19 @@
+<div *ngIf="medicalReportType == firstMedicalReport">
+    <first-medical-upload [personEvent]="selectedPersonEvent" [event]="event" [isWizard]="isWizard"
+        [isReadOnly]="isReadOnly" (emitDocument)="close($event)"></first-medical-upload>
+</div>
+
+<div *ngIf="medicalReportType == progressMedicalReport">
+    <progress-medical-upload [personEvent]="selectedPersonEvent" [event]="event" [isWizard]="isWizard"
+        [isReadOnly]="isReadOnly" [selectedMedicalReport]="selectedMedicalReport" (emitDocument)="close($event)"></progress-medical-upload>
+</div>
+
+<div *ngIf="medicalReportType == finalMedicalReport">
+    <final-medical-upload [personEvent]="selectedPersonEvent" [event]="event" [isWizard]="isWizard"
+        [isReadOnly]="isReadOnly" [selectedFinalMedicalReport]="selectedFinalMedicalReport" (emitDocument)="close($event)"></final-medical-upload>
+</div>
+
+<div *ngIf="medicalReportType == sickNoteReport">
+    <sick-note-upload [personEvent]="selectedPersonEvent" [event]="event" [isWizard]="isWizard"
+        [isReadOnly]="isReadOnly" (emitDocument)="close($event)"></sick-note-upload>
+</div>

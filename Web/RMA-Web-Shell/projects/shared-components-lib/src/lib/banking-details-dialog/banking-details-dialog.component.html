@@ -1,0 +1,68 @@
+<h2 mat-dialog-title>{{title}}</h2>
+<div mat-dialog-content class="bank-account-dialog">
+  <form [formGroup]="form" class="mat-container details-form" novalidate>
+    <section>
+      <mat-form-field class="mat-form-field">
+        <label class="mat-label other-label mandatory-field">Bank</label>
+        <mat-progress-bar *ngIf="loadingBanks" mode="indeterminate"></mat-progress-bar>
+        <mat-select formControlName="bankId" id="bankId" name="bankId"
+          (selectionChange)="loadBankBranches($event.value, true)">
+          <mat-option *ngFor="let bank of banks" [value]="bank.id">
+            {{bank.name}}
+          </mat-option>
+        </mat-select>
+        <mat-error *ngIf="form.get('bankId').hasError('required') || form.get('bankId').hasError('min')">
+          Bank is required
+        </mat-error>
+      </mat-form-field>
+      <mat-form-field class="mat-form-field-right">
+        <label class="mat-label other-label mandatory-field">Bank Branch</label>
+        <mat-progress-bar *ngIf="loadingBranches" mode="indeterminate"></mat-progress-bar>
+        <mat-select formControlName="bankBranchId" id="bankBranchId" name="bankBranchId"
+          (selectionChange)="loadBranchCode($event.value)">
+          <mat-option *ngFor="let branch of bankBranches" [value]="branch.id">
+            {{branch.name}}
+          </mat-option>
+        </mat-select>
+        <mat-error *ngIf="form.get('bankBranchId').hasError('required') || form.get('bankBranchId').hasError('min')">
+          Bank branch is required
+        </mat-error>
+      </mat-form-field>
+    </section>
+    <section>
+      <mat-form-field class="mat-form-field">
+        <label class="mat-label other-label mandatory-field">Bank Account Type</label>
+        <mat-progress-bar *ngIf="loadingAccountTypes" mode="indeterminate"></mat-progress-bar>
+        <mat-select formControlName="bankAccountType" id="bankAccountType" name="bankAccountType">
+          <mat-option *ngFor="let accountType of bankAccountTypes" [value]="accountType.id">
+            {{accountType.name}}
+          </mat-option>
+        </mat-select>
+        <mat-error
+          *ngIf="form.get('bankAccountType').hasError('required') || form.get('bankAccountType').hasError('min')">
+          Bank account type is required
+        </mat-error>
+      </mat-form-field>
+      <mat-form-field class="mat-form-field-right">
+        <label class="mat-label other-label mandatory-field">Branch Code</label>
+        <input matInput id="branchCode" name="branchCode" formControlName="branchCode" readonly />
+        <mat-error *ngIf="form.get('branchCode').hasError('required')">
+          Branch code is required
+        </mat-error>
+      </mat-form-field>
+    </section>
+    <section>
+      <mat-form-field class="mat-form-field">
+        <label class="mat-label other-label mandatory-field">Account Number</label>
+        <input matInput id="accountNumber" name="accountNumber" formControlName="accountNumber" />
+        <mat-error *ngIf="form.get('accountNumber').hasError('required')">
+          Brank account number is required
+        </mat-error>
+      </mat-form-field>
+    </section>
+  </form>
+</div>
+<div mat-dialog-actions>
+  <button mat-button (click)="closeDialog()">Close</button>
+  <button mat-button cdkFocusInitial (click)="validateBankAccount()">OK</button>
+</div>

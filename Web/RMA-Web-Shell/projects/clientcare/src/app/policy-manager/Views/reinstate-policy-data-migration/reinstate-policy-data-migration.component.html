@@ -1,0 +1,66 @@
+<mat-card style="margin: 15px 30px 15px 30px">
+  <mat-card-content style="margin-left: 10px;">
+    <div class="page-header">
+      <h1 style="margin-bottom: 15px;">Lapse/Reinstate <i>(Data Migration Only)</i></h1>
+    </div>
+
+    <div *ngIf="!hasPermission">
+      <div style="padding: 15px 0; color: orange; font-family: 'Oswald', sans-serif;">
+        You do not have sufficient permissions to lapse/reinstate policies
+      </div>
+      <div (click)="back()" class="form-buttons submit-button">
+        <button type="button" class="button float-button" style="margin-top:25px;">Back</button>
+      </div>
+    </div>
+
+    <div style="margin-bottom:12px;" *ngIf="hasPermission">
+      <form [formGroup]="form" class="mat-container details-form" novalidate>
+        <section>
+          <div class="field-container">
+            <mat-form-field class="mat-form-field">
+              <label class="mat-label other-label mandatory-field">Policy Number <i>(New)</i></label>
+              <input matInput maxlength="16" formControlName="policyNumber" name="policyNumber" />
+              <mat-error *ngIf="form.get('policyNumber').hasError('required')">
+                Policy number is required
+              </mat-error>
+            </mat-form-field>
+          </div>
+        </section>
+        <section>
+          <div class="field-container">
+            <div><label class="mat-label other-label mandatory-field">Lapsed Date</label></div>
+            <mat-form-field class="mat-form-field">
+              <input matInput formControlName="lastLapsedDate" [matDatepicker]="lastLapsedDate" name="lastLapsedDate" required>
+              <mat-datepicker-toggle matSuffix [for]="lastLapsedDate"></mat-datepicker-toggle>
+              <mat-datepicker touchUi="true" #lastLapsedDate></mat-datepicker>
+              <mat-error *ngIf="form.get('lastLapsedDate').hasError('required')">
+                Lapsed date is required
+              </mat-error>
+            </mat-form-field>
+          </div>
+        </section>
+        <section>
+          <div class="field-container">
+            <div><label class="mat-label other-label">Reinstate Date<i> (only if policy is to be reinstated)</i></label></div>
+            <mat-form-field class="mat-form-field">
+              <input matInput formControlName="reinstateDate" [matDatepicker]="reinstateDate" name="reinstateDate">
+              <mat-datepicker-toggle matSuffix [for]="reinstateDate"></mat-datepicker-toggle>
+              <mat-datepicker touchUi="true" #reinstateDate></mat-datepicker>
+            </mat-form-field>
+          </div>
+        </section>
+
+        <span [style.visibility]="isLoading ? 'visible' : 'hidden'">
+          <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+          <span class="grey site-font"><i>submitting...please wait</i></span>
+        </span>
+      </form>
+      <div class="form-group-button-lookup mat-form-button" style="margin-top: 15px;">
+        <div class="form-buttons" (click)="submit()" style="margin-left: 10px">
+          <button class="button float-button submit-button" [disabled]="isLoading ||!form.valid">Submit</button>
+        </div>
+      </div>
+    </div>
+  </mat-card-content>
+</mat-card>
+

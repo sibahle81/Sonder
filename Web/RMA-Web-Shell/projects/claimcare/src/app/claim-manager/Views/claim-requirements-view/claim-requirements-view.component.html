@@ -1,0 +1,38 @@
+<mat-card>
+    <mat-card-content>
+      <h1>Claim Requirement </h1>
+      <br />
+
+      <div *ngIf="(isLoading$ | async)">
+        <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+        <label class="mat-label other-label"><i>Getting Claim Requirements...please wait</i></label>
+      </div>
+
+      <div *ngIf="personEventClaimRequirements.length == 0 &&  !(isLoading$ | async)">
+        <i>No Claim Requirements were found</i>
+      </div>
+
+
+      <table *ngIf="personEventClaimRequirements.length != 0 && !(isLoading$ | async)" class="altRowTable table">
+        <tr>
+          <th>Requirement Category</th>
+          <th>Date Created</th>
+          <th>Date Closed</th>
+          <th>Instruction</th>
+          <th>Last User</th>
+          <th>Member Visibility</th>
+          <th>Actions</th>
+        </tr>
+        <tr *ngFor="let personEventClaimRequirement of personEventClaimRequirements">
+          <td>{{personEventClaimRequirement.claimRequirementCategory.name}}</td>
+          <td>{{personEventClaimRequirement.dateOpened | date:'yyyy-MM-dd'}}</td>
+          <td>{{personEventClaimRequirement.dateClosed | date:'yyyy-MM-dd'}}</td>
+          <td>{{personEventClaimRequirement.instruction != null ? personEventClaimRequirement.instruction : personEventClaimRequirement.claimRequirementCategory.name}}</td>
+          <td>{{personEventClaimRequirement.modifiedBy}}</td>
+          <td>{{personEventClaimRequirement.claimRequirementCategory.isMemberVisible}}</td>
+          <td></td>
+        </tr>
+
+      </table>
+    </mat-card-content>
+  </mat-card>

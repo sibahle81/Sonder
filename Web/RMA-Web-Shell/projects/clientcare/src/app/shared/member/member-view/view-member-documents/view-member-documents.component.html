@@ -1,0 +1,18 @@
+<div *ngIf="isViewMode">
+  <mat-card>
+  <div class="expansionTitle"><span class="material-icons">article</span> Documents <span (click)="view()" class="material-icons pointer right"
+      matTooltip="Close Documents">
+      close
+    </span>
+    <member-documents [rolePlayerId]="member.rolePlayerId" (requiredDocumentsUploaded)="checkRequiredDocumentsUploaded($event)"></member-documents>
+  </div>
+</mat-card>
+</div>
+<div *ngIf="!isViewMode">
+  <mat-card>
+    <div class="expansionTitle"><span class="material-icons">article</span> Documents<span (click)="view()" class="material-icons pointer right"
+        matTooltip="View documents">
+        expand_more
+      </span></div>
+  </mat-card>
+</div>

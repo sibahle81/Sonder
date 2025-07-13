@@ -1,0 +1,101 @@
+<mat-card *ngIf="isLoading$ | async">
+  <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+  <label class="mat-label other-label"><i>{{loadingMessages$ | async}}</i></label>
+</mat-card>
+
+<div *ngIf="!(isLoading$ | async)">
+  <mat-card>
+    <div class="menu-bar">
+      <span class="material-icons">
+        receipt_long
+      </span>&nbsp;
+      <label>Partial Dependency Lump Sum Invoice</label>
+      <span *ngIf="!isReadOnly && isEdit && !isRepay" (click)="update()" class="material-icons menu-button" matTooltip="edit">
+        edit
+      </span>
+      <span *ngIf="(formValid() && isRepay && selectedRepayReason > 0) || (formValid() && !isRepay)" class="material-icons menu-button" (click)="save()">
+        save
+      </span>
+    </div>
+
+    <invoice-generic *ngIf="description$ | async"
+      [claimInvoice]="claimInvoice"
+      [personEvent]="personEvent"
+      [claimInvoiceType]="partial"
+      [isReadOnly]="isReadOnly"
+      [action]="description$ | async">
+    </invoice-generic>
+
+    <form [formGroup]="form" class="mat-container" novalidate>
+      <section>
+        <mat-form-field class="mat-form-field">
+          <label class="mat-label other-label mandatory-field">No. of Family Members Before
+            Death</label>
+          <input matInput formControlName="numberBeforeDeath" min="1"
+            name="numberBeforeDeath" id="numberBeforeDeath" type="number" />
+          <mat-error *ngIf="form.get('numberBeforeDeath').hasError('required')">
+            no. of family before death is <strong>required</strong>
+          </mat-error>
+          <mat-error *ngIf="form.get('numberBeforeDeath').hasError('min')">
+            "no. of family members before death" cannot be zero
+          </mat-error>
+        </mat-form-field>
+
+        <mat-form-field class="mat-form-field-right">
+          <label class="mat-label other-label mandatory-field">No. of Family Members After Death</label>
+          <input matInput formControlName="numberAfterDeath" min="1"
+            name="numberAfterDeath" id="numberAfterDeath" type="number" />
+          <mat-error *ngIf="form.get('numberAfterDeath').hasError('required')">
+            no. of family after death<strong>required</strong>
+          </mat-error>
+          <mat-error *ngIf="form.get('numberAfterDeath').hasError('min')">
+            "no. of family members after death" cannot be zero
+          </mat-error>
+        </mat-form-field>
+      </section>
+
+      <section>
+        <mat-form-field class="mat-form-field">
+          <label class="mat-label other-label mandatory-field">Deceased Contribution to
+            Income(R)</label>
+          <input matInput formControlName="contribution" name="contribution"
+            min="1"
+            id="contribution" type="number" />
+          <mat-error *ngIf="form.get('contribution').hasError('required')">
+            contribution to income<strong>required</strong>
+          </mat-error>
+          <mat-error *ngIf="form.get('contribution').hasError('min')">
+            "deceased contribution to income(R) " cannot be zero
+          </mat-error>
+        </mat-form-field>
+
+        <mat-form-field class="mat-form-field-right">
+          <label class="mat-label other-label mandatory-field">Total Family Income(R)</label>
+          <input matInput formControlName="totalFamilyIncome" min="1"
+            name="totalFamilyIncome" id="totalFamilyIncome" type="number" />
+          <mat-error *ngIf="form.get('totalFamilyIncome').hasError('required')">
+            total family income<strong>required</strong>
+          </mat-error>
+          <mat-error *ngIf="form.get('totalFamilyIncome').hasError('min')">
+            "total family income(R) " cannot be zero
+          </mat-error>
+        </mat-form-field>
+      </section>
+
+      <section>
+        <mat-form-field class="mat-form-field">
+          <label class="mat-label other-label mandatory-field">Average Income per Family
+            Member(R)</label>
+          <input matInput formControlName="averageIncome" name="averageIncome"
+            id="averageIncome" type="number" min="1" />
+          <mat-error *ngIf="form.get('averageIncome').hasError('required')">
+            average income<strong>required</strong>
+          </mat-error>
+          <mat-error *ngIf="form.get('averageIncome').hasError('min')">
+            "average income per family member(R)" cannot be zero
+          </mat-error>
+        </mat-form-field>
+      </section>
+    </form>
+  </mat-card>
+</div>

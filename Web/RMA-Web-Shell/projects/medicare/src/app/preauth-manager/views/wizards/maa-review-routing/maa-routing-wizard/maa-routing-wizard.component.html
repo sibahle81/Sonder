@@ -1,0 +1,15 @@
+<form [formGroup]="form">
+<mat-form-field class="mat-form-field">
+    <label class="mat-label other-label mandatory-field">Assign To</label>
+    <mat-select name="assignmentType" id="assignmentType" formControlName="assignmentType"
+      (selectionChange)="onAssignementTypeChanged($event.value)">
+      <mat-option *ngFor="let assignmentType of assignmentTypes" [value]="assignmentType.value">
+        {{ assignmentType.name }}
+      </mat-option>
+    </mat-select>
+  </mat-form-field>
+  <div class="grid" *ngIf="selectedAssignedName && selectedAssignedName.length > 0">
+    <p>Assign To: </p>
+    <p>{{selectedAssignedName}}</p>
+  </div>
+</form>

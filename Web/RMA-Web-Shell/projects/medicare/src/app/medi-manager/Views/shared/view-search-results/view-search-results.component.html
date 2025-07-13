@@ -1,0 +1,49 @@
+<div class="page-header"  *ngIf="!isWizard">
+    <h1>View Search Results</h1>
+  </div>
+  <a mat-flat-button (click)="back()" *ngIf="!isWizard">
+    <mat-icon>arrow_back</mat-icon>
+    Back
+  </a>
+  <br>
+  <div *ngIf="loadingData$ | async">
+    <mat-progress-bar mode="indeterminate"
+                      [ngClass]="{ 'loading-main-double-menu-progress': doubleMenu, 'loading-main-single-menu-progress': !doubleMenu }">
+    </mat-progress-bar>
+    <p class="site-font grey">Loading...</p>
+  </div>
+  <div *ngIf="noPersonEventLink">
+      <div class="site-font grey">
+          <br>
+          <i class="grey">No Person Events Found</i>        
+      </div>
+  </div>  
+  <mat-card *ngIf="!noPersonEventLink">
+      <div *ngIf="!isInternalUser">
+          <mat-tab-group animationDuration="500ms" [(selectedIndex)]="selectedTab">
+              <mat-tab label="Claim Details">
+                  <holistic-claim-details *ngIf="selectedPersonEvent" [showPDColumns]="false" [personEvent]="selectedPersonEvent" [isReadOnly]="true"
+                      [isWizard]="false"></holistic-claim-details>
+              </mat-tab>
+  
+              <mat-tab label="Insured Life Details">
+                  <holistic-person-details *ngIf="selectedPersonEvent" [personEvent]="selectedPersonEvent" [isReadOnly]="true" 
+                      [isWizard]="false" [mode]="mode"></holistic-person-details>
+              </mat-tab>
+          </mat-tab-group>
+      </div>
+      <div *ngIf="isInternalUser && selectedEvent && personEventId > 0">
+          <holistic-person-event-list [showMedicalInvoice] ="false" *ngIf="selectedEvent && personEventId" [event]="selectedEvent"
+              [personEventId]="personEventId" (emitPersonEvent)="setPersonEvent($event)" [selectedTab]="selectedTab" [icd10List]="icd10List"></holistic-person-event-list> 
+      </div>
+  </mat-card> 
+  <holistic-event [eventId]="eventId"></holistic-event>  
+  <br/>
+  
+  <div>
+    <medicare-view-results-generic-action-menu *ngIf="selectedPersonEvent" [personEvent]="selectedPersonEvent" [preloadMedicalInvoices] ="preloadMedicalInvoices" [searchedPreauthType]="searchedPreauthType" [selectedPreAuthId]="selectedPreAuthId" ></medicare-view-results-generic-action-menu>    
+</div>
+
+<div>
+    <app-pensioner-medical-plan-viewer *ngIf="isHolisticView && selectedEvent" [holisticClaimId]="claimId" [event]="selectedEvent" [holisticPersonEventId]="personEventId"></app-pensioner-medical-plan-viewer>
+</div>

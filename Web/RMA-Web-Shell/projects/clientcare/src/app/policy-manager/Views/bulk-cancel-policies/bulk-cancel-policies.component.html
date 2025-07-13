@@ -1,0 +1,53 @@
+<div>
+  <h1>{{title}}</h1>
+</div>
+<div>
+  <form [formGroup]="form" class="mat-container details-form" novalidate>
+    <section>
+      <div class="field-container">
+        <mat-form-field class="mat-form-field">
+          <label class="mat-label other-label mandatory-field">Cancellation Reason</label>
+          <mat-select formControlName="cancellationReason" id="cancellationReason" name="cancellationReason">
+            <mat-option *ngFor="let reason of cancellationReasons" [value]="reason.id">
+              {{reason.name}}
+            </mat-option>
+          </mat-select>
+          <mat-error
+            *ngIf="form.get('cancellationReason').hasError('required') || form.get('cancellationReason').hasError('min')">
+            Cancellation reason is required
+          </mat-error>
+        </mat-form-field>
+      </div>
+      <div class="field-container-right">
+        <mat-form-field class="mat-form-field">
+          <label class="mat-label other-label mandatory-field">Effective Date</label>
+          <input matInput formControlName="cancellationDate" id="cancellationDate" name="cancellationDate" [matDatepicker]="cancellationDate">
+          <mat-datepicker-toggle matSuffix [for]="cancellationDate" [disabled]="form.disabled"></mat-datepicker-toggle>
+          <mat-datepicker touchUi="true" #cancellationDate></mat-datepicker>
+          <mat-error *ngIf="form.get('cancellationDate').hasError('required')">
+            Effective date is required
+          </mat-error>
+        </mat-form-field>
+      </div>
+
+
+    </section>
+  </form>
+</div>
+<div>
+  <upload-control #uploadControl [acceptedTypes]="'.csv'" [isSingleInput]="false" [allowDelete]="true"
+    [isReadOnly]="false"></upload-control>
+</div>
+<div class="left-padding" *ngIf="uploadControlComponent.uploadFileList.length > 0">
+  <div *ngIf="uploadControlComponent.isUploading">{{ message.value }}</div>
+</div>
+<br />
+<div [hidden]="!hasErrors" class="error-message">
+  <ng-container *ngFor="let msg of errors">
+    <span class="red">{{ msg }}</span><br />
+  </ng-container>
+</div>
+<br />
+<div class="form-buttons" (click)="save()">
+  <button class="button float-button submit-button" [disabled]="disabled">Upload File</button>
+</div>

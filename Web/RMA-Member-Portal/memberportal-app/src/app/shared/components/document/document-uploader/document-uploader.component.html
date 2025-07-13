@@ -1,0 +1,176 @@
+<mat-card *ngIf="(isLoading$ | async)">
+  <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+  <label class="mat-label other-label"><i>loading documents...please wait</i></label>
+</mat-card>
+
+<mat-card *ngIf="!(isLoading$ | async)">
+  <div *ngIf="documentSets && !documentTypes" class="menu-bar">
+    <span class="material-icons">
+      file_copy
+    </span>Document Sets
+  </div>
+
+  <div *ngIf="!documentSet">
+    <label class="mat-label other-label"><i>No document set found</i></label>
+  </div>
+
+  <div *ngIf="documentSets && !documentTypes">
+    <div class="grid-container">
+      <div *ngFor="let documentSet of documentSets" class="grid-item pointer"
+        (click)="getUniqueDocumentTypes(documentSet)">
+        <div>
+          <span class="material-icons pointer">file_copy</span>
+          <div class="document-card">{{getDocumentSet(documentSet)}}</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div *ngIf="documentTypes && !(documents$ | async) && !(isLoading$ | async) && !showUploader">
+    <div *ngIf="selectedDocumentSet" class="menu-bar"><span
+        class="material-icons">file_copy</span>&nbsp;{{getDocumentSet(selectedDocumentSet)}}
+    </div>
+
+    <div class="grid-container">
+      <div *ngFor="let documentType of documentTypes" class="grid-item pointer"
+        [ngClass]="{'grid-item-no-files': getDocumentCount(documentType) <= 0 && !((isRequired(documentType) && getDocumentCount(documentType) <= 0) || (isExpired(documentType) && getDocumentCount(documentType) > 0))}"
+        (click)="getDocuments(documentType)">
+        <div>
+          <div class="document-card">
+            <span class="document-type"><b><u>{{getDocumentType(documentType)}}</u></b></span><br /><br />
+            <span class="document-count">(<b>{{getDocumentCount(documentType)}}</b>) file(s)</span><br />
+            <span *ngIf="getDocumentCount(documentType) > 0 && isExpired(documentType)"
+              class="redFont"><b>*Expired</b><br /></span>
+            <span
+              *ngIf="getDocumentCount(documentType) > 0 && !isExpired(documentType) && getDaysTillExpired(documentType) >= 0"
+              class="blueFont"><b>expires in {{getDaysTillExpired(documentType)}} days</b><br /></span>
+            <span *ngIf="isRequired(documentType) && getDocumentCount(documentType) <= 0">*Required</span>
+            <span
+              *ngIf="isRequired(documentType) && !isExpired(documentType) && getDocumentCount(documentType) > 0">*{{getDocumentStatus(documentType)}}</span>
+            <span *ngIf="!isRequired(documentType) && !isExpired(documentType)">*Optional</span>
+            <br /><br />
+
+            <span class="material-icons pointer greenfont"
+              *ngIf="isRequired(documentType) && !isExpired(documentType) && getDocumentCount(documentType) > 0"
+              matTooltip="view {{getDocumentType(documentType)}}" (click)="getDocuments(documentType)">visibility</span>
+            <span class="material-icons pointer"
+              *ngIf="!isRequired(documentType) || isExpired(documentType) && getDocumentCount(documentType) > 0"
+              matTooltip="view {{getDocumentType(documentType)}}" (click)="getDocuments(documentType)">visibility</span>
+            <span class="material-icons pointer redfont pulse" matTooltip="upload {{getDocumentType(documentType)}}"
+              *ngIf="(isRequired(documentType) && getDocumentCount(documentType) <= 0) || (isExpired(documentType) && getDocumentCount(documentType) > 0)"
+              (click)="getDocuments(documentType)">upload</span>
+            <span class="material-icons pointer" matTooltip="upload {{getDocumentType(documentType)}}"
+              *ngIf="((isRequired(documentType) && !isExpired(documentType)) && getDocumentCount(documentType) > 0)"
+              (click)="uploadMore(documentType)">upload</span>
+
+            <span *ngIf="getConfiguredValidDays(documentType) != 0"><br /><br />
+              <span class="blue" *ngIf="expiryDate && getConfiguredValidDays(documentType) < 0">files expire on
+                <b>{{expiryDate | date: "yyyy-MM-dd"}}</b></span>
+              <span class="blue" *ngIf="getConfiguredValidDays(documentType) > 0">files expire every
+                <b>{{getConfiguredValidDays(documentType)}}</b> days</span>
+            </span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div *ngIf="(documents$ | async) && !showUploader">
+    <div *ngIf="selectedDocumentType" class="menu-bar"><span class="material-icons">file_copy</span>&nbsp;
+      <a class="pointer" (click)="closeDocuments()">{{getDocumentSet(selectedDocumentSet)}}</a> >>
+      {{getDocumentType(selectedDocumentType)}}
+
+      <span class="material-icons pointer right" (click)="closeDocuments()">close</span>
+      <span *ngIf="!isReadOnly" matTooltip="upload" class="material-icons pointer right"
+        (click)="toggleUploader()">file_upload</span>
+
+      <span
+        *ngIf="(canDelete || userHasPermission(requiredDeleteDocumentPermission)) && selectedDocuments && selectedDocuments?.length > 0 && !isReadOnly"
+        matTooltip="delete selected documents" class="material-icons pointer right"
+        (click)="confirmDelete('Delete', document, true)" [matMenuTriggerFor]="menu">delete</span>
+
+      <span *ngIf="showDocumentStatusButton && userHasPermission(requiredStatusPermission) && selectedDocuments && selectedDocuments?.length > 0 && !isReadOnly">
+        <span matTooltip="action selected documents" class="material-icons pointer right"
+          [matMenuTriggerFor]="menu">more_vert</span>
+        <mat-menu #menu="matMenu">
+          <span *ngFor="let menu of menus">
+            <button mat-menu-item (click)="onMenuItemClick(menu, document, false)">
+              <span>{{menu.title}}</span>
+            </button>
+          </span>
+        </mat-menu>
+      </span>
+    </div>
+    <div class="grid-container">
+      <div *ngIf="getDocumentCount(selectedDocumentType) <= 0">
+        <label class="mat-label other-label"><i>no documents have been uploaded...</i></label>
+      </div>
+
+      <div *ngFor="let document of (documents$ | async)" class="grid-item pointer">
+        <mat-checkbox
+          *ngIf="!isReadOnly && ((canDelete || userHasPermission(requiredDeleteDocumentPermission)) || userHasPermission(requiredStatusPermission))"
+          [checked]="isSelected(document)" (change)="documentSelected(document)"
+          [disabled]="isReadOnly">Selected?</mat-checkbox><br />
+
+        <div class="document-card">
+          <div class="document-menu">
+            {{formatText(document.fileName)}}<br />
+            <span *ngIf="document.documentDescription">{{document.documentDescription}}</span><br />
+            <span *ngIf="document.createdDate">{{document.createdDate | date: "yyyy-MM-dd"}}</span><br />
+            <span *ngIf="document.documentStatus"><b>{{getDocumentStatusName(document.documentStatus)}}</b></span>
+          </div>
+
+          <a matTooltip="open in new tab" class="pointer" (click)="openInNewTab(document)"><span
+              class="material-icons icn-button">tab</span></a>
+
+          <a matTooltip="download" class="pointer" (click)="downloadDocument(document)"><span
+              class="material-icons icn-button">file_download</span></a>
+
+          <span
+            *ngIf="!isReadOnly && (canDelete || userHasPermission(requiredDeleteDocumentPermission)) && (!selectedDocuments || selectedDocuments?.length <= 0)">
+            <a matTooltip="delete" class="pointer" (click)="confirmDelete('Delete', document, true)"><span
+                class="material-icons icn-button">delete</span></a></span>
+          <span
+            *ngIf="showDocumentStatusButton && !isReadOnly && userHasPermission(requiredStatusPermission) && (!selectedDocuments || selectedDocuments?.length <= 0)">
+            <a matTooltip="document statuses" class="pointer" [matMenuTriggerFor]="menu">
+              <span class="material-icons icn-button">more_vert</span>
+            </a>
+
+            <mat-menu #menu="matMenu">
+              <span *ngFor="let menu of menus">
+                <button mat-menu-item (click)="onMenuItemClick(menu, document, false)">
+                  <span>{{menu.title}}</span>
+                </button>
+              </span>
+            </mat-menu>
+          </span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div [hidden]="!(showUploader)">
+    <div class="menu-bar">
+      Upload Document(s) >> <span *ngIf="selectedDocumentType">{{getDocumentType(selectedDocumentType)}}</span>
+      <span *ngIf="!(isUploading$ | async)" matTooltip="back" class="material-icons pointer right"
+        (click)="toggleUploader()">close</span>
+      <span *ngIf="!(isUploading$ | async) && uploadDocuments?.uploadFileList?.length > 0"
+        (click)="save(selectedDocumentType)" class="material-icons pointer right pulse greenfont"
+        matTooltip="upload {{getDocumentType(selectedDocumentType)}}">
+        upload
+      </span>
+    </div>
+
+    <mat-card *ngIf="(isUploading$ | async)">
+      <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+      <label class="mat-label other-label"><i>uploading...please wait</i></label>
+    </mat-card>
+
+    <div [hidden]="(isUploading$ | async)">
+      <label class="mat-label other-label">Document Description <i>(optional) (25 characters max)</i></label><br />
+      <input class="mat-form-field" type="text" name="description" [(ngModel)]="documentDescription" maxlength="25">
+      <upload-control #uploadDocuments [acceptedTypes]="acceptedDocumentFormats">
+      </upload-control>
+    </div>
+  </div>
+</mat-card>

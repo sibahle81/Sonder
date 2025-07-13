@@ -1,0 +1,63 @@
+<mat-card>
+    <mat-card-header>
+        <mat-card-title class="wizard-font card-title grey">
+            <h1>Additional Documents</h1>
+        </mat-card-title>
+        <mat-card-subtitle>
+            <span class="grey site-font"><i>Additional Documents that may be required</i></span
+      >
+    </mat-card-subtitle>
+  </mat-card-header>
+  <mat-card-content style="margin-left: 10px;">
+    <form [formGroup]="form" (ngSubmit)="send()" class="mat-container">
+      <div style="margin-top: 20px;">
+        <!-- Line 1 -->
+        <section class="type-field">
+          <!-- Document Type -->
+          <mat-label class="mat-label other-label">Document Type</mat-label>
+          <mat-select multiple formControlName="documentType">
+            <mat-option
+              *ngFor="let documentType of documentTypes"
+              [value]="documentType.id"
+              title="Document"
+              (click)="select(documentType)"
+              >{{ documentType.name }}</mat-option
+            >
+          </mat-select>
+        </section>
+        <section>
+          <!-- Method of Communication -->
+          <mat-form-field>
+            <label class="mat-label other-label">Method of Communication</label>
+            <!-- <input matInput maxlength="50" name="communicationMethod" id="communicationMethod"
+              formControlName="communicationMethod" disabled value="Email" /> -->
+            <mat-select name="communicationMethod" id="communicationMethod" formControlName="communicationMethod"
+              [(ngModel)]="communicationMethodId">
+              <mat-option [value]="1">Email</mat-option>
+              <mat-option [value]="2">Phone</mat-option>
+              <mat-option [value]="3">SMS</mat-option>
+              <mat-option [value]="4">Post</mat-option>
+              <mat-option [value]="5">Whatsapp</mat-option>
+            </mat-select>
+          </mat-form-field>
+          <!--Email Address-->
+          <mat-form-field class="mat-form-field-right">
+            <label class="mat-label other-label">Email Address/Number</label>
+            <input matInput maxlength="50" name="emailAddress" id="emailAddress" formControlName="emailAddress" />
+            <mat-error *ngIf="form.get('emailAddress').hasError('required')">
+              Email is <strong>required</strong>
+            </mat-error>
+            <mat-error *ngIf="form.get('emailAddress').hasError('emailAddress')">
+              Valid email is <strong>required</strong>
+            </mat-error>
+          </mat-form-field>
+        </section>
+      </div>
+      <div class="form-group-button mat-form-button">
+        <button [mat-dialog-close]="form" [disabled]="form.pristine" (click)="downloadDocument()" class="button float-button">Download</button>
+        <button [mat-dialog-close]="form" [disabled]="form.pristine" (click)="send()" class="button float-button">Send</button>
+        <button [mat-dialog-close]="" (click)="onNoClick()" class="button float-button">Back</button>
+      </div>
+    </form>
+  </mat-card-content>
+</mat-card>

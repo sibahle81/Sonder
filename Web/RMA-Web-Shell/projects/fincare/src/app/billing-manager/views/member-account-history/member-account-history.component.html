@@ -1,0 +1,50 @@
+<mat-card>
+  <br />
+  <div *ngIf="datasource.isLoading">
+    <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+    <label class="mat-label other-label"><i>loading...please wait</i></label>
+  </div>
+  <div [hidden]="datasource.isLoading">
+    <label *ngIf="!datasource.hasData">No transaction history found...</label>
+    <div [hidden]="!datasource.hasData">
+      <mat-table #table [dataSource]="datasource" matSort matSortActive="invoiceDate" matSortDirection="asc"
+        matSortDisableClear>
+        <ng-container matColumnDef="invoiceDate">
+          <mat-header-cell *matHeaderCellDef mat-sort-header> Invoice Date </mat-header-cell>
+          <mat-cell *matCellDef="let row"> {{row.invoiceDate | date: 'yyyy-MM-dd'}} </mat-cell>
+        </ng-container>
+        <ng-container matColumnDef="paymentDate">
+          <mat-header-cell *matHeaderCellDef mat-sort-header>Last Payment Date </mat-header-cell>
+          <mat-cell *matCellDef="let row"> {{row.paymentDate | date: 'yyyy-MM-dd'}} </mat-cell>
+        </ng-container>
+        <ng-container matColumnDef="paymentStatus">
+          <mat-header-cell *matHeaderCellDef mat-sort-header> Invoice Status </mat-header-cell>
+          <mat-cell *matCellDef="let row"> {{ getInvoiceStatus(row.paymentAmount,row.invoiceAmount)}} </mat-cell>
+        </ng-container>
+        <ng-container matColumnDef="invoiceAmount">
+          <mat-header-cell class="number-align" *matHeaderCellDef mat-sort-header> Invoice Amount </mat-header-cell>
+          <mat-cell [ngClass]="{'total-green': row.paymentAmount && row.paymentAmount > 0.00}" class="number-align"
+            *matCellDef="let row"> {{row.invoiceAmount | currency: 'R'}} </mat-cell>
+        </ng-container>
+        <ng-container matColumnDef="paymentAmount">
+          <mat-header-cell class="number-align" *matHeaderCellDef mat-sort-header> Payment Amount </mat-header-cell>
+          <mat-cell [ngClass]="{'total-green': row.paymentAmount && row.paymentAmount > 0.00}" class="number-align"
+            *matCellDef="let row"> {{row.paymentAmount | currency: 'R'}} </mat-cell>
+        </ng-container>
+        <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
+        <mat-row *matRowDef="let row; columns: displayedColumns;"></mat-row>
+      </mat-table>
+      <div class="total-bar">
+        <table class="total-table">
+          <tr>
+            <td colspan="3" class="total-blank">&nbsp;</td>
+            <td [ngClass]="{'total-red': isDebit, 'total-green': !isDebit }" class="total-cell">Balance:</td>
+            <td [ngClass]="{'total-red': isDebit, 'total-green': !isDebit }" class="total-cell">{{total | currency: 'R'}}</td>
+          </tr>
+        </table>
+      </div>
+      <mat-paginator #paginator [length]="datasource.rowCount$" [pageSize]="5" [pageSizeOptions]="[5, 10, 25, 100]">
+      </mat-paginator>
+    </div>
+  </div>
+</mat-card>

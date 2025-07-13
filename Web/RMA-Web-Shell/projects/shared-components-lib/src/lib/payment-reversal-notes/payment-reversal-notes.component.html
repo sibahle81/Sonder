@@ -1,0 +1,44 @@
+<mat-card>
+  <mat-card-header>
+    <mat-card-title class="wizard-font card-title grey">
+      <h1 style="padding: 0;">Payment Reversal Note</h1>
+    </mat-card-title>
+    <mat-card-subtitle>
+      <span class="grey site-font"><i>Reason for payment reversal</i></span>
+    </mat-card-subtitle>
+  </mat-card-header>
+
+  <mat-card-content style="margin-left: 10px;">
+    <form [formGroup]="form" (ngSubmit)="saveNote()" class="mat-container">
+      <div style="margin-top: 20px;">
+        <section>
+          <section>    
+            <mat-form-field>
+              <span class="grey site-font"><i>Reason for document reversal</i></span>
+              <mat-select [(value)]="reversalReason">
+                <mat-option *ngFor="let reason of reversalReasons" [value]="reason" >
+                  {{formatLookup(reason)}}
+                </mat-option>   
+              </mat-select>
+            </mat-form-field>        
+        </section>
+      </section>
+        <section>
+          <section>
+            <mat-label class="mat-label other-label">Payment reversal reason details</mat-label>
+            <input matInput name="message" id="message" formControlName="message" required>
+          </section>
+        </section>
+      </div>
+
+      <div class="form-group-button mat-form-button">
+        <button (click)='saveNote()' type="button" class="button float-button">Save</button>
+        <button (click)='onNoClick()' type="button" class="button float-button">Close</button>
+      </div>
+    </form>
+  </mat-card-content>
+  <div [hidden]="!isNoteLoading">
+    <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+    <p class="site-font grey">saving payment reversal note...</p>
+  </div>
+</mat-card>

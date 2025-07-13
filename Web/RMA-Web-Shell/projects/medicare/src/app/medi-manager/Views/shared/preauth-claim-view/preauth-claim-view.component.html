@@ -1,0 +1,50 @@
+
+<div *ngIf="preAuthClaimDetail">
+<div class="menu-bar">
+  <span class="material-icons">
+    assignment_ind
+  </span>&nbsp;Claimant Details
+</div>
+<div class="grid">
+  <div>
+    <span class="title">Claim Reference Number</span>
+    <span class="value">{{ preAuthClaimDetail.claimReferenceNumber }} 
+      <span class="safety-orange">{{preAuthClaimDetail.isStp == true ? 'Claim is a STP Claim' : ''}}</span>
+    </span>
+  </div>
+  <div>
+    <span class="title">Event Number</span>
+    <span class="value">{{ preAuthClaimDetail.personEventId }}</span>
+  </div>  
+</div>
+<div class="grid">
+  <div>
+    <span class="title">Person Name</span>
+    <span class="value">{{ preAuthClaimDetail.personName }}</span>
+  </div>
+  <div>
+    <span class="title">Date of birth</span>
+    <span class="value">{{ preAuthClaimDetail.dateOfBirth | date: 'dd-MMM-yyyy h:mm a' }}</span>
+  </div>  
+</div>
+<div class="grid">
+  <div>
+    <span class="title">ID Number</span>
+    <span class="value">{{ preAuthClaimDetail.idNumber }}</span>
+  </div> 
+  <div>
+    <span class="title">Passport Number</span>
+    <span class="value">{{ preAuthClaimDetail.passportNumber }}</span>
+  </div>  
+</div>
+<div class="grid">
+  <div>
+    <span class="title">Employer name</span>
+    <span class="value">{{ preAuthClaimDetail.employerName }}</span>
+  </div>  
+  <div>
+    <span class="title">Industry number</span>
+    <span class="value">{{ preAuthClaimDetail.industryNumber }}</span>
+  </div>
+</div>
+</div>

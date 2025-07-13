@@ -1,0 +1,95 @@
+﻿<div style="margin: 15px 30px 15px 30px">
+    <div *ngIf="isBrokerLoading">
+        <mat-progress-bar mode="indeterminate" [ngClass]="{ 'loading-main-double-menu-progress': doubleMenu, 'loading-main-single-menu-progress': !doubleMenu }"></mat-progress-bar>
+        <p class="site-font grey">{{loadingMessage}}</p>
+    </div>
+
+    <div [hidden]="isBrokerLoading" style="width: 100% !important; height: 100%; border: gray 1pt solid; padding: 5px; font-family: 'Oswald', sans-serif; font-weight: 300;">
+        <div class="divTable">
+            <div class="divTableBody">
+                <div class="divTableHeading">
+                    <h1 style="margin-bottom: 20px;">Brokerage Statement</h1>
+                    <p style="margin-bottom: 10px;margin-left: 10px;">
+                        <strong>
+                            {{brokerage.name}}
+                        </strong>
+                    </p>
+                </div>
+                <div class="divTableRow">
+                    <div class="divTableCell" style="width: 40%;">
+                        ACCOUNT NUMBER::
+                    </div>
+                    <div class="divTableCell" style="width: 60%;">
+                        {{brokerage.bankAccount.accountNumber}}
+                    </div>
+                </div>
+                <div class="divTableRow">
+                    <div class="divTableCell" style="width: 40%;">
+                        BANK:
+                    </div>
+                    <div class="divTableCell" style="width: 60%;">
+                        {{brokerage.bank.name}}
+                    </div>
+                </div>
+                <div class="divTableRow">
+                    <div class="divTableCell" style="width: 40%;">
+                        ACCOUNT HOLDER:
+                    </div>
+                    <div class="divTableCell" style="width: 60%;">
+                        {{brokerage.bankAccount.accountHolderName}}
+                    </div>
+                </div>
+                <div class="divTableRow">
+                    <div class="divTableCell" style="width: 40%;">
+                        BRANCH CODE:
+                    </div>
+                    <div class="divTableCell" style="width: 60%;">
+                        {{brokerage.bank.universalBranchCode}}
+                    </div>
+                </div>
+                <div class="divTableRow">
+                    <div class="divTableCell" style="width: 40%;">
+                        ACCOUNT TYPE:
+                    </div>
+                    <div class="divTableCell" style="width: 60%;">
+                        {{brokerage.bankAccountType.name}}
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="mat-container mat-elevation-z8 broker-statement-table" >
+            <div [hidden]="dataSource.data.length === 0">
+                <mat-table #table [dataSource]="dataSource" matSort>
+                    <ng-container *ngFor="let column of columns" [matColumnDef]="column.columnDefinition">
+                        <mat-header-cell mat-sort-header *matHeaderCellDef class="mat-header-cell ng-tns-c10-2 cdk-column-Name mat-column-Name">{{ column.header }}</mat-header-cell>
+                        <mat-cell *matCellDef="let row" class="mat-cell cdk-column-Name mat-column-Name">{{ column.cell(row) }}</mat-cell>
+                    </ng-container>
+                    <ng-container matColumnDef="actions">
+                        <mat-header-cell *matHeaderCellDef mat-sort-header>Actions</mat-header-cell>
+                        <mat-cell *matCellDef="let row">
+                            <mat-header-cell *matHeaderCellDef mat-sort-header>Actions</mat-header-cell>
+                            <mat-cell *matCellDef="let row">
+                                <a role="button" class="link-edit" (click)="onSelect(row)">{{actionsLinkText}}</a>
+                            </mat-cell>
+                        </mat-cell>
+                    </ng-container>
+                    <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
+                    <mat-row *matRowDef="let row; columns: displayedColumns;"></mat-row>
+                </mat-table>
+                <mat-paginator #paginator
+                               [length]="dataSource.data.length"
+                               [pageIndex]="0"
+                               [pageSize]="5"
+                               [pageSizeOptions]="[5, 10, 25, 100]">
+                </mat-paginator>
+            </div>
+            <div style="margin-top: 20px;">
+                <strong>COMMISSION BALANCE R {{commissionBalance| number: '1.2-2'}}</strong>
+            </div>
+            <div (click)="download()" class="form-buttons submit-button">
+                <button type="button" class="button float-button">Download</button>
+            </div>
+        </div>
+    </div>
+</div>

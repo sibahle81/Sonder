@@ -1,0 +1,76 @@
+<div class="wizard-main-content mat-elevation-z8">
+  <form [formGroup]="form" class="mat-container details-form">
+    <section>
+      <mat-form-field class="mat-form-field">
+        <label class="mat-label other-label mandatory-field">Maximum Cover Age</label>
+        <span *ngIf="isShowMaxCoverAge" class="material-icons md-18" style="color: lightseagreen;" matTooltip="The maximum cover age is: {{maximumCoverAge}}">
+          info
+        </span>
+        <input matInput formControlName="maxCoverAge" type="number">
+        <mat-error *ngIf="form.get('maxCoverAge').hasError('required')">
+          Maximum Cover Age is <strong>required</strong>
+        </mat-error>
+      </mat-form-field>
+      <mat-form-field class="mat-form-field-right">
+        <label class="mat-label other-label mandatory-field">Spouse Maximum Cover Age</label>
+        <input matInput formControlName="spouseMaxCoverAge" type="number">
+        <mat-error *ngIf="form.get('spouseMaxCoverAge').hasError('required')">
+          Spouse Maximum Cover Age is <strong>required</strong>
+        </mat-error>
+      </mat-form-field>
+    </section>
+    <section>
+      <mat-form-field class="mat-form-field">
+        <label class="mat-label other-label mandatory-field">Maximum Number of Spouse Covered</label>
+        <input matInput formControlName="maxSpouseCovered" type="number">
+        <mat-error *ngIf="form.get('maxSpouseCovered').hasError('required')">
+          Maximum Numbe of Spouse Covered is <strong>required</strong>
+        </mat-error>
+      </mat-form-field>
+      <mat-form-field class="mat-form-field-right">
+        <label class="mat-label other-label mandatory-field">Marital Status</label>
+        <mat-select formControlName="maritalStatusOptionId" required>
+          <mat-option *ngFor="let option of maritalStatusOptions" [value]="option.benefitOptionItemValueId">
+            {{option.optionItemName}}
+          </mat-option>
+        </mat-select>
+        <mat-error *ngIf="form.get('maritalStatusOptionId').hasError('required')">
+          Marital Status is <strong>required</strong>
+        </mat-error>
+      </mat-form-field>
+    </section>
+    <section>
+      <mat-form-field class="mat-form-field">
+        <label class="mat-label other-label mandatory-field">Salary (Benfit Purpose)</label>
+        <mat-select formControlName="benefitSalaryTypeOptionItemId" required>
+          <mat-option *ngFor="let option of benefitSalaryTypeOptions" [value]="option.benefitOptionItemValueId">
+            {{option.optionItemName}}
+          </mat-option>
+        </mat-select>
+        <mat-error *ngIf="form.get('benefitSalaryTypeOptionItemId').hasError('required')">
+          Salary (Benfit Purpose) is <strong>required</strong>
+        </mat-error>
+      </mat-form-field>
+      <mat-form-field class="mat-form-field-right">
+        <label class="mat-label other-label mandatory-field">Salary (Premium Purpose)</label>
+        <mat-select formControlName="premiumSalaryTypeOptionItemId" required>
+          <mat-option *ngFor="let option of premiumSalaryTypeOptions" [value]="option.benefitOptionItemValueId">
+            {{option.optionItemName}}
+          </mat-option>
+        </mat-select>
+        <mat-error *ngIf="form.get('premiumSalaryTypeOptionItemId').hasError('required')">
+          Salary (Premium Purpose) is <strong>required</strong>
+        </mat-error>
+      </mat-form-field>
+    </section>
+    <section>
+      <mat-form-field class="mat-form-field">
+        <label class="mat-label other-label mandatory-field">Multiple of salary</label>
+        <input matInput formControlName="salaryMultiple" DecimalNineFour>
+        <mat-error *ngIf="form.get('salaryMultiple').hasError('required')">
+          Multiple of salary is <strong>required</strong>
+        </mat-error>
+      </mat-form-field>
+    </section>
+  </form>
+</div>

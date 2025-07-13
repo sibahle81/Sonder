@@ -1,0 +1,115 @@
+<mat-card class="matCard">
+    <mat-card-content class="matCardContent">
+        <div class="page-header">
+            <h1>Find a Medical Form</h1>
+        </div>
+        <mat-form-field [floatLabel]="'never'">
+            <input matInput maxlength="50" name="filter" id="filter" #filter width="300" minLength="3"
+                matTooltip="Search by claim reference, name, surname, contact no, healthcare provider or employer" matTooltipShowDelay="1000">
+            <mat-placeholder class="placeholder">Search by claim reference, name, surname, contact no, healthcare provider or employer</mat-placeholder>
+            <mat-icon class="search-icon" (click)="search()" matSuffix>search</mat-icon>
+            <button class="hidden" class="button submit-button" id="submit-button" (click)="search()"
+                matTooltip="Search by claim reference, name, surname, contact no, healthcare provider or employer" matTooltipShowDelay="1000">Search</button>
+        </mat-form-field>
+
+        <div *ngIf="dataSource.loading$ | async">
+            <mat-progress-bar mode="indeterminate"
+                [ngClass]="{ 'loading-main-double-menu-progress': doubleMenu, 'loading-main-single-menu-progress': !doubleMenu }">
+            </mat-progress-bar>
+            <p class="site-font grey">Searching...</p>
+        </div>
+
+        <div [hidden]="paginator.length == 0">
+            <mat-table #table [dataSource]="dataSource" matSort matSortActive="reportDate" matSortDirection="desc" matSortDisableClear>
+                <!-- Report Type -->
+                <ng-container matColumnDef="reportTypeName">
+                    <mat-header-cell *matHeaderCellDef mat-sort-header> Report Type </mat-header-cell>
+                    <mat-cell *matCellDef="let row" matTooltip="{{row.reportTypeName}}">
+                        <span class="truncate-text"> {{row.reportTypeName}} </span>
+                    </mat-cell>
+                </ng-container>
+                <!-- Report Category -->
+                <ng-container matColumnDef="reportCategoryName">
+                    <mat-header-cell *matHeaderCellDef mat-sort-header> Report Category </mat-header-cell>
+                    <mat-cell *matCellDef="let row" matTooltip="{{row.reportCategoryName}}">
+                        <span class="truncate-text"> {{row.reportCategoryName}} </span>
+                    </mat-cell>
+                </ng-container>
+                <!-- Claim Number -->
+                <ng-container matColumnDef="claimReferenceNumber">
+                    <mat-header-cell *matHeaderCellDef mat-sort-header> Claim Number </mat-header-cell>
+                    <mat-cell *matCellDef="let row" matTooltip="{{row.claimReferenceNumber}}">
+                        <span class="truncate-text"> {{row.claimReferenceNumber}} </span>
+                    </mat-cell>
+                </ng-container>
+                <!-- Practice Number -->
+                <ng-container matColumnDef="healthcareProviderPracticeNumber">
+                    <mat-header-cell *matHeaderCellDef mat-sort-header> Practice Number </mat-header-cell>
+                    <mat-cell *matCellDef="let row" matTooltip="{{row.healthcareProviderPracticeNumber}}">
+                        <span class="truncate-text"> {{row.healthcareProviderPracticeNumber}} </span>
+                    </mat-cell>
+                </ng-container>
+                <!-- Healthcare Provider Name -->
+                <ng-container matColumnDef="healthcareProviderName">
+                    <mat-header-cell *matHeaderCellDef mat-sort-header> Healthcare Provider Name </mat-header-cell>
+                    <mat-cell *matCellDef="let row" matTooltip="{{row.healthcareProviderName}}">
+                        <span class="truncate-text"> {{row.healthcareProviderName}} </span>
+                    </mat-cell>
+                </ng-container>
+                <!-- Patient Full Name -->
+                <ng-container matColumnDef="patientFullName">
+                    <mat-header-cell *matHeaderCellDef mat-sort-header> Patient Full Name </mat-header-cell>
+                    <mat-cell *matCellDef="let row" matTooltip="{{row.surname}} {{row.name}}">
+                        <span class="truncate-text"> {{row.surname}} {{row.name}} </span>
+                    </mat-cell>
+                </ng-container>
+                <!-- Employer Name -->
+                <ng-container matColumnDef="employerName">
+                    <mat-header-cell *matHeaderCellDef mat-sort-header> Employer Name </mat-header-cell>
+                    <mat-cell *matCellDef="let row" matTooltip="{{row.employerName}}">
+                        <span class="truncate-text"> {{row.employerName}} </span>
+                    </mat-cell>
+                </ng-container>
+                <!-- Report Submission Date -->
+                <ng-container matColumnDef="reportDate">
+                    <mat-header-cell *matHeaderCellDef mat-sort-header> Report Submission Date </mat-header-cell>
+                    <mat-cell *matCellDef="let row"> {{row.reportDate | date:'dd-MM-y'}} </mat-cell>
+                </ng-container>
+                <!-- Status -->
+                <ng-container matColumnDef="reportStatus">
+                    <mat-header-cell *matHeaderCellDef mat-sort-header> Status </mat-header-cell>
+                    <mat-cell *matCellDef="let row"> {{row.reportStatus}} </mat-cell>
+                </ng-container>
+                <!-- View Report -->
+                <ng-container matColumnDef="viewReport">
+                    <mat-header-cell *matHeaderCellDef>View Report</mat-header-cell>
+                    <mat-cell *matCellDef="let row">
+                        <a role="button" class="link-edit" (click)="onSelect(row)">View</a>
+                    </mat-cell>
+                </ng-container>
+
+                <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
+                <mat-row *matRowDef="let row; columns: displayedColumns;"></mat-row>
+            </mat-table>
+
+            <mat-paginator #paginator [length]="dataSource.rowCount$" [pageIndex]="0" [pageSize]="5"
+                [pageSizeOptions]="[5, 10, 25, 100]">
+            </mat-paginator>
+        </div>
+
+        <div [hidden]="paginator.length > 0 || !currentQuery || currentQuery == ''"
+            class="no-search-results-add-button">
+            <div class="site-font grey">
+                <p class="grey">Your search - <strong>{{currentQuery}}</strong> - did not match any medical reports.</p>
+                <span>Suggestions: </span>
+                <ul>
+                    <li>Make sure that all words are spelled correctly.</li>
+                    <li>Try different keywords.</li>
+                    <li>Try more general keywords.</li>
+                    <li>Try fewer keywords.</li>
+                </ul>
+            </div>
+        </div>
+
+    </mat-card-content>
+</mat-card>

@@ -1,0 +1,191 @@
+<h2 mat-dialog-title>Person Details</h2>
+<div mat-dialog-content>
+  <form [formGroup]="form" class="mat-container details-form" novalidate>
+    <section>
+      <mat-form-field class="mat-form-field">
+        <label class="mat-label other-label mandatory-field">Identification Type</label>
+        <mat-select formControlName="idType" id="idType" name="idType" (selectionChange)="changeIdType($event)">
+          <mat-option *ngFor="let type of idTypes" [value]="type.id">
+            {{type.name}}
+          </mat-option>
+        </mat-select>
+        <mat-error *ngIf="form.get('idType').hasError('required') || form.get('idType').hasError('min')">
+          Identification type is required
+        </mat-error>
+      </mat-form-field>
+      <mat-form-field class="mat-form-field-right">
+        <label class="mat-label other-label mandatory-field">Identification Number</label>
+        <input matInput maxlength="13" id="idNumber" name="idNumber" formControlName="idNumber"
+          (blur)="calculateDateOfBirth($event)" />
+        <mat-error *ngIf="form.get('idNumber').hasError('required')">
+          Identification number is required
+        </mat-error>
+        <mat-error *ngIf="form.get('idNumber').hasError('idNumber')">
+          A valid identification number is required
+        </mat-error>
+        <mat-error *ngIf="form.get('idNumber').hasError('minlength')">
+          Identification number must be at least 3 characters
+        </mat-error>
+      </mat-form-field>
+    </section>
+    <section>
+      <mat-form-field class="mat-form-field">
+        <label class="mat-label other-label mandatory-field">First Name</label>
+        <mat-progress-bar *ngIf="searchPerson" mode="indeterminate"></mat-progress-bar>
+        <input [hidden]="searchPerson" matInput AlphaOnly maxlength="50" id="firstName" name="firstName"
+          formControlName="firstName" />
+        <mat-error *ngIf="form.get('firstName').hasError('required') && !searchPerson">
+          First name is required
+        </mat-error>
+      </mat-form-field>
+      <mat-form-field class="mat-form-field-right">
+        <label class="mat-label other-label mandatory-field">Surname</label>
+        <mat-progress-bar *ngIf="searchPerson" mode="indeterminate"></mat-progress-bar>
+        <input [hidden]="searchPerson" matInput AlphaOnly maxlength="50" id="surname" name="surname"
+          formControlName="surname" />
+        <mat-error *ngIf="form.get('surname').hasError('required') && !searchPerson">
+          Surname is required
+        </mat-error>
+      </mat-form-field>
+    </section>
+
+    <section>
+      <mat-form-field class="mat-form-field">
+        <label class="mat-label other-label">Telephone Number</label>
+        <input matInput maxlength="10" NumberOnly id="tellNumber" name="tellNumber" formControlName="tellNumber" />
+        <mat-error *ngIf="form.get('tellNumber').hasError('required')">
+          A telephone number is required
+        </mat-error>
+        <mat-error *ngIf="form.get('tellNumber').hasError('phoneNumber')">
+          A valid telephone number is required
+        </mat-error>
+      </mat-form-field>
+      <mat-form-field class="mat-form-field-right">
+        <label class="mat-label other-label">Mobile Number</label>
+        <input matInput maxlength="10" NumberOnly id="cellNumber" name="cellNumber" formControlName="cellNumber" />
+        <mat-error *ngIf="form.get('cellNumber').hasError('required')">
+          A mobile number is required
+        </mat-error>
+        <mat-error *ngIf="form.get('cellNumber').hasError('phoneNumber')">
+          A valid mobile number is required
+        </mat-error>
+      </mat-form-field>
+    </section>
+    <section>
+      <mat-form-field class="mat-form-field">
+        <label class="mat-label other-label">Email</label>
+        <input matInput maxlength="255" id="emailAddress" name="emailAddress" formControlName="emailAddress" />
+        <mat-error *ngIf="form.get('emailAddress').hasError('required')">
+          An email address is required
+        </mat-error>
+        <mat-error *ngIf="form.get('emailAddress').hasError('email')">
+          A valid email address is required
+        </mat-error>
+      </mat-form-field>
+      <mat-form-field class="mat-form-field-right">
+        <label class="mat-label other-label">Preferred Communication</label>
+        <mat-select formControlName="preferredCommunicationTypeId" id="preferredCommunicationTypeId"
+          name="preferredCommunicationTypeId" (selectionChange)="setCommunicationValidators($event)">
+          <mat-option *ngFor="let type of communicationTypes" [value]="type.id">
+            {{type.name}}
+          </mat-option>
+        </mat-select>
+      </mat-form-field>
+    </section>
+    <section>
+      <mat-form-field class="mat-form-field">
+        <label class="mat-label other-label mandatory-field">Date of Birth</label>
+        <input matInput formControlName="dateOfBirth" id="dateOfBirth" name="dateOfBirth" [matDatepicker]="dateOfBirth"
+          (ngModelChange)="updateAge($event)">
+        <mat-datepicker-toggle matSuffix [for]="dateOfBirth" [disabled]="form.disabled"></mat-datepicker-toggle>
+        <mat-datepicker touchUi="true" #dateOfBirth></mat-datepicker>
+        <mat-error *ngIf="form.get('dateOfBirth').hasError('required')">
+          Date of birth is required
+        </mat-error>
+        <mat-error *ngIf="form.get('dateOfBirth').hasError('dateOfBirthInThefuture')">
+          Date of birth cannot be in the future
+        </mat-error>
+      </mat-form-field>
+      <mat-form-field class="mat-form-field-right">
+        <label class="mat-label other-label mandatory-field">Relation</label>
+        <mat-select id="rolePlayerTypeId" name="rolePlayerTypeId" formControlName="rolePlayerTypeId">
+          <mat-option *ngFor="let type of rolePlayerTypes" [value]="type.rolePlayerTypeId">
+            {{type.name}}
+          </mat-option>
+        </mat-select>
+        <mat-error
+          *ngIf="form.get('rolePlayerTypeId').hasError('required') || form.get('rolePlayerTypeId').hasError('min')">
+          Relation is required
+        </mat-error>
+      </mat-form-field>
+    </section>
+    <section>
+      <div class="field-container" [hidden]="!isAlive">
+        <mat-form-field class="mat-form-field">
+          <label class="mat-label other-label">Age
+            <i *ngIf="isAgeInMonths"> (months)</i>
+            <i *ngIf="!isAgeInMonths"> (years)</i>
+          </label>
+          <input matInput id="age" name="age" formControlName="age" />
+        </mat-form-field>
+      </div>
+      <div class="field-container-right" style="padding-top: 27px !important;"
+        *ngIf="isAlive && isOlderChild && showChildOptions">
+        <mat-form-field style="width:120px !important">
+          <input matInput [hidden]="true" formControlName="isDisabled" />
+          <mat-checkbox formControlName="isDisabled">
+            <label class="mat-label other-label">Is disabled?</label>
+          </mat-checkbox>
+        </mat-form-field>
+        <mat-form-field style="width:120px !important">
+          <input matInput [hidden]="true" formControlName="isStudying" />
+          <mat-checkbox formControlName="isStudying">
+            <label class="mat-label other-label">Is studying?</label>
+          </mat-checkbox>
+        </mat-form-field>
+      </div>
+    </section>
+    <section>
+      <mat-form-field>
+        <input matInput [hidden]="true" formControlName="isAlive" />
+        <mat-checkbox formControlName="isAlive">
+          <label class="mat-label other-label">Is alive?</label>
+        </mat-checkbox>
+      </mat-form-field>
+    </section>
+    <section>
+      <div [hidden]="isAlive">
+        <mat-form-field class="mat-form-field">
+          <label class="mat-label other-label">Date of Death</label>
+          <input matInput formControlName="dateOfDeath" [matDatepicker]="dateOfDeath">
+          <mat-datepicker-toggle matSuffix [for]="dateOfDeath" [disabled]="form.disabled"></mat-datepicker-toggle>
+          <mat-datepicker touchUi="true" #dateOfDeath></mat-datepicker>
+        </mat-form-field>
+        <mat-form-field class="mat-form-field-right">
+          <label class="mat-label other-label">Death Certificate Number</label>
+          <input matInput maxlength="50" formControlName="deathCertificateNumber" />
+        </mat-form-field>
+      </div>
+    </section>
+    <section>
+      <mat-form-field class="mat-form-field" *ngIf="showJoinDate">
+        <label class="mat-label other-label">Policy Join Date</label>
+        <input matInput formControlName="dateJoined" id="dateJoined" name="dateJoined" [matDatepicker]="dateJoined"
+          [min]="minJoinDate" [matDatepickerFilter]="isFirstDay" (ngModelChange)="validateJoinDateBeforeDoB()">
+        <mat-datepicker-toggle matSuffix [for]="dateJoined" [disabled]="form.disabled" readonly>
+        </mat-datepicker-toggle>
+        <mat-datepicker touchUi="true" #dateJoined></mat-datepicker>
+        <mat-error *ngIf="form.get('dateJoined').hasError('joinDateBeforeBirthday')">
+          Join date cannot be before date of birth
+        </mat-error>
+        <mat-error *ngIf="form.get('dateJoined').hasError('joinDateBeforePolicyStartDate')">
+          Join date cannot be before policy start date
+        </mat-error>
+      </mat-form-field>
+    </section>
+  </form>
+</div>
+<div mat-dialog-actions>
+  <button mat-button (click)="closeDialog()" class="button">Close</button>
+  <button *ngIf="canAddEdit" mat-button cdkFocusInitial (click)="checkRolePlayer()" class="button">Save</button>
+</div>

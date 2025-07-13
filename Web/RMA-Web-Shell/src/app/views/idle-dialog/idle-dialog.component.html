@@ -1,0 +1,18 @@
+<h1 mat-dialog-title>Automatic logout</h1>
+<div mat-dialog-content>
+    <p>
+        Your session is about to expire and you will be logged out of the system. If you would like to continue with this session, please click ‘Continue’.
+    </p>
+    <div style="display: block;max-width: 100px;height: 100%;margin: 0 auto">
+        <mat-progress-spinner #spinner [color]="color" mode="determinate" [value]="value">
+        </mat-progress-spinner>
+        <div style="position:relative; top: -60px; left: 40px;font-weight:bold;font-size:larger">
+            {{countDown}}
+            <br />
+        </div>
+    </div>
+</div>
+<div mat-dialog-actions>
+    <button mat-raised-button class="wider" (click)="onContinueClick()">Continue</button>
+    <button mat-raised-button color="warn" class="wider" (click)="onLogoffClick()">Logout</button>
+</div>

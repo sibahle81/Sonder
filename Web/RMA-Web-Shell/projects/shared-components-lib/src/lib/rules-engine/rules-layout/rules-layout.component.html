@@ -1,0 +1,14 @@
+﻿<div>
+    <div>
+        <nav class="innertop-nav">
+            <button mat-button [matMenuTriggerFor]="menu">Rules</button>
+            <mat-menu #menu="matMenu" [overlapTrigger]="false">
+                <button mat-menu-item [routerLink]="['/rules-engine']">Find a rule</button>
+            </mat-menu>
+        </nav>
+    </div>
+
+    <div [hidden]="loadingMessage != null || error != null" class="container-padding">
+        <router-outlet></router-outlet>
+    </div>
+</div>

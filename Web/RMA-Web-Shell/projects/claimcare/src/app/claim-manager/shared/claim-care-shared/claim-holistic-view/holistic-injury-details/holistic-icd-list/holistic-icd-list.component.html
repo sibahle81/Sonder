@@ -1,0 +1,33 @@
+<mat-card *ngIf="!dataSource || (dataSource && dataSource.loading$ | async)">
+    <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+    <label class="mat-label other-label"><i>loading ICD list...please wait</i></label>
+</mat-card>
+
+<div [hidden]="!(dataSource && dataSource.data && dataSource.data.data && dataSource.data.data.length > 0)">
+    <mat-card>
+        <div>
+            <div class="menu-bar">
+                <span class="material-icons">medication</span>&nbsp;ICD10 Codes
+            </div>
+            <mat-table #table [dataSource]="dataSource" matSort id="tblData">
+                <ng-container matColumnDef="ICD10Code">
+                    <mat-header-cell *matHeaderCellDef mat-sort-header>ICD10 Code</mat-header-cell>
+                    <mat-cell *matCellDef="let row">{{row.icd10Code}}</mat-cell>
+                </ng-container>
+
+                <ng-container matColumnDef="ICD10CodeDescription">
+                    <mat-header-cell *matHeaderCellDef mat-sort-header>ICD10 Code Description</mat-header-cell>
+                    <mat-cell *matCellDef="let row">{{row.icd10CodeDescription }}</mat-cell>
+                </ng-container>
+
+                <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
+                <mat-row *matRowDef="let row; columns: displayedColumns;"
+                    [ngClass]="{ 'highlight': row === selectedPersonEvent }"></mat-row>
+            </mat-table>
+
+            <mat-paginator #paginator [pageIndex]="0" [pageSize]="5" [pageSizeOptions]="[5, 10, 25, 100]"
+                [length]="dataSource && dataSource.rowCount$ | async" (page)="getData()">
+            </mat-paginator>
+        </div>
+    </mat-card>
+</div>

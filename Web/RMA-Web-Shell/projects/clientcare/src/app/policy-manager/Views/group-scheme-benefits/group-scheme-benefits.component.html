@@ -1,0 +1,69 @@
+<div class="main-content pad-bottom">
+  <mat-card>
+    <h3>Policy Benefits</h3>
+    <div *ngIf="loadingCurrent || loadingNew">
+      <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+    </div>
+    <div [hidden]="loadingCurrent || loadingNew">
+
+      <form *ngIf="form" [formGroup]="form" class="mat-container details-form" novalidate>
+        <section>
+          <div class="field-container">
+            <mat-form-field class="mat-form-field">
+              <label class="mat-label other-label mandatory-field">New Cover Amount</label>
+              <mat-select id="coverAmount" name="coverAmount" formControlName="coverAmount" (selectionChange)="filterBenefits($event.value)">
+                <mat-option *ngFor="let amount of coverAmountOptions" [value]="amount">
+                  {{ amount }} Cover Amount
+                </mat-option>
+              </mat-select>
+            </mat-form-field>
+          </div>
+        </section>
+      </form>
+
+      <mat-table #table [dataSource]="benefits">
+        <ng-container matColumnDef="coverMemberTypeId">
+          <mat-header-cell class="hidden-column" *matHeaderCellDef>Cover Member Type Id</mat-header-cell>
+          <mat-cell class="hidden-column" *matCellDef="let row">{{row.coverMemberTypeId}}</mat-cell>
+        </ng-container>
+        <ng-container matColumnDef="coverMemberType">
+          <mat-header-cell class="cover-member-type-column" *matHeaderCellDef>Cover Member Type</mat-header-cell>
+          <mat-cell class="cover-member-type-column" *matCellDef="let row">{{row.coverMemberType}}</mat-cell>
+        </ng-container>
+        <ng-container matColumnDef="oldBenefitId">
+          <mat-header-cell class="hidden-column" *matHeaderCellDef>Old Benefit Id</mat-header-cell>
+          <mat-cell class="hidden-column" *matCellDef="let row">{{row.oldBenefitId}}</mat-cell>
+        </ng-container>
+        <ng-container matColumnDef="oldBenefitName">
+          <mat-header-cell *matHeaderCellDef>Old Benefit</mat-header-cell>
+          <mat-cell *matCellDef="let row">{{row.oldBenefitName}}</mat-cell>
+        </ng-container>
+        <ng-container matColumnDef="newBenefitId">
+          <mat-header-cell class="hidden-column" *matHeaderCellDef>New Benefit Id</mat-header-cell>
+          <mat-cell class="hidden-column" *matCellDef="let row">{{row.newBenefitId}}</mat-cell>
+        </ng-container>
+        <ng-container matColumnDef="newBenefitName">
+          <mat-header-cell [ngClass]="{ 'hidden-column': !isApprovalWizard }" *matHeaderCellDef>New
+            Benefit</mat-header-cell>
+          <mat-cell [ngClass]="{ 'hidden-column': !isApprovalWizard }"
+            *matCellDef="let row">{{row.newBenefitName}}</mat-cell>
+        </ng-container>
+        <ng-container matColumnDef="benefitSelect">
+          <mat-header-cell [ngClass]="{ 'hidden-column': isApprovalWizard }" *matHeaderCellDef>New Benefit</mat-header-cell>
+          <mat-cell [ngClass]="{ 'hidden-column': isApprovalWizard }" *matCellDef="let row">
+            <mat-select [(value)]="row.newBenefitId"
+              (selectionChange)="loadBenefitName(row.oldBenefitId, $event.value, row.coverMemberTypeId)">
+              <mat-option *ngFor="let benefit of benefitsArray[benefits.indexOf(row)] | async"
+                [value]="benefit.benefitId">
+                {{benefit.benefitName}}
+              </mat-option>
+            </mat-select>
+          </mat-cell>
+        </ng-container>
+        <mat-header-row *matHeaderRowDef="benefitColumns"></mat-header-row>
+        <mat-row *matRowDef="let row; columns: benefitColumns;"></mat-row>
+      </mat-table>
+      <mat-error *ngIf="errorMessage != ''" class="error-message">{{ errorMessage }}</mat-error>
+    </div>
+  </mat-card>
+</div>

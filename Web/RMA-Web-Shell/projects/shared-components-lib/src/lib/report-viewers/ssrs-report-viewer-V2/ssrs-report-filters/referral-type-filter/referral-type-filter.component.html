@@ -1,0 +1,18 @@
+<div>
+    <form [formGroup]="form" class="mat-container details-form" novalidate>
+        <section>
+            <span>
+                <mat-form-field class="mat-form-field">
+                    <label class="mat-label other-label">{{title}}</label><br />
+                    <mat-select class="control" (selectionChange)="readForm()"
+                        formControlName="referralType" name="referralType" id="referralType">
+                        <mat-option [value]="'all'">All</mat-option>
+                        <mat-option *ngFor="let referralType of referralTypes" [value]="referralType">
+                            {{formatLookup(referralType)}}
+                        </mat-option>
+                    </mat-select>
+                </mat-form-field>
+            </span>
+        </section>
+    </form>
+</div>

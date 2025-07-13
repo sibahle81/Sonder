@@ -1,0 +1,83 @@
+<div *ngIf="isLoading$ | async">
+  <mat-card>
+    <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+    <label class="mat-label other-label"><i>loading rates...please wait</i></label>
+  </mat-card>
+</div>
+
+<div *ngIf="!(isLoading$ | async) && !showForm">
+  <div *ngIf="!isWizard && wizardsInProgress.length > 0">
+    <lib-running-wizards [moduleName]="'clientcare'" [managerName]="'member-manager'" [linkedItemId]="roleplayerId"
+      [wizardTypeCSVs]="'rate-adjustment'"></lib-running-wizards>
+      <br />
+  </div>
+  <mat-card>
+    <div *ngIf="!clientRates || clientRates.length <= 0">No rates found...</div>
+
+    <div *ngIf="clientRates && clientRates.length > 0">
+      <div class="scrollTable">
+        <table class="altRowTable">
+          <tr>
+            <th>Product Option</th>
+            <th>Category Insured</th>
+            <th>Year</th>
+            <th>Rate</th>
+            <th *ngIf="isWizard">Action</th>
+          </tr>
+          <tr *ngFor="let clientRate of clientRates">
+            <td>{{clientRate.product}}</td>
+            <td>{{getCategoryInsuredName(clientRate.category)}}</td>
+            <td>{{clientRate.ratingYear}}</td>
+            <td>{{clientRate.rate}}%</td>
+            <td *ngIf="isWizard"><a (click)="toggleForm(clientRate)"><span
+                  class="material-icons icn pointer">settings</span></a> </td>
+          </tr>
+        </table>
+      </div>
+    </div>
+  </mat-card>
+  <br />
+  <div (click)="checkExistingMaintenenceTasks()" *ngIf="!isWizard" class="form-buttons submit-button">
+    <button type="button" class="button float-button">Edit</button>
+  </div>
+</div>
+
+<mat-card *ngIf="showForm">
+  <form [formGroup]="form" class="mat-container details-form" novalidate>
+    <section>
+      <mat-form-field class="mat-form-field">
+        <label class="mat-label other-label">Product</label>
+        <input matInput formControlName="productOption" name="productOption" id="productOption" />
+      </mat-form-field>
+      <mat-form-field class="mat-form-field-right">
+        <label class="mat-label other-label">Category Insured</label>
+        <input matInput formControlName="categoryInsured" name="categoryInsured" id="categoryInsured" />
+      </mat-form-field>
+    </section>
+
+    <section>
+      <mat-form-field class="mat-form-field">
+        <label class="mat-label other-label">Rating Year</label>
+        <input matInput DecimalNumber formControlName="ratingYear" name="ratingYear" id="ratingYear" />
+      </mat-form-field>
+      <mat-form-field class="mat-form-field-right">
+        <label class="mat-label other-label">Rate</label>
+        <input matInput formControlName="rate" name="rate" id="rate" />
+      </mat-form-field>
+    </section>
+  </form>
+
+  <div *ngIf="isWizard && selectedPolicyNumber">
+    <br />
+    <lib-documents [system]="'MemberManager'" [documentSetId]="57" [keyName]="'CaseCode'"
+      [keyValue]="selectedPolicyNumber"></lib-documents>
+    <br />
+  </div>
+
+  <span *ngIf="form.valid && !form.pristine" class="mat-label other-label pointer" style="margin-left: 10px;"
+    (click)="readForm()"><span class="material-icons" style="color: green;">check_circle</span></span>
+  <span *ngIf="(!form.valid || form.pristine) && !isReadOnly" class="mat-label other-label pointer"
+    style="margin-left: 10px;"><span class="material-icons" style="color: lightpink;">check_circle</span></span>
+  <span class="mat-label other-label pointer" (click)="toggleForm()"><span class="material-icons">cancel</span></span>
+  <br />
+</mat-card>

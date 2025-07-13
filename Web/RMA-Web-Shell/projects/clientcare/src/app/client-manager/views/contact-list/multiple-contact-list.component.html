@@ -1,0 +1,40 @@
+﻿
+
+ 
+    <h1 style="padding: 0;" [hidden]="dataSource.data.length === 0">Contact List</h1>
+
+
+    <div style="margin-left: 10px;">
+        <div [hidden]="dataSource.data.length === 0">
+            <div class="mat-container mat-elevation-z8"  [hidden]="isLoading">
+                <div [hidden]="dataSource.data.length === 0">
+                    <mat-table #table [dataSource]="dataSource" matSort>
+                        <!--All standard columns-->
+                        <ng-container *ngFor="let column of columns" [matColumnDef]="column.columnDefinition">
+                            <mat-header-cell *matHeaderCellDef class="mat-header-cell ng-tns-c10-2 cdk-column-Name mat-column-Name">{{ column.header }}</mat-header-cell>
+                            <mat-cell *matCellDef="let row" class="mat-cell cdk-column-Name mat-column-Name">{{ column.cell(row) }}</mat-cell>
+                        </ng-container>
+
+                        <!-- Actions -->
+                        <ng-container  matColumnDef="actions">
+                            <mat-header-cell *matHeaderCellDef>Actions</mat-header-cell>
+                            <mat-cell *matCellDef="let row">
+                                <span><a role="button" class="link-edit" (click)="onRemove(row)">Remove</a></span>
+                            </mat-cell>
+                        </ng-container>
+
+                        <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
+                        <mat-row *matRowDef="let row; columns: displayedColumns;"></mat-row>
+                    </mat-table>
+
+                    <mat-paginator #paginator
+                                   [length]="dataSource.data.length"
+                                   [pageIndex]="0"
+                                   [pageSize]="5"
+                                   [pageSizeOptions]="[5, 10, 25, 100]">
+                    </mat-paginator>
+                </div>
+            </div>
+
+        </div>
+    </div>

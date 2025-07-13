@@ -1,0 +1,19 @@
+<mat-card *ngIf="!model">
+  <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+  <label class="mat-label other-label"><i>loading...please wait</i></label>
+</mat-card>
+
+<mat-card *ngIf="model">
+
+  <member-view [rolePlayerId]="model[0].policyOwnerId"></member-view><br />
+
+  <div class="menu-bar">
+    <span class="material-icons">
+      balance
+    </span>
+    Declarations
+  </div>
+  <div *ngFor="let policy of model">
+    <renewal-declaration [policy]="policy" [isWizard]="true" [isReadOnly]="false"></renewal-declaration>
+  </div>
+</mat-card>

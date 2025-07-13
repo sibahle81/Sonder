@@ -1,0 +1,121 @@
+<br>
+<mat-card *ngIf="isLoading">
+  <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+  <label class="mat-label other-label"><i>loading...please wait</i></label>
+</mat-card>
+
+<mat-card-content [hidden]="isLoading">
+  <div [hidden]="dataSource.data.length === 0">
+    <div [hidden]="isLoading" class="divAlign">
+      <div [hidden]="dataSource.data.length === 0">
+        <mat-accordion *ngFor="let documentType of documentTypes;">
+          <mat-expansion-panel>
+            <mat-expansion-panel-header>
+              <mat-panel-title [ngClass]="{'mandatory-field': documentType.required}">
+                <span class="material-icons">folder</span>
+                <span class="expansionTitleDocuments">
+                  {{documentType.documentTypeName}}
+                </span>
+              </mat-panel-title>
+
+              <span matTooltip="refresh {{documentType.documentTypeName}} document"
+                *ngIf="canRefreshDocument(documentType.docTypeId)"
+                [ngClass]="{ 'document-management-disabled': isRefreshing.value === documentType.docTypeId }"
+                (click)="openRefreshDocumentDialog($event, documentType)"
+                class="document-management-icon material-icons">restart_alt</span>
+
+              <span matTooltip="download {{documentType.documentTypeName}} template"
+                *ngIf="documentType.templateAvailable" 
+                (click)="downloadTemplate(documentType)" 
+                class="document-management-icon material-icons">file_download</span>
+
+              <span matTooltip="upload {{documentType.documentTypeName}} document"
+                (click)="openDialogUploadDocuments(documentType)" 
+                class="document-management-icon material-icons">upload_file</span>
+
+              <span matTooltip="upload {{documentType.documentTypeName}} document" 
+                *ngIf="showAdditionalDocumentsButton"
+                (click)="openDialogAdditionalDouments()" 
+                class="document-management-icon material-icons">note_add</span>
+
+              <span matTooltip="upload {{documentType.documentTypeName}} document"
+                *ngIf="showOutstandingDocumentsButton" 
+                (click)="openDialogOutstandingDouments()"
+                class="document-management-icon material-icons">plagiarism</span>
+
+            </mat-expansion-panel-header>
+            <div *ngIf="filterDocuments(dataSource.data, documentType.docTypeId).length !== 0">
+              <br>
+              <mat-table #table [dataSource]="filterDocuments(dataSource.data, documentType.docTypeId)">
+                <!-- Document name -->
+                <ng-container matColumnDef="documentName">
+                  <mat-header-cell *matHeaderCellDef> Document Name </mat-header-cell>
+                  <mat-cell *matCellDef="let row"> {{row.fileName}} </mat-cell>
+                </ng-container>
+                <!-- Document Decription -->
+                <ng-container matColumnDef="documentDescription">
+                  <mat-header-cell *matHeaderCellDef> Document Description</mat-header-cell>
+                  <mat-cell *matCellDef="let row"> {{row.documentDescription}} </mat-cell>
+                </ng-container>
+                <!-- Created By -->
+                <ng-container matColumnDef="createdBy">
+                  <mat-header-cell *matHeaderCellDef> Uploaded By </mat-header-cell>
+                  <mat-cell *matCellDef="let row"> {{row.createdBy}} </mat-cell>
+                </ng-container>
+                <!-- Date Received  -->
+                <ng-container matColumnDef="dateReceived">
+                  <mat-header-cell *matHeaderCellDef> Date Received </mat-header-cell>
+                  <mat-cell *matCellDef="let row"> {{row.createdDate| date: "yyyy/MM/dd"}} </mat-cell>
+                </ng-container>
+                <!-- is Received  -->
+                <ng-container matColumnDef="isReceive">
+                  <mat-header-cell *matHeaderCellDef> Receive </mat-header-cell>
+                  <mat-cell *matCellDef="let row"> {{row.isReceive}} </mat-cell>
+                </ng-container>
+                <!-- required -->
+                <ng-container matColumnDef="required">
+                  <mat-header-cell *matHeaderCellDef> Required </mat-header-cell>
+                  <mat-cell *matCellDef="let row"> {{row.required ? "Yes" : "Optional"}} </mat-cell>
+                </ng-container>
+                <!-- document status  -->
+                <ng-container matColumnDef="status">
+                  <mat-header-cell *matHeaderCellDef> Status </mat-header-cell>
+                  <mat-cell *matCellDef="let row"> {{row.documentStatusText}} </mat-cell>
+                </ng-container>
+                <ng-container matColumnDef="actions">
+                  <mat-header-cell *matHeaderCellDef>Actions</mat-header-cell>
+                  <mat-cell *matCellDef="let row" [matMenuTriggerFor]="menu" (click)="filterMenu(row)">
+                    <span class="material-icons pointer right">more_vert</span>
+                    <mat-menu #menu="matMenu">
+                      <button mat-menu-item *ngFor="let menu of menus" (click)="onMenuSelect(row, menu.title)"
+                        disabled={{menu.disable}}>{{menu.title}}</button>
+                    </mat-menu>
+                  </mat-cell>
+                </ng-container>
+                <mat-header-row *matHeaderRowDef="getDisplayedColumns();"></mat-header-row>
+                <mat-row *matRowDef="let row; columns: getDisplayedColumns();"></mat-row>
+              </mat-table>
+            </div>
+            <div *ngIf="filterDocuments(dataSource.data, documentType.docTypeId).length === 0">
+              <br>
+              <span class="grey site-font">No documents were found.</span>
+            </div>
+
+
+            <div *ngIf="isRefreshing.value === documentType.docTypeId">
+              <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+              <label class="mat-label other-label"><i>refreshing {{documentType.documentTypeName}} ...please be patient</i></label>
+            </div>
+
+
+          </mat-expansion-panel>
+        </mat-accordion>
+      </div>
+    </div>
+  </div>
+
+  <div [hidden]="dataSource.data.length > 0 || isLoading" style="margin-left: 20px;">
+    <span class="grey site-font">No records found</span>
+  </div>
+
+</mat-card-content>

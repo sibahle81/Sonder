@@ -1,0 +1,81 @@
+<form [formGroup]="form" name="form" class="mat-container details-form" novalidate>
+	<div class="mat-header">
+		<h1>Health Care Provider for {{authType}} authorisation</h1>
+	</div>
+
+	<div *ngIf="loadingHCPData$  | async">
+		<mat-progress-bar mode="indeterminate"
+			[ngClass]="{ 'loading-main-double-menu-progress': doubleMenu, 'loading-main-single-menu-progress': !doubleMenu }">
+		</mat-progress-bar>
+		<p class="site-font grey">Loading HCP Data...</p>
+	</div>
+
+	<mat-card>
+		<mat-card-content>
+			<mat-card class="mat-card-style-hcp" *ngIf="showSearchControl">
+				<mat-card-header>
+					<mat-card-title>Search Health Care Provider</mat-card-title>
+				</mat-card-header>
+				<mat-card-content style="margin-left: 10px;">
+					<!-- Container for the search input -->
+					<div class="hcp-search-container">
+						<mat-form-field style="width: 90%;" class="tp-full-width" [floatLabel]="'never'"
+							[ngClass]="{ 'mat-form-field-invalid': isHospitalError }">
+							<input matInput class="form-control mx-sm-3" [ngClass]="{ 'is-invalid': isHospitalError }"
+								maxlength="50" name="filter" #filter width="300" minLength="3" aria-label="state"
+								[matAutocomplete]="auto" [formControl]="filterRecordsCtrl"
+							matTooltip="Search by health care provider name or practise number or description"
+								matTooltipShowDelay="1000">
+						<mat-placeholder class="placeholder ng-star-inserted">Search by health care provider name or
+							practice number</mat-placeholder>
+							<mat-icon class="search-icon" matSuffix>search</mat-icon>
+							<mat-autocomplete #auto="matAutocomplete" [displayWith]="displayNull"
+								(optionSelected)="onSelectChanged($event.option)">
+								<mat-option *ngIf="isLoading" class="loader">Loading...</mat-option>
+								<ng-container *ngIf="!isLoading">
+									<mat-option *ngFor="let healthCareProvider of this.healthCareProviders"
+										[value]="healthCareProvider">
+										{{ healthCareProvider.name }} [{{healthCareProvider.practiceNumber}}]
+									</mat-option>
+								</ng-container>
+							</mat-autocomplete>
+						</mat-form-field>
+
+						<!-- External error message shown below the box -->
+						<div *ngIf="isHospitalError" class="hospital-error-msg">
+							{{getAuthTypeErrorMessage()}}
+						</div>
+					</div>
+				</mat-card-content>
+			</mat-card>
+			<div style="margin: 15px 30px 15px 40px">
+				<mat-form-field class="mat-form-field">
+					<label class="mat-label other-label">Practice number</label>
+					<input matInput id="healthcareProviderPracticeNumber" name="healthcareProviderPracticeNumber"
+						[value]="form.controls.healthcareProviderPracticeNumber.value" disabled='true'>
+					<input matInput formControlName="providerTypeId" class="hidden" />
+				</mat-form-field>
+				&nbsp;
+				<mat-form-field class="mat-form-field">
+					<label class="mat-label other-label">Practice name</label>
+					<input matInput id="healthcareProviderName" name="healthcareProviderName"
+						formControlName="healthcareProviderName" />
+				</mat-form-field>
+				&nbsp;
+				<mat-form-field class="mat-form-field">
+					<label class="mat-label other-label">Practitioner type</label>
+					<input matInput id="practitionerTypeName" name="practitionerTypeName"
+						formControlName="practitionerTypeName" />
+				</mat-form-field>
+				&nbsp;
+				<mat-form-field class="mat-form-field"  *ngIf="showTelephoneNumber">
+					<label class="mat-label other-label mandatory-field">Telephone Number</label>
+					<input matInput id="telephoneNumber" name="telephoneNumber"  (focusout)="onTelephoneNumberChanged($event)"
+						formControlName="telephoneNumber" />
+				</mat-form-field>
+				<br />
+				<input matInput formControlName="isVat" class="hidden" />
+			</div>
+		</mat-card-content>
+	</mat-card>
+</form>

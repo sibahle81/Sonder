@@ -1,0 +1,64 @@
+<mat-card *ngIf="isLoading$ | async">
+    <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+    <label class="mat-label other-label"><i>loading...please wait</i></label>
+</mat-card>
+
+<div *ngIf="!(isLoading$ | async)">
+    <mat-card>
+        <div class="menu-bar">
+            <span class="material-icons">
+                account_balance
+            </span>
+            Collections Information
+        </div>
+        <form [formGroup]="form" class="mat-container details-form" novalidate>
+            <section>
+                <mat-form-field class="mat-form-field">
+                    <label class="mat-label other-label">Inception Date</label>
+                    <input matInput (dateChange)="readForm()" [max]="maxDate" formControlName="inceptionDate"
+                        [matDatepicker]="inceptionDate">
+                    <mat-datepicker-toggle matSuffix [for]="inceptionDate">
+                    </mat-datepicker-toggle>
+                    <mat-datepicker touchUi="true" #inceptionDate></mat-datepicker>
+                </mat-form-field>
+                <mat-form-field class="mat-form-field-right">
+                    <label class="mat-label other-label">Expiry Date</label>
+                    <input matInput formControlName="expiryDate" [matDatepicker]="expiryDate">
+                    <mat-datepicker-toggle matSuffix [for]="expiryDate">
+                    </mat-datepicker-toggle>
+                    <mat-datepicker touchUi="true" #expiryDate></mat-datepicker>
+                </mat-form-field>
+            </section>
+            <section>
+                <mat-form-field class="mat-form-field">
+                    <label class="mat-label other-label">Collection Frequency</label>
+                    <mat-select (selectionChange)="readForm()" name="paymentFrequency" id="paymentFrequency"
+                        formControlName="paymentFrequency">
+                        <mat-option *ngFor="let paymentFrequency of paymentFrequencies" [value]="paymentFrequency">
+                            {{formatLookup(paymentFrequency)}}
+                        </mat-option>
+                    </mat-select>
+                    <mat-error *ngIf="form.get('paymentFrequency').hasError('required')">
+                        collection frequency is <strong>required</strong>
+                    </mat-error>
+                </mat-form-field>
+                <mat-form-field class="mat-form-field-right">
+                    <label class="mat-label other-label">Collection Method</label>
+                    <mat-select (selectionChange)="readForm()" name="paymentMethod" id="paymentMethod"
+                        formControlName="paymentMethod">
+                        <mat-option *ngFor="let paymentMethod of paymentMethods" [value]="paymentMethod">
+                            {{formatLookup(paymentMethod)}}
+                        </mat-option>
+                    </mat-select>
+                    <mat-error *ngIf="form.get('paymentMethod').hasError('required')">
+                        collection method is <strong>required</strong>
+                    </mat-error>
+                </mat-form-field>
+            </section>
+        </form>
+    </mat-card>
+    <mat-card *ngIf="rolePlayer && (showBanking$ | async)">
+        <role-player-banking-list (rolePlayerBankingSelectedEmit)="setBankAccount($event)" [rolePlayer]="rolePlayer" [isReadOnly]="isReadOnly"
+            [verifyAccount]="false" [showSelectColumn]="false"></role-player-banking-list>
+    </mat-card>
+</div>

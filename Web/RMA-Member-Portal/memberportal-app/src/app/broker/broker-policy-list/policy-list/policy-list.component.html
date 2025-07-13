@@ -1,0 +1,164 @@
+<mat-card style="margin: 15px 30px 15px 30px">
+  <mat-card-content style="margin-left: 10px;">
+    <div class="page-header">
+      <h1 style="margin-bottom: 15px;">Policy List</h1>
+    </div>
+    <mat-form-field [floatLabel]="'never'">
+      <input matInput maxlength="50" name="filter" #filter width="300" minLength="3"
+        matTooltip="Search by policy number or name" matTooltipShowDelay="1000">
+      <mat-placeholder class="placeholder">Search by policy number, Name</mat-placeholder>
+      <mat-icon class="search-icon" (click)="search()" matSuffix>search</mat-icon>
+      <button style="visibility: hidden;" class="button submit-button" (click)="search()"
+        matTooltip="Search by code, name or FSP number" matTooltipShowDelay="1000">Search</button>
+    </mat-form-field>
+    <div *ngIf="dataSource.loading$ | async">
+      <mat-progress-bar mode="indeterminate">
+      </mat-progress-bar>
+      <p class="site-font grey">Searching...</p>
+    </div>
+    <div [hidden]="dataSource.policies.length === 0 || isLoading">
+      <mat-table #table [dataSource]="policyDataSource" matSort>
+        <!-- Policy No Column -->
+        <ng-container matColumnDef="policyNumber">
+          <mat-header-cell mat-header-cell *matHeaderCellDef mat-sort-header (click)="sortData(policyDataSource.data)">
+            Policy
+            No </mat-header-cell>
+          <mat-cell mat-cell *matCellDef="let row">
+            <span class="mobile-label">Policy No:</span>
+            {{row.policyNumber}}
+          </mat-cell>
+        </ng-container>
+
+        <!-- policyOwner.displayName Column -->
+        <ng-container matColumnDef="clientName">
+          <mat-header-cell mat-header-cell *matHeaderCellDef mat-sort-header (click)="sortData(policyDataSource.data)">
+            Name
+          </mat-header-cell>
+          <mat-cell mat-cell *matCellDef="let row">
+            <span class="mobile-label">Name:</span>
+            {{row.clientName}}
+          </mat-cell>
+        </ng-container>
+
+        <!-- Policy Status Column -->
+        <ng-container matColumnDef="policyStatus">
+          <mat-header-cell mat-header-cell *matHeaderCellDef mat-sort-header (click)="sortData(policyDataSource.data)">
+            Policy
+            Status </mat-header-cell>
+          <mat-cell mat-cell *matCellDef="let row">
+            <span class="mobile-label">Policy Status:</span>
+            {{policyStatusEnum[row.policyStatus]}}
+          </mat-cell>
+        </ng-container>
+
+        <!-- Policy Inception Date Column -->
+        <ng-container matColumnDef="policyInceptionDate">
+          <mat-header-cell mat-header-cell *matHeaderCellDef mat-sort-header (click)="sortData(policyDataSource.data)">
+            Policy
+            Inception Date </mat-header-cell>
+          <mat-cell mat-cell *matCellDef="let row">
+            <span class="mobile-label">Inception Date:</span>
+            {{row.policyInceptionDate| date: "yyyy/MM/dd"}}
+          </mat-cell>
+        </ng-container>
+
+        <!-- Policy Expiry Date Column -->
+        <ng-container matColumnDef="expiryDate">
+          <mat-header-cell mat-header-cell *matHeaderCellDef mat-sort-header (click)="sortData(policyDataSource.data)">
+            Policy
+            Expiry Date </mat-header-cell>
+          <mat-cell mat-cell *matCellDef="let row">
+            <span class="mobile-label">Expiry Date:</span>
+            {{row.expiryDate| date: "yyyy/MM/dd"}}
+          </mat-cell>
+        </ng-container>
+
+        <!-- Policy Cancellation Date Column -->
+        <ng-container matColumnDef="cancellationDate">
+          <mat-header-cell mat-header-cell *matHeaderCellDef mat-sort-header (click)="sortData(policyDataSource.data)">
+            Policy
+            Cancellation Date
+          </mat-header-cell>
+          <mat-cell mat-cell *matCellDef="let row">
+            <span class="mobile-label">Cancellation Date:</span>
+            {{row.cancellationDate| date: "yyyy/MM/dd"}}
+          </mat-cell>
+        </ng-container>
+
+        <!-- Installment Premium Column -->
+        <ng-container matColumnDef="installmentPremium">
+          <mat-header-cell mat-header-cell *matHeaderCellDef mat-sort-header (click)="sortData(policyDataSource.data)">
+            Installment Premium </mat-header-cell>
+          <mat-cell mat-cell *matCellDef="let row">
+            <span class="mobile-label">Installment Premium:</span>
+            {{row.installmentPremium}}
+          </mat-cell>
+        </ng-container>
+
+        <!-- Payment Frequency Column -->
+        <ng-container matColumnDef="paymentFrequency">
+          <mat-header-cell mat-header-cell *matHeaderCellDef mat-sort-header (click)="sortData(policyDataSource.data)">
+            Payment Frequency </mat-header-cell>
+          <mat-cell mat-cell *matCellDef="let row">
+            <span class="mobile-label">Payment Frequency:</span>
+            {{paymentEnum[row.paymentFrequency]}}
+          </mat-cell>
+        </ng-container>
+
+        <!-- Payment Method Column -->
+        <ng-container matColumnDef="paymentMethod">
+          <mat-header-cell mat-header-cell *matHeaderCellDef mat-sort-header (click)="sortData(policyDataSource.data)">
+            Payment Method </mat-header-cell>
+          <mat-cell mat-cell *matCellDef="let row">
+            <span class="mobile-label">Payment Method:</span>
+            {{paymentMethodEnum[row.paymentMethod]}}
+          </mat-cell>
+        </ng-container>
+
+           <!-- Affordability Check Passed  Column -->
+           <ng-container matColumnDef="affordabilityCheckPassed">
+            <mat-header-cell mat-header-cell *matHeaderCellDef mat-sort-header (click)="sortData(policyDataSource.data)">
+              Affordability Status </mat-header-cell>
+            <mat-cell mat-cell *matCellDef="let row">
+              <span class="mobile-label">Affordable:</span>
+              <span *ngIf="row.policyLifeExtension === null"> Not Applicable </span>
+              <span *ngIf="row.policyLifeExtension?.affordabilityCheckPassed  === true"> Affordable </span>
+              <span *ngIf="row.policyLifeExtension?.affordabilityCheckPassed   === false"> Not Affordable </span>
+            </mat-cell>
+          </ng-container>
+ 
+        <ng-container matColumnDef="actions">
+          <mat-header-cell mat-header-cell *matHeaderCellDef> Action </mat-header-cell>
+          <mat-cell mat-cell *matCellDef="let row" [matMenuTriggerFor]="menu" (click)="filterMenu(row)" class="cursor">
+            <span class="mobile-label">Action:</span>
+            <mat-icon>more_vert</mat-icon>
+            <mat-menu #menu="matMenu">
+              <button mat-menu-item *ngFor="let menu of menus" (click)="onMenuSelect(row, menu.title)"
+                disabled={{menu.disable}}>{{menu.title}}</button>
+            </mat-menu>
+          </mat-cell>
+        </ng-container>
+
+        <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
+        <mat-row *matRowDef="let row; columns: displayedColumns;"></mat-row>
+      </mat-table>
+      <mat-paginator #paginator [length]="dataSource.rowCount$" [pageSize]="5" [pageSizeOptions]="[5, 10, 25, 100]">
+      </mat-paginator>
+    </div>
+    <div [hidden]="dataSource.policies.length > 0 || isLoading">
+      <span class="grey site-font"><b><i>No policies found linked to the broker.</i></b></span>
+    </div>
+    <div [hidden]="paginator.length > 0 || !currentQuery || currentQuery == ''" class="no-search-results-add-button">
+      <div class="site-font grey">
+        <p class="grey">Your search - <strong>{{currentQuery}}</strong> - did not match any brokerages.</p>
+        <span>Suggestions: </span>
+        <ul>
+          <li>Make sure that all words are spelled correctly.</li>
+          <li>Try different keywords.</li>
+          <li>Try more general keywords.</li>
+          <li>Try fewer keywords.</li>
+        </ul>
+      </div>
+    </div>
+  </mat-card-content>
+</mat-card>

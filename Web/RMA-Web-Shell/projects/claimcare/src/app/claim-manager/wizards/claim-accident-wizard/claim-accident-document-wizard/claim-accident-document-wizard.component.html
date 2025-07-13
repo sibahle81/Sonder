@@ -1,0 +1,29 @@
+<div *ngIf="model">
+    <mat-card
+        *ngIf="!(model.personEvents && model.personEvents?.length > 0 && model.personEvents[0].rolePlayer?.person?.personEmployments?.length > 0)">
+        <i>at least one employee with employment details must captured before documents and medical reports can be
+            uploaded...</i>
+    </mat-card>
+
+    <employee-list
+        *ngIf="model.personEvents && model.personEvents?.length > 0 && model.personEvents[0].rolePlayer?.person?.personEmployments?.length > 0"
+        [event]="model" [isWizard]="isWizard" [isReadOnly]="inApprovalMode" [triggerRefresh]="triggerRefresh"
+        [isDocumentTab]="true">
+    </employee-list>
+
+    <!--Claim Requirements-->
+    <mat-card *ngIf="model.personEvents && model.personEvents?.length > 0">
+        <mat-accordion multi="false">
+            <mat-expansion-panel *ngFor="let personEvent of model.personEvents"
+                [expanded]="model.personEvents.length == 1" [disabled]="model.personEvents.length == 1">
+                <mat-expansion-panel-header>
+                    <mat-panel-title>
+                        <label class="mat-label other-label">&nbsp;&nbsp;<i>Claim Requirements for
+                                <b>{{personEvent.rolePlayer.displayName}}</b></i></label>
+                    </mat-panel-title>
+                </mat-expansion-panel-header>
+                <claim-requirements-v2 [personEvent]="personEvent" [triggerRefresh]="triggerRefresh" [isWizard]="isWizard"></claim-requirements-v2>
+            </mat-expansion-panel>
+        </mat-accordion>
+    </mat-card>
+</div>

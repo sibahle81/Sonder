@@ -1,0 +1,65 @@
+<div class="lapse-content">
+  <form [formGroup]="form" class="mat-container details-form" novalidate>
+    <section>
+      <mat-form-field class="mat-form-field">
+        <label class="mat-label other-label">Policy Number</label>
+        <input matInput formControlName="policyNumber">
+      </mat-form-field>
+      <mat-form-field class="mat-form-field-right">
+        <label class="mat-label other-label">Policy Status</label>
+        <input matInput formControlName="policyStatus">
+      </mat-form-field>
+    </section>
+    <section>
+      <mat-form-field class="mat-form-field">
+        <label class="mat-label other-label">First Name</label>
+        <input matInput formControlName="firstName">
+      </mat-form-field>
+      <mat-form-field class="mat-form-field-right">
+        <label class="mat-label other-label">Surname</label>
+        <input matInput formControlName="surname">
+      </mat-form-field>
+    </section>
+    <section>
+      <mat-form-field class="mat-form-field">
+        <label class="mat-label other-label">Identification Type</label>
+        <input matInput formControlName="idType">
+      </mat-form-field>
+      <mat-form-field class="mat-form-field-right">
+        <label class="mat-label other-label">Identification Number</label>
+        <input matInput formControlName="idNumber">
+      </mat-form-field>
+    </section>
+    <section>
+      <mat-form-field class="mat-form-field">
+        <label class="mat-label other-label">Date of Birth</label>
+        <input matInput formControlName="dateOfBirth">
+      </mat-form-field>
+      <mat-form-field class="mat-form-field-right">
+        <label class="mat-label other-label">Age</label>
+        <input matInput formControlName="age">
+      </mat-form-field>
+    </section>
+    <section>
+      <mat-form-field class="mat-form-field">s
+        <label class="mat-label other-label">Product</label>
+        <input matInput formControlName="product">
+      </mat-form-field>
+      <mat-form-field class="mat-form-field-right">
+        <label class="mat-label other-label">Product Option</label>
+        <input matInput formControlName="productOption">
+      </mat-form-field>
+    </section>
+    <section>
+      <div><label class="mat-label other-label mandatory-field">Policy Lapse Date</label></div>
+      <mat-form-field class="mat-form-field">
+        <input matInput formControlName="lapseDate" [matDatepicker]="lapseDate" [min]="minDate">
+        <mat-datepicker-toggle matSuffix [for]="lapseDate" [disabled]="form.disabled"></mat-datepicker-toggle>
+        <mat-datepicker touchUi="true" #lapseDate></mat-datepicker>
+        <mat-error *ngIf="form.get('lapseDate').hasError('required')">
+          Policy lapse date is required
+        </mat-error>
+      </mat-form-field>
+    </section>
+  </form>
+</div>

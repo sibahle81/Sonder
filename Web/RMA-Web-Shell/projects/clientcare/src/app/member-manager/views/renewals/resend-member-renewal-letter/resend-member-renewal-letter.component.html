@@ -1,0 +1,95 @@
+<div *ngIf="!hideForm">
+    <form [formGroup]="form" class="mat-container details-form" novalidate>
+      <section>
+        <mat-form-field class="mat-form-field">
+          <label class="mat-label other-label mandatory-field">Contact Name</label>
+          <input matInput id="name" name="name" formControlName="name" />
+          <mat-error *ngIf="form.get('name').hasError('required')">
+            Contact Name is <strong>required</strong>
+          </mat-error>
+        </mat-form-field>
+  
+        <mat-form-field class="mat-form-field-right">
+          <label class="mat-label other-label mandatory-field">Email Address</label>
+          <input matInput id="communicationTypeValue" name="communicationTypeValue"
+            formControlName="communicationTypeValue" />
+          <mat-error *ngIf="form.get('communicationTypeValue').hasError('required')">
+            Contact is <strong>required</strong>
+          </mat-error>
+          <mat-error *ngIf="form.get('communicationTypeValue').hasError('email')">
+            Please enter a valid<strong> email address </strong>
+          </mat-error>
+        </mat-form-field>
+      </section>
+    </form>
+    <span *ngIf="form.valid && !form.pristine" class="mat-label other-label pointer" style="margin-left: 10px;"
+      (click)="add()"><span class="material-icons" style="color: green;">add_circle</span></span>
+    <span *ngIf="!form.valid || form.pristine" class="mat-label other-label pointer" style="margin-left: 10px;"><span
+        class="material-icons" style="color: lightpink;">add_circle</span></span>
+    <span class="mat-label other-label pointer" (click)="toggleForm()"><span class="material-icons">cancel</span></span>
+  </div>
+
+
+  <div *ngIf="hideForm">
+    <div *ngIf="rolePlayerContacts">
+      <div *ngIf="rolePlayerContacts.length <= 0">
+        <br />
+        <label class="mat-label other-label"><i>No email addresses have been added...</i><span
+            class="mat-label other-label pointer" (click)="toggleForm()"><span
+              class="material-icons">add_circle</span></span></label><br /><br />
+      </div>
+  
+      <div *ngIf="rolePlayerContacts.length > 0">
+        <label class="mat-label other-label grey-lable-button"><i>Add email address...</i><span
+            class="mat-label other-label pointer" (click)="toggleForm()"><span
+              class="material-icons">add_circle</span></span></label><br />
+      </div>
+  
+      <div *ngIf="rolePlayerContacts.length > 0" class="scrollTable">
+        <table class="altRowTable" style="width:100%;">
+          <tr>
+            <th>Selected ?</th>
+            <th>Contact Name</th>
+            <th>Communication Type</th>
+            <th>Contact</th>
+          </tr>
+          <tr *ngFor="let contact of rolePlayerContacts">
+            <td>
+              <mat-checkbox (change)="selected(contact)"></mat-checkbox>
+            </td>
+  
+            <td>{{contact.firstname}} {{contact.surname}}</td>
+  
+            <td *ngIf="contact.communicationType == 1"><span class="material-icons">email</span> Email<span
+              *ngIf="contact.isPreferred"> <span class="material-icons" style="color: rgb(214, 214, 0);">
+                star_rate
+              </span>(preferred)</span></td>
+          <td *ngIf="contact.communicationType == 2"><span class="material-icons">phone</span> Phone<span
+              *ngIf="contact.isPreferred"> (<span class="material-icons" style="color: rgb(214, 214, 0);">
+                star_rate
+              </span> preferred)</span></td>
+          <td *ngIf="contact.communicationType == 3"><span class="material-icons">sms</span> SMS<span
+              *ngIf="contact.isPreferred"> (<span class="material-icons" style="color: rgb(214, 214, 0);">
+                star_rate
+              </span> preferred)</span></td>
+          <td *ngIf="contact.communicationType == 4"><span class="material-icons">local_post_office</span> Post<span
+              *ngIf="contact.isPreferred"> (<span class="material-icons" style="color: rgb(214, 214, 0);">
+                star_rate
+              </span> preferred)</span></td>
+
+            <td *ngIf="contact.communicationType == 1">{{contact.emailAddress}}</td>
+            <td *ngIf="contact.communicationType != 1">{{contact.contactNumber}}</td>
+  
+          </tr>
+        </table>
+      </div>
+  
+      <div class="form-group-button mat-form-button">
+        <div class="form-buttons">
+          <button [disabled]="selectedRolePlayerContacts.length <= 0" (click)="submit()" class="button float-button submit-button"><span
+              class="material-icons">send</span> Send</button>
+          <button (click)="cancel()" class="button float-button submit-button">Cancel</button>
+        </div>
+      </div>
+    </div>
+  

@@ -1,0 +1,167 @@
+<div *ngIf="isAuthorized; else notAuthorized">
+  <form [formGroup]="form" novalidate>
+    <mat-form-field [floatLabel]="'never'">
+
+      <input matInput maxlength="50" formControlName="filterAccount" id="filterAccount" formControlName="filterAccount"
+        #filter width="300" minLength="3" (keyup)="searchCommissionAccounts($event)"
+        matTooltip="Search Accounts by Broker Name or by Broker Juristic Name" matTooltipShowDelay="1000">
+
+      <mat-icon class="search-icon" (click)="searchCommissionAccounts($event)" matSuffix>search</mat-icon>
+      <mat-error *ngIf="form.get('filterAccount').hasError('minlength')">
+        Search string must be at least <strong>three characters</strong>
+      </mat-error>
+      <mat-placeholder class="placeholder">Search Accounts by Broker Name or by Broker Juristic Name
+      </mat-placeholder>
+    </mat-form-field>
+
+  </form>
+  <div *ngIf="isLoading">
+    <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+    <label class="mat-label other-label"><i>Loading accounts...please wait</i></label>
+  </div>
+  <section>
+    <div *ngIf="datasource.data.length > 0">
+      <div class="mat-container mat-elevation-z8 table-container-div">
+        <div class="table-div" [hidden]="!(datasource.data.length > 0)">
+            <mat-table #table [dataSource]="datasource" matSort>
+
+              <ng-container matColumnDef="accountName">
+                <mat-header-cell *matHeaderCellDef mat-sort-header>Name</mat-header-cell>
+                <mat-cell *matCellDef="let row"> {{row.accountName}} </mat-cell>
+                <mat-footer-cell *matFooterCellDef></mat-footer-cell>
+              </ng-container>
+
+              <ng-container matColumnDef="totalPendingRelease">
+                <mat-header-cell *matHeaderCellDef mat-sort-header>Current</mat-header-cell>
+                <mat-cell *matCellDef="let row">
+                  <a *ngIf="row.totalPendingRelease != 0;else noTotalPendingRelease" role="button"
+                    (click)="getCommissionsByAccount(row.accountTypeId,row.accountId,1)"
+                    class="link-edit">{{row.totalPendingRelease|number:'1.2-2'}}
+                  </a>
+                <ng-template #noTotalPendingRelease>
+                  <span>{{row.totalPendingRelease|number:'1.2-2'}}</span>
+                </ng-template>
+                </mat-cell>
+                <mat-footer-cell *matFooterCellDef>
+                  {{calculateTotalPendingRelease() |number:'1.2-2'}}
+                </mat-footer-cell>
+              </ng-container>
+
+              <ng-container matColumnDef="totalSubmitted">
+                <mat-header-cell *matHeaderCellDef mat-sort-header>Released</mat-header-cell>
+                <mat-cell *matCellDef="let row">
+                  <a  *ngIf="row.totalSubmitted != 0;else nototalSubmitted" role="button"
+                    (click)="getCommissionsByAccount(row.accountTypeId,row.accountId,2)"
+                    class="link-edit">{{row.totalSubmitted|number:'1.2-2'}}
+                  </a>
+                <ng-template #nototalSubmitted>
+                  <span>{{row.totalSubmitted|number:'1.2-2'}}</span>
+                </ng-template>
+                </mat-cell>
+                <mat-footer-cell *matFooterCellDef>
+                  {{calculateTotalSubmitted() |number:'1.2-2'}}
+                </mat-footer-cell>
+              </ng-container>
+
+              <ng-container matColumnDef="totalPaid">
+                <mat-header-cell *matHeaderCellDef mat-sort-header>Paid</mat-header-cell>
+                <mat-cell *matCellDef="let row" >
+                  <a *ngIf="row.totalPaid != 0;else noTotalPaid"
+                      role="button" (click)="getCommissionsByAccount(row.accountTypeId,row.accountId,3)"
+                      class="link-edit">{{row.totalPaid|number:'1.2-2'}}
+                  </a>
+                <ng-template #noTotalPaid>
+                  <span>{{row.totalPaid|number:'1.2-2'}}</span>
+                </ng-template>
+                </mat-cell>
+                <mat-footer-cell *matFooterCellDef>
+                    {{calculateTotalPaid() |number:'1.2-2'}}
+                </mat-footer-cell>
+              </ng-container>
+
+              <ng-container matColumnDef="totalWithHeld">
+                <mat-header-cell *matHeaderCellDef mat-sort-header>WithHeld</mat-header-cell>
+                <mat-cell *matCellDef="let row">
+                  <a  *ngIf="row.totalWithHeld != 0;else noTotalWithHeld" role="button"
+                      (click)="getCommissionsByAccount(row.accountTypeId,row.accountId,4)"
+                      class="link-edit">{{row.totalWithHeld|number:'1.2-2'}}
+                  </a>
+                <ng-template #noTotalWithHeld>
+                  <span>{{row.totalWithHeld|number:'1.2-2'}}</span>
+                </ng-template>
+                </mat-cell>
+                <mat-footer-cell *matFooterCellDef>
+                    {{calculateTotalWithheld() |number:'1.2-2'}}
+                </mat-footer-cell>
+              </ng-container>
+
+              <ng-container matColumnDef="totalRejected">
+                  <mat-header-cell *matHeaderCellDef mat-sort-header>Bank Rejection</mat-header-cell>
+                  <mat-cell *matCellDef="let row">
+                    <a *ngIf="row.totalRejected != 0;else noTotalRejected" role="button"
+                      (click)="getCommissionsByAccount(row.accountTypeId,row.accountId,5)"
+                      class="link-edit">{{row.totalRejected|number:'1.2-2'}}
+                    </a>
+                  <ng-template #noTotalRejected>
+                    <span>{{row.totalRejected|number:'1.2-2'}}</span>
+                  </ng-template>
+                  </mat-cell>
+                  <mat-footer-cell *matFooterCellDef>
+                    {{calculateTotalRejected() |number:'1.2-2'}}
+                  </mat-footer-cell>
+              </ng-container>
+
+              <ng-container matColumnDef="clawBackAccountBalance">
+                  <mat-header-cell *matHeaderCellDef mat-sort-header>Claw Back Balance</mat-header-cell>
+                  <mat-cell *matCellDef="let row">
+                    <a role="button" (click)="getCommissionClawBackMovementByAccount(row.accountTypeId,row.accountId)"
+                      class="link-edit">{{row.clawBackAccountBalance|number:'1.2-2'}}
+                    </a>
+                  </mat-cell>
+                  <mat-footer-cell *matFooterCellDef>
+                      {{calculateclawBackAccountBalance() |number:'1.2-2'}}
+                  </mat-footer-cell>
+              </ng-container>
+
+              <ng-container matColumnDef="actions">
+                <mat-header-cell *matHeaderCellDef mat-sort-header></mat-header-cell>
+                <mat-cell *matCellDef="let row" [matMenuTriggerFor]="menu">
+                <span class="material-icons pointer right">more_vert</span>
+                <mat-menu #menu="matMenu">
+                <button mat-menu-item *ngFor="let menu of menus" (click)="onMenuItemClick(row, menu)"
+                  disabled={{menu.disable}}>{{menu.title}}
+                </button>
+                </mat-menu>
+                </mat-cell>
+                <mat-footer-cell *matFooterCellDef></mat-footer-cell>
+              </ng-container>
+
+              <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
+              <mat-row *matRowDef="let row; columns: displayedColumns;"></mat-row>
+              <mat-footer-row *matFooterRowDef="displayedColumns"></mat-footer-row>
+      </mat-table>
+
+    <mat-paginator #paginator
+      [hidden]="datasource.data.length== 0"
+      [pageSize]="10"
+      [pageSizeOptions]="[5, 10, 25, 100]"
+      [showFirstLastButtons]="true">
+    </mat-paginator>
+  </div>
+</div>
+</div>
+
+<div class= "no-accounts-div" [hidden]="datasource.data.length > 0 || isLoading">
+  <span class="grey site-font">No commission accounts exist.</span>
+</div>
+  </section>
+</div>
+<ng-template #notAuthorized>
+  <div>
+    <br />
+    <div class="wizard-permissions-error">You do not have sufficient permissions to view commission accounts.</div>
+    <div (click)="navigateBack()" class="form-buttons submit-button">
+      <button type="button" class="button float-button">Back</button>
+    </div>
+  </div>
+</ng-template>

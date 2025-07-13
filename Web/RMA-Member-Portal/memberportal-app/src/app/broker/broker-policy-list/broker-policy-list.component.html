@@ -1,0 +1,99 @@
+<div>
+  <nav class="innertop-nav">
+    <button mat-button class="menuBtn" [matMenuTriggerFor]="menu4">
+      <h3 class="ArabicActions">Broker Actions</h3>
+    </button>
+    <mat-menu #menu4="matMenu" [overlapTrigger]="false">
+      <button mat-menu-item class="menuBtn" [routerLink]="['/broker-premium-listing']">Upload Premium Listing</button>
+      <button mat-menu-item class="menuBtn" [routerLink]="['/create-case']">Create Case</button>
+      <button mat-menu-item class="menuBtn" [routerLink]="['/case-list']">Case List</button>
+    </mat-menu>
+  </nav>
+</div>
+<br />
+<!-- <div [hidden]="hide">
+  <h3 class="heading">{{message}}</h3>
+</div> -->
+
+<policy-list></policy-list>
+
+<!-- <div [hidden]="!hide" class="title">
+  <h1 class="Arabic">Policy List</h1>
+  <div *ngIf="isLoading$ | async" class="menu-container" style="margin-top:12px">
+    <div class="loader">
+      <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+      <i>loading policies...please wait</i>
+    </div>
+  </div>
+</div> -->
+
+<div class="tableContent">
+  <mat-card-content [hidden]="(isLoading$ | async)">
+    <hr />
+    <div style="display:inline-block;margin-left:15px ">
+      <h3 class="ArabicH3">Download Commission Statement</h3>
+      <div class="form">
+        <form>
+          <section>
+            <mat-form-field class="dateControls">
+              <label>From</label>
+              <input matInput [matDatepicker]="startDatePicker" date="true" [value]="startDt.value" time="false"
+                (ngModelChange)="startDateChange($event)" [formControl]="startDt" [max]="maxDate" readonly>
+              <mat-datepicker-toggle matSuffix class="picker-toggle" [for]="startDatePicker">
+              </mat-datepicker-toggle>
+              <mat-datepicker #startDatePicker touchUi="true" ng-model-options="{ timezone: 'sast' }">
+              </mat-datepicker>
+            </mat-form-field>
+            <mat-form-field class="mat-form-field-right dateControls">
+              <label>To</label>
+              <input matInput [matDatepicker]="endDatePicker" date="true" [value]="endDt.value" time="false"
+                (ngModelChange)="endDateChange($event)" [formControl]="endDt" [max]="maxDate" readonly>
+              <mat-datepicker-toggle matSuffix class="picker-toggle" [for]="endDatePicker">
+              </mat-datepicker-toggle>
+              <mat-datepicker #endDatePicker touchUi="true" ng-model-options="{ timezone: 'sast' }">
+              </mat-datepicker>
+            </mat-form-field>
+          </section>
+        </form>
+      </div>
+      <table>
+        <tr>
+          <td style="background-color: whitesmoke !important;">
+            <span class="material-icons viewIcon" (click)="openCommissionDialog()" matTooltip="View">pageview</span>
+            <span class="material-icons viewIcon" (click)="downloadReport()" matTooltip="Download">archive</span>
+          </td>
+          <td style="background-color: whitesmoke !important;">
+            <mat-radio-group aria-labelledby="reportformat-radio-group-label" class="reportformat-radio-group"
+              [(ngModel)]="selectedReportFormat" (change)="reportFormatChange($event)">
+              <mat-radio-button class="reportformat-radio-button" *ngFor="let reportFormat of reportFormats"
+                [value]="reportFormat">
+                {{reportFormat}} &nbsp;&nbsp;
+              </mat-radio-button>
+            </mat-radio-group>
+            <label class="radioLabel">{{downloadMessage}}</label>
+          </td>
+        </tr>
+        <tr *ngIf="isDownloading">
+          <td colspan="2" style="background-color: whitesmoke !important;">
+            <div>
+              <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+              <label class="mat-label other-label">
+                <i>
+                  downloading {{selectedReportFormat}} Commission Statement list report...
+                </i>
+              </label>
+            </div>
+          </td>
+        </tr>
+      </table>
+    </div>
+    <div [hidden]="true">
+      <ssrs-reportviewer [reportserver]="reportServerAudit" [reporturl]="reportUrlAudit"
+        [showparameters]="showParametersAudit" [parameters]="parametersAudit" [language]="languageAudit"
+        [width]="widthAudit" [height]="heightAudit" [toolbar]="toolbarAudit" [format]="selectedReportFormat"
+        [isDownload]="isDownload" [reportName]="reportName">
+      </ssrs-reportviewer>
+    </div>
+
+  </mat-card-content>
+</div>

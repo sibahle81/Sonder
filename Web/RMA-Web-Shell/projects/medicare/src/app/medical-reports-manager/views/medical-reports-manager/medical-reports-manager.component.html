@@ -1,0 +1,137 @@
+<div *ngIf="isLoading">
+    <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+    <span *ngIf="isLoading" class="site-font grey" style="margin-top: 15px;"><i>Loading data, please
+            wait...</i></span>
+</div>
+<div>
+    <mat-card>
+      <mat-card-header>
+          <mat-card-title class="wizard-font card-title grey">
+              <h1></h1>
+              <h3>{{reportTitle}}</h3>
+          </mat-card-title>
+      </mat-card-header>
+      <mat-card-content> 
+        <form [formGroup]="form" class="mat-container details-form" novalidate> 
+          <div>
+            <section>
+                <div>
+                    <div><label class="mat-label other-label mandatory-field">Report Type</label></div>
+                    <mat-form-field class="mat-form-field">
+                        <mat-select name="medicalReportTypes" id="medicalReportTypes"
+                            formControlName="medicalReportTypes"
+                            (selectionChange)="medicalReportTypeChanged($event)">
+                            <mat-option *ngFor="let medicalReportTypes of medicalReportTypes"
+                                [value]="medicalReportTypes">
+                                {{medicalReportTypes.name}}
+                            </mat-option>
+                        </mat-select>
+                    </mat-form-field>
+                </div>
+            </section>
+          </div>
+          <div>
+            <div class="form">
+              <section [hidden]='!isDateFilterVisble'>
+                  <div class="field-left">
+                      <div><label class="mat-label other-label mandatory-field">Start Date</label></div>
+                      <mat-form-field class="mat-form-field">
+                          <input matInput [matDatepicker]="startDatePicker" date="true" [value]="startDt.value"
+                              time="false" [formControl]="startDt" readonly
+                              (ngModelChange)="startDateChange($event)" [max]="startMaxDate">
+                          <mat-datepicker-toggle matSuffix class="picker-toggle" [for]="startDatePicker">
+                          </mat-datepicker-toggle>
+                          <mat-datepicker #startDatePicker touchUi="true" ng-model-options="{ timezone: 'sast' }">
+                          </mat-datepicker>
+                      </mat-form-field>
+                  </div>
+                  <div class="field-right">
+                      <div><label class="mat-label other-label mandatory-field">End Date</label></div>
+                      <mat-form-field class="mat-form-field">
+                          <input matInput [matDatepicker]="endDatePicker" date="true" [value]="endDt.value"
+                              time="false" [formControl]="endDt" readonly (ngModelChange)="endDateChange($event)">
+                          <mat-datepicker-toggle matSuffix class="picker-toggle" [for]="endDatePicker">
+                          </mat-datepicker-toggle>
+                          <mat-datepicker #endDatePicker touchUi="true" ng-model-options="{ timezone: 'sast' }">
+                          </mat-datepicker>
+                      </mat-form-field>
+                  </div>
+              </section>
+              
+            <section [hidden]='!completedServicesReportFilter'>
+                <div [hidden]='!isServiceYearVisible' class="field-left">
+                    <div><label class="mat-label other-label mandatory-field">Service Year</label></div>
+                    <mat-form-field class="mat-form-field">
+                        <input matInput id="serviceYear" name="serviceYear" formControlName="serviceYear">
+                    </mat-form-field>
+                </div>
+                <div class="field-right">
+                    <div><label class="mat-label other-label field-container-left">PMP Region</label></div>
+                    <mat-form-field class="mat-form-field">
+                        <mat-select name="pmpRegion" id="pmpRegion"formControlName="pmpRegion">
+                            <mat-option *ngFor="let pmpRegionDb of pmpRegions" [value]="pmpRegionDb.id">
+                                {{pmpRegionDb.name}}
+                            </mat-option>
+                        </mat-select>
+                    </mat-form-field>
+                </div>
+            </section>
+            <section [hidden]='!completedServicesReportFilter'>
+              <div class="field-left">
+                  <div><label class="mat-label other-label mandatory-field">Diagnostic Group</label></div>
+                  <mat-form-field class="mat-form-field">
+                    <mat-select name="drgGroup" id="drgGroup"formControlName="drgGroup">
+                        <mat-option *ngFor="let diagnosticGroup of diagnosticGroups" [value]="diagnosticGroup.icd10DiagnosticGroupId">
+                            {{diagnosticGroup.code}}
+                        </mat-option>
+                    </mat-select>
+                </mat-form-field>
+              </div>
+          </section>
+            </div>
+         </div>
+      
+      <section>
+        <div class="ViewButton">
+            <div class="mat-form-field">
+                <div class="form-buttons" (click)="viewReport()">
+                    <button class="button submit-button pad-left">View</button>
+                </div>
+            </div>
+        </div>
+    </section>
+  
+    <div class="form">
+      <section>
+          <table>
+              <tr>
+                  <td>
+                      <input type="image" alt="export" (click)="exportReport()"
+                          src="/assets/images/downloads-icon.png" width="40" height="40" />
+                  </td>
+                  <td>
+                      <mat-radio-group aria-labelledby="reportformat-radio-group-label"
+                          class="reportformat-radio-group" (change)="reportFormatChange($event)">
+                          <mat-radio-button class="reportformat-radio-button"
+                              *ngFor="let reportFormat of reportFormats" [value]="reportFormat">
+                              {{reportFormat}} &nbsp;&nbsp;
+                          </mat-radio-button>
+                      </mat-radio-group>
+                  </td>
+              </tr>
+          </table>
+      </section>
+  </div>
+  <div [hidden]="!showReport">
+    <br>
+    <ssrs-reportviewer [reportserver]="reportServer" [reporturl]="reportUrl"
+        [showparameters]="showParameters" [format]="selectedReportFormat"
+        [extension]="extension" [parameters]="parameters" [language]="language"
+        [width]="width" [height]="height" [toolbar]="toolbar" [isDownload]="isDownload">
+    </ssrs-reportviewer>
+  </div>
+  
+        </form> 
+      </mat-card-content>
+    </mat-card>
+</div>

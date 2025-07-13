@@ -1,0 +1,9 @@
+<span *ngIf="isLoading$ | async" class="material-icons rotating" matTooltip="loading lead">
+    loop
+</span>
+
+<div *ngIf="!(isLoading$ | async)">
+    <div *ngIf="lead">
+        <b matTooltip="lead code">({{lead.code}})</b> {{lead.displayName}}
+    </div>
+</div>

@@ -1,0 +1,109 @@
+<div *ngIf="!showForm" class="menu-bar">
+    <span class="material-icons">
+        work
+    </span>
+    Employee Benefits
+
+    <span *ngIf="!showForm" class="material-icons pointer right pulse" (click)="add()" matTooltip="add">
+        add
+    </span>
+</div>
+
+
+<person-employment-benefit-details-dialog *ngIf="showForm"  [employerRolePlayer]="employerRolePlayer" [employeeRolePlayer]="employeeRolePlayer"
+    [personEmployment]="personEmployment" [employeeInsuredBenefitModel]="employeeInsuredBenefit" [isReadOnly]="isReadOnly" [isEdit]="isEdit" (closeEmit)="close($event)" (saveEmit)="save($event)"></person-employment-benefit-details-dialog>
+
+<div>
+    <mat-card>
+      <mat-accordion>
+        <ng-container > 
+          <mat-expansion-panel *ngFor="let group of groupedInsuredBenefitSumAssured">
+            <mat-expansion-panel-header>
+              <mat-panel-title>
+                {{ group.group }}  - ({{getRelation(group.data[0].rolePlayerTypeId)}})
+              </mat-panel-title>
+            </mat-expansion-panel-header>
+            <mat-table #table [dataSource]="group.data" matSort id="tblData" (matSortChange)="getData()">
+                <ng-container matColumnDef="policyName">
+                    <mat-header-cell *matHeaderCellDef mat-sort-header> Policy </mat-header-cell>
+                    <mat-cell *matCellDef="let element">{{ element.policyName }}</mat-cell>
+                </ng-container>
+
+                <ng-container matColumnDef="benefitName">
+                    <mat-header-cell *matHeaderCellDef mat-sort-header> Benefit </mat-header-cell>
+                    <mat-cell *matCellDef="let element">{{ element.benefitName }}</mat-cell>
+                </ng-container>
+
+                <ng-container matColumnDef="effectiveDate">
+                    <mat-header-cell *matHeaderCellDef mat-sort-header> Effective Date </mat-header-cell>
+                    <mat-cell *matCellDef="let element">{{ setEffectiveDate(element.personInsuredCategoryEffectiveDate, element.insuredSumAssuredEffectiveDate) | date: "yyyy-MM-dd" }}</mat-cell>
+                </ng-container>
+
+                <ng-container matColumnDef="dateJoinedPolicy">
+                    <mat-header-cell *matHeaderCellDef mat-sort-header> Date Joined Policy </mat-header-cell>
+                    <mat-cell *matCellDef="let element">{{element.dateJoinedPolicy ? (element.dateJoinedPolicy | date: "yyyy-MM-dd") : ''}}</mat-cell>
+                </ng-container>
+
+                <ng-container matColumnDef="annualSalary">
+                    <mat-header-cell *matHeaderCellDef mat-sort-header> Annual Salary </mat-header-cell>
+                    <mat-cell *matCellDef="let element">{{ element.annualSalary }}</mat-cell>
+                </ng-container>
+
+                <ng-container matColumnDef="benefitCategoryName">
+                    <mat-header-cell *matHeaderCellDef mat-sort-header> Benefit Category </mat-header-cell>
+                    <mat-cell *matCellDef="let element">{{ element.benefitCategoryName }}</mat-cell>
+                </ng-container>
+
+                <ng-container matColumnDef="potentialCoverAmount">
+                    <mat-header-cell *matHeaderCellDef mat-sort-header> Potential Basic Cover </mat-header-cell>
+                    <mat-cell *matCellDef="let element">{{ element.potentialCoverAmount }}</mat-cell>
+                </ng-container>
+
+                <ng-container matColumnDef="potentialWaiverAmount">
+                    <mat-header-cell *matHeaderCellDef mat-sort-header> Potential Waiver </mat-header-cell>
+                    <mat-cell *matCellDef="let element">{{ element.potentialWaiverAmount }}</mat-cell>
+                </ng-container>
+
+                <ng-container matColumnDef="actualCoverAmount">
+                    <mat-header-cell *matHeaderCellDef mat-sort-header> Actual Basic Cover </mat-header-cell>
+                    <mat-cell *matCellDef="let element">{{ element.actualCoverAmount }}</mat-cell>
+                </ng-container>
+
+                <ng-container matColumnDef="actualWaiverAmount">
+                    <mat-header-cell *matHeaderCellDef mat-sort-header> Actual Waiver </mat-header-cell>
+                    <mat-cell *matCellDef="let element">{{ element.actualWaiverAmount }}</mat-cell>
+                </ng-container>
+
+                <ng-container matColumnDef="medicalPremWaiverAmount">
+                    <mat-header-cell *matHeaderCellDef mat-sort-header> Medical Prem Waiver </mat-header-cell>
+                    <mat-cell *matCellDef="let element">{{ element.medicalPremWaiverAmount }}</mat-cell>
+                </ng-container>
+
+                <!-- Actions -->
+                <ng-container matColumnDef="actions">
+                    <mat-header-cell *matHeaderCellDef>Actions</mat-header-cell>
+                    <mat-cell *matCellDef="let row">
+                        <span (click)="view(row)" class="material-icons icn pointer icn-button" matTooltip="view">
+                            visibility
+                        </span>
+
+                        <span (click)="edit(row)" class="material-icons icn pointer icn-button" matTooltip="edit">
+                            settings
+                        </span>
+                    </mat-cell>
+                </ng-container>
+
+                <mat-header-row *matHeaderRowDef="getDisplayedColumns()"></mat-header-row>
+                <mat-row
+                    [ngClass]="selectedEmployment && (row.personEmpoymentId == selectedEmployment.personEmpoymentId) ? 'highlight' : ''"
+                    *matRowDef="let row; columns: getDisplayedColumns();"></mat-row>
+            </mat-table> 
+          </mat-expansion-panel>
+        </ng-container> 
+      </mat-accordion>
+      <div
+            *ngIf="!(dataSource.data && dataSource.data.length > 0 || (isLoading$ | async))">
+            <label class="mat-label other-label"><i>No employee benefits categories found...</i></label>
+        </div>
+    </mat-card>
+</div>

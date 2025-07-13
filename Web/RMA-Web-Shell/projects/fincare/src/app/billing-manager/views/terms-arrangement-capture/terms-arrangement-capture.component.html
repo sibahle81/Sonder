@@ -1,0 +1,268 @@
+
+<div [hidden]="datasourceProducts.data.length === 0" class="table-container">
+  <br />
+  <mat-accordion>
+      <mat-expansion-panel expanded="true" class="searchBgColor">
+          <mat-expansion-panel-header>
+              <mat-panel-title>
+                  <p class="labelParagraph">Debtor(s) and product(s) that will form part of arrangement</p>
+              </mat-panel-title>
+          </mat-expansion-panel-header>
+          <mat-table #table [dataSource]="datasourceProducts">
+              <ng-container matColumnDef="productName">
+                  <mat-header-cell *matHeaderCellDef>Product</mat-header-cell>
+                  <mat-cell *matCellDef="let row">{{row.productOptionName}}</mat-cell>
+                  <mat-footer-cell *matFooterCellDef></mat-footer-cell>
+              </ng-container>
+              <ng-container matColumnDef="finPayenumber">
+                  <mat-header-cell *matHeaderCellDef>Debtor No.</mat-header-cell>
+                  <mat-cell *matCellDef="let row">{{row.finPayenumber}}</mat-cell>
+                  <mat-footer-cell *matFooterCellDef class="footerBold">Total</mat-footer-cell>
+              </ng-container>
+              <ng-container matColumnDef="amount">
+                  <mat-header-cell *matHeaderCellDef>Total</mat-header-cell>
+                  <mat-cell *matCellDef="let row" class="right-aligned-amounts">{{row.contractAmount |
+                      currency:'':''}}</mat-cell>
+                  <mat-footer-cell *matFooterCellDef
+                      class="footerBold right-aligned-amounts">{{getProductTotals() |
+                      currency:'':''}}</mat-footer-cell>
+              </ng-container>
+              <ng-container matColumnDef="actions">
+                  <mat-header-cell *matHeaderCellDef>Action</mat-header-cell>
+                  <mat-cell *matCellDef="let row">
+                      <a (click)="removeProductOption(row)" role="button" class="link-edit">
+                          <span matTooltip="remove" class="material-icons icn pointer">
+                              delete
+                          </span>
+                      </a>
+                  </mat-cell>
+                  <mat-footer-cell *matFooterCellDef></mat-footer-cell>
+              </ng-container>
+              <mat-header-row *matHeaderRowDef="displayedColumnsProducts"></mat-header-row>
+              <mat-row *matRowDef="let row; columns: displayedColumnsProducts;"></mat-row>
+              <mat-footer-row class="sticky-footer"
+                  *matFooterRowDef="displayedColumnsProducts"></mat-footer-row>
+          </mat-table>
+          <mat-paginator #paginator [pageIndex]="0" [pageSize]="5" [pageSizeOptions]="[5, 10, 25, 100]">
+          </mat-paginator>
+      </mat-expansion-panel>
+  </mat-accordion>
+</div>
+<br />
+<form [formGroup]="form" class="mat-container details-form" novalidate>
+  <mat-card class="card">
+    <mat-card-content>
+      <section>
+        <div>
+          <mat-form-field class="mat-form-field">
+            <label class="mat-label other-label">Member Name</label>
+            <input matInput formControlName="displayName" name="displayName" id="displayName" />
+          </mat-form-field>
+        </div>
+        <div *ngIf="(isLoadingFixedPayment$ | async)" class="mat-form-field-right">
+          <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+          <label class="mat-label other-label"><i>Calculating Fixed Payment...please wait...</i></label>
+      </div>
+        <div>
+          <mat-form-field class="mat-form-field">
+            <label class="mat-label other-label">Term Arrangement Total</label>
+            <input matInput formControlName="outstandingAmount" name="outstandingAmount" id="outstandingAmount" />
+          </mat-form-field>
+          <mat-form-field class="mat-form-field-right">
+            <label class="mat-label other-label">Term Fixed Installments</label>
+            <input matInput formControlName="installmentAmount" name="installmentAmount" id="installmentAmount" />
+          </mat-form-field>
+        </div>
+      </section>
+      <section>
+        <mat-form-field class="mat-form-field">
+          <label class="mat-label other-label">Payment Frequency</label>
+          <mat-select [(value)]="selectedPaymentFrequencyId" name="paymentFrequency" id="paymentFrequency"
+            formControlName="paymentFrequency" (selectionChange)="paymentFrequencyChanged()">
+            <mat-option *ngFor="let paymentFrequency of paymentFrequencies" [value]="paymentFrequency.id">
+              {{formatLookup(paymentFrequency.name)}}
+            </mat-option>
+            <mat-error *ngIf="form.get('paymentFrequency').hasError('required')">
+              Payment Frequency is <strong>required</strong>
+            </mat-error>
+          </mat-select>
+        </mat-form-field>       
+        <mat-form-field class="mat-form-field-right">
+          <label class="mat-label other-label">Payment Schedule Type</label>
+          <mat-select [(value)]="selectedPaymentScheduleId" name="paymentSchedule" id="paymentSchedule"
+            formControlName="paymentSchedule" (selectionChange)="paymentScheduleChanged()">
+            <mat-option *ngFor="let paymentSchedule of paymentSchedules" [value]="paymentSchedule.id">
+              {{formatLookup(paymentSchedule.name)}}
+            </mat-option>
+          </mat-select>
+        </mat-form-field>
+      </section>    
+      <section>
+        <mat-form-field class="mat-form-field ">
+          <label class="mat-label other-label">Number Of Payments</label>
+          <input matInput formControlName="numberOfPayments" type="number" min="0" name="numberOfPayments" (input)="onNumberOfPaymentsChanged($event.target.value)"
+            id="numberOfPayments" />
+          <mat-error *ngIf="form.get('numberOfPayments').hasError('required')">
+            Number Of Payments is <strong>required</strong>
+          </mat-error>
+        </mat-form-field>
+        <mat-form-field class="mat-form-field-right">
+          <label class="mat-label other-label">Number Of Months</label>
+          <input matInput formControlName="numberOfMonths" type="number" min="0" name="numberOfMonths" (input)="onNumberOfMonthsChanged($event.target.value)"
+            id="numberOfMonths" />
+        </mat-form-field>
+      </section> 
+      <section>
+        <section>
+          <section>          
+            <mat-form-field class="mat-form-field">
+              <label class="mat-label other-label">Arrangement Start Date</label>
+              <input [matTooltip]="'Format: mm/dd/yyyy'" matInput formControlName="termStartDate"  [matDatepicker]="termStartDate" id="termStartDate" 
+               readonly [min]="minDate" name="termStartDate"  date="true" time="false" >
+              <mat-datepicker-toggle matSuffix [for]="termStartDate"  ></mat-datepicker-toggle>
+              <mat-datepicker touchUi="true" #termStartDate class="picker-toggle" ></mat-datepicker>
+              <mat-error *ngIf="form.get('termStartDate').hasError('required')">
+                Term start date is <strong>required</strong>
+              </mat-error>    
+           </mat-form-field>
+          <mat-form-field class="mat-form-field-right">
+            <label class="mat-label other-label">Payment Method</label>
+            <mat-select [(value)]="selectedPaymentMethodId" name="paymentMethod" id="paymentMethod"
+              formControlName="paymentMethod" (selectionChange)="paymentMethodChanged($event.value)">
+              <mat-option *ngFor="let paymentMethod of paymentMethods" [value]="paymentMethod.id">
+                {{formatLookup(paymentMethod.name)}}
+              </mat-option>
+            </mat-select>
+            <mat-error *ngIf="form.get('paymentMethod').hasError('required')">
+              Payment Method is <strong>required</strong>
+            </mat-error>
+          </mat-form-field>
+          </section>
+          <button *ngIf="!hidePaymentSchedule"  type="button"
+          class="button submit-button" (click)="addScheduleLineItem()">Flexible Schedule<span
+          class="material-icons">add</span></button>
+        </section>
+        <section>
+          <mat-form-field class="mat-form-field">
+            <label class="mat-label other-label">Installment Day</label>
+            <mat-select [(value)]="selectedInstallmentDay" name="installmentDay" id="installmentDay"
+              formControlName="installmentDay">
+              <mat-option *ngFor="let installmentDay of installmentDays" [value]="installmentDay.id">
+                {{formatLookup(installmentDay.name)}}
+              </mat-option>
+            </mat-select>
+            <mat-error *ngIf="form.get('installmentDay').hasError('required')">
+              Installment Day is <strong>required</strong>
+            </mat-error>
+          </mat-form-field>
+        </section>
+        <div [hidden]="datasourceSchedules.data.length === 0" class="table-container">
+          <p class="labelParagraph">Term Arrangement Payment Schedule</p>
+            <mat-table #table [dataSource]="datasourceSchedules" matSort>
+                <ng-container matColumnDef="month">
+                    <mat-header-cell *matHeaderCellDef mat-sort-header>Month</mat-header-cell>
+                    <mat-cell *matCellDef="let row">{{row.month}}</mat-cell>
+                    <mat-footer-cell *matFooterCellDef>Total</mat-footer-cell>
+                </ng-container>  
+                <ng-container matColumnDef="amount">
+                  <mat-header-cell *matHeaderCellDef mat-sort-header>Amount</mat-header-cell>
+                  <mat-cell *matCellDef="let row">{{row.amount}}</mat-cell>
+                  <mat-footer-cell *matFooterCellDef>{{ getFlexibleScheduleTotal()}}</mat-footer-cell>
+              </ng-container> 
+                <ng-container matColumnDef="actions">
+                  <mat-header-cell *matHeaderCellDef>Action</mat-header-cell>
+                  <mat-cell *matCellDef="let row">
+                    <a (click)="removeSchedule(row)" role="button" class="link-edit">
+                      <span matTooltip="remove" class="material-icons icn pointer">
+                        delete
+                      </span>
+                    </a>                
+                  </mat-cell>
+                  <mat-footer-cell *matFooterCellDef></mat-footer-cell>
+                </ng-container>    
+
+                <mat-header-row *matHeaderRowDef="displayedColumnsSchedule"></mat-header-row>
+                <mat-row *matRowDef="let row; columns: displayedColumnsSchedule;"></mat-row>
+                <mat-footer-row class="sticky-footer" *matFooterRowDef="['month', 'amount', 'actions']"></mat-footer-row>
+
+            </mat-table>
+            <mat-paginator #paginator [pageIndex]="0" [pageSize]="5" [pageSizeOptions]="[5, 10, 25, 100]">
+            </mat-paginator>           
+          <br />
+          <br />
+        </div>
+        <br>
+        <mat-card *ngIf="showAddBanking && rolePlayer">       
+          <role-player-banking-list (rolePlayerBankingSelectedEmit)="setBankAccount($event)" [rolePlayer]="rolePlayer" [selectedRolePlayerBankingId] = 'model.rolePlayerBankingId' 
+          [isReadOnly]="inApprovalMode" [verifyAccount]="true"  [showSelectColumn]="true">
+          </role-player-banking-list>
+        </mat-card>
+      </section> 
+      <div [hidden]="datasource.data.length === 0" class="table-container">
+        <p class="labelParagraph">Subsidiaries/Debtors</p>
+          <mat-table #table [dataSource]="datasource" matSort>
+              <ng-container matColumnDef="finpayeeNumber">
+                  <mat-header-cell *matHeaderCellDef mat-sort-header>Debtor Number</mat-header-cell>
+                  <mat-cell *matCellDef="let row">{{row.finpayeeNumber}}</mat-cell>
+              </ng-container>  
+              <ng-container matColumnDef="debtorName">
+                <mat-header-cell *matHeaderCellDef mat-sort-header>Debtor Name</mat-header-cell>
+                <mat-cell *matCellDef="let row">{{row.debtorName}}</mat-cell>
+            </ng-container>
+              <ng-container matColumnDef="balance">
+                  <mat-header-cell *matHeaderCellDef mat-sort-header>Term Arrangement Amount</mat-header-cell>
+                  <mat-cell *matCellDef="let row">{{row.balance | currency:'':''}}</mat-cell>
+              </ng-container>                
+              <ng-container matColumnDef="actions">
+                <mat-header-cell *matHeaderCellDef>Action</mat-header-cell>
+                <mat-cell *matCellDef="let row">
+                  <a  (click)="removeDebtor(row)" role="button" class="link-edit">
+                    <span matTooltip="remove" class="material-icons icn pointer">
+                      delete
+                    </span>
+                  </a>                
+                </mat-cell>
+              </ng-container>              
+              <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
+              <mat-row *matRowDef="let row; columns: displayedColumns;"></mat-row>
+          </mat-table>
+          <mat-paginator #paginator [pageIndex]="0" [pageSize]="5" [pageSizeOptions]="[5, 10, 25, 100]">
+          </mat-paginator>        
+      </div>   
+      <section [hidden]="isDisabled">   
+        <br />       
+        <button class="button  submit-button" *ngIf="hidePaymentSchedule" type="button"  (click)="addSubsidiary()">Add Subsidiary</button>
+        <br />
+      </section> 
+      <section>      
+        <document-uploader [documentSet]="termsSupportingDocumentsDocSet" [systemName]="documentSystemName" [keyName]="'wizardId'"
+        [keyValue]="wizardId" 
+        (requiredDocumentsUploadedEmit)="isRequiredDocumentsUploaded($event)"></document-uploader>  
+      </section>
+      <section>
+        <section>
+          <br />
+          <a role="button" class="link-edit mat-form-field" style="cursor: pointer"
+          (click)="readTermsAndConditions()">Read Agreement T&Cs</a>
+          <mat-checkbox name="acceptAgreement" id="acceptAgreement" class="mat-form-field-right" *ngIf="hasReadTermsAndConditions |async"
+          formControlName="acceptAgreement" (change)="agreementChecked($event)">Accept Terms and Conditions
+        </mat-checkbox>        
+        </section>       
+      </section>
+      <section>
+        <br />
+        <mat-checkbox name="sendAgreementToClient" id="sendAgreementToClient" formControlName="sendAgreementToClient"
+          (change)="sendAgreementToClientChecked($event)">Send To Client
+        </mat-checkbox><br />
+      </section>
+      <section *ngIf=" noAutoApprovalReasons">
+        <p><b>Reasons not auto-approved</b></p>
+        <ul>
+          <li *ngFor="let reason of noAutoApprovalReasons">
+            {{splitPascalCaseWord(reason)}}
+          </li>
+        </ul>
+      </section>
+    </mat-card-content>
+  </mat-card>
+</form>

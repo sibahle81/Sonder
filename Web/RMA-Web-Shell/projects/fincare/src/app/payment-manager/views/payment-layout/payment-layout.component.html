@@ -1,0 +1,26 @@
+﻿<div class="content">
+  <nav active-menu>
+    <button mat-button [routerLink]="['/fincare/payment-manager']">Home</button>
+    <button [matMenuTriggerFor]="menu2" mat-button  style="width:130px !important">Payments</button>
+    <mat-menu #menu2="matMenu" [overlapTrigger]="false">     
+      <button mat-menu-item [routerLink]="['/fincare/payment-manager/payment-list']">Payment Pool</button>
+      <button *ngIf="!disable_coid_vaps_e2e_fincare" mat-menu-item [routerLink]="['/fincare/payment-manager/upload-discounts']">Upload HCP Discounts</button>   
+      <button *ngIf="!disable_coid_vaps_e2e_fincare" mat-menu-item  [routerLink]="['/fincare/payment-manager/manual-allocation-unallocated-payments']">Payment Allocations</button> 
+      <button *ngIf="!disable_coid_vaps_e2e_fincare" mat-menu-item  [routerLink]="['/fincare/payment-manager/bank-statement-report']">Bank Statements</button> 
+      <button *ngIf="!disable_coid_vaps_e2e_fincare" mat-menu-item  [routerLink]="['/fincare/payment-manager/manual-payments']">Manual Payments</button> 
+    </mat-menu>
+
+    <button *ngIf="!disable_coid_vaps_e2e_fincare" mat-button [matMenuTriggerFor]="menu1" style="width:130px !important">Commissions</button>
+    <mat-menu #menu1="matMenu" [overlapTrigger]="false">
+      <button mat-menu-item [routerLink]="['/fincare/payment-manager/broker-accounts-view']">Commission
+        Accounts</button>
+      <button mat-menu-item [routerLink]="['/fincare/payment-manager/commission-release']">Maintain Commission</button>
+      <button mat-menu-item [routerLink]="['/fincare/payment-manager/payment-recall']">Recall Commission Payments</button>
+      <button mat-menu-item [routerLink]="['/fincare/payment-manager/commission-audit-trail']">Audit Trail</button>
+    </mat-menu>
+  </nav>
+
+  <div [hidden]="loadingMessage != null || error != null" class="container-padding">
+    <router-outlet></router-outlet>
+  </div>
+</div>

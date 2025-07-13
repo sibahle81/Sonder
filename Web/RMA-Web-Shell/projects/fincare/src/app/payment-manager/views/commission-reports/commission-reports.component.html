@@ -1,0 +1,73 @@
+<mat-card style="margin: 15px 30px">
+  <mat-card-content>
+    <div *ngIf="isAuthorized; else notAuthorized">
+      <div style="width:100%">
+        <form [formGroup]="form" class="mat-container details-form" novalidate>
+          <div style="margin-bottom: 15px;">
+            <div  class="field-container" style="word-wrap: normal;">
+              <div><label class="mat-label other-label mandatory-field">Start Date</label>
+              </div>
+              <mat-form-field>
+                <input matInput [min]="minDate" formControlName="startDate" [matDatepicker]="startDate"
+                  (dateChange)="validateDates()" required>
+                <mat-datepicker-toggle matSuffix [for]="startDate"></mat-datepicker-toggle>
+                <mat-datepicker touchUi="true" #startDate></mat-datepicker>
+                <mat-error *ngIf="form.get('startDate').hasError('required')">
+                  start date is <strong>required</strong>
+                </mat-error>
+                <mat-error *ngIf="form.get('startDate').hasError('min')">
+                  start date cannot be <strong>after</strong> the end date
+                </mat-error>
+              </mat-form-field>
+            </div>
+
+            <div class="field-container-right">
+              <div><label class="mat-label other-label">End Date</label></div>
+              <mat-form-field>
+                <input matInput formControlName="endDate" [matDatepicker]="endDate" (dateChange)="validateDates()">
+                <mat-datepicker-toggle matSuffix [for]="endDate"></mat-datepicker-toggle>
+                <mat-datepicker touchUi="true" #endDate></mat-datepicker>
+                <mat-error *ngIf="form.get('endDate').hasError('min')">
+                  End date cannot be <strong>before</strong> the start date
+                </mat-error>
+              </mat-form-field>
+            </div>
+          </div>
+        </form>
+        <div style="width:100%">
+          <div [hidden]="!formIsValid" (click)="downloadReport()" class="form-buttons submit-button"
+            style="margin-left: 10px;">
+            <button type="button" class="button submit-button">View</button>
+          </div>
+          <div style="display:inline-block;margin-left:15px">
+            <div class="form-buttons" (click)="navigateBack()" style="margin-left: 10px">
+              <button class="button submit-button">Back</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div *ngIf="isDownloading">
+        <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+        <label class="mat-label other-label"><i>Loading commission report...please wait</i></label>
+      </div>
+    </div>
+    <div style="width:100%" [hidden]="!showReport">
+      <hr>
+      <ssrs-reportviewer [reportserver]="reportServerAudit" [reporturl]="reportUrlAudit"
+        [showparameters]="showParametersAudit" [parameters]="parametersAudit" [language]="languageAudit"
+        [width]="widthAudit" [height]="heightAudit" [toolbar]="toolbarAudit" [format]="'pdf'">
+      </ssrs-reportviewer>
+    </div>
+
+    <ng-template #notAuthorized>
+      <div class="wizard-permissions-error">You do not have sufficient permissions to view commission reports.</div>
+      <div style="display:inline-block">
+        <div class="form-buttons" (click)="navigateBack()">
+          <button class="button submit-button">Back</button>
+        </div>
+      </div>
+    </ng-template>
+
+  </mat-card-content>
+</mat-card>

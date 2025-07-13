@@ -1,0 +1,143 @@
+<mat-card>
+  <mat-card-header>
+    <mat-card-title class="wizard-font card-title grey">
+      <h1>{{title}}</h1>
+    </mat-card-title>
+    <mat-card-subtitle>
+    </mat-card-subtitle>
+  </mat-card-header>
+
+  <mat-card-content>
+    <form [formGroup]="form" class="mat-container" novalidate>
+      <div>
+        <section>
+          <!--Title-->
+          <mat-form-field class="mat-form-field">
+            <label class="mat-label other-label">Title</label>
+            <mat-select (selectionChange)="titleChanged($event)" name="title" id="title" formControlName="title">
+              <mat-option *ngFor="let title of titles" [value]="title.id">
+                {{title.name}}
+              </mat-option>
+            </mat-select>
+            <mat-error *ngIf="form.get('title').hasError('required') && form.get('title').touched">
+              Title is <strong>required</strong>
+            </mat-error>
+          </mat-form-field>
+
+          <!--Firstname-->
+          <mat-form-field class="mat-form-field-right">
+            <label class="mat-label other-label mandatory-field">First Name</label>
+            <input matInput id="firstName" name="firstName" formControlName="firstName" />
+            <mat-error *ngIf="form.get('firstName').hasError('required')  && form.get('firstName').touched">
+              Firstname is <strong>required</strong>
+            </mat-error>
+          </mat-form-field>
+        </section>
+
+        <section>
+          <!--Surname-->
+          <mat-form-field class="mat-form-field">
+            <label class="mat-label other-label mandatory-field">Surname</label>
+            <input matInput id="surname" name="surname" formControlName="surname" />
+            <mat-error *ngIf="form.get('surname').hasError('required')  && form.get('surname').touched">
+              Surname is <strong>required</strong>
+            </mat-error>
+          </mat-form-field>
+
+          <!--Communication Type-->
+          <mat-form-field class="mat-form-field-right">
+            <label class="mat-label other-label mandatory-field">Communication Type</label>
+            <mat-select (selectionChange)="communictionTypeChanged($event)" name="communicationType"
+              id="communicationType" formControlName="communicationType">
+              <mat-option *ngFor="let communicationType of communicationTypes" [value]="communicationType.id">
+                {{communicationType.name}}
+              </mat-option>
+            </mat-select>
+            <mat-error
+              *ngIf="form.get('communicationType').hasError('required')  && form.get('communicationType').touched">
+              Communication Type is <strong>required</strong>
+            </mat-error>
+          </mat-form-field>
+        </section>
+
+        <section>
+          <!--Email Address-->
+          <mat-form-field class="mat-form-field">
+            <label id="lblEmail" class="mat-label other-label">Email Address</label>
+            <input matInput id="emailAddress" name="emailAddress" formControlName="emailAddress" />
+            <mat-error *ngIf="form.get('emailAddress').hasError('required') && form.get('emailAddress').touched">
+              Email Address is <strong>required</strong>
+            </mat-error>
+            <mat-error *ngIf="form.get('emailAddress').hasError('email') && form.get('emailAddress').touched">
+              Please enter a valid<strong> email address </strong>
+            </mat-error>
+          </mat-form-field>
+          <!--Cell Number-->
+          <mat-form-field class="mat-form-field-right">
+            <label id="lblCellNumber" class="mat-label other-label mandatory-field">Cell Number</label>
+            <input matInput id="contactNumber" name="contactNumber" NumberOnly formControlName="contactNumber"
+              onKeyPress="if(this.value.length==10) return false;" />
+            <mat-error *ngIf="form.get('contactNumber').hasError('required') && form.get('contactNumber').touched">
+              Cell Number is <strong>required</strong>
+            </mat-error>
+            <mat-error *ngIf="form.get('contactNumber').hasError('phoneNumber') && form.get('contactNumber').touched">
+              Cell number must be<strong> ten digits</strong>
+            </mat-error>
+          </mat-form-field>
+        </section>
+
+        <section>
+          <!--Telephone Number-->
+          <mat-form-field class="mat-form-field">
+            <label id="lblTelNumber" class="mat-label other-label">Telephone Number</label>
+            <input matInput id="telephone" name="telephone" (focus)="enableTellValidation()" NumberOnly
+              formControlName="telephone" onKeyPress="if(this.value.length==10) return false;" />
+            <mat-error *ngIf="form.get('telephone').hasError('required')">
+              Telephone Number is <strong>required</strong>
+            </mat-error>
+            <mat-error *ngIf="form.get('telephone').hasError('phoneNumber')">
+              Telephone number must be<strong> ten digits</strong>
+            </mat-error>
+          </mat-form-field>
+
+          <!--Contact Designation-->
+          <mat-form-field class="mat-form-field-right">
+            <label class="mat-label other-label">Contact Designation</label>
+            <mat-select [(value)]="defaultContactDesignation" (selectionChange)="contactDesignationTypeChanged($event)" name="contactDesignationType"
+              id="contactDesignationType" formControlName="contactDesignationType">
+              <mat-option *ngFor="let contactDesignation of contactDesignations" [value]="contactDesignation.id">
+                {{contactDesignation.name}}
+              </mat-option>
+            </mat-select>
+            <mat-error
+              *ngIf="form.get('contactDesignationType').hasError('required')  && form.get('contactDesignationType').touched">
+              Contact Designation Type is <strong>required</strong>
+            </mat-error>
+          </mat-form-field>
+        </section>
+
+        <section>
+          <mat-form-field *ngIf="!isClaim" class="mat-form-field">
+            <label class="mat-label other-label">Contact Context</label>
+            <mat-select [(value)]="defaultContactContext" formControlName="contactInformationType" multiple>
+              <mat-option *ngFor="let contactInformation of contactInformationTypes" [value]="contactInformation.id">
+                {{contactInformation.name}}
+              </mat-option>
+            </mat-select>
+          </mat-form-field>
+        </section>
+      </div>
+
+      <div class="form-group-button saveBtn">
+        <button (click)='save()' *ngIf="form.valid && !form.pristine && !(isSaving$ | async)" type="button"
+          class="button float-button">Submit</button>
+        <button (click)='cancel()' type="button" class="button float-button">Close</button>
+      </div>
+    </form>
+
+    <div *ngIf="(isSaving$ | async)">
+      <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+      <label class="mat-label other-label"><i>Saving contact details...please wait</i></label>
+    </div>
+  </mat-card-content>
+</mat-card>

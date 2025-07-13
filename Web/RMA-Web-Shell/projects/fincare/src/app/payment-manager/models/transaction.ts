@@ -1,0 +1,41 @@
+import { Invoice } from '../../shared/models/invoice';
+import { TransactionTypeLink } from './transactionTypeLink';
+import { TransactionTypeEnum } from '../../shared/enum/transactionTypeEnum';
+import { InvoiceAllocation } from '../../shared/models/invoice-allocation';
+import { DebitTransactionAllocation } from '../../shared/models/debit-transaction-allocation';
+
+export class Transaction {
+  transactionId: number;
+  invoiceId: number;
+  rolePlayerId: number;
+  transactionTypeLinkId: number;
+  amount: number;
+  amountAllocated: number;
+  transactionDate: Date;
+  bankReference: string;
+  invoice: Invoice;
+  transactionTypeLink: TransactionTypeLink;
+  transactionType: TransactionTypeEnum;
+  rmaReference: string;
+  unallocatedAmount: number;
+  reason: number;
+  selected: boolean;
+  transferAmount: number;
+  reallocatedAmount: number;
+  originalUnallocatedAmount: number;
+  balance: number;
+  refundAmount: number;
+  policyId: number;
+  documentNumber: string;
+  reference: string;
+  description: string;
+  debitAmount: number;
+  creditAmount: number;
+  runningBalance: number;
+  itemId: number;
+  invoiceAllocations: InvoiceAllocation[];
+  linkedTransactions: Transaction[];
+  transaction: any;
+  bankStatementEntryId?: number;
+  debitAllocations: DebitTransactionAllocation[];
+}

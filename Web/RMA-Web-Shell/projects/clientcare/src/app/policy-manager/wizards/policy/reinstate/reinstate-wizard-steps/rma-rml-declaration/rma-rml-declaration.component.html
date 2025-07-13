@@ -1,0 +1,11 @@
+<div *ngIf="model">
+    <roleplayer-policy-declaration [policy]="model.policy" [startDate]="getStartDate(model.policy, model.effectiveFrom)"
+        [endDate]="today" [isReadOnly]="inApprovalMode"
+        (requiredDeclarationsValidEmit)="requiredDeclarationsSubmitted($event)"></roleplayer-policy-declaration>
+
+    <div *ngFor="let vapsPolicy of model.vapsPolicies">
+        <roleplayer-policy-declaration [policy]="vapsPolicy" [startDate]="getStartDate(vapsPolicy, model.effectiveFrom)"
+            [endDate]="today" [isReadOnly]="inApprovalMode"
+            (requiredDeclarationsValidEmit)="requiredDeclarationsSubmitted($event)"></roleplayer-policy-declaration>
+    </div>
+</div>

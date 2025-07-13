@@ -1,0 +1,280 @@
+<app-medicare-search-menus></app-medicare-search-menus>
+<div class="items-heading heading-left">
+  <h1>{{(switchBatchType == switchBatchTypeEnum.MedEDI) ? "Medical Batch Invoices List" :"Teba Batch Invoices List"}} </h1>
+</div>
+<a mat-flat-button (click)="onNavigateBack()">
+  <mat-icon>arrow_back</mat-icon>
+  Back
+</a>
+<br>
+
+<div class="items-buttons-container">
+  <div class="form-buttons submit-button">
+    <button type="button" class="button float-button" (click)="onReinstate()">Reinstate</button>
+  </div>
+  <div class="form-buttons submit-button">
+    <button type="button" class="button float-button" [disabled]="!canReassign || !userSelected" (click)="onReAssign()">Re-Assign</button>
+  </div>
+  <div class="form-buttons submit-button">
+    <button type="button" class="button float-button" (click)="onRefreshMapping()">Refresh Mapping</button>
+  </div>
+</div>
+<br>
+<br />
+<div class="clear">&nbsp;</div>
+
+<div class="container-tables">
+
+    <div *ngIf="switchBatchSearchResponseData.length > 0">
+    <mat-card class="matCard">
+      <div>
+        <div class="grid">
+          <div>
+            <span class="title" >From Switch</span>
+            <span class="value">{{ switchBatchSearchResponseData[0].description }} </span>
+          </div>
+
+          <div>
+            <span class="title">Batch No</span>
+            <span class="value">{{ switchBatchSearchResponseData[0].switchBatchNumber }}</span>
+          </div>
+
+          <div>
+            <span class="title">FileName</span>
+            <span class="value">{{ switchBatchSearchResponseData[0].switchFileName }}</span>
+          </div>
+        </div>
+
+        <div class="grid">
+          <div>
+            <span class="title">Date Submitted</span>
+            <span class="value">{{ switchBatchSearchResponseData[0].dateSubmitted | date:'yyyy-MM-dd' }} </span>
+          </div>
+
+          <div>
+            <span class="title">Date Switched</span>
+            <!-- will need to use the enum -->
+            <span class="value">{{ switchBatchSearchResponseData[0].dateSwitched | date:'yyyy-MM-dd' }}</span>
+          </div>
+
+          <div>
+            <span class="title">Description</span>
+            <span class="value">{{ switchBatchSearchResponseData[0].description }} </span>
+          </div>
+        </div>
+
+        <div class="grid">
+          <div>
+            <span class="title">Date Received</span>
+            <span class="value">{{ switchBatchSearchResponseData[0].dateReceived | date:'yyyy-MM-dd' }} </span>
+          </div>
+
+          <div>
+            <span class="title">Date Completed</span>
+            <span class="value">{{ switchBatchSearchResponseData[0].dateCompleted | date:'yyyy-MM-dd' }}</span>
+          </div>
+
+          <div>
+            <span class="title">Assign To User</span>
+            <span class="value assign-to-user">
+              <form [formGroup]="form" class="mat-container details-form assign-to-user-form" novalidate>
+                <section>
+                  <!--Assign To Use-->
+                  <mat-form-field>
+                    <mat-select (selectionChange)="onAssignToUserChange($event)" formControlName="assignToUse"
+                      id="assignToUse" name="assignToUse" [disabled]="!canReassign">
+                      <mat-option *ngFor="let assignToUser of switchBatchAssignToUsersList" [value]="assignToUser" >
+                        {{assignToUser.displayName}}</mat-option>
+                    </mat-select>
+                  </mat-form-field>
+                </section>
+              </form>
+            </span>
+          </div>
+        </div>
+
+        <div class="grid">
+          <div>
+            <span class="title">No. Invoices Stated</span>
+            <span class="value">{{ switchBatchSearchResponseData[0].invoicesStated }} </span>
+          </div>
+
+          <div>
+            <span class="title">No. Invoices Counted</span>
+            <span class="value">{{ switchBatchSearchResponseData[0].invoicesCounted }}</span>
+          </div>
+
+          <div>
+            <span class="title">No. Invoices Processed</span>
+            <span class="value">{{ switchBatchSearchResponseData[0].invoicesProcessed }}</span>
+          </div>
+        </div>
+
+        <div class="grid">
+          <div>
+            <span class="title">Amount Stated (Incl)</span>
+            <span class="value">{{ switchBatchSearchResponseData[0].amountStatedInclusive |
+              currency:"R":"symbol":'1.2-2' }} </span>
+          </div>
+
+          <div>
+            <span class="title">Amount Counted (Incl)</span>
+            <span class="value">{{ switchBatchSearchResponseData[0].amountCountedInclusive |
+              currency:"R":"symbol":'1.2-2' }}</span>
+          </div>
+
+          <div>
+            <span class="title">Amount Processed (Incl)</span>
+            <!-- subtraction-->
+            <span class="value">{{ switchBatchSearchResponseData[0].amountProcessed |
+              currency:"R":"symbol":'1.2-2' }}</span>
+          </div>
+        </div>
+      </div>
+    </mat-card>
+  </div>
+
+  <mat-card>
+    <div class="items-heading-center">
+      <h1>{{(switchBatchType == switchBatchTypeEnum.MedEDI) ? "Electronic Medical Invoices Batch Details" :"Electronic Teba Invoices Batch Details"}} </h1>
+    </div>
+
+    <div *ngIf="loading$ | async">
+      <mat-progress-bar mode="indeterminate"
+        [ngClass]="{ 'loading-main-double-menu-progress': doubleMenu, 'loading-main-single-menu-progress': !doubleMenu }">
+      </mat-progress-bar>
+      <p class="site-font grey">Loading...</p>
+    </div>
+
+    <div class="items-list-table">
+      <mat-table [dataSource]="dataSourceSwitchBatchInvoiceDetails" matSort class="mat-elevation-z8">
+
+        <!-- Check Box  -->
+        <ng-container matColumnDef="reinstate">
+          <mat-header-cell *matHeaderCellDef class="mat-header-cell wizard-select">Reinstate</mat-header-cell>
+          <mat-cell class="wizard-select" *matCellDef="let element" >
+            <mat-checkbox id="{{element.switchBatchInvoiceId}}" [disabled]="!canReinstate(element)" class="checkbox" (change)="AddCheckedItems($event, element)">
+            </mat-checkbox>
+          </mat-cell>
+        </ng-container>
+
+        <ng-container matColumnDef="ViewUnderAssessReasons">
+          <mat-header-cell *matHeaderCellDef > </mat-header-cell>
+          <mat-cell  *matCellDef="let element" > 
+            <span *ngIf="element?.medicalInvoiceUnderAssessReasons?.length" class="material-icons" (click)="onViewUnderAssessReasons(element)"
+              matTooltip="View Under Assess Reasons">
+              <!-- ViewUnderAssessReasons -->
+              {{"report"}}
+            </span> 
+          </mat-cell>
+        </ng-container>
+
+        <ng-container matColumnDef="ViewSwitchInvoice">
+          <mat-header-cell *matHeaderCellDef > </mat-header-cell>
+          <mat-cell  *matCellDef="let element" > <span class="material-icons" (click)="onViewSwitchInvoice(element)"
+              matTooltip="View Switch Invoice">
+              <!-- ViewSwitchInvoice -->
+              {{"preview"}}
+            </span> </mat-cell>
+        </ng-container>
+
+        <ng-container matColumnDef="DeleteInvoice">
+          <mat-header-cell *matHeaderCellDef> </mat-header-cell>
+          <mat-cell *matCellDef="let element"> <span
+              *ngIf="element.switchInvoiceStatus |invoiceSwitchBatchConditionalIcons:element.invoiceId:this.switchInvoiceStatusConditionalIconEnum.DeleteInvoiceAction && canDelete"
+              class="material-icons" (click)="canDelete && onDeleteInvoiceReasonModal(element)" matTooltip="Delete Invoice"
+              [class.disabled]="!canDelete">
+              <!-- DeleteInvoice -->
+              {{"delete"}} 
+            </span>
+          </mat-cell>
+        </ng-container>
+
+        <ng-container matColumnDef="AddBatchInvoice">
+          <mat-header-cell *matHeaderCellDef> </mat-header-cell>
+          <mat-cell *matCellDef="let element"> <span
+              *ngIf="element.switchInvoiceStatus |invoiceSwitchBatchConditionalIcons:element.invoiceId:this.switchInvoiceStatusConditionalIconEnum.AddBatchInvoiceAction "
+              class="material-icons" (click)="onUnprocessedBatchInvoiceList(element)" matTooltip="Map Batch Invoice">
+              <!-- AddBatchInvoice -->
+              {{"add_link"}}
+            </span> </mat-cell>
+        </ng-container>
+
+        <ng-container matColumnDef="ViewSwitchInvoiceClaimMapped">
+          <mat-header-cell *matHeaderCellDef> </mat-header-cell>
+          <mat-cell *matCellDef="let element"> 
+            <!--  -->
+            <span
+            *ngIf="element.switchInvoiceStatus |invoiceSwitchBatchConditionalIcons:element.invoiceId:this.switchInvoiceStatusConditionalIconEnum.ViewSwitchInvoiceClaimMapped "
+              class="material-icons" (click)="onUnprocessedBatchInvoiceList(element)" matTooltip="Mapped Claim View">
+              <!-- ViewSwitchInvoiceClaimMapped -->
+              {{"insert_link"}}
+            </span> </mat-cell>
+        </ng-container>
+
+        <ng-container matColumnDef="healthCareProviderName">
+          <mat-header-cell *matHeaderCellDef mat-sort-header> HealthCare Provider Name </mat-header-cell>
+          <mat-cell *matCellDef="let element" matTooltip="{{element.healthCareProviderName}}" [style.background]="element | switchBatchInvoiceStatusColor"> {{element.healthCareProviderName}} </mat-cell>
+        </ng-container>
+        <!-- practiceNumber Column -->
+        <ng-container matColumnDef="practiceNumber">
+          <mat-header-cell *matHeaderCellDef mat-sort-header> Practice Number </mat-header-cell>
+          <mat-cell *matCellDef="let element" matTooltip="{{element.practiceNumber}}" [style.background]="element | switchBatchInvoiceStatusColor"> {{element.practiceNumber}} </mat-cell>
+        </ng-container>
+        <!-- spInvoiceNumber Column -->
+        <ng-container matColumnDef="spInvoiceNumber">
+          <mat-header-cell *matHeaderCellDef mat-sort-header> Invoice# </mat-header-cell>
+          <mat-cell *matCellDef="let element" matTooltip="{{element.spInvoiceNumber}}" [style.background]="element | switchBatchInvoiceStatusColor"> {{element.spInvoiceNumber }}
+          </mat-cell>
+        </ng-container>
+        <!-- spAccountNumber Column -->
+        <ng-container matColumnDef="spAccountNumber">
+          <mat-header-cell *matHeaderCellDef mat-sort-header> Account# </mat-header-cell>
+          <mat-cell *matCellDef="let element" matTooltip="{{element.spAccountNumber}}" [style.background]="element | switchBatchInvoiceStatusColor"> {{element.spAccountNumber }} </mat-cell>
+        </ng-container>
+        <!-- invoiceDate Column -->
+        <ng-container matColumnDef="invoiceDate">
+          <mat-header-cell *matHeaderCellDef mat-sort-header> Invoice Date </mat-header-cell>
+          <mat-cell *matCellDef="let element" [style.background]="element | switchBatchInvoiceStatusColor"> {{element.invoiceDate | date:'yyyy-MM-dd'}} </mat-cell>
+        </ng-container>
+        <!-- totalInvoiceAmountInclusive Column -->
+        <ng-container matColumnDef="totalInvoiceAmountInclusive">
+          <mat-header-cell *matHeaderCellDef mat-sort-header> Invoice Amount (Incl) </mat-header-cell>
+          <mat-cell *matCellDef="let element" [style.background]="element | switchBatchInvoiceStatusColor"> {{element.totalInvoiceAmountInclusive | currency:"R":"symbol":'1.2-2'}}
+          </mat-cell>
+          <mat-footer-cell *matFooterCellDef> </mat-footer-cell>
+        </ng-container>
+        <!-- surname Column -->
+        <ng-container matColumnDef="surname">
+          <mat-header-cell *matHeaderCellDef mat-sort-header> Surname </mat-header-cell>
+          <mat-cell *matCellDef="let element" matTooltip="{{element.surname}}" [style.background]="element | switchBatchInvoiceStatusColor"> {{element.surname}} </mat-cell>
+        </ng-container>
+        <!-- firstName Column -->
+        <ng-container matColumnDef="firstName">
+          <mat-header-cell *matHeaderCellDef mat-sort-header> FirstName </mat-header-cell>
+          <mat-cell *matCellDef="let element" matTooltip="{{element.firstName}}" [style.background]="element | switchBatchInvoiceStatusColor"> {{element.firstName}} </mat-cell>
+          <mat-footer-cell *matFooterCellDef> </mat-footer-cell>
+        </ng-container>
+        <!-- claimReferenceNumber Column -->
+        <ng-container matColumnDef="claimReferenceNumberMatch">
+          <mat-header-cell *matHeaderCellDef mat-sort-header> Claim Ref# </mat-header-cell>
+          <mat-cell *matCellDef="let element" [style.background]="element | switchBatchInvoiceStatusColor" matTooltip="{{getClaimReferenceNumber(element)}}"> {{getClaimReferenceNumber(element)}} </mat-cell>
+        </ng-container>
+        <!-- status Column -->
+        <ng-container matColumnDef="status">
+          <mat-header-cell *matHeaderCellDef mat-sort-header> Invoice Status </mat-header-cell>
+          <mat-cell *matCellDef="let element" [style.background]="element | switchBatchInvoiceStatusColor" matTooltip="{{getInvoiceUnderAssessReasons(element)}}"> {{getSwitchInvoiceStatus(element)}}  </mat-cell>
+        </ng-container>
+        <mat-header-row *matHeaderRowDef="displayedColumnsSwitchBatchInvoiceDetails"></mat-header-row>
+        <mat-row *matRowDef="let row; columns: displayedColumnsSwitchBatchInvoiceDetails;" class="element-row" (click)="highlightSeletectedRecord(row)" 
+        [ngClass]="{'highlightSelectedRecordColor': selectedRowIndex == row.spInvoiceNumber}"
+        [style.background-color]="row | switchBatchInvoiceStatusColor" >
+        </mat-row>
+      </mat-table>
+      <mat-paginator [pageSizeOptions]="[5, 10, 25, 100]"></mat-paginator>
+    </div>
+    <div [hidden]="dataSourceSwitchBatchInvoiceDetails.data.length > 0">
+      <span class="grey site-font">No batch invoices found. Please ensure that you have appropriate permissions.</span>
+    </div>
+  </mat-card>
+</div>

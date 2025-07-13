@@ -1,0 +1,184 @@
+<div *ngIf="isLoading">
+  <div style="margin-right: 15px;">
+    <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+  </div>
+  <span style="color: grey">Processing...</span>
+</div>
+<div>
+  <mat-card class="document-container">
+    <mat-card-header>
+      <mat-card-title>
+        <h1 class="wizard-font">Manual Qlink Transaction</h1>
+      </mat-card-title>
+    </mat-card-header>
+
+    <section class="field-section">
+      <div class="field-container">
+        <div class="field-container-right">
+          <mat-checkbox [(ngModel)]="bulkPolicies">Bulk Transaction?</mat-checkbox>
+        </div>
+        <br />
+        <br />
+        <mat-form-field *ngIf="!bulkPolicies">
+          <input matInput [(ngModel)]="policyNumber" placeholder="Enter Policy Number">
+        </mat-form-field>
+
+        <div *ngIf="!bulkPolicies">
+          <div class="form-group-button mat-form-button">
+            <div class="form-buttons">
+              <button (click)="search()" class="button float-button">Check QLink Status</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+    <br />
+    <section class="field-section">
+      <div class="field-container">
+        <br />
+        <div class="upload-container"
+          *ngIf="bulkPolicies && (selectedOption !== 'update' && selectedOption !== 'activate' && selectedOption !== 'cancel')">
+          <button mat-raised-button color="primary" class="button float-button" (click)="fileInput.click()">
+            <mat-icon>attach_file</mat-icon>
+            <span>Choose File</span>
+          </button>
+          <br />
+          <input type="file" #fileInput (change)="onFileSelected($event)" style="display: none;">
+        </div>
+        <br />
+        <br />
+        <div
+          *ngIf="bulkPolicies && (selectedOption !== 'update' && selectedOption !== 'activate' && selectedOption !== 'cancel')">
+          <label>{{ selectedFile ? selectedFile.name : 'No file chosen' }}</label>
+        </div>
+        <br />
+      </div>
+    </section>
+    <br />
+    <div
+      *ngIf="bulkPolicies && (selectedOption !== 'update' && selectedOption !== 'activate' && selectedOption !== 'cancel')">
+      <div class="form-group-button mat-form-button">
+        <div class="form-buttons">
+          <button (click)="search()" class="button float-button">Check Bulk QLink Statuses</button>
+        </div>
+      </div>
+    </div>
+    <br />
+    <br />
+    <section class="field-section">
+      <div class="field-container">
+        <mat-label class="mat-label other-label mandatory-field">Deduction Action</mat-label>
+        <mat-form-field class="mat-form-field">
+          <mat-select [(ngModel)]="selectedOption" (selectionChange)="onSelectionChange()">
+            <mat-option value="activate">Activate Deduction (QADD)</mat-option>
+            <mat-option value="cancel">Cancel Deduction (QDEL)</mat-option>
+            <mat-option value="update">Update Deduction (QUPD)</mat-option>
+          </mat-select>
+        </mat-form-field>
+      </div>
+    </section>
+    <section class="field-section">
+      <div class="field-container"
+        *ngIf="selectedOption === 'update' || selectedOption === 'activate' || selectedOption === 'cancel'">
+        <mat-form-field>
+          <textarea matInput [placeholder]="notePlaceHolder" [(ngModel)]="policyNoteText"></textarea>
+        </mat-form-field>
+      </div>
+    </section>
+  </mat-card>
+
+  <div *ngIf="showSearchResults">
+    <mat-card>
+      <div>
+        <mat-label class="mat-label other-label"><b>Successful Qlink Transactions</b></mat-label>
+        <mat-table #table [dataSource]="dataSource" matSort id="tblData">
+          <ng-container matColumnDef="policyNumber">
+            <mat-header-cell *matHeaderCellDef> Policy Number </mat-header-cell>
+            <mat-cell *matCellDef="let row">{{ row.policyNumber }}</mat-cell>
+          </ng-container>
+
+          <ng-container matColumnDef="policyStatus">
+            <mat-header-cell *matHeaderCellDef> Policy Status </mat-header-cell>
+            <mat-cell *matCellDef="let row">{{ row.policyStatus}}</mat-cell>
+          </ng-container>
+
+          <ng-container matColumnDef="installmentPremium">
+            <mat-header-cell *matHeaderCellDef> Installment Premium </mat-header-cell>
+            <mat-cell *matCellDef="let row">{{row.installmentPremium | currency: 'R': 'symbol':'1.2-2'}}</mat-cell>
+          </ng-container>
+
+          <ng-container matColumnDef="premium">
+            <mat-header-cell *matHeaderCellDef> Deduction Amount </mat-header-cell>
+            <mat-cell *matCellDef="let row">{{row.premiumAmount | currency: 'R': 'symbol':'1.2-2'}}</mat-cell>
+          </ng-container>
+
+          <ng-container matColumnDef="deductionStartDate">
+            <mat-header-cell *matHeaderCellDef> Deduction Start Date</mat-header-cell>
+            <mat-cell *matCellDef="let row">{{ row.deductionStartDate | date: 'dd/MM/yyyy' }}</mat-cell>
+          </ng-container>
+
+          <ng-container matColumnDef="deductionEndDate">
+            <mat-header-cell *matHeaderCellDef> Deduction End Date</mat-header-cell>
+            <mat-cell *matCellDef="let row">{{ row.deductionEndDate | date: 'dd/MM/yyyy' }}</mat-cell>
+          </ng-container>
+
+          <ng-container matColumnDef="qlinkTransactionType">
+            <mat-header-cell *matHeaderCellDef> QLink Transaction Type </mat-header-cell>
+            <mat-cell *matCellDef="let row">{{ row.qlinkType }}</mat-cell>
+          </ng-container>
+
+          <ng-container matColumnDef="createdDate">
+            <mat-header-cell *matHeaderCellDef> Created Date</mat-header-cell>
+            <mat-cell *matCellDef="let row">{{ row.createdDate | date: 'dd/MM/yyyy' }}</mat-cell>
+          </ng-container>
+
+          <mat-header-row *matHeaderRowDef="getDisplayedColumns()"></mat-header-row>
+          <mat-row *matRowDef="let row; columns: getDisplayedColumns();"></mat-row>
+        </mat-table>
+        <mat-paginator #paginator [pageIndex]="0" [pageSize]="5" [pageSizeOptions]="[5, 10, 25, 100]"
+          [length]="this.dataSource.data ? dataSource.data.length : 0 | async">
+        </mat-paginator>
+      </div>
+    </mat-card>
+  </div>
+</div>
+
+<div>
+  <div class="form-group-button mat-form-button"
+    *ngIf="selectedOption === 'update' || selectedOption === 'activate' || selectedOption === 'cancel' || allowQlinkProcess">
+    <div class="form-buttons">
+      <button (click)="processQadds()" class="button float-button"
+        [disabled]="!isPolicyNoteTextPopulated()">Process</button>
+        <button (click)="reloadPage()" class="button float-button"
+       >Refresh</button>
+    </div>
+  </div>
+</div>
+<div>
+  <br />
+  <br />
+  <div *ngIf="showProcesshResults">
+    <mat-card>
+      <div>
+        <mat-label class="mat-label other-label">Process Results</mat-label>
+        <mat-table #table [dataSource]="processDataSource" matSort id="processData">
+          <ng-container matColumnDef="policyNumber">
+            <mat-header-cell *matHeaderCellDef> Policy Number </mat-header-cell>
+            <mat-cell *matCellDef="let row">{{ row.policyNumber }}</mat-cell>
+          </ng-container>
+
+          <ng-container matColumnDef="message">
+            <mat-header-cell *matHeaderCellDef> Result </mat-header-cell>
+            <mat-cell *matCellDef="let row">{{row.message}}</mat-cell>
+          </ng-container>
+
+          <mat-header-row *matHeaderRowDef="getProcessDisplayedColumns()"></mat-header-row>
+          <mat-row *matRowDef="let row; columns: getProcessDisplayedColumns();"></mat-row>
+        </mat-table>
+        <mat-paginator #paginator [pageIndex]="0" [pageSize]="5" [pageSizeOptions]="[5, 10, 25, 100]"
+          [length]="this.processDataSource.data ? processDataSource.data.length : 0 | async">
+        </mat-paginator>
+      </div>
+    </mat-card>
+  </div>
+</div>

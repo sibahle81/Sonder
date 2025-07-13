@@ -1,0 +1,25 @@
+<div class="upload-from-local-div">
+  <h2 class="upload-heding">Upload Document</h2>
+  <div>
+    <svg xmlns="http://www.w3.org/2000/svg" width="80" height="80" viewBox="0 0 80 80" fill="none">
+      <path
+        d="M21.6795 63.3485C18.0667 63.3513 14.5744 62.0501 11.8442 59.684C9.11407 57.318 7.32959 54.0461 6.81873 50.4696C6.30787 46.8932 7.10495 43.2525 9.06349 40.2167C11.022 37.181 14.0104 34.954 17.4795 33.9452C18.9513 28.469 22.3669 23.7161 27.088 20.575C31.8091 17.4338 37.5125 16.1194 43.1322 16.8774C48.7519 17.6354 53.9032 20.414 57.6234 24.6937C61.3435 28.9734 63.3779 34.4614 63.3461 40.1319C66.2698 40.5485 68.9267 42.0583 70.7809 44.3569C72.6352 46.6554 73.5487 49.5716 73.3372 52.5173C73.1257 55.4629 71.8051 58.2187 69.6415 60.2289C67.478 62.239 64.6327 63.3539 61.6795 63.3485H21.6795Z"
+        stroke="#006586" stroke-linejoin="round" />
+      <path d="M46.681 36.6823L40.0143 30.0156M40.0143 30.0156L33.3477 36.6823M40.0143 30.0156V50.0156" stroke="#006586"
+        stroke-linecap="round" stroke-linejoin="round" />
+    </svg>
+  </div>
+  <div class="upload-mssage">
+    <span class="drag-file-msg">Drag your file here or</span>
+    <span class="browser-file-tab" (click)="fileSelect.click()">Browse</span>
+
+    <mat-form-field class="status-update-mff" appearance="outline">
+      <input [hidden]="true" (change)="onFileSelect($event)" type="file" accept="all/*" #fileSelect />
+      <input readonly matInput [(ngModel)]="filename" (click)="fileSelect.click()" class="cursor-style-css"
+        placeholder="Select file..." />
+      <button matSuffix class="btn-padding-0" mat-icon-button>
+      </button>
+    </mat-form-field>
+
+  </div>
+</div>

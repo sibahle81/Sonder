@@ -1,0 +1,90 @@
+﻿<mat-expansion-panel [expanded]="false" (closed)="ClearData()">
+  <mat-expansion-panel-header>
+    <mat-panel-title>
+      <span class="material-icons">sports_kabaddi</span>&nbsp;&nbsp;&nbsp;&nbsp;Exit Reasons
+    </mat-panel-title>
+    <mat-panel-description>
+    </mat-panel-description>
+  </mat-expansion-panel-header>
+  <div [hidden]="!hasData">
+    <table class="altRowTable" style="width:50%;">
+      <tr>
+        <td><b>Total No. of claims exited STP:</b> {{this.totalExitReasonClaims}}</td>
+      </tr>
+    </table>
+  </div>
+  <div class="resetBtn">
+    <button mat-mini-fab color="primary" (click)="ClearData()">
+      <mat-icon matTooltip="Reset">autorenew</mat-icon>
+    </button>
+  </div>
+  <div [hidden]="hasData">
+    <label class="mat-label other-label">
+      <h3 class="font"><span class="material-icons lightRed">archive</span> &nbsp; {{noDataHeading}}
+      </h3>
+    </label>
+    <span [style.visibility]="isLoading ? 'visible' : 'hidden'">
+      <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+      <span class="grey site-font"><i>Loading Data...please wait</i></span>
+    </span>
+  </div>
+  <br />
+
+  <div [hidden]="!hasData">
+    <canvas baseChart [data]="data" [labels]="chartLabels" [colors]="chartColors" [plugins]="pieChartPlugins"
+      [options]="pieChartOptions" [legend]="pieChartLegend" [chartType]="chartType" (chartHover)="chartHovered($event)"
+      (chartClick)="chartClicked($event)">
+    </canvas>
+  </div>
+  <form [formGroup]="form" class="mat-container details-form" novalidate>
+    <section>
+      <div>
+        <mat-form-field class="mat-form-field inputDate">
+          <label class="mat-label other-label">From Date</label>
+          <input readonly matInput [min]="minDate" [max]="maxDate" date="true" time="false" formControlName="startDate"
+            [matDatepicker]="startDate" id="startDate" />
+          <mat-datepicker-toggle class="date-icon" matSuffix [for]="startDate"></mat-datepicker-toggle>
+          <mat-datepicker touchUi="true" #startDate></mat-datepicker>
+        </mat-form-field>
+        &nbsp;
+        &nbsp;
+        <mat-form-field class="mat-form-field inputDate">
+          <label class="mat-label other-label">End Date</label>
+          <input readonly matInput [max]="maxDate" date="true" time="false" formControlName="endDate"
+            [matDatepicker]="endDate" id="endDate" />
+          <mat-datepicker-toggle class="date-icon" matSuffix [for]="endDate">
+          </mat-datepicker-toggle>
+          <mat-datepicker touchUi="true" #endDate></mat-datepicker>
+        </mat-form-field>
+      </div>
+      <div>
+        <!--Benefits-->
+        <mat-form-field class="mat-form-field inputDate">
+          <label class="mat-label other-label">Possible Benefits Due</label>
+          <input matInput #benefitDueElement aria-label="benefitsDue" [matAutocomplete]="benefitsAuto" id="benefitsDue"
+            name="benefitsDue" formControlName="benefitsDue">
+          <mat-autocomplete #benefitsAuto="matAutocomplete" id="benefitsDue">
+            <mat-option [value]="'All'">All</mat-option>
+            <mat-option *ngFor="let benefit of filteredBenefits" [value]="benefit.name">
+              {{benefit.name}}
+            </mat-option>
+          </mat-autocomplete>
+        </mat-form-field>
+      </div>
+      <div class="form-group-buttons">
+        <button (click)="ClearData()" class="button submit-button">Reset</button>
+        <button (click)="applyData()" class="button submit-button">Apply</button>
+      </div>
+      <br />
+      <br />
+      <span [style.visibility]="dataLoading ? 'visible' : 'hidden'">
+        <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+        <span class="grey site-font"><i>Loading Data...please wait</i></span>
+      </span>
+
+    </section>
+  </form>
+</mat-expansion-panel>
+<div>
+  <claim-table-productivity></claim-table-productivity>
+</div>

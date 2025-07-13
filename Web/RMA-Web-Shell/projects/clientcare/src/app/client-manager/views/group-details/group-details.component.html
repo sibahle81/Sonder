@@ -1,0 +1,205 @@
+﻿<div class="page-header"></div>
+<div *ngIf="!canAdd">
+    <h1>Groups</h1>
+    <div style="padding-bottom: 15px; color: orange; font-family: 'Oswald', sans-serif;">You do not have sufficient permissions to add a new group.</div>
+    <div (click)="back()" class="form-buttons submit-button">
+        <button type="button" class="button float-button">Back</button>
+    </div>
+</div>
+
+<div [hidden]="!canAdd" style="padding-top: 15px;">
+
+    <mat-tab-group>
+        <mat-tab label="Group Details">
+
+            <mat-card style="margin: 15px 30px 15px 30px">
+                <mat-card-header>
+                    <mat-card-title class="wizard-font card-title grey">
+                        <h1 class="wizard-font" style="padding: 0;">Group Details</h1>
+                    </mat-card-title>
+                </mat-card-header>
+
+                <mat-card-content style="margin-left: 10px;">
+
+                    <form [formGroup]="form" (ngSubmit)="save()" class="mat-container details-form" novalidate>
+                        <section>
+                            <!--Name-->
+                            <mat-form-field class="mat-form-field">
+                                <label class="mat-label other-label mandatory-field">Group name</label>
+                                <input matInput maxlength="50" id="name" name="name" formControlName="name" unique-validator [table]="'Group'" [field]="'Name'" [currentValue]="currentName" [serviceType]="6" />
+                                <mat-error *ngIf="form.get('name').hasError('required')">
+                                    Group name<strong> is required</strong>
+                                </mat-error>
+                                <mat-error *ngIf="form.get('name').hasError('isTaken')">
+                                    This group <strong>already exists</strong>
+                                </mat-error>
+                                <mat-error *ngIf="form.get('name').hasError('minlength')">
+                                    Group name must be at least <strong>three characters</strong>
+                                </mat-error>
+                            </mat-form-field>
+
+                            <!--Registration Number-->
+                            <mat-form-field class="mat-form-field-right">
+                                <label class="mat-label other-label mandatory-field">Registration number</label>
+                                <input matInput maxlength="50" id="registrationNumber" name="registrationNumber" formControlName="registrationNumber" unique-validator [table]="'Group'" [field]="'RegistrationNumber'" [currentValue]="currentRegistrationNumber" [serviceType]="6" />
+                                <mat-error *ngIf="form.get('registrationNumber').hasError('required')">
+                                    Group registration number<strong> is required</strong>
+                                </mat-error>
+                                <mat-error *ngIf="form.get('registrationNumber').hasError('isTaken')">
+                                    Group registration number <strong>already exists</strong>
+                                </mat-error>
+                                <mat-error *ngIf="form.get('registrationNumber').hasError('minlength')">
+                                    Group registration number must be at least <strong>three characters</strong>
+                                </mat-error>
+                                <mat-error *ngIf="form.get('registrationNumber').hasError('pattern')">
+                                    Please enter a valid<strong> company registration number format: 'YYYY/NNNNNN/NN'</strong>.
+                                </mat-error>
+                            </mat-form-field>
+                        </section>
+                        <section>
+                            <!--Person Type-->
+                            <mat-form-field class="mat-form-field">
+                                <label class="mat-label other-label mandatory-field">Contact person title</label>
+                                <mat-select name="title" id="title" #title formControlName="title" [(value)]="personTitleId">
+                                    <mat-option *ngFor="let title of titles" [value]="title.id">{{title.name}}</mat-option>
+                                </mat-select>
+                                <mat-error *ngIf="title.errorState && form.get('title').hasError('required')">
+                                    Title is <strong>required</strong>
+                                </mat-error>
+                            </mat-form-field>
+                            <!--Designation-->
+                            <mat-form-field class="mat-form-field-right">
+                                <label class="mat-label other-label mandatory-field">Designation</label>
+                                <input matInput maxlength="50" id="designation" name="designation" formControlName="designation" />
+                                <mat-error *ngIf="form.get('designation').hasError('required')">
+                                    Designation<strong> is required</strong>
+                                </mat-error>
+                            </mat-form-field>
+                        </section>
+                        <section>
+                            <!--Contact Person-->
+                            <mat-form-field class="mat-form-field">
+                                <label class="mat-label other-label mandatory-field">Contact person</label>
+                                <input matInput maxlength="50" id="contactPerson" name="contactPerson" formControlName="contactPerson" />
+                                <mat-error *ngIf="form.get('contactPerson').hasError('required')">
+                                    Contact person<strong> is required</strong>
+                                </mat-error>
+                                <mat-error *ngIf="form.get('contactPerson').hasError('minlength')">
+                                    Contact person must be at least <strong>three characters</strong>
+                                </mat-error>
+                            </mat-form-field>
+                            <!--Email Address-->
+                            <mat-form-field class="mat-form-field-right">
+                                <label class="mat-label other-label mandatory-field">Email address</label>
+                                <input matInput maxlength="50" id="email" name="email" pattern="[a-zA-Z0-9.-_]{1,}@[a-zA-Z.-]{2,}[.]{1}[a-zA-Z]{2,}" formControlName="email" />
+                                <mat-error *ngIf="form.get('email').hasError('required')">
+                                    Email<strong> is required</strong>
+                                </mat-error>
+                                <mat-error *ngIf="form.get('email').hasError('pattern')||!form.invalid">
+                                    Please enter a <strong>valid</strong> email address.
+                                </mat-error>
+                            </mat-form-field>
+                        </section>
+                        <section>
+                            <!--Telephone-->
+                            <mat-form-field class="mat-form-field">
+                                <label class="mat-label other-label mandatory-field">Telephone number</label>
+                                <input matInput maxlength="10" id="telephoneNumber" name="telephoneNumber" formControlName="telephoneNumber" NumberOnly="true" />
+                                <mat-error *ngIf="form.get('telephoneNumber').hasError('required')">
+                                    Telephone<strong> is required</strong>
+                                </mat-error>
+                                <mat-error *ngIf="form.get('telephoneNumber').hasError('minlength')">
+                                    Telephone number <strong>must be 10 digits</strong>
+                                </mat-error>
+                            </mat-form-field>
+                            <!--Mobile phone-->
+                            <mat-form-field class="mat-form-field-right">
+                                <label class="mat-label other-label mandatory-field">Mobile number</label>
+                                <input matInput maxlength="10" id="mobileNumber" name="mobileNumber" formControlName="mobileNumber" NumberOnly="true" />
+                                <mat-error *ngIf="form.get('mobileNumber').hasError('required')">
+                                    Mobile number<strong> is required</strong>
+                                </mat-error>
+                                <mat-error *ngIf="form.get('mobileNumber').hasError('minlength')">
+                                    Mobile number<strong>must be 10 digits</strong>
+                                </mat-error>
+                            </mat-form-field>
+                        </section>
+                        <section>
+                            <!--description-->
+                            <mat-form-field class="mat-form-field">
+                                <label class="mat-label other-label mandatory-field">Description<a class="grey site-font" style="font-style: italic">(Maximum of 500 characters allowed)</a> </label>
+                                <textarea matInput maxlength="500" style="height: 150px" id="description" name="description" formControlName="description"></textarea>
+                                <mat-error *ngIf="form.get('description').hasError('required')">
+                                    Group description<strong> is required</strong>
+                                </mat-error>
+                            </mat-form-field>
+                        </section>
+
+                        <last-modified-by type="Group"></last-modified-by>
+
+                        <div class="form-group-button mat-form-button" *ngIf="!isSubmitting">
+                            <div *ngIf="!form.disabled" class="form-buttons">
+                                <button [disabled]="form.pristine" class="button float-button submit-button">Save</button>
+                            </div>
+
+                            <div (click)="edit()" *ngIf="form.disabled && !isSubmitting" class="form-buttons">
+                                <button type="button" class="button float-button submit-button">Edit</button>
+                            </div>
+
+                            <div (click)="back()" class="form-buttons">
+                                <button type="button" class="button float-button submit-button">Back</button>
+                            </div>
+                        </div>
+                    </form>
+                </mat-card-content>
+            </mat-card>
+
+        </mat-tab>
+        <mat-tab label="Bank Account">
+            <bank-account-list [itemType]="'Group'" [itemId]="groupId"></bank-account-list>
+        </mat-tab>
+        <mat-tab label="Address">
+            <mat-card>
+                <mat-card-header>
+                    <mat-card-title class="wizard-font card-title grey">
+                        <h1 style="padding: 0;">Address</h1>
+                    </mat-card-title>
+                </mat-card-header>
+                <mat-card-content>
+                    <div class="form-group-button mat-form-button">
+                        <span *ngIf="!hasGroup" class="grey site-font">
+                            <i>Cannot add an address until a group has been added.</i>
+                        </span>
+                        <div (click)="addAddress()" *ngIf="!hasAddress && hasGroup">
+                            <button type="button" class="button float-button submit-button">Add Address</button>
+                        </div>
+                        <div (click)="viewAddress()" *ngIf="hasAddress">
+                            <button type="button" class="button float-button submit-button">View Address</button>
+                        </div>
+                        <br />
+                    </div>
+                </mat-card-content>
+            </mat-card>
+        </mat-tab>
+        <mat-tab label="Clients">
+            <mat-card>
+                <mat-card-header>
+                    <mat-card-title class="wizard-font card-title grey">
+                        <h1 style="padding: 0;">Groups</h1>
+                    </mat-card-title>
+                </mat-card-header>
+                <mat-card-content>
+                    <group-client-list name="group"></group-client-list>
+                </mat-card-content>
+            </mat-card>
+        </mat-tab>
+        <mat-tab label="Notes">
+            <notes name="group"></notes>
+        </mat-tab>
+
+        <mat-tab label="Audit Log">
+            <audit-log name="group"></audit-log>
+        </mat-tab>
+
+    </mat-tab-group>
+</div>

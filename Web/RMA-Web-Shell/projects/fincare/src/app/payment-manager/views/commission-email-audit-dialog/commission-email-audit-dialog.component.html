@@ -1,0 +1,40 @@
+<div *ngIf="isLoading">
+    <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+    <label class="mat-label other-label"><i>Loading sent emails...please wait</i></label>
+</div>
+<div [hidden]="datasource.data.length === 0" class="div_scroll">
+    <mat-table #table [dataSource]="datasource" matSort>
+        <ng-container matColumnDef="fromAddress">
+            <mat-header-cell *matHeaderCellDef mat-sort-header>From</mat-header-cell>
+            <mat-cell *matCellDef="let row">{{row.fromAddress}}</mat-cell>
+        </ng-container>
+        <ng-container matColumnDef="recipient">
+            <mat-header-cell *matHeaderCellDef mat-sort-header>Recipient</mat-header-cell>
+            <mat-cell *matCellDef="let row">{{row.reciepients}}</mat-cell>
+        </ng-container>
+        <ng-container matColumnDef="dateCreated">
+            <mat-header-cell *matHeaderCellDef mat-sort-header>Date Sent</mat-header-cell>
+            <mat-cell *matCellDef="let row" class="right-aligned-amounts">{{row.createdDate | date:'yyyy-MM-dd'}}</mat-cell>
+        </ng-container>
+        <ng-container matColumnDef="actions">
+            <mat-header-cell *matHeaderCellDef mat-sort-header></mat-header-cell>
+            <mat-cell *matCellDef="let row" [matMenuTriggerFor]="menu">
+                <span class="material-icons pointer right">more_vert</span>
+                <mat-menu #menu="matMenu">
+                    <button mat-menu-item *ngFor="let menu of menus" (click)="onMenuItemClick(row, menu)" disabled={{menu.disable}}>{{menu.title}}</button>
+                </mat-menu>
+            </mat-cell>
+        </ng-container>
+        <mat-header-row *matHeaderRowDef="displayedColumns; sticky: true"></mat-header-row>
+        <mat-row *matRowDef="let row; columns: displayedColumns;"></mat-row>
+    </mat-table>
+    <mat-paginator [pageSize]="10" [pageSizeOptions]="[5, 10, 25, 100]">
+    </mat-paginator>
+</div>
+<div *ngIf="datasource.data.length === 0 && searchDone" style="margin-top: 20px; margin-bottom: 20px;">
+    <b>No emails found for the period</b>
+</div>
+
+<div style="text-align: center">
+    <button class="button submit-button" (click)="closeDialog()" style="margin-left: 30px;">Close</button>
+</div>

@@ -1,0 +1,199 @@
+<div mat-dialog-content>
+  <div class="mat-header">
+    <h1>Search For Person Event</h1>
+  </div>
+
+  <!--results from PEV search selectable TABLE-->
+  <app-invoice-switch-batch-search-pev-table-results
+    (selectedPersonEventSearchResultsEvent)="receiveselectedPersonEventSearchResults($event)"
+    (newSearchQuery)="receivenewSearchQueryResults($event)"
+    (formSearchControlVisibleState)="receiveformSearchControlVisibleStateResults($event)"
+    [personEventResultsTableData]="personEventResultsTableData"
+    [medicalSwitchBatchSearchPersonEvent]="medicalSwitchBatchSearchPersonEventParams">
+  </app-invoice-switch-batch-search-pev-table-results>
+  <br>
+  <!--results from selected PEV table details GRID-->
+  <app-invoice-switch-batch-accident-person-details
+    [selectedPersonEventSearchResultsInput]="selectedPersonEventSearchResultsData"
+    [startWizardBatchSelectedData]="startWizardBatchSelectedDataSend"
+    (lastQueryShowPEVTableEvent)="receiveSearchPersonEventFormVisibleState($event)">
+  </app-invoice-switch-batch-accident-person-details>
+  <br>
+
+  <!--PEV Searching form-->
+  <div *ngIf="searchPersonEventFormVisibleState == personEventSearchNavigationEnum.ShowOption">
+    <form [formGroup]="searchPersonEventForm">
+      <br>
+      <mat-card class="matCard">
+        <h1>Search for Manual Mapping</h1>
+        <section>
+          <!--industryNumber-->
+          <div class="field-container">
+            <div><label class="mat-label other-label">Industry Number</label></div>
+            <mat-form-field>
+              <input matInput formControlName="industryNumber" id="industryNumber" name="industryNumber">
+            </mat-form-field>
+          </div>
+          <!--coEmployeeNo-->
+          <div class="field-container-right">
+            <div><label class="mat-label other-label">Co. Employee No.</label></div>
+            <mat-form-field>
+              <input matInput formControlName="coEmployeeNo" id="coEmployeeNo" name="coEmployeeNo">
+            </mat-form-field>
+          </div>
+        </section>
+        <br />
+        <div class="clear">&nbsp;</div>
+        <section>
+          <!--surname-->
+          <div class="field-container">
+            <div><label class="mat-label other-label">Surname</label></div>
+            <mat-form-field>
+              <input matInput formControlName="surname" id="surname" name="surname">
+            </mat-form-field>
+          </div>
+          <!--pensionNumber-->
+          <div class="field-container-right">
+            <div><label class="mat-label other-label">Pension Number</label></div>
+            <mat-form-field>
+              <input matInput formControlName="pensionNumber" id="pensionNumber" name="pensionNumber">
+            </mat-form-field>
+          </div>
+        </section>
+        <br />
+        <div class="clear">&nbsp;</div>
+        <section>
+          <!--fullFirstName-->
+          <div class="field-container">
+            <div><label class="mat-label other-label">Full First Name</label></div>
+            <mat-form-field>
+              <mat-form-field>
+                <input matInput formControlName="fullFirstName" id="fullFirstName" name="fullFirstName">
+              </mat-form-field>
+            </mat-form-field>
+          </div>
+          <!--passPortNumber-->
+          <div class="field-container-right">
+            <div><label class="mat-label other-label">Passport Number</label></div>
+            <mat-form-field>
+              <input matInput formControlName="passPortNumber" id="passPortNumber" name="passPortNumber">
+            </mat-form-field>
+          </div>
+        </section>
+        <br />
+        <div class="clear">&nbsp;</div>
+        <section>
+          <!--initials-->
+          <div class="field-container">
+            <div><label class="mat-label other-label">Initials</label></div>
+            <mat-form-field>
+              <mat-form-field>
+                <input matInput formControlName="initials" id="initials" name="initials">
+              </mat-form-field>
+            </mat-form-field>
+          </div>
+          <!--passportNationality-->
+          <div class="field-container-right">
+            <mat-form-field>
+              <label class="mat-label other-label">Passport Nationality</label>
+              <mat-select formControlName="passportNationality" id="passportNationality" name="passportNationality"
+                [value]="national">
+                <mat-option></mat-option>
+                <mat-option *ngFor="let national of nationality" [value]="national">
+                  {{national}}</mat-option>
+              </mat-select>
+            </mat-form-field>
+          </div>
+        </section>
+        <br />
+        <div class="clear">&nbsp;</div>
+        <section>
+          <!--idNumber-->
+          <div class="field-container">
+            <div><label class="mat-label other-label">ID Number</label></div>
+            <mat-form-field>
+              <mat-form-field>
+                <input matInput formControlName="idNumber" id="idNumber" name="idNumber">
+              </mat-form-field>
+            </mat-form-field>
+          </div>
+          <!--eventId-->
+          <div class="field-container-right">
+            <div><label class="mat-label other-label">Event Id</label></div>
+            <mat-form-field>
+              <input matInput formControlName="eventId" id="eventId" name="eventId">
+            </mat-form-field>
+          </div>
+        </section>
+        <br />
+        <div class="clear">&nbsp;</div>
+        <section>
+          <!--otherIdentification-->
+          <div class="field-container">
+            <div><label class="mat-label other-label">Other Identification</label></div>
+            <mat-form-field>
+              <mat-form-field>
+                <input matInput formControlName="otherIdentification" id="otherIdentification"
+                  name="otherIdentification">
+              </mat-form-field>
+            </mat-form-field>
+          </div>
+          <!--mainClaimRefNo-->
+          <div class="field-container-right">
+            <div><label class="mat-label other-label">Main Claim Ref No</label></div>
+            <mat-form-field>
+              <input matInput formControlName="mainClaimRefNo" id="mainClaimRefNo" name="mainClaimRefNo">
+            </mat-form-field>
+          </div>
+        </section>
+        <br />
+        <div class="clear">&nbsp;</div>
+        <section>
+          <!--dateOfBirth-->
+          <div class="field-container">
+            <mat-form-field class="mat-form-field">
+              <label class="mat-label other-label">Date of Birth</label>
+              <input matInput formControlName="dateOfBirth" id="dateOfBirth" name="dateOfBirth"
+                [matDatepicker]="dateOfBirth">
+              <mat-datepicker-toggle matSuffix [for]="dateOfBirth" [disabled]="false"></mat-datepicker-toggle>
+              <mat-datepicker startView="month" [startAt]="startDate" touchUi="true" #dateOfBirth></mat-datepicker>
+            </mat-form-field>
+          </div>
+          <!--dateOfEvent-->
+          <div class="field-container-right">
+            <mat-form-field class="mat-form-field">
+              <label class="mat-label other-label">Event Date</label>
+              <input matInput formControlName="dateOfEvent" id="dateOfEvent" name="dateOfEvent"
+                [matDatepicker]="dateOfEvent">
+              <mat-datepicker-toggle matSuffix [for]="dateOfEvent" [disabled]="false"></mat-datepicker-toggle>
+              <mat-datepicker startView="month" [startAt]="startDate" touchUi="true" #dateOfEvent></mat-datepicker>
+            </mat-form-field>
+          </div>
+        </section>
+        <br />
+        <div class="clear">&nbsp;</div>
+
+        <div class="items-buttons-container">
+          <div class="form-buttons submit-button">
+            <button type="button" class="button float-button" (click)="onResetAllFormFields()">Reset</button>
+          </div>
+          <div class="form-buttons submit-button">
+            <button type="button" class="button float-button" (click)="onSearchPersonEvent()">Search</button>
+          </div>
+        </div>
+
+        <br />
+        <div class="clear">&nbsp;</div>
+      </mat-card>
+    </form>
+  </div>
+  <br />
+  <div class="clear">&nbsp;</div>
+  <app-invoice-switch-batch-viewer [invoiceData]="invoiceData"  [switchBatchType]="switchBatchType"></app-invoice-switch-batch-viewer>
+</div>
+
+<div class="items-buttons-container">
+  <div class="form-buttons submit-button">
+    <button class="button float-button cancel-btn" [mat-dialog-close]="false">Cancel</button>
+  </div>
+</div>

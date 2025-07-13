@@ -1,0 +1,64 @@
+<mat-card *ngIf="!model || (isLoading$ | async)">
+    <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+    <label class="mat-label other-label"><i>loading invoice payment approval...please wait</i></label>
+</mat-card>
+
+<span *ngIf="model && !(isLoading$ | async)">
+    <member-view [rolePlayerId]="selectedPersonEvent.companyRolePlayerId" [isReadOnly]="true"></member-view>
+
+    <person-event-view [personEventId]="selectedPersonEvent.personEventId"></person-event-view>
+
+    <mat-card>
+        <div class="menu-bar">
+            <span class="material-icons">
+                person
+            </span>&nbsp;Person Event: ({{selectedPersonEvent.personEventReferenceNumber}})
+        </div>
+
+        <mat-tab-group *ngIf="model" animationDuration="500ms">
+            <mat-tab
+                label="{{model.claims && model.claims.length > 0 ? 'Claims (' + model.claims.length + ')' : 'Claims(0)'}}">
+                <mat-card *ngIf="!selectedClaim">
+                    <holistic-claim-details [personEvent]="selectedPersonEvent" [isReadOnly]="isReadOnly"
+                        (claimSelectedEmit)="setSelectedClaim($event)"></holistic-claim-details>
+                </mat-card>
+
+                <mat-card *ngIf="selectedClaim">
+                    <div class="menu-bar">
+                        <span class="material-icons">
+                            monitor_heart
+                        </span>&nbsp;Claim: ({{selectedClaim.claimReferenceNumber}})
+
+                        <span class="material-icons pointer right pulse" matTooltip="back" (click)="resetClaim()">
+                            arrow_back
+                        </span>
+                    </div>
+
+                    <mat-tab-group *ngIf="selectedClaim" animationDuration="500ms" [(selectedIndex)]="defaultPEVTabIndex">
+                        <mat-tab label="Invoices">
+                            <claim-invoice-container [personEvent]="selectedPersonEvent" [claim]="selectedClaim">
+                            </claim-invoice-container>
+                        </mat-tab>
+                        <mat-tab label="Payments">
+                            <claim-payment-container [personEvent]="selectedPersonEvent">
+                            </claim-payment-container>
+                        </mat-tab>
+                    </mat-tab-group>
+                </mat-card>
+            </mat-tab>
+            <mat-tab label="Employee">
+                <person [rolePlayer]="model.rolePlayer" [title]="'Employee'" [isReadOnly]="true"
+                    [showDocuments]="false">
+                </person>
+            </mat-tab>
+            <mat-tab label="Employment">
+                <holistic-employment-details [personEvent]="selectedPersonEvent" [isReadOnly]="true">
+                </holistic-employment-details>
+            </mat-tab>
+            <mat-tab label="Notes">
+                <common-notes [moduleType]="moduleType" [noteItemType]="noteItemType" [itemId]="model.personEventId">
+                </common-notes>
+            </mat-tab>
+        </mat-tab-group>
+    </mat-card>
+</span>

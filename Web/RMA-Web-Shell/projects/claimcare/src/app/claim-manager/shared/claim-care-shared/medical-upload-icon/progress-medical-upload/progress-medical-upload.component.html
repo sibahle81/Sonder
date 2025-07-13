@@ -1,0 +1,372 @@
+<mat-card class="pad" *ngIf="(isLoading$ | async)">
+  <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+  <label class="mat-label other-label"><i>loading progress medical report...please wait</i></label>
+</mat-card>
+<div *ngIf="!(isLoading$ | async)">
+
+  <mat-card>
+    <div class="menu-bar">
+      <span class="material-icons">
+        edit_document
+      </span>&nbsp;Progress Medical Report
+      <span class="material-icons menu-button" matTooltip="Close" (click)='cancel()'>
+        close
+      </span>
+      <span class="material-icons menu-button pulse" matTooltip="Save" (click)='save()'
+        *ngIf="!isReadOnly && (form.valid && !form.pristine) && selectedICDCodes.length > 0 && documentsEmitted && documentsEmitted.length > 0">
+        save
+      </span>
+    </div>
+
+    <health-care-provider-search-V2 *ngIf="!selectedHealthCareProvider"
+      (healthCareProviderSelectedEmit)="setHealthCareProvider($event)"></health-care-provider-search-V2>
+
+        <form [formGroup]="form" class="mat-container details-form" novalidate>
+            <div *ngIf="selectedHealthCareProvider">
+                <section>
+                    <mat-form-field class="mat-form-field">
+                        <label class="mat-label other-label mandatory-field">Received Date</label>
+                        <input matInput formControlName="reportDate" [matDatepicker]="reportDate" id="reportDate"
+                            name="reportDate">
+                        <mat-datepicker-toggle matSuffix [for]="reportDate" [disabled]="false"></mat-datepicker-toggle>
+                        <mat-datepicker startView="month" [startAt]="startDate" touchUi="true"
+                            #reportDate></mat-datepicker>
+                    </mat-form-field>
+                </section>
+
+
+                <section>
+                    <mat-form-field class="mat-form-field">
+                        <label class="mat-label other-label mandatory-field">Healthcare Provider Practice
+                            Number
+                        </label><span *ngIf="!isReadOnly" (click)="resetHCPSearch()"
+                            class="material-icons pointer right" matTooltip="search health care provider">
+                            restart_alt
+                        </span>
+                        <input matInput id="healthcareProviderPracticeNumber" name="healthcareProviderPracticeNumber"
+                            formControlName="healthcareProviderPracticeNumber" />
+                    </mat-form-field>
+
+          <mat-form-field class="mat-form-field-right">
+            <label class="mat-label other-label mandatory-field">Healthcare Provider Name</label>
+            <input matInput id="healthcareProviderName" name="healthcareProviderName"
+              formControlName="healthcareProviderName" />
+          </mat-form-field>
+        </section>
+
+        <section>
+          <mat-form-field class="mat-form-field">
+            <label class="mat-label other-label">Medical Report Category</label>
+            <mat-select name="medicalReportCategory" id="medicalReportCategory" formControlName="medicalReportCategory">
+              <mat-option *ngFor="let medicalReportCategory of medicalReportCategories"
+                [value]="medicalReportCategory.id">
+                {{medicalReportCategory.name}}
+              </mat-option>
+            </mat-select>
+            <mat-error
+              *ngIf="form.get('medicalReportCategory').hasError('required')  && form.get('medicalReportCategory').touched">
+              Medical Report Category is <strong>required</strong>
+            </mat-error>
+          </mat-form-field>
+
+          <mat-form-field class="mat-form-field-right">
+            <label class="mat-label other-label mandatory-field">Date Of Consultation</label>
+            <input matInput formControlName="dateOfConsultation" [matDatepicker]="dateOfConsultation"
+              id="dateOfConsultation" name="dateOfConsultation" [min]="minDate" [max]="startDate" readonly>
+            <mat-datepicker-toggle matSuffix [for]="dateOfConsultation" [disabled]="false"></mat-datepicker-toggle>
+            <mat-datepicker startView="month" [startAt]="startDate" touchUi="true" #dateOfConsultation></mat-datepicker>
+            <mat-error
+              *ngIf="form.get('dateOfConsultation').hasError('required')  && form.get('dateOfConsultation').touched">
+              Date Of Consultation is <strong>required</strong>
+            </mat-error>
+            <mat-error *ngIf="form.get('dateOfConsultation').hasError('inValidDate')">
+              Date of Consultation must not be before date of accident
+            </mat-error>
+          </mat-form-field>
+        </section>
+
+        <section>
+          <mat-form-field class="mat-form-field">
+            <label class="mat-label other-label">Body Side</label>
+            <mat-select name="bodySide" id="bodySide" formControlName="bodySide">
+              <mat-option *ngFor="let bodySide of bodySides" [value]="bodySide.id">
+                {{bodySide.name}}
+              </mat-option>
+            </mat-select>
+            <mat-error *ngIf="form.get('bodySide').hasError('required')  && form.get('bodySide').touched">
+              Body side is <strong>required</strong>
+            </mat-error>
+          </mat-form-field>
+
+          <mat-form-field class="mat-form-field-right">
+            <label class="mat-label other-label">Severity</label>
+            <mat-select name="severity" id="severity" formControlName="severity">
+              <mat-option *ngFor="let severity of severities" [value]="severity.id">
+                {{severity.name}}
+              </mat-option>
+            </mat-select>
+            <mat-error *ngIf="form.get('severity').hasError('required')  && form.get('severity').touched">
+              Contact Designation Type is <strong>required</strong>
+            </mat-error>
+          </mat-form-field>
+        </section>
+
+        <section>
+          <div class="field-container">
+            <label class="other-label mandatory-field">Is the patient unfit for work?</label>
+          </div>
+
+          <div class="field-container-right">
+            <mat-radio-group formControlName="isUnfitForWork" id="isUnfitForWork"  (change)="isUnfitForWorkOnChange($event)">
+              <mat-radio-button value="Yes">Yes</mat-radio-button>&nbsp;
+              <mat-radio-button value="No">No</mat-radio-button>
+            </mat-radio-group>
+          </div>
+
+          <br />
+          <br />
+
+          <div *ngIf="form.value.isUnfitForWork == 'Yes'">
+            <section>
+              <mat-form-field class="mat-form-field">
+                <label class="other-label mandatory-field">Unfit Start Date</label>
+                <input matInput [matDatepicker]="unfitStartPicker" [min]="eventStartDate"
+                  formControlName="unfitStartDate" id="unfitStartDate" (dateChange)="showUnfitEndDate($event)" readonly>
+                <mat-datepicker-toggle matSuffix [for]="unfitStartPicker"></mat-datepicker-toggle>
+                <mat-datepicker #unfitStartPicker [startAt]="startDate"></mat-datepicker>
+              </mat-form-field>
+
+              <mat-form-field class="mat-form-field-right">
+                <label class="other-label mandatory-field">Unfit End Date</label>
+                <input matInput [matDatepicker]="unfitEndPicker" formControlName="unfitEndDate" id="unfitEndDate" 
+                  readonly>
+                <mat-datepicker-toggle matSuffix [for]="unfitEndPicker"></mat-datepicker-toggle>
+                <mat-datepicker #unfitEndPicker></mat-datepicker>
+                <mat-error *ngIf="form.get('unfitEndDate').hasError('invalidEndDate')">
+                  Unfit End Date cannot be before Unfit Start Date
+                </mat-error>
+              </mat-form-field>
+            </section>
+          </div>
+        </section>
+
+        <br />
+
+        <section>
+          <div class="field-container">
+            <label class="other-label mandatory-field">Has the patient stabilised? </label>
+          </div>
+
+          <div class="field-container-right">
+            <mat-radio-group formControlName="radioStabilisedDetails" id="radioStabilisedDetails" (change)="isRadioStabilisedDetailsChanged($event)">
+              <mat-radio-button value="Yes">Yes</mat-radio-button>&nbsp;
+              <mat-radio-button value="No">No</mat-radio-button>
+            </mat-radio-group>
+            <mat-error
+            *ngIf="form.get('radioStabilisedDetails').hasError('required')  && form.get('ctlNotStabilisedReason').touched">
+            Stabilised is <strong>required</strong>
+          </mat-error>
+          </div>
+
+          <br />
+          <br />
+
+          <div *ngIf="form.value.radioStabilisedDetails == 'No'">
+            <section>
+              <mat-form-field class="mat-form-field">
+                <label class="other-label">&nbsp;Provide details of not stabilised reason:</label>
+                <textarea matInput cdkTextareaAutosize cdkAutosizeMinRows="3" cdkAutosizeMaxRows="5"
+                  id="ctlNotStabilisedReason" formControlName="ctlNotStabilisedReason" maxlength="1000"></textarea>
+              </mat-form-field>
+              <mat-error
+              *ngIf="form.get('ctlNotStabilisedReason').hasError('required')  && form.get('ctlNotStabilisedReason').touched">
+              Not Stabilised reason is <strong>required</strong>
+            </mat-error>
+            </section>
+          </div>
+
+          <div *ngIf="form.value.radioStabilisedDetails == 'Yes'">
+            <section>
+              <mat-form-field>
+                <label class="other-label mandatory-field">Date Stabilized:</label>
+                <input readonly matInput [matDatepicker]="pickerDateStabilised" formControlName="ctlDateStabilised"
+                  id="ctlDateStabilised" [max]="maxDate">
+                <mat-datepicker-toggle matSuffix [for]="pickerDateStabilised"></mat-datepicker-toggle>
+                <mat-datepicker #pickerDateStabilised [startAt]="startDate"></mat-datepicker>
+                <mat-error
+                  *ngIf="form.get('ctlDateStabilised').hasError('required')  && form.get('ctlDateStabilised').touched">
+                  Date stabilised is <strong>required</strong>
+                </mat-error>
+                <mat-error *ngIf="form.get('ctlDateStabilised').hasError('inValidDate')">
+                  Date stabilised must not be before date of accident
+                </mat-error>
+              </mat-form-field>
+            </section>
+          </div>
+
+        </section>
+
+        <br />
+        <section>
+          <div class="field-container">
+            <label class="other-label mandatory-field">Does the patient require further treatment?</label>
+          </div>
+
+          <div class="field-container-right">
+            <mat-radio-group formControlName="radioAdditionalTreatment" id="radioAdditionalTreatment"  (change)="isRadioAdditionalTreatment($event)">
+              <mat-radio-button value="Yes">Yes</mat-radio-button>&nbsp;
+              <mat-radio-button value="No">No</mat-radio-button>
+            </mat-radio-group>
+          </div>
+
+          <br />
+          <br />
+
+          <div *ngIf="form.value.radioAdditionalTreatment == 'Yes'">
+            <section>
+              <mat-form-field class="mat-form-field">
+                <label class="other-label">&nbsp;Provide details of additional treatment required:</label>
+                <textarea matInput cdkTextareaAutosize cdkAutosizeMinRows="3" cdkAutosizeMaxRows="5"
+                  id="ctlTreatmentDetails" formControlName="ctlTreatmentDetails" maxlength="1000"></textarea>
+              </mat-form-field>
+            </section>
+          </div>
+        </section>
+
+        <br />
+
+        <section>
+          <div class="field-container">
+            <label class="other-label mandatory-field">Has the patient been referred to a specialist?</label>
+          </div>
+
+          <div class="field-container-right">
+            <mat-radio-group formControlName="radioSpecialistDetails" id="radioSpecialistDetails" (change)="isRadioSpecialistDetails($event)">
+              <mat-radio-button value="Yes">Yes</mat-radio-button>&nbsp;
+              <mat-radio-button value="No">No</mat-radio-button>
+            </mat-radio-group>
+          </div>
+
+          <br />
+          <br />
+
+          <div *ngIf="form.value.radioSpecialistDetails == 'Yes'">
+            <section>
+              <mat-form-field class="mat-form-field">
+                <label class="other-label">&nbsp;Provide specialist name, date and outcome</label>
+                <textarea matInput cdkTextareaAutosize cdkAutosizeMinRows="3" cdkAutosizeMaxRows="5"
+                  id="ctlSpecialistReferralDetails" formControlName="ctlSpecialistReferralDetails"
+                  maxlength="1000"></textarea>
+              </mat-form-field>
+            </section>
+          </div>
+        </section>
+
+        <br />
+
+        <section>
+          <div class="field-container">
+            <label class="other-label mandatory-field">Has the patient been referred for radiological examinations?
+            </label>
+          </div>
+
+          <div class="field-container-right">
+            <mat-radio-group aria-label="Has the patient been referred for radiological examinations? "
+              formControlName="radioRadiologyDetails" id="radioRadiologyDetails" (change)="isRadioRadiologyDetailssChanged($event)">
+              <mat-radio-button value="Yes">Yes</mat-radio-button>&nbsp;
+              <mat-radio-button value="No">No</mat-radio-button>
+            </mat-radio-group>
+          </div>
+
+          <br />
+          <br />
+
+          <div *ngIf="form.value.radioRadiologyDetails == 'Yes'">
+            <section>
+              <mat-form-field class="mat-form-field">
+                <label class="other-label">&nbsp;Provide specialist name, date and outcome</label>
+                <textarea matInput cdkTextareaAutosize cdkAutosizeMinRows="3" cdkAutosizeMaxRows="5"
+                  id="ctlRadiologyFindings" formControlName="ctlRadiologyFindings"
+                  maxlength="1000"></textarea>
+              </mat-form-field>
+            </section>
+          </div>
+        </section>
+
+        <br />
+
+        <section>
+          <div class="field-container">
+            <label class="other-label mandatory-field">Has the patient undergone further
+              operations/procedures/anaesthetic since the
+              first medical report?</label>
+          </div>
+
+          <div class="field-container-right">
+            <mat-radio-group formControlName="radioAdditionalOperationsProcedures"
+              id="radioAdditionalOperationsProcedures" (change)="isradioAdditionalOperationsProceduresChanged($event)">
+              <mat-radio-button value="Yes">Yes</mat-radio-button>&nbsp;
+              <mat-radio-button value="No">No</mat-radio-button>
+            </mat-radio-group>
+          </div>
+
+          <br />
+          <br />
+
+          <div *ngIf="form.value.radioAdditionalOperationsProcedures == 'Yes'">
+            <section>
+              <mat-form-field class="mat-form-field">
+                <label class="other-label">&nbsp;Provide details:</label>
+                <textarea matInput cdkTextareaAutosize cdkAutosizeMinRows="3" cdkAutosizeMaxRows="5"
+                  id="ctlOperationsProcedures" formControlName="ctlOperationsProcedures" maxlength="1000"></textarea>
+              </mat-form-field>
+            </section>
+          </div>
+        </section>
+
+        <br />
+
+        <section>
+          <div class="field-container">
+            <label class="other-label mandatory-field">Has the patient received further physiotherapy treatment
+              since the 1st medical report?</label>
+          </div>
+
+          <div class="field-container-right">
+            <mat-radio-group formControlName="radioAdditionalPhysiotherapy" id="radioAdditionalPhysiotherapy" (change)="isradioAdditionalPhysiotherapyChanged($event)">
+              <mat-radio-button value="Yes">Yes</mat-radio-button>&nbsp;
+              <mat-radio-button value="No">No</mat-radio-button>
+            </mat-radio-group>
+          </div>
+
+          <br />
+          <br />
+
+          <div *ngIf="form.value.radioAdditionalPhysiotherapy == 'Yes'">
+            <section>
+              <mat-form-field class="mat-form-field">
+                <label class="other-label">&nbsp;Provide details:</label>
+                <textarea matInput cdkTextareaAutosize cdkAutosizeMinRows="3" cdkAutosizeMaxRows="5"
+                  id="ctlPhysiotherapy" formControlName="ctlPhysiotherapy" maxlength="1000"></textarea>
+              </mat-form-field>
+            </section>
+          </div>
+        </section>
+
+        <br />
+
+        <estimate-icd-code-list [personEvent]="personEvent" [event]="event" [selectedICDCodes]="selectedICDCodes"
+          [medicalReportForm]="progressMedicalReportForm" [isWizard]="isWizard"
+          [isReadOnly]="isReadOnly" (formStatusChanged)="onIcdCodeListFormStatusChanged($event)"></estimate-icd-code-list>
+
+        <document-uploader *ngIf="claimMedicalDocuments" [documentSet]="claimMedicalDocuments"
+          [documentTypeFilter]="documentTypeEnums" [systemName]="documentSystemName"
+          [forceRequiredDocumentTypeFilter]="documentTypeEnums"
+          [keyName]="'PersonEventId'" [keyValue]="personEvent.personEventId"
+          [canDelete]="personEvent.isStraightThroughProcess ? false : true"
+          [documentUploadStatus]="documentUploadStatus"
+          (emitAllDocuments)="allDocumentsEmitted($event)"></document-uploader>
+      </div>
+    </form>
+  </mat-card>
+</div>

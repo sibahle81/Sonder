@@ -1,0 +1,171 @@
+<mat-card *ngIf="(isLoading$ | async)">
+    <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+    <label class="mat-label other-label"><i>{{loadingMessage$ | async}}</i></label>
+</mat-card>
+
+<div *ngIf="!(isLoading$ | async)">
+    <div *ngIf="policy.rolePlayerPolicyOnlineSubmissions && policy.rolePlayerPolicyOnlineSubmissions.length > 0">
+        <mat-card>
+            <div class="menu-bar">
+                {{getProductOptionName()}} ({{policy.policyNumber}})
+            </div>
+
+            <div *ngFor="let rolePlayerPolicyOnlineSubmission of policy.rolePlayerPolicyOnlineSubmissions">
+                <div *ngIf="!(isLoading$ | async) && !selectedRolePlayerPolicyOnlineSubmissionDetail">
+                    <mat-card class="margins">
+                        <div class="scrollTable">
+                            <table class="altRowTable">
+                                <tr>
+                                    <th>Year</th>
+                                    <th>Type</th>
+                                    <th>Category Insured</th>
+                                    <th>Average Number of Employees</th>
+                                    <th>Total Employee Earnings</th>
+                                    <th>Live In Allowance</th>
+                                    <th *ngIf="!isReadOnly && canCapture()">
+                                        Action</th>
+                                </tr>
+                                <tr *ngFor="let rolePlayerPolicyOnlineSubmissionDetail of rolePlayerPolicyOnlineSubmission.rolePlayerPolicyOnlineSubmissionDetails"
+                                    [ngClass]="{'excluded': isExcluded(rolePlayerPolicyOnlineSubmissionDetail)}">
+                                    <td>{{rolePlayerPolicyOnlineSubmission.declarationYear}}</td>
+                                    <td>{{getRolePlayerPolicyDeclarationType(rolePlayerPolicyOnlineSubmission.rolePlayerPolicyDeclarationType)}}
+                                    </td>
+                                    <td>{{getCategoryInsuredName(rolePlayerPolicyOnlineSubmissionDetail.categoryInsured)}}
+                                    </td>
+                                    <td>{{rolePlayerPolicyOnlineSubmissionDetail.averageNumberOfEmployees ?
+                                        rolePlayerPolicyOnlineSubmissionDetail.averageNumberOfEmployees : 0}}</td>
+                                    <td>{{rolePlayerPolicyOnlineSubmissionDetail.averageEmployeeEarnings ?
+                                        formatMoney(rolePlayerPolicyOnlineSubmissionDetail.averageEmployeeEarnings.toFixed(2))
+                                        : '0.00'}}
+                                    </td>
+                                    <td>{{rolePlayerPolicyOnlineSubmissionDetail.liveInAllowance ?
+                                        rolePlayerPolicyOnlineSubmissionDetail.liveInAllowance
+                                        : 'N/A'}}
+                                    </td>
+                                    <td *ngIf="!isReadOnly && canCapture()">
+                                        <span *ngIf="!rolePlayerPolicyOnlineSubmissionDetail.isDeleted"
+                                            class="material-icons pointer" matTooltip="edit"
+                                            (click)="rolePlayerPolicyOnlineSubmissionDetailSelected(rolePlayerPolicyOnlineSubmissionDetail)"
+                                            [ngClass]="{'greenfont': isValid(rolePlayerPolicyOnlineSubmissionDetail), 'redfont pulse': !isValid(rolePlayerPolicyOnlineSubmissionDetail)}">
+                                            settings
+                                        </span>
+
+                                        <a *ngIf="rolePlayerPolicyOnlineSubmissionDetail.isDeleted" role="button"
+                                            class="link-edit pointer" matTooltip="include"
+                                            (click)="exclude(rolePlayerPolicyOnlineSubmission, rolePlayerPolicyOnlineSubmissionDetail)">
+                                            <span class="material-icons pointer">
+                                                add_circle
+                                            </span>
+                                        </a>
+                                        <a *ngIf="!rolePlayerPolicyOnlineSubmissionDetail.isDeleted" role="button"
+                                            class="link-edit pointer" matTooltip="exclude"
+                                            (click)="exclude(rolePlayerPolicyOnlineSubmission, rolePlayerPolicyOnlineSubmissionDetail)">
+                                            <span class="material-icons pointer">
+                                                do_disturb_on
+                                            </span>
+                                        </a>
+
+                                        <a *ngIf="userHasPermission(viewAuditPermission) && rolePlayerPolicyOnlineSubmissionDetail.rolePlayerPolicyOnlineSubmissionDetailId > 0"
+                                            (click)="openRolePlayerPolicyOnlineSubmissionDetailAuditDialog(rolePlayerPolicyOnlineSubmission, rolePlayerPolicyOnlineSubmissionDetail)"
+                                            role="button" class="link-edit">
+                                            <span matTooltip="audit" class="material-icons icn pointer">
+                                                fingerprint
+                                            </span>
+                                        </a>
+                                    </td>
+                                </tr>
+                            </table>
+                        </div>
+                    </mat-card>
+                </div>
+
+                <div *ngIf="selectedRolePlayerPolicyOnlineSubmissionDetail">
+                    <mat-card>
+                        <div class="menu-bar">
+                            <span class="material-icons">
+                                engineering
+                            </span>
+                            Online Submission Detail
+                            <span (click)="reset()" class="material-icons pointer right" matTooltip="cancel">
+                                close
+                            </span>
+                            <span *ngIf="form.valid && !form.pristine" (click)="save()"
+                                class="material-icons pointer right pulse greenfont" matTooltip="save">
+                                save
+                            </span>
+                        </div>
+                        <form [formGroup]="form" class="mat-container details-form" novalidate>
+                            <section>
+                                <mat-form-field class="mat-form-field">
+                                    <label class="mat-label other-label">Product Option</label>
+                                    <input matInput formControlName="productOption" name="productOption"
+                                        id="productOption" />
+                                </mat-form-field>
+                                <mat-form-field class="mat-form-field-right">
+                                    <label class="mat-label other-label">Category Insured</label>
+                                    <input matInput formControlName="categoryInsured" name="categoryInsured"
+                                        id="categoryInsured" />
+                                </mat-form-field>
+                            </section>
+                            <section>
+                                <mat-form-field
+                                    *ngIf="selectedRolePlayerPolicyOnlineSubmissionDetail.categoryInsured == unSkilled"
+                                    class="mat-form-field">
+                                    <label class="mat-label other-label">Number of Employees Receiving Live In
+                                        Allowance<i> (LIA for
+                                            {{selectedRolePlayerPolicyOnlineSubmissionDetail.declarationYear}}:
+                                            {{formatMoney(getLiveInAllowanceForCoverPeriod(selectedRolePlayerPolicyOnlineSubmission).toFixed(2))}})</i></label>
+                                    <input (input)="validate()" matInput NumberOnly formControlName="liveInAllowance"
+                                        name="liveInAllowance" id="liveInAllowance" />
+                                    <mat-error *ngIf="form.get('liveInAllowance').hasError('min')">
+                                        minimum allowable number of employees receiving LIA
+                                        <strong>exceeded</strong> (minimum
+                                        allowable: 0)
+                                    </mat-error>
+                                    <mat-error *ngIf="form.get('liveInAllowance').hasError('max')">
+                                        maximum allowable number of employees receiving LIA
+                                        <strong>exceeded</strong> (maximum
+                                        allowable: {{form.get('averageNumberOfEmployees').value ?
+                                        form.get('averageNumberOfEmployees').value : 0}})
+                                    </mat-error>
+                                </mat-form-field>
+                            </section>
+                            <section>
+                                <mat-form-field class="mat-form-field">
+                                    <label class="mat-label other-label">Average Number of Employees</label>
+                                    <input (input)="validate()" matInput NumberOnly
+                                        formControlName="averageNumberOfEmployees" name="averageNumberOfEmployees"
+                                        id="averageNumberOfEmployees" />
+                                    <mat-error *ngIf="form.get('averageNumberOfEmployees').hasError('required')">
+                                        average number of employees is <strong>required</strong>
+                                    </mat-error>
+                                </mat-form-field>
+                                <mat-form-field class="mat-form-field-right">
+                                    <label class="mat-label other-label">Total Employee Earnings</label>
+                                    <input (input)="validate()" matInput DecimalNumber
+                                        formControlName="averageEmployeeEarnings" name="averageEmployeeEarnings"
+                                        id="averageEmployeeEarnings" />
+                                    <mat-error *ngIf="form.get('averageEmployeeEarnings').hasError('required')">
+                                        total employee earnings is <strong>required</strong>
+                                    </mat-error>
+                                    <mat-error *ngIf="form.get('averageEmployeeEarnings').hasError('min')">
+                                        minimum allowable earnigs per employee is too <strong>low</strong> (minimum
+                                        allowable: {{configuredMaximum && minimumAllowableEarningsPerEmployee > 0 ?
+                                        formatMoney(minimumAllowableEarningsPerEmployee.toFixed(2)) : 'not
+                                        configured'}})
+                                    </mat-error>
+                                    <mat-error *ngIf="form.get('averageEmployeeEarnings').hasError('max')">
+                                        maximum allowable earnigs per employee <strong>exceeded</strong> (maximum
+                                        allowable: {{configuredMaximum && maximumAllowableEarningsPerEmployee > 0 ?
+                                        formatMoney(maximumAllowableEarningsPerEmployee.toFixed(2)) : 'not
+                                        configured'}})
+                                    </mat-error>
+                                </mat-form-field>
+                            </section>
+                        </form>
+                    </mat-card>
+                </div>
+            </div>
+        </mat-card>
+    </div>
+</div>

@@ -1,0 +1,45 @@
+<form [formGroup]="form" *ngIf="this.form">
+  <div class="mat-header">
+    <h1 class="mat-header-text">Capture Treating Doctor Authorisation</h1>
+    <button class="button submit-button" (click)="resetForm()">Reset</button>
+  </div>
+  <p>
+    <br />
+    <healthcareprovider-search #healthcareProviderSearch  [showTelephoneNumber]="false" [healthCareProviderSearchType]="treatingDoctor" 
+      (healthCareProviderChanged)="healthCareProviderChangedFunction($event)"
+      (healthCareProviderLoaded)="healthCareProviderLoadedFunction($event)"></healthcareprovider-search>
+    <br />
+    <preauth-diagnosis [preAuthDiagnosisType]="treatingDoctor" [showTreamentBaskets]="false"></preauth-diagnosis>
+    <br />
+    <mat-form-field class="date-field mat-form-field" color="accent">
+      <label class="mat-label other-label mandatory-field">Date authorised from</label>
+      <input matInput [matDatepicker]="pickerTreatingDoctorAuthFrom" formControlName="dateAuthorisedFromTreatingDoctor"
+      (dateChange)="fromDateChange($event);">
+      <mat-datepicker-toggle  matSuffix
+        [for]="pickerTreatingDoctorAuthFrom"></mat-datepicker-toggle>
+      <mat-datepicker #pickerTreatingDoctorAuthFrom></mat-datepicker>
+    </mat-form-field>
+    <mat-form-field class="date-field mat-form-field-right" color="accent">
+      <label class="mat-label other-label mandatory-field">Date authorised to</label>
+      <input matInput [matDatepicker]="pickerTreatingDoctorAuthTo" formControlName="dateAuthorisedToTreatingDoctor"
+      (dateChange)="toDateChange($event);">
+      <mat-datepicker-toggle  matSuffix
+        [for]="pickerTreatingDoctorAuthTo"></mat-datepicker-toggle>
+      <mat-datepicker #pickerTreatingDoctorAuthTo></mat-datepicker>
+    </mat-form-field>
+    <br />
+    <mat-form-field class="mat-form-field-right">
+      <label class="mat-label other-label mandatory-field">Motivation(Min 10 characters)</label>
+      <textarea matInput cdkTextareaAutosize cdkAutosizeMinRows="3" cdkAutosizeMaxRows="5"
+        formControlName="motivation" class="mat-input-element" minlength="10"
+        maxlength="1000" (focusout)="onMotivationChange()"></textarea>
+        <mat-error *ngIf="form.get('motivation').hasError('minlength')">
+          Motivation must be at least <strong>10 characters</strong>
+       </mat-error>
+    </mat-form-field>
+    <br />
+    <preauth-breakdown #preAuthBreakdown [preAuthBreakdownType]="treatingDoctor" [showLevelOfCare]="false" authType="Treating Doctor"
+      [showResetButton]="false" [healthCareProvider]="healthCareProvider" [preAuthClaimDetail]="preAuthClaimDetail" [personEventId]="personEventId" [subAuthModel]="model"></preauth-breakdown>
+    <br /><br /><br />
+  </p>
+</form>

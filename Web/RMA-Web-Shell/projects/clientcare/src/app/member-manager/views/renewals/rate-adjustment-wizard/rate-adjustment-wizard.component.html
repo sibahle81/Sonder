@@ -1,0 +1,11 @@
+<div *ngIf="isLoading$ | async">
+  <mat-card>
+    <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+    <label class="mat-label other-label"><i>loading...please wait</i></label>
+  </mat-card>
+  <br/>
+</div>
+
+<div *ngIf="!(isLoading$ | async) && this.model">
+  <rate-adjustment [_clientRates]="this.model" [isWizard]="true" [isReadOnly]="inApprovalMode"></rate-adjustment>
+</div>

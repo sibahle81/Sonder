@@ -1,0 +1,48 @@
+<div class="topbar-menu">
+    <!--Left Menu Toggle-->
+    <div class="topnav" style="position: absolute;top: 0;left: 0;padding-bottom: 2%;background-color: transparent;">
+        <div class="image-container">
+            <img src="/assets/images/rmalogo.png" alt="" />
+        </div>
+        <div class="notificationDiv">
+            <!-- <div class="menubar">
+        <mat-icon (click)="rightMenuDialog()" matTooltip="Menu">menu bar</mat-icon>
+      </div>
+      <div class="chatIcon">
+        <mat-icon matTooltip="Chat" aria-label="Chat_toolTip">chat_bubble_outline</mat-icon>
+      </div> -->
+            <div class="messagesIcon">
+                <mat-icon matTooltip="My Notifications" matBadge="{{numberOfNotifications}}" matBadgePosition="after" matBadgeColor="accent" (click)="notificationDialog()" aria-label="Message_toolTip">message
+                </mat-icon>
+            </div>
+            <div class="notificationIcon">
+                <mat-icon matBadge="{{numberOfTasks}}" matBadgeColor="warn" matTooltip="My Tasks" (click)="taskDialog()" aria-label="Notification_toolTip">notification_important</mat-icon>
+            </div>
+        </div>
+    </div>
+    <div *ngIf="user !== null" class="top-nav">
+        <a *ngIf="!navigationOpen" (click)="toggleNavigation()">
+            <svg width="35" height="35" id="icoOpen">
+                <path d="M0,5 30,5" stroke="#000" stroke-width="5" />
+                <path d="M0,14 30,14" stroke="#000" stroke-width="5" />
+                <path d="M0,23 30,23" stroke="#000" stroke-width="5" />
+            </svg>
+        </a>
+    </div>
+    <!--Top Level Notificaiton Bar-->
+    <div class="top-search" [ngStyle]="{'background-color': environmentColor}">
+        <div *ngIf="hasDefaultClientPreference" (click)="navigateToClient()" class="search-container search-container-right" [@slideInOut]>
+            <p style="font-size:smaller;text-align:right;padding-right:5px">
+                Pinned Client Name: <a style="cursor:pointer">{{userPreference?.defaultClientName}} </a>
+            </p>
+        </div>
+        <breadcrumb></breadcrumb>
+        <span *ngIf="!(environment.toLowerCase().includes('prod') || environment.toLowerCase().includes('unknown'))" style="margin-top: 20px; margin-right: 15px; float: right; font-size: x-small;">
+            You are on the <b>{{environment}}</b> environment
+        </span>
+        <span style="margin-top: 20px; margin-right: 15px; float: right; font-size: x-small;">
+            <a href='{{compCareURL}}' target="_blank" alt="Navigate To The CompCare System">Switch To CompCare</a>
+        </span>
+    </div>
+</div>
+<div class="menu-spacer"></div>

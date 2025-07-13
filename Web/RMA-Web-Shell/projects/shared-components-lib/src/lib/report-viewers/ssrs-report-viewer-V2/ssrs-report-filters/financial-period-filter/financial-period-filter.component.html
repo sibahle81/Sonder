@@ -1,0 +1,19 @@
+<mat-card>
+    <label class="mat-label other-label">Financial Period
+        <span *ngIf="(isLoading$ | async)">
+            <i>: (loading period...please wait)</i>
+        </span>
+        <span *ngIf="!(isLoading$ | async) && selectedPeriod">
+            <span *ngIf="selectedPeriod != 'all'">
+                <i>- <b>{{selectedPeriod.status}}: ({{selectedPeriod.startDate | date: "yyyy-MM-dd"}} -
+                    {{selectedPeriod.endDate | date: "yyyy-MM-dd"}})</b></i>
+            </span>
+            <span *ngIf="selectedPeriod == 'all'">
+                <i>: <b>financial period has not been configured for the selected year and month</b></i>
+            </span>
+
+        </span>
+    </label>
+    <year-filter [triggerReset]="triggerReset" (parameterEmit)="setYear($event)"></year-filter>
+    <month-filter [triggerReset]="triggerReset" (parameterEmit)="setMonth($event)"></month-filter>
+</mat-card>

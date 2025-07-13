@@ -1,0 +1,146 @@
+<div class="main-container">
+    <div *ngIf="dataSource.isLoading">
+        <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+        <label class="mat-label other-label"><i>searching...please wait</i></label>
+    </div>
+    <mat-card class="card_main">
+        <h1>{{headerTitle}}</h1>
+        <mat-card-content>
+            <mat-form-field [floatLabel]="'never'" class="search-filter">
+                <input matInput maxlength="50" name="filter" id="filter" #filter width="300" minLength="3"
+                    matTooltip="{{placeHolder}}" matTooltipShowDelay="1000" [disabled]="dataSource.isLoading">
+                <mat-placeholder class="placeholder">{{placeHolder}}</mat-placeholder>               
+            </mat-form-field>
+            <div class="clear-both">
+                <button type="button" (click)="search()" class="button">Search</button>
+              </div><br /><br />
+        </mat-card-content>
+    </mat-card>
+
+    <div *ngIf="isDownloading$|async" class="clear-both">
+        <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+        <label class="mat-label other-label"><i>Downloading Credit Notes...please wait</i></label>
+    </div>
+    <div *ngIf="isEmailing$|async" class="clear-both">
+        <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+        <label class="mat-label other-label"><i>Emailing Credit Notes...please be patient</i></label>
+    </div>
+
+    <div [hidden]="dataSource.isLoading || dataSource.data.length === 0" class="clear-both">
+        <div class="clear-both">
+            <form [formGroup]="form" novalidate>
+                <div class="field-container">
+                    <mat-form-field>
+                        <label class="mat-label other-label">Recipient Email Address (If overridding default
+                            recipient)<br />
+                            <i><span style="font-size: x-small;">Use colon(;) separated email addresses for multiple
+                                    recipients</span></i></label>
+                        <input matInput matTooltip="Use colon(;) separated email addresses for multiple recipients"
+                            name="ownerEmail" id="ownerEmail" formControlName="ownerEmail">
+                    </mat-form-field>
+                </div>
+            </form>
+        </div>
+        <mat-table #table [dataSource]="dataSource" matSort multiTemplateDataRows class="clear-both">
+            <!-- Expand Column -->
+            <ng-container matColumnDef="expand">
+                <mat-header-cell *matHeaderCellDef> Expand </mat-header-cell>
+                <mat-cell *matCellDef="let row" (click)="expandCollapse(row)">
+                    <span *ngIf="!row.isExpanded"><span class="material-icons expand-icon">add_circle</span></span>
+                    <span *ngIf="row.isExpanded"><span class="material-icons expand-icon">remove_circle</span></span>
+                </mat-cell>
+            </ng-container>
+            <ng-container matColumnDef="finPayeNumber">
+                <mat-header-cell *matHeaderCellDef mat-sort-header> Debtor Number </mat-header-cell>
+                <mat-cell *matCellDef="let row"> {{row.finPayeNumber}}
+                </mat-cell>
+                <ng-container matColumnDef="creditNoteNumber">
+                    <mat-header-cell *matHeaderCellDef mat-sort-header> Document Number </mat-header-cell>
+                    <mat-cell *matCellDef="let row"> {{row.documentReference}} </mat-cell>
+                </ng-container>
+            </ng-container>
+            <ng-container matColumnDef="policyNumber">
+                <mat-header-cell *matHeaderCellDef mat-sort-header> Policy Number </mat-header-cell>
+                <mat-cell *matCellDef="let row"> {{row.policyNumber}}
+                </mat-cell>
+            </ng-container>
+            <ng-container matColumnDef="creditNoteAmount">
+                <mat-header-cell *matHeaderCellDef mat-sort-header> Amount </mat-header-cell>
+                <mat-cell *matCellDef="let row" class="right-aligned-amounts"> {{row.amount | currency:'':''}}
+                </mat-cell>
+            </ng-container>
+            <!-- Actions -->
+            <ng-container matColumnDef="actions">
+                <mat-header-cell *matHeaderCellDef> <mat-checkbox
+                        [checked]="dataSource.data  && dataSource.data.data && selectedCreditNoteIds.length === dataSource.data.data.length"
+                        (change)="creditNoteAllChecked($event)" class="margin-right">
+                    </mat-checkbox>
+                    <span class="material-icons pointer margin-right" (click)="downloadSelectedCreditNotes()">
+                        download_for_offline
+                    </span>
+                    <span class="material-icons pointer" (click)="emailSelectedCreditNotes()">
+                        mail
+                    </span></mat-header-cell>
+                <mat-cell *matCellDef="let row">
+                    <mat-checkbox [checked]="selectedCreditNoteIds.indexOf(row.transactionId) > -1"
+                        (change)="creditNoteTransactionChecked($event,row)" class="margin-right">
+                    </mat-checkbox>
+                    <span class="material-icons pointer margin-right" (click)="onSelected(row)">
+                        visibility
+                    </span>
+                </mat-cell>
+            </ng-container>
+
+            <div [hidden]=" true">
+                <ng-container matColumnDef="expandedDetail">
+                    <mat-cell class="expand" *matCellDef="let row">
+                        <div>
+                            <table>
+                                <tr class="ChildData">
+                                    <td><b class="mat-cell-label">Credit Note Source Module:</b>
+                                        {{getSourceModule(row.sourceModuleId)}}</td>
+                                </tr>
+                                <tr class="ChildData">
+                                    <td><b class="mat-cell-label">Credit Note Source:</b>
+                                        {{getSourceProcess(row.sourceProcessId)}}</td>
+                                </tr>
+                                <tr class="ChildData">
+                                    <td><b class="mat-cell-label">Client Email:</b> {{row.emailAddress}}</td>
+                                </tr>
+                            </table>
+                        </div>
+                    </mat-cell>
+                </ng-container>
+            </div>
+            <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
+            <mat-row *matRowDef="let row; columns: displayedColumns;" [class.expanded]="row.isExpanded"></mat-row>
+            <mat-row *matRowDef="let row; columns: ['expandedDetail'];"
+                [@detailExpand]="row.isExpanded == true ? 'expanded' : 'collapsed'">
+            </mat-row>
+        </mat-table>
+
+        <mat-paginator #paginator [length]="dataSource.data.length" [pageIndex]="0" [pageSize]="10"
+        [pageSizeOptions]="[5, 10, 25, 100]">
+      </mat-paginator>
+    </div>
+
+    <div [hidden]="true" class="clear-both">
+        <ssrs-reportviewer [reportserver]="reportServerAudit" [reporturl]="reportUrlAudit"
+            [showparameters]="showParametersAudit" [parameters]="parametersAudit" [language]="languageAudit"
+            [width]="widthAudit" [height]="heightAudit" [toolbar]="toolbarAudit" [format]="format"
+            [isDownload]="isDownload" [reportName]="'creditNote'">
+        </ssrs-reportviewer>
+    </div>
+    <div [hidden]="dataSource.isLoading || paginator.length > 0 || !currentQuery || currentQuery == ''"
+        class="no-search-results-add-button">
+        <div class="site-font grey">
+            <p class="grey">Your search - <strong>{{currentQuery}}</strong> - did not match any records.</p>
+            <span>Suggestions: </span>
+            <ul>
+                <li>Make sure that all words are spelled correctly.</li>
+                <li>Try different keywords.</li>
+                <li>Try more general keywords.</li>
+                <li>Try fewer keywords.</li>
+            </ul>
+        </div>
+    </div>

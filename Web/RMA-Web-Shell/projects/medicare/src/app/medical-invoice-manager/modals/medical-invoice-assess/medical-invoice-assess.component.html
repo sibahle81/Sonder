@@ -1,0 +1,312 @@
+<div mat-dialog-content>
+  <div class="margine-space">
+    <div class="mat-header">
+      <h1>{{(switchBatchType == switchBatchTypeEnum.MedEDI) ? "Medical Invoice Assess" :"Teba Invoice Assess"}} </h1>
+    </div>
+
+    <mat-card class="matCard">
+
+      <div *ngIf="loadingClaimsData$ | async">
+        <mat-progress-bar mode="indeterminate"
+          [ngClass]="{ 'loading-main-double-menu-progress': doubleMenu, 'loading-main-single-menu-progress': !doubleMenu }">
+        </mat-progress-bar>
+        <p class="site-font grey">Loading...</p>
+      </div>
+      <mat-expansion-panel>
+        <mat-expansion-panel-header>
+          <mat-panel-title>
+            Claim Holistic View
+          </mat-panel-title>
+        </mat-expansion-panel-header>
+        <br>
+        <div *ngIf="selectedEvent && personEventId > 0">
+          <holistic-person-event-list *ngIf="selectedEvent && personEventId" [event]="selectedEvent"
+            [personEventId]="personEventId" (emitPersonEvent)="setPersonEvent($event)" [selectedTab]="2"
+            [icd10List]="icd10ListClaims" [rolePlayerId]="invoiceDataSelected.healthCareProviderId"></holistic-person-event-list>
+        </div> 
+      </mat-expansion-panel>
+      <br>
+      
+      <div>
+        <div class="grid">
+          <div>
+            <span class="title">{{(switchBatchType == switchBatchTypeEnum.MedEDI) ? "HCP Name" :"Service Provider"}}
+            </span>
+            <span class="value">{{ invoiceDataSelected.healthCareProviderName }} </span>
+          </div>
+        </div>
+        <div class="grid">
+          <div>
+            <span class="title">Practice Number</span>
+            <span class="value">{{ invoiceDataSelected.practiceNumber }}</span>
+          </div>
+        </div>
+        <div class="grid">
+          <div>
+            <span class="title">Invoice Number</span>
+            <span class="value">{{ invoiceDataSelected.hcpInvoiceNumber }}</span>
+          </div>
+        </div>
+        <div class="grid">
+          <div>
+            <span class="title">Payee Name</span>
+            <span class="value">{{ (loadingPayee$ | async) ? "loading..." : payeeName }} </span>
+          </div>
+        </div>
+        <div class="grid">
+          <div>
+            <span class="title">Invoicer Name</span>
+            <span class="value">{{ (loadingPayee$ | async) ? "loading..." : payeeName }} </span>
+          </div>
+        </div>
+
+        <div class="grid">
+          <div>
+            <span class="title">Invoice Amount</span>
+            <span class="value">{{ invoiceDataSelected.invoiceAmount }} </span>
+          </div>
+
+          <div>
+            <span class="title">Excl VAT:</span>
+            <span class="value">{{ invoiceDataSelected.invoiceTotalInclusive - invoiceDataSelected.invoiceVat | currency:"R":"symbol":'1.0-2'}}</span>
+          </div>
+
+          <div>
+            <span class="title">VAT:</span>
+            <span class="value">{{ invoiceDataSelected.invoiceVat | currency:"R":"symbol":'1.0-2' }}</span>
+          </div>
+
+          <div>
+            <span class="title">Total Incl:</span>
+            <span class="value">{{ invoiceDataSelected.invoiceTotalInclusive | currency:"R":"symbol":'1.0-2'}}</span>
+          </div>
+        </div>
+
+        <div class="grid">
+          <div>
+            <span class="value">
+              Allocate a line item to a specific claim by selecting the radio button in the claims's column, or select
+              the
+              radio
+              button in the column titles 'Excluded' to exclude that line item. Note: When you exclude a line item, or
+              enter less
+              than the full amount, you have to specify a reason why. To allocate all the line items to a specific
+              claim,
+              click
+              the claim title cell. Only claims with a Medical Cost Benefit will be listed. Only claims for which
+              liability has
+              been accespted can be allocated against.</span>
+          </div>
+        </div>
+
+      </div>
+
+      <div *ngIf="loadingClaimsData$ | async">
+        <mat-progress-bar mode="indeterminate"
+          [ngClass]="{ 'loading-main-double-menu-progress': doubleMenu, 'loading-main-single-menu-progress': !doubleMenu }">
+        </mat-progress-bar>
+        <p class="site-font grey">Searching for report...</p>
+      </div>
+      <mat-expansion-panel *ngIf="switchBatchType != switchBatchTypeEnum.Teba">
+        <mat-expansion-panel-header>
+          <mat-panel-title>
+            Linked Medical reports
+          </mat-panel-title>
+        </mat-expansion-panel-header>
+        <br>
+        <div *ngIf="medicalReportList.length > 0;else no_medical_report">
+          <medical-report-list [medicalReports]="medicalReportList" [event]="selectedEvent"
+            [isWizard]="false"></medical-report-list>
+        </div>
+      </mat-expansion-panel>
+      <ng-template #no_medical_report>
+        <span class="red-text-status-message">{{"No Medical Report Found"}}</span>
+      </ng-template>
+      <hr>
+
+      <div class="items-buttons-container">
+        <div class="form-buttons submit-button">
+          <button type="button" class="button float-button" (click)="onAllocateRejectPend()">Reject/Pend</button>
+        </div>
+        <div class="form-buttons submit-button">
+          <button type="button" class="button float-button" (click)="onOverride()">Override</button>
+        </div>
+      </div>
+
+      <div class="clear">&nbsp;</div>
+      <div>
+        <div *ngIf="isLoading">
+          <mat-progress-bar mode="indeterminate">Subtmitting, please wait...</mat-progress-bar>
+        </div>
+        <h1>Line Items</h1>
+
+        <mat-error *ngIf="!allocationRulesResults?.overallSuccess && allocationRulesResults.ruleResults.length > 0">
+          {{getError('allocationRulesResults',allocationRulesResults)}}
+        </mat-error> 
+
+        <div>
+          <form [formGroup]="medicalInvoiceAssessForm">
+            <mat-table [dataSource]="allocationLines.controls" #tableAssessData class="mat-elevation-z8">              
+              <ng-container matColumnDef="description">
+                <mat-header-cell *matHeaderCellDef> Line Description </mat-header-cell>
+                <mat-cell *matCellDef="let element"> {{element.get('description').value }} </mat-cell>
+                <mat-footer-cell *matFooterCellDef> Total </mat-footer-cell>
+              </ng-container>
+              <ng-container matColumnDef="hcpTariffCode">
+                <mat-header-cell *matHeaderCellDef> Tariff Code </mat-header-cell>
+                <mat-cell *matCellDef="let element"> {{element.get('hcpTariffCode').value }} </mat-cell>
+                <mat-footer-cell *matFooterCellDef> </mat-footer-cell>
+              </ng-container>
+              <ng-container matColumnDef="serviceDate">
+                <mat-header-cell *matHeaderCellDef> Service Date </mat-header-cell>
+                <mat-cell *matCellDef="let element"> {{element.get('serviceDate').value | date:'yyyy-MM-dd'}} </mat-cell>
+                <mat-footer-cell *matFooterCellDef> </mat-footer-cell>
+              </ng-container>
+              <!-- ServiceTimeStart Column -->
+              <ng-container matColumnDef="serviceTimeStart">
+                  <mat-header-cell *matHeaderCellDef> Service Time Start </mat-header-cell>
+                  <mat-cell *matCellDef="let element"> {{element.get('serviceTimeStart').value }} </mat-cell>
+                  <mat-footer-cell *matFooterCellDef> </mat-footer-cell>
+              </ng-container>
+              <!-- ServiceTimeEnd Column -->
+              <ng-container matColumnDef="serviceTimeEnd">
+                  <mat-header-cell *matHeaderCellDef> Service Time End </mat-header-cell>
+                  <mat-cell *matCellDef="let element"> {{element.get('serviceTimeEnd').value }} </mat-cell>
+                  <mat-footer-cell *matFooterCellDef> </mat-footer-cell>
+              </ng-container>
+              <!-- requestedAmountInclusive Column -->
+              <ng-container matColumnDef="requestedAmountInclusive">
+                <mat-header-cell *matHeaderCellDef> Invoice Amt(Incl) </mat-header-cell>
+                <mat-cell *matCellDef="let element"> {{element.get('requestedAmountInclusive').value }} </mat-cell>
+                <mat-footer-cell *matFooterCellDef> </mat-footer-cell>
+              </ng-container>
+              <!-- requestedVat Column -->
+              <ng-container matColumnDef="requestedVat">
+                <mat-header-cell *matHeaderCellDef> requestedVat </mat-header-cell>
+                <mat-cell *matCellDef="let element"> {{element.get('requestedVat').value }} </mat-cell>
+                <mat-footer-cell *matFooterCellDef> </mat-footer-cell>
+              </ng-container>
+              <!-- Assess Quantity fields -->
+              <ng-container matColumnDef="authorisedQuantity">
+                <mat-header-cell *matHeaderCellDef> Assess Quantity </mat-header-cell>
+                <mat-cell *matCellDef="let element; let i = index" [formGroup]="element">
+                  <mat-form-field>
+                    <input matInput type="number" formControlName="authorisedQuantity"  min="0.5" step="0.5"
+                      (change)="onChangeAssessValueLineItem($event,i); onQuantityChange(element,$event,i)" [errorStateMatcher]="matcher" />
+                    <mat-error *ngIf="medicalInvoiceAssessForm.controls.allocationLines.controls[i].invalid">
+                      {{getError('authorisedQuantity',i)}}
+                    </mat-error>
+                  </mat-form-field>
+                </mat-cell>
+                <mat-footer-cell *matFooterCellDef> </mat-footer-cell>
+              </ng-container>
+
+              <ng-container matColumnDef="authorisedVat">
+                <mat-header-cell *matHeaderCellDef> Assess Vat </mat-header-cell>
+                <mat-cell *matCellDef="let element"> {{element.get('authorisedVat').value }} </mat-cell>
+                <mat-footer-cell *matFooterCellDef> </mat-footer-cell>
+              </ng-container>
+
+              <ng-container matColumnDef="authorisedAmount">
+                <mat-header-cell *matHeaderCellDef> Assess Amount </mat-header-cell>
+                <mat-cell *matCellDef="let element"> {{element.get('requestedAmount').value }} </mat-cell>
+                <mat-footer-cell *matFooterCellDef> </mat-footer-cell>
+              </ng-container>
+              
+              <ng-container matColumnDef="authorisedAmountInclusive">
+                <mat-header-cell *matHeaderCellDef> Assess Amt(Incl) </mat-header-cell>
+                <mat-cell *matCellDef="let element; let i = index" [formGroup]="element">
+                  <mat-form-field>
+                    <input matInput type="number" min="1" formControlName="authorisedAmountInclusive"
+                      (change)="onChangeAssessValueLineItem($event,i); onValueChangeRecalculateVat(element,$event,i)" [errorStateMatcher]="matcher" />
+                    <mat-error *ngIf="medicalInvoiceAssessForm.controls.allocationLines.controls[i].invalid">
+                      {{getError('authorisedAmountInclusive',i)}}
+                    </mat-error>
+                  </mat-form-field>
+                </mat-cell>
+                <mat-footer-cell *matFooterCellDef> </mat-footer-cell>
+              </ng-container>
+              <!-- Excluded  -- Radion-->
+              <ng-container matColumnDef="exclude">
+                <mat-header-cell *matHeaderCellDef> Excluded </mat-header-cell>
+                <mat-cell *matCellDef="let element; let i = index">
+                  <mat-radio-button #radioButtonIncludeSelected name="lineItemIncludeExclude{{i}}"
+                    (click)="onSelectedRadioLineItem(i,AssessIncludeExcludeLineEnum[2])">
+                  </mat-radio-button>
+                </mat-cell>
+                <mat-footer-cell *matFooterCellDef> </mat-footer-cell>
+              </ng-container>
+              <!-- underAssessReason -- Text Area-->
+              <ng-container matColumnDef="underAssessReason">
+                <mat-header-cell *matHeaderCellDef> Reason </mat-header-cell>
+                <mat-cell *matCellDef="let element; let i = index" [formGroup]="element">
+                  <mat-form-field>
+                    <textarea matInput formControlName="underAssessReason" placeholder="Reason..."
+                      (keyup)="onChangeAssessValueLineItem($event,i)" [errorStateMatcher]="matcher">
+                  </textarea>
+                  <mat-error *ngIf="medicalInvoiceAssessForm.controls.allocationLines.controls[i].invalid">
+                    {{getError('underAssessReason',i)}}
+                  </mat-error>
+
+                  </mat-form-field>
+                </mat-cell>
+                <mat-footer-cell *matFooterCellDef> </mat-footer-cell>
+              </ng-container>
+              <!-- include  -- Radion-->
+              <ng-container matColumnDef="include">
+                <mat-header-cell *matHeaderCellDef> Include </mat-header-cell>
+                <mat-cell *matCellDef="let element; let i = index">
+                  <mat-radio-button #radioButtonExcludeSelected name="lineItemIncludeExclude{{i}}"
+                    (click)="onSelectedRadioLineItem(i,AssessIncludeExcludeLineEnum[1])">
+                  </mat-radio-button>
+                </mat-cell>
+                <mat-footer-cell *matFooterCellDef> </mat-footer-cell>
+              </ng-container>
+              <!-- tariffAmount Column -->
+              <ng-container matColumnDef="tariffAmount">
+                <mat-header-cell *matHeaderCellDef> Total Tariff Amount </mat-header-cell>
+                <mat-cell *matCellDef="let element"> {{element.get('tariffAmount').value|
+                  currency:"R":"symbol":'1.0-2'}}
+                </mat-cell>
+                <!--element.tariffAmount-->
+                <mat-footer-cell *matFooterCellDef> </mat-footer-cell>
+              </ng-container>
+              <!-- requestedQuantity Column -->
+              <ng-container matColumnDef="requestedQuantity">
+                <mat-header-cell *matHeaderCellDef> {{(switchBatchType == switchBatchTypeEnum.MedEDI) ? "Doctor's Quantity" :
+                  "KMs/Qty"}} </mat-header-cell>
+                <mat-cell *matCellDef="let element"> {{element.get('requestedQuantity').value}} </mat-cell>
+                <!--element.requestedQuantity-->
+                <mat-footer-cell *matFooterCellDef> </mat-footer-cell>
+              </ng-container>
+              <!-- defaultQuantity Column -->
+              <ng-container matColumnDef="defaultQuantity">
+                <mat-header-cell *matHeaderCellDef> Tariff's Quantity </mat-header-cell>
+                <mat-cell *matCellDef="let element"> {{element.get('defaultQuantity').value }} </mat-cell>
+                <!--element.defaultQuantity-->
+                <mat-footer-cell *matFooterCellDef> </mat-footer-cell>
+              </ng-container>
+              <mat-header-row *matHeaderRowDef="getDisplayedColumns()"></mat-header-row>
+              <mat-row *matRowDef="let row; columns: getDisplayedColumns();"></mat-row>
+              <mat-footer-row *matFooterRowDef="getDisplayedColumns(); sticky: true"></mat-footer-row>
+            </mat-table>
+          </form>
+        </div>
+
+        <div class="items-buttons-container">
+          <div class="form-buttons submit-button">
+            <button type="button" class="button float-button"
+              (click)="onAllocateSubmit(medicalInvoiceAssessForm)">Submit</button>
+          </div>
+          <div class="form-buttons submit-button">
+            <button type="button" class="button float-button" (click)="onReset()">Reset</button>
+          </div>
+          <div class="form-buttons submit-button">
+            <button class="button float-button cancel-btn" [mat-dialog-close]="true">Cancel</button>
+          </div>
+        </div>
+
+      </div>
+    </mat-card>
+  </div>
+</div>

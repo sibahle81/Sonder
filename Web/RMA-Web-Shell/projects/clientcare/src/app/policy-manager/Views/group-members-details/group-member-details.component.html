@@ -1,0 +1,424 @@
+<div class="page-header"></div>
+<div class="wizard-main-content">
+  <mat-card class="wizard-mat-card-content">
+    <mat-card-content class="mat-card-content">
+      <form [formGroup]="form" class="mat-container details-form" novalidate>
+        <section>
+          <div class="page-header">
+            <h3 style="margin-bottom: 15px;">Scheme Details</h3>
+          </div>
+        </section>
+        <section>
+          <div class="field-container">
+            <mat-form-field class="mat-form-field">
+              <label class="mat-label other-label mandatory-field">Name</label>
+              <input id="companyName" name="companyName" matInput formControlName="companyName" />
+              <mat-error *ngIf="form.get('companyName').hasError('required')">
+                Member Name is required
+              </mat-error>
+            </mat-form-field>
+          </div>
+          <div class="field-container-right">
+            <mat-form-field class="mat-form-field">
+              <label class="mat-label other-label mandatory-field">Company Type</label>
+              <mat-select id="companyIdType" name="companyIdType" formControlName="companyIdType"
+                (selectionChange)="companyIdTypeChange($event)">
+                <mat-option [value]="1">Company</mat-option>
+                <mat-option [value]="4">Group</mat-option>
+              </mat-select>
+              <mat-error *ngIf="form.get('companyIdType').hasError('required')">
+                Client Type is required
+              </mat-error>
+            </mat-form-field>
+          </div>
+        </section>
+        <section>
+          <div class="field-container">
+            <mat-form-field class="mat-form-field">
+              <label class="mat-label other-label mandatory-field">Registration Number</label>
+              <mat-progress-bar *ngIf="generatingCode" mode="indeterminate"></mat-progress-bar>
+              <input id="companyRegNo" name="companyRegNo" [hidden]="generatingCode" matInput
+                formControlName="companyRegNo" />
+              <mat-error *ngIf="form.get('companyRegNo').hasError('required')">
+                Registration Number is required
+              </mat-error>
+              <mat-error *ngIf="form.get('companyRegNo').hasError('registrationNumber')">
+                A <strong>valid</strong> Registration Number required
+              </mat-error>
+            </mat-form-field>
+          </div>
+          <div class="field-container-right">
+            <mat-form-field class="mat-form-field">
+              <label class="mat-label other-label">VAT Registration Number</label>
+              <input id="referenceNumber" name="referenceNumber" matInput NumberOnly formControlName="referenceNumber"
+                maxlength="10" minlength="10" />
+              <mat-error *ngIf="form.get('referenceNumber').hasError('maxlength')">
+                A <strong>valid</strong> VAT Number required
+              </mat-error>
+              <mat-error *ngIf="form.get('referenceNumber').hasError('minlength')">
+                A <strong>valid</strong> VAT Number required
+              </mat-error>
+            </mat-form-field>
+          </div>
+        </section>
+        <section>
+          <div class="field-container">
+            <mat-form-field class="mat-form-field">
+              <label class="mandatory-field">Industry Class</label>
+              <mat-select id="industryClass" name="industryClass" formControlName="industryClass"
+                (selectionChange)="getIndustries($event.value)">
+                <mat-option *ngFor="let industryClass of filteredIndustryClasses" [value]="industryClass.id">
+                  {{industryClass.name}}
+                </mat-option>
+              </mat-select>
+              <div *ngIf="industryClassesLoading && !isDisabled">
+                <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+                <label class="mat-label other-label"><i>loading industry classes...please wait</i></label>
+              </div>
+              <mat-error *ngIf="form.get('industryClass').hasError('required')">
+                Industry class is required
+              </mat-error>
+            </mat-form-field>
+          </div>
+          <mat-form-field class="mat-form-field-right">
+            <label class="mat-label other-label">Old Policy Number</label>
+            <input matInput maxlength="50" name="oldPolicyNumber" id="oldPolicyNumber" formControlName="oldPolicyNumber"
+              (blur)="clientReferenceExists($event)">
+            <div *ngIf="searchingClientReferenceDuplicates">
+              <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+              <label class="mat-label other-label"><i>checking duplicates...please wait</i></label>
+            </div>
+            <mat-error *ngIf="form.controls['oldPolicyNumber'].hasError('exists')">
+              Policy Number <strong>already exists</strong>
+            </mat-error>
+          </mat-form-field>
+        </section>
+        <section>
+          <mat-form-field class="mat-form-field">
+            <label class="mandatory-field">Industry</label>
+            <mat-select id="industryId" name="industryId" formControlName="industryId">
+              <mat-option *ngFor="let industry of filteredIndustries" [value]="industry.id">
+                {{industry.name}}
+              </mat-option>
+            </mat-select>
+            <div *ngIf="loadingIndustries && !isDisabled">
+              <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+              <label class="mat-label other-label"><i>loading industries...please wait</i></label>
+            </div>
+            <mat-error *ngIf="form.get('industryId').hasError('required')">
+              Industry is required
+            </mat-error>
+          </mat-form-field>
+          <mat-form-field class="mat-form-field-right">
+            <label class="mandatory-field">Client Type</label>
+            <mat-select id="clientTypeId" name="clientTypeId" formControlName="clientTypeId">
+              <mat-option *ngFor="let clientType of clientTypes" [value]="clientType.id">
+                {{clientType.name}}
+              </mat-option>
+            </mat-select>
+            <div *ngIf="loadingClientTypes && !isDisabled">
+              <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+              <label class="mat-label other-label"><i>loading client types...please wait</i></label>
+            </div>
+            <mat-error *ngIf="form.get('clientTypeId').hasError('required')">
+              Client type is required
+            </mat-error>
+          </mat-form-field>
+        </section>
+        <section>
+          <div class="field-container">
+            <mat-form-field class="mat-form-field">
+              <label class="mandatory-field">Underwritten</label>
+              <mat-select id="underwritten" name="underwritten" formControlName="underwritten">
+                <mat-option *ngFor="let underwritten of underwrittenList" [value]="underwritten.id">
+                  {{underwritten.name}}
+                </mat-option>
+              </mat-select>
+              <div *ngIf="loadingUnderwrittenList && !isDisabled">
+                <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+                <label class="mat-label other-label"><i>loading underwritten options...please wait</i></label>
+              </div>
+              <mat-error *ngIf="form.get('underwritten').hasError('required')">
+                Underwritten is required
+              </mat-error>
+            </mat-form-field>
+          </div>
+          <div class="field-container-right">
+            <mat-form-field class="mat-form-field">
+              <label class="mandatory-field">Policy Holder</label>
+              <mat-select id="policyHolder" name="policyHolder" formControlName="policyHolder">
+                <mat-option *ngFor="let policyHolder of policyHolderList" [value]="policyHolder.id">
+                  {{policyHolder.name}}
+                </mat-option>
+              </mat-select>
+              <div *ngIf="loadingPolicyHolderList && !isDisabled">
+                <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+                <label class="mat-label other-label"><i>loading policy holder options...please wait</i></label>
+              </div>
+              <mat-error *ngIf="form.get('policyHolder').hasError('required')">
+                Policy holder is required
+              </mat-error>
+            </mat-form-field>
+          </div>
+        </section>
+        <section>
+          <div class="field-container">
+            <mat-form-field class="mat-form-field">
+              <label class="mandatory-field">Partnership</label>
+              <mat-select id="partnership" name="partnership" formControlName="partnership">
+                <mat-option *ngFor="let partnership of partnershipList" [value]="partnership.id">
+                  {{partnership.name}}
+                </mat-option>
+              </mat-select>
+              <div *ngIf="loadingPartnershipList && !isDisabled">
+                <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+                <label class="mat-label other-label"><i>loading partnership options...please wait</i></label>
+              </div>
+              <mat-error *ngIf="form.get('partnership').hasError('required')">
+                Partnership is required
+              </mat-error>
+            </mat-form-field>
+          </div>
+        </section>
+        <section>
+          <div class="page-header">
+            <h3 style="margin-bottom: 15px;">Broker Details</h3>
+          </div>
+        </section>
+        <section>
+          <div class="field-container">
+            <mat-form-field class="mat-form-field">
+              <label class="mat-label other-label">Broker Name</label>
+              <input id="brokerName" name="brokerName" matInput readonly="true" [value]="brokerDetail.name" />
+            </mat-form-field>
+          </div>
+          <div class="field-container-right">
+            <mat-form-field class="mat-form-field">
+              <label class="mat-label other-label">Broker Code</label>
+              <input id="brokerCode" name="brokerCode" matInput readonly="true" [value]="brokerDetail.fspNumber" />
+            </mat-form-field>
+          </div>
+        </section>
+
+        <section>
+          <div class="field-container">
+            <mat-form-field class="mat-form-field">
+              <label class="mat-label other-label mandatory-field">Contact Name</label>
+              <input id="contactName" name="contactName" matInput formControlName="contactName" />
+              <mat-error *ngIf="form.get('contactName').hasError('required')">
+                Contact name is required
+              </mat-error>
+            </mat-form-field>
+          </div>
+          <div class="field-container-right">
+            <mat-form-field class="mat-form-field">
+              <label class="mat-label other-label mandatory-field">Contact Number</label>
+              <input id="telephoneNumber" name="telephoneNumber" matInput NumberOnly maxlength="10" minlength="10"
+                formControlName="telephoneNumber" />
+              <mat-error *ngIf="form.get('telephoneNumber').hasError('required')">
+                A <strong>valid</strong> contact number is required
+              </mat-error>
+            </mat-form-field>
+          </div>
+        </section>
+        <section>
+          <div class="field-container">
+            <mat-form-field class="mat-form-field">
+              <label class="mat-label other-label mandatory-field">Email Address</label>
+              <input id="emailAddress" matInput maxlength="50" type="email" name="emailAddress"
+                formControlName="emailAddress">
+              <mat-error *ngIf="form.get('emailAddress').hasError('required')">
+                Email address is <strong>required</strong>
+              </mat-error>
+              <mat-error *ngIf="form.get('emailAddress').hasError('email')">
+                Email must be a <strong>valid email address</strong>
+              </mat-error>
+            </mat-form-field>
+          </div>
+        </section>
+        <section>
+          <div class="page-header">
+            <h3 style="margin-bottom: 15px;">Person Contact Details</h3>
+          </div>
+        </section>
+        <section>
+          <div class="field-container">
+            <mat-form-field class="mat-form-field">
+              <label class="mat-label other-label mandatory-field">Contact Person Name</label>
+              <input id="contactPersonName" name="contactPersonName" matInput formControlName="contactPersonName" />
+              <mat-error *ngIf="form.get('contactPersonName').hasError('required')">
+                Contact Person Name is required
+              </mat-error>
+            </mat-form-field>
+          </div>
+          <div class="field-container-right">
+            <mat-form-field class="mat-form-field">
+              <label class="mat-label other-label mandatory-field">Contact Email</label>
+              <input id="contactEmail" name="contactEmail" matInput formControlName="contactEmail" />
+              <mat-error
+                *ngIf="form.get('contactEmail').hasError('required') || form.get('contactEmail').hasError('email')">
+                A <strong>valid</strong> email address is <strong>required</strong>
+              </mat-error>
+            </mat-form-field>
+          </div>
+        </section>
+        <section>
+          <div class="field-container">
+            <mat-form-field class="mat-form-field">
+              <label class="mat-label other-label mandatory-field">Contact Person Telephone</label>
+              <input id="contactTelephone" name="contactTelephone" matInput NumberOnly maxlength="10" minlength="10"
+                formControlName="contactTelephone" />
+              <mat-error
+                *ngIf="form.get('contactTelephone').hasError('required') || form.get('contactTelephone').hasError('contactTelephone')">
+                A <strong>valid</strong> telephone number required
+              </mat-error>
+            </mat-form-field>
+          </div>
+          <div class="field-container-right">
+            <mat-form-field class="mat-form-field">
+              <label class="mat-label other-label mandatory-field">Contact Person Mobile</label>
+              <input id="contactMobile" name="contactMobile" matInput NumberOnly maxlength="10" minlength="10"
+                formControlName="contactMobile" />
+              <mat-error *ngIf="form.get('contactMobile').hasError('required')">
+                A <strong>valid</strong> mobile number required
+              </mat-error>
+            </mat-form-field>
+          </div>
+        </section>
+        <section>
+          <div class="field-container" style="margin: 0px 0px 0px 0px;">
+            <mat-checkbox id="isEuropAssist" name="isEuropAssist" formControlName="isEuropAssist"
+              (change)="isEuropAssistCheckChange($event)">
+              <label class="mat-label other-label">Europ Assist <label><i>(R{{europAssistFee}})</i></label></label>
+            </mat-checkbox>
+          </div>
+        </section>
+        <section>
+          <div class="field-container">
+            <!--Europ Assist Inception Date-->
+            <mat-form-field class="mat-form-field">
+              <label class="mat-label other-label">Europ Assist Inception Date</label>
+              <input [matTooltip]="'Format: mm/dd/yyyy'" matInput formControlName="europAssistInceptionDate"
+                [disabled]="!isEnableInceptionDate" [matDatepicker]="europAssistInceptionDate"
+                id="europAssistInceptionDate" [matDatepickerFilter]="isFirstDay" readonly [min]="eaMinDate"
+                name="europAssistInceptionDate">
+              <mat-datepicker-toggle matSuffix [for]="europAssistInceptionDate"
+                [disabled]="!isEnableInceptionDate"></mat-datepicker-toggle>
+              <mat-datepicker touchUi="true" #europAssistInceptionDate></mat-datepicker>
+            </mat-form-field>
+          </div>
+          <div class="field-container-right" [hidden]="!canChangeStartDate">
+            <mat-form-field class="mat-form-field">
+              <div class="checkbox-container"><label class="mat-label other-label">&nbsp;</label></div>
+              <input matInput [hidden]="true" formControlName="changeEuropAssistInceptionDate" />
+              <mat-checkbox formControlName="changeEuropAssistInceptionDate"
+                (change)="enableEuropAssistInceptionDate($event)">
+                <label class="mat-label other-label">Change europ assist start date?</label>
+              </mat-checkbox>
+            </mat-form-field>
+          </div>
+        </section>
+
+        <section>
+
+          <mat-form-field class="mat-form-field">
+            <label class="mat-label other-label">Policy Inception Date<i *ngIf="canBackDate"> (back dating is
+                enabled)</i></label>
+            <input matInput id="policyInceptionDate" name="policyInceptionDate" formControlName="policyInceptionDate"
+              [matDatepicker]="policyInceptionDate" required name="policyInceptionDate" readonly [min]="minDate"
+              [matDatepickerFilter]="isFirstDay">
+            <mat-datepicker-toggle matSuffix [for]="policyInceptionDate"></mat-datepicker-toggle>
+            <mat-datepicker touchUi="true" #policyInceptionDate></mat-datepicker>
+            <mat-error *ngIf="form.get('policyInceptionDate').hasError('required')">
+              Policy inception date is required
+            </mat-error>
+          </mat-form-field>
+
+          <div class="field-container-right" [hidden]="!canChangeStartDate">
+            <mat-form-field class="mat-form-field">
+              <div class="checkbox-container"><label class="mat-label other-label">&nbsp;</label></div>
+              <input matInput [hidden]="true" formControlName="changeInceptionDate" />
+              <mat-checkbox formControlName="changeInceptionDate" (change)="enableStartDate($event)">
+                <label class="mat-label other-label">Change policy start date?</label>
+              </mat-checkbox>
+            </mat-form-field>
+          </div>
+
+        </section>
+        <section>
+          <div class="field-container" style="margin: 15px 0px 0px 0px;">
+            <mat-checkbox id="isAnnualIncrease" name="isAnnualIncrease" formControlName="isAnnualIncrease"
+              (change)="isAnnualIncreaseCheckChange($event)">
+              <label class="mat-label other-label">Policy Annual Premium and Benefit Increase?</label>
+            </mat-checkbox>
+          </div>
+        </section>
+        <section>
+          <div *ngIf="isAnnualIncrease">
+            <mat-form-field class="mat-form-field">
+              <label class="mat-label other-label">Annual Increase % Amounts</label>
+              <input matInput [hidden]="true" />
+              <mat-select name="annualIncreaseType" id="annualIncreaseType" formControlName="annualIncreaseType"
+                [(value)]="annualIncreaseType" (selectionChange)="annualIncreaseTypeChanged($event)">
+                <mat-option value="5% premium increase and 4% benefit increase">5% premium increase and 4% benefit
+                  increase</mat-option>
+                <mat-option value="10% premium increase and 5% benefit increase">10% premium increase and 5% benefit
+                  increase</mat-option>
+              </mat-select>
+            </mat-form-field>
+          </div>
+        </section>
+        <section>
+          <div class="field-container" [hidden]="!isShowEndDate">
+            <!--Europ Assist End Date-->
+            <mat-form-field class="mat-form-field">
+              <label class="mat-label other-label">Europ Assist End Date</label>
+              <input [matTooltip]="'Format: mm/dd/yyyy'" matInput formControlName="europAssistEndDate"
+                [matDatepicker]="europAssistEndDate" id="europAssistEndDate" readonly [min]="minDate"
+                name="europAssistEndDate">
+              <mat-datepicker-toggle matSuffix [for]="europAssistEndDate"
+                [disabled]="form.get('europAssistEndDate').disabled"></mat-datepicker-toggle>
+              <mat-datepicker touchUi="true" #europAssistEndDate></mat-datepicker>
+            </mat-form-field>
+          </div>
+        </section>
+      </form>
+      <div *ngIf="!(isDisabled) && isCancelCase" style="margin-left: 8px;margin-bottom: 10px">
+        <section><button class="button submit-button" (click)="cancelPolicyWithNote()">Cancel Policy</button></section>
+        <div *ngIf="isWithinCoolingOfPeriod">
+          <h4 style="color:red">Policy is within cooling off period.&nbsp;Banking details must be verified</h4>
+        </div>
+      </div>
+      <div *ngIf="isCancelCase">
+        <div [hidden]="datasource.cancellationReason===''">
+          <h4>Cancellation Reason</h4>
+          <mat-table #table [dataSource]="datasource" matSort>
+            <ng-container matColumnDef="cancellationReason">
+              <mat-header-cell *matHeaderCellDef mat-sort-header>Cancellation Reason</mat-header-cell>
+              <mat-cell *matCellDef="let row"> {{row.cancellationReason}} </mat-cell>
+            </ng-container>
+            <ng-container matColumnDef="cancellationDate">
+              <mat-header-cell *matHeaderCellDef mat-sort-header>Cancellation Date</mat-header-cell>
+              <mat-cell *matCellDef="let row"> {{row.cancellationDate | date:'yyyy-MM-dd'}} </mat-cell>
+            </ng-container>
+            <ng-container matColumnDef="action" class="mat-column-action">
+              <mat-header-cell *matHeaderCellDef mat-sort-header class="Action">Action</mat-header-cell>
+              <mat-cell *matCellDef="let row">
+                <a role="button" (click)="onEditCancellation(row)" class="link-edit">Edit</a>
+              </mat-cell>
+            </ng-container>
+            <mat-header-row *matHeaderRowDef="displayedColumns; sticky: true"></mat-header-row>
+            <mat-row *matRowDef="let row; columns: displayedColumns;"></mat-row>
+          </mat-table>
+          <mat-error *ngIf="!model.mainMember.policies[0].policyCancelReason">
+            Policy cancellation reason and effective date are required
+          </mat-error>
+        </div>
+      </div>
+      <policy-product-options [parentModel]="model" (productOptionSelected)="onSelectedOption($event)">
+      </policy-product-options>
+      <group-policy-benefits [title]="'Group Benefits'" [selectedProductOption]="selectedProductOption">
+      </group-policy-benefits>
+    </mat-card-content>
+  </mat-card>
+</div>

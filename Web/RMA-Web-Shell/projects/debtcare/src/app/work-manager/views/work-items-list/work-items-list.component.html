@@ -1,0 +1,50 @@
+<div class="mat-container mat-elevation-z8">
+  <mat-card class="matCard">
+    <div *ngIf="dataSource.loading$ | async">
+      <mat-progress-bar mode="indeterminate"
+          [ngClass]="{ 'loading-main-double-menu-progress': doubleMenu, 'loading-main-single-menu-progress': !doubleMenu }">
+      </mat-progress-bar>
+      <p class="site-font grey">Loading work items...</p>
+    </div>
+    <div class="mat-header">
+      <h2>Recent activity on work items</h2 >
+    </div>
+    <mat-card-content class="matCardContent">
+      <div [hidden]="paginator.length == 0">
+        <mat-table #table [dataSource]="dataSource" matSort matSortActive="modifiedDate" matSortDirection="desc"
+          matSortDisableClear>
+          <ng-container matColumnDef="description">
+            <mat-header-cell *matHeaderCellDef mat-sort-header> Description </mat-header-cell>
+            <mat-cell *matCellDef="let workItem"> {{workItem.workItemName}} </mat-cell>
+          </ng-container>
+          <ng-container matColumnDef="workItemState">
+            <mat-header-cell *matHeaderCellDef mat-sort-header> Status </mat-header-cell>
+            <mat-cell *matCellDef="let workItem"> {{this.getWorkItemStateFriendlyName(workItem.workItemState)}} </mat-cell>
+          </ng-container>
+          <ng-container matColumnDef="createdBy">
+            <mat-header-cell *matHeaderCellDef mat-sort-header> Creator </mat-header-cell>
+            <mat-cell *matCellDef="let workItem"> {{workItem.createdBy}} </mat-cell>
+          </ng-container>
+          <ng-container matColumnDef="additionalInformation">
+            <mat-header-cell *matHeaderCellDef> Additional Information </mat-header-cell>
+            <mat-cell *matCellDef="let workItem"> {{workItem.additionalInformation}} </mat-cell>
+          </ng-container>
+          <ng-container matColumnDef="modifiedDate">
+            <mat-header-cell *matHeaderCellDef mat-sort-header> Modified Date </mat-header-cell>
+            <mat-cell *matCellDef="let workItem"> {{workItem.modifiedDate | date:'dd-MM-y'}} </mat-cell>
+          </ng-container>
+          <ng-container matColumnDef="workItemIForWizard">
+            <mat-header-cell *matHeaderCellDef> Resume Wizard </mat-header-cell>
+            <mat-cell *matCellDef="let workItem">
+              <a class="cursorPointer" role="button" class="link-edit" (click)="onSelect(workItem)">Open</a>
+            </mat-cell>
+          </ng-container>
+          <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
+          <mat-row *matRowDef="let row; columns: displayedColumns;"></mat-row>
+        </mat-table>
+      <mat-paginator #paginator [length]="dataSource.rowCount$" [pageIndex]="0" [pageSize]="5" [pageSizeOptions]="[5, 10, 25, 100]">
+      </mat-paginator>
+      </div>
+    </mat-card-content>
+  </mat-card>
+</div>

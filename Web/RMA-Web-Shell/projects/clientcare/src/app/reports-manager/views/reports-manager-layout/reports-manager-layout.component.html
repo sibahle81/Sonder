@@ -1,0 +1,45 @@
+<div>
+    <div>
+      <nav class="innertop-nav">
+        <button mat-button [routerLink]="['clientcare/clientcare-report']" class='Activebutton'>Home</button>
+  
+        <button mat-button [matMenuTriggerFor]="menu2" class='Activebutton'>
+          Product Manager
+        </button>
+        <mat-menu #menu2="matMenu" [overlapTrigger]="false">
+          <button mat-menu-item [routerLink]="['product-manager-reports']">Product Manager Reports</button>
+        </mat-menu>
+  
+        <button mat-button class="MenuButtons" [matMenuTriggerFor]="menu6" class='Activebutton'>
+          Policy Manager</button>
+        <mat-menu #menu6="matMenu" [overlapTrigger]="false">
+          <button mat-menu-item [routerLink]="['policy-manager-reports']">Policy Manager Reports</button>
+        </mat-menu>
+  
+        <button *ngIf="showCoidMenuOptions" mat-button class="MenuButtons" [matMenuTriggerFor]="menu3" class='Activebutton'>
+          Lead Manager
+        </button>
+        <mat-menu #menu3="matMenu" [overlapTrigger]="false">
+          <button mat-menu-item [routerLink]="['lead-manager-reports']">Lead Manager Reports</button>
+        </mat-menu>
+  
+        <button *ngIf="showCoidMenuOptions" mat-button class="MenuButtons" [matMenuTriggerFor]="menu4" class='Activebutton'>
+          Quote Manager
+        </button>
+        <mat-menu #menu4="matMenu" [overlapTrigger]="false">
+          <button mat-menu-item [routerLink]="['quote-manager-reports']">Quote Manager Reports</button>
+        </mat-menu>
+  
+        <button *ngIf="showCoidMenuOptions" mat-button class="MenuButtons" [matMenuTriggerFor]="menu5" class='Activebutton'>
+          Member Manager
+        </button>
+        <mat-menu #menu5="matMenu" [overlapTrigger]="false">
+          <button mat-menu-item [routerLink]="['member-manager-reports']">Member Manager Reports</button>
+        </mat-menu>
+  
+      </nav>
+    </div>
+    <div [hidden]="loadingMessage != null || error != null" class="container-padding">
+      <router-outlet></router-outlet>
+    </div>
+  </div>

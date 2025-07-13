@@ -1,0 +1,28 @@
+<div class="flex-container">
+  <div>
+    <form [formGroup]="form">
+      <mat-form-field class="mat-form-field-right">
+        <label class="mat-label other-label">Recipient Email Address<br />
+        </label>
+        <input matInput maxlength="300" (input)="onEmailChange($event.target.value)" name="ownerEmail" id="ownerEmail"
+          value="{{recipientEmail}}">
+      </mat-form-field>
+      <div *ngIf="isSending$ | async">
+        <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+        <label class="mat-label other-label"><i>sending email...please wait</i></label>
+      </div>
+      <div class="form-group-button mat-form-button mat-form-field-right">
+        <button matTooltip="send email" class="button" [disabled]="(isSending$ | async)"
+          (click)="sendMemoOfAgreeMent()"><span class="material-icons">send</span> Send</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<div id="memorandum" *ngIf="reportParametersLoaded$ | async">
+  <p class="labelParagraph">Memorandum Of Agreement</p>
+  <ssrs-reportviewer [reportserver]="reportServerAudit" [reporturl]="reportUrlAudit"
+    [showparameters]="showParametersAudit" [format]="formatAudit" [parameters]="parametersAudit"
+    [language]="languageAudit" [width]="widthAudit" [height]="heightAudit" [toolbar]="toolbarAudit">
+  </ssrs-reportviewer>
+</div>

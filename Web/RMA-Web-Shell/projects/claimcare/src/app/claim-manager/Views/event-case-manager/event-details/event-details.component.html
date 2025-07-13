@@ -1,0 +1,34 @@
+<div *ngIf="isLoading" class="menu-container">
+    <div style="margin-right: 15px;">
+        <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+    </div>
+    <span style="color: grey">Loading...</span>
+</div>
+
+<div [hidden]="isLoading" style="padding-top: 15px;">
+    <mat-tab-group>
+        <mat-tab label="Event Details">
+            <event></event>
+        </mat-tab>
+
+        <mat-tab label="Person Event Details">
+                <person-event-death #personEventDeathCom></person-event-death>
+        </mat-tab>
+    </mat-tab-group>
+
+    <!--Buttons-->
+    <div class="form-group-button mat-form-button">
+        <div (click)="edit()" class="form-buttons submit-button">
+            <button type="button" class="button float-button">Edit</button>
+        </div>
+        <div  (click)="acknowledge()" class="form-buttons submit-button">
+            <button type="button" class="button float-button">Acknowledge</button>
+        </div>
+        <div [hidden]="statusId == 3" (click)="reject()" class="form-buttons submit-button">
+            <button type="button" class="button float-button">Reject</button>
+        </div>
+        <div (click)="back()" class="form-buttons submit-button">
+            <button type="button" class="button float-button">Back</button>
+        </div>
+    </div>
+</div>

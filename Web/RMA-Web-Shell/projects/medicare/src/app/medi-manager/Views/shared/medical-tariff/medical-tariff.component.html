@@ -1,0 +1,207 @@
+<div [hidden]="showViewMedicalTariff">
+<div *ngIf="showNavigation">
+    <button class="close" title="close" mat-button (click)="onNavigateBack($event)">X</button>
+</div>
+
+<div class="page-header" style="margin: 15px 30px 15px 30px">
+    <h1>Search Tariffs</h1>
+</div>
+
+<div *ngIf="tariffSearchDataSource.loading$ | async">
+        <mat-progress-bar mode="indeterminate"
+            [ngClass]="{ 'loading-main-double-menu-progress': doubleMenu, 'loading-main-single-menu-progress': !doubleMenu }">
+        </mat-progress-bar>
+        <p class="site-font grey">Loading.....</p>
+</div>
+
+<mat-card>
+<div>
+    <form [formGroup]="form" class="mat-container" style="display:contents;" novalidate>
+
+        <section>
+        <div class="field-container-right">
+        <!--Tariff Code-->
+            <mat-form-field class="mat-form-field">
+                <label class="mat-label other-label">Tariff Code</label>
+                <input matInput id="tariffCode" name="tariffCode" formControlName="tariffCode" />
+            </mat-form-field>
+        </div>
+
+        <!--Tariff Type-->
+        <div class="field-container-right">
+            <mat-form-field class="mat-form-field">
+            <label class="mat-label other-label">Tariff Type</label>
+            <mat-select formControlName="tariffType"
+                        id="tariffType" name="tariffType">
+                        <mat-option *ngFor="let tariffType of tariffTypes;let i = index"
+                            [value]="tariffType.id">{{tariffType.name}}</mat-option>
+            </mat-select>
+        </mat-form-field>
+        </div>
+        
+        <!--Tariff Description-->
+        <div class="field-container-right">
+            <mat-form-field class="mat-form-field">
+            <label class="mat-label other-label">Tariff Description</label>
+            <input matInput id="tariffDescription" name="tariffDescription" formControlName="tariffDescription" />
+        </mat-form-field>
+        </div>
+
+         <!--Practitioner Name-->
+        <div class="field-container-right">
+            <mat-form-field class="mat-form-field">
+            <label class="mat-label other-label">Practitioner Name</label>
+            <input matInput id="practitionerName" name="practitionerName" formControlName="practitionerName"/>
+        </mat-form-field>
+        </div>
+        </section>
+
+        <section>
+                <!--Practitioner Type-->
+                <div class="field-container-right">
+                <mat-form-field class="mat-form-field">
+            <label class="mat-label other-label">Practitioner Type</label>
+            <mat-select formControlName="practitionerType"
+                        id="practitionerType" name="practitionerType">
+                <mat-option *ngFor="let practitionerType of practitionerTypes" [value]="practitionerType.id">{{practitionerType.name}}</mat-option>
+            </mat-select>
+        </mat-form-field>
+        </div>
+        <!--Date-->
+        <div class="field-container-right">
+            
+            <mat-form-field class="mat-form-field">
+                <label class="mat-label other-label">Date</label>
+                <input matInput formControlName="tariffDate" id="tariffDate" name="tariffDate"
+                    [matDatepicker]="tariffDate">
+                <mat-datepicker-toggle matSuffix [for]="tariffDate" [disabled]="false">
+                </mat-datepicker-toggle>
+                <mat-datepicker startView="month" touchUi="true" #tariffDate>
+                </mat-datepicker>
+            </mat-form-field>
+
+        </div>
+        
+        </section>
+
+    </form>
+
+    <div class="items-buttons-container">
+        <div class="form-buttons submit-button">
+            <button type="button" class="button float-button search-buttons-container" (click)="onMedicalTariffSearch()">Search</button>
+        </div>
+        <div class="form-buttons submit-button">
+            <button type="button" class="button float-button  search-buttons-container" (click)="onMedicalTariffReset()">Clear Search</button>
+        </div>
+    </div>
+</div>
+
+<div style="padding-top:26%">
+    <mat-table [dataSource]="tariffSearchDataSource" matSort class="mat-elevation-z8">
+        
+        <ng-container matColumnDef="tariffId">
+            <mat-header-cell *matHeaderCellDef mat-sort-header> Tariff Id </mat-header-cell>
+            <mat-cell *matCellDef="let element" matTooltip="{{element.tariffId}}">
+                {{element.tariffId}} </mat-cell>
+        </ng-container>
+       
+        <ng-container matColumnDef="tariffCode">
+            <mat-header-cell *matHeaderCellDef mat-sort-header> Tariff Code </mat-header-cell>
+            <mat-cell *matCellDef="let element" matTooltip="{{element.tariffCode}}">
+                {{element.tariffCode}}
+            </mat-cell>
+        </ng-container>
+
+        <ng-container matColumnDef="tariffType">
+            <mat-header-cell *matHeaderCellDef mat-sort-header> Tariff Type </mat-header-cell>
+            <mat-cell *matCellDef="let element" matTooltip="{{element.tariffType}}">
+                {{element.tariffType}}
+            </mat-cell>
+        </ng-container>
+
+        <ng-container matColumnDef="tariffDescription">
+            <mat-header-cell *matHeaderCellDef mat-sort-header> Tariff Description </mat-header-cell>
+            <mat-cell *matCellDef="let element" matTooltip="{{element.tariffDescription}}">
+                {{element.tariffDescription}}
+            </mat-cell>
+        </ng-container>
+
+        <ng-container matColumnDef="validFrom">
+            <mat-header-cell *matHeaderCellDef mat-sort-header> Valid From </mat-header-cell>
+            <mat-cell *matCellDef="let element" matTooltip="{{element.validFrom}}">
+                {{element.validFrom}}
+            </mat-cell>
+        </ng-container>
+
+        <ng-container matColumnDef="validTo">
+            <mat-header-cell *matHeaderCellDef mat-sort-header> Valid To </mat-header-cell>
+            <mat-cell *matCellDef="let element" matTooltip="{{element.validTo}}">
+                {{element.validTo}}
+            </mat-cell>
+        </ng-container>
+
+        <ng-container matColumnDef="itemCost">
+            <mat-header-cell *matHeaderCellDef mat-sort-header> Item Cost(Incl)</mat-header-cell>
+            <mat-cell *matCellDef="let element" matTooltip="{{element.itemCost}}">
+                {{element.itemCost}}
+            </mat-cell>
+        </ng-container>
+
+        <ng-container matColumnDef="defaultQuantity">
+            <mat-header-cell *matHeaderCellDef mat-sort-header> Per Qty </mat-header-cell>
+            <mat-cell *matCellDef="let element" matTooltip="{{element.defaultQuantity}}">
+                {{element.defaultQuantity}}
+            </mat-cell>
+        </ng-container>
+
+        <ng-container matColumnDef="practitionerType">
+            <mat-header-cell *matHeaderCellDef mat-sort-header> Practitioner Type </mat-header-cell>
+            <mat-cell *matCellDef="let element" matTooltip="{{element.practitionerType}}">
+                {{element.practitionerType}} 
+            </mat-cell>
+        </ng-container>
+
+        <ng-container matColumnDef="basicUnitCost">
+            <mat-header-cell *matHeaderCellDef mat-sort-header> Basic Unit Cost </mat-header-cell>
+            <mat-cell *matCellDef="let element" matTooltip="{{element.basicUnitCost}}">
+                {{element.basicUnitCost}}
+            </mat-cell>
+        </ng-container>
+
+        <ng-container matColumnDef="recomendedUnits">
+            <mat-header-cell *matHeaderCellDef mat-sort-header> Rec.Units </mat-header-cell>
+            <mat-cell *matCellDef="let element" matTooltip="{{element.recomendedUnits}}">
+                {{element.recomendedUnits}}
+            </mat-cell>
+        </ng-container>
+
+        <ng-container matColumnDef="unitType">
+            <mat-header-cell *matHeaderCellDef mat-sort-header> Unit Type </mat-header-cell>
+            <mat-cell *matCellDef="let element" matTooltip="{{element.unitType}}">
+                {{element.unitType}}
+            </mat-cell>
+        </ng-container>
+
+       <mat-header-row *matHeaderRowDef="displayedColumns">
+        </mat-header-row>
+        <mat-row *matRowDef="let row; columns: displayedColumns"
+        [ngClass]="{'highlight': selectedRowIndex == row.tariffId}"
+         (dblclick)="viewMedicalTariff(row)"></mat-row>
+    </mat-table>
+
+    <mat-paginator #paginator [length]="paginator.length" [pageIndex]="0" [pageSize]="5"
+      [pageSizeOptions]="[5, 10, 25, 100]">
+    </mat-paginator>
+
+</div>
+</mat-card>
+
+</div>
+
+<div *ngIf="showViewMedicalTariff">
+    <app-view-medical-tariff [tariffId]="selectedTariffId" [showSubmit]="showNavigation" (onClose)="onClose()" (onSubmit)="onSubmit($event)" ></app-view-medical-tariff>
+</div>
+
+
+
+

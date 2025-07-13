@@ -1,0 +1,35 @@
+<mat-tab-group style="padding: 15px;" (selectedTabChange)="onTabChanged($event);">
+  <mat-tab label="Refunds">
+    <refund-dashboard-widget [refresh]="tabChanged"></refund-dashboard-widget>
+    <refund-dashboard-reason-widget [refresh]="tabChanged"></refund-dashboard-reason-widget>
+    <refund-dashboard-details-widget [refresh]="tabChanged"></refund-dashboard-details-widget>
+  </mat-tab>
+
+  <mat-tab label="Cancellations">
+    <cancellations-by-month-dashboard-widget [refresh]="tabChanged"></cancellations-by-month-dashboard-widget>
+    <div id="content">
+      <div class="divs">
+        <cancellations-by-year-dashboard-widget [refresh]="tabChanged"></cancellations-by-year-dashboard-widget>
+      </div>
+      <div class="divs">
+        <cancellations-by-resolved-dashboard-widget [refresh]="tabChanged"></cancellations-by-resolved-dashboard-widget>
+      </div>
+    </div>
+    <cancellations-by-reason-dashboard-widget [refresh]="tabChanged"></cancellations-by-reason-dashboard-widget>
+  </mat-tab>
+
+  <mat-tab label="DOCR">
+    <br />
+    <div *ngIf="isLoading$ | async">
+      <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+      <label class="mat-label other-label"><i>loading...please wait</i></label>
+    </div>
+    <div [hidden]="isLoading$ | async">
+      <div class="form-buttons">
+        <button class="button submit-button" (click)="export()">Export</button>
+      </div><br/><br/>
+      <ssrs-reportviewer [reportserver]="ssrsBaseUrl" [reporturl]="reportUrl" [format]="format" (downloadComplete)="resetFormat()">
+      </ssrs-reportviewer>
+    </div>
+  </mat-tab>
+</mat-tab-group>

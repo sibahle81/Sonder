@@ -1,0 +1,87 @@
+<mat-card>
+  <mat-card-content>
+    <form [formGroup]="form" *ngIf="this.form">
+      <ng-container>
+        <mat-label class="other-label mandatory-field">Mechanism of injury</mat-label>
+        <br/>
+        <mat-form-field appearance="standard">
+          <textarea matInput cdkTextareaAutosize cdkAutosizeMinRows="3" cdkAutosizeMaxRows="5" id="ctlMechanismOfInjury"
+                    formControlName="ctlMechanismOfInjury" class="mat-input-element" maxlength="1000"></textarea>
+        </mat-form-field>
+      </ng-container>
+      <br>
+      <br>
+      <ng-container>
+        <mat-label class="other-label mandatory-field">Clinical description of original injury/injuries or disease:</mat-label>
+        <br/>
+        <mat-form-field appearance="standard">
+          <textarea matInput cdkTextareaAutosize cdkAutosizeMinRows="3" cdkAutosizeMaxRows="5" id="ctlInjuryOrDiseaseDetails"
+                    formControlName="ctlInjuryOrDiseaseDetails" maxlength="1000"></textarea>
+        </mat-form-field>
+      </ng-container>
+      <br>
+
+      <mat-label class="other-label mandatory-field">Is the present disablement solely attributable to the accident?
+      </mat-label>
+      <br>
+      <mat-radio-group aria-label="Is the present disablement solely attributable to the accident?"
+                       formControlName="radioIsEventSoleContributorToDisablement" id="radioIsEventSoleContributorToDisablement">
+        <mat-radio-button value="Yes">Yes</mat-radio-button>&nbsp;
+        <mat-radio-button value="No">No</mat-radio-button>
+      </mat-radio-group>
+      <br>
+      <br>
+      <ng-container *ngIf="form.value.radioIsEventSoleContributorToDisablement == 'No'">
+        <mat-label  class="other-label mandatory-field">Provide details of additional contributory causes</mat-label>
+        <br/>
+        <mat-form-field appearance="standard">
+          <textarea matInput cdkTextareaAutosize cdkAutosizeMinRows="3" cdkAutosizeMaxRows="5"
+                    formControlName="ctlContributingCauses" maxlength="1000" id="ctlContributingCauses"></textarea>
+        </mat-form-field>
+      </ng-container>
+      <br>
+
+      <mat-label class="other-label mandatory-field">Has the clinical condition stabilised and is not likely to
+        improve?
+      </mat-label>
+      <br>
+      <mat-radio-group aria-label="Has the clinical condition stabilised and is not likely to improve?"
+                       formControlName="radioIsConditionStabilised" id="radioIsConditionStabilised">
+        <mat-radio-button value="Yes">Yes</mat-radio-button>&nbsp;
+        <mat-radio-button value="No">No</mat-radio-button>
+      </mat-radio-group>
+      <br>
+      <br>
+      <ng-container *ngIf="form.value.radioIsConditionStabilised == 'Yes'">
+        <mat-label  class="other-label">Date Stabilised:</mat-label>
+        <br/>
+        <mat-form-field appearance="standard" class="datepicker date-stabilised">
+          <input matInput [matDatepicker]="pickerDateStabilised" formControlName="ctlDateStabilised" id="ctlDateStabilised">
+          <mat-datepicker-toggle matSuffix [for]="pickerDateStabilised"></mat-datepicker-toggle>
+          <mat-datepicker #pickerDateStabilised></mat-datepicker>
+        </mat-form-field>
+      </ng-container>
+      <br>
+      <ng-container>
+        <mat-label  class="other-label mandatory-field">Impairment findings:</mat-label>
+        <br/>
+        <mat-form-field appearance="standard">
+          <textarea matInput cdkTextareaAutosize cdkAutosizeMinRows="3" cdkAutosizeMaxRows="5"
+                    formControlName="ctlImpairmentFindings" maxlength="1000" id="ctlImpairmentFindings"></textarea>
+        </mat-form-field>
+        <p>If there are impairment findings, please detail any permanent anatomical defect and/or impairment of functions on the relevant assessment chart, <br> to be found at: <a
+          href="https://randmutual.co.za/Downloads#48932-general-medical-reports" target="_blank">https://randmutual.co.za/Downloads#48932-general-medical-reports</a>.<br> Upload the completed assessment chart via the CompCare channel
+        </p>
+      </ng-container>
+      <mat-label  class="other-label mandatory-field">Date on which the patient is due to return to work:</mat-label>
+      <br/>
+      <mat-form-field appearance="standard" class="datepicker date-returned-to-work">
+        <input matInput [matDatepicker]="picker" formControlName="ctlDateReturnToWork" id="ctlDateReturnToWork">
+        <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+        <mat-datepicker #picker></mat-datepicker>
+      </mat-form-field>
+
+      <br>
+    </form>
+  </mat-card-content>
+</mat-card>

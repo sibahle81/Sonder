@@ -1,0 +1,345 @@
+<section class="create-template">
+
+    <div class="marketing-care-template" [ngClass]="isSpinner ? 'on-disabled' : 'on-enabled' ">
+
+        <div class="padding-width">
+            <div class="display-flex-border">
+
+                <div class="recovery-btn  padding-width2">
+                    <button mat-button class="top-nav-detail-tab"><span class="action-name">{{currentAction}} Message Template</span></button>
+                </div>
+
+            </div>
+        </div>
+
+        <form [formGroup]="createTemplateForm">
+
+            <div [ngClass]="isPreviewTemplate ? 'disabled-input-field' : 'on-enabled'" class="marketing-form-field  display-flex">
+
+                <div class="width-33">
+                    <div class="width-margin">
+                        <p class="form-lable-text  font-family">Campaign Name</p>
+                        <mat-form-field class="status-update-mff" appearance="outline">
+                            <input matInput placeholder="" formControlName="campaignName" class="border-none-imp"
+                                readonly>
+                                
+                            <mat-error class="color-red"
+                                *ngIf="createTemplateForm.get('campaignName')?.touched && createTemplateForm.get('campaignName')?.invalid">
+                                Please add campaign name</mat-error>
+                        </mat-form-field>
+                    </div>
+                </div>
+
+                <div class="width-33">
+                    <div class="width-margin">
+                        <p class="form-lable-text  font-family">Template Name</p>
+                        <mat-form-field class="status-update-mff" appearance="outline">
+                            <input matInput placeholder="" formControlName="templateName" class="border-none-imp">
+                        </mat-form-field>
+                        <span *ngIf="templateNameInvalid" class="color-red">
+                            Please add Template name
+                        </span>
+                    </div>
+                </div>
+
+                <div class="width-16">
+                    <div class="width-margin flex-column-view">
+                        <p class="form-lable-text  font-family">Schedule Day</p>
+                        <mat-form-field class="status-update-mff" appearance="outline">
+                            <input matInput placeholder="" formControlName="scheduleDay" type="number"
+                                [min]="scheduleDayMinValue" class="border-none-imp">
+                        </mat-form-field>
+                        <span *ngIf="scheduleDayInvalid" class="color-red">
+                            Please add schedule Day
+                        </span>
+                    </div>
+
+                </div>
+
+                <div class="width-16">
+                    <p class="form-lable-text  font-family">Schedule Time</p>
+                    <div class="width-margin flex-column-view">
+
+                        <mat-form-field appearance="outline" class="half-view">
+                                <input matInput class="time-picker" formControlName="scheduleTime" type="time" id="appt" name="appt" />
+
+                        </mat-form-field>
+                        <span *ngIf="scheduleTimeInvalid" class="color-red">
+                            Please add schedule time
+                        </span>
+
+                    </div>
+                </div>
+
+            </div>
+
+
+            <div class="div-padding">
+                <div class="display-flex-padding">
+                    <ng-container *ngFor="let item of typeTabs">
+                        <div class="type-class" (click)="onSelectTab(item)">
+                            <span class="type-class-item" [ngStyle]="selectedTab == item ? 
+                     {'color' : '#006586' } : { 'color': '#5BB5D0' }">{{item}}</span>
+                            <span class="type-class-border"
+                                [ngStyle]="selectedTab == item ? 
+                      { 'border': '2.5px solid #006586', 'visibility': 'visible','border-radius': '7px 7px 0px 0px' } : { 'border': '2.5px solid #5BB5D0','visibility': 'hidden','border-radius': '7px 7px 0px 0px' }"></span>
+                        </div>
+                    </ng-container>
+                </div>
+
+                <div [ngClass]="isPreviewTemplate ? 'disabled-input-field' : 'on-enabled'" class="message-box-container  padding-div">
+                    <div *ngIf="selectedTab == 'SMS'" class="message-box">
+                        <div class="message-box-heading">
+                            <h4 class="h4-style">Message</h4>
+                        </div>
+
+                        <div class="message-inside-box">
+
+                            <div class="width-66">
+                                <div class="message-type-area">
+                                    <textarea name="" id="" formControlName="message"
+                                        (ngModelChange)="readSMS($event)" cols="100" rows="15"  [maxlength]="maxChars"></textarea>
+                                    <span class="character-length">Characters: {{ previewSMSText != null ?
+                                        previewSMSText.length : 0}}/{{maxChars}}</span>
+                                </div>
+                                <mat-error class="color-red"
+                                    *ngIf="createTemplateForm.get('message')?.touched && createTemplateForm.get('message')?.invalid">
+                                    Please add messege</mat-error>
+
+                                <div class="create-template-div">
+                                </div>
+
+                            </div>
+
+                            <div class="width-33">
+                                <div class="border-radius">
+                                    <div class="message-box-heading">
+                                        <h4 class="margin-top-bottom">Preview Message</h4>
+                                    </div>
+                                    <div class="message-type-area message-type-area-preview">
+                                        <div class="preview-area padding preview-area-message" [innerHTML]="previewSMSText" >
+                                        </div>
+                                      </div>
+                                      
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+
+                    <div *ngIf="selectedTab == 'WhatsApp'" class="message-box">
+
+                        <div class="display">
+                            <div class="width-66">
+
+                                <div class="create-message-temp-tabs-fields  display">
+
+                                    <div class="width-50">
+                                        <div class="width-margin2">
+                                            <p class="form-lable-text  tempId-style">
+                                                Template ID</p>
+                                            <mat-form-field class="status-update-mff" appearance="outline">
+                                                <input matInput placeholder="" formControlName="templateId"
+                                                    class="border-none-imp">
+                                            </mat-form-field>
+                                            <small class="note-text">Note : This template should be whitelisted with
+                                                your WhatsApp provider.</small>
+                                            <mat-error class="color-red"
+                                                *ngIf="createTemplateForm.get('templateId')?.touched && createTemplateForm.get('templateId')?.invalid">
+                                                Please add template id</mat-error>
+                                        </div>
+                                    </div>
+
+                                    <div class="width-50">
+                                        <p class="form-lable-text  tempId-style">Type</p>
+                                        <div class="width-margin2">
+                                            <mat-form-field class="status-update-mff" appearance="outline">
+                                                <mat-select class="border-none-imp" formControlName="type">
+                                                    <ng-container *ngFor="let type of templateTypeList">
+                                                        <mat-option [value]="type"><span>{{type}}</span></mat-option>
+                                                    </ng-container>
+                                                </mat-select>
+                                            </mat-form-field>
+                                            <mat-error class="color-red"
+                                                *ngIf="createTemplateForm.get('type')?.touched && createTemplateForm.get('type')?.invalid">
+                                                Please select type</mat-error>
+                                        </div>
+                                    </div>
+
+                                </div>
+
+                                <div>
+                                    <div class="message-type-area  padding-top">
+                                        <h4 class="margin-top-bottom">Message</h4>
+                                        <textarea name="" id="" formControlName="whtsAppMessege"
+                                            (ngModelChange)="readWhatsapp($event)" cols="110" rows="10">
+                             </textarea>
+                                    </div>
+                                </div>
+                                <div>
+                                    <div class="display">
+
+                                        <div class="width-50">
+                                            <p class="form-lable-text  btn-style">Buttons</p>
+                                            <div class="width-margin">
+                                                <mat-form-field class="width-90" appearance="outline">
+                                                    <mat-select class="border-none-imp" formControlName="button">
+                                                        <ng-container *ngFor="let btn of buttonList">
+                                                            <mat-option [value]="btn"
+                                                                (click)="selectBuutonOption(btn)"><span>{{btn}}</span></mat-option>
+                                                        </ng-container>
+                                                    </mat-select>
+                                                    <mat-error class="color-red"
+                                                        *ngIf="createTemplateForm.get('button')?.touched && createTemplateForm.get('button')?.invalid">
+                                                        Please select button</mat-error>
+                                                </mat-form-field>
+                                            </div>
+                                        </div>
+                                        <div *ngIf="mainAction == 'Call to Action'" class="type-of-action-style">
+                                            <p class="form-lable-text  btn-style">Type of Action</p>
+
+                                            <div class="call-div-style">
+                                                <div class="width-50">
+                                                    <input type="checkbox" id="callPhoneNumber"
+                                                        (change)="updateCheck('phoneNumber',isCallNumberChecked ? true : false)"
+                                                        [(ngModel)]="isCallNumberChecked"
+                                                        [ngModelOptions]="{standalone: true}"
+                                                        (ready)="onReady($event)">
+                                                    <label for="callPhoneNumber" class="font-16">Call (Phone
+                                                        Number)</label>
+                                                </div>
+
+                                                <div class="width-50">
+                                                    <input type="checkbox" id="visitSite"
+                                                        (change)="updateCheck('visit',isVisitChecked ? true : false)"
+                                                        [(ngModel)]="isVisitChecked"
+                                                        [ngModelOptions]="{standalone: true}">
+                                                    <label for="visitSite" class="font-16">Visit Site</label>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div *ngIf="mainAction == 'Call to Action'">
+                                        <div *ngIf="enableCallPhoneNumber">
+                                            <h2>Call (Phone Number)</h2>
+                                            <div class="display">
+                                                <div class="width-50">
+                                                    <p class="form-lable-text  btn-style">Button Text</p>
+                                                    <mat-form-field class="status-update-mff  width-95"
+                                                        appearance="outline">
+                                                        <input matInput placeholder="" formControlName="buttonTextCall"
+                                                            class="border-none-imp">
+                                                        <mat-error class="color-red"
+                                                            *ngIf="createTemplateForm.get('buttonTextCall')?.touched && createTemplateForm.get('buttonTextCall')?.invalid">
+                                                            Please add Button Text</mat-error>
+                                                    </mat-form-field>
+                                                </div>
+                                                <div class="width-50">
+                                                    <p class="form-lable-text  btn-style">Phone Number</p>
+                                                    <mat-form-field class="status-update-mff  width-95"
+                                                        appearance="outline">
+                                                        <input matInput placeholder="" formControlName="phoneNumber"
+                                                            class="border-none-imp">
+                                                        <mat-error class="color-red"
+                                                            *ngIf="createTemplateForm.get('phoneNumber')?.touched && createTemplateForm.get('phoneNumber')?.invalid">
+                                                            Please add Phone Number</mat-error>
+                                                    </mat-form-field>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div *ngIf="isVisitSiteEanble">
+                                            <h2>Visit Site</h2>
+                                            <div class="display">
+                                                <div class="width-33">
+                                                    <p class="form-lable-text  btn-style">Button Text</p>
+                                                    <mat-form-field class="status-update-mff  width-95"
+                                                        appearance="outline">
+                                                        <input matInput placeholder=""
+                                                            formControlName="buttonTextVisitSite"
+                                                            class="border-none-imp">
+                                                        <mat-error class="color-red"
+                                                            *ngIf="createTemplateForm.get('buttonTextVisitSite')?.touched && createTemplateForm.get('buttonTextVisitSite')?.invalid">
+                                                            Please add Button Text</mat-error>
+                                                    </mat-form-field>
+                                                </div>
+                                                <div class="width-33">
+                                                    <p class="form-lable-text  btn-style">Type URL</p>
+                                                    <mat-form-field class="status-update-mff  width-95"
+                                                        appearance="outline">
+                                                        <mat-select formControlName="typeUrl" class="border-none-imp">
+                                                            <mat-option value="Text Type">Text Type</mat-option>
+                                                        </mat-select>
+                                                    </mat-form-field>
+                                                </div>
+                                                <div class="width-33">
+                                                    <p class="form-lable-text btn-style">Website URL</p>
+                                                    <mat-form-field class="status-update-mff  width-95"
+                                                        appearance="outline">
+                                                        <input matInput placeholder="" formControlName="websiteUrl"
+                                                            class="border-none-imp">
+                                                        <mat-error class="color-red"
+                                                            *ngIf="createTemplateForm.get('websiteUrl')?.touched && createTemplateForm.get('websiteUrl')?.invalid">
+                                                            Please add Website URL</mat-error>
+                                                    </mat-form-field>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                            </div>
+
+                            <div class="preview-msg-style">
+                                <div class="preview-msg-border">
+                                    <div class="message-box-heading">
+                                        <h4 class="h4-style">Preview Message</h4>
+                                    </div>
+                                    <div class="message-type-area message-type-area-preview">
+                                        <div class="preview-area padding preview-area-message" [innerHTML]="previewWhatsappText" >
+                                        </div>
+                                      </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div *ngIf="selectedTab == 'Email'" class="message-box ck-editor">
+                    <div [ngClass]="isPreviewTemplate ? 'disabled-input-field' : 'on-enabled'" class="create-template-ckEditor">
+                        <ckeditor 
+                        [editor]="Editor"
+                        [data]="editorText"
+                        [(ngModel)]="TextEditor" 
+                        (ngModelChange)="onReadEmail($event)"
+                        [config]="editorConfig" 
+                        debounce="500"
+                        #myckeditor="ngModel"
+                        (ready)="onReady($event)"
+                        [ngModelOptions]="{standalone: true}"
+                        ></ckeditor>
+                    </div>
+                </div>
+            </div>
+        </form>
+        <div class="action-btn-div  display-arrow">
+            <div class="width-50">
+                <button class="back-btn" (click)="goBack('not_added')"> <mat-icon>arrow_back</mat-icon> <span class="padding-left">
+                        Back</span></button>
+            </div>
+
+            <div class="save-btn-div">
+                <button *ngIf="currentAction == 'create' " class="save-btn" [ngClass]=" isSaveEnable ? 'enable-btn' : 'disable-btn' "
+                    (click)="createCampaignTemplate()">Save</button>
+
+                <button *ngIf="currentAction == 'edit'" class="save-btn" [ngClass]="'enable-btn'"
+                    (click)="updateTemplate()">Save</button>
+
+            </div>
+        </div>
+
+    </div>
+
+    <div [hidden]="!isSpinner" class="spinner-view">
+        <mat-spinner *ngIf="isSpinner"></mat-spinner>
+    </div>
+
+</section>

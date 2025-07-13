@@ -1,0 +1,37 @@
+<h1 mat-dialog-title style="width:500px;background-color:#2DAAE1;padding-left:10px;padding-top:10px;padding-bottom:10px;color:white">Manage Users</h1>
+<div mat-dialog-content style="width:500px;text-align:center;padding-bottom:70px;">
+    <form [formGroup]="form" class="mat-container" style="display:contents;" novalidate>
+        <mat-form-field style="width:100%;text-align:center;">
+            <!--select input field-->
+            <label class="mat-label other-label">Select User</label>
+            <mat-select id="filter" name="filter" matInput [(ngModel)]="filter" formControlName="filter">
+                <mat-option *ngFor="let workPool of workPoolsForUser" [value]="workPool.userId">
+                    {{workPool.userName}}
+                </mat-option>
+            </mat-select>
+        </mat-form-field>
+
+        <mat-form-field class="date-field" color="accent">
+            <label class="mat-label other-label">Start Time Off</label>
+            <input matInput [matDatepicker]="picker1" (dateChange)="Date1Change($event)" name="dtPicker1" id="dtPicker1" formControlName="dtPicker1" [min]="minDate">
+            <mat-datepicker-toggle style=" position: absolute !important;right: 0 !important;top: 18px  !important;" matSuffix [for]="picker1"></mat-datepicker-toggle>
+            <mat-datepicker #picker1></mat-datepicker>
+        </mat-form-field>
+
+        <mat-form-field class="date-field mat-form-field-right" color="accent">
+            <label class="mat-label other-label">End Time Off</label>
+            <input matInput [matDatepicker]="picker2" (dateChange)="Date2Change($event)"  name="dtPicker2" id="dtPicker2" formControlName="dtPicker2" [min]="minDate">
+            <mat-datepicker-toggle style=" position: absolute !important;right: 0 !important;top: 18px  !important;" matSuffix [for]="picker2"></mat-datepicker-toggle>
+            <mat-datepicker #picker2></mat-datepicker>
+        </mat-form-field>
+
+        <table class="button-container">
+            <tr>
+                <td>
+                    <button type="button" class="button float-button" (click)="addManageUser()">Save</button>
+                    <button type="button" style="margin-left: 15px;margin-right: 0;" class="button float-button" (click)="onNoClick()">Exit</button>
+                </td>
+            </tr>
+        </table>
+    </form>
+</div>

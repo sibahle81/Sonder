@@ -1,0 +1,94 @@
+﻿<mat-card>
+    <mat-card-header>
+        <mat-card-title class="wizard-font card-title grey">
+            <h1 style="padding: 0;">Find a Role</h1>
+        </mat-card-title>
+    </mat-card-header>
+    <mat-card-content style="margin-left: 10px;">
+
+        <form [formGroup]="form" class="mat-container" novalidate>
+            <mat-form-field [floatLabel]="'never'">
+                <input matInput maxlength="50" formControlName="query" name="query" width="300" minLength="3" matTooltip="Search by name" matTooltipShowDelay="1000">
+                <mat-placeholder class="placeholder">Search by name</mat-placeholder>
+                <mat-icon class="search-icon" (click)="search()" matSuffix>search</mat-icon>
+                <mat-error *ngIf="form.get('query').hasError('required')">
+                    Please enter a search term.
+                </mat-error>
+                <mat-error *ngIf="form.get('query').hasError('minlength')">
+                    Please enter a search term longer than 3 characters
+                </mat-error>
+                <button style="visibility: hidden;" class="button submit-button" (click)="search()" matTooltip="Search by name" matTooltipShowDelay="1000">Search</button>
+            </mat-form-field>
+        </form>
+
+        <div *ngIf="dataSource.isLoading">
+            <mat-progress-bar mode="indeterminate" [ngClass]="{ 'loading-main-double-menu-progress': doubleMenu, 'loading-main-single-menu-progress': !doubleMenu }"></mat-progress-bar>
+            <p class="site-font grey">Searching...</p>
+        </div>
+
+        <div [hidden]="dataSource.data.length === 0 || dataSource.isLoading">
+            <mat-table #table [dataSource]="dataSource" matSort>
+
+                <!-- Name -->
+                <ng-container matColumnDef="name">
+                    <mat-header-cell *matHeaderCellDef mat-sort-header> Name </mat-header-cell>
+                    <mat-cell *matCellDef="let row"> {{row.name}} </mat-cell>
+                </ng-container>
+
+                <!-- Actions -->
+                <ng-container matColumnDef="actions">
+                    <mat-header-cell *matHeaderCellDef mat-sort-header>Actions</mat-header-cell>
+	                <mat-cell *matCellDef="let row">
+		                <span *ngIf="row.canEdit"><a role="button" class="link-edit" (click)="onSelect(row)">View / Edit</a></span>
+		                <span *ngIf="!row.canEdit"><a role="button" class="link-edit" (click)="onSelect(row)">View</a></span>
+	                </mat-cell>
+                </ng-container>
+
+                <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
+                <mat-row *matRowDef="let row; columns: displayedColumns;"></mat-row>
+            </mat-table>
+
+            <mat-paginator #paginator
+                           [length]="dataSource.data.length"
+                           [pageIndex]="0"
+                           [pageSize]="5"
+                           [pageSizeOptions]="[5, 10, 25, 100]">
+            </mat-paginator>
+        </div>
+
+        <div [hidden]="dataSource.isLoading || dataSource.filteredData.length > 0 || dataSource.data.length > 0 || !currentQuery || currentQuery == ''" class="no-search-results-add-button">
+            <div class="site-font grey">
+                <p class="grey">Your search - <strong>{{currentQuery}}</strong> - did not match any roles.</p>
+                <span>Suggestions: </span>
+                <ul>
+                    <li>Make sure that all words are spelled correctly.</li>
+                    <li>Try different keywords.</li>
+                    <li>Try more general keywords.</li>
+                    <li>Try fewer keywords.</li>
+                </ul>
+            </div>
+        </div>
+
+    </mat-card-content>
+</mat-card>
+<style>
+    mat-form-field {
+        width: 100%;
+    }
+    input.mat-input-element {
+        height: 50px;
+        border-radius: 22px !important;
+    }
+    mat-error {
+        text-align: center;
+    }
+    .search-icon {
+        position: absolute;
+        right: 16px;
+        top: -40px;
+        color: #33BFE6;
+    }
+    .search-icon:hover {
+        cursor: pointer
+    }
+</style>

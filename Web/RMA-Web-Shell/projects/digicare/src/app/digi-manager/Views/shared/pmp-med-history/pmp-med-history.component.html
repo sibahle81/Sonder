@@ -1,0 +1,504 @@
+<form [formGroup]="form" name="form" class="mat-container details-form" novalidate>
+    <div *ngIf="isLoadingCategories">
+        <mat-progress-bar mode="indeterminate"
+            [ngClass]="{ 'loading-main-double-menu-progress': doubleMenu, 'loading-main-single-menu-progress': !doubleMenu }">
+        </mat-progress-bar>
+        <p class="site-font grey">Loading categories...</p>
+    </div>
+
+    <section>
+        <div class="field-container">
+            <div><label class="mat-label other-label mandatory-field">Level of Injury</label></div>
+            <mat-select formControlName="levelofInjury" id="levelofInjury" name="levelofInjury">
+                <mat-option selected="selected" value="0" title="Select">Select</mat-option>
+                <mat-option value="1200" title="C1">C1</mat-option>
+                <mat-option value="1201" title="C2">C2</mat-option>
+                <mat-option value="1202" title="C3">C3</mat-option>
+                <mat-option value="1203" title="C4">C4</mat-option>
+                <mat-option value="1204" title="C5">C5</mat-option>
+                <mat-option value="1205" title="C6">C6</mat-option>
+                <mat-option value="1206" title="C7">C7</mat-option>
+                <mat-option value="1219" title="L1">L1</mat-option>
+                <mat-option value="1220" title="L2">L2</mat-option>
+                <mat-option value="1221" title="L3">L3</mat-option>
+                <mat-option value="1222" title="L4">L4</mat-option>
+                <mat-option value="1223" title="L5">L5</mat-option>
+                <mat-option value="1207" title="T1">T1</mat-option>
+                <mat-option value="1216" title="T10">T10</mat-option>
+                <mat-option value="1217" title="T11">T11</mat-option>
+                <mat-option value="1218" title="T12">T12</mat-option>
+                <mat-option value="1208" title="T2">T2</mat-option>
+                <mat-option value="1209" title="T3">T3</mat-option>
+                <mat-option value="1210" title="T4">T4</mat-option>
+                <mat-option value="1211" title="T5">T5</mat-option>
+                <mat-option value="1212" title="T6">T6</mat-option>
+                <mat-option value="1213" title="T7">T7</mat-option>
+                <mat-option value="1214" title="T8">T8</mat-option>
+                <mat-option value="1215" title="T9">T9</mat-option>
+            </mat-select>
+        </div>
+        <div class="field-container-right">
+            <div><label class="mat-label other-label mandatory-field">Severity</label></div>
+            <mat-select formControlName="severity" id="severity" name="severity">
+                <mat-option selected="selected" value="0" title="Select">Select</mat-option>
+                <mat-option value="1" title="Whole">Whole</mat-option>
+                <mat-option value="2" title="Partial">Partial</mat-option>
+            </mat-select>
+        </div>
+    </section>
+
+    <section>
+        <div class="field-container">
+            <div><label class="mat-label other-label mandatory-field">Bladder emptying type</label></div>
+            <mat-select formControlName="bladderemptyingtype" id="bladderemptyingtype" name="bladderemptyingtype">
+                <mat-option selected="selected" value="0" title="Select">Select</mat-option>
+                <mat-option value="104" title="Condom Catheter">Condom Catheter</mat-option>
+                <mat-option value="105" title="Normal">Normal</mat-option>
+                <mat-option value="103" title="Reflex Voiding">Reflex Voiding</mat-option>
+                <mat-option value="100" title="Self Intermittent Clean Catheterisation">Self Intermittent Clean
+                    Catheterisation</mat-option>
+                <mat-option value="102" title="Suprapubic Catheter">Suprapubic Catheter</mat-option>
+                <mat-option value="101" title="Urethral Catheter">Urethral Catheter</mat-option>
+            </mat-select>
+        </div>
+        <div class="field-container-right">
+            <div><label class="mat-label other-label">Describe any problems experienced with bladder emptying</label>
+            </div>
+            <textarea maxlength="1000" formControlName="txtsBladderEmptyingProblems" id="txtsBladderEmptyingProblems"
+                name="txtsBladderEmptyingProblems" matInput
+                placeholder="please describe bladder emptying problems"></textarea>
+        </div>
+    </section>
+    <section>
+        <div class="field-container">
+            <div><label class="mat-label other-label">Frequency of bowel movement</label></div>
+            <mat-select formControlName="frequencybowelmovement" id="frequencybowelmovement"
+                name="frequencybowelmovement">
+                <mat-option selected="selected" value="0" title="Select">Select</mat-option>
+                <mat-option value="2100" title="Daily">Daily</mat-option>
+                <mat-option value="2101" title="Weekly">Weekly</mat-option>
+            </mat-select>
+        </div>
+        <div class="field-container-right">
+            <div><label class="mat-label other-label">Bowel Regime / Medication</label></div>
+            <mat-select formControlName="bowelRegime" id="bowelRegime" name="bowelRegime">
+                <mat-option selected="selected" value="0" title="Select">Select</mat-option>
+                <mat-option value="2202" title="Dulcolax">Dulcolax</mat-option>
+                <mat-option value="2200" title="None">None</mat-option>
+                <mat-option value="2203" title="Other">Other</mat-option>
+                <mat-option value="2201" title="Senekot">Senekot</mat-option>
+            </mat-select>
+        </div>
+    </section>
+
+    <section>
+        <div class="field-container">
+            <div><label class="mat-label other-label">Constipation</label></div>
+            <mat-select formControlName="constipation" id="constipation" name="constipation">
+                <mat-option value="Yes">Yes</mat-option>
+                <mat-option value="No">No</mat-option>
+            </mat-select>
+        </div>
+        <div class="field-container-right">
+            <div><label class="mat-label other-label">Colostomy</label></div>
+            <mat-select formControlName="colostomy" id="colostomy" name="colostomy">
+                <mat-option value="Yes">Yes</mat-option>
+                <mat-option value="No">No</mat-option>
+            </mat-select>
+        </div>
+    </section>
+    <section>
+        <div class="field-container">
+            <div><label class="mat-label other-label">Muscle Spasm</label></div>
+            <mat-select formControlName="muscleSpasm" id="muscleSpasm" name="muscleSpasm">
+                <mat-option value="Yes">Yes</mat-option>
+                <mat-option value="No">No</mat-option>
+            </mat-select>
+        </div>
+        <div class="field-container-right">
+            <div><label class="mat-label other-label">Muscle Spasm Frequency</label></div>
+            <mat-select formControlName="muscleSpasmFrequency" id="muscleSpasmFrequency" name="muscleSpasmFrequency">
+                <mat-option selected="selected" value="0" title="Select">Select</mat-option>
+                <mat-option value="2100" title="Daily">Daily</mat-option>
+                <mat-option value="2101" title="Weekly">Weekly</mat-option>
+            </mat-select>
+        </div>
+    </section>
+    <section>
+        <div class="field-container">
+            <div><label class="mat-label other-label">Muscle Spasm Type</label></div>
+            <mat-form-field>
+                <input matInput formControlName="muscleSpasmType" id="muscleSpasmType" name="muscleSpasmType">
+            </mat-form-field>
+        </div>
+        <div class="field-container-right">
+            <div><label class="mat-label other-label">Muscle Spasm Duration</label></div>
+            <mat-form-field>
+                <input matInput formControlName="muscleSpasmDuration" id="muscleSpasmDuration"
+                    name="muscleSpasmDuration">
+            </mat-form-field>
+        </div>
+    </section>
+    <section>
+        <div class="field-container">
+            <div><label class="mat-label other-label">Muscle Spasm Medication</label></div>
+            <mat-form-field>
+                <input matInput formControlName="muscleSpasmMedication" id="muscleSpasmMedication"
+                    name="muscleSpasmMedication">
+            </mat-form-field>
+        </div>
+        <div class="field-container-right">
+            <div><label class="mat-label other-label">How many meals per day??</label></div>
+            <mat-form-field>
+                <input matInput formControlName="howmanymealsperday" id="howmanymealsperday" name="howmanymealsperday">
+            </mat-form-field>
+        </div>
+    </section>
+    <section>
+        <div class="field-container">
+            <div><label class="mat-label other-label">Type of Food?</label></div>
+            <mat-form-field>
+                <input matInput formControlName="typeofFood" id="typeofFood" name="typeofFood">
+            </mat-form-field>
+        </div>
+        <div class="field-container-right">
+            <div><label class="mat-label other-label">How much fluid intake per day?</label></div>
+            <mat-select formControlName="howmuchfluidintakeperday" id="howmuchfluidintakeperday"
+                name="howmuchfluidintakeperday">
+                <mat-option selected="selected" value="0" title="Select">Select</mat-option>
+                <mat-option value="2300" title="1 Litre">1 Litre</mat-option>
+                <mat-option value="2301" title="2 Litres">2 Litres</mat-option>
+                <mat-option value="2302" title="3 Litres">3 Litres</mat-option>
+                <mat-option value="2303" title="More than 3 Litres">More than 3 Litres</mat-option>
+            </mat-select>
+        </div>
+    </section>
+    <section>
+        <div class="field-container">
+            <div><label class="mat-label other-label">Balances Diet?</label></div>
+            <mat-select formControlName="balancesDiet" id="balancesDiet" name="balancesDiet">
+                <mat-option value="Yes">Yes</mat-option>
+                <mat-option value="No">No</mat-option>
+            </mat-select>
+        </div>
+        <div class="field-container-right">
+            <div><label class="mat-label other-label">Allergies?</label></div>
+            <mat-select formControlName="allergies" id="allergies" name="allergies">
+                <mat-option value="Yes">Yes</mat-option>
+                <mat-option value="No">No</mat-option>
+            </mat-select>
+        </div>
+    </section>
+
+    <section>
+        <div class="field-container">
+            <div><label class="mat-label other-label">Diabetes</label></div>
+            <mat-select formControlName="diabetes" id="diabetes" name="diabetes">
+                <mat-option value="Yes">Yes</mat-option>
+                <mat-option value="No">No</mat-option>
+            </mat-select>
+        </div>
+        <div class="field-container-right">
+            <div><label class="mat-label other-label">Hypertension</label></div>
+            <mat-select formControlName="hypertension" id="hypertension" name="hypertension">
+                <mat-option value="Yes">Yes</mat-option>
+                <mat-option value="No">No</mat-option>
+            </mat-select>
+        </div>
+    </section>
+    <section>
+        <div class="field-container">
+            <div><label class="mat-label other-label">Previous Bedsores</label></div>
+            <mat-select formControlName="previousBedsores" id="previousBedsores" name="previousBedsores">
+                <mat-option value="Yes">Yes</mat-option>
+                <mat-option value="No">No</mat-option>
+            </mat-select>
+        </div>
+        <div class="field-container-right">
+            <div><label class="mat-label other-label">Other Co-morbidities</label></div>
+            <textarea maxlength="1000" formControlName="othermorbidities" id="othermorbidities" name="othermorbidities"
+                matInput placeholder="please describe Other Co-morbidities"></textarea>
+        </div>
+    </section>
+    <section>
+        <div class="field-container">
+            <div><label class="mat-label other-label">Wheelchair Status - Cushion & Cover</label></div>
+            <textarea maxlength="1000" formControlName="wheelchairStatus" id="wheelchairStatus" name="wheelchairStatus"
+                matInput placeholder="please describe Wheel chair Status"></textarea>
+        </div>
+        <div class="field-container-right">
+            <div><label class="mat-label other-label">Date of Wheelchair Issued</label></div>
+            <mat-form-field>
+                <input matInput formControlName="wheelchairIssuedDate" [matDatepicker]="WheelchairIssuedDate"
+                    id="wheelchairIssuedDate" name="wheelchairIssuedDate">
+                <mat-datepicker-toggle matSuffix [for]="WheelchairIssuedDate" [disabled]="true"></mat-datepicker-toggle>
+                <mat-datepicker touchUi="true" #WheelchairIssuedDate></mat-datepicker>
+            </mat-form-field>
+        </div>
+    </section>
+    <section>
+        <div class="field-container">
+            <div><label class="mat-label other-label">Wheelchair Serial Number</label></div>
+            <mat-form-field>
+                <input matInput formControlName="wheelchairSerialNumber" id="wheelchairSerialNumber"
+                    name="wheelchairSerialNumber">
+            </mat-form-field>
+        </div>
+        <div class="field-container-right">
+            <div><label class="mat-label other-label">Wheelchair Repair Needed</label></div>
+            <mat-select formControlName="wheelchairRepairNeeded" id="wheelchairRepairNeeded" name="wheelchairRepairNeeded">
+                <mat-option value="Yes">Yes</mat-option>
+                <mat-option value="No">No</mat-option>
+            </mat-select>
+        </div>
+    </section>
+    <section>
+        <div class="field-container">
+            <div><label class="mat-label other-label">Describe problems with the Wheelchair</label></div>
+            <textarea maxlength="1000" formControlName="problemswiththeWheelchair" id="problemswiththeWheelchair" name="problemswiththeWheelchair"
+                matInput placeholder="Describe problems with the Wheelchair"></textarea>
+        </div>
+        <div class="field-container-right">
+            <div><label class="mat-label other-label">Alcohol Use</label></div>
+            <mat-select formControlName="alcoholUse" id="alcoholUse" name="alcoholUse">
+                <mat-option value="Yes">Yes</mat-option>
+                <mat-option value="No">No</mat-option>
+            </mat-select>
+        </div>
+    </section>
+    <section>
+        <div class="field-container">
+            <div><label class="mat-label other-label">Quantity of Alcohol per week</label></div>
+            <mat-form-field>
+                <input matInput formControlName="quantityofAlcoholperweek" id="quantityofAlcoholperweek"
+                    name="quantityofAlcoholperweek">
+            </mat-form-field>
+        </div>
+        <div class="field-container-right">
+            <div><label class="mat-label other-label">Smoker</label></div>
+            <mat-select formControlName="smoker" id="smoker" name="smoker">
+                <mat-option value="Yes">Yes</mat-option>
+                <mat-option value="No">No</mat-option>
+            </mat-select>
+        </div>
+    </section>
+    <section>
+        <div class="field-container">
+            <div><label class="mat-label other-label">Number of cigarettes per day</label></div>
+            <mat-form-field>
+                <input matInput formControlName="numberofcigarettesperday" id="numberofcigarettesperday"
+                    name="numberofcigarettesperday">
+            </mat-form-field>
+        </div>
+        <div class="field-container-right">
+            <div><label class="mat-label other-label">Dagga</label></div>
+            <mat-select formControlName="dagga" id="dagga" name="dagga">
+                <mat-option value="Yes">Yes</mat-option>
+                <mat-option value="No">No</mat-option>
+            </mat-select>
+        </div>
+    </section>
+    <section>
+        <div class="field-container">
+            <div><label class="mat-label other-label">Amount of dagga per day</label></div>
+            <mat-form-field>
+                <input matInput formControlName="amountofdaggaperday" id="amountofdaggaperday"
+                    name="amountofdaggaperday">
+            </mat-form-field>
+        </div>
+        <div class="field-container-right">
+            <div><label class="mat-label other-label">OtherDrugs</label></div>
+            <mat-select formControlName="otherDrugs" id="otherDrugs" name="otherDrugs">
+                <mat-option value="Yes">Yes</mat-option>
+                <mat-option value="No">No</mat-option>
+            </mat-select>
+        </div>
+    </section>
+    <section>
+        <div class="field-container">
+            <div><label class="mat-label other-label">Amount of other drugs per day</label></div>
+            <mat-form-field>
+                <input matInput formControlName="otherdrugsperday" id="otherdrugsperday"
+                    name="otherdrugsperday">
+            </mat-form-field>
+        </div>
+        <div class="field-container-right">
+            <div><label class="mat-label other-label">Who is the likely care-giver</label></div>
+            <mat-form-field>
+                <input matInput formControlName="caregiver" id="caregiver"
+                    name="caregiver">
+            </mat-form-field>
+        </div>
+    </section>
+    <section>
+        <div class="field-container">
+            <div><label class="mat-label other-label">Relationship of care-giver to SCI</label></div>
+            <mat-form-field>
+                <input matInput formControlName="relationshipCaregiver" id="relationshipCaregiver"
+                    name="relationshipCaregiver">
+            </mat-form-field>
+        </div>
+        <div class="field-container-right">
+            <div><label class="mat-label other-label">Age of Care-giver</label></div>
+            <mat-select formControlName="ageCaregiver" id="ageCaregiver" name="ageCaregiver">
+                <mat-option value="Yes">Yes</mat-option>
+                <mat-option value="No">No</mat-option>
+            </mat-select>
+        </div>
+    </section>
+    <section>
+        <div class="field-container">
+            <div><label class="mat-label other-label">Will care-giver be able to attend training at the hospital</label></div>
+            <mat-form-field>
+                <input matInput formControlName="trainingCaregiver" id="trainingCaregiver"
+                    name="trainingCaregiver">
+            </mat-form-field>
+        </div>
+        <div class="field-container-right">
+            <div><label class="mat-label other-label">Can home be accessed by a motor vehicle?</label></div>
+            <mat-select formControlName="motorvehicleaccessed" id="motorvehicleaccessed" name="motorvehicleaccessed">
+                <mat-option value="Yes">Yes</mat-option>
+                <mat-option value="No">No</mat-option>
+            </mat-select>
+        </div>
+    </section>
+    <section>
+        <div class="field-container">
+            <div><label class="mat-label other-label">Do ramps need to be built?</label></div>
+            <mat-select formControlName="rampsbuilt" id="rampsbuilt" name="rampsbuilt">
+                <mat-option value="Yes">Yes</mat-option>
+                <mat-option value="No">No</mat-option>
+            </mat-select>
+        </div>
+        <div class="field-container-right">
+            <div><label class="mat-label other-label">Do doors require widening?</label></div>
+            <mat-select formControlName="doorsrequirewidening" id="doorsrequirewidening" name="doorsrequirewidening">
+                <mat-option value="Yes">Yes</mat-option>
+                <mat-option value="No">No</mat-option>
+            </mat-select>
+        </div>
+    </section>
+    <section>
+        <div class="field-container">
+            <div><label class="mat-label other-label">No of Doors require widening?</label></div>
+            <mat-form-field>
+                <input matInput formControlName="noofDoorsrequirewidening" id="noofDoorsrequirewidening"
+                    name="noofDoorsrequirewidening">
+            </mat-form-field>
+        </div>
+        <div class="field-container-right">
+            <div><label class="mat-label other-label">Toilet Type</label></div>
+            <mat-select formControlName="toiletType" id="toiletType" name="toiletType">
+                <mat-option selected="selected" value="0" title="Select">Select</mat-option>
+				<mat-option value="1401" title="Chemical">Chemical</mat-option>
+				<mat-option value="1400" title="Flush">Flush</mat-option>
+				<mat-option value="1403" title="Nil">Nil</mat-option>
+				<mat-option value="1402" title="V.I.P">V.I.P</mat-option>
+            </mat-select>
+        </div>
+    </section>
+
+    <section>
+        <div class="field-container">
+            <div><label class="mat-label other-label">Could toilet be accessed by wheelchair patient?	</label></div>
+            <mat-select formControlName="toiletaccessedwheelchair" id="toiletaccessedwheelchair" name="toiletaccessedwheelchair">
+                <mat-option selected="selected" value="0" title="Select">Select</mat-option>
+				<mat-option value="1" title="Yes">Yes</mat-option>
+				<mat-option value="2" title="No">No</mat-option>
+            </mat-select>
+        </div>
+        <div class="field-container-right">
+            <div><label class="mat-label other-label">Comment on alterations required if toilet not large enough for a wheelchair:	</label></div>
+            <textarea maxlength="1000" formControlName="toiletAlterationsRequired" id="toiletAlterationsRequired" name="toiletAlterationsRequired"
+            matInput placeholder="Toilet Alterations "></textarea>
+        </div>
+    </section>
+
+
+    <section>
+        <div class="field-container">
+            <div><label class="mat-label other-label">Does the patient have a commode and urinal?</label></div>
+            <mat-select formControlName="cbobCommodeAndUrinal" id="cbobCommodeAndUrinal" name="cbobCommodeAndUrinal">
+                <mat-option selected="selected" value="0" title="Select">Select</mat-option>
+				<mat-option value="1" title="Yes">Yes</mat-option>
+				<mat-option value="2" title="No">No</mat-option>
+            </mat-select>
+        </div>
+        <div class="field-container-right">
+            <div><label class="mat-label other-label">What is the water source? </label></div>
+            <mat-select formControlName="cbosWaterSource" id="cbosWaterSource" name="cbosWaterSource">
+                <mat-option selected="selected" value="0" title="Select">Select</mat-option>
+				<mat-option value="1501" title="Borehole">Borehole</mat-option>
+				<mat-option value="1503" title="Dam">Dam</mat-option>
+				<mat-option value="1502" title="River">River</mat-option>
+				<mat-option value="1504" title="Spring">Spring</mat-option>
+				<mat-option value="1500" title="Stand Pipe">Stand Pipe</mat-option>
+				<mat-option value="1505" title="Well">Well</mat-option>
+            </mat-select>
+        </div>
+    </section>
+
+    <section>
+        <div class="field-container">
+            <div><label class="mat-label other-label">Approximate Distance of Water from Home in meters	</label></div>
+            <mat-select formControlName="cbonDistanceOfWater" id="cbonDistanceOfWater" name="cbonDistanceOfWater">
+                <mat-option selected="selected" value="0" title="Select">Select</mat-option>
+				<mat-option value="2602" title="500m - 1000m">500m - 1000m</mat-option>
+				<mat-option value="2600" title="In Home">In Home</mat-option>
+				<mat-option value="2601" title="Less than 500m">Less than 500m</mat-option>
+				<mat-option value="2603" title="More Than 1000m">More Than 1000m</mat-option>
+            </mat-select>
+        </div>
+        <div class="field-container-right">
+            <div><label class="mat-label other-label">Is water accessible to patient at all times?</label></div>
+            <mat-select formControlName="cbobWaterAccessible" id="cbobWaterAccessible" name="cbobWaterAccessible">
+                <mat-option selected="selected" value="0" title="Select">Select</mat-option>
+				<mat-option value="1" title="Yes">Yes</mat-option>
+				<mat-option value="2" title="No">No</mat-option>
+            </mat-select>
+        </div>
+    </section>
+
+    <section>
+        <div class="field-container">
+            <div><label class="mat-label other-label">Why water is not accessible to patient at all times?	</label></div>
+            <textarea maxlength="1000" formControlName="txtsNoWaterAccessibleReason" id="txtsNoWaterAccessibleReason" name="txtsNoWaterAccessibleReason"
+            matInput placeholder="Toilet Alterations "></textarea>
+        </div>
+        <div class="field-container-right">
+            <div><label class="mat-label other-label">Has Electricity?	</label></div>
+            <mat-select formControlName="cbobHasElectricity" id="cbobHasElectricity" name="cbobHasElectricity">
+                <mat-option selected="selected" value="0" title="Select">Select</mat-option>
+				<mat-option value="1" title="Yes">Yes</mat-option>
+				<mat-option value="2" title="No">No</mat-option>
+            </mat-select>
+        </div>
+    </section>
+    <section>
+        <div class="field-container">
+            <div><label class="mat-label other-label">Method of Cooking	</label></div>
+            <mat-select formControlName="cbosCookingMethod" id="cbosCookingMethod" name="cbosCookingMethod">
+                <mat-option selected="selected" value="0" title="Select">Select</mat-option>
+				<mat-option value="2700" title="Electricity">Electricity</mat-option>
+				<mat-option value="2701" title="Gas">Gas</mat-option>
+				<mat-option value="2702" title="Open Fire">Open Fire</mat-option>
+				<mat-option value="2703" title="Parafine">Parafine</mat-option>
+            </mat-select>
+        </div>
+        <div class="field-container-right">
+            <div><label class="mat-label other-label">Medication</label></div>
+            <textarea maxlength="1000" formControlName="txtsMedication" id="txtsMedication" name="txtsMedication"
+            matInput placeholder="Medication "></textarea>
+        </div>
+    </section>
+    <section>
+        <div class="field-container">
+            <div><label class="mat-label other-label mandatory-field">Reviewed By</label></div>
+            <mat-form-field>
+                <input matInput formControlName="reviewedBy" id="reviewedBy" name="reviewedBy">
+            </mat-form-field>
+        </div>
+        <div class="field-container-right">
+        </div>
+    </section>
+</form>

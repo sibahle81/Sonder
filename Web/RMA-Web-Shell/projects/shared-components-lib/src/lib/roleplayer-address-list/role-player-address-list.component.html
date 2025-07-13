@@ -1,0 +1,108 @@
+<mat-card class="pad" *ngIf="(isLoading$ | async) || (dataSource.loading$ | async)">
+    <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+    <label class="mat-label other-label"><i>loading...please wait</i></label>
+</mat-card>
+
+<div [hidden]="(isLoading$ | async) || (dataSource.loading$ | async)">
+
+    <div class="menu-bar" *ngIf="!(dataSource.loading$ | async)">
+        <span class="material-icons">public</span>&nbsp;Addresses
+        <span *ngIf="!isReadOnly && userHasPermission(addPermission)" (click)="add()"
+            class="material-icons pointer right" matTooltip="add">
+            add_circle
+        </span>
+    </div>
+    <mat-card *ngIf="!(dataSource.data?.rowCount > 0 || (dataSource.loading$ | async))">
+        <label class="mat-label other-label"><i>No addresses found...</i></label>
+    </mat-card>
+    <div [hidden]="!(dataSource.data?.rowCount > 0)">
+        <mat-table #table [dataSource]="dataSource" matSort (matSortChange)="getData()" id="tblData">
+            <ng-container matColumnDef="isPrimary">
+                <mat-header-cell *matHeaderCellDef mat-sort-header> Primary? </mat-header-cell>
+                <mat-cell *matCellDef="let row">
+                    <span *ngIf="row.isPrimary" class="material-icons greyFont" matTooltip="primary {{getType(row.addressType)}}">
+                        radio_button_checked
+                    </span>
+                    <span *ngIf="!row.isPrimary" class="material-icons greyFont" matTooltip="not primary">
+                        radio_button_unchecked
+                    </span>
+                </mat-cell>
+            </ng-container>
+
+            <ng-container matColumnDef="addressType">
+                <mat-header-cell *matHeaderCellDef mat-sort-header> Address Type </mat-header-cell>
+                <mat-cell *matCellDef="let row">{{getType(row.addressType)}}</mat-cell>
+            </ng-container>
+
+            <ng-container matColumnDef="addressLine1">
+                <mat-header-cell *matHeaderCellDef mat-sort-header> Line 1 </mat-header-cell>
+                <mat-cell *matCellDef="let row">
+                    {{row.addressLine1 && row.addressLine1?.length > 15 ? row.addressLine1.substring(0,15)+'...'
+                    : row.addressLine1 && row.addressLine1?.length < 15 ? row.addressLine1 : 'N/A' }} </mat-cell>
+            </ng-container>
+
+            <ng-container matColumnDef="addressLine2">
+                <mat-header-cell *matHeaderCellDef mat-sort-header> Line 2 </mat-header-cell>
+                <mat-cell *matCellDef="let row">
+                    {{row.addressLine2 && row.addressLine2?.length > 15 ? row.addressLine2.substring(0,15)+'...'
+                    : row.addressLine2 && row.addressLine2?.length < 15 ? row.addressLine2 : 'N/A' }} </mat-cell>
+            </ng-container>
+
+            <ng-container matColumnDef="postalCode">
+                <mat-header-cell *matHeaderCellDef mat-sort-header> Postal Code </mat-header-cell>
+                <mat-cell *matCellDef="let row">{{row.postalCode}}</mat-cell>
+            </ng-container>
+
+            <ng-container matColumnDef="city">
+                <mat-header-cell *matHeaderCellDef mat-sort-header> City</mat-header-cell>
+                <mat-cell *matCellDef="let row">{{row.city}}</mat-cell>
+            </ng-container>
+
+            <ng-container matColumnDef="province">
+                <mat-header-cell *matHeaderCellDef mat-sort-header> Province </mat-header-cell>
+                <mat-cell *matCellDef="let row">{{row.province}}</mat-cell>
+            </ng-container>
+
+            <ng-container matColumnDef="countryId">
+                <mat-header-cell *matHeaderCellDef mat-sort-header> Country </mat-header-cell>
+                <mat-cell *matCellDef="let row">{{getCountryName(row.countryId)}}</mat-cell>
+            </ng-container>
+
+            <ng-container matColumnDef="effectiveDate">
+                <mat-header-cell *matHeaderCellDef mat-sort-header>Effective From</mat-header-cell>
+                <mat-cell *matCellDef="let row">
+                    {{row.effectiveDate | date:'yyyy-MM-dd HH:mm:ss'}}
+                </mat-cell>
+            </ng-container>
+
+            <ng-container matColumnDef="actions">
+                <mat-header-cell *matHeaderCellDef>Action</mat-header-cell>
+                <mat-cell *matCellDef="let row">
+                    <a (click)="showAddressDialog(row, true)" role="button" class="link-edit">
+                        <span matTooltip="view" class="material-icons icn pointer">
+                            visibility
+                        </span>
+                    </a>
+                    <a *ngIf="userHasPermission(editPermission) && !isReadOnly" (click)="showAddressDialog(row, false)" role="button"
+                        class="link-edit">
+                        <span matTooltip="edit" class="material-icons icn pointer">
+                            settings
+                        </span>
+                    </a>
+                    <a *ngIf="userHasPermission(viewAuditPermission)" (click)="openAuditDialog(row)" role="button"
+                        class="link-edit">
+                        <span matTooltip="audit" class="material-icons icn pointer">
+                            fingerprint
+                        </span></a>
+                </mat-cell>
+            </ng-container>
+
+            <mat-header-row *matHeaderRowDef="getDisplayedColumns()"></mat-header-row>
+            <mat-row *matRowDef="let row; columns: getDisplayedColumns()"></mat-row>
+        </mat-table>
+
+        <mat-paginator #paginator [pageIndex]="0" [pageSize]="5" [pageSizeOptions]="[5, 10, 25, 100]"
+            [length]="this.dataSource.rowCount$ | async" (page)="getData()">
+        </mat-paginator>
+    </div>
+</div>

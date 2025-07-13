@@ -1,0 +1,126 @@
+<mat-card>
+  <div class="expansionTitle">
+    <span class="material-icons">groups</span> {{ personType === 'beneficiary' ? 'Beneficiaries' : 'Recipients' }}
+    {{benefitType}}
+
+    <a *ngIf="!viewFormMode && model.pensionCase && model.pensionCase.benefitType === benefitTypeEnum.Fatal"
+      (click)="onAddPersonButtonClick()" class="material-icons pointer right"
+      [matTooltip]="personType == 'recipient' ? 'Add Recipient' : 'Add Beneficiary'">
+      add_circle_outline
+    </a>
+
+    <a *ngIf="!viewFormMode && model.pensionCase && model.pensionCase.benefitType === benefitTypeEnum.Disability"
+      (click)="onAddPersonButtonClick()" class="material-icons pointer right"
+      [matTooltip]="personType == 'recipient' ? 'Add Recipient' : 'Add Beneficiary'">
+      add_circle_outline
+    </a>
+
+  </div>
+
+  <div *ngIf="showTable && !viewFormMode">
+    <div *ngIf="dataSource.length === 0">
+      No {{personType}} found
+    </div>
+
+    <div *ngIf="dataSource.length > 0">
+      <mat-table #table [dataSource]="dataSource" matSort>
+        <!-- Name Column -->
+        <ng-container matColumnDef="name">
+          <mat-header-cell *matHeaderCellDef> Name </mat-header-cell>
+          <mat-cell *matCellDef="let row"> {{row.firstName}} </mat-cell>
+        </ng-container>
+
+        <!-- Surname Column -->
+        <ng-container matColumnDef="surname">
+          <mat-header-cell *matHeaderCellDef> Surname </mat-header-cell>
+          <mat-cell *matCellDef="let row"> {{row.surname}} </mat-cell>
+        </ng-container>
+
+         <!-- idPassportNumber Column -->
+        <ng-container matColumnDef="idPassportNumber">
+          <mat-header-cell *matHeaderCellDef> Id/Passport Number </mat-header-cell>
+          <mat-cell *matCellDef="let row"> {{row.idNumber ? row.idNumber : row.passportNumber}}
+          </mat-cell>
+        </ng-container>
+
+
+       <!-- Family unit Column -->
+        <ng-container matColumnDef="idFamilyUnit">
+          <mat-header-cell *matHeaderCellDef> Family Unit </mat-header-cell>
+          <mat-cell *matCellDef="let row"> {{row.familyUnit}}
+          </mat-cell>
+        </ng-container>
+
+        <ng-container matColumnDef="actions">
+          <mat-header-cell *matHeaderCellDef>Action</mat-header-cell>
+          <mat-cell *matCellDef="let row">
+            <a role="button" class="link-edit" (click)="addInBeneficiaryRecipientList(row)" *ngIf="canAddPersonToList(row)">
+              <span [matTooltip]="personType == 'recipient' ? 'Add in beneficiary list' : 'Add in Recipient list'" class="material-icons icn pointer">
+                add
+              </span>
+            </a>
+            <a role="button" class="link-edit" (click)="viewPerson(row)">
+              <span matTooltip="view" class="material-icons icn pointer">
+                visibility
+              </span>
+            </a>
+            <a *ngIf="canEdit && isWizard" role="button" class="link-edit" (click)="editPerson(row)">
+              <span matTooltip="edit" class="material-icons icn pointer">
+                settings
+              </span>
+            </a>
+            <a *ngIf="canEdit" role="button" class="link-edit" (click)="confirmDelete(row)">
+              <span matTooltip="delete" class="material-icons icn pointer">
+                delete
+              </span>
+            </a>
+          </mat-cell>
+        </ng-container>
+
+        <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
+        <mat-row *matRowDef="let row; columns: displayedColumns;"></mat-row>
+      </mat-table>
+    </div>
+  </div>
+
+  <div *ngIf="isWizard && viewFormMode">
+    <!-- <div *ngIf="form"> -->
+    <app-personal-details *ngIf="form && !addPersonMode"
+      (cancelButtonClicked)="onCancelButtonClicked()"
+      (saveButtonClicked)="onSaveButtonClicked($event)"
+      [isView]="isView"
+      [minAge]="personType === 'recipient'? 18 : 0"
+      [maxAge]="personType === 'recipient'? 100 : isDisabled ? 40 : 18"
+      [componentData]="{
+          form: form,
+          formHeader: formHeader,
+          showActionButtons: true,
+          familyUnits: familyUnits,
+          model: model,
+          personType: personType
+        }"></app-personal-details>
+
+    <app-personal-details *ngIf="blankForm && addPersonMode"
+      (cancelButtonClicked)="onCancelButtonClicked()"
+      (saveButtonClicked)="onSaveButtonClicked($event)"
+      [minAge]="personType === 'recipient'? 18 : 0"
+      [maxAge]="personType === 'recipient'? 100 : 18"
+      [componentData]="{
+          form: blankForm,
+          formHeader: formHeader,
+          showActionButtons: true,
+          familyUnits: familyUnits,
+          model: model,
+          personType: personType
+        }"></app-personal-details>
+  </div>
+  <div *ngIf="!isWizard && viewFormMode && !(isLoading$ | async) && rolePlayer">
+    <person-view *ngIf="supportedPersonTypes.includes(rolePlayer.rolePlayerIdentificationType)"
+      [rolePlayer]="rolePlayer" [tabIndex]="tabIndex" [defaultPolicyId]="defaultPolicyId"></person-view>
+  </div>
+  <mat-card class="margin-bottom" *ngIf="(isLoading$ | async)">
+    <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+    <label class="mat-label other-label"><i>loading...please wait</i></label>
+  </mat-card>
+  <!-- </div> -->
+</mat-card>

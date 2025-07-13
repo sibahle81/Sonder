@@ -1,0 +1,513 @@
+<!--CLIENT NAME-->
+<mat-card *ngIf="clientName != '' && !(isLoadingPolicy$ | async)" class="nameheading">
+    <mat-card-content>
+        <div class="nameContent"><b>
+                <mat-icon matTooltip="Client name">account_circle</mat-icon> {{clientName}}
+                <span class="nameClass"><i>Class: {{finPayeeClass}}</i></span>
+            </b>
+        </div>
+    </mat-card-content>
+</mat-card>
+
+<br />
+<br />
+
+<ng-template #stepOne>
+    <div class="main-container">
+        <div class="document-container">
+            <mat-card class="policy">
+                <mat-card-content>
+                    <h1 class="Heading">Policy</h1>
+                    <br />
+
+                    <div *ngIf="isLoadingPolicy$ | async">
+                        <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+                        <label class="mat-label other-label loading"><i>loading policies...please wait</i></label>
+                    </div>
+
+                    <table *ngIf="!(isLoadingPolicy$ | async)" class="altRowTable tableClass">
+                        <tr>
+                            <th>Policy Number</th>
+                            <th>Product Option</th>
+                            <th>Status</th>
+                            <th>Action</th>
+                        </tr>
+                        <tr *ngFor="let policy of policies">
+                            <td>{{policy.policyNumber}}</td>
+                            <td>{{policy.productOption.code + "-" + policy.productOption.name}}</td>
+                            <td *ngIf="greenPolicyStatus.includes(getStatus(policy.policyStatus))" align="center"><span
+                                    class="material-icons lightGreen"
+                                    matTooltip="{{getStatus(policy.policyStatus)}}">play_circle_filled</span></td>
+                            <td *ngIf="amberPolicyStatus.includes(getStatus(policy.policyStatus))" align="center"><span
+                                    class="material-icons lightAmber"
+                                    matTooltip="{{getStatus(policy.policyStatus)}}">pause_circle_filled</span></td>
+                            <td *ngIf="redPolicyStatus.includes(getStatus(policy.policyStatus))" align="center"><span
+                                    class="material-icons lightRed"
+                                    matTooltip="{{getStatus(policy.policyStatus)}}">stop</span>
+                            </td>
+                            <td *ngIf="bluePolicyStatus.includes(getStatus(policy.policyStatus))" align="center"><span
+                                    class="material-icons lightBlue"
+                                    matTooltip="{{getStatus(policy.policyStatus)}}">cached</span></td>
+                            <td *ngIf="policyId == policy.policyId" align="center"><a role="button" class="link-edit">
+                                    <span class="material-icons"
+                                        matTooltip="Currently being viewed">check_box</span></a>
+                            </td>
+                        </tr>
+                    </table>
+                </mat-card-content>
+            </mat-card>
+        </div>
+        <br />
+        <div class="account-container">
+            <br />
+            <mat-card class="policyDetails">
+                <mat-card-content>
+                    <h1 class="Heading">Policy Details</h1>
+                    <br />
+
+                    <div *ngIf="isLoadingPolicy$ | async">
+                        <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+                        <label class="mat-label other-label loading"><i>loading policy details...please wait</i></label>
+                    </div>
+
+                    <table *ngIf="policy && !(isLoadingPolicy$ | async)" class="altRowTable tableClass">
+                        <tr>
+                            <td><b>Policy Number: </b></td>
+                            <td>{{policy.policyNumber}}</td>
+                        </tr>
+                        <tr>
+                            <td><b>Policy Status: </b></td>
+                            <td>{{getStatus(policy.policyStatus)}}</td>
+                        </tr>
+                        <tr>
+                            <td><b>Client Reference: </b></td>
+                            <td>{{policy.clientReference}}</td>
+                        </tr>
+                        <tr>
+                            <td><b>Client Name: </b></td>
+                            <td>{{clientName}}</td>
+                        </tr>
+                        <tr>
+                            <td><b>Inception Date: </b></td>
+                            <td>{{policy.policyInceptionDate| date: 'yyyy/MM/dd' }}</td>
+                        </tr>
+                        <tr>
+                            <td><b>Expiry Date: </b></td>
+                            <td>{{policy.expiryDate| date: 'yyyy/MM/dd' }}</td>
+                        </tr>
+                        <tr>
+                            <td><b>Cancellation Date: </b></td>
+                            <td>{{policy.cancellationDate| date: 'yyyy/MM/dd' }}</td>
+                        </tr>
+                        <tr>
+                            <td><b>First Installment Date: </b></td>
+                            <td>{{policy.firstInstallmentDate| date: 'yyyy/MM/dd' }}</td>
+                        </tr>
+                        <tr>
+                            <td><b>Last Installment Date: </b></td>
+                            <td>{{policy.lastInstallmentDate| date: 'yyyy/MM/dd' }}</td>
+                        </tr>
+                        <tr>
+                            <td><b>Last Lapsed Date: </b></td>
+                            <td>{{policy.lastLapsedDate| date: 'yyyy/MM/dd' }}</td>
+                        </tr>
+                        <tr>
+                            <td><b>Last Re-instate Date: </b></td>
+                            <td>{{policy.LastReinstateDate| date: 'yyyy/MM/dd' }}</td>
+                        </tr>
+                        <tr>
+                            <td><b>Regular Installment Day: </b></td>
+                            <td>{{policy.regularInstallmentDayOfMonth}}</td>
+                        </tr>
+                        <tr>
+                            <td><b>December Installment Day: </b></td>
+                            <td>{{policy.decemberInstallmentDayOfMonth}}</td>
+                        </tr>
+                        <tr>
+                            <td><b>Annual Premium: </b></td>
+                            <td>{{annualPremium | currency: 'R'}}</td>
+                        </tr>
+                        <tr>
+                            <td><b>Monthly Premium: </b></td>
+                            <td>{{monthlyPremium | currency: 'R'}}</td>
+                        </tr>
+                        <tr>
+                            <td><b>Commission Fee (%): </b></td>
+                            <td>{{policy.commissionPercentage * 100}}%</td>
+                        </tr>
+                        <tr>
+                            <td><b>Intermediary Service Fee (%): </b></td>
+                            <td>{{policy.adminPercentage * 100}}%</td>
+                        </tr>
+                    </table>
+
+                </mat-card-content>
+            </mat-card>
+        </div>
+    </div>
+    <br />
+</ng-template>
+
+<ng-template #stepTwo>
+    <div class="main-container">
+        <div class="top-selector-container">
+            <div class="personal-container" *ngIf="policyOwner && policyOwner.person">
+                <mat-card class="personalInfo">
+                    <mat-card-content>
+                        <h1 class="Heading">Personal Information</h1>
+                        <br />
+
+                        <div *ngIf="isLoadingRolePlayer$ | async">
+                            <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+                            <label class="mat-label other-label"><i>loading personal information...please
+                                    wait</i></label>
+                        </div>
+
+
+                        <table *ngIf="policyOwner && !(isLoadingRolePlayer$ | async)" class="altRowTable tableClass">
+                            <tr>
+                                <td><b>Name:</b> {{this.policyOwner.person.firstName}}</td>
+                            </tr>
+                            <tr>
+                                <td><b>Surname:</b> {{this.policyOwner.person.surname}}</td>
+                            </tr>
+                            <tr>
+                                <td><b>ID/Passport:</b>
+                                    {{this.policyOwner.person.idNumber ?
+                                    this.policyOwner.person.idNumber :
+                                    this.policyOwner.person.passportNumber}} </td>
+                            </tr>
+                            <tr>
+                                <td><b>Birth Date:</b>
+                                    {{this.policyOwner.person.dateOfBirth | date:'yyyy/MM/dd'}}</td>
+                            </tr>
+                            <tr>
+                                <td><b>Gender:</b> {{this.gender}}</td>
+                            </tr>
+                        </table>
+                    </mat-card-content>
+                </mat-card>
+            </div>
+            <div class="personal-container" *ngIf="policyOwner && policyOwner.company">
+                <mat-card class="personalInfo">
+                    <mat-card-content>
+                        <h1 class="Heading">Company Information</h1>
+                        <br />
+
+                        <div *ngIf="isLoadingRolePlayer$ | async">
+                            <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+                            <label class="mat-label other-label"><i>loading personal information...please
+                                    wait</i></label>
+                        </div>
+
+
+                        <table *ngIf="policyOwner && !(isLoadingRolePlayer$ | async)" class="altRowTable tableClass">
+                            <tr>
+                                <td><b> Name:</b> {{this.policyOwner.company.name}}</td>
+                            </tr>
+                            <tr>
+                                <td><b> Company Name:</b> {{this.policyOwner.company.name}}</td>
+                            </tr>
+                            <tr>
+                                <td><b>Contact Person:</b> {{this.policyOwner.company.contactPersonName}}</td>
+                            </tr>
+                            <tr>
+                                <td><b>Company Registration No:</b>
+                                    {{this.policyOwner.company.companyRegNo}} </td>
+                            </tr>
+                        </table>
+                    </mat-card-content>
+                </mat-card>
+            </div>
+            <span class="spaceBetweenComponent"></span>
+            <div class="personal-container">
+                <mat-card class="address">
+                    <mat-card-content>
+                        <h1 class="Heading">Address</h1>
+                        <br />
+
+                        <div *ngIf="isLoadingRolePlayer$ | async">
+                            <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+                            <label class="mat-label other-label loading"><i>loading address details...please
+                                    wait</i></label>
+                        </div>
+
+                        <div *ngIf="!rolePlayerAddress &&  !(isLoadingRolePlayer$ | async)">
+                            <i>no address details have been added</i>
+                        </div>
+
+                        <table *ngIf="rolePlayerAddress && !(isLoadingRolePlayer$ | async)"
+                            class="altRowTable tableClass">
+                            <tr>
+                                <td><b>Address Line 1:</b> {{this.rolePlayerAddress.addressLine1}}</td>
+                            </tr>
+                            <tr>
+                                <td><b>Address Line 2:</b> {{this.rolePlayerAddress.addressLine2}}</td>
+                            </tr>
+                            <tr>
+                                <td><b>City:</b> {{this.rolePlayerAddress.city}}</td>
+                            </tr>
+                            <tr>
+                                <td><b>Province:</b> {{this.rolePlayerAddress.province}}</td>
+                            </tr>
+                            <tr>
+                                <td><b>Postal Code:</b> {{this.rolePlayerAddress.postalCode}}</td>
+                            </tr>
+                        </table>
+                    </mat-card-content>
+                </mat-card>
+            </div>
+        </div>
+        <br />
+        <div class="top-selector-container">
+            <div class="personal-container">
+                <mat-card class="contacts">
+                    <mat-card-content>
+
+                        <h1 class="Heading">Contacts</h1>
+                        <br />
+
+                        <div *ngIf="isLoadingRolePlayer$ | async">
+                            <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+                            <label class="mat-label other-label loading"><i>loading contact details...please
+                                    wait</i></label>
+                        </div>
+
+                        <table *ngIf="contact && !(isLoadingRolePlayer$ | async)" class="altRowTable tableClass">
+                            <tr>
+                                <td>
+                                    <mat-icon matTooltip="Contact name">account_circle</mat-icon>
+                                </td>
+                                <td>{{contact.name}}</td>
+                            </tr>
+                            <tr>
+                                <td><span class="material-icons" matTooltip="Landline phone number">call</span></td>
+                                <td>{{contact.telephoneNumber}}</td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <mat-icon matTooltip="Mobile phone number">phonelink_ring</mat-icon>
+                                </td>
+                                <td>{{contact.mobileNumber}}</td>
+                            </tr>
+                            <tr>
+                                <td><span class="material-icons" matTooltip="Email address">mail</span></td>
+                                <td><a href="mailto:{{contact.email}}">{{contact.email}}</a></td>
+                            </tr>
+                        </table>
+
+                    </mat-card-content>
+                </mat-card>
+            </div>
+            <span class="spaceBetweenComponent"></span>
+            <div class="personal-container">
+                <!--BANKING DETAILS-->
+                <mat-card class="bankingDetails">
+                    <mat-card-content>
+
+                        <h1 class="Heading">Banking Details</h1>
+                        <br />
+
+                        <div *ngIf="isLoadingBanking$ | async">
+                            <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+                            <label class="mat-label other-label loading"><i>loading banking details...please
+                                    wait</i></label>
+                        </div>
+
+                        <div *ngIf="!rolePlayerBankingDetail &&  !(isLoadingBanking$ | async)">
+                            <i class="noBankingDetailsHeading">no banking details have been added</i>
+                        </div>
+
+                        <div *ngIf="rolePlayerBankingDetail && !(isLoadingBanking$ | async)">
+                            <table class="altRowTable tableClass">
+                                <tr>
+                                    <td><b>Bank:</b></td>
+                                    <td>{{rolePlayerBankingDetail.bankName}}</td>
+                                </tr>
+                                <tr>
+                                    <td><b>Account Holder:</b></td>
+                                    <td>{{rolePlayerBankingDetail.accountHolderName}}</td>
+                                </tr>
+                                <tr>
+                                    <td><b>Account Number:</b></td>
+                                    <td>{{rolePlayerBankingDetail.accountNumber}}</td>
+                                </tr>
+                                <tr>
+                                    <td><b>Account Type:</b></td>
+                                    <td>{{getAccountType(rolePlayerBankingDetail.bankAccountType)}}</td>
+                                </tr>
+                                <tr>
+                                    <td><b>Branch</b></td>
+                                    <td>{{rolePlayerBankingDetail.branchCode}}</td>
+                                </tr>
+                                <tr>
+                                    <td><b>Purpose</b></td>
+                                    <td>{{getPurpose(rolePlayerBankingDetail.purposeId)}}</td>
+                                </tr>
+                            </table>
+                        </div>
+                    </mat-card-content>
+                </mat-card>
+            </div>
+        </div>
+    </div>
+    <br />
+</ng-template>
+
+<ng-template #stepThree>
+    <div class="main-container">
+        <div class="account-container">
+            <mat-card class="tableClass">
+                <mat-card-content>
+                    <h1 class="Heading">Account History</h1>
+                    <br />
+                    <div class="searchDiv">
+                        <app-search-input (searchcriteria)="searchData($event)" (emptyData)="fillTable($event)"
+                            [placeHolder]="placeHolder"></app-search-input>
+                    </div>
+                    <br />
+
+                    <div *ngIf="isLoadingStatement$ | async">
+                        <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+                        <label class="mat-label other-label"><i>loading transactions...please wait</i></label>
+                    </div>
+
+                    <div *ngIf="dataSource.data.length == 0 &&  !(isLoadingStatement$ | async)">
+                        <i>No transactions were found</i>
+                    </div>
+                    <div *ngIf="searchContainsNothing">
+                        <label class="noSearchDataHeading">No Data Found</label>
+                    </div>
+                    <div *ngIf="dataSource && dataSource.data.length >0 && !(isLoadingStatement$ | async ) && !searchContainsNothing"
+                        class="tableClass">
+                        <mat-table [dataSource]="dataSource" matSort class="mat-elevation-z8 ">
+
+                            <!-- Policy No Column -->
+                            <ng-container matColumnDef="Month">
+                                <mat-header-cell *matHeaderCellDef mat-sort-header> Month </mat-header-cell>
+                                <mat-cell *matCellDef="let row">
+                                    <span class="mobile-label">Month:</span>
+                                    {{row.transactionDate | date: 'yyyy/MM/dd'}}
+                                </mat-cell>
+                            </ng-container>
+
+                            <!-- Description -->
+                            <ng-container matColumnDef="Description">
+                                <mat-header-cell *matHeaderCellDef mat-sort-header> Description </mat-header-cell>
+                                <mat-cell *matCellDef="let row">
+                                    <span class="mobile-label">Description:</span>
+                                    {{row.description}}
+                                </mat-cell>
+                            </ng-container>
+
+                            <!-- Policy Debit-->
+                            <ng-container matColumnDef="Debit">
+                                <mat-header-cell *matHeaderCellDef mat-sort-header> Debit </mat-header-cell>
+                                <ng-container *matCellDef="let row">
+                                    <mat-cell *ngIf="row.debitAmount > 0" class="debitOrange">
+                                        <span class="mobile-label">Debit:</span>
+                                        {{row.debitAmount | currency: 'R'}} (-)
+                                    </mat-cell>
+                                    <mat-cell *ngIf="row.debitAmount <= 0">
+                                        <span class="mobile-label">Debit:</span>
+                                        {{row.debitAmount | currency: 'R'}} (-)
+                                    </mat-cell>
+                                </ng-container>
+                            </ng-container>
+
+                            <!-- Policy Inception Date Column -->
+                            <ng-container matColumnDef="Credit">
+                                <mat-header-cell *matHeaderCellDef mat-sort-header> Credit </mat-header-cell>
+                                <ng-container *matCellDef="let row">
+
+                                    <mat-cell *ngIf="row.creditAmount > 0" class="creditGreen">
+                                        <span class="mobile-label">Credit:</span>
+                                        {{row.creditAmount | currency: 'R'}}
+                                    </mat-cell>
+                                    <mat-cell *ngIf="row.creditAmount <= 0">
+                                        <span class="mobile-label">Credit:</span>
+                                        {{row.creditAmount | currency: 'R'}}
+                                    </mat-cell>
+                                </ng-container>
+                            </ng-container>
+
+                            <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
+                            <mat-row *matRowDef="let row; columns: displayedColumns;"></mat-row>
+                        </mat-table>
+                        <div [hidden]="hidePaginator" class="paginator">
+                            <mat-paginator #paginator [length]="dataSource.data.length" [pageSize]="5"
+                                [pageSizeOptions]="[5, 10, 25, 100]">
+                            </mat-paginator>
+                        </div>
+                    </div>
+                </mat-card-content>
+            </mat-card>
+        </div>
+    </div>
+    <br />
+</ng-template>
+
+
+<ng-template [ngIf]="smallScreen" [ngIfElse]="bigScreen">
+    <mat-vertical-stepper linear #stepper>
+        <mat-step label="Policy Details">
+            <ng-container *ngTemplateOutlet="stepOne"></ng-container>
+            <div>
+                <button class="button submit-button nextBtn" mat-button matStepperNext>Next</button>
+                &nbsp;
+                <button class="button submit-button backToPolicies" mat-button (click)="back()">Back to
+                    Policies</button>
+            </div>
+        </mat-step>
+        <mat-step label="Personal Information">
+            <ng-container *ngTemplateOutlet="stepTwo"></ng-container>
+            <div>
+                <button class="button submit-button backbtn" mat-button matStepperPrevious>Back</button>
+                &nbsp;
+                <button class="button submit-button nextBtn" mat-button matStepperNext>Next</button>
+                &nbsp;
+                <button class="button submit-button backToPolicies" mat-button (click)="back()">Back to
+                    Policies</button>
+            </div>
+        </mat-step>
+        <mat-step label="Account History">
+            <ng-container *ngTemplateOutlet="stepThree"></ng-container>
+        </mat-step>
+    </mat-vertical-stepper>
+</ng-template>
+
+<ng-template #bigScreen>
+    <mat-horizontal-stepper linear #stepper>
+        <mat-step label="Policy Details">
+            <ng-container *ngTemplateOutlet="stepOne"></ng-container>
+            <div>
+                <button class="button submit-button nextBtn" mat-button matStepperNext>Next</button>
+                &nbsp;
+                <button class="button submit-button backToPolicies" mat-button (click)="back()">Back to
+                    Policies</button>
+            </div>
+
+        </mat-step>
+        <mat-step label="Personal Information">
+            <ng-container *ngTemplateOutlet="stepTwo"></ng-container>
+            <div>
+                <button class="button submit-button backbtn" mat-button matStepperPrevious>Back</button>
+                &nbsp;
+                <button class="button submit-button nextBtn" mat-button matStepperNext>Next</button>
+                &nbsp;
+                <button class="button submit-button backToPolicies" mat-button (click)="back()">Back to
+                    Policies</button>
+            </div>
+        </mat-step>
+        <mat-step label="Account History">
+            <ng-container *ngTemplateOutlet="stepThree"></ng-container>
+            <div class="form-buttons">
+                <button class="button submit-button backbtn" mat-button matStepperPrevious>Previous</button>
+                &nbsp;
+                <button class="button submit-button backToPolicies" mat-button (click)="back()">Back to
+                    Policies</button>
+            </div>
+
+        </mat-step>
+    </mat-horizontal-stepper>
+</ng-template>

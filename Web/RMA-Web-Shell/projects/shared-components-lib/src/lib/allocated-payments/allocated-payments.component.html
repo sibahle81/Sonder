@@ -1,0 +1,163 @@
+<div>
+  <mat-card>
+    <mat-card-content>
+      <div>
+        <form [formGroup]="form" class="mat-container details-form" novalidate>
+
+          <section class="section1">
+            <div>
+              <mat-form-field class="mat-form-field">
+                <label class="mat-label other-label mandatory-field">Date Filter</label>
+                <mat-select formControlName="dateType">
+                  <mat-option [value]="0">Statement Date</mat-option>
+                  <mat-option [value]="1">Allocation Date</mat-option>
+                  <mat-option [value]="2">Transaction Date</mat-option>
+                </mat-select>
+              </mat-form-field>
+            </div>
+            <div  class="field-container wordwrap">
+              <div><label class="mat-label other-label">Start Date</label>
+              </div>
+              <mat-form-field>
+                <input matInput formControlName="startDate" [matDatepicker]="startDate" (dateChange)="validateDates()"
+                  [hidden]="true">
+                <input matInput [ngModel]="displayStartDate | date : 'yyyy/MM/dd'" (click)="startDate.open()"
+                  [readonly]="true" [ngModelOptions]="{standalone: true}">
+                <mat-datepicker-toggle matSuffix [for]="startDate"></mat-datepicker-toggle>
+                <mat-datepicker touchUi="true" #startDate></mat-datepicker>
+
+                <mat-error *ngIf="form.get('startDate').hasError('min')">
+                  start date cannot be <strong>after</strong> the end date
+                </mat-error>
+              </mat-form-field>
+            </div>
+
+            <div class="field-container-right">
+              <div><label class="mat-label other-label">End Date</label></div>
+              <mat-form-field>
+                <input matInput formControlName="endDate" [matDatepicker]="endDate" (dateChange)="validateDates()"
+                  [hidden]="true">
+                <input matInput [ngModel]="displayEndDate | date : 'yyyy/MM/dd'" (click)="endDate.open()"
+                  [readonly]="true" [ngModelOptions]="{standalone: true}">
+                <mat-datepicker-toggle matSuffix [for]="endDate"></mat-datepicker-toggle>
+                <mat-datepicker touchUi="true" #endDate></mat-datepicker>
+                <mat-error *ngIf="form.get('endDate').hasError('min')">
+                  End date cannot be <strong>before</strong> the start date
+                </mat-error>
+              </mat-form-field>
+            </div>
+          </section>
+        </form>
+        <div class="form-group row" class="margin-left">
+          <button (click)="viewReport()" [disabled]="!formIsValid" class="button float-button">View</button>
+          <button type="button" (click)="resetSearch()" class="button float-button">Reset</button>
+        </div>
+
+        <div class="mat-container mat-elevation-z8">
+          <div class="mat-header">
+            <h1>Allocated Payments</h1><br />
+
+          </div>
+          <app-search-input (searchcriteria)="searchData($event)" [placeHolder]="placeHolder"></app-search-input>
+          <mat-table #table [dataSource]="dataSource" multiTemplateDataRows matSort>
+            <!-- Expand Column -->
+            <ng-container matColumnDef="expand">
+              <mat-header-cell *matHeaderCellDef> Expand </mat-header-cell>
+              <mat-cell *matCellDef="let row" (click)="expandCollapse(row)">
+                <span *ngIf="!row.isExpanded"><span class="material-icons expand-icon">add_circle</span></span>
+                <span *ngIf="row.isExpanded"><span class="material-icons expand-icon">remove_circle</span></span>
+              </mat-cell>
+            </ng-container>
+            <ng-container matColumnDef="debtorNumber">
+              <mat-header-cell *matHeaderCellDef mat-sort-header> DEBTOR NUMBER </mat-header-cell>
+              <mat-cell *matCellDef="let row"> {{row.debtorNumber}} </mat-cell>
+            </ng-container>
+            <ng-container matColumnDef="invoiceNumber">
+              <mat-header-cell *matHeaderCellDef mat-sort-header> INVOICE NUMBER </mat-header-cell>
+              <mat-cell *matCellDef="let row"> {{row.invoiceNumber}} </mat-cell>
+            </ng-container>
+            <ng-container matColumnDef="policyNumber">
+              <mat-header-cell *matHeaderCellDef mat-sort-header> POLICY NUMBER </mat-header-cell>
+              <mat-cell *matCellDef="let row"> {{row.policyNumber}} </mat-cell>
+            </ng-container>
+            <ng-container matColumnDef="bankAccountNumber">
+              <mat-header-cell *matHeaderCellDef mat-sort-header> BANK ACCOUNT NUMBER </mat-header-cell>
+              <mat-cell *matCellDef="let row"> {{row.bankAccountNumber}} </mat-cell>
+            </ng-container>
+            <ng-container matColumnDef="userReference">
+              <mat-header-cell *matHeaderCellDef mat-sort-header> USER REFERENCE </mat-header-cell>
+              <mat-cell *matCellDef="let row"> {{row.userReference}} </mat-cell>
+            </ng-container>
+
+            <ng-container matColumnDef="amount">
+              <mat-header-cell *matHeaderCellDef mat-sort-header> AMOUNT </mat-header-cell>
+              <mat-cell *matCellDef="let row" class="right-aligned-amounts"> R{{row.amount | number: amountFormat}} </mat-cell>
+            </ng-container>
+            <ng-container matColumnDef="userReference1">
+              <mat-header-cell *matHeaderCellDef mat-sort-header> USER REFERENCE 1 </mat-header-cell>
+              <mat-cell *matCellDef="let row"> {{row.userReference1}} </mat-cell>
+            </ng-container>
+            <ng-container matColumnDef="userReference2">
+              <mat-header-cell *matHeaderCellDef mat-sort-header> USER REFERENCE 2 </mat-header-cell>
+              <mat-cell *matCellDef="let row"> {{row.userReference2}} </mat-cell>
+            </ng-container>
+            <ng-container matColumnDef="bankStatementEntryId">
+              <mat-header-cell *matHeaderCellDef mat-sort-header> BANK STATEMENT ENTRY ID</mat-header-cell>
+              <mat-cell *matCellDef="let row"> {{row.bankStatementEntryId}} </mat-cell>
+            </ng-container>
+            <div [hidden]=" true">
+              <ng-container matColumnDef="expandedDetail">
+                <mat-cell class="expand" *matCellDef="let row">
+                  <div>
+                    <table>
+                      <tr class="ChildData">
+                        <td><b class="mat-cell-label">DEBTOR NAME:</b> {{row.debtorName}}</td>
+                      </tr>
+                      <tr class="ChildData">
+                        <td><b class="mat-cell-label">TRANSACTION TYPE:</b> {{row.transactionType}}</td>
+                      </tr>
+                      <tr class="ChildData">
+                        <td><b class="mat-cell-label">TRANSACTION DATE:</b> {{row.transactionDate | date:'yyyy/MM/dd'}}
+                        </td>
+                      </tr>
+                      <tr class="ChildData">
+                        <td><b class="mat-cell-label">STATEMENT DATE:</b> {{row.statementDate | date:'yyyy/MM/dd'}}</td>
+                      </tr>
+                      <tr class="ChildData">
+                        <td><b class="mat-cell-label">HYPHEN DATE PROCESSED:</b> {{row.hyphenDateProcessed |
+                          date:'yyyy/MM/dd'}}</td>
+                      </tr>
+                      <tr class="ChildData">
+                        <td><b class="mat-cell-label">HYPHEN DATE RECEIVED:</b> {{row.hyphenDateReceived |
+                          date:'yyyy/MM/dd'}}</td>
+                      </tr>
+                      <tr class="ChildData">
+                        <td><b class="mat-cell-label">ALLOCATION DATE:</b> {{row.allocationDate | date:'yyyy/MM/dd'}}
+                        </td>
+                      </tr>
+                    </table>
+                  </div>
+                </mat-cell>
+              </ng-container>
+            </div>
+
+            <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
+            <mat-row *matRowDef="let row; columns: displayedColumns;" [class.expanded]="row.isExpanded"></mat-row>
+            <mat-row *matRowDef="let row; columns: ['expandedDetail'];"
+              [@detailExpand]="row.isExpanded == true ? 'expanded' : 'collapsed'">
+            </mat-row>
+          </mat-table>
+          <mat-paginator #paginator [length]="dataSource.filteredData.length" [pageIndex]="0" [pageSize]="10"
+            [pageSizeOptions]="[5, 10, 25, 100]">
+          </mat-paginator>
+        </div>
+      </div>
+    </mat-card-content>
+  </mat-card>
+</div>
+<div>
+  <table class="form-group row" class="margin-left1">
+    <button [disabled]="canExport==0" (click)="exporttoCSV()" class="button float-button">Export</button>
+    <button type="button" (click)="clear()" class="button float-button">Back</button>
+  </table>
+</div>

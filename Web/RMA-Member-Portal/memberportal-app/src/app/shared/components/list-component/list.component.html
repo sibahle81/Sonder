@@ -1,0 +1,71 @@
+<div [hidden]="isError">
+    <div class="page-header">
+        <h1 style="margin-bottom: -60px;margin-left: 13px;">{{titlePlural}}</h1>
+        <span class="grey site-font"><i>{{hideAddButtonText}}</i></span>
+    </div>
+
+    <div class="mat-container mat-elevation-z8">
+
+        <div [hidden]="dataSource.data.length === 0">
+            <div class="mat-header">
+                <div class="search-container search-container-right">
+                    <input type="text" name="search" placeholder="search {{titlePlural | lowercase}}..." #filter>
+                </div>
+            </div>
+
+            <div [hidden]="dataSource.filteredData.length === 0">
+                <mat-table #table [dataSource]="dataSource" matSort style="max-height:301px !important;">
+
+                    <!--All standard columns-->
+                    <ng-container *ngFor="let column of columns" [matColumnDef]="column.columnDefinition">
+                        <mat-header-cell mat-sort-header *matHeaderCellDef class="mat-header-cell ng-tns-c10-2 cdk-column-Name mat-column-Name">{{ column.header }}</mat-header-cell>
+                        <mat-cell *matCellDef="let row" class="mat-cell cdk-column-Name mat-column-Name">{{ column.cell(row) }}</mat-cell>
+                    </ng-container>
+
+                    <!-- Actions -->
+                    <ng-container *ngIf="!hideActionsLink" matColumnDef="actions">
+                        <mat-header-cell *matHeaderCellDef>Actions</mat-header-cell>
+                        <mat-cell *matCellDef="let row">
+                            <a role="button" class="link-edit" *ngIf="!hideSelectLink" (click)="onSelect(row)">{{actionsLinkTextChange(row)}}</a> &nbsp;|&nbsp;
+                            <a role="button" class="link-edit" *ngIf="!hideRemoveLink" (click)="onRemove(row)">{{removeLinkTextChange(row)}}</a>
+                            <a role="button" class="link-edit" *ngIf="!hideCustomActionLink" (click)="onCustomAction(row)">{{customActionLinkTextChange(row)}}</a>
+                        </mat-cell>
+                    </ng-container>
+
+
+                    <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
+                    <mat-row *matRowDef="let row; columns: displayedColumns;"></mat-row>
+                </mat-table>
+
+                <mat-paginator #paginator style="min-height: 55px !important;height: 58px !important;" [length]="dataSource.filteredData.length >= 1 ? dataSource.filteredData.length : dataSource.data.length" [pageIndex]="0" [pageSize]="5" [pageSizeOptions]="[5, 10, 25, 100]">
+                </mat-paginator>
+            </div>
+        </div>
+
+        <div [hidden]="dataSource.data.length > 0" style="margin-left: 20px;">
+            <p class="grey" style="margin-left: -17px">No {{titlePlural | lowercase}} have been added.</p>
+        </div>
+
+        <div [hidden]="dataSource.filteredData.length > 0 || dataSource.data.length === 0" class="no-search-results-add-button">
+            <div class="site-font grey">
+                <p class="grey">Your search - <strong>{{filter.value}}</strong> - did not match any {{titlePlural | lowercase}}.</p>
+                <span>Suggestions: </span>
+                <ul>
+                    <li>Make sure that all words are spelled correctly.</li>
+                    <li>Try different keywords.</li>
+                    <li>Try more general keywords.</li>
+                    <li>Try fewer keywords.</li>
+                </ul>
+            </div>
+            <div class="new-button" (click)="clearFilter()">
+                <button class="button float-button">Clear search</button>
+            </div>
+        </div>
+
+        <div style="display: flex; padding: 0 24px" role="row">
+            <div class="new-button new-button-top" (click)="newItem()" [hidden]="hideAddButton">
+                <button class="button">Add new {{title | lowercase}}</button>
+            </div>
+        </div>
+    </div>
+</div>

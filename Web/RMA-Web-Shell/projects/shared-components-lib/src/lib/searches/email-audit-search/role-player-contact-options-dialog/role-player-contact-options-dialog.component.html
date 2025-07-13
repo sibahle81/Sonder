@@ -1,0 +1,14 @@
+<div class="menu-bar">
+  <span class="material-icons">mail</span>
+  {{title}}
+  <span (click)="cancel()" class="material-icons pointer right" matTooltip="close">
+    close
+  </span>
+</div>
+
+<label class="mat-label other-label">Please Select</label><br />
+<mat-select (selectionChange)="rolePlayerContactOptionSelected($event.value)">
+    <mat-option *ngFor="let rolePlayerContactOption of data.rolePlayerContactOptions" [value]="rolePlayerContactOption">
+        {{rolePlayerContactOption.key}}
+    </mat-option>
+</mat-select>

@@ -1,0 +1,34 @@
+<mat-card *ngIf="isLoading">
+  <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+  <span style="color: grey"><i>loading...please wait</i></span>
+</mat-card>
+<div [hidden]="isLoading" class="menu-container"><br />
+  <div class="menu-bar">
+    <span matTooltip="Back to search" class="material-icons pointer right" (click)="close()">
+      close
+    </span>
+  </div>
+  <mat-tab-group>
+    <mat-tab label="Policy Details">
+      <policy-information></policy-information>
+    </mat-tab>
+    <mat-tab label="Documents">
+      <app-verify-case></app-verify-case>
+    </mat-tab>
+    <mat-tab label="Group">
+      <group-member-detail></group-member-detail>
+    </mat-tab>
+    <mat-tab label="Members">
+      <group-policy-members></group-policy-members>
+    </mat-tab>
+    <mat-tab label="Contact">
+      <policy-contact-details></policy-contact-details>
+    </mat-tab>
+    <mat-tab label="Collection">
+      <policy-collection-details></policy-collection-details>
+    </mat-tab>
+    <mat-tab label="Notes">
+      <role-player-policy-notes></role-player-policy-notes>
+    </mat-tab>
+  </mat-tab-group>
+</div>

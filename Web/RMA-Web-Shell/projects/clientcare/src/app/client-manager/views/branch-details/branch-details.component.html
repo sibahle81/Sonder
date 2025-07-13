@@ -1,0 +1,71 @@
+﻿<div class="page-header"></div>
+<div *ngIf="!canAdd">
+    <h1>Branch Details</h1>
+    <div style="padding-bottom: 15px; color: orange; font-family: 'Oswald', sans-serif;">You do not have sufficient permissions to add a new branch.</div>
+    <div (click)="back()" class="form-buttons submit-button">
+        <button type="button" class="button float-button">Back</button>
+    </div>
+</div>
+
+<div [hidden]="!canAdd" style="padding-top: 15px;">
+    <mat-tab-group>
+        <mat-tab label="Branch Details">
+
+            <mat-card style="margin: 15px 30px 15px 30px">
+                <mat-card-header>
+                    <mat-card-title class="wizard-font card-title grey">
+                        <h1 class="wizard-font" style="padding: 0;">Branch Details</h1>
+                    </mat-card-title>
+                </mat-card-header>
+
+                <mat-card-content style="margin-left: 10px;">
+
+                    <form [formGroup]="form" (ngSubmit)="save()" class="mat-container" novalidate>
+
+                        <!--Name-->
+                        <mat-form-field>
+                            <label class="mat-label other-label">Branch name</label>
+                            <input matInput maxlength="50" formControlName="name" name="name">
+                            <mat-error *ngIf="form.get('name').hasError('required')">
+                                Name is <strong>required</strong>
+                            </mat-error>
+                        </mat-form-field>
+
+
+                        
+
+                        <last-modified-by type="Branch"></last-modified-by>
+
+                        <div *ngIf="showButtons" class="form-group-button mat-form-button">
+
+                            <div *ngIf="showSaveButton" class="form-buttons" matTooltip="No changes have been made" [matTooltipDisabled]="!form.pristine">
+                                <button [disabled]="form.pristine" class="button float-button submit-button">Save</button>
+                            </div>
+
+                            <div *ngIf="showEditButton" (click)="edit()" class="form-buttons submit-button">
+                                <button type="button" class="button float-button">Edit</button>
+                            </div>
+
+                            <div (click)="back()" class="form-buttons submit-button">
+                                <button type="button" class="button float-button">Back</button>
+                            </div>
+                        </div>
+
+                    </form>
+
+                </mat-card-content>
+
+            </mat-card>
+
+        </mat-tab>
+
+        <mat-tab label="Notes">
+            <notes name="branch"></notes>
+        </mat-tab>
+
+        <mat-tab label="Audit Log">
+            <audit-log name="branch"></audit-log>
+        </mat-tab>
+
+    </mat-tab-group>
+</div>

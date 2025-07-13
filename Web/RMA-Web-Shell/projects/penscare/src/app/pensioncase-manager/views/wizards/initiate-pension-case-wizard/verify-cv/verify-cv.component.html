@@ -1,0 +1,82 @@
+<mat-card>
+  <mat-card-content>
+    <h1>Verify CV Calculation</h1>
+    <div *ngIf="isLoading" class="loading-message-container">
+      <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+      <span class="site-font grey" style="margin-top: 5px;margin-left:15px;"><i>Verifying Capitalized Value, please wait for verication to complete before navigating to another step...</i></span>
+    </div>
+    <mat-accordion>
+      <ng-container>
+        <mat-expansion-panel  [expanded]="expansionStep === 0" (opened)="setExpansionStep(0)">
+          <mat-expansion-panel-header>
+            <mat-panel-title>
+            <h4>Monthly payment</h4>
+            </mat-panel-title>
+          </mat-expansion-panel-header>
+
+          <div class="expansion-content">
+            <form *ngIf="form" [formGroup]="form">
+              <section>
+                <mat-form-field>
+                  <label class="mat-label other-label">Capitalized Value</label>
+                  <input matInput maxlength="50" formControlName="verifiedCV" id="verifiedCV" name="verifiedCV" />
+                </mat-form-field>
+              </section>
+
+              <ng-container *ngFor="let claim of model.pensionClaims">
+                <section>
+                  <mat-form-field>
+                    <label class="mat-label other-label">{{claim.productCode}} Earnings</label>
+                    <input type="number" matInput id="{{claim.productCode}}Earnings"
+                      name="{{claim.productCode}}Earnings"
+                      #calculationValueElement
+                      formControlName="{{claim.productCode}}Earnings">
+                  </mat-form-field>
+
+                  <mat-form-field class="mat-form-field-right">
+                    <label class="mat-label other-label">{{claim.productCode}} Compensation</label>
+                    <input type="number" matInput id="{{claim.productCode}}TotalCompensation"
+                      #calculationValueElement
+                      name="{{claim.productCode}}TotalCompensation"
+                      formControlName="{{claim.productCode}}TotalCompensation">
+                  </mat-form-field>
+                </section>
+              </ng-container>
+
+              <section *ngIf="form.get('caa')">
+                <mat-form-field>
+                  <label class="mat-label other-label">CAA</label>
+                  <input type="number" matInput id="caa" name="caa" #calculationValueElement formControlName="caa">
+                </mat-form-field>
+              </section>
+            </form>
+          </div>
+        </mat-expansion-panel>
+
+
+        <mat-expansion-panel [expanded]="expansionStep === 1" (opened)="setExpansionStep(1)">
+          <mat-expansion-panel-header>
+            <mat-panel-title>
+            <h4>Compensation</h4>
+            </mat-panel-title>
+          </mat-expansion-panel-header>
+          <div class="expansion-content">
+            <app-verify-compensation-table [compensationDataSource]="compensationDataSource"></app-verify-compensation-table>
+          </div>
+        </mat-expansion-panel>
+
+        <mat-expansion-panel [expanded]="expansionStep === 2" (opened)="setExpansionStep(2)">
+          <mat-expansion-panel-header>
+            <mat-panel-title>
+            <h4>Capitalised Value</h4>
+            </mat-panel-title>
+          </mat-expansion-panel-header>
+          <div class="expansion-content">
+            <app-verify-cv-calculation-table [compensationDataSource]="compensationDataSource" [response]="response" *ngIf="compensationDataSource"></app-verify-cv-calculation-table>
+          </div>
+        </mat-expansion-panel>
+      </ng-container>
+    </mat-accordion>
+  </mat-card-content>
+</mat-card>
+

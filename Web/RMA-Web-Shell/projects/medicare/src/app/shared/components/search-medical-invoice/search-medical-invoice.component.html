@@ -1,0 +1,276 @@
+<app-medicare-search-menus></app-medicare-search-menus>
+<mat-card class="matcard">
+    <mat-card-content class="matcard content">
+      
+      <div class="page-header">
+        <h1>Search Medical Invoices</h1>
+      </div>
+      <br />
+  
+      <mat-card>
+        <form [formGroup]="form" class="mat-container details-form" novalidate>
+        <section>
+              <div class="field-container" *ngIf="isInternalUser">
+                <div><label class="mat-label other-label">Practice Number</label></div>
+                <mat-form-field >
+                  <input matInput (keyup)="getMedicalServiceProvider($event)" id="practiceNumberFilter" name="practiceNumberFilter" #filter [formControl]="practiceNumberControl" />
+                  <mat-icon class="search-icon" (click)="getMedicalServiceProvider($event)" matSuffix>search</mat-icon>
+                </mat-form-field>
+                <div *ngIf="searchingPractice">
+                  <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+                </div>
+              </div>
+              <div class="field-container" *ngIf="!isInternalUser">
+                <div><label class="mat-label other-label">Practice Number</label></div>
+                    <mat-form-field>
+                      <mat-select id="userHealthCareProvider" name="userHealthCareProvider" #filter formControlName="userHealthCareProviderControl" (selectionChange)="onUserHealthCareProviderChanged($event)">
+                        <mat-option *ngFor="let userHealthCareProvider of userHealthCareProviders" [value]="userHealthCareProvider.practiceNumber">{{userHealthCareProvider.practiceNumber}}
+                        </mat-option>
+                      </mat-select>
+                    </mat-form-field>
+                    <div *ngIf="searchingPractice">
+                      <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+                    </div>
+              </div>
+              <div class="field-container-right">
+                <div><label class="mat-label other-label">Practice</label></div>
+                <mat-form-field>
+                  <input matInput readonly id="practiceNameFilter" name="practiceNameFilter" #filter [formControl]="practiceNameControl" />
+                </mat-form-field>
+              </div>
+        </section>
+   
+        <section>
+          <div class="field-container">
+            <div><label class="mat-label other-label">Claim Reference</label></div>
+              <mat-form-field>
+                <input matInput id="claimReferenceFilter" name="claimReferenceFilter" #filter [formControl]="claimReferenceControl" />
+              </mat-form-field>
+          </div>
+              <div class="field-container-right">
+              <mat-form-field>
+                <label class="mat-label other-label">Invoice Date</label>
+                <input matInput id="invoiceDateFilter" name="invoiceDateFilter" #filter 
+                  [matDatepicker]="invoiceDateFilter" [formControl]="invoiceDateControl" />
+                <mat-datepicker-toggle matSuffix [for]="invoiceDateFilter"></mat-datepicker-toggle>
+                <mat-datepicker touchUi="true" #invoiceDateFilter></mat-datepicker>
+              </mat-form-field>
+              </div>
+        </section>
+
+
+          <section>
+              <div class="field-container">
+                <div><label class="mat-label other-label">Supplier Invoice Number</label></div>
+                <mat-form-field>
+                  <input matInput id="supplierInvoiceNumberFilter" name="supplierInvoiceNumberFilter" #filter [formControl]="supplierInvoiceNumberControl" />
+                </mat-form-field>
+              </div>
+
+              <div class="field-container-right">
+                <div><label class="mat-label other-label">Account Number</label></div>
+                <mat-form-field>
+                  <input matInput id="accountNumberFilter" name="accountNumberFilter" #filter [formControl]="accountNumberControl" />
+                </mat-form-field>
+              </div>
+          </section>
+         
+          <section>
+                <div class="field-container">
+                    <mat-form-field>
+                      <label class="mat-label other-label">Treatment From</label>
+                      <input matInput id="treatmentFromDateFilter" name="treatmentFromDateFilter" #filter 
+                        [matDatepicker]="treatmentFromDateFilter" [formControl]="treatmentFromDateControl" />
+                      <mat-datepicker-toggle matSuffix [for]="treatmentFromDateFilter"></mat-datepicker-toggle>
+                      <mat-datepicker touchUi="true" #treatmentFromDateFilter></mat-datepicker>
+                    </mat-form-field>
+                  </div>
+                  <div class="field-container-right">
+                    <mat-form-field>
+                      <label class="mat-label other-label">Treatment To</label>
+                      <input matInput id="treatmentToDateFilter" name="treatmentToDateFilter" #filter 
+                        [matDatepicker]="treatmentToDateFilter" [formControl]="treatmentToDateControl" />
+                      <mat-datepicker-toggle matSuffix [for]="treatmentToDateFilter"></mat-datepicker-toggle>
+                      <mat-datepicker touchUi="true" #treatmentToDateFilter></mat-datepicker>
+                    </mat-form-field>
+                  </div>
+          </section>
+
+          <section>
+                <div class="field-container">
+                    <mat-form-field>
+                      <label class="mat-label other-label">Medical Invoice Status</label>
+                      <mat-select id="invoiceStatusFilter" name="invoiceStatusFilter" #filter [formControl]="invoiceStatusControl">
+                        <mat-option value="0">All</mat-option>
+                        <mat-option *ngFor="let invoiceStatus of invoiceStatuses" [value]="invoiceStatus.id">{{invoiceStatus.name}}
+                        </mat-option>
+                      </mat-select>
+                    </mat-form-field>
+                  </div>
+                  <div class="field-container-right">
+                    <div><label class="mat-label other-label">Batch Invoice Status</label></div>
+                    <mat-form-field>
+                      <mat-select id="batchInvoiceStatusFilter" name="batchInvoiceStatusFilter" #filter [formControl]="switchBatchInvoiceStatusControl">
+                        <mat-option value="0">All</mat-option>
+                        <mat-option value="3">Deleted</mat-option>
+                        <mat-option value="4">ManualProcess</mat-option>
+                        <mat-option value="5">Reinstated</mat-option>
+                      </mat-select>
+                    </mat-form-field>
+                  </div>
+          </section>
+
+         <section>
+               <div class="field-container">
+                 <div><label class="mat-label other-label">Practitioner Type</label></div>
+                 <mat-form-field>
+                  <mat-select id="practitionerTypeFilter" name="practitionerTypeFilter" #filter [disabled]="!isInternalUser" [formControl]="practitionerTypeControl">
+                  <mat-option value="0">All</mat-option>
+                  <mat-option *ngFor="let practitionerType of practitionerTypes" [value]="practitionerType.id">{{practitionerType.name}}
+                  </mat-option>
+                  </mat-select>
+                 </mat-form-field>
+                </div>
+                <div class="field-container-right">
+                    <br>
+                    <button type="button" title="Search" (click)="search()"
+                      class="button float-button submit-button import-button" [disabled]="disableSubmit">search</button>
+                      <button type="button" title="Reset" (click)="clear()"
+                      class="button float-button submit-button import-button">reset</button>
+                </div>
+         </section>
+        </form>
+      </mat-card>
+      <br/>
+
+      <div *ngIf="searchInvoiceDataSource.isLoading">
+        <mat-progress-bar mode="indeterminate"
+        [ngClass]="{ 'loading-main-double-menu-progress': doubleMenu, 'loading-main-single-menu-progress': !doubleMenu }"></mat-progress-bar>
+      <span *ngIf="searchInvoiceDataSource.isLoading" class="site-font grey">
+        {{searchInvoiceDataSource.statusMsg}}</span>
+      </div>
+      <br/>
+
+      <div [hidden]="pageLength == 0">
+        <mat-table #table [dataSource]="searchInvoiceDataSource" matSort matSortActive="invoiceId" matSortDirection="desc"
+          matSortDisableClear>
+          <!-- Checkbox Column -->
+          <ng-container matColumnDef="select">
+                <mat-header-cell *matHeaderCellDef>select</mat-header-cell>
+                <mat-cell *matCellDef="let row">
+                  <mat-checkbox (click)="$event.stopPropagation()" (change)="selectHandler(row)"
+                    [checked]="selection.isSelected(row)">
+                  </mat-checkbox>
+                </mat-cell>
+                <mat-footer-cell *matFooterCellDef> </mat-footer-cell>
+              </ng-container>
+           <!--  claimReferenceNumber  Column -->
+        <ng-container matColumnDef="claimReferenceNumber">
+            <mat-header-cell *matHeaderCellDef mat-sort-header> Claim Number </mat-header-cell>
+            <mat-cell *matCellDef="let element" matTooltip="{{element.claimReferenceNumber}}"> <span class="truncate-text">{{element.claimReferenceNumber}} </span></mat-cell>
+          </ng-container>
+          <!-- RMA MediCareInvoiceNumber Column -->
+          <ng-container matColumnDef="RMAInvoiceNo">
+            <mat-header-cell *matHeaderCellDef mat-sort-header> RMA Invoice No. </mat-header-cell>
+            <mat-cell *matCellDef="let element" matTooltip="{{element.invoiceNumber}}"> <span class="truncate-text">{{element.invoiceNumber}}</span> </mat-cell>
+          </ng-container>
+          <!-- Status Column -->
+          <ng-container matColumnDef="invoiceStatus">
+            <mat-header-cell *matHeaderCellDef mat-sort-header> Status </mat-header-cell>
+            <mat-cell *matCellDef="let element" [style.background]="element.invoiceStatus | invoiceStatusColor" matTooltip="{{getInvoiceUnderAssessReasons(element)}}"><span class="truncate-text"> {{element.invoiceStatusDesc}}</span> </mat-cell>
+          </ng-container>
+          <!-- MSP Column -->
+          <ng-container matColumnDef="MSP">
+            <mat-header-cell *matHeaderCellDef mat-sort-header> MSP / Provider </mat-header-cell>
+            <mat-cell *matCellDef="let element" matTooltip="{{element.healthCareProviderName +' - '+ element.practiceNumber}}"> <span class="truncate-text">{{element.healthCareProviderName +" - "+ element.practiceNumber}} </span>
+            </mat-cell>
+          </ng-container>
+          <!-- Invoice No Column -->
+          <ng-container matColumnDef="hcpInvoiceNumber">
+            <mat-header-cell *matHeaderCellDef mat-sort-header> Invoice No </mat-header-cell>
+            <mat-cell *matCellDef="let element" matTooltip="{{element.hcpInvoiceNumber}}"> <span class="truncate-text">{{element.hcpInvoiceNumber}} </span></mat-cell>
+          </ng-container>
+          <!-- AccountNo Column -->
+          <ng-container matColumnDef="hcpAccountNumber">
+            <mat-header-cell *matHeaderCellDef mat-sort-header> Account No </mat-header-cell>
+            <mat-cell *matCellDef="let element" matTooltip="{{element.hcpAccountNumber}}"><span class="truncate-text"> {{element.hcpAccountNumber}} </span> </mat-cell>
+          </ng-container>   
+          <ng-container matColumnDef="batchNumber">
+            <mat-header-cell *matHeaderCellDef mat-sort-header> Batch No </mat-header-cell>
+            <mat-cell *matCellDef="let element" matTooltip="{{element.batchNumber}}"><span class="truncate-text"> {{element.batchNumber}} </span> </mat-cell>
+          </ng-container>
+          <!-- SvcData Column -->
+          <ng-container matColumnDef="serviceDate">
+            <mat-header-cell *matHeaderCellDef mat-sort-header> Date Admitted </mat-header-cell>
+            <mat-cell *matCellDef="let element" matTooltip="{{element.dateAdmitted | date:'yyyy-MM-dd'}}"> <span class="truncate-text">{{element.dateAdmitted | date:'yyyy-MM-dd'}}</span> </mat-cell>
+          </ng-container>
+          <!-- InvDate Column -->
+          <ng-container matColumnDef="invoiceDate">
+            <mat-header-cell *matHeaderCellDef mat-sort-header> Invoice Date </mat-header-cell>
+            <mat-cell *matCellDef="let element" matTooltip="{{element.invoiceDate | date:'yyyy-MM-dd'}}"> {{element.invoiceDate | date:'yyyy-MM-dd'}} </mat-cell>
+            <mat-footer-cell *matFooterCellDef> </mat-footer-cell>
+          </ng-container>
+           <!-- PaymentConfirmationDate Column -->
+           <ng-container matColumnDef="paymentConfirmationDate">
+            <mat-header-cell *matHeaderCellDef mat-sort-header> Payment Confirmation Date </mat-header-cell>
+            <mat-cell *matCellDef="let element" matTooltip="{{element.paymentConfirmationDate | date:'yyyy-MM-dd'}}"> {{element.paymentConfirmationDate | date:'yyyy-MM-dd'}} </mat-cell>
+            <mat-footer-cell *matFooterCellDef> </mat-footer-cell>
+          </ng-container>
+          <ng-container matColumnDef="person">
+            <mat-header-cell *matHeaderCellDef mat-sort-header> Person </mat-header-cell>
+            <mat-cell *matCellDef="let element" matTooltip="{{element.person}}"><span class="truncate-text"> {{element.person}} </span> </mat-cell>
+          </ng-container>
+          <ng-container matColumnDef="status">
+            <mat-header-cell *matHeaderCellDef mat-sort-header> Status </mat-header-cell>
+            <mat-cell *matCellDef="let element"><span class="truncate-text"> {{element.status}} </span> </mat-cell>
+          </ng-container>
+          <!-- InvTotalInc Column -->
+          <ng-container matColumnDef="invoiceAmount">
+            <mat-header-cell *matHeaderCellDef mat-sort-header> Invoice Total(Inc) </mat-header-cell>
+            <mat-cell *matCellDef="let element" matTooltip="{{element.invoiceAmount}}"> {{element.invoiceAmount}} </mat-cell>
+          </ng-container>
+          <!-- AuthTotalInc Column -->
+          <ng-container matColumnDef="authorisedAmount">
+            <mat-header-cell *matHeaderCellDef mat-sort-header> Auth Total Inc </mat-header-cell>
+            <mat-cell *matCellDef="let element" matTooltip="{{element.authorisedAmount}}"> {{element.authorisedAmount}} </mat-cell>
+            <mat-footer-cell *matFooterCellDef> </mat-footer-cell>
+          </ng-container>
+        <!-- S/Care Column -->
+         <ng-container matColumnDef="SCare">
+            <mat-header-cell *matHeaderCellDef mat-sort-header> S/Care </mat-header-cell>
+            <mat-cell *matCellDef="let element"> {{false}} </mat-cell>
+          </ng-container>
+          <!-- Pre Auth Nos Column -->
+          <ng-container matColumnDef="preAuthNumber">
+            <mat-header-cell *matHeaderCellDef mat-sort-header> Pre Auth Nos </mat-header-cell>
+            <mat-cell *matCellDef="let element" matTooltip="{{element.preAuthNumber}}"> <span class="truncate-text">{{element.preAuthNumber}}</span> </mat-cell>
+          </ng-container>
+
+           <!-- Actions Column -->
+        <ng-container matColumnDef="actions">
+          <mat-header-cell *matHeaderCellDef> Actions </mat-header-cell>
+          <mat-cell *matCellDef="let invoice" [matMenuTriggerFor]="menu" (click)="filterMenu(invoice)">
+            <span class="material-icons pointer">more_vert</span>
+            <mat-menu #menu="matMenu">
+              <button disabled="{{menu.disable}}" mat-menu-item *ngFor="let menu of menus"
+                (click)="onMenuItemClick(invoice, menu)">{{menu.title}}</button>
+            </mat-menu>
+          </mat-cell>
+        </ng-container>
+          <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
+          <mat-row *matRowDef="let row; columns: displayedColumns;"></mat-row>
+        </mat-table>
+  
+        <mat-paginator #paginator [length]="pageLength" [pageIndex]="0" [pageSize]="25"
+          [pageSizeOptions]="[5, 10, 25, 100, 200]">
+        </mat-paginator>
+      </div>
+  
+      <div *ngIf="searchInvoiceDataSource.data && searchInvoiceDataSource.data.data 
+        && searchInvoiceDataSource.data.data.length === 0 && !(searchInvoiceDataSource.isLoading)">      
+        <div class="site-font grey">
+          <p class="grey">Your search did not match any invoices.</p>        
+        </div>
+      </div>
+    </mat-card-content>
+  </mat-card>

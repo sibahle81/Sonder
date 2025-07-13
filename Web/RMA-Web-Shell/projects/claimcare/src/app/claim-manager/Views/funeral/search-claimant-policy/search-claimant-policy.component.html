@@ -1,0 +1,113 @@
+<div class="main-container">
+  <mat-card style="margin: 15px 30px 15px 30px">
+    <h1 style="line-height: 1;padding: 0; margin-bottom: 30px;">{{headerTitle}}</h1>
+    <mat-card-content style="margin-left: 10px;">
+      <div>
+        <mat-form-field [floatLabel]="'never'">
+          <input matInput maxlength="50" name="query" id="query" #filter width="300" minLength="3"
+            matTooltip="Search by Name, Surname, Identity Number, Passport Number, Employee Number"
+            matTooltipShowDelay="1000">
+
+          <mat-placeholder class="placeholder">Search by Name, Surname, Identity Number, Passport Number, Employee
+            Number</mat-placeholder>
+
+          <mat-icon class="search-icon" (click)="search()" matSuffix>search</mat-icon>
+          <button style="visibility: hidden;" class="button submit-button" (click)="search()"
+            matTooltip="Search by Name, Surname, Identity Number, Passport Number, Employee Number"
+            matTooltipShowDelay="1000">Search</button>
+        </mat-form-field>
+        <button class="clear-button" (click)="reset()" matTooltip="Clear search text">
+          <mat-icon class="clear-icon" matSuffix>clear</mat-icon>
+        </button>
+      </div>
+
+      <div *ngIf="dataSource.isLoading">
+        <mat-progress-bar mode="indeterminate"
+          [ngClass]="{ 'loading-main-double-menu-progress': doubleMenu, 'loading-main-single-menu-progress': !doubleMenu }">
+        </mat-progress-bar>
+        <p class="site-font grey">Searching...</p>
+      </div>
+
+      <div [hidden]="paginator.length === 0 || dataSource.isLoading" class="table-container">
+        <mat-table #table [dataSource]="dataSource" matSort>
+          <!-- Policy  -->
+          <ng-container matColumnDef="policyNumber">
+            <mat-header-cell *matHeaderCellDef mat-sort-header> Policy Number </mat-header-cell>
+            <mat-cell *matCellDef="let row"> {{row.policyNumber}}
+
+            </mat-cell>
+          </ng-container>
+
+          <!--Member Name -->
+          <ng-container matColumnDef="memberFirstName">
+            <mat-header-cell *matHeaderCellDef mat-sort-header> Member Name </mat-header-cell>
+            <mat-cell *matCellDef="let row"> {{row.firstName}} </mat-cell>
+          </ng-container>
+
+          <!--Member Surname -->
+          <ng-container matColumnDef="memberLastName">
+            <mat-header-cell *matHeaderCellDef mat-sort-header>Member Surname </mat-header-cell>
+            <mat-cell *matCellDef="let row"> {{row.surname}} </mat-cell>
+          </ng-container>
+
+          <!--Role -->
+          <ng-container matColumnDef="memberRole">
+            <mat-header-cell *matHeaderCellDef mat-sort-header>Role </mat-header-cell>
+            <mat-cell *matCellDef="let row"> {{row.relation}} </mat-cell>
+          </ng-container>
+
+          <!--Status -->
+          <ng-container matColumnDef="status">
+            <mat-header-cell *matHeaderCellDef mat-sort-header> ID/Passport Number </mat-header-cell>
+            <mat-cell *matCellDef="let row"> {{row.idNumber}} </mat-cell>
+          </ng-container>
+          <!--Employee -->
+          <ng-container matColumnDef="claimReferenceNumber">
+            <mat-header-cell *matHeaderCellDef mat-sort-header> Claim Number </mat-header-cell>
+            <mat-cell *matCellDef="let row"> {{row.claimReferenceNumber}} </mat-cell>
+          </ng-container>
+
+          <!--Employee -->
+          <ng-container matColumnDef="employeeNumber">
+            <mat-header-cell *matHeaderCellDef mat-sort-header> Employee Number </mat-header-cell>
+            <mat-cell *matCellDef="let row"> {{row.employeeNumber}} </mat-cell>
+          </ng-container>
+
+          <!-- Actions -->
+          <ng-container matColumnDef="actions">
+            <mat-header-cell *matHeaderCellDef mat-sort-header>Actions</mat-header-cell>
+            <mat-cell *matCellDef="let row">
+              <span><a role="button" class="link-edit" (click)="onSelected(row)">Select</a></span>
+            </mat-cell>
+          </ng-container>
+
+          <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
+          <mat-row *matRowDef="let row; columns: displayedColumns;"></mat-row>
+        </mat-table>
+
+        <mat-paginator #paginator [length]="paginator.length" [pageIndex]="0" [pageSize]="5"
+          [pageSizeOptions]="[5, 10, 25, 100]">
+        </mat-paginator>
+      </div>
+      <section>
+        <!-- Interview With Family Memeber -->
+        <mat-checkbox id="showActiveCheckBox" name="showActiveCheckBox" [(ngModel)]="showActiveCheckBoxInput">
+          <label class="mat-label other-label">Show Active</label>
+        </mat-checkbox>
+      </section>
+      <div [hidden]="dataSource.isLoading || paginator.length > 0 || isReset || !currentQuery || currentQuery == ''"
+        class="no-search-results-add-button">
+        <div class="site-font grey">
+          <p class="grey">Your search - <strong>{{currentQuery}}</strong> - did not match any records.</p>
+          <span>Suggestions: </span>
+          <ul>
+            <li>Make sure that all words are spelled correctly.</li>
+            <li>Try different keywords.</li>
+            <li>Try more general keywords.</li>
+            <li>Try fewer keywords.</li>
+          </ul>
+        </div>
+      </div>
+
+    </mat-card-content>
+  </mat-card>

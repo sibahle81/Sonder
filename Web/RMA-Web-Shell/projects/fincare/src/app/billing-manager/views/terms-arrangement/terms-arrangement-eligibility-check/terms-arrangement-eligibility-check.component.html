@@ -1,0 +1,45 @@
+<div>
+  <mat-tab-group>
+     <mat-tab label="Declarations">
+         <mat-expansion-panel [expanded]="true" class="panel">
+           <mat-expansion-panel-header>
+             <mat-panel-title>
+               <span class="material-icons">article</span><span class="expansionTitle">Declarations</span>
+             </mat-panel-title>
+           </mat-expansion-panel-header>
+           <mat-card class="card">
+           <div *ngIf="(isLoading$ | async)">
+            <mat-card style="margin-left: 10px; margin-right: 10px;">
+              <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+              <label class="mat-label other-label"><i>loading...please wait</i></label>
+            </mat-card>
+            <br />
+          </div>
+          <div *ngIf="!(isLoading$ | async)">
+            <br>
+            <div *ngIf="!declarations || declarations.length <= 0">
+              <label class="mat-label other-label"><i>No earnings found...</i></label>
+            </div>
+            
+            <mat-card>
+              <div *ngIf="declarations.length > 0" class="scrollTable">
+                <table class="altRowTable">
+                  <tr>
+                    <th>Average Employee Count</th>
+                    <th>Average Earnings</th>
+                    <th>Declaration Year</th>
+                  </tr>
+                  <tr *ngFor="let declaration of declarations">
+                    <td>{{declaration.averageEmployeeCount}}</td>
+                    <td>{{declaration.averageEarnings}}</td>
+                    <td>{{declaration.declarationYear}}</td>
+                  </tr>
+                </table>
+              </div>
+            </mat-card>
+          </div>
+           </mat-card>
+         </mat-expansion-panel>
+     </mat-tab>
+   </mat-tab-group>
+</div>

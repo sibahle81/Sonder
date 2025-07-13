@@ -1,0 +1,74 @@
+    <div *ngIf="(isLoading$ | async)">
+        <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+        <label class="mat-label other-label"><i>loading branches... please wait</i></label>
+    </div>
+    
+    <div *ngIf="!(isLoading$ | async)">
+        <div class="menu-bar">
+        <span>
+            <span class="material-icons">
+            groups
+            </span>
+            Branches
+        </span>
+        </div>
+    
+        <div *ngIf="branches && branches.length > 0">
+            <mat-card>
+                <mat-table #table [dataSource]="dataSource" matSort>
+                    <ng-container matColumnDef="code">
+                        <mat-header-cell *matHeaderCellDef> Code </mat-header-cell>
+                        <mat-cell *matCellDef="let row"> {{row.finPayee?.finPayeNumber}} </mat-cell>
+                    </ng-container>
+
+                    <ng-container matColumnDef="name">
+                        <mat-header-cell *matHeaderCellDef> Name </mat-header-cell>
+                        <mat-cell *matCellDef="let row"> {{row.displayName}} </mat-cell>
+                    </ng-container>
+
+                    <ng-container matColumnDef="idPassportNumber">
+                        <mat-header-cell *matHeaderCellDef> Registration Number </mat-header-cell>
+                        <mat-cell *matCellDef="let row"> {{row.company?.idNumber}}
+                        </mat-cell>
+                    </ng-container>
+
+                    <ng-container matColumnDef="type">
+                        <mat-header-cell *matHeaderCellDef> Type </mat-header-cell>
+                        <mat-cell *matCellDef="let row"> {{getClientType(row.clientType)}}
+                        </mat-cell>
+                    </ng-container>
+
+                    <ng-container matColumnDef="status">
+                        <mat-header-cell *matHeaderCellDef> Status </mat-header-cell>
+                        <mat-cell *matCellDef="let row"> {{getBranchStatus(row.memberStatus)}}
+                        </mat-cell>
+                    </ng-container>
+
+                    <ng-container matColumnDef="actions" *ngIf="!isReadOnly">
+                        <mat-header-cell *matHeaderCellDef> Additional Info  </mat-header-cell>
+                        <mat-cell *matCellDef="let row">
+                          <span (click)="showMoreInformation(row)" matTooltip="more info"
+                              class="material-icons icn icn-button pointer">
+                              info
+                          </span>
+                      </mat-cell>
+                    </ng-container>
+                    
+
+                    <mat-header-row *matHeaderRowDef="getDisplayedColumns()"></mat-header-row>
+                    <mat-row *matRowDef="let row; columns: getDisplayedColumns();"></mat-row>
+                </mat-table>
+                <mat-paginator #paginator [length]="dataSource.data ? dataSource.data.length : 0" [pageIndex]="0" [pageSize]="5"
+                    [pageSizeOptions]="[5, 10, 25, 100]">
+                </mat-paginator>
+            </mat-card>
+        </div>
+    
+        <div *ngIf="branches && branches.length == 0" class="scrollTable">
+            <label class="mat-label other-label"><i>No branches found...</i></label>
+        </div>
+    
+        <div *ngIf="showSearch">
+        <member-search-V2 [basicMode]="false" (memberSelectedEmit)="branchSelectedEmit($event)"></member-search-V2>
+        </div>
+    </div>

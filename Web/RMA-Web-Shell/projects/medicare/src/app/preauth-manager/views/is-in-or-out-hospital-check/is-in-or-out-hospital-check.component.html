@@ -1,0 +1,35 @@
+<div class="margine-space">
+    <div class="mat-header">
+        <h5 class="orange">In or Out Of Hospital?</h5>
+    </div>
+
+    <mat-card class="matCard">
+        <div class="clear">&nbsp;</div>
+
+        <section>
+            <div class="">
+                <div class="">
+                    <b>In-Hospital</b> - (Admitted - Including Day cases). <br>
+                    <b>Out Of Hospital</b> - (No Admission- Including casualty treatment).
+                </div>
+            </div>
+            <div class="clear">&nbsp;</div>
+            <hr />
+            <div class="">
+                <b><label class="mat-label other-label mandatory-field mandatory-field">(Please select In or Out Of Hospital)</label></b>
+            </div>
+            <div class="field-container">
+            
+                <mat-radio-group name="inOutHospitalOptionList" fxLayout="column" [formControl]="isInHospital" id="isInHospital">
+                    <mat-radio-button *ngFor="let op of inOutHospitalListOfOptions" [checked]="op.checked" [value]="op.value"
+                        name="op.name">{{ op.name}}</mat-radio-button>
+                </mat-radio-group>
+            
+            </div>
+
+            <br />
+        </section>
+
+    </mat-card>
+    <br>
+</div>

@@ -1,0 +1,77 @@
+
+<div *ngIf="!showForm" class="menu-bar">
+    <span class="material-icons">
+        work
+    </span>
+    Employee Other Insured Lifes
+    <span *ngIf="!showForm" class="material-icons pointer right pulse" (click)="add()" matTooltip="add">
+        add
+    </span>
+</div>
+
+<person-employment-insured-lives-dialog *ngIf="showForm"  [otherInsureLifeRolePlayer]="employerRolePlayer" [employeeRolePlayer]="employeeRolePlayer"
+    [personEmployment]="personEmployment" [employeeOtherInsuredlifeModel]="employeeOtherInsuredlife" [isReadOnly]="!isEdit" (closeEmit)="close($event)" (saveEmit)="save($event)"></person-employment-insured-lives-dialog>
+<div>
+    <mat-card>
+            <mat-table #table [dataSource]="dataSource" matSort id="tblData" (matSortChange)="getData()">
+                <ng-container matColumnDef="relationship">
+                    <mat-header-cell *matHeaderCellDef> Relationship </mat-header-cell>
+                    <mat-cell *matCellDef="let row">{{row.relationship ? getRolePlayerType(row.relationship) :
+                      'N/A'}}</mat-cell>
+                  </ng-container>
+                <ng-container matColumnDef="name">
+                    <mat-header-cell *matHeaderCellDef mat-sort-header> Name </mat-header-cell>
+                    <mat-cell *matCellDef="let row">{{ row.name }}</mat-cell>
+                </ng-container>
+                <ng-container matColumnDef="surname">
+                    <mat-header-cell *matHeaderCellDef mat-sort-header> Surname </mat-header-cell>
+                    <mat-cell *matCellDef="let row">{{ row.surname }}</mat-cell>
+                </ng-container>
+                <ng-container matColumnDef="dateOfBirth">
+                    <mat-header-cell *matHeaderCellDef mat-sort-header> Birth Date </mat-header-cell>
+                    <mat-cell *matCellDef="let row">{{row.dateOfBirth ? (row.dateOfBirth | date: "yyyy-MM-dd") : ''}}</mat-cell>
+                </ng-container>
+                <ng-container matColumnDef="effectiveDate">
+                    <mat-header-cell *matHeaderCellDef mat-sort-header> Effective Date </mat-header-cell>
+                    <mat-cell *matCellDef="let row">{{row.effectiveDate ? (row.effectiveDate | date: "yyyy-MM-dd") : ''}}</mat-cell>
+                </ng-container>
+                <ng-container matColumnDef="employeeJoinDate">
+                    <mat-header-cell *matHeaderCellDef mat-sort-header> Date Joined Employee </mat-header-cell>
+                    <mat-cell *matCellDef="let row">{{row.employeeJoinDate ? (row.employeeJoinDate | date: "yyyy-MM-dd") : ''}}</mat-cell>
+                </ng-container>
+                <ng-container matColumnDef="gender">
+                    <mat-header-cell *matHeaderCellDef> Gender </mat-header-cell>
+                    <mat-cell *matCellDef="let row">{{row.gender ? getGender(row.gender) :
+                      'N/A'}}</mat-cell>
+                </ng-container>
+                <ng-container matColumnDef="nationality">
+                    <mat-header-cell *matHeaderCellDef> Nationality </mat-header-cell>
+                    <mat-cell *matCellDef="let row">{{row.nationality ? getNationality(row.nationality) :
+                      'N/A'}}</mat-cell>
+                </ng-container>
+                <!-- Actions -->
+                <ng-container matColumnDef="actions">
+                    <mat-header-cell *matHeaderCellDef>Actions</mat-header-cell>
+                    <mat-cell *matCellDef="let row">
+                        <span (click)="view(row)" class="material-icons icn pointer icn-button" matTooltip="view">
+                            visibility
+                        </span>
+                        <span (click)="edit(row)" class="material-icons icn pointer icn-button" matTooltip="edit">
+                            settings
+                        </span>
+                    </mat-cell>
+                </ng-container>
+                <mat-header-row *matHeaderRowDef="getDisplayedColumns()"></mat-header-row>
+                <mat-row
+                    [ngClass]="selectedEmployment && (row.personEmpoymentId == selectedEmployment.personEmpoymentId) ? 'highlight' : ''"
+                    *matRowDef="let row; columns: getDisplayedColumns();"></mat-row>
+            </mat-table>
+            <mat-paginator #paginator [length]="dataSource.data.length" [pageIndex]="0" [pageSize]="5"
+                [pageSizeOptions]="[5, 10,100]">
+            </mat-paginator>
+        <div
+            *ngIf="!(dataSource.data && dataSource.data.length > 0 || (isLoading$ | async))">
+            <label class="mat-label other-label"><i>No employee other insured lifes found...</i></label>
+        </div>
+    </mat-card>
+</div>

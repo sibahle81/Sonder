@@ -1,0 +1,18 @@
+<mat-card *ngIf="isLoading$ | async">
+    <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+    <label class="mat-label other-label"><i>{{loadingMessages$ | async}}</i></label>
+</mat-card>
+
+<div *ngIf="!(isLoading$ | async)">
+    <form [formGroup]="form" class="mat-container" novalidate>
+        <mat-card>
+            <div class="menu-bar" *ngIf="!(isLoading$ | async)">
+                <label>Referral Capture</label>
+                <span class="material-icons menu-button">
+                    supervised_user_circle
+                </span>
+            </div>
+
+        </mat-card>
+    </form>
+</div>

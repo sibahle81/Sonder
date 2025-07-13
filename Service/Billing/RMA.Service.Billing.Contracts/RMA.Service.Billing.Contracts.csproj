@@ -1,0 +1,386 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{DA2EE1AE-A96F-447A-98C8-C2F65651478C}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <RootNamespace>RMA.Service.Billing.Contracts</RootNamespace>
+    <AssemblyName>RMA.Service.Billing.Contracts</AssemblyName>
+    <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
+    <Deterministic>true</Deterministic>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x64'">
+    <DebugSymbols>true</DebugSymbols>
+    <OutputPath>bin\x64\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <DebugType>full</DebugType>
+    <PlatformTarget>x64</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>..\..\..\Solution Items\RMA.ruleset</CodeAnalysisRuleSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x64'">
+    <OutputPath>bin\x64\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <Optimize>true</Optimize>
+    <DebugType>pdbonly</DebugType>
+    <PlatformTarget>x64</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>..\..\..\Solution Items\RMA.ruleset</CodeAnalysisRuleSet>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup>
+    <StartupObject />
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="FileHelpers, Version=3.5.2.0, Culture=neutral, PublicKeyToken=3e0c08d59cc3d657, processorArchitecture=MSIL">
+      <HintPath>..\..\..\packages\FileHelpers.3.5.2\lib\net45\FileHelpers.dll</HintPath>
+    </Reference>
+    <Reference Include="Hyphen.FACS">
+      <HintPath>..\..\..\Lib\Hyphen.FACS.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.ServiceFabric.Data, Version=6.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=AMD64">
+      <HintPath>..\..\..\packages\Microsoft.ServiceFabric.Data.3.4.664\lib\net472\Microsoft.ServiceFabric.Data.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.ServiceFabric.Data.Extensions, Version=1.4.5.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\..\..\packages\Microsoft.ServiceFabric.Data.Extensions.3.4.664\lib\net472\Microsoft.ServiceFabric.Data.Extensions.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.ServiceFabric.Data.Interfaces, Version=5.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=AMD64">
+      <HintPath>..\..\..\packages\Microsoft.ServiceFabric.Data.Interfaces.3.4.664\lib\net472\Microsoft.ServiceFabric.Data.Interfaces.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.ServiceFabric.Diagnostics, Version=6.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=AMD64">
+      <HintPath>..\..\..\packages\Microsoft.ServiceFabric.Diagnostics.Internal.3.4.664\lib\net472\Microsoft.ServiceFabric.Diagnostics.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.ServiceFabric.FabricTransport, Version=6.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=AMD64">
+      <HintPath>..\..\..\packages\Microsoft.ServiceFabric.FabricTransport.Internal.3.4.664\lib\net472\Microsoft.ServiceFabric.FabricTransport.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.ServiceFabric.FabricTransport.V2, Version=6.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=AMD64">
+      <HintPath>..\..\..\packages\Microsoft.ServiceFabric.FabricTransport.Internal.3.4.664\lib\net472\Microsoft.ServiceFabric.FabricTransport.V2.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.ServiceFabric.Internal, Version=6.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=AMD64">
+      <HintPath>..\..\..\packages\Microsoft.ServiceFabric.6.5.664\lib\net472\Microsoft.ServiceFabric.Internal.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.ServiceFabric.Internal.Strings, Version=6.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=AMD64">
+      <HintPath>..\..\..\packages\Microsoft.ServiceFabric.6.5.664\lib\net472\Microsoft.ServiceFabric.Internal.Strings.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.ServiceFabric.Preview, Version=6.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=AMD64">
+      <HintPath>..\..\..\packages\Microsoft.ServiceFabric.6.5.664\lib\net472\Microsoft.ServiceFabric.Preview.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.ServiceFabric.ReliableCollection.Interop, Version=1.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\..\..\packages\Microsoft.ServiceFabric.Data.Extensions.3.4.664\lib\net472\Microsoft.ServiceFabric.ReliableCollection.Interop.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.ServiceFabric.Services, Version=6.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=AMD64">
+      <HintPath>..\..\..\packages\Microsoft.ServiceFabric.Services.3.4.664\lib\net472\Microsoft.ServiceFabric.Services.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.ServiceFabric.Services.Remoting, Version=6.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=AMD64">
+      <HintPath>..\..\..\packages\Microsoft.ServiceFabric.Services.Remoting.3.4.664\lib\net472\Microsoft.ServiceFabric.Services.Remoting.dll</HintPath>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.ComponentModel.DataAnnotations" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Fabric, Version=6.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=AMD64">
+      <HintPath>..\..\..\packages\Microsoft.ServiceFabric.6.5.664\lib\net472\System.Fabric.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Fabric.Management.ServiceModel, Version=6.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=AMD64">
+      <HintPath>..\..\..\packages\Microsoft.ServiceFabric.6.5.664\lib\net472\System.Fabric.Management.ServiceModel.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Fabric.Strings, Version=6.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=AMD64">
+      <HintPath>..\..\..\packages\Microsoft.ServiceFabric.6.5.664\lib\net472\System.Fabric.Strings.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Runtime.Serialization" />
+    <Reference Include="System.ServiceModel" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Net.Http" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Abstraction\DataExchangeBase.cs" />
+    <Compile Include="Entities\BulkHandOverRequest.cs" />
+    <Compile Include="Entities\BulkWriteOffModel.cs" />
+    <Compile Include="Entities\FileUploadResponse.cs" />
+    <Compile Include="Entities\InterestCalculationRequest.cs" />
+    <Compile Include="Entities\InterestSearchRequest.cs" />
+    <Compile Include="Entities\Interest.cs" />
+    <Compile Include="Entities\AdhocPaymentInstructionsTermArrangementSchedule.cs" />
+    <Compile Include="Entities\BenefitPayrollInvoice.cs" />
+    <Compile Include="Entities\BulkWriteOffRequest.cs" />
+    <Compile Include="Entities\DebtorProductCategoryStatusRequest.cs" />
+    <Compile Include="Entities\ForecastRates.cs" />
+    <Compile Include="Entities\LegalCommissionRecon.cs" />
+    <Compile Include="Entities\LegalHandOverFileDetail.cs" />
+    <Compile Include="Entities\MonthlyBrokerPaymentScheduleModel.cs" />
+    <Compile Include="Entities\CompanyBranchBankAccount.cs" />
+    <Compile Include="Entities\PaymentAllocationLookup.cs" />
+    <Compile Include="Entities\AutoAllocationAccount.cs" />
+    <Compile Include="Entities\BranchCompanyMap.cs" />
+    <Compile Include="Entities\BranchModel.cs" />
+    <Compile Include="Entities\CompanyModel.cs" />
+    <Compile Include="Entities\DebtorCompanyAndBranchModel.cs" />
+    <Compile Include="Entities\CreditTransaction.cs" />
+    <Compile Include="Entities\DataExchange\DataExchangeModelBase.cs" />
+    <Compile Include="Entities\DataExchange\Import\BillingDataExchangeModel.cs" />
+    <Compile Include="Entities\DebtorOpenCreditTransaction.cs" />
+    <Compile Include="Entities\DebtorOpeningClosingDetail.cs" />
+    <Compile Include="Entities\AbilityChart.cs" />
+    <Compile Include="Entities\AbilityCollectionPostingRequest.cs" />
+    <Compile Include="Entities\AbilityCollections.cs" />
+    <Compile Include="Entities\AbilityCollectionsAudit.cs" />
+    <Compile Include="Entities\AbilityTransactionsAudit.cs" />
+    <Compile Include="Entities\AdhocInterestCalculation.cs" />
+    <Compile Include="Entities\AdhocInterestRequest.cs" />
+    <Compile Include="Entities\AdhocPaymentInstruction.cs" />
+    <Compile Include="Entities\AgeAnalysisRequest.cs" />
+    <Compile Include="Entities\AgeAnalysis.cs" />
+    <Compile Include="Entities\AgeAnalysisNote.cs" />
+    <Compile Include="Entities\AllocatedPayment.cs" />
+    <Compile Include="Entities\AuditLog.cs" />
+    <Compile Include="Entities\BadDebtReinstate.cs" />
+    <Compile Include="Entities\BadDebtReinstateRequest.cs" />
+    <Compile Include="Entities\BadDebtWriteOff.cs" />
+    <Compile Include="Entities\BankEntryTransaction.cs" />
+    <Compile Include="Entities\CollectionBankingDetail.cs" />
+    <Compile Include="Entities\CreditNoteSearchResult.cs" />
+    <Compile Include="Entities\CreditNoteSendRequest.cs" />
+    <Compile Include="Entities\CreditNoteToEmail.cs" />
+    <Compile Include="Entities\DebtorAccountNumberModel.cs" />
+    <Compile Include="Entities\DebtorCreditReallocationRequest.cs" />
+    <Compile Include="Entities\DebtorDebtWriteOff.cs" />
+    <Compile Include="Entities\DebtorOpenTransactionsRequest.cs" />
+    <Compile Include="Entities\DebtorProductBalanceRequest.cs" />
+    <Compile Include="Entities\DebtorProductCategoryBalance.cs" />
+    <Compile Include="Entities\InterBankTransferDetail.cs" />
+    <Compile Include="Entities\PaymentStagingFile.cs" />
+    <Compile Include="Entities\Payments\FileContentImport.cs" />
+    <Compile Include="Entities\Payments\SimpleBankStatementEntryModel.cs" />
+    <Compile Include="Entities\Payments\StatementRequest.cs" />
+    <Compile Include="Entities\PaymentStaging.cs" />
+    <Compile Include="Entities\TransactionSearchRequest.cs" />
+    <Compile Include="Entities\PolicyPaymentAllocation\AllocatePaymentToPolicyRequest.cs" />
+    <Compile Include="Entities\PolicyPaymentAllocation\PolicyBilling.cs" />
+    <Compile Include="Entities\PolicyPaymentAllocation\PolicyPaymentAllocation.cs" />
+    <Compile Include="Entities\PolicyPaymentAllocation\PolicyPaymentTransaction.cs" />
+    <Compile Include="Entities\PolicyPaymentAllocation\ReversePolicyPaymentRequest.cs" />
+    <Compile Include="Entities\PolicyPaymentAllocation\TransferPaymentFromPolicyToPolicyRequest.cs" />
+    <Compile Include="Entities\TermScheduleRefundBreakDown.cs" />
+    <Compile Include="Entities\TransactionDetail.cs" />
+    <Compile Include="Entities\UpdateDebtorStatusRequest.cs" />
+    <Compile Include="Entities\DebtorStatusModel.cs" />
+    <Compile Include="Entities\DebtorStatusRule.cs" />
+    <Compile Include="Entities\EditTermArrangementSchedules.cs" />
+    <Compile Include="Entities\ExcptionAllocationFile.cs" />
+    <Compile Include="Entities\BulkAllocationFile.cs" />
+    <Compile Include="Entities\BulkAllocationMessage.cs" />
+    <Compile Include="Entities\ExceptionAllocation.cs" />
+    <Compile Include="Entities\DebtorProductBalance.cs" />
+    <Compile Include="Entities\DebtorStatementRequest.cs" />
+    <Compile Include="Entities\FileExchange\Excel\ExcelFileExchangeModel.cs" />
+    <Compile Include="Entities\FileExchange\FileExchangeModelBase.cs" />
+    <Compile Include="Entities\IndustryBillingCycle.cs" />
+    <Compile Include="Entities\InterDebtorToDebtorRequest.cs" />
+    <Compile Include="Entities\InterDebtorTransactionRequest.cs" />
+    <Compile Include="Entities\InterestAdjustment.cs" />
+    <Compile Include="Entities\InterestCalculation.cs" />
+    <Compile Include="Entities\BadDebtWriteOffRequest.cs" />
+    <Compile Include="Entities\InterestIndicator.cs" />
+    <Compile Include="Entities\InvoiceAllocationSearchRequest.cs" />
+    <Compile Include="Entities\InvoiceDocumentModel.cs" />
+    <Compile Include="Entities\InvoiceLineItemNonFinancialReGen.cs" />
+    <Compile Include="Entities\InvoiceNonFinancialReGenBusMessage.cs" />
+    <Compile Include="Entities\InvoiceSendRequest.cs" />
+    <Compile Include="Entities\PaymentAllocationBulk.cs" />
+    <Compile Include="Entities\BulkManualAllocation.cs" />
+    <Compile Include="Entities\BulkPremiumTransfer.cs" />
+    <Compile Include="Entities\BundleRaise.cs" />
+    <Compile Include="Entities\CancelledInvoiceSearchResult.cs" />
+    <Compile Include="Entities\ClaimRecoveryInvoiceSearchByBankRefResult.cs" />
+    <Compile Include="Entities\CollectionAgent.cs" />
+    <Compile Include="Entities\Collection.cs" />
+    <Compile Include="Entities\CollectionAgentImportFileModel.cs" />
+    <Compile Include="Entities\CollectionBatch.cs" />
+    <Compile Include="Entities\CollectionMessage.cs" />
+    <Compile Include="Entities\Allocation.cs" />
+    <Compile Include="Entities\CollectionsAgeing.cs" />
+    <Compile Include="Entities\CreditNoteReversal.cs" />
+    <Compile Include="Entities\DebitOrder.cs" />
+    <Compile Include="Entities\DebitTransactionAllocation.cs" />
+    <Compile Include="Entities\DuplicateInvoiceSearchResult.cs" />
+    <Compile Include="Entities\FacsTransactionResult.cs" />
+    <Compile Include="Entities\ClaimRecoveryInvoice.cs" />
+    <Compile Include="Entities\BillingNote.cs" />
+    <Compile Include="Entities\FileContentModel.cs" />
+    <Compile Include="Entities\InterDebtorTransferDetail.cs" />
+    <Compile Include="Entities\BulkPremiumTransferDetail.cs" />
+    <Compile Include="Entities\InterestReversal.cs" />
+    <Compile Include="Entities\InterestReversalRequest.cs" />
+    <Compile Include="Entities\PendingBundleRaiseCancellation.cs" />
+    <Compile Include="Entities\PendingInterestDate.cs" />
+    <Compile Include="Entities\PolicyProductCategory.cs" />
+    <Compile Include="Entities\PremiumListingTransaction.cs" />
+    <Compile Include="Entities\PremiumPaymentRequest.cs" />
+    <Compile Include="Entities\QLinkMonthlyPremiumReferenceMessage.cs" />
+    <Compile Include="Entities\QLinkPaymentRecord.cs" />
+    <Compile Include="Entities\QLinkStatementResponse.cs" />
+    <Compile Include="Entities\Refund.cs" />
+    <Compile Include="Entities\RefundHeaderDetail.cs" />
+    <Compile Include="Entities\RefundRmaBankAccountAmount.cs" />
+    <Compile Include="Entities\RefundRoleLimit.cs" />
+    <Compile Include="Entities\RefundTransaction.cs" />
+    <Compile Include="Entities\RefundTransactionsRequest.cs" />
+    <Compile Include="Entities\TermArrangement.cs" />
+    <Compile Include="Entities\TermArrangementInvoice.cs" />
+    <Compile Include="Entities\TermArrangementSubsidiary.cs" />
+    <Compile Include="Entities\TermArrangementProductOption.cs" />
+    <Compile Include="Entities\TermFlexibleSchedule.cs" />
+    <Compile Include="Entities\TermProductBalanceRequest.cs" />
+    <Compile Include="Entities\TermsArrangementNote.cs" />
+    <Compile Include="Entities\TermArrangementSchedule .cs" />
+    <Compile Include="Entities\TermsDebitOrderDetail.cs" />
+    <Compile Include="Entities\TermsMemoOfAgreementEmail.cs" />
+    <Compile Include="Entities\TransactionDocumentSendRequest.cs" />
+    <Compile Include="Entities\UpdatePolicyPremiumMessage.cs" />
+    <Compile Include="Entities\WriteOffTransactions.cs" />
+    <Compile Include="Entities\TransactionAdjustment.cs" />
+    <Compile Include="Entities\TransactionsBackDatingRequest.cs" />
+    <Compile Include="Entities\TransactionsReversalRequest.cs" />
+    <Compile Include="Entities\InterDebtorTransfer.cs" />
+    <Compile Include="Entities\TransactionTransfer.cs" />
+    <Compile Include="Entities\FinPayee.cs" />
+    <Compile Include="Entities\CreditNoteAccount.cs" />
+    <Compile Include="Entities\InterBankTransfer.cs" />
+    <Compile Include="Entities\Invoice.cs" />
+    <Compile Include="Entities\InvoiceAllocation.cs" />
+    <Compile Include="Entities\InvoiceLineItem.cs" />
+    <Compile Include="Entities\InvoicePaymentAllocation.cs" />
+    <Compile Include="Entities\InvoicePolicyRolePlayerDetail.cs" />
+    <Compile Include="Entities\RefundStatementModel.cs" />
+    <Compile Include="Entities\TransactionSearchResult.cs" />
+    <Compile Include="Entities\InvoiceSearchByBankRefResult.cs" />
+    <Compile Include="Entities\ManualPaymentAllocation.cs" />
+    <Compile Include="Entities\InvoiceSearchResult.cs" />
+    <Compile Include="Entities\Statement.cs" />
+    <Compile Include="Entities\Payments\UnallocatedPayment.cs" />
+    <Compile Include="Entities\RmaBankAccount.cs" />
+    <Compile Include="Entities\RmaBankAccountTransaction.cs" />
+    <Compile Include="Entities\SearchAccountResults.cs" />
+    <Compile Include="Entities\Transaction.cs" />
+    <Compile Include="Entities\TransactionTypeLink.cs" />
+    <Compile Include="Entities\UnallocatedBankImport.cs" />
+    <Compile Include="Entities\UnallocatedBankImportPayment.cs" />
+    <Compile Include="Entities\UnallocatedPayment.cs" />
+    <Compile Include="Entities\UnpaidInvoice.cs" />
+    <Compile Include="Entities\UnsuccessfulInitiation.cs" />
+    <Compile Include="Enums\AllocationTargetType.cs" />
+    <Compile Include="Enums\TransactionActionType.cs" />
+    <Compile Include="Integration\Hyphen\HyphenFACSResponse.cs" />
+    <Compile Include="Integration\Hyphen\RootHyphenFACSResponse.cs" />
+    <Compile Include="Interfaces\IAbilityCollectionsAuditService.cs" />
+    <Compile Include="Interfaces\IAbilityCollectionsService.cs" />
+    <Compile Include="Interfaces\IAbilityTransactionsAuditService.cs" />
+    <Compile Include="Interfaces\IAgeAnalysisService.cs" />
+    <Compile Include="Interfaces\IInterestService.cs" />
+    <Compile Include="Interfaces\IAuditLogService.cs" />
+    <Compile Include="Interfaces\IBankFacsRequestService.cs" />
+    <Compile Include="Interfaces\IBillingService.cs" />
+    <Compile Include="Interfaces\IBulkPaymentAllocationListener.cs" />
+    <Compile Include="Interfaces\IClaimRecoveryInvoiceService.cs" />
+    <Compile Include="Interfaces\ICollectionQueueListener.cs" />
+    <Compile Include="Interfaces\IBrokerPaymentScheduleService.cs" />
+    <Compile Include="Interfaces\ICollectionService.cs" />
+    <Compile Include="Interfaces\IDataExchangeService.cs" />
+    <Compile Include="Interfaces\IDocumentNumberService.cs" />
+    <Compile Include="Interfaces\IInterBankTransferService.cs" />
+    <Compile Include="Interfaces\IInterDebtorTransferNoteService.cs" />
+    <Compile Include="Interfaces\IInterDebtorTransferService.cs" />
+    <Compile Include="Interfaces\IInvoiceAddService.cs" />
+    <Compile Include="Interfaces\IInvoiceLineItemService.cs" />
+    <Compile Include="Interfaces\IPaymentAllocationLookupService.cs" />
+    <Compile Include="Interfaces\IQLinkMonthlyPremiumQueueListener.cs" />
+    <Compile Include="Interfaces\IRegenerateInvoiceNonFinancialsBusListener.cs" />
+    <Compile Include="Interfaces\IRolePlayerPolicyInvoiceService.cs" />
+    <Compile Include="Interfaces\IInvoiceService.cs" />
+    <Compile Include="Interfaces\IPaymentAllocationService.cs" />
+    <Compile Include="Interfaces\IStatementService.cs" />
+    <Compile Include="Interfaces\ITermsArrangementService.cs" />
+    <Compile Include="Interfaces\ITransactionCreatorService.cs" />
+    <Compile Include="Interfaces\ITransactionService.cs" />
+    <Compile Include="Program.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Entities\StatementAnalysis.cs" />
+    <Compile Include="Entities\RefundHeader.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <AdditionalFiles Include="..\..\..\Solution Items\RMA.DependencyValidation\ServicePlatform.layerdiagram">
+      <Link>ServicePlatform.layerdiagram</Link>
+      <Visible>False</Visible>
+    </AdditionalFiles>
+    <None Include="App.config" />
+    <None Include="packages.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <Analyzer Include="..\..\..\packages\Microsoft.DependencyValidation.Analyzers.0.11.0\analyzers\dotnet\cs\Microsoft.DependencyValidation.Analyzers.resources.dll" />
+    <Analyzer Include="..\..\..\packages\Microsoft.DependencyValidation.Analyzers.0.11.0\analyzers\dotnet\Microsoft.DependencyValidation.Analyzers.dll" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\Common\RMA.Common.Database\RMA.Common.Database.csproj">
+      <Project>{5A742FB8-0332-42DE-9D56-07315B898B32}</Project>
+      <Name>RMA.Common.Database</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\..\Common\RMA.Common\RMA.Common.csproj">
+      <Project>{C30FB382-556D-41E4-B987-DEA4F962059A}</Project>
+      <Name>RMA.Common</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\Admin\RMA.Service.Admin.MasterDataManager.Contracts\RMA.Service.Admin.MasterDataManager.Contracts.csproj">
+      <Project>{81ABD00C-262F-48DF-A933-63E3730F0245}</Project>
+      <Name>RMA.Service.Admin.MasterDataManager.Contracts</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\Admin\RMA.Service.Admin.SecurityManager.Contracts\RMA.Service.Admin.SecurityManager.Contracts.csproj">
+      <Project>{05202D9C-BE63-4105-8CE4-A9BFA19413D8}</Project>
+      <Name>RMA.Service.Admin.SecurityManager.Contracts</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\ClaimCare\RMA.Service.ClaimCare.Contracts\RMA.Service.ClaimCare.Contracts.csproj">
+      <Project>{1CB03DED-41D2-40F8-960D-60B78D6E0EE1}</Project>
+      <Name>RMA.Service.ClaimCare.Contracts</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\ClientCare\RMA.Service.ClientCare.Contracts\RMA.Service.ClientCare.Contracts.csproj">
+      <Project>{aeab775a-a0fe-497b-8947-14fe5ac961d1}</Project>
+      <Name>RMA.Service.ClientCare.Contracts</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\FinCare\RMA.Service.FinCare.Contracts\RMA.Service.FinCare.Contracts.csproj">
+      <Project>{D989A1CF-E3C8-4AC9-A110-BD658869C9BD}</Project>
+      <Name>RMA.Service.FinCare.Contracts</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\RMA.Service.Billing.Database\RMA.Service.Billing.Database.csproj">
+      <Project>{9bae9530-6ebd-4229-bb07-10ef0f601688}</Project>
+      <Name>RMA.Service.Billing.Database</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Entities\DataExchange\Export\" />
+    <Folder Include="Entities\FileExchange\CSV\" />
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+</Project>

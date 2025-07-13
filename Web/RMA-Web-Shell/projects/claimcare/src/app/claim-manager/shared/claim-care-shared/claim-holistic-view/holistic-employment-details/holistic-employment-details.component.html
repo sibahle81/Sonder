@@ -1,0 +1,199 @@
+<mat-card *ngIf="isLoading$ | async">
+  <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+  <label class="mat-label other-label"><i>loading person employment details...please wait</i></label>
+</mat-card>
+
+<mat-card *ngIf="isSaving$ | async">
+  <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+  <label class="mat-label other-label"><i>saving person employment details...please wait</i></label>
+</mat-card>
+
+<mat-card *ngIf="notFound$ | async">
+  <label class="mat-label other-label"><b>Person Employment details not found. Record may be deleted.</b></label>
+</mat-card>
+
+
+<form [formGroup]="form" class="mat-container" novalidate *ngIf="!(isLoading$ | async) || !(isSaving$ | async)">
+  <mat-card>
+    <div class="menu-bar">
+      <span class="material-icons">
+        work
+      </span>&nbsp;Person Employment
+      <span *ngIf="isEditMode" (click)="cancel()" class="material-icons pointer right" matTooltip="cancel">
+        close
+      </span>
+      <span *ngIf="!isReadOnly && personEvent.rolePlayer && mode != editMode && mode != newPerson" (click)="edit()" class="material-icons pointer right" matTooltip="edit">
+        settings
+      </span>
+      <span *ngIf="hasAuditPermission && !isWizard" (click)="openAuditDialog()" matTooltip="audit"
+        class="material-icons pointer right">
+        fingerprint
+      </span>
+      <span *ngIf="form.valid && !form.pristine && !isReadOnly" (click)="save()"
+        class="material-icons pointer right pulse greenFont" matTooltip="save">
+        save
+      </span>
+      <span *ngIf="isFatal && mode != viewMode" class="material-icons pointer right BeneficiaryIcon"
+        matTooltip="add beneficiary" (click)="addBeneficiary()">
+        add_circle
+      </span>
+    </div>
+    <br />
+    <section>
+      <!--is Skilled-->
+      <fieldset class="radio-field">
+        <legend><label id="lblSkilled" class="mat-label other-label mandatory-field">
+            Skilled / Unskilled</label></legend>
+        <p>
+          <input type="radio" value="true" formControlName="skilled"
+            (change)="skilledChange(true)"><label>Skilled</label>
+          <input type="radio" value="false" formControlName="skilled"
+            (change)="skilledChange(false)"><label>Unskilled</label>
+        </p>
+      </fieldset>
+    </section>
+    <br />
+    <section>
+      <!--is Trainee/Learner/Apprentice-->
+      <fieldset class="radio-field">
+        <label id="lblTrainee" class="mat-label other-label mandatory-field">
+          Trainee/Learner/Apprentice?</label>
+        <p>
+          <input title="Trainee/Learner/" type="radio" value="true" formControlName="trainee"><label>Yes</label>
+          <input title="Skilled" type="radio" value="false" formControlName="trainee"><label>No</label>
+        </p>
+      </fieldset>
+    </section>
+    <br />
+    <section>
+      <mat-form-field class="mat-form-field">
+        <label class="mat-label other-label mandatory-field">Start Date With Employer</label>
+        <input matInput formControlName="employmentDate" (dateChange)="validateEmploymentDate($event)"
+          [matDatepicker]="employmentDate" matTooltip="Date of accident cannot be before employment start date"
+          id="employmentDate" readonly name="employmentDate" [max]="maxDate">
+        <mat-datepicker-toggle matSuffix matTooltip="Date of accident cannot be before employment start date"
+          [for]="employmentDate"></mat-datepicker-toggle>
+        <mat-datepicker touchUi="true" #employmentDate></mat-datepicker>
+        <mat-error *ngIf="form.get('employmentDate').hasError('required') && form.get('employmentDate').touched">
+          Start Date With Employer is <strong>required</strong>
+        </mat-error>
+      </mat-form-field>
+
+      <mat-form-field class="mat-form-field-right">
+        <label class="mat-label other-label mandatory-field">Years In Occupation</label>
+        <input id="yearsOccupation" name="yearsOccupation" matInput NumberOnly (blur)="yearsValidation()"
+          formControlName="yearsOccupation" readonly class="readOnly" />
+        <mat-error *ngIf="
+            form.get('yearsOccupation').hasError('required') &&
+            form.get('yearsOccupation').touched
+          ">
+          Years in occupation is <strong>required</strong>
+        </mat-error>
+        <div *ngIf="monthsInOccupation != 0">
+          <label>({{ monthsInOccupation }} months in occupation)</label>
+        </div>
+        <div *ngIf="daysInOccupation != 0">
+          <label>({{ daysInOccupation }} days in occupation)</label>
+        </div>
+      </mat-form-field>
+    </section>
+
+    <section>
+      <mat-form-field class="mat-form-field">
+        <label class="mat-label other-label mandatory-field">Years In Industry</label>
+        <input id="yearsInIndustry" name="yearsInIndustry" matInput formControlName="yearsInIndustry" NumberOnly
+          type="number" [min]="0" />
+        <mat-error *ngIf="
+            form.get('yearsInIndustry').hasError('required') &&
+            form.get('yearsInIndustry').touched
+          ">
+          Years in industry is <strong>required</strong>
+        </mat-error>
+      </mat-form-field>
+
+      <mat-form-field class="mat-form-field-right">
+        <label class="mat-label other-label mandatory-field">Paterson Grading</label>
+        <mat-select id="petersonGrading" name="petersonGrading" formControlName="petersonGrading"
+          (selectionChange)="petersonGradingChanged($event)">
+          <mat-option *ngFor="let patersonGrading of patersonGradings" [value]="patersonGrading.patersonGradingId">
+            {{ patersonGrading.description }}
+          </mat-option>
+        </mat-select>
+        <mat-error *ngIf="
+            form.get('petersonGrading').hasError('required') &&
+            form.get('petersonGrading').touched
+          ">
+          Peterson grading is <strong>required</strong>
+        </mat-error>
+      </mat-form-field>
+    </section>
+
+    <section>
+      <mat-form-field class="mat-form-field">
+        <label class="mat-label other-label">RMA Employee Ref Number</label>
+        <input id="rmaEmployeeNumber" name="rmaEmployeeNumber" matInput formControlName="rmaEmployeeNumber"
+          (keypress)="keyPressAlphanumeric($event)" />
+        <mat-error *ngIf="
+            form.get('rmaEmployeeNumber').hasError('minlength') &&
+            form.get('rmaEmployeeNumber').touched
+          ">
+          RMA Employee Ref Number is to <strong>short</strong>
+        </mat-error>
+      </mat-form-field>
+
+      <mat-form-field class="mat-form-field-right">
+        <label class="mat-label other-label mandatory-field">Employee Number</label>
+        <input id="employeeNumber" name="employeeNumber" matInput formControlName="employeeNumber" />
+        <mat-error *ngIf="
+            form.get('employeeNumber').hasError('required') &&
+            form.get('employeeNumber').touched
+          ">
+          Employee number is <strong>required</strong>
+        </mat-error>
+      </mat-form-field>
+    </section>
+    <section>
+      <mat-form-field class="mat-form-field">
+        <label id="lblIndustry" class="mat-label other-label" [ngClass]="{
+            'mandatory-field': industryClassEnum && industryClassEnum == mining
+          }">Employee Industry Number</label>
+        <input id="industryNumber" name="industryNumber" matInput formControlName="industryNumber"
+          (keypress)="omitSpecialChar($event)" />
+        <div [hidden]="!(isIndustryNumberLoading$ | async)">
+          <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+          <label class="mat-label other-label"><i>Industry number duplicate check...please wait</i></label>
+        </div>
+        <mat-error *ngIf="
+            form.get('industryNumber').hasError('required') &&
+            form.get('industryNumber').touched
+          ">
+          Employee industry number is <strong>required</strong>
+        </mat-error>
+        <mat-error *ngIf="
+            form.get('industryNumber').hasError('isIndustryNumberUnique') &&
+            form.get('industryNumber').touched
+          ">
+          Employee industry number already <strong>exists</strong> for another
+          employee
+        </mat-error>
+      </mat-form-field>
+
+      <mat-form-field class="mat-form-field-right">
+        <label class="mat-label other-label mandatory-field">Occupation</label>
+        <mat-select name="designationTypeId" id="designationTypeId" formControlName="designationTypeId">
+          <input matInput (keyup)="onOccupationKey($event.target.value)">
+          <mat-option *ngFor="let item of designationTypes" [value]="item?.id">
+            {{ item?.id }} - {{ item?.name }}
+          </mat-option>
+        </mat-select>
+        <mat-error *ngIf="form.get('designationTypeId').hasError('required') && form.get('designationTypeId').touched">
+          Occupation is <strong>required</strong>
+        </mat-error>
+      </mat-form-field>
+    </section>
+  </mat-card>
+</form>
+
+<div *ngIf="hasBeneficiaryData || (personEvent.beneficiaries && personEvent.beneficiaries.length > 0)">
+  <beneficiary-list [personEvent]="personEvent" [isReadOnly]="isReadOnly" [isWizard]="isWizard"></beneficiary-list>
+</div>

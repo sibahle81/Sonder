@@ -1,0 +1,202 @@
+<mat-card>
+  <mat-card-title [hidden]="dataSource.loading$ | async">
+    <h1>{{Heading}}</h1>
+  </mat-card-title>
+
+  <mat-card-content>
+
+    <div [hidden]="dataSource.loading$ | async">
+      <mat-form-field [floatLabel]="'never'">
+        <input matInput maxlength="50" name="query" [(ngModel)]="query" #filter width="300" minLength="3"
+          class="elementBox" matTooltip="Search by Person Event Id" matTooltipShowDelay="1000">
+
+        <mat-placeholder class="placeholder">Search by Event Number, PEV number, Passport, ID number, surname, DOB
+          (yyyy-mm-dd),
+          Industry number or employee number
+        </mat-placeholder>
+
+        <mat-icon class="search-icon" (click)="search()" matTooltip="Search by personEventId" matSuffix>search
+        </mat-icon>
+      </mat-form-field>
+    </div>
+    <mat-divider [inset]="true"></mat-divider>
+    <br>
+    <div *ngIf="dataSource.loading$ | async" class="loadingDiv">
+      <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+      <span class="site-font grey">Loading Results...</span>
+    </div>
+
+    <div class="row">
+      <div [hidden]="paginator.length === 0 || (dataSource.loading$ | async)">
+        <mat-table #table [dataSource]="dataSource" multiTemplateDataRows matSort>
+
+          <!-- Expand Column -->
+          <ng-container matColumnDef="expand">
+            <mat-header-cell *matHeaderCellDef> Expand </mat-header-cell>
+            <mat-cell *matCellDef="let row" (click)="expandCollapse(row)">
+              <span *ngIf="!row.isExpanded"><span class="material-icons expand-icon">add_circle</span></span>
+              <span *ngIf="row.isExpanded"><span class="material-icons expand-icon">remove_circle</span></span>
+            </mat-cell>
+          </ng-container>
+
+          <ng-container matColumnDef="personEventNumber">
+            <mat-header-cell *matHeaderCellDef mat-sort-header>PEV Number</mat-header-cell>
+            <mat-cell *matCellDef="let row">{{row.claimNumber}}</mat-cell>
+          </ng-container>
+
+          <ng-container matColumnDef="memberNumber">
+            <mat-header-cell *matHeaderCellDef mat-sort-header>Member Number</mat-header-cell>
+            <mat-cell *matCellDef="let row">{{row.memberNumber ? row.memberNumber : ''}}
+            </mat-cell>
+          </ng-container>
+
+          <ng-container matColumnDef="memberName">
+            <mat-header-cell *matHeaderCellDef mat-sort-header>Member Name</mat-header-cell>
+            <mat-cell *matCellDef="let row">{{row.memberName ? row.memberName : ''}}</mat-cell>
+          </ng-container>
+
+          <ng-container matColumnDef="identificationNumber">
+            <mat-header-cell *matHeaderCellDef mat-sort-header>Identification Number</mat-header-cell>
+            <mat-cell *matCellDef="let row">{{row.identificationNumber}}</mat-cell>
+          </ng-container>
+
+          <ng-container matColumnDef="insuredLife">
+            <mat-header-cell *matHeaderCellDef>Employee Name</mat-header-cell>
+            <mat-cell *matCellDef="let row">{{row.insuredLife ? row.insuredLife : ''}}</mat-cell>
+          </ng-container>
+
+          <ng-container matColumnDef="createdDate">
+            <mat-header-cell *matHeaderCellDef mat-sort-header>Created Date</mat-header-cell>
+            <mat-cell *matCellDef="let row">{{row.createdDate | date:'mediumDate'}}</mat-cell>
+          </ng-container>
+
+          <ng-container matColumnDef="isStraightThroughProcess">
+            <mat-header-cell *matHeaderCellDef>Is STP</mat-header-cell>
+            <mat-cell *matCellDef="let row">{{row.isStraightThroughProcess}}</mat-cell>
+          </ng-container>
+
+          <ng-container matColumnDef="suspiciousTransactionStatus">
+            <mat-header-cell *matHeaderCellDef>Is STM</mat-header-cell>
+            <mat-cell *matCellDef="let row">
+              {{getSuspiciousTransactionStatus(row.suspiciousTransactionStatus)}}
+            </mat-cell>
+          </ng-container>
+
+          <ng-container matColumnDef="claimStatus">
+            <mat-header-cell *matHeaderCellDef>Claim Status</mat-header-cell>
+            <mat-cell *matCellDef="let row"
+              matTooltip="{{row.claimStatus | claimStatusDescription: row.claimLiabilityStatus ? row.claimLiabilityStatus : null }}">
+              {{row.claimStatus | claimStatus}}</mat-cell>
+          </ng-container>
+
+          <ng-container matColumnDef="liabilityStatus">
+            <mat-header-cell *matHeaderCellDef>Liability Status</mat-header-cell>
+            <mat-cell *matCellDef="let row">{{row.claimLiabilityStatus ?
+              getLiabilityStatus(row.claimLiabilityStatus) :
+              ""}}</mat-cell>
+          </ng-container>
+
+          <div [hidden]=" true">
+            <ng-container matColumnDef="expandedDetail">
+              <mat-cell class="expand" *matCellDef="let row">
+                <div>
+                  <table>
+                    <tr class="ChildData">
+                      <td><b class="mat-cell-label">Exit Reason:</b> {{row.stpExitReason ?
+                        getSTPExitReason(row.stpExitReason) :""}}</td>
+                    </tr>
+                    <tr class="ChildData">
+                      <td><b class="mat-cell-label">Description:</b> {{row.stpDescription ?
+                        row.stpDescription :""}}</td>
+                    </tr>
+                    <tr class="ChildData">
+                      <td><b class="mat-cell-label">Claim Status:</b> {{row.claimStatus ?
+                        getClaimStatus(row.claimStatus): ""}}</td>
+                    </tr>
+                    <tr class="ChildData">
+                      <td><b class="mat-cell-label">Liability Status:</b> {{row.claimLiabilityStatus ?
+                        getLiabilityStatus(row.claimLiabilityStatus) :""}}</td>
+                    </tr>
+                    <tr class="ChildData">
+                      <td><b class="mat-cell-label">Event Number:</b> {{row.eventNumber ? row.eventNumber :""}}</td>
+                    </tr>
+                    <tr class="ChildData">
+                      <td><b class="mat-cell-label">Date of Birth:</b> {{row.dob | date:'yyyy/MM/dd'}}</td>
+                    </tr>
+                    <tr class="ChildData">
+                      <td><b class="mat-cell-label">Employee Number:</b> {{row.employeeNumber ? row.employeeNumber :""}}
+                      </td>
+                    </tr>
+                    <tr class="ChildData">
+                      <td><b class="mat-cell-label">Employee Industry Number:</b> {{row.employeeIndustryNumber ?
+                        row.employeeIndustryNumber
+                        :""}}</td>
+                    </tr>
+                  </table>
+                </div>
+              </mat-cell>
+            </ng-container>
+          </div>
+          <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
+          <mat-row *matRowDef="let row; columns: displayedColumns;" [class.expanded]="row.isExpanded"></mat-row>
+          <mat-row *matRowDef="let row; columns: ['expandedDetail'];"
+            [@detailExpand]="row.isExpanded == true ? 'expanded' : 'collapsed'">
+          </mat-row>
+        </mat-table>
+        <mat-paginator #paginator [pageIndex]="0" [pageSize]="5" [pageSizeOptions]="[5, 10, 25, 100]">
+        </mat-paginator>
+      </div>
+    </div>
+    <div *ngIf="paginator.length < 1 && !dataSource.dataLoading">
+      No data found...
+    </div>
+    <div [hidden]="paginator.length > 0 || !currentQuery || currentQuery == ''" class="no-search-results-add-button">
+      <div class="site-font grey">
+        <p class="grey">Your search - <strong>{{currentQuery}}</strong> - did not match any records.</p>
+        <span>Suggestions: </span>
+        <ul>
+          <li>Make sure that all words are spelled correctly.</li>
+          <li>Try different keywords.</li>
+          <li>Try more general keywords.</li>
+          <li>Try fewer keywords.</li>
+        </ul>
+      </div>
+    </div>
+    <div class="download-block">
+      <table>
+        <tr>
+          <td [class.disabled]="!isDownload" class="download-cls">
+            <input type="image" alt="Dowload" (click)="exporttoCSV()" src="/assets/images/downloads-icon.png" width="40"
+              height="40" />
+          </td>
+          <td class="download-cls">
+            <mat-radio-group aria-labelledby="reportformat-radio-group-label" class="reportformat-radio-group"
+              [(ngModel)]="selectedreportFormat" (change)="reportFormatChange($event)">
+              <mat-radio-button class="reportformat-radio-button" *ngFor="let reportFormat of reportFormats"
+                [value]="reportFormat">
+                {{reportFormat}} &nbsp;&nbsp;
+              </mat-radio-button>
+            </mat-radio-group>
+          </td>
+        </tr>
+        <tr [hidden]="!isDownloading">
+          <td colspan="2" class="download-cls">
+            <div>
+              <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+              <label class="mat-label other-label">
+                <i>
+                  downloading {{selectedreportFormat}} person events....
+                </i>
+              </label>
+            </div>
+          </td>
+        </tr>
+        <tr>
+        </tr>
+      </table>
+    </div>
+    <div (click)="back()" class="form-buttons submit-button">
+      <button type="button" class="button float-button">Back</button>
+    </div>
+  </mat-card-content>
+</mat-card>

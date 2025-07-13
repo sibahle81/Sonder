@@ -1,0 +1,41 @@
+<div *ngIf="form">
+  <form [formGroup]="form">
+    <section class="top-section">
+      <mat-form-field>
+        <label class="mat-label other-label">ID/Passport Number</label>
+        <input matInput maxlength="50" formControlName="benIdOrPassport" id="benIdOrPassport" />
+      </mat-form-field>
+    </section>
+    <section>
+      <mat-form-field>
+        <label class="mat-label other-label">Last Name</label>
+        <input matInput maxlength="50" formControlName="benLastName" id="benLastName" />
+      </mat-form-field>
+      <mat-form-field class="mat-form-field-right">
+        <label class="mat-label other-labelform.get">First Name</label>
+        <input matInput maxlength="10" formControlName="benFirstName" id="benFirstName" />
+        <mat-error *ngIf="form.get('benFirstName').hasError('required') && form.get('benFirstName').touched">
+          Other Number is required
+        </mat-error>
+      </mat-form-field>
+    </section>
+    <section>
+      <mat-form-field>
+        <label class="mat-label other-label">Contact Number</label>
+        <input matInput maxlength="50" formControlName="benContactNum" id="benContactNum"  />
+      </mat-form-field>
+
+      <mat-form-field class="m-l-30" *ngIf="form.controls['beneficiaryType']" >
+        <label class="mat-label other-labelform.get">Beneficiary type</label>
+        <mat-select id="beneficiaryType" name="beneficiaryType" formControlName="beneficiaryType">
+          <mat-option *ngFor="let beneficiaryType of beneficiaryTypes" [value]="beneficiaryType.id">
+            {{beneficiaryType.name}}
+          </mat-option>
+        </mat-select>
+        <mat-error *ngIf="form.get('beneficiaryType').hasError('required') && form.get('beneficiaryType').touched">
+          Beneficiary Type is required
+        </mat-error>
+      </mat-form-field>
+    </section>
+  </form>
+</div>

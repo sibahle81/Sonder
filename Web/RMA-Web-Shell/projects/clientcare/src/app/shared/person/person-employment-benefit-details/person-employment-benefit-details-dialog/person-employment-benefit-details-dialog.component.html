@@ -1,0 +1,183 @@
+<div class="menu-bar">
+    <span class="material-icons">
+        work
+    </span>
+    Capture Employee Benefit Details
+    <span *ngIf="!(isLoading$ | async)" class="material-icons pointer right pulse" (click)="close()" matTooltip="close">
+        cancel
+    </span>
+    <span *ngIf="form.valid && !isReadOnly && !(isLoading$ | async)" class="material-icons pointer right pulse" (click)="save()"
+        matTooltip="save">
+        save
+    </span>
+</div>
+
+<mat-card *ngIf="(isLoading$ | async)">
+    <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+    <label class="mat-label other-label"><i>loading...please wait</i></label>
+</mat-card>
+
+<mat-card *ngIf="!(isLoading$ | async)">
+    <form [formGroup]="form" class="mat-container details-form" novalidate>       
+        <section *ngIf="isEdit || isReadOnly">
+            <mat-form-field>
+              <label class="mat-label other-label mandatory-field">View Details by Effective Date:</label>
+              <mat-select formControlName="selectedDetailDate" (selectionChange)="onDetailsDateChanged($event.value)">
+                <mat-option *ngFor="let detailDate of effectiveDates" [value]="detailDate">
+                  {{ detailDate | date: 'yyyy-MM-dd'}}
+                </mat-option>
+              </mat-select>
+            </mat-form-field>
+        </section>
+        <section>
+            <mat-form-field>
+              <label class="mat-label other-label mandatory-field">Insured Person</label>
+              <mat-select formControlName="selectedInsuredLife" (selectionChange)="onInsuredLifeChanged($event.value)">
+                <mat-option *ngFor="let insuredLife of insuredlives" [value]="insuredLife.otherInsureLifeRolePlayerId">
+                  {{ insuredLife.name + ' ' + insuredLife.surname + " (" + getRelationshipType(insuredLife.relationship) + ")"}}
+                </mat-option>
+              </mat-select>
+            </mat-form-field>
+        </section>
+        <section>
+            <mat-form-field class="mat-form-field">
+                <label class="mat-label other-label mandatory-field">Policy</label>
+                <mat-select [(value)]="selectedPolicyId" name="policyId" id="policyId" (selectionChange)="selectedPolicyChange($event)" formControlName="policyId">
+                    <mat-option *ngFor="let policy of Policies" [value]="policy.policyId">
+                        {{formatLookup(policy.policyName)}}
+                    </mat-option>
+                </mat-select>
+                <mat-error *ngIf="form.get('policyId').hasError('required') && (form.get('policyId').touched ||form.get('policyId').dirty )">
+                    Policy is <strong>required</strong>
+                </mat-error>
+            </mat-form-field>
+            <mat-form-field class="mat-form-field-right">
+                <label class="mat-label other-label mandatory-field">Benefit</label>
+                <mat-select [(value)]="selectedBenefitId" name="benefitId" id="benefitId" (selectionChange)="selectedBenefitChange($event)"
+                        formControlName="benefitId">
+                    <mat-option *ngFor="let benefit of Benefits" [value]="benefit.id">
+                        {{formatLookup(benefit.name)}}
+                    </mat-option>
+                </mat-select>
+                <mat-error *ngIf="form.get('benefitId').hasError('required') && (form.get('benefitId').touched ||form.get('benefitId').dirty )">
+                    Benefit is <strong>required</strong>
+                </mat-error>
+            </mat-form-field>
+        </section>
+
+        <section>
+            <mat-form-field class="mat-form-field">                
+                <label class="mat-label other-label mandatory-field">Benefit Category</label>
+                <mat-select [(value)]="selectedBenefitCategoryId" name="benefitCategoryId" id="benefitCategoryId"
+                            formControlName="benefitCategoryId" (selectionChange)="selectedBenefitCategoryChange($event)">
+                    <mat-option *ngFor="let benefitCategory of BenefitCategories" [value]="benefitCategory.benefitCategoryId">
+                        {{formatLookup(benefitCategory.name)}}
+                    </mat-option>
+                </mat-select>
+                <mat-error *ngIf="form.get('benefitCategoryId').hasError('required') && (form.get('benefitCategoryId').touched ||form.get('benefitCategoryId').dirty )">
+                    Benefit Category is <strong>required</strong>
+                </mat-error>
+            </mat-form-field>
+            <mat-form-field class="mat-form-field-right">
+                <label class="mat-label other-label mandatory-field">Effective Date</label>
+                <input matInput  formControlName="effectiveDate"  (dateChange)="newEffectiveDateChanged($event)" [matDatepicker]="effectiveDate">
+                <mat-datepicker-toggle matSuffix [for]="effectiveDate" [disabled]="form.disabled"></mat-datepicker-toggle>
+                <mat-datepicker touchUi="true" #effectiveDate></mat-datepicker>
+                <mat-error *ngIf="form.get('effectiveDate').hasError('required')">
+                    Effective Date is <strong>required</strong>
+                </mat-error>
+                <mat-error *ngIf="form.get('effectiveDate').hasError('required') && (form.get('benefitCategoryId').touched ||form.get('benefitCategoryId').dirty ) && !isFirstOfMonth">
+                    Effective Date is The effective date should be on the <strong>first day</strong> of the month
+                </mat-error>
+            </mat-form-field>
+        </section>
+
+        <section>
+            <mat-form-field class="mat-form-field">
+                <label class="mat-label other-label mandatory-field">Date Joined Policy</label>
+                <input matInput  formControlName="dateJoinedPolicy" [matDatepicker]="dateJoinedPolicy">
+                <mat-datepicker-toggle matSuffix [for]="dateJoinedPolicy" [disabled]="form.disabled"></mat-datepicker-toggle>
+                <mat-datepicker touchUi="true" #dateJoinedPolicy></mat-datepicker>
+                <mat-error *ngIf="form.get('dateJoinedPolicy').hasError('required')">
+                    Date Joined Policy is <strong>required</strong>
+                </mat-error>
+            </mat-form-field>
+            <mat-form-field class="mat-form-field-right">
+                <label class="mat-label other-label mandatory-field">Benefit Status</label>
+                <mat-select name="personInsuredCategoryStatus" id="personInsuredCategoryStatus" formControlName="personInsuredCategoryStatus">
+                    <mat-option *ngFor="let categoryStatus of personInsuredCategoryStatuses" [value]="categoryStatus.id">
+                    {{formatLookup(categoryStatus.name)}}
+                </mat-option>
+                </mat-select>
+                <mat-error *ngIf="form.get('personInsuredCategoryStatus').hasError('required')">
+                    Status is <strong>required</strong>
+                </mat-error>
+            </mat-form-field>
+        </section>
+        
+        <section>
+            <mat-form-field class="mat-form-field">
+                <label class="mat-label other-label">Annual Salary</label>
+                <input matInput formControlName="annualSalary" name="annualSalary" id="annualSalary" />
+                <mat-error *ngIf="form.get('dateJoinedPolicy').hasError('required')">
+                    Annual Salary is <strong>required</strong>
+                </mat-error>
+            </mat-form-field>
+            <mat-form-field class="mat-form-field-right">
+                <label class="mat-label other-label">Premium</label>
+                <input matInput formControlName="premium" name="premium" id="premium" />
+            </mat-form-field>
+        </section>
+
+        <section>
+            <mat-form-field class="mat-form-field">
+                <label class="mat-label other-label">Potential Basic Cover Amount</label>
+                <input matInput formControlName="potentialCoverAmount" name="potentialCoverAmount" id="potentialCoverAmount" />
+                <mat-error *ngIf="form.get('potentialCoverAmount').hasError('required')">
+                    Potential Basic Cover Amount is <strong>required</strong>
+                </mat-error>
+            </mat-form-field>
+            <mat-form-field class="mat-form-field-right">
+                <label class="mat-label other-label">Potential Waiver Amount</label>
+                <input matInput formControlName="potentialWaiverAmount" name="potentialWaiverAmount" id="potentialWaiverAmount" />
+                <mat-error *ngIf="form.get('potentialWaiverAmount').hasError('required')">
+                    Potential Waiver Amount is <strong>required</strong>
+                </mat-error>
+            </mat-form-field>
+        </section>
+
+        <section>
+            <mat-form-field class="mat-form-field">
+                <label class="mat-label other-label">Actual Basic Cover Amount</label>
+                <input matInput formControlName="actualCoverAmount" name="actualCoverAmount" id="actualCoverAmount" />
+                <mat-error *ngIf="form.get('actualCoverAmount').hasError('required')">
+                    Actual Basic Cover Amount is <strong>required</strong>
+                </mat-error>
+            </mat-form-field>
+            <mat-form-field class="mat-form-field-right">
+                <label class="mat-label other-label">Actual Waiver Amount</label>
+                <input matInput formControlName="actualWaiverAmount" name="actualWaiverAmount" id="actualWaiverAmount" />
+                <mat-error *ngIf="form.get('actualWaiverAmount').hasError('required')">
+                    Actual Waiver Amount is <strong>required</strong>
+                </mat-error>
+            </mat-form-field>
+        </section>
+
+        <section>
+            <mat-form-field class="mat-form-field">
+                <label class="mat-label other-label">Medical Premium Waiver Amount</label>
+                <input matInput formControlName="medicalPremWaiverAmount" name="medicalPremWaiverAmount" id="medicalPremWaiverAmount" />
+                <mat-error *ngIf="form.get('medicalPremWaiverAmount').hasError('required')">
+                    Medical Premium Waiver Amount is <strong>required</strong>
+                </mat-error>
+            </mat-form-field>
+            <mat-form-field class="mat-form-field-right">
+                <label class="mat-label other-label">Share Of Fund</label>
+                <input matInput formControlName="shareOfFund" name="shareOfFund" id="shareOfFund" />
+                <mat-error *ngIf="form.get('shareOfFund').hasError('required')">
+                    Share Of Fund is <strong>required</strong>
+                </mat-error>
+            </mat-form-field>
+        </section>
+    </form>
+</mat-card>

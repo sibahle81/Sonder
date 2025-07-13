@@ -1,0 +1,205 @@
+<app-medicare-search-menus></app-medicare-search-menus>
+    
+<div class="page-header">
+  <h1>Search Preauthorisation</h1>
+</div>
+
+<div *ngIf="searchPreAuthorisationDataSource.isLoading">
+  <mat-progress-bar mode="indeterminate"
+    [ngClass]="{ 'loading-main-double-menu-progress': doubleMenu, 'loading-main-single-menu-progress': !doubleMenu }"></mat-progress-bar>
+  <span *ngIf="searchPreAuthorisationDataSource.isLoading" class="site-font grey">
+    {{searchPreAuthorisationDataSource.statusMsg}}</span>
+</div>
+<br />
+
+<mat-card>
+  <div>
+    <form [formGroup]="form" class="mat-container details-form" novalidate>      
+      <section>
+        <div class="field-container">
+          <div><label class="mat-label other-label">Preauth Number</label></div>
+          <mat-form-field>
+            <input matInput id="preAuthFilter" name="preAuthFilter" #filter formControlName="searchByPreAuthNumberControl" />
+          </mat-form-field>
+        </div>
+      </section>
+
+      <section>
+        <div class="field-container">
+          <div><label class="mat-label other-label">Practice Number</label></div>
+          <mat-form-field *ngIf="isInternalUser">
+            <input matInput (keyup)="getHealthCareProvider($event)" id="practiceFilter" name="practiceFilter" #filter formControlName="searchByPracticeNumberControl" />
+            <mat-icon class="search-icon" (click)="getHealthCareProvider($event)" matSuffix>search</mat-icon>
+          </mat-form-field>
+          <mat-form-field *ngIf="!isInternalUser">
+            <mat-select id="userHealthCareProvider" name="userHealthCareProvider" #filter formControlName="searchByuserHealthCareProvider" (selectionChange)="getHealthCareProvider($event)">
+              <mat-option *ngFor="let userHealthCareProvider of userHealthCareProviders" [value]="userHealthCareProvider.practiceNumber">{{userHealthCareProvider.practiceNumber}}
+              </mat-option>
+            </mat-select>
+          </mat-form-field>
+          <div *ngIf="searchingPractice">
+            <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+          </div>
+        </div>
+
+        <div class="field-container-right">
+          <div><label class="mat-label other-label">HealthCare Provider</label></div>
+          <mat-form-field>
+            <input matInput readonly id="healthCareProviderFilter" name="healthCareProviderFilter" #filter formControlName="healthCareProviderControl" />
+          </mat-form-field>
+        </div>
+      </section>
+
+      <section>
+        <div class="field-container">
+          <div><label class="mat-label other-label">Preauth Type</label></div>
+          <mat-form-field>
+            <mat-select id="preAuthTypeFilter" name="preAuthTypeFilter" #filter formControlName="searchByPreAuthTypeControl">
+              <mat-option value="0">All</mat-option>
+              <mat-option *ngFor="let preAuthType of preAuthTypes" [value]="preAuthType.id">{{preAuthType.name}}
+              </mat-option>
+            </mat-select>
+          </mat-form-field>
+        </div>
+
+        <div class="field-container-right">
+          <div><label class="mat-label other-label">Preauth Status</label></div>
+          <mat-form-field>
+            <mat-select id="preAuthStatusFilter" name="preAuthStatusFilter" #filter formControlName="searchByPreAuthStatusControl">
+              <mat-option value="0">All</mat-option>
+              <mat-option *ngFor="let preAuthStatus of preAuthStatuses" [value]="preAuthStatus.id">{{preAuthStatus.name}}
+              </mat-option>
+            </mat-select>
+          </mat-form-field>
+        </div>
+      </section>
+
+      <section>
+        <div class="field-container">
+          <mat-form-field>
+            <label class="mat-label other-label">Date Authorised From</label>
+            <input matInput id="dateAuthorisedFromFilter" name="dateAuthorisedFromFilter" #filter 
+              [matDatepicker]="dateAuthorisedFromFilter" formControlName="searchByDateAuthorisedFromControl" />
+            <mat-datepicker-toggle matSuffix [for]="dateAuthorisedFromFilter"></mat-datepicker-toggle>
+            <mat-datepicker touchUi="true" #dateAuthorisedFromFilter></mat-datepicker>
+          </mat-form-field>
+        </div>
+
+        <div class="field-container-right">
+          <mat-form-field>
+            <label class="mat-label other-label">Date Authorised To</label>
+            <input matInput id="dateAuthorisedToFilter" name="dateAuthorisedToFilter" #filter 
+              [matDatepicker]="dateAuthorisedToFilter" formControlName="searchByDateAuthorisedToControl" />
+            <mat-datepicker-toggle matSuffix [for]="dateAuthorisedToFilter"></mat-datepicker-toggle>
+            <mat-datepicker touchUi="true" #dateAuthorisedToFilter></mat-datepicker>
+          </mat-form-field>
+        </div> 
+      </section>  
+
+      <section>
+        <div class="field-container">
+          <button type="button" (click)="search()" class="button float-button"
+            [disabled]="disableSubmit">Search</button>
+        </div>
+
+        <div class="field-container-right">
+          <button type="button" (click)="reset()" class="button float-button">Reset</button>
+        </div>
+      </section>
+    </form>
+  </div>
+</mat-card> 
+<br/>
+
+<div [hidden]="pageLength == 0">
+  <mat-table #table [dataSource]="searchPreAuthorisationDataSource" matSort matSortActive="preAuthId" matSortDirection="desc"
+    matSortDisableClear>
+    <ng-container matColumnDef="preAuthNumber">
+      <mat-header-cell *matHeaderCellDef mat-sort-header> PreAuth Number </mat-header-cell>
+      <mat-cell *matCellDef="let preAuthorisation" matTooltip="{{preAuthorisation.preAuthNumber}}">
+        <span class="truncate-text"> {{ preAuthorisation.preAuthNumber}} </span>
+      </mat-cell>
+    </ng-container>
+    <ng-container matColumnDef="healthCareProviderDetail">
+      <mat-header-cell *matHeaderCellDef mat-sort-header> HealthCare Provider </mat-header-cell>
+      <mat-cell *matCellDef="let preAuthorisation"
+        matTooltip="{{preAuthorisation.practiceNumber}} - {{preAuthorisation.healthCareProviderName}}">
+        <span class="truncate-text"> {{preAuthorisation.practiceNumber}} -
+          {{preAuthorisation.healthCareProviderName}} </span>
+      </mat-cell>
+    </ng-container>
+    <ng-container matColumnDef="requestComments">
+      <mat-header-cell *matHeaderCellDef mat-sort-header> Request Comments </mat-header-cell>
+      <mat-cell *matCellDef="let preAuthorisation" matTooltip="{{preAuthorisation.requestComments}}">
+        <span class="truncate-text"> {{ preAuthorisation.requestComments }} </span>
+      </mat-cell>
+    </ng-container>
+    <ng-container matColumnDef="requestedAmount">
+      <mat-header-cell *matHeaderCellDef mat-sort-header> Requested Amount </mat-header-cell>
+      <mat-cell *matCellDef="let preAuthorisation" matTooltip="{{preAuthorisation.requestedAmount}}">
+        <span class="truncate-text"> {{ preAuthorisation.requestedAmount }} </span>
+      </mat-cell>
+    </ng-container>
+    <ng-container matColumnDef="authorisedAmount">
+      <mat-header-cell *matHeaderCellDef mat-sort-header> Authorised Amount </mat-header-cell>
+      <mat-cell *matCellDef="let preAuthorisation" matTooltip="{{preAuthorisation.authorisedAmount}}">
+        <span class="truncate-text"> {{ preAuthorisation.authorisedAmount }} </span>
+      </mat-cell>
+    </ng-container>
+    <ng-container matColumnDef="createdDate">
+      <mat-header-cell *matHeaderCellDef mat-sort-header> Created Date </mat-header-cell>
+      <mat-cell *matCellDef="let preAuthorisation" matTooltip="{{preAuthorisation.createdDate}}">
+        <span class="truncate-text"> {{ preAuthorisation.createdDate | date:'yyyy-MM-dd HH:MM:SS' }} </span>
+      </mat-cell>
+    </ng-container>
+    <ng-container matColumnDef="dateAuthorised">
+      <mat-header-cell *matHeaderCellDef mat-sort-header> Date Authorised </mat-header-cell>
+      <mat-cell *matCellDef="let preAuthorisation" matTooltip="{{preAuthorisation.dateAuthorised}}">
+        <span class="truncate-text"> {{ preAuthorisation.dateAuthorised | date:'yyyy-MM-dd HH:MM:SS' }} </span>
+      </mat-cell>
+    </ng-container>
+    <ng-container matColumnDef="claimReferenceNumber">
+      <mat-header-cell *matHeaderCellDef mat-sort-header>Claim Number</mat-header-cell>
+      <mat-cell *matCellDef="let preAuthorisation" matTooltip="{{preAuthorisation.claimReferenceNumber}}">
+        <span class="truncate-text"> {{ preAuthorisation.claimReferenceNumber}} </span>
+      </mat-cell>
+    </ng-container>
+    <ng-container matColumnDef="preAuthStatus">
+      <mat-header-cell *matHeaderCellDef mat-sort-header> Status </mat-header-cell>
+      <mat-cell *matCellDef="let preAuthorisation" matTooltip="{{preAuthorisation.preAuthStatus}}">
+        <span class="truncate-text"> {{ getPreauthStatus(preAuthorisation.preAuthStatus) }} </span>
+      </mat-cell>
+    </ng-container>
+    <ng-container matColumnDef="preAuthId">
+      <mat-header-cell *matHeaderCellDef mat-sort-header class="hideCell"> PreAuth Id </mat-header-cell>
+      <mat-cell *matCellDef="let preAuthorisation" matTooltip="{{preAuthorisation.preAuthId}}" class="hideCell">
+        <span class="truncate-text"> {{ preAuthorisation.preAuthId}} </span>
+      </mat-cell>
+    </ng-container>
+    <!-- Actions Column -->
+    <ng-container matColumnDef="actions">
+      <mat-header-cell *matHeaderCellDef> Actions </mat-header-cell>
+      <mat-cell *matCellDef="let preAuth" [matMenuTriggerFor]="menu" (click)="filterMenu(preAuth)">
+        <span class="material-icons pointer">more_vert</span>
+        <mat-menu #menu="matMenu">
+          <button disabled="{{menu.disable}}" mat-menu-item *ngFor="let menu of menus"
+            (click)="onMenuItemClick(preAuth, menu)">{{menu.title}}</button>
+        </mat-menu>
+      </mat-cell>
+    </ng-container>
+    <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
+    <mat-row *matRowDef="let row; columns: displayedColumns;"></mat-row>
+  </mat-table>
+
+  <mat-paginator #paginator [length]="pageLength" [pageIndex]="0" [pageSize]="5"
+    [pageSizeOptions]="[5, 10, 25, 100]">
+  </mat-paginator>
+</div>
+<br>
+
+<div *ngIf="searchPreAuthorisationDataSource.data && searchPreAuthorisationDataSource.data.data 
+  && searchPreAuthorisationDataSource.data.data.length === 0 && !(searchPreAuthorisationDataSource.isLoading)">      
+  <div class="site-font grey">
+    <p class="grey">Your search did not match any preauthorisations.</p>        
+  </div>
+</div>

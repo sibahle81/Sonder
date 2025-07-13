@@ -1,0 +1,78 @@
+<div class="pad-form">
+  <h3>Policy Members</h3>
+  <div [hidden]="showMemberCertificate">
+    <div *ngIf="dataSource.isLoading">
+      <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+      <span class="grey"><i>Loading policy members...</i></span>
+    </div>
+    <br>
+    <br>
+    <div [hidden]="dataSource.isLoading">
+      <div *ngIf="paginator.length === 0">
+        <span class="grey"><i>No policy members found..</i></span>
+      </div>
+      <br>
+      <br>
+      <div [hidden]="paginator.length === 0">
+        <mat-table #table [dataSource]="dataSource" matSort matSortActive="RolePlayerTypeId" matSortDirection="asc"
+          matSortDisableClear>
+          <ng-container matColumnDef="policyNumber">
+            <mat-header-cell *matHeaderCellDef>Policy</mat-header-cell>
+            <mat-cell *matCellDef="let row">{{row.policyNumber}}</mat-cell>
+          </ng-container>
+          <ng-container matColumnDef="clientReference">
+            <mat-header-cell *matHeaderCellDef>Client Reference</mat-header-cell>
+            <mat-cell *matCellDef="let row">{{row.clientReference}}</mat-cell>
+          </ng-container>
+          <ng-container matColumnDef="memberName">
+            <mat-header-cell *matHeaderCellDef>Member Name</mat-header-cell>
+            <mat-cell *matCellDef="let row">{{row.memberName}}</mat-cell>
+          </ng-container>
+          <ng-container matColumnDef="idNumber">
+            <mat-header-cell *matHeaderCellDef>ID Number</mat-header-cell>
+            <mat-cell *matCellDef="let row">{{row.idNumber}}</mat-cell>
+          </ng-container>
+          <ng-container matColumnDef="dateOfBirth">
+            <mat-header-cell *matHeaderCellDef>Date of Birth</mat-header-cell>
+            <mat-cell *matCellDef="let row">{{row.dateOfBirth | date:'yyyy/MM/dd'}}</mat-cell>
+          </ng-container>
+          <ng-container matColumnDef="policyJoinDate">
+            <mat-header-cell *matHeaderCellDef>Policy Join Date</mat-header-cell>
+            <mat-cell *matCellDef="let row">{{row.policyJoinDate | date:'yyyy/MM/dd'}}</mat-cell>
+          </ng-container>
+          <ng-container matColumnDef="insuredLifeStatus">
+            <mat-header-cell *matHeaderCellDef>Status</mat-header-cell>
+            <mat-cell *matCellDef="let row">{{ getInsuredLifeStatus(row.insuredLifeStatus) }}</mat-cell>
+          </ng-container>
+          <ng-container matColumnDef="premium">
+            <mat-header-cell *matHeaderCellDef>Premium</mat-header-cell>
+            <mat-cell *matCellDef="let row">{{row.premium | number:'1.2-2'}}</mat-cell>
+          </ng-container>
+          <ng-container matColumnDef="actions">
+            <mat-header-cell *matHeaderCellDef>&nbsp;</mat-header-cell>
+            <mat-cell *matCellDef="let row"><a (click)="membershipCertificate(row.policyId)">Membership Certificate</a>
+            </mat-cell>
+          </ng-container>
+          <mat-header-row *matHeaderRowDef="memberColumns"></mat-header-row>
+          <mat-row *matRowDef="let row; columns: memberColumns;"></mat-row>
+        </mat-table>
+        <mat-paginator #paginator [length]="dataSource.rowCount$" [pageSize]="5" [pageSizeOptions]="[5, 10, 25, 100]">
+        </mat-paginator>
+      </div>
+    </div>
+  </div>
+  <div [hidden]="!showMemberCertificate">
+    <mat-card-actions>
+      <div class="left-margin" style="padding-bottom: 15px;">
+        <button class="button submit-button" (click)="showMembers()">Show Members</button>
+      </div>
+    </mat-card-actions>
+    <div [hidden]="!showReport" style="width: 100%; height: auto; margin-left: auto; margin-right: auto;">
+      <ssrs-reportviewer [reportserver]="reportServer" [reporturl]="reportUrl" [showparameters]="showParameters"
+        [parameters]="parameters" [language]="language" [width]="width" [height]="height" [toolbar]="toolbar"
+        (error)="reportError($event)">
+      </ssrs-reportviewer>
+    </div>
+  </div>
+</div>
+<div class="spacer"></div>

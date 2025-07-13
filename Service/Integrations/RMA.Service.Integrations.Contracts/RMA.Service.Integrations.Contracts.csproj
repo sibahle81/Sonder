@@ -1,0 +1,187 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{66928FA0-0AA5-4E2A-842C-61A1EC14960C}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>RMA.Service.Integrations.Contracts</RootNamespace>
+    <AssemblyName>RMA.Service.Integrations.Contracts</AssemblyName>
+    <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <Deterministic>true</Deterministic>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x64'">
+    <DebugSymbols>true</DebugSymbols>
+    <OutputPath>bin\x64\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <DebugType>full</DebugType>
+    <PlatformTarget>x64</PlatformTarget>
+    <LangVersion>7.3</LangVersion>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x64'">
+    <OutputPath>bin\x64\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <Optimize>true</Optimize>
+    <DebugType>pdbonly</DebugType>
+    <PlatformTarget>x64</PlatformTarget>
+    <LangVersion>7.3</LangVersion>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Net.Http" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Entities\CompCare\Icd10Code.cs" />
+    <Compile Include="Entities\CompCare\MedicalReportType.cs" />
+    <Compile Include="Entities\CompCare\MedicalReportCategory.cs" />
+    <Compile Include="Entities\CompCare\CCClaimRequest.cs" />
+    <Compile Include="Entities\CompCare\CCClaimResponse.cs" />
+    <Compile Include="Entities\CompCare\MedicalReportSubmissionRequest.cs" />
+    <Compile Include="Entities\CompCare\MedicalReportSubmissionResponse.cs" />
+    <Compile Include="Entities\CompCare\SuspiciousTransactionRequest.cs" />
+    <Compile Include="Entities\CompCare\SuspiciousTransactionResponse.cs" />
+    <Compile Include="Entities\EANotification\EmailNotificationResponse.cs" />
+    <Compile Include="Entities\EANotification\EuropAssistClaimDetails.cs" />
+    <Compile Include="Entities\Fspe\Address.cs" />
+    <Compile Include="Entities\Fspe\FspeIntegration\CarrierCode.cs" />
+    <Compile Include="Entities\Fspe\FspeIntegration\ClassOfBusiness.cs" />
+    <Compile Include="Entities\Fspe\FspeIntegration\Debarments.cs" />
+    <Compile Include="Entities\Fspe\FspeIntegration\Debarred.cs" />
+    <Compile Include="Entities\Fspe\FspeIntegration\FSP.cs" />
+    <Compile Include="Entities\Fspe\FspeIntegration\FSPEResponse.cs" />
+    <Compile Include="Entities\Fspe\FspeIntegration\FSPEResponseReference.cs" />
+    <Compile Include="Entities\Fspe\FspeIntegration\FspProduct.cs" />
+    <Compile Include="Entities\Fspe\FspeIntegration\FspProducts.cs" />
+    <Compile Include="Entities\Fspe\FspeIntegration\FspRepCOB.cs" />
+    <Compile Include="Entities\Fspe\FspeIntegration\FspRepCOBs.cs" />
+    <Compile Include="Entities\Fspe\FspeIntegration\FSPs.cs" />
+    <Compile Include="Entities\Fspe\FspeIntegration\KeyIndividual.cs" />
+    <Compile Include="Entities\Fspe\FspeIntegration\KeyIndividuals.cs" />
+    <Compile Include="Entities\Fspe\FspeIntegration\KIClassOfBusiness.cs" />
+    <Compile Include="Entities\Fspe\FspeIntegration\KIProduct.cs" />
+    <Compile Include="Entities\Fspe\FspeIntegration\Personresponse.cs" />
+    <Compile Include="Entities\Fspe\FspeIntegration\Personresponses.cs" />
+    <Compile Include="Entities\Fspe\FspeIntegration\Product.cs" />
+    <Compile Include="Entities\Fspe\FspeIntegration\Products.cs" />
+    <Compile Include="Entities\Fspe\FspeIntegration\PublicationResponse.cs" />
+    <Compile Include="Entities\Fspe\FspeIntegration\RepProduct.cs" />
+    <Compile Include="Entities\Fspe\FspeIntegration\Representative.cs" />
+    <Compile Include="Entities\Fspe\FspeIntegration\Representatives.cs" />
+    <Compile Include="Entities\Fspe\FspeIntegration\RootFSPEResponseReference.cs" />
+    <Compile Include="Entities\Fspe\FspeIntegration\SoleProprietor.cs" />
+    <Compile Include="Entities\Fspe\FspeIntegration\SoleProprietors.cs" />
+    <Compile Include="Entities\Fspe\FspeIntegration\SPClassOfBusiness.cs" />
+    <Compile Include="Entities\Fspe\FspeIntegration\SPProduct.cs" />
+    <Compile Include="Entities\Fspe\FspeIntegration\V3FSPPublicationResponse.cs" />
+    <Compile Include="Entities\Fspe\FspLicenseCategory.cs" />
+    <Compile Include="Entities\Fspe\ComplianceOfficer.cs" />
+    <Compile Include="Entities\Fspe\ContactPerson.cs" />
+    <Compile Include="Entities\Fspe\Fsp.cs" />
+    <Compile Include="Entities\Fspe\FSPSubscription.cs" />
+    <Compile Include="Entities\Fspe\GetAllFromSubscriptionList.cs" />
+    <Compile Include="Entities\Fspe\RepQualification.cs" />
+    <Compile Include="Entities\Fspe\RepEntity.cs" />
+    <Compile Include="Entities\Fspe\RepLicenseCategory.cs" />
+    <Compile Include="Entities\Fspe\RootGetAllFromSubscriptionList.cs" />
+    <Compile Include="Entities\Fspe\RootGetAllFromSubscriptionListResponse.cs" />
+    <Compile Include="Entities\Fspe\RootSubmitSubscriptionList.cs" />
+    <Compile Include="Entities\Fspe\RootSubmitSubscriptionListResponse.cs" />
+    <Compile Include="Entities\Fspe\SubmitSubscriptionList.cs" />
+    <Compile Include="Entities\Hyphen\HyphenVerificationBankResponse.cs" />
+    <Compile Include="Entities\Hyphen\HyphenVerificationRequest.cs" />
+    <Compile Include="Entities\Hyphen\HyphenVerificationResult.cs" />
+    <Compile Include="Entities\BlobStorage\DocumentEntry.cs" />
+    <Compile Include="Entities\Hyphen\RootHyphenVerificationBankResponse.cs" />
+    <Compile Include="Entities\Hyphen\RootHyphenVerificationResult.cs" />
+    <Compile Include="Entities\MediCare\MedicalInvoiceUpdateMessage.cs" />
+    <Compile Include="Entities\Qlink\QlinkDeductionCode.cs" />
+    <Compile Include="Entities\Qlink\QlinkPolicyModel.cs" />
+    <Compile Include="Entities\Qlink\QlinkReservationTransactionModel.cs" />
+    <Compile Include="Entities\Qlink\QlinkSearchRequest.cs" />
+    <Compile Include="Entities\Qlink\QlinkTransactionModel.cs" />
+    <Compile Include="Entities\Qlink\QlinkTransactionRequest.cs" />
+    <Compile Include="Entities\Qlink\QlinkTransactionResponse.cs" />
+    <Compile Include="Entities\Sms\SmsRequest.cs" />
+    <Compile Include="Entities\STP\STPIntegrationBody.cs" />
+    <Compile Include="Entities\Vopd\HomeAffairsStatusVerification.cs" />
+    <Compile Include="Entities\Vopd\QuickVopdResponseMessage.cs" />
+    <Compile Include="Entities\Vopd\RootHomeAffairsStatusVerificationRequest.cs" />
+    <Compile Include="Entities\Vopd\VopdRequestMessage.cs" />
+    <Compile Include="Entities\Vopd\VopdResponse.cs" />
+    <Compile Include="Entities\Vopd\VerificationDetail.cs" />
+    <Compile Include="Entities\Vopd\VopdResponseMessage.cs" />
+    <Compile Include="Enums\ActionEnum.cs" />
+    <Compile Include="Enums\VopdVerificationType.cs" />
+    <Compile Include="Interfaces\AzureBlob\IBinaryStorageService.cs" />
+    <Compile Include="Interfaces\CompCare\ICCClaimService.cs" />
+    <Compile Include="Interfaces\CompCare\IMedicalReportService.cs" />
+    <Compile Include="Interfaces\EuropAssistNotification\IEuropAssistNotificationService.cs" />
+    <Compile Include="Interfaces\Exchange\IExchangeMonitorService.cs" />
+    <Compile Include="Interfaces\Fspe\IFspeImportIntegrationService.cs" />
+    <Compile Include="Interfaces\Fspe\IFspeService.cs" />
+    <Compile Include="Interfaces\Hyphen\IHyphenAccountVerificationResponseListener.cs" />
+    <Compile Include="Interfaces\Hyphen\IHyphenAccountVerificationService.cs" />
+    <Compile Include="Interfaces\Qlink\IQlinkIntegrationService.cs" />
+    <Compile Include="Interfaces\Sms\ISmsRequestService.cs" />
+    <Compile Include="Interfaces\Vopd\IVopdRequestProcessorService.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Entities\ScanCare\" />
+  </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="Microsoft.DependencyValidation.Analyzers">
+      <Version>0.11.0</Version>
+    </PackageReference>
+    <PackageReference Include="Microsoft.ServiceFabric.Services.Remoting">
+      <Version>3.4.664</Version>
+    </PackageReference>
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\Common\RMA.Common\RMA.Common.csproj">
+      <Project>{C30FB382-556D-41E4-B987-DEA4F962059A}</Project>
+      <Name>RMA.Common</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\Admin\RMA.Service.Admin.MasterDataManager.Contracts\RMA.Service.Admin.MasterDataManager.Contracts.csproj">
+      <Project>{81ABD00C-262F-48DF-A933-63E3730F0245}</Project>
+      <Name>RMA.Service.Admin.MasterDataManager.Contracts</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <AdditionalFiles Include="..\..\..\Solution Items\RMA.DependencyValidation\ServicePlatform.layerdiagram">
+      <Link>ServicePlatform.layerdiagram</Link>
+      <Visible>False</Visible>
+    </AdditionalFiles>
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+</Project>

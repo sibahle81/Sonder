@@ -1,0 +1,50 @@
+
+
+<span >
+    <mat-card *ngIf="isLoading$ | async">
+        <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+        <label class="mat-label other-label"><i>loading...please wait</i></label>
+    </mat-card>
+    <mat-card *ngIf="!(isLoading$ | async)">
+        <span *ngIf="message && message != ''">
+            <label class="mat-label other-label">
+                <mat-card>
+                    <span class="material-icons info">info</span>
+                    <span> {{message}}</span>
+                </mat-card>
+            </label><br />
+        </span>
+        <form [formGroup]="form" class="mat-container details-form" novalidate>
+            <section>
+                <mat-form-field class="mat-form-field">
+                    <label class="mat-label other-label">Industry Class</label>
+                    <mat-select (selectionChange)="setParameter('IndustryClassId', $event.value)" name="industryClass"
+                        id="industryClass" formControlName="industryClass">
+                        <mat-option *ngFor="let industryClass of industryClasses" [value]="industryClass">
+                            {{formatLookup(industryClass)}}
+                        </mat-option>
+                    </mat-select>
+                    <mat-error *ngIf="form.get('industryClass').hasError('required')">
+                        industry class is <strong>required</strong>
+                    </mat-error>
+                </mat-form-field>
+
+                <mat-form-field class="mat-form-field-right">
+                    <label class="mat-label other-label">Effective To Date</label>
+                    <input (dateChange)="setParameter('EndDate', $event.value)" matInput
+                        formControlName="effectiveToDate" [matDatepicker]="effectiveToDate" [min]="minDate">
+                    <mat-datepicker-toggle matSuffix [for]="effectiveToDate">
+                    </mat-datepicker-toggle>
+                    <mat-datepicker touchUi="true" #effectiveToDate></mat-datepicker>
+                    <mat-error *ngIf="form.get('effectiveToDate').hasError('required')">
+                        effective date is <strong>required</strong>
+                    </mat-error>
+                </mat-form-field>
+            </section>
+        </form>
+        <div *ngIf="parameters && parameters.length > 1 && reportUrl">
+            <br />
+            <ssrs-report-viewer-V2 [reporturl]="reportUrl" [parameters]="parameters"></ssrs-report-viewer-V2>
+        </div>
+    </mat-card>
+</span>

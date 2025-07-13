@@ -1,0 +1,25 @@
+<div class="menu-bar">
+  <span class="material-icons">
+    live_help
+  </span>
+  Referral Context
+  <span (click)="cancel()" class="material-icons pointer right" matTooltip="close">
+    cancel
+  </span>
+</div>
+
+<lead-search *ngIf="data.referral.referralItemType == lead" [basicMode]="true" (leadSelectedEmit)="setReferralItem($event)"></lead-search>
+
+<quote-search-V2 *ngIf="data.referral.referralItemType == quote" (quoteSelectedEmit)="setReferralItem($event)"></quote-search-V2>
+
+<member-search-V2 *ngIf="data.referral.referralItemType == member" [basicMode]="true" (memberSelectedEmit)="setReferralItem($event)"></member-search-V2>
+
+<policy-search-V2 *ngIf="data.referral.referralItemType == policy" (policySelectedEmit)="setReferralItem($event)"></policy-search-V2>
+
+<claim-search *ngIf="data.referral.referralItemType == personEvent" [title]="'Person Event'" (claimSelectedEmit)="setReferralItem($event)"></claim-search>
+
+<claim-search *ngIf="data.referral.referralItemType == claim" (claimSelectedEmit)="setReferralItem($event)"></claim-search>
+
+<span *ngIf="data.referral.referralItemType == debtor"><debtor-search (debtorSelectedEmit)="setReferralItem($event)"></debtor-search></span>
+
+<span *ngIf="data.referral.referralItemType == payment">Payment search context to be added here</span>

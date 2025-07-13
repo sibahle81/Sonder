@@ -1,0 +1,184 @@
+<div *ngIf="(dataSource.loading$ | async)">
+  <mat-card>
+    <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+    <label class="mat-label other-label"><i>loading contacts...please wait</i></label>
+  </mat-card>
+</div>
+
+<div *ngIf="(isLoading$ | async)">
+  <mat-card>
+    <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+    <label class="mat-label other-label"><i>saving contact...please wait</i></label>
+  </mat-card>
+</div>
+
+<div [hidden]="(dataSource.loading$ | async)">
+  <div [hidden]="(showDetail$ | async) || (showForm$ | async)">
+
+    <div class="menu-bar">
+      <span class="material-icons">
+        phone_iphone
+      </span>
+      Contacts
+      <span
+        *ngIf="!isReadOnly && (userHasPermission(editPermission) || (userHasPermission(addPermission) && lead.leadId <= 0))"
+        (click)="showForm(null, true)" class="material-icons pointer right" matTooltip="add contact">
+        add_circle
+      </span>
+    </div>
+
+    <div [hidden]="!(dataSource.data && dataSource.data.data && dataSource.data.data.length > 0)">
+      <mat-table #table [dataSource]="dataSource" matSort id="tblData">
+        <ng-container matColumnDef="select">
+          <mat-header-cell *matHeaderCellDef> Select </mat-header-cell>
+          <mat-cell *matCellDef="let row">
+            <mat-checkbox (change)="contactSelected(row)">
+            </mat-checkbox>
+          </mat-cell>
+        </ng-container>
+        <ng-container matColumnDef="contact">
+          <mat-header-cell *matHeaderCellDef> Contact </mat-header-cell>
+          <mat-cell *matCellDef="let row">{{row.name + ' ' + row.surname}}</mat-cell>
+        </ng-container>
+        <ng-container matColumnDef="emailAddress">
+          <mat-header-cell *matHeaderCellDef> Email </mat-header-cell>
+          <mat-cell *matCellDef="let row"><data-masker [text]="row.emailAddress"></data-masker></mat-cell>
+        </ng-container>
+        <ng-container matColumnDef="contactNumber">
+          <mat-header-cell *matHeaderCellDef> Mobile </mat-header-cell>
+          <mat-cell *matCellDef="let row"><data-masker [text]="row.contactNumber"></data-masker></mat-cell>
+        </ng-container>
+        <ng-container matColumnDef="telephoneNumber">
+          <mat-header-cell *matHeaderCellDef> Telephone </mat-header-cell>
+          <mat-cell *matCellDef="let row"><data-masker [text]="row.telephoneNumber"></data-masker></mat-cell>
+        </ng-container>
+        <ng-container matColumnDef="preferredCommunicationTypeId">
+          <mat-header-cell *matHeaderCellDef> Preferred Communication </mat-header-cell>
+          <mat-cell *matCellDef="let row">{{getCommunicationType(row.preferredCommunicationTypeId)}}</mat-cell>
+        </ng-container>
+        <ng-container matColumnDef="actions">
+          <mat-header-cell *matHeaderCellDef>Action</mat-header-cell>
+          <mat-cell *matCellDef="let row">
+            <a (click)="showForm(row, false)" role="button" class="link-edit">
+              <span matTooltip="view" class="material-icons icn pointer">
+                visibility
+              </span>
+            </a>
+            <a *ngIf="!isReadOnly && (userHasPermission(editPermission) || (userHasPermission(addPermission) && lead.leadId <= 0))"
+              (click)="showForm(row, true)" role="button" class="link-edit">
+              <span matTooltip="edit" class="material-icons icn pointer">
+                settings
+              </span>
+            </a>
+            <a *ngIf="row.contactId <= 0" (click)="delete(row)" role="button" class="link-edit">
+              <span matTooltip="delete" class="material-icons icn pointer">
+                delete
+              </span>
+            </a>
+            <a *ngIf="hasAuditPermission && row.contactId > 0" (click)="openAuditDialog(row)" role="button"
+              class="link-edit">
+              <span matTooltip="audit" class="material-icons icn pointer">
+                fingerprint
+              </span></a>
+          </mat-cell>
+        </ng-container>
+
+        <mat-header-row *matHeaderRowDef="getDisplayedColumns()"></mat-header-row>
+        <mat-row *matRowDef="let row; columns: getDisplayedColumns();"></mat-row>
+      </mat-table>
+
+      <mat-paginator #paginator [pageIndex]="0" [pageSize]="5" [pageSizeOptions]="[5, 10, 25, 100]"
+        [length]="this.dataSource.rowCount$ | async" (page)="getData()">
+      </mat-paginator>
+    </div>
+
+    <div
+      *ngIf="!(dataSource.data && dataSource.data.data && dataSource.data.data.length > 0 || (dataSource.loading$ | async))">
+      <mat-card>
+        <label class="mat-label other-label"><i>No contacts found...</i></label>
+      </mat-card>
+    </div>
+  </div>
+
+  <div *ngIf="(showForm$ | async) && !(isLoading$ | async)">
+    <mat-card>
+      <div *ngIf="!(isLoading$ | async)" class="menu-bar">
+        <span class="material-icons">
+          phone_iphone
+        </span>
+        Contacts
+        <span *ngIf="!(isLoading$ | async)" (click)="close()" class="material-icons pointer right" matTooltip="close">
+          close
+        </span>
+        <span *ngIf="form.valid && !form.pristine" (click)="save()" class="material-icons pointer right pulseGreen"
+          matTooltip="save">
+          save
+        </span>
+      </div>
+
+      <div [hidden]="(isLoading$ | async)">
+        <form [formGroup]="form" class="mat-container details-form" novalidate>
+          <section>
+            <mat-form-field class="mat-form-field">
+              <label class="mat-label other-label mandatory-field">Name</label>
+              <input matInput formControlName="name" name="name" id="name" />
+              <mat-error *ngIf="form.get('name').hasError('required')">
+                name is <strong>required</strong>
+              </mat-error>
+            </mat-form-field>
+            <mat-form-field class="mat-form-field-right">
+              <label class="mat-label other-label mandatory-field">Surname</label>
+              <input matInput formControlName="surname" name="surname" id="surname" />
+              <mat-error *ngIf="form.get('surname').hasError('required')">
+                surname is <strong>required</strong>
+              </mat-error>
+            </mat-form-field>
+          </section>
+
+          <section>
+            <mat-form-field class="mat-form-field">
+              <label class="mat-label other-label mandatory-field">Preferred Communication Type</label>
+              <mat-select name="preferredCommunicationType" id="preferredCommunicationType"
+                formControlName="preferredCommunicationType" (selectionChange)="communicationTypeChanged($event.value)">
+                <mat-option *ngFor="let communicationType of filteredCommunicationTypes" [value]="communicationType">
+                  {{formatLookup(communicationType)}}
+                </mat-option>
+              </mat-select>
+              <mat-error *ngIf="form.get('preferredCommunicationType').hasError('required')">
+                preferred communication type is <strong>required</strong>
+              </mat-error>
+            </mat-form-field>
+          </section>
+
+          <section>
+            <mat-form-field class="mat-form-field">
+              <label class="mat-label other-label mandatory-field">Email</label>
+              <input matInput formControlName="emailAddress" name="emailAddress" id="emailAddress" />
+              <mat-error *ngIf="form.get('emailAddress').hasError('required')">
+                email is <strong>required</strong>
+              </mat-error>
+            </mat-form-field>
+            <mat-form-field class="mat-form-field-right">
+              <label class="mat-label other-label">Mobile</label>
+              <input matInput formControlName="contactNumber" name="contactNumber" id="contactNumber" NumberOnly />
+              <mat-error *ngIf="form.get('contactNumber').hasError('required')">
+                contact number is <strong>required</strong>
+              </mat-error>
+            </mat-form-field>
+          </section>
+
+          <section>
+            <mat-form-field class="mat-form-field">
+              <label class="mat-label other-label">Telephone</label>
+              <input matInput formControlName="telephoneNumber" name="telephoneNumber" id="telephoneNumber"
+                NumberOnly />
+              <mat-error *ngIf="form.get('telephoneNumber').hasError('required')">
+                telephone number is <strong>required</strong>
+              </mat-error>
+            </mat-form-field>
+          </section>
+        </form>
+      </div>
+    </mat-card>
+  </div>
+</div>

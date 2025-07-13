@@ -1,0 +1,112 @@
+<mat-card-header>
+  <mat-card-title class="wizard-font card-title grey">
+    <h1 style="padding: 0;">Inter Debtor Transfer</h1>
+  </mat-card-title>
+</mat-card-header>
+
+<form [formGroup]="form" class="mat-container details-form" novalidate>
+      <div>
+        <section>
+          <mat-form-field class="mat-form-field">
+            <label class="mat-label other-label mandatory-field">From Debtor Number</label>
+            <input matInput formControlName="fromDebtorNumber" name="fromDebtorNumber" id="fromDebtorNumber" readonly />
+            <mat-error *ngIf="form.get('fromDebtorNumber').hasError('required')">
+              From Debtor number is <strong>required</strong>
+            </mat-error>
+          </mat-form-field>
+        </section>
+        <br/>
+        <section>
+          <mat-form-field class="mat-form-field">
+            <label class="mat-label other-label">From Debtor Account</label>
+            <input matInput formControlName="fromDebtorAccount" name="fromDebtorAccount" id="fromDebtorAccount" readonly />
+            <mat-error *ngIf="form.get('fromDebtorAccount').hasError('required')">
+              From Debtor account is <strong>required</strong>
+            </mat-error>
+         </mat-form-field>
+        </section>
+        <br/>
+        <section>
+            <div [hidden]="dataSource.data.length === 0 || dataSource.isLoading" class="table-container">
+              <mat-table #table [dataSource]="dataSource" #sort matSort>
+                <!--Statement Reference -->
+                   <ng-container matColumnDef="rmaReference">
+                    <mat-header-cell *matHeaderCellDef mat-sort-header>Document Number</mat-header-cell>
+                    <mat-cell *matCellDef="let row"> {{row.rmaReference}} </mat-cell>
+                  </ng-container>
+
+                 <!-- Date -->
+                <ng-container matColumnDef="transactionDate">
+                      <mat-header-cell *matHeaderCellDef mat-sort-header>Document Date</mat-header-cell>
+                      <mat-cell *matCellDef="let row"> {{this.datePipe.transform(row.transactionDate, 'yyyy-MM-dd')}} </mat-cell>
+                </ng-container>
+
+                <!--Transaction Amount -->
+                <ng-container matColumnDef="amount">
+                  <mat-header-cell *matHeaderCellDef mat-sort-header>Amount</mat-header-cell>
+                  <mat-cell *matCellDef="let row"> {{ row.amount | currency:'ZAR':'' | replace:',':' ' }} </mat-cell>
+                </ng-container>
+
+                 <!--Transaction Balance -->
+                 <ng-container matColumnDef="unallocatedAmount">
+                  <mat-header-cell *matHeaderCellDef mat-sort-header>Balance</mat-header-cell>
+                  <mat-cell *matCellDef="let row"> {{ row.unallocatedAmount | currency:'ZAR':'' | replace:',':' ' }} </mat-cell>
+                </ng-container>
+
+                <!--Transfer Amount -->
+                    <ng-container matColumnDef="transferAmount">
+                      <mat-header-cell *matHeaderCellDef mat-sort-header> Transfer Amount </mat-header-cell>
+                        <mat-cell *matCellDef="let row"> {{ row.transferAmount | currency:'ZAR':'' | replace:',':' ' }} </mat-cell>
+                  </ng-container>
+
+                <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
+                <mat-row *matRowDef="let row; columns: displayedColumns;"></mat-row>
+              </mat-table>
+
+              <mat-paginator #paginator [length]="paginator.length" [pageIndex]="0" [pageSize]="5"
+                [pageSizeOptions]="[5, 10, 25, 100]">
+              </mat-paginator>
+            </div>
+        </section>
+        <br />
+
+        <section>
+          <mat-form-field class="mat-form-field">
+            <label class="mat-label other-label mandatory-field">Total Transfer Amount</label>
+            <input matInput formControlName="transferAmount" name="transferAmount" id="transferAmount" readonly />
+            <mat-error *ngIf="form.get('transferAmount').hasError('required')">
+              Transfer amount is <strong>required</strong>
+            </mat-error>
+          </mat-form-field>
+        </section>
+        <br/>
+
+        <section>
+          <mat-form-field class="mat-form-field">
+            <label class="mat-label other-label mandatory-field">To Debtor Number</label>
+            <input matInput formControlName="toDebtorNumber" name="toDebtorNumber" id="toDebtorNumber" readonly />
+            <mat-error *ngIf="form.get('toDebtorNumber').hasError('required')">
+              To Debtor number is <strong>required</strong>
+            </mat-error>
+          </mat-form-field>
+        </section>
+        <br/>
+
+        <section>
+          <mat-form-field class="mat-form-field">
+            <label class="mat-label other-label">To Debtor Account</label>
+            <input matInput formControlName="toDebtorAccount" name="toDebtorAccount" id="toDebtorAccount" readonly />
+            <mat-error *ngIf="form.get('toDebtorAccount').hasError('required')">
+              To Debtor account is <strong>required</strong>
+            </mat-error>
+         </mat-form-field>
+        </section>
+
+        <section>
+         <inter-debtor-transfer-documents [documentSetId]="29" [keyName]="'FinPayeNumber'" [keyValue]="requestCode">
+         </inter-debtor-transfer-documents>
+        </section>
+      </div>
+</form>
+
+<br/>

@@ -1,0 +1,90 @@
+<form [formGroup]="form" name="form" class="mat-container details-form">
+  <mat-card class="matcard">
+    <mat-card-content class="matcard content">
+      <div>
+        <mat-form-field class="mat-form-field">
+          <label class="mat-label other-label mandatory-field">Search CPT Code</label>
+          <input matInput id="itemCode" name="itemCode" formControlName="itemCode" (change)="search()" />
+        </mat-form-field>
+
+        <mat-form-field style="margin-left: 25px;" class="mat-form-field">
+          <label class="mat-label other-label">Item Description</label>
+          <input matInput id="itemDescription" name="itemDescription" formControlName="itemDescription" />
+        </mat-form-field>
+      </div>
+      <div *ngIf="dataSource.loading$ | async">
+        <mat-progress-bar mode="indeterminate"
+          [ngClass]="{ 'loading-main-double-menu-progress': doubleMenu, 'loading-main-single-menu-progress': !doubleMenu }">
+        </mat-progress-bar>
+        <p class="site-font grey">Loading RPLCodes...</p>
+      </div>
+
+      <div [hidden]="paginator.length == 0">
+        <mat-table #table [dataSource]="dataSource" matSort matSortActive="tariffId" matSortDirection="desc"
+          matSortDisableClear>
+          <ng-container matColumnDef="tariffCode">
+            <mat-header-cell *matHeaderCellDef mat-sort-header> Tariff Code </mat-header-cell>
+            <mat-cell *matCellDef="let crosswalk" matTooltip="{{crosswalk.tariffCode}}">
+              <span class="truncate-text"> {{ crosswalk.tariffCode}} </span>
+            </mat-cell>
+          </ng-container>
+          <ng-container matColumnDef="tariffDescription">
+            <mat-header-cell *matHeaderCellDef mat-sort-header> Tariff Description</mat-header-cell>
+            <mat-cell *matCellDef="let crosswalk" matTooltip="{{crosswalk.tariffDescription}}">
+              <span class="truncate-text"> {{ crosswalk.tariffDescription}} </span>
+            </mat-cell>
+          </ng-container>
+          <ng-container matColumnDef="treatmentCode">
+            <mat-header-cell *matHeaderCellDef mat-sort-header> CPT Code </mat-header-cell>
+            <mat-cell *matCellDef="let crosswalk" matTooltip="{{crosswalk.treatmentCode}}">
+              <span class="truncate-text"> {{ form.controls['itemCode'].value }} </span>
+            </mat-cell>
+          </ng-container>
+          <ng-container matColumnDef="treatmentCodeDescription">
+            <mat-header-cell *matHeaderCellDef mat-sort-header> CPT Description </mat-header-cell>
+            <mat-cell *matCellDef="let crosswalk" matTooltip="{{crosswalk.treatmentCodeDescription}}">
+              <span class="truncate-text"> {{ crosswalk.treatmentCodeDescription }} </span>
+            </mat-cell>
+          </ng-container>
+          <ng-container matColumnDef="defaultQuantity">
+            <mat-header-cell *matHeaderCellDef mat-sort-header>Default Quantity </mat-header-cell>
+            <mat-cell *matCellDef="let crosswalk" matTooltip="{{crosswalk.defaultQuantity}}">
+              <span class="truncate-text"> {{ crosswalk.defaultQuantity}} </span>
+            </mat-cell>
+          </ng-container>
+          <ng-container matColumnDef="tariffAmount">
+            <mat-header-cell *matHeaderCellDef mat-sort-header> Tariff Amount</mat-header-cell>
+            <mat-cell *matCellDef="let crosswalk" matTooltip="{{crosswalk.tariffAmount}}">
+              <span class="truncate-text"> {{ crosswalk.tariffAmount}} </span>
+            </mat-cell>
+          </ng-container>
+          <ng-container matColumnDef="requestedQuantity">
+            <mat-header-cell *matHeaderCellDef> Requested Quantity</mat-header-cell>
+            <mat-cell *matCellDef="let crosswalk" matTooltip="{{crosswalk.requestedQuantity}}">
+              <input #requestedQuantity type="number" style="max-width: 40px;" value="{{crosswalk.requestedQuantity}}"
+                (keyup)="calculateRequestedQty(requestedQuantity.value, crosswalk)" (change)="calculateRequestedQty(requestedQuantity.value, crosswalk)">
+            </mat-cell>
+          </ng-container>
+          <ng-container matColumnDef="requestedAmount">
+            <mat-header-cell *matHeaderCellDef> Requested Amount</mat-header-cell>
+            <mat-cell *matCellDef="let crosswalk" matTooltip="{{crosswalk.requestedAmount}}">
+              <span class="truncate-text"> {{ crosswalk.requestedAmount}} </span>
+            </mat-cell>
+          </ng-container>
+          <ng-container matColumnDef="select">
+            <mat-header-cell *matHeaderCellDef></mat-header-cell>
+            <mat-cell *matCellDef="let crosswalk">
+              <mat-checkbox (change)="onSelectCrosswalk($event,crosswalk,form.controls['itemCode'].value)">
+              </mat-checkbox>
+            </mat-cell>
+          </ng-container>
+          <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
+          <mat-row *matRowDef="let row; columns: displayedColumns;"></mat-row>
+        </mat-table>
+        <mat-paginator #paginator [length]="dataSource.rowCount$" [pageIndex]="0" [pageSize]="10"
+          [pageSizeOptions]="[5, 10, 25, 100]">
+        </mat-paginator>
+      </div>
+    </mat-card-content>
+  </mat-card>
+</form>

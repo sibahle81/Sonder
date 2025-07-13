@@ -1,0 +1,162 @@
+<div>
+  <mat-card>
+      <mat-card-header>
+          <mat-card-title class="wizard-font card-title grey">
+              <h1></h1>
+              <h3>{{reportTitle}}</h3>
+          </mat-card-title>
+      </mat-card-header>
+      <mat-card-content>
+          <form [formGroup]="form" class="mat-container details-form" novalidate>
+              <div>
+                  <section>
+                      <div>
+                          <div><label class="mat-label other-label mandatory-field">Report Type</label></div>
+                          <mat-form-field class="mat-form-field">
+                              <mat-select name="quoteReportTypes" id="quoteReportTypes"
+                                  formControlName="quoteReportTypes"
+                                  (selectionChange)="quoteReportTypeChanged($event)">
+                                  <mat-option *ngFor="let quoteReportType of quoteReportTypes"
+                                      [value]="quoteReportType">
+                                      {{quoteReportType.name}}
+                                  </mat-option>
+                              </mat-select>
+                          </mat-form-field>
+                      </div>
+                  </section>
+              </div>
+              <div>
+                  <div class="form">
+                      <section [hidden]='!isDateFilterVisble'>
+                          <div class="field-left">
+                              <div><label class="mat-label other-label mandatory-field">Start Date</label></div>
+                              <mat-form-field class="mat-form-field">
+                                  <input matInput [matDatepicker]="startDatePicker" date="true" [value]="startDt.value"
+                                      time="false" [formControl]="startDt" readonly
+                                      (ngModelChange)="startDateChange($event)" [max]="startMaxDate">
+                                  <mat-datepicker-toggle matSuffix class="picker-toggle" [for]="startDatePicker">
+                                  </mat-datepicker-toggle>
+                                  <mat-datepicker #startDatePicker touchUi="true" ng-model-options="{ timezone: 'sast' }">
+                                  </mat-datepicker>
+                              </mat-form-field>
+                          </div>
+                          <div class="field-right">
+                              <div><label class="mat-label other-label mandatory-field field-container-left">End Date</label></div>
+                              <mat-form-field class="mat-form-field">
+                                  <input matInput [matDatepicker]="endDatePicker" date="true" [value]="endDt.value"
+                                      time="false" [formControl]="endDt" readonly (ngModelChange)="endDateChange($event)"
+                                      [max]="endMinDate">
+                                  <mat-datepicker-toggle matSuffix class="picker-toggle" [for]="endDatePicker">
+                                  </mat-datepicker-toggle>
+                                  <mat-datepicker #endDatePicker touchUi="true" ng-model-options="{ timezone: 'sast' }">
+                                  </mat-datepicker>
+                              </mat-form-field>
+                          </div>
+                      </section>
+                  </div>
+              </div>
+              <div>
+                  <section [hidden]="!isQuoteStatus">
+                      <div class="field-left">
+                          <div><label class="mat-label other-label mandatory-field">Quote Status</label></div>
+                          <mat-form-field class="mat-form-field">
+                              <mat-select name="quoteStatus" id="quoteStatus" (selectionChange)="quoteStatusChanged($event)">
+                                  <mat-option *ngFor="let quoteStatus of quoteStatus" [value] ="quoteStatus">
+                                      {{quoteStatus.name}}
+                                  </mat-option>  
+                              </mat-select>
+                          </mat-form-field>
+                      </div>
+                  </section>
+
+                  <section [hidden]='!isQuoteClientType'>
+                      <div class="field-right" >
+                          <div><label class="mat-label other-label mandatory-field">Client Type</label></div>
+                          <mat-form-field class="mat-form-field">
+                              <mat-select name="quoteClientType" id="quoteClientType"
+                                  (selectionChange)="quoteClientTypeChanged($event)">
+                                  <mat-option *ngFor="let quoteClientType of quoteClientType" [value]="quoteClientType">
+                                      {{quoteClientType.name}}
+                                  </mat-option>
+                              </mat-select>
+                          </mat-form-field>
+                      </div>
+                 
+                  </section>
+
+                
+
+                  <section [hidden]='!isQuoteFilterDateType'>
+                      <div class="field-container-right" >
+                          <div><label class="mat-label other-label mandatory-field">Filter Date Type</label></div>
+                          <mat-form-field class="mat-form-field">
+                              <mat-select name="quoteFilterDateType" id="quoteFilterDateType"
+                                  (selectionChange)="quoteFilterDateientTypeChanged($event)">
+                                  <mat-option *ngFor="let quoteFilterDateType of quoteFilterDateType" [value]="quoteFilterDateType">
+                                      {{quoteFilterDateType.name}}
+                                  </mat-option>
+                              </mat-select>
+                          </mat-form-field>
+                      </div>
+                  </section>
+
+                  <section [hidden]='!isQuoteFilterSLA'>
+                    <div class="field-container-right" >
+                        <div><label class="mat-label other-label mandatory-field">SLA</label></div>
+                        <mat-form-field class="mat-form-field">
+                            <mat-select name="quoteFilterSLA" id="quoteFilterSLA"
+                                (selectionChange)="quoteFilterSLAChanged($event)">
+                                <mat-option *ngFor="let quoteFilterSLA of quoteFilterSLA" [value]="quoteFilterSLA">
+                                    {{quoteFilterSLA.name}}
+                                </mat-option>
+                            </mat-select>
+                        </mat-form-field>
+                    </div>
+                </section>
+                
+                
+              </div>
+
+              <section>
+                  <div class="ViewButton">
+                      <div class="mat-form-field">
+                          <div class="form-buttons" (click)="viewReport()">
+                              <button class="button submit-button pad-left">View</button>
+                          </div>
+                      </div>
+                  </div>
+              </section>
+
+              <div class="form">
+                  <section>
+                      <table>
+                          <tr>
+                              <td>
+                                  <input type="image" alt="export" (click)="exportReport()"
+                                      src="/assets/images/downloads-icon.png" width="40" height="40" />
+                              </td>
+                              <td>
+                                  <mat-radio-group aria-labelledby="reportformat-radio-group-label"
+                                      class="reportformat-radio-group" (change)="reportFormatChange($event)">
+                                      <mat-radio-button class="reportformat-radio-button"
+                                          *ngFor="let reportFormat of reportFormats" [value]="reportFormat">
+                                          {{reportFormat}} &nbsp;&nbsp;
+                                      </mat-radio-button>
+                                  </mat-radio-group>
+                              </td>
+                          </tr>
+                      </table>
+                  </section>
+              </div>
+              <div [hidden]="!showReport">
+                  <br>
+                  <ssrs-reportviewer [reportserver]="reportServerAudit" [reporturl]="reportUrlAudit"
+                      [showparameters]="showParametersAudit" [format]="selectedReportFormat"
+                      [extension]="extensionAudit" [parameters]="parametersAudit" [language]="languageAudit"
+                      [width]="widthAudit" [height]="heightAudit" [toolbar]="toolbarAudit" [isDownload]="isDownload">
+                  </ssrs-reportviewer>
+              </div>
+          </form>
+      </mat-card-content>
+  </mat-card>
+</div>

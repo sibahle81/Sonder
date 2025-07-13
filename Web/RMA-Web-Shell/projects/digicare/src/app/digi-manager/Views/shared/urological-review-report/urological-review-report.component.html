@@ -1,0 +1,288 @@
+<form [formGroup]="form" name="form" class="mat-container details-form" novalidate>
+    <div *ngIf="isLoadingCategories">
+        <mat-progress-bar mode="indeterminate" [ngClass]="{ 'loading-main-double-menu-progress': doubleMenu, 'loading-main-single-menu-progress': !doubleMenu }">
+        </mat-progress-bar>
+        <p class="site-font grey">Loading categories...</p>
+    </div>
+
+    <section>
+        <div class="field-container">
+            <div><label class="mat-label other-label mandatory-field">Date Reviewed</label></div>
+            <mat-form-field>
+                <input matInput formControlName="dateReviewed" [matDatepicker]="DateReviewed" id="dateReviewed" name="dateReviewed">
+                <mat-datepicker-toggle matSuffix [for]="DateReviewed" [disabled]="true"></mat-datepicker-toggle>
+                <mat-datepicker touchUi="true" #DateReviewed></mat-datepicker>
+            </mat-form-field>
+        </div>
+        <div class="field-container-right">
+            <div><label class="mat-label other-label mandatory-field">Level of Injury</label></div>
+            <mat-select formControlName="levelofInjury" id="levelofInjury" name="levelofInjury">
+                <mat-option selected="selected" value="0" title="Select">Select</mat-option>
+				<mat-option value="1200" title="C1">C1</mat-option>
+				<mat-option value="1201" title="C2">C2</mat-option>
+				<mat-option value="1202" title="C3">C3</mat-option>
+				<mat-option value="1203" title="C4">C4</mat-option>
+				<mat-option value="1204" title="C5">C5</mat-option>
+				<mat-option value="1205" title="C6">C6</mat-option>
+				<mat-option value="1206" title="C7">C7</mat-option>
+				<mat-option value="1219" title="L1">L1</mat-option>
+				<mat-option value="1220" title="L2">L2</mat-option>
+				<mat-option value="1221" title="L3">L3</mat-option>
+				<mat-option value="1222" title="L4">L4</mat-option>
+				<mat-option value="1223" title="L5">L5</mat-option>
+				<mat-option value="1207" title="T1">T1</mat-option>
+				<mat-option value="1216" title="T10">T10</mat-option>
+				<mat-option value="1217" title="T11">T11</mat-option>
+				<mat-option value="1218" title="T12">T12</mat-option>
+				<mat-option value="1208" title="T2">T2</mat-option>
+				<mat-option value="1209" title="T3">T3</mat-option>
+				<mat-option value="1210" title="T4">T4</mat-option>
+				<mat-option value="1211" title="T5">T5</mat-option>
+				<mat-option value="1212" title="T6">T6</mat-option>
+				<mat-option value="1213" title="T7">T7</mat-option>
+				<mat-option value="1214" title="T8">T8</mat-option>
+				<mat-option value="1215" title="T9">T9</mat-option>
+            </mat-select>
+        </div>
+    </section>
+
+    <section>
+        <div class="field-container">
+            <div><label class="mat-label other-label mandatory-field">Examination BP</label></div>
+            <mat-form-field>
+                <input matInput formControlName="examinationBP" id="examinationBP" name="examinationBP">
+            </mat-form-field>
+        </div>
+        <div class="field-container-right">
+            <div><label class="mat-label other-label mandatory-field">Examination Pulse</label></div>
+            <mat-form-field>
+                <input matInput formControlName="examinationPulse" id="examinationPulse" name="examinationPulse">
+            </mat-form-field>
+        </div>
+    </section>
+    <section>
+        <div class="field-container">
+            <div><label class="mat-label other-label mandatory-field">Has Bed Sores?</label></div>
+            <mat-select formControlName="bedSores" id="bedSores" name="bedSores">
+                <mat-option value="Yes">Yes</mat-option>
+                <mat-option value="No">No</mat-option>
+            </mat-select>
+        </div>
+        <div class="field-container-right">
+            <div><label class="mat-label other-label">If bed sores please describe</label></div>
+            <textarea maxlength="1000" formControlName="txtbedsoresSymptoms" id="txtbedsoresSymptoms"
+                name="txtbedsoresSymptoms" matInput placeholder="please describe"></textarea>
+        </div>
+    </section>
+
+    <section>
+        <div class="field-container">
+            <div><label class="mat-label other-label">Cystoscopy</label></div>
+            <mat-form-field>
+                <input matInput formControlName="cystoscopy" id="cystoscopy" name="cystoscopy">
+            </mat-form-field>
+        </div>
+        <div class="field-container-right">
+            <div><label class="mat-label other-label">Urodynamics	</label></div>
+            <mat-select formControlName="urodynamics" id="urodynamics" name="urodynamics">
+                <mat-option selected="selected" value="0" title="Select">Select</mat-option>
+				<mat-option value="203" title="Detrusor areflexia">Detrusor areflexia</mat-option>
+				<mat-option value="201" title="Detrusor hyperreflexia with DESD">Detrusor hyperreflexia with DESD</mat-option>
+				<mat-option value="202" title="Detrusor hyperreflexia without DESD">Detrusor hyperreflexia without DESD</mat-option>
+				<mat-option value="200" title="Normal">Normal</mat-option>
+            </mat-select>
+        </div>
+    </section>
+    <section>
+        <div class="field-container">
+            <div><label class="mat-label other-label">LPP Test	</label></div>
+            <mat-select formControlName="lPPTest" id="lPPTest" name="lPPTest">
+                <mat-option selected="selected" value="0" title="Select">Select</mat-option>
+				<mat-option value="502" title=">50 cm/H2O">&gt;50 cm/H2O</mat-option>
+				<mat-option value="501" title="15-50 cm/H2O">15-50 cm/H2O</mat-option>
+				<mat-option value="500" title="Absent">Absent</mat-option>
+            </mat-select>
+        </div>
+        <div class="field-container-right">
+            <div><label class="mat-label other-label">Compliance Test</label></div>
+            <mat-select formControlName="complianceTest" id="complianceTest" name="complianceTest">
+                <mat-option selected="selected" value="0" title="Select">Select</mat-option>
+				<mat-option value="602" title="<10">&lt;10</mat-option>
+				<mat-option value="600" title=">20">&gt;20</mat-option>
+				<mat-option value="601" title="10-20">10-20</mat-option>
+            </mat-select>
+        </div>
+    </section>
+    <section>
+        <div class="field-container">
+            <div><label class="mat-label other-label">OtherTest</label></div>
+            <mat-form-field>
+                <input matInput formControlName="otherTest" id="otherTest" name="otherTest">
+            </mat-form-field>
+        </div>
+        <div class="field-container-right">
+            <div><label class="mat-label other-label">VCU Test</label></div>
+            <mat-select formControlName="vCUTest" id="vCUTest" name="vCUTest">
+                <mat-option value="Yes">Yes</mat-option>
+                <mat-option value="No">No</mat-option>
+            </mat-select>
+        </div>
+    </section>
+    <section>
+        <div class="field-container">
+            <div><label class="mat-label other-label mandatory-field">Date of VCU Test	</label></div>
+            <mat-form-field>
+                <input matInput formControlName="dateofVCUTest" [matDatepicker]="DateofVCUTest" id="dateofVCUTest" name="dateofVCUTest">
+                <mat-datepicker-toggle matSuffix [for]="DateofVCUTest" [disabled]="true"></mat-datepicker-toggle>
+                <mat-datepicker touchUi="true" #DateofVCUTest></mat-datepicker>
+            </mat-form-field>
+        </div>
+        <div class="field-container-right">
+            <div><label class="mat-label other-label">Reflux Grade</label></div>
+            <mat-select formControlName="refluxGrade" id="refluxGrade"
+                name="refluxGrade">
+                <mat-option value="1300" title="1">1</mat-option>
+				<mat-option value="1301" title="2">2</mat-option>
+				<mat-option value="1302" title="3">3</mat-option>
+				<mat-option value="1303" title="4">4</mat-option>
+				<mat-option value="1304" title="5">5</mat-option>
+            </mat-select>
+        </div>
+    </section>
+    <section>
+        <div class="field-container">
+            <div><label class="mat-label other-label">Sphincter DESD</label></div>
+            <mat-select formControlName="sphincterDESD" id="sphincterDESD"
+                name="sphincterDESD">
+                <mat-option value="Absent">Absent</mat-option>
+                <mat-option value="Present">Present</mat-option>
+            </mat-select>
+        </div>
+        <div class="field-container-right">
+            <div><label class="mat-label other-label mandatory-field">Sphincter Description</label></div>
+            <textarea maxlength="1000" formControlName="sphincterDescription" id="sphincterDescription"
+                name="sphincterDescription" matInput placeholder="please describe"></textarea>
+        </div>
+    </section>
+    <section>
+        <div class="field-container">
+            <div><label class="mat-label other-label">Sonar	</label></div>
+            <mat-select formControlName="sonar" id="sonar" name="sonar">
+                <mat-option value="Yes">Yes</mat-option>
+                <mat-option value="No">No</mat-option>
+            </mat-select>
+        </div>
+        <div class="field-container-right">
+            <div><label class="mat-label other-label">IVP Test</label></div>
+            <mat-select formControlName="iVPTest" id="iVPTest" name="iVPTest">
+                <mat-option value="Yes">Yes</mat-option>
+                <mat-option value="No">No</mat-option>
+            </mat-select>
+        </div>
+    </section>
+    <section>
+        <div class="field-container">
+            <div><label class="mat-label other-label">Date of IVP Test	</label></div>
+            <mat-form-field>
+                <input matInput formControlName="dateofIVPTest" [matDatepicker]="DateofIVPTest" id="dateofIVPTest" name="dateofIVPTest">
+                <mat-datepicker-toggle matSuffix [for]="DateofIVPTest" [disabled]="true"></mat-datepicker-toggle>
+                <mat-datepicker touchUi="true" #DateofIVPTest></mat-datepicker>
+            </mat-form-field>
+        </div>
+        <div class="field-container-right">
+            <div><label class="mat-label other-label">FBC</label></div>
+            <mat-select formControlName="fBC" id="fBC" name="fBC">
+                <mat-option value="Abnormal">Abnormal</mat-option>
+                <mat-option value="normal">Normal</mat-option>
+            </mat-select>
+        </div>
+    </section>
+    <section>
+        <div class="field-container">
+            <div><label class="mat-label other-label">U & EL</label></div>
+            <mat-select formControlName="uEL" id="uEL" name="uEL">
+                <mat-option value="Abnormal">Abnormal</mat-option>
+                <mat-option value="normal">Normal</mat-option>
+            </mat-select>
+        </div>
+        <div class="field-container-right">
+            <div><label class="mat-label other-label">PSA</label></div>
+            <mat-select formControlName="pSA" id="pSA" name="pSA">
+                <mat-option selected="selected" value="0" title="Select">Select</mat-option>
+				<mat-option value="3301" title="5 - 10">5 - 10</mat-option>
+				<mat-option value="3300" title="Less than 5">Less than 5</mat-option>
+				<mat-option value="3302" title="More than 10">More than 10</mat-option>
+            </mat-select>
+        </div>
+    </section>
+    <section>
+        <div class="field-container">
+            <div><label class="mat-label other-label">MC & S Urine</label></div>
+            <mat-form-field>
+                <input matInput formControlName="mCSUrine" id="mCSUrine" name="mCSUrine">
+            </mat-form-field>
+        </div>
+        <div class="field-container-right">
+            
+            <div><label class="mat-label other-label mandatory-field">Creatinine Clearance</label></div>
+            <mat-select formControlName="creatinineClearance" id="creatinineClearance"
+                name="creatinineClearance">
+                <mat-option selected="selected" value="0" title="Select">Select</mat-option>
+				<mat-option value="3401" title="80 - 140">80 - 140</mat-option>
+				<mat-option value="3400" title="Less than 80">Less than 80</mat-option>
+				<mat-option value="3402" title="More than 140">More than 140</mat-option>
+            </mat-select>
+        </div>
+    </section>
+    <section>
+        <div class="field-container">
+            <div><label class="mat-label other-label mandatory-field">Hostility Factor</label></div>
+            <mat-select formControlName="hostilityFactor" id="hostilityFactor"
+                name="hostilityFactor">
+                <mat-option value="300" title="0">0</mat-option>
+				<mat-option value="301" title="1">1</mat-option>
+				<mat-option value="302" title="2">2</mat-option>
+            </mat-select>
+        </div>
+        <div class="field-container-right">
+            <div><label class="mat-label other-label mandatory-field">Follow up Summary</label></div>
+            <mat-form-field>
+                <textarea maxlength="1000" formControlName="followupSummary" id="followupSummary"
+                    name="followupSummary" matInput placeholder="Followup Summary"></textarea>
+            </mat-form-field>
+        </div>
+    </section>
+    <section>
+        <div class="field-container">
+            <div><label class="mat-label other-label mandatory-field">Medications TTO</label></div>
+            <mat-form-field>
+                <input matInput formControlName="medicationsTTO" id="medicationsTTO" name="medicationsTTO">
+            </mat-form-field>
+        </div>
+        <div class="field-container-right">
+            <div><label class="mat-label other-label mandatory-field">Risk for Complications</label></div>
+            <mat-select formControlName="riskforComplications" id="riskforComplications" name="riskforComplications">
+                <mat-option value="1000" title="High">High</mat-option>
+				<mat-option value="1002" title="Low">Low</mat-option>
+				<mat-option value="1001" title="Medium">Medium</mat-option>
+            </mat-select>
+        </div>
+    </section>
+ 
+    <section>
+        <div class="field-container">
+            <div><label class="mat-label other-label mandatory-field">Follow up Date</label></div>
+            <mat-form-field>
+                <input matInput formControlName="followupDate" [matDatepicker]="FollowupDate" id="followupDate" name="followupDate">
+                <mat-datepicker-toggle matSuffix [for]="FollowupDate" [disabled]="true"></mat-datepicker-toggle>
+                <mat-datepicker touchUi="true" #FollowupDate></mat-datepicker>
+            </mat-form-field>
+        </div>
+        <div class="field-container-right">
+            <div><label class="mat-label other-label mandatory-field">Reviewed By</label></div>
+            <mat-form-field>
+                <input matInput formControlName="ReviewedBy" id="ReviewedBy" name="ReviewedBy">
+            </mat-form-field>
+        </div>
+    </section>
+</form>

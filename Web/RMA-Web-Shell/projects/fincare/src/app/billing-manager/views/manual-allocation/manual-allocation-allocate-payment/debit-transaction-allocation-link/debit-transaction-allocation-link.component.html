@@ -1,0 +1,115 @@
+<div *ngIf="isLoading && selectedTransactionTypeId === 8">
+    <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+    <label class="mat-label other-label"><i>Loading refunds...please wait</i></label>
+</div>
+<div *ngIf="selectedTransactionTypeId === 8 && refundsDataSource && refundsDataSource.data.length > 0">
+  <mat-table #table [dataSource]="refundsDataSource" matSort>
+      <!-- Refund  -->
+      <ng-container matColumnDef="reference">
+          <mat-header-cell *matHeaderCellDef> Reference </mat-header-cell>
+          <mat-cell *matCellDef="let row"> {{row.reference}}
+          </mat-cell>
+      </ng-container>
+      <ng-container matColumnDef="headerTotalAmount">
+          <mat-header-cell *matHeaderCellDef> Refund Amount </mat-header-cell>
+          <mat-cell *matCellDef="let row"> {{row.headerTotalAmount}} </mat-cell>
+      </ng-container>
+      <ng-container matColumnDef="createdDate">
+          <mat-header-cell *matHeaderCellDef> Date </mat-header-cell>
+          <mat-cell *matCellDef="let row"> {{row.createdDate | date:'yyyy/MM/dd'}} </mat-cell>
+      </ng-container>
+      <ng-container matColumnDef="actions">
+          <mat-header-cell *matHeaderCellDef>
+          </mat-header-cell>
+          <mat-cell *matCellDef="let row; let i=index" style="justify-content:center;display:flex !important;">
+              <mat-checkbox (change)="refundChecked($event,row)">
+              </mat-checkbox>
+              <ng-template #noRefundCheck>
+                  <span>&nbsp;</span>
+              </ng-template>
+          </mat-cell>
+      </ng-container>
+      <mat-header-row *matHeaderRowDef="refundsDisplayedColumns"></mat-header-row>
+      <mat-row *matRowDef="let row; columns: refundsDisplayedColumns;"></mat-row>
+  </mat-table>
+  <mat-paginator [pageSize]="10" [pageSizeOptions]="[5, 10, 25, 100]">
+  </mat-paginator>
+</div>
+
+<div *ngIf="isLoading && selectedTransactionTypeId === 9">
+    <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+    <label class="mat-label other-label"><i>Loading inter debtor transfers...please wait</i></label>
+</div>
+<div *ngIf="selectedTransactionTypeId === 9 && interDebtorTransferDataSource && interDebtorTransferDataSource.data.length > 0">
+  <mat-table #table [dataSource]="interDebtorTransferDataSource" matSort>
+      <!-- InterDebtorTransfer  -->
+      <ng-container matColumnDef="fromDebtorNumber">
+          <mat-header-cell *matHeaderCellDef> From Debtor Number </mat-header-cell>
+          <mat-cell *matCellDef="let row"> {{row.fromDebtorNumber}}
+          </mat-cell>
+      </ng-container>>
+      <ng-container matColumnDef="transferAmount">
+          <mat-header-cell *matHeaderCellDef> Transfer Amount </mat-header-cell>
+          <mat-cell *matCellDef="let row"> {{row.transferAmount}} </mat-cell>
+      </ng-container>
+      <ng-container matColumnDef="receiverDebtorNumber">
+          <mat-header-cell *matHeaderCellDef> Receiver Debtor Number </mat-header-cell>
+          <mat-cell *matCellDef="let row"> {{row.receiverDebtorNumber}} </mat-cell>
+      </ng-container>
+      <ng-container matColumnDef="receiverAccountNumber">
+          <mat-header-cell *matHeaderCellDef> Receiver Account Number </mat-header-cell>
+          <mat-cell *matCellDef="let row"> {{row.receiverAccountNumber}} </mat-cell>
+      </ng-container>
+      <ng-container matColumnDef="createdDate">
+        <mat-header-cell *matHeaderCellDef> Date </mat-header-cell>
+        <mat-cell *matCellDef="let row"> {{row.createdDate | date:'yyyy/MM/dd'}} </mat-cell>
+    </ng-container>
+    <ng-container matColumnDef="actions">
+        <mat-header-cell *matHeaderCellDef>
+        </mat-header-cell>
+        <mat-cell *matCellDef="let row; let i=index" style="justify-content:center;display:flex !important;">
+            <mat-checkbox (change)="interDebtorTransferChecked($event,row)">
+            </mat-checkbox>
+        </mat-cell>
+    </ng-container>
+      <mat-header-row *matHeaderRowDef="interDebtorTransferDisplayedColumns"></mat-header-row>
+      <mat-row *matRowDef="let row; columns: interDebtorTransferDisplayedColumns;"></mat-row>
+  </mat-table>
+  <mat-paginator [pageSize]="10" [pageSizeOptions]="[5, 10, 25, 100]">
+  </mat-paginator>
+</div>
+
+<div *ngIf="isLoading && selectedTransactionTypeId === 1">
+    <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+    <label class="mat-label other-label"><i>Loading payments...please wait</i></label>
+</div>
+<div *ngIf="selectedTransactionTypeId === 1 && paymentsDataSource && paymentsDataSource.data.length > 0">
+  <mat-table #table [dataSource]="paymentsDataSource" matSort>
+      <!-- Payments  -->
+      <ng-container matColumnDef="rmaReference">
+          <mat-header-cell *matHeaderCellDef> Reference </mat-header-cell>
+          <mat-cell *matCellDef="let row"> {{row.rmaReference}}
+          </mat-cell>
+      </ng-container>
+      <ng-container matColumnDef="amount">
+          <mat-header-cell *matHeaderCellDef> Amount </mat-header-cell>
+          <mat-cell *matCellDef="let row"> {{row.amount}} </mat-cell>
+      </ng-container>>
+      <ng-container matColumnDef="transactionDate">
+        <mat-header-cell *matHeaderCellDef> Transaction Date </mat-header-cell>
+        <mat-cell *matCellDef="let row"> {{row.transactionDate | date:'yyyy/MM/dd'}} </mat-cell>
+    </ng-container>
+    <ng-container matColumnDef="actions">
+        <mat-header-cell *matHeaderCellDef>
+        </mat-header-cell>
+        <mat-cell *matCellDef="let row; let i=index" style="justify-content:center;display:flex !important;">
+            <mat-checkbox (change)="paymentChecked($event,row)">
+            </mat-checkbox>
+        </mat-cell>
+    </ng-container>
+      <mat-header-row *matHeaderRowDef="paymentsDisplayedColumns"></mat-header-row>
+      <mat-row *matRowDef="let row; columns: paymentsDisplayedColumns;"></mat-row>
+  </mat-table>
+  <mat-paginator [pageSize]="10" [pageSizeOptions]="[5, 10, 25, 100]">
+  </mat-paginator>
+</div>

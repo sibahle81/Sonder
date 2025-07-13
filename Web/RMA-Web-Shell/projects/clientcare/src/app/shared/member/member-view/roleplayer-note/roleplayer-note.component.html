@@ -1,0 +1,129 @@
+<mat-card *ngIf="(dataSource.loading$ | async)">
+  <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+  <label class="mat-label other-label"><i>loading notes...please wait</i></label>
+</mat-card>
+
+<mat-card *ngIf="(isLoading$ | async)">
+  <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+  <label class="mat-label other-label"><i>saving note...please wait</i></label>
+</mat-card>
+
+<div [hidden]="(dataSource.loading$ | async) || (isLoading$ | async)">
+  <div [hidden]="(showDetail$ | async) || (showForm$ | async)">
+
+    <div class="menu-bar">
+      <span class="material-icons">
+        note
+      </span>
+      Notes
+      <span (click)="showForm(null)" class="material-icons pointer right" matTooltip="add note">
+        add_circle
+      </span>
+    </div>
+
+    <div [hidden]="!(dataSource.data && dataSource.data.data && dataSource.data.data?.length > 0)">
+      <mat-table #table [dataSource]="dataSource" matSort id="tblData">
+        <ng-container matColumnDef="text">
+          <mat-header-cell *matHeaderCellDef> Note </mat-header-cell>
+          <mat-cell *matCellDef="let row">{{row.text}}</mat-cell>
+        </ng-container>
+        <ng-container matColumnDef="createdBy">
+          <mat-header-cell *matHeaderCellDef> Created By </mat-header-cell>
+          <mat-cell *matCellDef="let row">{{row.createdBy}}</mat-cell>
+        </ng-container>
+        <ng-container matColumnDef="createdByConverted">
+          <mat-header-cell *matHeaderCellDef> *Created By </mat-header-cell>
+          <mat-cell *matCellDef="let row"><user-display-name [userName]="row.createdBy"></user-display-name></mat-cell>
+        </ng-container>
+        <ng-container matColumnDef="createdDate">
+          <mat-header-cell *matHeaderCellDef> Created Date </mat-header-cell>
+          <mat-cell *matCellDef="let row">{{row.createdDate | date:"yyyy-MM-dd HH:mm:ss"}}</mat-cell>
+        </ng-container>
+
+        <ng-container matColumnDef="actions">
+          <mat-header-cell *matHeaderCellDef>Action</mat-header-cell>
+          <mat-cell *matCellDef="let row">
+            <a (click)="view(row)" role="button" class="link-edit">
+              <span matTooltip="view" class="material-icons icn pointer">
+                visibility
+              </span>
+            </a>
+            <a *ngIf="currentUserCanEdit(row)" (click)="showForm(row)" role="button" class="link-edit">
+              <span matTooltip="edit" class="material-icons icn pointer">
+                settings
+              </span>
+            </a>
+            <a *ngIf="hasAuditPermission" (click)="openAuditDialog(row)" role="button" class="link-edit">
+              <span matTooltip="audit" class="material-icons icn pointer">
+                fingerprint
+              </span></a>
+          </mat-cell>
+        </ng-container>
+
+        <mat-header-row *matHeaderRowDef="getDisplayedColumns()"></mat-header-row>
+        <mat-row *matRowDef="let row; columns: getDisplayedColumns();"></mat-row>
+      </mat-table>
+
+      <mat-paginator #paginator [pageIndex]="0" [pageSize]="5" [pageSizeOptions]="[5, 10, 25, 100]"
+        [length]="this.dataSource.rowCount$ | async" (page)="getData()">
+      </mat-paginator>
+    </div>
+
+    <mat-card
+      *ngIf="!(dataSource.data && dataSource.data.data && dataSource.data.data?.length > 0 || (dataSource.loading$ | async))">
+      <label class="mat-label other-label"><i>No notes found...</i></label>
+    </mat-card>
+  </div>
+
+  <div *ngIf="(showDetail$ | async) && !(showForm$ | async)">
+    <div class="menu-bar">
+      <span class="material-icons">
+        note
+      </span>
+      Notes
+      <span (click)="close()" class="material-icons pointer right" matTooltip="close">
+        close
+      </span>
+    </div>
+    <mat-card>
+      <p>{{selectedNote.text}}</p><br />
+      <div class="menu-bar">
+        <label class="mat-label other-label"><i>
+            <user-display-name [userName]="selectedNote.modifiedBy"></user-display-name>
+            {{selectedNote.modifiedDate | date: "yyyy-MM-dd h:mm:ss"}}
+          </i></label>
+      </div>
+    </mat-card>
+  </div>
+
+  <div *ngIf="(showForm$ | async)">
+    <div *ngIf="!(isLoading$ | async)" class="menu-bar">
+      <span class="material-icons">
+        note
+      </span>
+      Notes
+      <span *ngIf="!(isLoading$ | async)" (click)="close()" class="material-icons pointer right" matTooltip="close">
+        close
+      </span>
+      <span *ngIf="form.valid && !form.pristine" (click)="save()" class="material-icons pointer right pulseGreen"
+        matTooltip="save">
+        save
+      </span>
+    </div>
+
+    <mat-card>
+      <form [formGroup]="form" class="mat-container details-form" novalidate>
+        <section>
+          <mat-form-field class="mat-form-field">
+            <label class="mat-label other-label">Note</label>
+            <textarea matTextareaAutosize matAutosizeMinRows="5" matAutosizeMaxRows="3" maxlength="255" matInput
+              minlength="3" id="text" name="text" formControlName="text"></textarea>
+            <mat-error *ngIf="form.get('text').hasError('required')">
+              Text is <strong>required</strong>
+            </mat-error>
+          </mat-form-field>
+        </section>
+      </form>
+    </mat-card>
+  </div>
+</div>

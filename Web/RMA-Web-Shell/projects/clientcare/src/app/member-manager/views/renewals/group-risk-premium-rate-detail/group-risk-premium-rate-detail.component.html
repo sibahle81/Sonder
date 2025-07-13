@@ -1,0 +1,269 @@
+<div  class="wizard-main-content" >
+  <div class="wizard-main-content mat-elevation-z8">
+    <mat-card class="wizard-mat-card wizard-mat-table">
+      <mat-card-header>
+        <mat-card-title>
+          <h4>Premium Rates</h4>
+        </mat-card-title>
+      </mat-card-header>
+      <mat-card-content >
+        <div *ngIf="isLoadingGroupRiskPolicies$ | async">
+          <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+          <label class="mat-label other-label"><i>loading premium rates...please wait</i></label>
+        </div>
+        <br/>
+        <form [formGroup]="form" class="mat-container details-form" >
+          <section>
+            <mat-form-field class="mat-form-field">
+              <label class="mat-label other-label">Policy</label>
+              <mat-select [(value)]="selectedPolicyId" name="policyId" id="policyId" (selectionChange)="selectedPolicyChange($event)"
+                          formControlName="policyId">
+                <mat-option *ngFor="let policy of Policies" [value]="policy.policyId">
+                  {{formatLookup(policy.policyName)}}
+                </mat-option>
+              </mat-select>
+              <mat-error *ngIf="form.get('policyId').hasError('required') && (form.get('policyId').touched ||form.get('policyId').dirty )">
+                Policy is <strong>required</strong>
+              </mat-error>
+            </mat-form-field>
+          </section>
+
+          <section>
+            <mat-form-field class="mat-form-field">
+              <label class="mat-label other-label">Benefit</label>
+              <mat-select [(value)]="selectedBenefitId" name="benefitId" id="benefitId" (selectionChange)="selectedBenefitChange($event)"
+                          formControlName="benefitId">
+                <mat-option *ngFor="let benefit of Benefits" [value]="benefit.id">
+                  {{formatLookup(benefit.name)}}
+                </mat-option>
+              </mat-select>
+              <mat-error *ngIf="form.get('benefitId').hasError('required') && (form.get('benefitId').touched ||form.get('benefitId').dirty )">
+                Benefit is <strong>required</strong>
+              </mat-error>
+            </mat-form-field>
+          </section>
+          <section>
+
+            <mat-form-field class="mat-form-field">
+              <label class="mat-label other-label">Effective Date</label>
+              <input matInput  formControlName="effectiveDate"  (dateChange)="newEffectiveDateChanged($event)" [matDatepicker]="effectiveDate">
+              <mat-datepicker-toggle matSuffix [for]="effectiveDate" [disabled]="form.disabled"></mat-datepicker-toggle>
+              <mat-datepicker touchUi="true" #effectiveDate></mat-datepicker>
+              <mat-error *ngIf="form.get('effectiveDate').hasError('required')">
+                Effective Date is <strong>required</strong>
+              </mat-error>
+            </mat-form-field>
+          </section>
+          <section>
+            <mat-form-field class="mat-form-field">
+              <label class="mat-label other-label">Benefit Category</label>
+              <mat-select [(value)]="selectedBenefitCategoryId" name="benefitCategoryId" id="benefitCategoryId"
+                          formControlName="benefitCategoryId" [disabled]="!isCategoryBilling || form.disabled">
+                <mat-option *ngFor="let benefitCategory of BenefitCategories" [value]="benefitCategory.benefitCategoryId">
+                  {{formatLookup(benefitCategory.name)}}
+                </mat-option>
+              </mat-select>
+              <mat-error *ngIf="form.get('benefitCategoryId').hasError('required') && (form.get('benefitCategoryId').touched ||form.get('benefitCategoryId').dirty )">
+                Benefit Category is <strong>required</strong>
+              </mat-error>
+            </mat-form-field>
+          </section>
+
+          <section>
+            <mat-form-field class="mat-form-field ">
+              <label class="mat-label other-label">Billing Level</label>
+              <mat-select  [(value)]="selectedBillingLevelCode" name="billingLevelCode" id="billingLevelCode"
+                          formControlName="billingLevelCode">
+                <mat-option *ngFor="let billingLevel of BillingLevelTypes" [value]="billingLevel">
+                  {{formatLookup(billingLevel)}}
+                </mat-option>
+              </mat-select>
+              <mat-error *ngIf="form.get('billingLevelCode').hasError('required') && (form.get('billingLevelCode').touched ||form.get('billingLevelCode').dirty )">
+                Billing Level is <strong>required</strong>
+              </mat-error>
+            </mat-form-field>
+          </section>
+
+          <section>
+            <mat-form-field class="mat-form-field">
+              <label class="mat-label other-label">Reinsurance Treaty</label>
+              <mat-select [(value)]="selectedReinsuranceTreatyId" name="reinsuranceTreatyId" id="reinsuranceTreatyId"
+                          formControlName="reinsuranceTreatyId">
+                <mat-option *ngFor="let reinsuranceTreaty of ReinsuranceTreaties" [value]="reinsuranceTreaty.treatyId">
+                  {{formatLookup(reinsuranceTreaty.treatyName)}}
+                </mat-option>
+              </mat-select>
+              <mat-error *ngIf="form.get('reinsuranceTreatyId').hasError('required') && (form.get('reinsuranceTreatyId').touched ||form.get('reinsuranceTreatyId').dirty )">
+                Reinsurance Treaty is <strong>required</strong>
+              </mat-error>
+            </mat-form-field>
+          </section>
+
+          <section>
+            <mat-form-field class="mat-form-field">
+              <label class="mat-label other-label">Billing Method</label>
+              <mat-select [(value)]="selectedBillingMethodName" name="billingMethodCode" id="billingMethodCode" (selectionChange)="selectedbillingMethodChange($event)"
+                          formControlName="billingMethodCode">
+                <mat-option *ngFor="let billingMethod of BillingMethodTypes" [value]="billingMethod">
+                  {{formatLookup(billingMethod)}}
+                </mat-option>
+              </mat-select>
+              <mat-error *ngIf="form.get('billingMethodCode').hasError('required') && (form.get('billingMethodCode').touched ||form.get('billingMethodCode').dirty )">
+                Billing Method is <strong>required</strong>
+              </mat-error>
+            </mat-form-field>
+            </section>
+
+        </form>
+      </mat-card-content>
+    </mat-card>
+
+
+    <!--Reinsurance Average Rate table -->
+
+    <mat-card class="wizard-mat-card wizard-mat-table">
+      <mat-card-content class="wizard-mat-card-content">
+
+          <div class="mat-container" style="width: 600Px;">
+             <table >
+               <tr style="text-align: left"  >
+
+               <tr>
+                 <th>Reinsurance Treaty</th>
+                 <th>Average %</th>
+               </tr>
+               <tr *ngFor="let x of benefitReinsuranceAverageModelTableData ">
+                 <td>
+                   <label class="mat-label other-label">{{x.treatyName}}</label>
+                 </td>
+                 <td >
+                   <input matInput  SixDigitDecimal (blur)="reinsAverageValueChanged($event)"  [(ngModel)]="x.reinsAverage">
+                 </td>
+               </tr>
+             </table>
+          </div>
+
+      </mat-card-content>
+    </mat-card>
+
+    <!--Rate Component -->
+    <mat-card class="wizard-mat-card wizard-mat-table">
+      <mat-card-content class="wizard-mat-card-content">
+
+          <div >
+            <div class="mat-container ">
+              <div style="width: 600px">
+                <mat-table #table [dataSource]="dataSourcePremiumRateComponentModelTableData">
+                  <!-- componentName Column -->
+                  <ng-container matColumnDef="componentName">
+                    <mat-header-cell *matHeaderCellDef>Rate Component </mat-header-cell>
+                    <mat-cell *matCellDef="let element"> {{element.componentName}} </mat-cell>
+                    <mat-footer-cell *matFooterCellDef>Total</mat-footer-cell>
+                  </ng-container>
+                  <!-- totalRateComponentValue Column -->
+                  <ng-container matColumnDef="totalRateComponentValue">
+                    <mat-header-cell *matHeaderCellDef> Total </mat-header-cell>
+                    <mat-cell *matCellDef="let element">
+                      <mat-form-field floatLabel="never">
+                        <input matInput   SixDigitDecimal   (blur)="totalRateComponentValueChanged($event)"  [value]="element.totalRateComponentValue" [(ngModel)]="element.totalRateComponentValue ">
+                      </mat-form-field>
+                    </mat-cell>
+                    <mat-footer-cell *matFooterCellDef>{{calculateTotalRateComponentValueTotal() |number:'1.6-6' }}</mat-footer-cell>
+                  </ng-container>
+
+                  <mat-header-row *matHeaderRowDef="displayedColumnsPremiumRateComponentModelTableData"></mat-header-row>
+                  <mat-row *matRowDef="let row; columns: displayedColumnsPremiumRateComponentModelTableData;"></mat-row>
+                  <mat-footer-row *matFooterRowDef="displayedColumnsPremiumRateComponentModelTableData;"> </mat-footer-row>
+                </mat-table>
+
+              </div>
+
+              <div [hidden]="dataSourcePremiumRateComponentModelTableData.data.length > 0 ">
+                <span class="grey site-font">No premium rates have been added.</span>
+              </div>
+            </div>
+          </div>
+      </mat-card-content>
+      <mat-card-footer>
+        <div class="form-group-button mat-form-button form-buttons submit-button mat-elevation-z8" *ngIf="!isDisabled" style="margin-bottom: 10px;float: right;">
+          <button class="button submit-button" (click)="onSavePremiumRate()">Save Changes</button>
+        </div>
+      </mat-card-footer>
+    </mat-card>
+
+     <!--  This are rates that are created -->
+    <mat-card class="wizard-mat-card wizard-mat-table">
+      <mat-card-header>
+        <h4>Created Premium Rates</h4>
+      </mat-card-header>
+      <mat-card-content class="wizard-mat-card-content">
+        <div>
+          <div class="mat-container ">
+
+            <div>
+              <mat-table #table [dataSource]="dataSource" matSort>
+                <ng-container matColumnDef="policyName">
+                  <mat-header-cell *matHeaderCellDef mat-sort-header> Policy Name </mat-header-cell>
+                  <mat-cell *matCellDef="let row"> {{row.policyName }} </mat-cell>
+                </ng-container>
+
+                <ng-container matColumnDef="benefitName">
+                  <mat-header-cell *matHeaderCellDef mat-sort-header>Benefit</mat-header-cell>
+                  <mat-cell *matCellDef="let row"> {{row.benefitName }} </mat-cell>
+                </ng-container>
+
+                <ng-container matColumnDef="benefitCategoryName">
+                  <mat-header-cell *matHeaderCellDef mat-sort-header>Benefit Category</mat-header-cell>
+                  <mat-cell *matCellDef="let row"> {{row.benefitCategoryName }} </mat-cell>
+                </ng-container>
+
+                <ng-container matColumnDef="billingMethodCode">
+                  <mat-header-cell *matHeaderCellDef mat-sort-header>Billing Method</mat-header-cell>
+                  <mat-cell *matCellDef="let row">
+                    {{formatLookup(getBillingMethodName(row.billingMethodCode))}}</mat-cell>
+                </ng-container>
+
+                <ng-container matColumnDef="totalRate">
+                  <mat-header-cell *matHeaderCellDef mat-sort-header>Rate</mat-header-cell>
+                  <mat-cell *matCellDef="let row"> {{row.totalRate |number:'1.6-6'}} </mat-cell>
+                </ng-container>
+
+                <ng-container matColumnDef="effectiveDate">
+                  <mat-header-cell *matHeaderCellDef mat-sort-header> Effective Date </mat-header-cell>
+                  <mat-cell *matCellDef="let row"> {{row.effectiveDate  | date: 'yyyy-MM-dd'}} </mat-cell>
+                </ng-container>
+
+              <ng-container matColumnDef="lastUpdateDate">
+                  <mat-header-cell *matHeaderCellDef mat-sort-header> LastUpdate Date </mat-header-cell>
+                  <mat-cell *matCellDef="let row"> {{row.lastUpdateDate  | date: 'yyyy-MM-dd'}} </mat-cell>
+               </ng-container>
+
+                <ng-container  matColumnDef="actions">
+                  <mat-header-cell *matHeaderCellDef>Actions</mat-header-cell>
+                  <mat-cell *matCellDef="let row; let i = index;">
+                    <span  > <img src="/assets/images/edit.png" class="action-icon" /> <a role="button" class="link-edit action-link" (click)="onEdit(row, i)">View</a></span>
+                    <div *ngIf="!isDisabled">
+                      <span  > <img src="/assets/images/delete.png" class="action-icon action-icon-right" /> <a role="button" class="link-edit action-link" (click)="onRemove(row, i)">REMOVE</a></span>
+                    </div>
+                  </mat-cell>
+                </ng-container>
+
+                <mat-header-row *matHeaderRowDef="displayedColumns;"></mat-header-row>
+                <mat-row *matRowDef="let row; columns: displayedColumns;"></mat-row>
+              </mat-table>
+
+              <mat-paginator #paginator [length]="dataSource.data.length" [pageIndex]="0" [pageSize]="5"
+                             [pageSizeOptions]="[5, 10,100]">
+              </mat-paginator>
+            </div>
+
+            <div [hidden]="dataSource.data.length > 0 ">
+              <span class="grey site-font">No premium rates have been added.</span>
+            </div>
+          </div>
+        </div>
+
+      </mat-card-content>
+    </mat-card>
+  </div>
+</div>

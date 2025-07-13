@@ -1,0 +1,65 @@
+<div>
+  <div>
+    <nav class="innertop-nav">
+      <button mat-button [routerLink]="['/medicare/medicare-notifications']">Home</button>
+      <button mat-button [routerLink]="['/medicare/medical-invoice-list']">Med Invoices</button>
+      <button mat-button [routerLink]="['/medicare/work-manager/teba-invoice-list']">Teba Invoices</button>
+      <button mat-button [routerLink]="['/medicare/work-manager']">Work Manager</button>
+      <button mat-button [routerLink]="['/medicare/work-manager/incomplete-work-item-list']">Incomplete Items</button>
+      <button mat-button [routerLink]="['/medicare/hospital-visit-manager/hospital-visits']">Hospital Visits</button>
+      <button mat-button [routerLink]="['/medicare/medical-invoice-under-payment-and-non-payment']">Reports</button>
+
+      <button mat-button [matMenuTriggerFor]="menu1">Search</button>
+      <mat-menu #menu1="matMenu" [overlapTrigger]="false">
+        <button mat-menu-item [routerLink]="['/medicare/medi-home']">Search Claim</button>
+        <button mat-menu-item [routerLink]="['/medicare/search-medical-invoices']">Search Medical Invoices</button>
+        <button mat-menu-item [routerLink]="['/medicare/search-preauthorisation']">Search Pre Authorisation</button>
+        <button mat-menu-item [routerLink]="['/claimcare/claim-manager/event-search']">Search Events</button>
+        <button mat-menu-item [routerLink]="['/medicare/medicare-claimsearch']">Search Person Events</button>
+        <div *ngIf="!this.isExternalUser">
+          <button mat-menu-item [routerLink]="['/medicare/medical-tariff']">Medical Tariffs</button>
+        </div>
+      </mat-menu>
+
+      <button mat-button [matMenuTriggerFor]="menu2">Online PreAuth</button>
+      <mat-menu #menu2="matMenu" [overlapTrigger]="false">
+        <button mat-menu-item (click)="captureHospitalAuth()">Capture Hospital Auth</button>
+        <button mat-menu-item (click)="captureTreatmentAuth()">Capture Treatment Auth</button>
+        <button mat-menu-item (click)="captureProstheticAuth()">Capture Prosthetic Auth</button>
+        <button mat-menu-item (click)="captureChronicAuth()">Capture Chronic Medication Auth</button>
+        <div *ngIf="!this.isExternalUser">
+          <button mat-menu-item (click)="listProstheticQuotes()">Prosthetic Quote List</button>
+        </div>
+      </mat-menu>
+
+      <button mat-button [matMenuTriggerFor]="menu3">Invoices</button>
+      <mat-menu #menu3="matMenu" [overlapTrigger]="false">
+        <button mat-menu-item (click)="onCaptureNewInvoice()">Capture New Med Invoice</button>
+        <div *ngIf="!this.isExternalUser">
+          <button mat-menu-item (click)="medEDISwitchBatches()">Med Switch Batches</button>
+        </div>
+        <div *ngIf="!this.isExternalUser">
+          <button mat-menu-item (click)="tebaSwitchBatches()">Teba Switch Batches</button>
+        </div>
+        <button mat-menu-item (click)="onCaptureNewTebaInvoice()">Capture New Teba Invoice</button>
+        <button mat-menu-item [routerLink]="['/medicare/medical-invoice-search']">Filter Medical Invoice
+          Details</button>
+        <button mat-menu-item [routerLink]="['/medicare/medical-invoice-list']">Med Invoices</button>
+        <button mat-menu-item [routerLink]="['/medicare/work-manager/teba-invoice-list']">Teba Invoices</button>
+        <button mat-menu-item [routerLink]="['/medicare/recall-medical-invoice-payments']">Recall Invoice
+          Payments</button>
+      </mat-menu>
+
+        <button mat-button [matMenuTriggerFor]="menu4" *ngIf="!this.isExternalUser">PMP</button>
+      <mat-menu #menu4="matMenu" [overlapTrigger]="false">
+        <button mat-menu-item [routerLink]="['/medicare/pensioner-medical-plan-viewer']">Pensioner Medical Plan(PMP)
+          Viewer</button>
+      </mat-menu>
+    </nav>
+  </div>
+</div>
+<div *ngIf="isExternalUser">
+  <nav class="hcp-selector">
+    <hcp-user-context-view></hcp-user-context-view>
+  </nav>
+</div>

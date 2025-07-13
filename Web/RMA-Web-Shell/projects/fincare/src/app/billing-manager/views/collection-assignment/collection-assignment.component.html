@@ -1,0 +1,62 @@
+<h3>Outstanding Payments</h3>
+<div *ngIf="isLoading">
+  <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+</div>
+<div [hidden]="isLoading" style="margin-bottom: 24px;">
+  <mat-table #table [dataSource]="datasource.data" matSort>
+    <ng-container matColumnDef="accountNumber">
+      <mat-header-cell *matHeaderCellDef mat-sort-header>Account Number</mat-header-cell>
+      <mat-cell *matCellDef="let row">{{row.accountNumber}}</mat-cell>
+    </ng-container>
+    <ng-container matColumnDef="clientName">
+      <mat-header-cell *matHeaderCellDef mat-sort-header>Client Name</mat-header-cell>
+      <mat-cell *matCellDef="let row">{{row.clientName}}</mat-cell>
+    </ng-container>
+    <ng-container matColumnDef="balance">
+      <mat-header-cell *matHeaderCellDef mat-sort-header>Balance</mat-header-cell>
+      <mat-cell *matCellDef="let row">{{row.balance | number: '1.2-2'}}</mat-cell>
+    </ng-container>
+    <ng-container matColumnDef="interest">
+      <mat-header-cell *matHeaderCellDef mat-sort-header>Interest</mat-header-cell>
+      <mat-cell *matCellDef="let row">{{row.interest | number: '1.2-2'}}</mat-cell>
+    </ng-container>
+    <ng-container matColumnDef="current">
+      <mat-header-cell *matHeaderCellDef mat-sort-header>Current</mat-header-cell>
+      <mat-cell *matCellDef="let row">{{row.current | number: '1.2-2'}}</mat-cell>
+    </ng-container>
+    <ng-container matColumnDef="balance30Days">
+      <mat-header-cell *matHeaderCellDef mat-sort-header>30 Days</mat-header-cell>
+      <mat-cell *matCellDef="let row">{{row.balance30Days | number: '1.2-2'}}</mat-cell>
+    </ng-container>
+    <ng-container matColumnDef="balance60Days">
+      <mat-header-cell *matHeaderCellDef mat-sort-header>60 Days</mat-header-cell>
+      <mat-cell *matCellDef="let row">{{row.balance60Days | number: '1.2-2'}}</mat-cell>
+    </ng-container>
+    <ng-container matColumnDef="balance90Days">
+      <mat-header-cell *matHeaderCellDef mat-sort-header>90 Days</mat-header-cell>
+      <mat-cell *matCellDef="let row">{{row.balance90Days | number: '1.2-2'}}</mat-cell>
+    </ng-container>
+    <ng-container matColumnDef="balance120Days">
+      <mat-header-cell *matHeaderCellDef mat-sort-header>120 Days</mat-header-cell>
+      <mat-cell *matCellDef="let row">{{row.balance120Days | number: '1.2-2'}}</mat-cell>
+    </ng-container>
+    <ng-container matColumnDef="balance120PlusDays">
+      <mat-header-cell *matHeaderCellDef mat-sort-header>120+ Days</mat-header-cell>
+      <mat-cell *matCellDef="let row">{{row.balance120PlusDays | number: '1.2-2'}}</mat-cell>
+    </ng-container>
+    <ng-container matColumnDef="notes">
+      <mat-header-cell *matHeaderCellDef>Notes</mat-header-cell>
+      <mat-cell *matCellDef="let row">
+        <span class="add-note-icon" (click)="addNote(row)">
+          <mat-icon>add_circle_outline</mat-icon>
+        </span>
+        <span class="link" (click)="showNotes(row)">{{ getNotesLink(row) }}</span>
+      </mat-cell>
+    </ng-container>
+    <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
+    <mat-row *matRowDef="let row; columns: displayedColumns;"></mat-row>
+  </mat-table>
+  <mat-paginator #paginator [length]="datasource.data ? datasource.data.length : 0" [pageIndex]="0" [pageSize]="5"
+    [pageSizeOptions]="[5, 10, 20, 50]">
+  </mat-paginator>
+</div>

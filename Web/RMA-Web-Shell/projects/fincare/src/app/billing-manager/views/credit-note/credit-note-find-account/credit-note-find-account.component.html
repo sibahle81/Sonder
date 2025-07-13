@@ -1,0 +1,7 @@
+<div *ngIf="isSubmitting$ | async">
+  <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+  <p class="site-font grey">{{message}}</p>
+</div>
+<div [hidden]="isSubmitting$ | async">
+  <account-search (itemSelected)="onAccountSelected($event)"></account-search>
+</div>

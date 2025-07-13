@@ -1,0 +1,77 @@
+﻿<mat-card style="margin: 15px 30px 15px 30px">
+    <mat-card-header>
+        <mat-card-title class="wizard-font card-title grey">
+            <h1 style="padding: 0;">Campaign Reminder</h1>
+        </mat-card-title>
+    </mat-card-header>
+    <mat-card-content style="margin-left: 10px;">
+        <div *ngIf="isLoading">
+            <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+        </div>
+        <div *ngIf="!hasCampaign" style="margin-left: 20px;">
+            <p class="grey"><i>Reminder can be added after the campaign has been added.</i></p>
+        </div>
+        <div [hidden]="!hasCampaign" style="margin-bottom: 20px;">
+            <form [formGroup]="form" (ngSubmit)="save()" class="mat-container details-form" novalidate>
+                <section>
+                    <div class="field-container">
+                        <div><label class="mat-label other-label mandatory-field">Reminder date</label></div>
+                        <mat-form-field>
+                            <input readonly matInput formControlName="reminderDate" [matDatepicker]="reminderDate" id="reminderDate" name="reminderDate" />
+                            <mat-datepicker-toggle matSuffix [for]="reminderDate" [disabled]="form.disabled"></mat-datepicker-toggle>
+                            <mat-datepicker touchUi="true" #reminderDate></mat-datepicker>
+                            <mat-error *ngIf="hasDateError">
+                                Campaign reminder date is required
+                            </mat-error>
+                        </mat-form-field>
+                    </div>
+                </section>
+                <section>
+                    <div class="field-container">
+                        <div><label class="mat-label other-label mandatory-field">Reminder time</label></div>
+                        <div class="field-container error-container">
+                            <div class="field-container time-box">
+                                <mat-form-field class="time-box">
+                                    <mat-select #reminderHour formControlName="reminderHour">
+                                        <mat-option *ngFor="let hour of hours" [value]="hour">{{hour | number:'2.0'}}</mat-option>
+                                    </mat-select>
+                                </mat-form-field>
+                            </div>
+                            <div class="field-container colon-container"><span class="time-colon"> : </span></div>
+                            <div class="field-container time-box">
+                                <mat-form-field class="time-box">
+                                    <mat-select #reminderMinute formControlName="reminderMinute">
+                                        <mat-option *ngFor="let minute of minutes" [value]="minute">{{minute | number:'2.0'}}</mat-option>
+                                    </mat-select>
+                                </mat-form-field>
+                            </div>
+                            <div class="field-container check-box">
+                                <label class="mat-label other-label">&nbsp;</label>
+                                <input [hidden]="true" matInput formControlName="reminderActive" />
+                                <mat-checkbox formControlName="reminderActive">
+                                    <label class="mat-label other-label">Reminder active?</label>
+                                </mat-checkbox>
+                            </div>
+                            <div>
+                                <mat-error class="time-error" *ngIf="hasTimeError">
+                                    Campaign reminder time is required
+                                </mat-error>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+                <div *ngIf="showButtons" class="form-group-button button-box">
+                    <div *ngIf="showSaveButton" class="form-buttons" matTooltip="No changes have been made" [matTooltipDisabled]="!form.pristine">
+                        <button [disabled]="form.pristine" class="button float-button submit-button">Save</button>
+                    </div>
+                    <div *ngIf="showSaveButton" (click)="cancel()" class="form-buttons submit-button">
+                        <button type="button" class="button float-button">Cancel</button>
+                    </div>
+                    <div *ngIf="showEditButton" (click)="edit()" class="form-buttons submit-button">
+                        <button type="button" class="button float-button">Edit</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </mat-card-content>
+</mat-card>

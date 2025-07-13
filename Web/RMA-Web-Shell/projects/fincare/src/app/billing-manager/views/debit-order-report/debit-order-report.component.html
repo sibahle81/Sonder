@@ -1,0 +1,222 @@
+<div>
+  <mat-card class="container">
+    <mat-card-content class="content">
+      <div>
+        <form [formGroup]="form" class="mat-container details-form" novalidate>
+          <section>
+            <div class="field-container">
+              <div><label class="mat-label other-label">Period</label></div>
+              <mat-form-field class="mat-form-field">
+                <input matInput formControlName="period" [matDatepicker]="period" (click)="period.open()" readonly>
+                <mat-datepicker-toggle matSuffix [for]="period"></mat-datepicker-toggle>
+                <mat-datepicker touchUi="true" #period startView="year" (yearSelected)="chosenYearHandler($event)"
+                  (monthSelected)="chosenMonthHandler($event, period)">
+                </mat-datepicker>
+              </mat-form-field>
+            </div>
+          </section>
+          <section style="margin-bottom: 15px;">
+            <div  class="field-container" style="word-wrap: normal;">
+              <div><label class="mat-label other-label">Start Date</label>
+              </div>
+              <mat-form-field>
+                <input matInput formControlName="startDate" [matDatepicker]="startDate" (dateChange)="validateDates()"
+                  [hidden]="true">
+                <input matInput [ngModel]="displayStartDate | date : 'yyyy/MM/dd'" (click)="startDate.open()"
+                  [readonly]="true" [ngModelOptions]="{standalone: true}">
+                <mat-datepicker-toggle matSuffix [for]="startDate"></mat-datepicker-toggle>
+                <mat-datepicker touchUi="true" #startDate ng-model-options="{ timezone: 'useUtc' }"></mat-datepicker>
+
+                <mat-error *ngIf="form.get('startDate').hasError('min')">
+                  start date cannot be <strong>after</strong> the end date
+                </mat-error>
+              </mat-form-field>
+            </div>
+
+            <div class="field-container-right">
+              <div><label class="mat-label other-label">End Date</label></div>
+              <mat-form-field>
+                <input matInput formControlName="endDate" [matDatepicker]="endDate" (dateChange)="validateDates()"
+                  [hidden]="true">
+                <input matInput [ngModel]="displayEndDate | date : 'yyyy/MM/dd'" (click)="endDate.open()"
+                  [readonly]="true" [ngModelOptions]="{standalone: true}">
+                <mat-datepicker-toggle matSuffix [for]="endDate"></mat-datepicker-toggle>
+                <mat-datepicker touchUi="true" #endDate></mat-datepicker>
+                <mat-error *ngIf="form.get('endDate').hasError('min')">
+                  End date cannot be <strong>before</strong> the start date
+                </mat-error>
+              </mat-form-field>
+            </div>
+          </section>
+
+          <section>
+            <mat-form-field class="mat-form-field">
+              <label class="mat-label other-label mandatory-field">Industry Class</label>
+              <input matInput formControlName="industry" [hidden]="true">
+              <div *ngIf="loadingIndustries">
+                <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+              </div>
+              <div [hidden]="loadingIndustries">
+                <mat-select formControlName="industry">
+                  <mat-option *ngFor="let industry of industries" [value]="industry.id">
+                    {{industry.name}}
+                  </mat-option>
+                </mat-select>
+                <mat-error *ngIf="form.get('industry').hasError('required') && form.get('industry').touched">
+                  industry is <strong>required</strong>
+                </mat-error>
+                <!-- Insert validation here -->
+              </div>
+            </mat-form-field>
+            <mat-form-field class="mat-form-field-right">
+              <label class="mat-label other-label mandatory-field">Product</label>
+              <input matInput formControlName="product" [hidden]="true">
+              <div *ngIf="loadingProducts">
+                <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+              </div>
+              <div [hidden]="loadingProducts">
+                <mat-select formControlName="product">
+                  <mat-option *ngFor="let product of products" [value]="product.id">
+                    {{product.name}}
+                  </mat-option>
+                </mat-select>
+                <mat-error *ngIf="form.get('product').hasError('required')  && form.get('product').touched">
+                  product is <strong>required</strong> 
+                </mat-error>
+                <!-- Insert validation here -->
+              </div>
+            </mat-form-field>
+          </section>
+          <section>
+            <mat-form-field class="mat-form-field">
+              <label class="mat-label other-label mandatory-field">Debit Order Type</label>
+              <input matInput formControlName="debitOrderTypes" [hidden]="true">
+              <div *ngIf="loadingDebitOrderTypes">
+                <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+              </div>
+              <div [hidden]="loadingDebitOrderTypes">
+                <mat-select [(value)]="selectedDebitOrderType" formControlName="debitOrderTypes">
+                  <mat-option *ngFor="let debitOrderType of debitOrderTypes" [value]="debitOrderType.id">
+                    {{debitOrderType.name}}
+                  </mat-option>
+                </mat-select>
+                <mat-error *ngIf="form.get('debitOrderTypes').hasError('required')  && form.get('debitOrderTypes').touched">
+                  Debit order type <strong>required</strong> 
+                </mat-error>
+                <!-- Insert validation here -->
+              </div>
+            </mat-form-field>
+
+            <mat-form-field class="mat-form-field-right">
+              <label class="mat-label other-label">Bank Account</label>
+              <mat-select class="bankAccount" id="bankAccount" name="bankAccount" matInput formControlName="bankAccount"
+                (selectionChange)="selectedBankAccountChanged($event)">
+                <mat-option selected [value]="0">All</mat-option>
+                <mat-option *ngFor="let rmaBankAccount of rmaBankAccounts" [value]="rmaBankAccount.rmaBankAccountId">
+                  {{rmaBankAccount.product}} {{rmaBankAccount.accountNumber}}
+                </mat-option>
+              </mat-select>
+              <div *ngIf="isLoadingBankAccounts$ | async">
+                <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+                <label class="mat-label other-label"><i>loading...please wait</i></label>
+              </div>
+            </mat-form-field>
+          </section>
+        </form>
+        <div class="form-group row" style="margin-left: 12px;">
+          <button (click)="viewReport()" [disabled]="isApplicationInvalid()" class="button float-button">View</button>
+          <button type="button" (click)="resetSearch()" class="button float-button">Reset</button>
+        </div>
+
+        <div *ngIf="isLoading" style="margin-top:5px">
+          <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+          <label class="mat-label other-label"><i>Loading report...please wait</i></label>
+        </div>
+        <div class="mat-container mat-elevation-z8" [hidden]="dataSource.data.length === 0">
+          <div class="mat-header">
+            <h1>DEBIT ORDER REPORT</h1><br />
+
+          </div>
+          <div class="search-container search-container-right">
+            <input type="text" name="search" (keyup)="applyFilter($event.target.value)" placeholder="search here...">
+          </div>
+
+          <mat-table #table [dataSource]="dataSource" multiTemplateDataRows matSort>
+            <!-- Expand Column -->
+            <ng-container matColumnDef="moreInfo">
+              <mat-header-cell *matHeaderCellDef> Additional Info  </mat-header-cell>
+              <mat-cell *matCellDef="let row">
+                <span (click)="showMoreInformation(row)" matTooltip="more info"
+                    class="material-icons icn icn-button pointer">
+                    info
+                </span>
+            </mat-cell>
+            </ng-container>
+
+            <ng-container matColumnDef="controlNumber">
+              <mat-header-cell *matHeaderCellDef mat-sort-header>Control Number</mat-header-cell>
+              <mat-cell *matCellDef="let row"> {{row.controlNumber}} </mat-cell>
+            </ng-container>
+            <ng-container matColumnDef="controlName">
+              <mat-header-cell *matHeaderCellDef mat-sort-header>Control Name</mat-header-cell>
+              <mat-cell *matCellDef="let row"> {{row.controlName}} </mat-cell>
+            </ng-container>
+            <ng-container matColumnDef="year">
+              <mat-header-cell *matHeaderCellDef mat-sort-header>Year</mat-header-cell>
+              <mat-cell *matCellDef="let row"> {{row.year}} </mat-cell>
+            </ng-container>
+            <ng-container matColumnDef="period">
+              <mat-header-cell *matHeaderCellDef mat-sort-header>Period</mat-header-cell>
+              <mat-cell *matCellDef="let row"> {{row.period}} </mat-cell>
+            </ng-container>
+            <ng-container matColumnDef="collectionStatus">
+              <mat-header-cell *matHeaderCellDef mat-sort-header>Collection Status</mat-header-cell>
+              <mat-cell *matCellDef="let row"> {{row.collectionStatus}} </mat-cell>
+            </ng-container>
+            <ng-container matColumnDef="debitOrderDate">
+              <mat-header-cell *matHeaderCellDef mat-sort-header>Debit Order Date</mat-header-cell>
+              <mat-cell *matCellDef="let row"> {{row.debitOrderDay}} </mat-cell>
+            </ng-container>
+            <ng-container matColumnDef="accountNumber">
+              <mat-header-cell *matHeaderCellDef mat-sort-header>Account Number</mat-header-cell>
+              <mat-cell *matCellDef="let row"> {{row.accountNumber}} </mat-cell>
+            </ng-container>
+            <ng-container matColumnDef="accountHolder">
+              <mat-header-cell *matHeaderCellDef mat-sort-header> Account Holder </mat-header-cell>
+              <mat-cell *matCellDef="let row"> {{row.accountHolder}} </mat-cell>
+            </ng-container>
+            <ng-container matColumnDef="policyNumber">
+              <mat-header-cell *matHeaderCellDef mat-sort-header>Policy Number</mat-header-cell>
+              <mat-cell *matCellDef="let row"> {{row.policyNumber}} </mat-cell>
+            </ng-container>
+            <ng-container matColumnDef="debitOrdeAmount">
+              <mat-header-cell *matHeaderCellDef mat-sort-header>Amount</mat-header-cell>
+              <mat-cell *matCellDef="let row" class="right-aligned-amounts"> {{row.debitOrdeAmount | currency:'R'}}
+              </mat-cell>
+            </ng-container>
+            <ng-container matColumnDef="actionDate">
+              <mat-header-cell *matHeaderCellDef mat-sort-header>Action Date</mat-header-cell>
+              <mat-cell *matCellDef="let row"> {{row.actionDate | date:'yyyy/MM/dd'}} </mat-cell>
+            </ng-container>
+            <ng-container matColumnDef="decemberDebitDay">
+              <mat-header-cell *matHeaderCellDef mat-sort-header> December Debit Day </mat-header-cell>
+              <mat-cell *matCellDef="let row"> {{row.decemberDebitDay | date:'yyyy/MM/dd'}} </mat-cell>
+            </ng-container>
+
+            <mat-header-row *matHeaderRowDef="getDisplayedColumns();"></mat-header-row>
+            <mat-row *matRowDef="let row; columns: getDisplayedColumns();" ></mat-row>
+          </mat-table>
+          <mat-paginator #paginator [length]="dataSource.filteredData.length" [pageIndex]="0" [pageSize]="10"
+            [pageSizeOptions]="[5, 10, 25, 100]">
+          </mat-paginator>
+        </div>
+      </div>
+    </mat-card-content>
+  </mat-card>
+</div>
+<div>
+  <table class="form-group row" style="margin-left: 29px;">
+    <button [disabled]="!canExport" (click)="exporttoCSV()" class="button float-button">Export</button>
+    <button type="button" (click)="clear()" class="button float-button">Back</button>
+  </table>
+</div>

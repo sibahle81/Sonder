@@ -1,0 +1,49 @@
+<div *ngIf="(isLoading$ | async)">
+  <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+  <label class="mat-label other-label"><i>loading...please wait</i></label>
+</div>
+
+<div *ngIf="!(isLoading$ | async)">  
+    <div *ngIf="!showSearch && employer.company">
+        <mat-tab-group animationDuration="500ms" [(selectedIndex)]="tabIndex">
+            <mat-tab label="Details">
+                <div class="menu-bar">
+                    <span>
+                      <span class="material-icons">
+                        group
+                      </span>
+                      Group Risk: {{employer.company.name}}
+                      <span (click)="delete()" class="material-icons pointer right" matTooltip="cancel">
+                        close
+                      </span>
+                    </span>
+                  </div>
+                <member-details [member]="employer" (refreshEmit)="refresh($event)" [isReadOnly]="isReadOnly"></member-details>
+                <mat-card>
+                    <employer-branches [rolePlayerId]="employer.rolePlayerId" [isReadOnly]="isReadOnly"></employer-branches>
+                </mat-card>
+            </mat-tab>
+        
+            <mat-tab *ngIf="employer.company" label="Company">
+                <member-company [member]="employer" (refreshEmit)="refresh($event)" [isReadOnly]="isReadOnly"></member-company>
+            </mat-tab>
+        
+            <mat-tab label="Contacts">
+                <member-contacts [member]="employer" [isWizard]="isWizard" [isReadOnly]="isReadOnly"></member-contacts>
+            </mat-tab>
+        
+            <mat-tab label="Addresses">
+            <role-player-address-list [rolePlayer]="employer" [isReadOnly]="isReadOnly" [isWizard]="isWizard"></role-player-address-list>
+            </mat-tab>
+        
+            <mat-tab label="Bank Accounts">
+            <role-player-banking-list [rolePlayer]="employer" [isWizard]="isWizard" [isReadOnly]="isReadOnly"
+                [verifyAccount]="false" [showSelectColumn]="false"></role-player-banking-list>
+            </mat-tab>  
+        </mat-tab-group>
+    </div>
+  
+    <div *ngIf="showSearch">
+        <member-search-V2 [basicMode]="false" (memberSelectedEmit)="employerSelected($event)"></member-search-V2>
+    </div>
+</div>

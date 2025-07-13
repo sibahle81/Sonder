@@ -1,0 +1,16 @@
+<section>
+  <mat-accordion>
+    <mat-expansion-panel [expanded]="panelOpenState">
+      <mat-expansion-panel-header>
+        <mat-panel-title>
+          <h4>Search</h4>
+        </mat-panel-title>
+      </mat-expansion-panel-header>
+      <app-seach-debtor (itemSelected)="onAccountSelected($event)"></app-seach-debtor>
+    </mat-expansion-panel>
+  </mat-accordion>
+  <br />
+</section>
+<div *ngIf="rolePlayerId > 0">
+  <roleplayer-letters-of-good-standing [rolePlayerId]="rolePlayerId"></roleplayer-letters-of-good-standing>
+</div>

@@ -1,0 +1,73 @@
+<mat-card>
+  <mat-card class="pad" *ngIf="(dataSource.loading$ | async) || (isLoading$ | async)">
+    <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+    <label class="mat-label other-label"><i>loading HCP users...please wait</i></label>
+  </mat-card>
+
+  <div class="pad" [hidden]="(dataSource.loading$ | async) || (isLoading$ | async)">
+    <div class="menu-bar">
+      <span class="material-icons">
+        insert_link
+      </span>
+      Registered Healthcare Provider Users
+      <span (click)="openAddDialog()" class="material-icons pointer right" matTooltip="add">
+        add_circle
+      </span>
+    </div>
+
+    <div [hidden]="!(dataSource.data && dataSource.data.data && dataSource.data.data.length > 0)">
+      <mat-table #table [dataSource]="dataSource" matSort id="tblData">
+        <ng-container matColumnDef="userId">
+          <mat-header-cell *matHeaderCellDef> User </mat-header-cell>
+          <mat-cell *matCellDef="let row">{{row.name}}</mat-cell>
+        </ng-container>
+
+        <ng-container matColumnDef="userHealthcareproviderMapStatus">
+          <mat-header-cell *matHeaderCellDef> Status </mat-header-cell>
+          <mat-cell *matCellDef="let row">
+            {{getUserCompanyMapStatus(row.userHealthCareProviderMapStatus)}}
+          </mat-cell>
+        </ng-container>
+
+        <ng-container matColumnDef="actions">
+          <mat-header-cell *matHeaderCellDef>Action</mat-header-cell>
+          <mat-cell *matCellDef="let row">
+            <a *ngIf="row.userId" (click)="edit(row)" role="button" class="link-edit">
+              <span matTooltip="edit" class="material-icons icn pointer">
+                settings
+              </span></a>
+
+            <a *ngIf="row.userId" (click)="openContactsDialog(row)" role="button" class="link-edit">
+              <span matTooltip="contact details" class="material-icons icn pointer">
+                phone
+              </span></a>
+
+            <a *ngIf="!row.userId && row.userActivationId && row.userActivationId > 0"
+              (click)="resendUserActivation(row)" role="button" class="link-edit">
+              <span matTooltip="re-send user activation email" class="material-icons icn pointer">
+                send
+              </span></a>
+
+            <a *ngIf="row.healthcareproviderId && row.healthcareproviderId > 0 && hasAuditPermission"
+              (click)="openAuditDialog(row)" role="button" class="link-edit">
+              <span matTooltip="view audit details" class="material-icons pointer">
+                fingerprint
+              </span></a>
+          </mat-cell>
+        </ng-container>
+
+        <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
+        <mat-row *matRowDef="let row; columns: displayedColumns;"></mat-row>
+      </mat-table>
+
+      <mat-paginator #paginator [pageIndex]="0" [pageSize]="5" [pageSizeOptions]="[5, 10, 25, 100]"
+        [length]="this.dataSource.rowCount$ | async" (page)="getData()">
+      </mat-paginator>
+    </div>
+
+    <mat-card
+      *ngIf="!(dataSource.data && dataSource.data.data && dataSource.data.data.length > 0 || (dataSource.loading$ | async))">
+      <label class="mat-label other-label"><i>No HCP users found...</i></label>
+    </mat-card>
+  </div>
+</mat-card>

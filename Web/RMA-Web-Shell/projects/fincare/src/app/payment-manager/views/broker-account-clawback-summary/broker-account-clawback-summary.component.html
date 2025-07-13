@@ -1,0 +1,126 @@
+<div *ngIf="isAuthorized; else notAuthorized">
+    <table style="display:inline-block;">
+        <tr>
+            <td style="width: 300px; min-width: 300px;" colspan="2" style="text-align: center;">CLAW BACK SUMMARY</td>
+        </tr>
+        <tr>
+            <td>NAME</td>
+            <td>{{accountName}}</td>
+        </tr>
+        <tr>
+            <td>CODE</td>
+            <td>{{accountCode}}</td>
+        </tr>
+        <tr>
+            <td>BALANCE</td>
+            <td>{{accountBalance|number:'1.2-2'}}</td>
+        </tr>
+    </table>
+    <div style="display:inline-block;margin-left:15px ">
+
+        <table>
+            <tr>
+                <td style="background-color: whitesmoke !important;">
+                    <input type="image" alt="Download" (click)="downloadReport()" src="/assets/images/downloads-icon.png" width="40" height="40" />
+                </td>
+                <td style="background-color: whitesmoke !important;">
+                    <mat-radio-group aria-labelledby="reportformat-radio-group-label" class="reportformat-radio-group" [(ngModel)]="selectedreportFormat" (change)="reportFormatChange($event)">
+                        <mat-radio-button class="reportformat-radio-button" *ngFor="let reportFormat of reportFormats" [value]="reportFormat">
+                            {{reportFormat}} &nbsp;&nbsp;
+                        </mat-radio-button>
+                    </mat-radio-group>
+                </td>
+            </tr>
+            <tr *ngIf="isDownloading">
+                <td colspan="2" style="background-color: whitesmoke !important;">
+                    <div>
+                        <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+                        <label class="mat-label other-label"><i>downloading {{selectedreportFormat}} brokerage commission report...</i></label>
+                    </div>
+                </td>
+            </tr>
+            <tr>
+            </tr>
+        </table>
+    </div>
+    <div *ngIf="isLoading">
+        <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+        <label class="mat-label other-label"><i>Loading claw back summary...please wait</i></label>
+    </div>
+    <section>
+        <div [hidden]="datasource.data.length === 0">
+            <mat-table #table [dataSource]="datasource" matSort>
+                <ng-container matColumnDef="paymentType">
+                    <mat-header-cell *matHeaderCellDef mat-sort-header>Transaction Type</mat-header-cell>
+                    <mat-cell *matCellDef="let row"> {{getPayTypeText(row.commissionPaymentType)}} </mat-cell>
+                    <mat-footer-cell *matFooterCellDef></mat-footer-cell>
+                </ng-container>
+
+                <ng-container matColumnDef="totalDueAmount">
+                    <mat-header-cell *matHeaderCellDef mat-sort-header>Total Due Amount</mat-header-cell>
+                    <mat-cell *matCellDef="let row" class="right-aligned-amounts">
+                        {{row.totalDueAmount|number:'1.2-2'}}</mat-cell>
+                    <mat-footer-cell *matFooterCellDef class="right-aligned-amounts">
+                        {{calculateTotalDueAmount() |number:'1.2-2'}}</mat-footer-cell>
+                </ng-container>
+
+                <ng-container matColumnDef="currentClawBackBalance">
+                    <mat-header-cell *matHeaderCellDef mat-sort-header>Current ClawBack Balance</mat-header-cell>
+                    <mat-cell *matCellDef="let row" class="right-aligned-amounts">
+                        {{row.currentClawBackBalance|number:'1.2-2'}}</mat-cell>
+                    <mat-footer-cell *matFooterCellDef class="right-aligned-amounts">
+                        {{calculateCurrentClawBackBalance() |number:'1.2-2'}}</mat-footer-cell>
+                </ng-container>
+
+                <ng-container matColumnDef="newClawBackBalance">
+                    <mat-header-cell *matHeaderCellDef mat-sort-header>New ClawBack Balance</mat-header-cell>
+                    <mat-cell *matCellDef="let row" class="right-aligned-amounts">
+                        {{row.newClawBackBalance|number:'1.2-2'}}
+                    </mat-cell>
+                    <mat-footer-cell *matFooterCellDef class="right-aligned-amounts">
+                        {{calculateNewClawBackBalance() |number:'1.2-2'}}</mat-footer-cell>
+                </ng-container>
+
+                <ng-container matColumnDef="createdDate">
+                    <mat-header-cell *matHeaderCellDef mat-sort-header>Clawback Date</mat-header-cell>
+                    <mat-cell *matCellDef="let row">
+                        {{row.createdDate | date:'dd-MMM-yyyy HH:mm:ss'}}
+                    </mat-cell>
+                    <mat-footer-cell *matFooterCellDef></mat-footer-cell>
+                </ng-container>
+
+                <ng-container matColumnDef="createdBy">
+                    <mat-header-cell *matHeaderCellDef mat-sort-header>User</mat-header-cell>
+                    <mat-cell *matCellDef="let row">
+                        {{row.createdBy}}
+                    </mat-cell>
+                    <mat-footer-cell *matFooterCellDef></mat-footer-cell>
+                </ng-container>
+                <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
+                <mat-row *matRowDef="let row; columns: displayedColumns;"></mat-row>
+                <mat-footer-row *matFooterRowDef="displayedColumns"></mat-footer-row>
+            </mat-table>
+        </div>
+        <div [hidden]="datasource.data.length === 0">
+            <mat-paginator [pageSize]="10" [pageSizeOptions]="[5, 10, 25, 100]">
+            </mat-paginator>
+        </div>
+    </section>
+</div>
+<div class="form-buttons" (click)="navigateBack()" style="margin-left: 10px">
+    <button class="button float-button submit-button">Back</button>
+</div>
+<ng-template #notAuthorized>
+    <div>
+        <div class="wizard-permissions-error">You do not have sufficient permissions to view account summaries.</div>
+        <div (click)="navigateBack()" class="form-buttons submit-button">
+            <button type="button" class="button float-button">Back</button>
+        </div>
+    </div>
+</ng-template>
+
+<div [hidden]="true">
+    <ssrs-reportviewer [reportserver]="reportServerAudit" [reporturl]="reportUrlAudit" [showparameters]="showParametersAudit" [parameters]="parametersAudit" [language]="languageAudit" [width]="widthAudit" [height]="heightAudit" [toolbar]="toolbarAudit" [format]="selectedreportFormat"
+        [isDownload]="isDownload" [reportName]="'Brokerage_Commission_Clawbacks'">
+    </ssrs-reportviewer>
+</div>

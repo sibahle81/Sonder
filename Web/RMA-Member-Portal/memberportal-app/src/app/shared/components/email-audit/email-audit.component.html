@@ -1,0 +1,79 @@
+<mat-card style="margin: 15px 30px 15px 30px">
+    <mat-card-header>
+      <mat-card-title class="wizard-font card-title grey">
+        <h1 style="padding: 0;">Email Audit</h1>
+      </mat-card-title>
+    </mat-card-header>
+    <mat-dialog-content>
+      <mat-card-content style="margin-left: 10px;">
+        <div *ngIf="isLoading">
+          <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+          <span *ngIf="isLoading" class="site-font grey" style="margin-top: 15px;"><i>Loading email audits...</i></span>
+        </div>
+        <div [hidden]="dataSource.data.length === 0 || isLoading">
+          <div class="mat-container mat-elevation-z8" [hidden]="isLoading" style="overflow-x: auto;">
+            <div [hidden]="dataSource.data.length === 0">
+              <mat-table #table [dataSource]="dataSource" matSort id="tblData" style="width: 1135px;">
+                <!--From -->
+                <ng-container matColumnDef="fromAddress">
+                  <mat-header-cell *matHeaderCellDef mat-sort-header> From </mat-header-cell>
+                  <mat-cell *matCellDef="let row">
+                    <div class="media-body">
+                      <div *ngFor="let email of splitEmails(row.fromAddress)">
+                        <p>{{email}}</p>
+                      </div>
+                    </div>
+                  </mat-cell>
+                </ng-container>
+                <!--Recipients -->
+                <ng-container matColumnDef="reciepients">
+                  <mat-header-cell *matHeaderCellDef mat-sort-header>Recipient(s)</mat-header-cell>
+                  <mat-cell *matCellDef="let row">
+                    <div class="media-body">
+                      <div *ngFor="let email of splitEmails(row.reciepients)">
+                        <p>{{email}}</p>
+                      </div>
+                    </div>
+                  </mat-cell>
+                </ng-container>
+                <!--Success -->
+                <ng-container matColumnDef="isSuccess">
+                  <mat-header-cell *matHeaderCellDef mat-sort-header> Success </mat-header-cell>
+                  <mat-cell *matCellDef="let row"> {{row.isSuccess}} </mat-cell>
+                </ng-container>
+                <!--Failure Reason -->
+                <ng-container matColumnDef="processDescription">
+                  <mat-header-cell *matHeaderCellDef mat-sort-header> Failure Reason </mat-header-cell>
+                  <mat-cell *matCellDef="let row"> {{row.processDescription}} </mat-cell>
+                </ng-container>
+                <!--Sent Date -->
+                <ng-container matColumnDef="createdDate">
+                  <mat-header-cell *matHeaderCellDef mat-sort-header> Sent Date </mat-header-cell>
+                  <mat-cell *matCellDef="let row"> {{row.createdDate | date:"yyyy-MM-dd "}} </mat-cell>
+                </ng-container>
+                <!-- View -->
+                <ng-container matColumnDef="actions">
+                  <mat-header-cell *matHeaderCellDef mat-sort-header>Actions</mat-header-cell>
+                  <mat-cell *matCellDef="let row" [matMenuTriggerFor]="menu" (click)="filterMenu()">
+                    <mat-icon>more_vert</mat-icon>
+                    <mat-menu #menu="matMenu">
+                      <button mat-menu-item *ngFor="let menu of menus" (click)="onMenuSelect(row, menu.title)"
+                        disabled={{menu.disable}}>{{menu.title}}</button>
+                    </mat-menu>
+                  </mat-cell>
+                </ng-container>
+                <mat-header-row *matHeaderRowDef="displayedColumns; sticky: true"></mat-header-row>
+                <mat-row *matRowDef="let row; columns: displayedColumns;"></mat-row>
+              </mat-table>
+              <mat-paginator #paginator [length]="dataSource.data.length" [pageIndex]="0" [pageSize]="5"
+                [pageSizeOptions]="[5, 10, 25, 50]">
+              </mat-paginator>
+            </div>
+          </div>
+        </div>
+        <div [hidden]="dataSource.data.length > 0 || isLoading">
+          <span class="grey site-font">No records found.</span>
+        </div>
+      </mat-card-content>
+    </mat-dialog-content>
+</mat-card>

@@ -1,0 +1,138 @@
+<div *ngIf="model">
+  <form [formGroup]="form" class="mat-container details-form" novalidate>
+    <mat-card>
+      <section *ngIf="finPayeNumber" class="grid-inputs">
+        <h4>Debtor Account</h4><h4>{{finPayeNumber}}</h4>
+      </section>
+      <section *ngIf="refundReason" class="grid-inputs">
+        <h4>Refund Reason</h4><h4>{{refundReason}}</h4>
+      </section>
+      <section *ngIf="model && model.debtorClaimRecoveryBalance" class="grid-inputs">
+        <h4>Claim Recoveries</h4><h4>{{model.debtorClaimRecoveryBalance | currency:'':''}}</h4>
+      </section>
+      <section *ngIf="model && model.refundAmount" class="grid-inputs">
+        <h4>Refund Amount</h4><h4>{{model.refundAmount | currency:'':''}}</h4>
+      </section>
+    </mat-card>
+  <mat-card *ngIf="rolePlayer">
+      <section>
+        <h4>Refund Banking Details</h4>
+        <div>
+          <role-player-banking-list (rolePlayerBankingSelectedEmit)="setBankAccount($event)" [rolePlayer]="rolePlayer" [selectedRolePlayerBankingId] = 'model.rolePlayerBankingId' 
+            [isReadOnly]="this.form.disabled"
+            [verifyAccount]="true" [showSelectColumn]="true">
+          </role-player-banking-list>
+        </div>
+      </section>
+    </mat-card>
+    <br />
+    <mat-card>
+      <section class="clear_both">
+        <div>
+          <mat-form-field class="mat-form-field">
+            <label class="mat-label other-label">Group Email</label>
+            <input matInput formControlName="groupEmail" name="groupEmail" id="groupEmail" />
+          </mat-form-field>
+          <mat-form-field class="mat-form-field-right">
+            <label class="mat-label other-label">Client Email</label>
+            <input matInput formControlName="clientEmail" name="clientEmail" id="clientEmail"
+              (keyup)="logClientEmailPopulated($event.target.value)" />
+          </mat-form-field>
+        </div>
+        <div><button type="button" *ngIf="!isDisabled && (cleintEmailPopulated | async)" (click)="addEmail()"
+            class="button">Save</button></div>
+      </section>
+    </mat-card>
+    <br />
+    <mat-card>
+      <section>
+        <mat-form-field class="mat-form-field">
+          <label class="mat-label other-label">Refund Date</label>
+          <input readonly matInput date="true" time="false" [min]="minDate" [matDatepicker]="refundDate" id="refundDate"
+            formControlName="refundDate" />
+          <mat-datepicker-toggle matSuffix [for]="refundDate">
+          </mat-datepicker-toggle>
+          <mat-datepicker touchUi="true" #refundDate ng-model-options="{ timezone: 'sast' }"></mat-datepicker>
+        </mat-form-field>
+      </section>
+      <section>
+      <mat-form-field>
+        <label class="mat-label other-label mandatory-field">Note</label>
+        <textarea matTextareaAutosize matAutosizeMinRows="5" matAutosizeMaxRows="3" maxlength="255" matInput
+          minlength="3" id="refundNote" name="refundNote" formControlName="refundNote"></textarea>
+        <mat-error *ngIf="form.get('refundNote').hasError('required')">
+          Note is <strong>required</strong>
+        </mat-error>
+        <mat-error *ngIf="form.get('refundNote').hasError('minlength')">
+          Note must be at least <strong>three characters</strong>
+        </mat-error>
+      </mat-form-field>
+    </section>
+        <div [hidden]="datasource.data.length === 0">
+          <mat-table #table [dataSource]="datasource" matSort>
+            <ng-container matColumnDef="transactionType">
+              <mat-header-cell *matHeaderCellDef mat-sort-header>Transaction Type</mat-header-cell>
+              <mat-cell *matCellDef="let row">{{getTransactionTypeDesc(row.transactionType)}}</mat-cell>
+            </ng-container>
+            <ng-container matColumnDef="documentNumber">
+              <mat-header-cell *matHeaderCellDef mat-sort-header>Document Number</mat-header-cell>
+              <mat-cell *matCellDef="let row">{{getDocumentNumber(row)}}</mat-cell>
+            </ng-container>
+            <ng-container matColumnDef="transactionAmount">
+              <mat-header-cell *matHeaderCellDef mat-sort-header>Transaction Amount</mat-header-cell>
+              <mat-cell *matCellDef="let row" class="right-aligned-amounts">{{row.amount | currency:'':''}}</mat-cell>
+            </ng-container>
+            <ng-container matColumnDef="balance">
+              <mat-header-cell *matHeaderCellDef mat-sort-header>Balance</mat-header-cell>
+              <mat-cell *matCellDef="let row" class="right-aligned-amounts">{{row.balance | currency:'':''}}</mat-cell>
+            </ng-container>
+            <ng-container matColumnDef="refundAmount">
+              <mat-header-cell *matHeaderCellDef mat-sort-header>Refund Amount</mat-header-cell>
+              <mat-cell *matCellDef="let row" class="right-aligned-amounts">{{row.refundAmount | currency:'':''}}
+              </mat-cell>
+            </ng-container>
+            <ng-container matColumnDef="transactionDate">
+              <mat-header-cell *matHeaderCellDef mat-sort-header>Transaction Date</mat-header-cell>
+              <mat-cell *matCellDef="let row">{{row.transactionDate | date: 'yyyy/MM/dd'}}</mat-cell>
+            </ng-container>
+            <mat-header-row *matHeaderRowDef="displayedColumns;"></mat-header-row>
+            <mat-row *matRowDef="let row; columns: displayedColumns;"></mat-row>
+          </mat-table>
+          <mat-paginator #paginator [length]="datasource.data ? datasource.data.length : 0" [pageIndex]="0"
+            [pageSize]="5" [pageSizeOptions]="[5, 10, 25, 100]">
+          </mat-paginator>
+        </div> 
+      <br />
+      <div class="refund-account-container" [hidden] ="datasourceRefundBreakDown.data.length === 0"> 
+        <mat-card>
+        <h5>Refund From Account</h5>
+           <mat-table  [dataSource] ="datasourceRefundBreakDown"  matSort #sort2="matSort">            
+              <ng-container matColumnDef="rmaBankAccountNumber">
+                <mat-header-cell *matHeaderCellDef mat-sort-header>RMA Bank Account</mat-header-cell>>
+                <mat-cell *matCellDef="let row">{{row.rmaBankAccountNumber}}</mat-cell>
+              </ng-container>
+              <ng-container matColumnDef="refundAmount">
+                <mat-header-cell *matHeaderCellDef mat-sort-header>Refundable Amount</mat-header-cell>
+                <mat-cell *matCellDef="let row"   class="right-aligned-amounts refund-amount">{{row.refundAmount | currency:'':''}}
+                </mat-cell>
+              </ng-container>
+              <mat-header-row *matHeaderRowDef=" displayedBreakDownColumns;"></mat-header-row>
+              <mat-row *matRowDef="let row; columns: displayedBreakDownColumns;"></mat-row>
+              </mat-table>
+            </mat-card>
+            </div>
+      <br />
+    
+    </mat-card>
+  </form>
+  <br />
+  <div *ngIf="documentSet">
+      <document-uploader [documentSet]="documentSet" [systemName]="documentSystemName" [keyName]="'wizardId'"
+        [keyValue]="wizardId"></document-uploader>
+  </div>
+</div>
+<div *ngIf="(isLoading$ | async) || !model">
+  <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+  <label class="mat-label other-label"><i>loading...please wait</i></label>
+</div>
+<br />

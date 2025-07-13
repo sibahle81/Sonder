@@ -1,0 +1,30 @@
+<div>
+  <h1>Upload Premium Listing</h1>
+</div>
+<div>
+  <upload-control #uploadControl [acceptedTypes]="'.xlsx'" [isSingleInput]="true" [allowDelete]="true"
+    [isReadOnly]="false"></upload-control>
+</div>
+<div class="pad-left pad-top" *ngIf="uploadControlComponent.uploadFileList.length > 0">
+  <br/>
+  <div>Uploading large files may take several minutes. Please be patient.</div>
+  <div>The wizard task is created in the background, and should be available after a short time.</div>
+</div>
+<div class="pad-left" *ngIf="errorMessage.length > 0">
+  <div class="red">
+    <ng-container *ngFor="let msg of errorMessage">
+      {{msg}}<br/>
+    </ng-container>
+  </div>
+</div>
+<br/>
+<div>
+  <mat-checkbox (change)="createPolicy($event)">Create new policy</mat-checkbox>
+</div>
+<div *ngIf="createNewPolicy">
+  <label class="red">Warning: this will create new policies, and NOT update any existing policies</label>
+</div>
+<br />
+<div class="form-buttons" (click)="save()">
+  <button class="button float-button submit-button" [disabled]="disabled">Upload File</button>
+</div>

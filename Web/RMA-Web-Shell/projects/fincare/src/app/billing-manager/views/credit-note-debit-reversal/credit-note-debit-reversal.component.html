@@ -1,0 +1,129 @@
+<mat-card-header>
+  <mat-card-title class="wizard-font card-title grey">
+    <h1>Credit Note</h1>
+  </mat-card-title>
+</mat-card-header>
+<div *ngIf="(isLoading$ | async)">
+  <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+  <label class="mat-label other-label"><i>loading...please wait</i></label>
+</div>
+<div *ngIf="model && roleplayer && debitTransactions">
+  <form [formGroup]="form" class="mat-container details-form" novalidate>
+    <mat-card>
+      <label class="mat-label other-label">Account Holder: <b>{{roleplayer.displayName}}</b></label><br />
+      <label *ngIf="model.finPayeeNumber" class="mat-label other-label">Account Number: <b> {{model.finPayeeNumber}}</b></label><br />
+      <label *ngIf="!model.isAuthorised" class="mat-label other-label notAuthorized" >Account is <b>not</b>
+        authorised</label>
+      <label *ngIf="model.isAuthorised" class="mat-label other-label authorized" >Account was authorised by
+        <b>{{model.authorisedBy}}</b></label>
+    </mat-card>
+    <br />
+    <section [hidden] ="isDisabled">
+    <mat-card>
+      <mat-card-header>
+        <mat-card-title class="wizard-font card-title grey">
+          <h1 class="custPadding">Debit Transactions</h1>
+        </mat-card-title>
+      </mat-card-header>
+      <div [hidden]="!showOwnAmountTransaction">
+        <section>
+          <mat-form-field class="mat-form-field">
+            <label class="mat-label other-label mandatory-field">Amount</label>
+            <input matInput formControlName="partialAmount" name="partialAmount" id="partialAmount" DecimalNumber />
+            <div class="errorMessages" *ngIf="showMessage">Invalid amount: Amount must be between 1 and {{maxAmountAllowed | currency:'R'}}</div>
+          </mat-form-field>
+        </section>
+        <button type="button" (click)="addPartialAmount()" class="button float-button">Continue</button>
+      </div>
+
+      <div *ngIf="debitSearchFailed$ | async">
+          There are no interest or debit transactions to reverse
+      </div>
+      <div *ngIf="(isLoadingTransactions$ | async)">
+        <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+        <label class="mat-label other-label"><i>loading transactions...please wait</i></label>
+      </div>
+      <div  [hidden]="(!datasource.data && datasource.data.length === 0 && (isLoadingTransactions$ | async))  || showOwnAmountTransaction">
+        <mat-table #table [dataSource]="datasource" matSort>
+          <ng-container matColumnDef="documentNumber">
+            <mat-header-cell *matHeaderCellDef mat-sort-header>Document Number</mat-header-cell>
+            <mat-cell *matCellDef="let row"> {{row.rmaReference}} </mat-cell>
+          </ng-container>
+          <ng-container matColumnDef="documentDate">
+            <mat-header-cell *matHeaderCellDef mat-sort-header>Document Date</mat-header-cell>
+            <mat-cell *matCellDef="let row"> {{ row.transactionDate | date: 'yyyy/MM/dd'}} </mat-cell>
+          </ng-container>
+          <ng-container matColumnDef="amount">
+            <mat-header-cell *matHeaderCellDef mat-sort-header>Amount</mat-header-cell>
+            <mat-cell *matCellDef="let row" class="right-aligned-amounts"> {{row.amount | currency: 'R'}}
+            </mat-cell>
+          </ng-container>
+          <ng-container matColumnDef="amountOutstanding">
+            <mat-header-cell *matHeaderCellDef mat-sort-header>Outstanding Amount</mat-header-cell>
+            <mat-cell *matCellDef="let row" class="right-aligned-amounts"> {{row.balance | currency: 'R'}} </mat-cell>
+          </ng-container>
+          <ng-container matColumnDef="amountAllocated">
+            <mat-header-cell *matHeaderCellDef mat-sort-header>Allocted Amount</mat-header-cell>
+            <mat-cell *matCellDef="let row" class="right-aligned-amounts"> {{row.amountAllocated | currency: 'R'}} </mat-cell>
+          </ng-container>
+
+          <ng-container matColumnDef="actions" class="mat-column-created">
+            <mat-header-cell *matHeaderCellDef mat-sort-header></mat-header-cell>
+            <mat-cell *matCellDef="let row">
+                <a role="button" class="link-edit"
+                *ngIf="!(selectedDebitTransactionIds.includes(row.transactionId))"
+                (click)="debitTransactionSelected(row.transactionId, 0)">full amount |</a>
+                <a role="button" class="link-edit"
+                *ngIf="!(selectedDebitTransactionIds.includes(row.transactionId))"
+                (click)="toggleOwnAmountTransaction(row.transactionId, row.balance)">own
+                amount</a>
+              <a role="button" class="link-edit"
+                *ngIf="selectedDebitTransactionIds.includes(row.transactionId)"
+                (click)="debitTransactionRemoved(row.transactionId, row.amountAllocated)">remove</a>
+            </mat-cell>
+          </ng-container>
+          <mat-header-row *matHeaderRowDef="displayedColumns;"></mat-header-row>
+          <mat-row *matRowDef="let row; columns: displayedColumns;"></mat-row>
+        </mat-table>
+        <mat-paginator  #paginator [length]="datasource.data ? datasource.data.length : 0" [pageIndex]="0" [pageSize]="5"
+        [pageSizeOptions]="[5, 10, 25, 100]">
+        </mat-paginator>
+      </div>
+      <br/>
+      <div [hidden]="!showOwnAmount">
+        <section>
+          <mat-form-field class="mat-form-field">
+            <label class="mat-label other-label mandatory-field">Amount</label>
+            <input matInput formControlName="partialAmount" name="partialAmount" id="partialAmount" DecimalNumber />
+            <div  class="errorMessages" *ngIf="showMessage">Invalid amount: Amount must be between 1 and {{maxAmountAllowed | currency:'R'}}</div>
+          </mat-form-field>
+        </section>
+        <button type="button" (click)="addPartialAmount()" class="button float-button">Continue</button>
+      </div>
+    </mat-card>
+  </section>
+    <br />
+    <mat-card>
+      <section>
+        <mat-form-field class="mat-form-field">
+          <label class="mat-label other-label mandatory-field">Credit Note Amount</label>
+          <input matInput formControlName="amount" name="amount" id="amount" DecimalNumber />
+        </mat-form-field>
+      </section>
+
+      <mat-form-field>
+        <label class="mat-label other-label mandatory-field">Reason</label>
+        <textarea matTextareaAutosize matAutosizeMinRows="5" matAutosizeMaxRows="3" maxlength="255" matInput
+          minlength="3" id="reason" name="reason" formControlName="reason"></textarea>
+        <mat-error *ngIf="form.get('reason').hasError('required')">
+          Reason is <strong>required</strong>
+        </mat-error>
+        <mat-error *ngIf="form.get('reason').hasError('minlength')">
+          Reason must be at least <strong>three characters</strong>
+        </mat-error>
+      </mat-form-field>
+    </mat-card>
+  </form>
+</div>
+
+<br />

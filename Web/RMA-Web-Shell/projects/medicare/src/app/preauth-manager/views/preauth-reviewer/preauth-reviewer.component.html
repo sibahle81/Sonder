@@ -1,0 +1,91 @@
+<mat-card>  
+  <div class="menu-bar">
+    <span class="material-icons">
+      vaccines
+    </span>&nbsp;PreAuth Review
+</div>  
+    <mat-card-content>
+    <br><br>  
+    <mat-card>
+      <mat-card-content>
+        <preauth-claim-view  *ngIf="preAuthClaimDetails" #ClaimDetailsMainPreAuth [preAuthClaimDetail]="preAuthClaimDetails"></preauth-claim-view>      
+        <div>
+          <div class="grid">
+            <div *ngIf="preAuthClaimDetails">
+              <span class="title">Claim Event</span>
+              <span class="value">{{ preAuthClaimDetails.eventDate | date: 'dd-MMM-yyyy h:mm a'}} </span>
+            </div>
+          </div>
+    
+          <div *ngIf="eventDateInjuryDateNotEqual" class="warning">
+            Event date and Injury dates should be the same
+          </div>
+        </div>
+      </mat-card-content>
+    </mat-card> 
+    <br><br>
+    <div [hidden]="!isLoading  && preAuthClaimDetails">
+      <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+      Loading...
+    </div>
+    <mat-expansion-panel expanded="true" *ngIf="hospitalDetails">
+      <mat-expansion-panel-header>
+        <mat-panel-title>
+          {{ preAuthTypeText }}
+        </mat-panel-title>
+      </mat-expansion-panel-header>
+      <hr>
+      <preauth-hcp-view  #HealthcareProviderMainPreAuth [authDetails]="mainPreAuthorisation" [healthCareProvider]="hcpMainAuth$ | async" 
+      [preAuthClaimDetails]="preAuthClaimDetails$">
+      </preauth-hcp-view>
+      <br /><br />
+      <mat-expansion-panel>
+        <mat-expansion-panel-header>
+          <mat-panel-title>
+            PreAuth ICD10 Codes
+          </mat-panel-title>
+        </mat-expansion-panel-header>
+        <preauth-icd10-edit #MainPreAuthICD10Codes [preAuthId]="preAuthIdMainPreAuth" [isHospitalAuth]="true"></preauth-icd10-edit>
+      </mat-expansion-panel>
+      <br/><br/>
+      <mat-expansion-panel>
+        <mat-expansion-panel-header>
+          <mat-panel-title>
+            PreAuthorisation Breakdown
+          </mat-panel-title>
+        </mat-expansion-panel-header>
+        <preauth-breakdown #mainPreAuthBreakdown [preAuthId]="preAuthIdMainPreAuth" authControlMode="true"
+        authType="Hospital" [showLevelOfCare]="levelOfCare" [personEventId]="personEventId"></preauth-breakdown>
+      </mat-expansion-panel>
+      <preauth-review #preauthReviewComponentHospital [authDetails]="hospitalDetails"></preauth-review>
+      <br><br>
+    </mat-expansion-panel>
+    <mat-expansion-panel *ngIf="showTreatingDoctorAuth">
+      <mat-expansion-panel-header>
+        <mat-panel-title>
+          Treating Doctor Autorisation Details
+        </mat-panel-title>
+      </mat-expansion-panel-header>
+      <hr>
+      <preauth-hcp-view #HealthcareProviderTreatingDoctor [authDetails]="treatingDoctorDetails" [healthCareProviderId]="healthCareProviderIdTreatingDoctor">
+      </preauth-hcp-view>
+      <br /><br />
+      <preauth-icd10-edit #TreatingDoctorAuthICD10Codes [preAuthId]="preAuthIdTreatingDoctor"></preauth-icd10-edit>
+      <br><br>
+      <preauth-breakdown #treatingDoctorBreakdown [preAuthId]="preAuthIdTreatingDoctor" authControlMode="true"
+      authType="Treating Doctor" [showLevelOfCare]="!levelOfCare" [personEventId]="personEventId"></preauth-breakdown>
+      <br><br>
+      <preauth-review #preauthReviewComponentTreatingDoctor [authDetails]="treatingDoctorDetails"></preauth-review>
+      <br><br>
+    </mat-expansion-panel>
+    <div *ngIf="preAuth$ | async as auth">
+      <mat-expansion-panel>
+        <mat-expansion-panel-header>
+          <mat-panel-title>PreAuth Activity</mat-panel-title>
+        </mat-expansion-panel-header>
+        <hr>
+        <preauth-activity [auth]="auth?.preAuthActivities"></preauth-activity>
+      </mat-expansion-panel>
+    </div>
+  </mat-card-content>
+</mat-card>

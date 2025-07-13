@@ -1,0 +1,81 @@
+<mat-card *ngIf="this.form">
+  <mat-card-content>
+      <h1> {{this.form.controls['action'].value}} Tax Rebates for Tax Year {{this.form.controls['year'].value}} </h1>
+      <form [formGroup]="form">
+        <section>
+          <mat-form-field>
+            <label class="mat-label other-label mandatory-field">Primary rebate (less than 65years)</label>
+            <input matInput maxlength="50" type="number" formControlName="primary" name="primary" id="primary" />
+            <mat-error *ngIf="form.get('primary').hasError('required')">
+               Primary Rebate is required
+            </mat-error>
+            <mat-error *ngIf="form.get('primary').hasError('zeroOrLessAmount')">
+              Primary Rebate must be a positive number
+            </mat-error>
+          </mat-form-field>
+
+          <mat-form-field class="mat-form-field  mat-form-field-right">
+            <label class="mat-label other-label mandatory-field">Secondary Rebate (65years and older)</label>
+            <input matInput maxlength="50" type="number" formControlName="secondary" name="secondary" id="secondary" />
+            <mat-error *ngIf="form.get('secondary').hasError('required')">
+              Secondary Rebate is required
+            </mat-error>
+            <mat-error *ngIf="form.get('secondary').hasError('zeroOrLessAmount')">
+              Secondary Rebate must be a positive number
+            </mat-error>
+          </mat-form-field>
+        </section>
+
+        <section>
+          <mat-form-field>
+            <label class="mat-label other-label mandatory-field">Tertiary rebate (75years and older)</label>
+            <input matInput maxlength="50" type="number" formControlName="tertiary" name="tertiary" id="tertiary" />
+            <mat-error *ngIf="form.get('tertiary').hasError('required')">
+               Tertiary Rebate is required
+            </mat-error>
+            <mat-error *ngIf="form.get('tertiary').hasError('zeroOrLessAmount')">
+              Tertiary Rebate must be a positive number
+            </mat-error>
+          </mat-form-field>
+
+          <mat-form-field class="mat-form-field  mat-form-field-right">
+            <label class="mat-label other-label mandatory-field">Primary Minimum Tax (less than 65years)</label>
+            <input matInput maxlength="50" type="number" formControlName="primaryMinimumTax" name="primaryMinimumTax" id="primaryMinimumTax" />
+            <mat-error *ngIf="form.get('primaryMinimumTax').hasError('required')">
+              Primary Minimum Tax is required
+            </mat-error>
+            <mat-error *ngIf="form.get('primaryMinimumTax').hasError('zeroOrLessAmount')">
+              Primary Minimum Tax must be a positive number
+            </mat-error>
+          </mat-form-field>
+        </section>
+
+        <section>
+          <mat-form-field>
+            <label class="mat-label other-label mandatory-field">Secondary Minimum Tax (65years and older)</label>
+            <input matInput maxlength="50" type="number" formControlName="secondaryMinimumTax" name="secondaryMinimumTax" id="secondaryMinimumTax" />
+            <mat-error *ngIf="form.get('secondaryMinimumTax').hasError('required')">
+               Secondary Minimum Tax is required
+            </mat-error>
+            <mat-error *ngIf="form.get('secondaryMinimumTax').hasError('zeroOrLessAmount')">
+              Secondary Minimum Tax must be a positive number
+            </mat-error>
+          </mat-form-field>
+
+          <mat-form-field class="mat-form-field  mat-form-field-right">
+            <label class="mat-label other-label mandatory-field">Tertiary Minimum Tax  (75years and older)</label>
+            <input matInput maxlength="50" type="number" formControlName="tertiaryMinimumTax" name="tertiaryMinimumTax" id="tertiaryMinimumTax" />
+            <mat-error *ngIf="form.get('tertiaryMinimumTax').hasError('required')">
+              Tertiary Minimum Tax is required
+            </mat-error>
+            <mat-error *ngIf="form.get('tertiaryMinimumTax').hasError('zeroOrLessAmount')">
+              Tertiary Minimum Tax must be a positive number
+            </mat-error>
+          </mat-form-field>
+        </section>
+      </form>
+  </mat-card-content>
+</mat-card>
+
+
+

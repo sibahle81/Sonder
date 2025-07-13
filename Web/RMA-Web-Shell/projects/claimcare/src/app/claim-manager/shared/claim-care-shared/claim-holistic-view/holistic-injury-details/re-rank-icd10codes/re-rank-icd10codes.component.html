@@ -1,0 +1,76 @@
+<mat-card class="pad" *ngIf="(isLoading$ | async)">
+    <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+    <label class="mat-label other-label"><i>loading icd10 codes...please wait</i></label>
+</mat-card>
+
+<div class="menu-bar">
+    <span class="material-icons">
+        qr_code_2
+    </span>&nbsp;Re-rank ICD10 Codes
+    <span class="material-icons pointer right" matTooltip="cancel" (click)="cancel()">
+        cancel
+    </span>
+    <span class="material-icons pointer right" matTooltip="save" (click)="save()">
+        save
+    </span>
+</div>
+
+<div [hidden]="(isLoading$ | async)">
+    <div *ngIf="data.injuries">
+        <mat-table #table [dataSource]="data.injuries" id="tblData">
+            <ng-container matColumnDef="icd10CodeDescription">
+                <mat-header-cell *matHeaderCellDef> ICD10 Code Description </mat-header-cell>
+                <mat-cell *matCellDef="let row">
+                    <icd10-code-description [icd10CodeId]="row.icd10CodeId"></icd10-code-description>
+                </mat-cell>
+            </ng-container>
+
+            <ng-container matColumnDef="injurySeverityTypeDesc">
+                <mat-header-cell *matHeaderCellDef> Severity </mat-header-cell>
+                <mat-cell *matCellDef="let row">
+                    {{ getSeverity(row.injurySeverityType) }}
+                </mat-cell>
+            </ng-container>
+
+            <ng-container matColumnDef="bodySideAffectedTypeDesc">
+                <mat-header-cell *matHeaderCellDef> Body Side </mat-header-cell>
+                <mat-cell *matCellDef="let row">
+                    {{ getBodySide(row.bodySideAffectedType) }}
+                </mat-cell>
+            </ng-container>
+
+            <ng-container matColumnDef="mmiDays">
+                <mat-header-cell *matHeaderCellDef> MMI Days </mat-header-cell>
+                <mat-cell *matCellDef="let row">
+                    {{row.mmiDays}} day(s)
+                </mat-cell>
+            </ng-container>
+
+            <ng-container matColumnDef="injuryRank">
+                <mat-header-cell *matHeaderCellDef> Rank </mat-header-cell>
+                <mat-cell *matCellDef="let row">
+                    {{row.injuryRank}}
+                </mat-cell>
+            </ng-container>
+
+            <ng-container matColumnDef="actions">
+                <mat-header-cell *matHeaderCellDef> Actions </mat-header-cell>
+                <mat-cell *matCellDef="let row">
+                    <a *ngIf="!isTopInjuryRank(row)" (click)="moveUp(row)" role="button" class="link-edit">
+                        <span matTooltip="move up" class="material-icons icn pointer">
+                            arrow_upward
+                        </span>
+                    </a>
+                    <a *ngIf="!isBottomInjuryRank(row)" (click)="moveDown(row)" role="button" class="link-edit">
+                        <span matTooltip="move down" class="material-icons icn pointer">
+                            arrow_downward
+                        </span>
+                    </a>
+                </mat-cell>
+            </ng-container>
+
+            <mat-header-row *matHeaderRowDef="getDisplayedColumns()"></mat-header-row>
+            <mat-row *matRowDef="let row; columns: getDisplayedColumns();"></mat-row>
+        </mat-table>
+    </div>
+</div>

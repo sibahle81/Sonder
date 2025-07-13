@@ -1,0 +1,75 @@
+<h1>Manage Periods</h1>
+
+<br />
+
+<mat-card>
+  <div class="form-group-button mat-form-button">
+    <div class="form-buttons submit-button">
+      <button (click)="addPeriods()" [disabled]="(isLoading$ | async) || (isRollingPeriod$ | async)" type="button"
+        class="button float-button">Add 12 periods from last period end date</button>
+    </div>
+    <div class="form-buttons submit-button">
+      <button (click)="startRollPeriods()" [disabled]="(isLoading$ | async) || (isRollingPeriod$ | async)" type="button"
+        class="button float-button">Roll billing period</button>
+    </div>
+    <div class="form-buttons submit-button">
+      <button (click)="closeCurrentPeriod()" [disabled]="(isLoading$ | async) || (isRollingPeriod$ | async)" type="button"
+        class="button float-button">Close current period and open next period</button>
+    </div>
+  </div>
+  <br />
+  <br />
+</mat-card>
+
+<br />
+
+<mat-card>
+  <div *ngIf="isLoading$ | async">
+    <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+    <label class="mat-label other-label"><i>loading periods...please wait</i></label>
+  </div>
+
+  <div *ngIf="isRollingPeriod$ | async">
+    <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+    <label class="mat-label other-label"><i>rolling period...please wait</i></label>
+  </div>
+
+  <div *ngIf="dataSource$ && !(isRollingPeriod$ | async) && !(isLoading$ | async)">
+    <mat-card>
+      <label class="mat-label other-label">Year</label><br />
+      <mat-select [(ngModel)]="year" style="width: 350px;" (selectionChange)="yearChange($event)">
+        <mat-option *ngFor="let year of yearsFilter" [value]="year">{{year}}
+        </mat-option>
+      </mat-select>
+      <br />
+    </mat-card>
+    <mat-table #table [dataSource]="dataSource$">
+      <ng-container matColumnDef="startDate">
+        <mat-header-cell *matHeaderCellDef> Start Date </mat-header-cell>
+        <mat-cell *matCellDef="let row"> {{row.startDate | date:'yyyy/MM/dd'}} </mat-cell>
+      </ng-container>
+      <ng-container matColumnDef="endDate">
+        <mat-header-cell *matHeaderCellDef> End Date </mat-header-cell>
+        <mat-cell *matCellDef="let row"> {{row.endDate | date:'yyyy/MM/dd'}} </mat-cell>
+      </ng-container>
+      <ng-container matColumnDef="modifiedBy">
+        <mat-header-cell *matHeaderCellDef> Modified By </mat-header-cell>
+        <mat-cell *matCellDef="let row"> {{ getModifiedBy(row) }} </mat-cell>
+      </ng-container>
+      <ng-container matColumnDef="modifiedDate">
+        <mat-header-cell *matHeaderCellDef> Modified Date </mat-header-cell>
+        <mat-cell *matCellDef="let row"> {{ getModifiedDate(row) | date:'yyyy/MM/dd' }} </mat-cell>
+      </ng-container>
+      <ng-container matColumnDef="status">
+        <mat-header-cell *matHeaderCellDef> Status </mat-header-cell>
+        <mat-cell *matCellDef="let row" [ngClass]='getPeriodClass(row)'>
+          {{row.status}}
+        </mat-cell>
+      </ng-container>
+
+      <mat-header-row *matHeaderRowDef="displayColumns"></mat-header-row>
+      <mat-row *matRowDef="let row; columns: displayColumns;"></mat-row>
+    </mat-table>
+  </div>
+
+</mat-card>

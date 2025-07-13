@@ -1,0 +1,23 @@
+<div class="thor-modal-material__wrapper">
+    <header *ngIf="data.title" class="thor-modal-material__header">
+        <p class="thor-modal-material__title">{{ data.title }}</p>
+        <a class="icon-mat-sharp-close" (click)="closeModal($event)"></a>
+    </header>
+
+    <div mat-dialog-content class="thor-modal-material__body">
+
+        <mat-card *ngIf="isLoading$ | async">
+            <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+            <label class="mat-label other-label"><i>loading...please wait</i></label>
+          </mat-card>
+        <!-- Medical reports view -->
+        <div *ngIf="event && selectedPersonEvent">
+            <holistic-medical-report-container [event]="event"
+                [personEvent]="selectedPersonEvent"  [isReadOnly]="isReadOnly"  [isWizard]="isWizard"></holistic-medical-report-container>
+        </div>
+
+    </div>
+    <button type="button" class="button float-button" (click)="onClose()">
+        Cancel
+      </button>
+</div>

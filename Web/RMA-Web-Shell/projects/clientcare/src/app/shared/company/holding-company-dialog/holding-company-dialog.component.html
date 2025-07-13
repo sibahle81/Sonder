@@ -1,0 +1,68 @@
+<div class="menu-bar">
+  <span class="material-icons">
+    business
+  </span>
+  Holding Company
+  <span (click)="close()" class="material-icons pointer right" matTooltip="close">
+    close
+  </span>
+  <span *ngIf="!(isLoading$ | async) && form.valid && !form.pristine" (click)="save()" class="material-icons pointer right" matTooltip="save">
+    save
+  </span>
+  <span *ngIf="!(isLoading$ | async) && rolePlayer.company.rolePlayerId > 0 && !isEdit" (click)="edit()" class="material-icons pointer right" matTooltip="edit">
+    settings
+  </span>
+</div>
+
+<mat-card *ngIf="(isLoading$ | async) || !rolePlayer">
+  <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+  <label class="mat-label other-label"><i>loading...please wait</i></label>
+</mat-card>
+
+<mat-card *ngIf="!(isLoading$ | async) && rolePlayer">
+  <mat-tab-group animationDuration="500ms">
+    <mat-tab label="Details">
+      <form *ngIf="!showCompanySearch" [formGroup]="form" class="mat-container details-form" novalidate>
+        <section>
+          <mat-form-field class="mat-form-field">
+            <label class="mat-label other-label mandatory-field">Company Name</label>
+            <input matInput formControlName="name" name="name" id="name" />
+          </mat-form-field>
+          <mat-form-field class="mat-form-field-right">
+            <label class="mat-label other-label mandatory-field">Company Level</label>
+            <input matInput formControlName="companyLevel" name="companyLevel" id="companyLevel" />
+          </mat-form-field>
+        </section>
+
+        <section>
+          <mat-form-field class="mat-form-field">
+            <label class="mat-label other-label">Registration Type</label>
+            <mat-select name="registrationType" id="registrationType" formControlName="registrationType">
+              <mat-option *ngFor="let registrationType of registrationTypes" [value]="registrationType">
+                {{formatLookup(registrationType)}}
+              </mat-option>
+            </mat-select>
+            <mat-error *ngIf="form.get('registrationType').hasError('required')">
+              registration type is <strong>required</strong>
+            </mat-error>
+          </mat-form-field>
+          <mat-form-field class="mat-form-field-right">
+            <label class="mat-label other-label">Company Registration Number</label>
+            <input matInput formControlName="registrationNumber" name="registrationNumber" id="registrationNumber" />
+            <mat-error *ngIf="form.get('registrationNumber').hasError('required')">
+              registration number is <strong>required</strong>
+            </mat-error>
+          </mat-form-field>
+        </section>
+      </form>
+    </mat-tab>
+
+    <mat-tab [disabled]="rolePlayer.memberStatus == _new" label="Contacts">
+      <member-contacts [member]="rolePlayer"></member-contacts>
+    </mat-tab>
+
+    <mat-tab [disabled]="rolePlayer.memberStatus == _new" label="Addresses">
+      <role-player-address-list [rolePlayer]="rolePlayer"></role-player-address-list>
+    </mat-tab>
+  </mat-tab-group>
+</mat-card>

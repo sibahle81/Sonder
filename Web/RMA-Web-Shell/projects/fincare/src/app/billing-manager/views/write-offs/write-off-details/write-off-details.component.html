@@ -1,0 +1,40 @@
+<form [formGroup]="form" novalidate >
+<div >    
+    <mat-form-field class="mat-form-field">
+      <label class="mat-label other-label">Write-Off Reason</label>
+      <mat-select [(value)]="selectedReasonId" name="writeOffReason" id="writeOffReason"
+        formControlName="writeOffReason">
+        <mat-option *ngFor="let writeOffReason of writeOffReasons" [value]="writeOffReason.id">
+          {{formatLookup(writeOffReason.name)}}
+        </mat-option>
+      </mat-select>
+      <mat-error *ngIf="form.get('writeOffReason').hasError('required')">
+        Write-Off Reason is <strong>required</strong>
+      </mat-error>
+    </mat-form-field>       
+</div> 
+</form>
+<div *ngIf="!isLoading && datasourceTransactionsSummary.data.length > 0">
+    <mat-card>
+      <p class="labelParagraph">Unallocated Transactions Summary</p>
+      <mat-table #table [dataSource]="datasourceTransactionsSummary">     
+        <ng-container matColumnDef="transactionType">
+          <mat-header-cell *matHeaderCellDef>Transaction Types</mat-header-cell>
+          <mat-cell *matCellDef="let row"> {{row.transactionType}} </mat-cell>
+          <mat-footer-cell *matFooterCellDef class="footerBold">Debtor Net Balance</mat-footer-cell>
+        </ng-container>
+        <ng-container matColumnDef="balance">
+          <mat-header-cell *matHeaderCellDef>total Balance</mat-header-cell>
+          <mat-cell *matCellDef="let row" class="right-aligned-amounts  amount-margin"> {{row.balance | currency:'':''}} </mat-cell>
+          <mat-footer-cell *matFooterCellDef class="footerBold right-aligned-amounts amount-margin">{{ debtorNetBalance |
+            currency:'':''}}</mat-footer-cell>
+        </ng-container>
+        <mat-header-row *matHeaderRowDef="displayedColumnsTransactionsSummary"></mat-header-row>
+        <mat-row *matRowDef="let row; columns: displayedColumnsTransactionsSummary;"></mat-row>
+        <mat-footer-row class="sticky-footer" *matFooterRowDef="displayedColumnsTransactionsSummary"></mat-footer-row>
+      </mat-table>
+      <mat-paginator #paginatorTransactionsSummary [length]="datasourceInvoices.data ? datasourceInvoices.data.length : 0" [pageIndex]="0" [pageSize]="5" [pageSizeOptions]="[5, 10, 25, 100]">
+      </mat-paginator>
+    </mat-card>
+  </div>
+  

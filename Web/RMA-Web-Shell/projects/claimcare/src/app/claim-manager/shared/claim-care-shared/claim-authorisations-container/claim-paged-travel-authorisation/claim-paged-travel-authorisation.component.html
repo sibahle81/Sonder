@@ -1,0 +1,58 @@
+<mat-card>
+    <div *ngIf="(dataSource?.loading$ | async) || (isLoading$ | async)">
+        <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+        <span class="site-font">loading claim invoices...please wait</span>
+    </div>
+
+    <div [hidden]="(dataSource.loading$ | async) ||  (isLoading$ | async)
+            || (dataSource && dataSource.data && dataSource.data.data && dataSource.data.data.length <= 0) 
+            || (paginator && paginator.length === 0 && !(dataSource.loading$ | async))">
+        <mat-table #table [dataSource]="dataSource" matSort id="tblData"
+            (matSortChange)="getData()">
+            <ng-container matColumnDef="select">
+                <mat-header-cell *matHeaderCellDef>
+                    <span class="material-icons noHover">
+                        security_update_good
+                    </span>
+                </mat-header-cell>
+                <mat-cell *matCellDef="let row">
+                    <mat-checkbox id="chk_{{row.claimInvoiceId}}"
+                        (change)="AddCheckedItems($event, row)">
+
+                    </mat-checkbox>
+                </mat-cell>
+            </ng-container>
+            <ng-container matColumnDef="dateAuthorisedFrom">
+                <mat-header-cell *matHeaderCellDef> Date Authorised From
+                </mat-header-cell>
+                <mat-cell *matCellDef="let row"> {{row.dateAuthorisedFrom | date}}
+                </mat-cell>
+            </ng-container>
+            <ng-container matColumnDef="dateAuthorisedTo">
+                <mat-header-cell *matHeaderCellDef> Date Authorised To 
+                </mat-header-cell>
+                <mat-cell *matCellDef="let row"> {{row.dateAuthorisedTo | date}}
+                </mat-cell>
+            </ng-container>
+            
+            <mat-header-row *matHeaderRowDef="getDisplayedColumns()"></mat-header-row>
+            <mat-row *matRowDef="let row; columns: getDisplayedColumns();"></mat-row>
+        </mat-table>
+        <mat-paginator #paginator [pageIndex]="0" [pageSize]="5"
+            [pageSizeOptions]="[5, 10, 25, 100]"
+            [length]="this.dataSource.rowCount$ | async" (page)="getData()">
+        </mat-paginator>
+    </div>
+
+    <div *ngIf="paginator.length === 0 && !(dataSource.loading$ | async)">
+        No data found...
+    </div>
+
+    <div class="form-group-button mat-form-button" *ngIf="showPayMultiple && dataSource && dataSource.data && dataSource.data.data && dataSource.data.data.length > 1">
+        <div (click)="payMultiple()">
+            <button type="button" class="button float-button">Pay Multiple</button>
+        </div>
+    </div>
+    <br />
+
+</mat-card>

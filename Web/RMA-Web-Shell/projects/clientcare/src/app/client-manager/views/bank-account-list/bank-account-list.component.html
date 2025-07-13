@@ -1,0 +1,76 @@
+﻿<mat-card style="margin: 15px 30px 15px 30px">
+    <mat-card-header>
+        <mat-card-title class="wizard-font card-title grey">
+            <h1 style="padding: 0;">Bank Accounts</h1>
+        </mat-card-title>
+    </mat-card-header>
+    <mat-card-content style="margin-left: 10px;">
+
+        <div *ngIf="isLoading">
+            <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+            <span class="site-font grey" style="margin-top: 15px;"><i>Loading Bank Accounts...</i></span>
+        </div>
+
+        <!--
+        <span *ngIf="!hasBranchesAndDepartments && !isLoading" class="grey site-font">
+            <i>Cannot add a bank account until branches or departments are added.</i>
+        </span>
+        -->
+
+        <div [hidden]="dataSource.data.length > 0 || isLoading || isModifying" style="margin-left: 20px;">
+            <span class="grey site-font">No bank accounts have been added for this client.</span>
+        </div>
+
+        <!-- Table with list of bank accounts linked to client -->
+        <div [hidden]="isModifying || showUnlinkBankAccount || isLoading">
+            <div class="mat-container mat-elevation-z8">
+                <div [hidden]="dataSource.data.length === 0">
+                    <mat-table #table [dataSource]="dataSource" matSort>
+                        <ng-container *ngFor="let column of columns" [matColumnDef]="column.columnDefinition">
+                            <mat-header-cell *matHeaderCellDef class="mat-header-cell ng-tns-c10-2 cdk-column-Name mat-column-Name">{{ column.header }}</mat-header-cell>
+                            <mat-cell *matCellDef="let row" class="mat-cell cdk-column-Name mat-column-Name">{{ column.cell(row) }}</mat-cell>
+                        </ng-container>
+                        <ng-container matColumnDef="actions">
+                            <mat-header-cell *matHeaderCellDef mat-sort-header>Actions</mat-header-cell>
+                            <mat-cell *matCellDef="let row">
+                                <a role="button" class="link-edit" (click)="onSelect(row)">{{actionsLinkText}}</a>
+                                <!--<span *ngIf="row.itemType !== 'Client'" style="margin: 0 5px 0 5px;">|</span>
+                                <a role="button" *ngIf="row.itemType !== 'Client'" class="link-edit" (click)="unlinkBankAccount(row)">Unlink</a>-->
+                            </mat-cell>
+                        </ng-container>
+                        <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
+                        <mat-row *matRowDef="let row; columns: displayedColumns;"></mat-row>
+                    </mat-table>
+                    <mat-paginator #paginator
+                                   [length]="dataSource.data.length"
+                                   [pageIndex]="0"
+                                   [pageSize]="5"
+                                   [pageSizeOptions]="[5, 10, 25, 100]">
+                    </mat-paginator>
+                </div>
+            </div>
+        </div>
+
+        <!-- Add / link bank account buttons -->
+        <div *ngIf="canAdd">
+            <div class="form-group-button mat-form-button" style="margin: 15px 0 20px 15px; padding-bottom: 20px;" [hidden]="isLoading || showAddBankAccount || showLinkBankAccount || showUnlinkBankAccount">
+                <div class="form-buttons">
+                    <button [hidden]="!showAdd" (click)="modifyAddBankAccount()" class="button float-button submit-button">Add bank account</button>
+                    <!--<button (click)="modifyLinkBankAccount()" [disabled]="!hasBankAccounts" class="button float-button submit-button">Link bank account</button>-->
+                </div>
+            </div>
+        </div>
+
+        <!-- Confirm unlink bank account buttons -->
+        <div *ngIf="showUnlinkBankAccount">
+            <h1>Unlink bank confirmation</h1>
+            <p class="grey site-font">Are you sure you want to unlink {{linkedClientName}} from {{selectedBankAccount.accountNumber}}?</p>
+            <div class="form-group-button mat-form-button" style="margin: 15px 0 20px 15px; padding-bottom: 20px;">
+                <div class="form-buttons">
+                    <button (click)="onUnlinkBankAccount()" class="button float-button submit-button">Yes, unlink bank</button>
+                    <button (click)="cancelAction()" class="button float-button submit-button">No, don't unlink</button>
+                </div>
+            </div>
+        </div>
+    </mat-card-content>
+</mat-card>

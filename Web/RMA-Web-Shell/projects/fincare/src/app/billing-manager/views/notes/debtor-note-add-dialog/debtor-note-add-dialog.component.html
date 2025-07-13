@@ -1,0 +1,20 @@
+<form  [formGroup]="form" novalidate>
+    <p>{{splitPascalCaseWord(noteType)}} Note</p>
+    <section>
+        <mat-form-field>
+          <label class="mat-label other-label mandatory-field">Note</label>
+          <textarea matTextareaAutosize matAutosizeMinRows="5" matAutosizeMaxRows="3" maxlength="255" matInput
+            minlength="5" id="debtorNote" name="debtorNote" formControlName="debtorNote" class="textInput"></textarea>
+          <mat-error *ngIf="form.get('debtorNote').hasError('required')">
+            Note is <strong>required</strong>
+          </mat-error>
+          <mat-error *ngIf="form.get('debtorNote').hasError('minlength')">
+            Note must be at least <strong>three characters</strong>
+          </mat-error>
+        </mat-form-field>
+      </section>
+      <section>
+        <button  class="button submit-button" (click)="addNote()">Save</button>&nbsp;&nbsp;<button (click)="close()" class="button submit-button">Dismiss</button>
+      </section>
+</form>
+

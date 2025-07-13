@@ -1,0 +1,123 @@
+<div [hidden]="hidden">
+  <br /><br />
+  <div *ngIf="(isLoading$ | async)">
+    <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+    <label class="mat-label other-label"><i>Loading...please wait</i></label>
+  </div>
+
+  <div *ngIf="previousInsurerRolePlayers.length <= 0 && isReadOnlyMode && !(isLoading$ | async)">
+    <label class="mat-label other-label"><span class="material-icons">info</span><i>No previous insurance
+        found</i></label><br /><br />
+    <div class="form-buttons" *ngIf="isEditable">
+      <button class="button submit-button" (click)="toggleReadOnlyMode()">+Add</button>
+    </div>
+  </div>
+
+  <div *ngIf="previousInsurerRolePlayers.length > 0 && isReadOnlyMode && !(isLoading$ |async) ">
+    <table class="altRowTable">
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Insurer</th>
+        <th>Policy Number</th>
+        <th>Start Date</th>
+        <th>End Date</th>
+      </tr>
+      <tr *ngFor="let previousInsurerRolePlayer of previousInsurerRolePlayers">
+        <td>{{getRoleplayerType(previousInsurerRolePlayer.insuredLifeType)}}</td>
+        <td>{{previousInsurerRolePlayer.insuredLifeName}}</td>
+        <td>{{getInsurerName(previousInsurerRolePlayer.previousInsurerId)}}</td>
+        <td>{{previousInsurerRolePlayer.policyNumber}}</td>
+        <td>{{previousInsurerRolePlayer.policyStartDate | date: 'yyyy-MM-dd'}}</td>
+        <td>{{previousInsurerRolePlayer.policyEndDate | date: 'yyyy-MM-dd'}}</td>
+      </tr>
+    </table>
+    <br />
+    <div class="form-buttons" *ngIf="isEditable">
+      <button class="button submit-button" (click)="toggleReadOnlyMode()">+Add</button>
+    </div>
+  </div>
+
+  <div *ngIf="!isReadOnlyMode">
+    <div *ngIf="insuredLives.length <= 0">
+      <span *ngFor="let type of context"><span class="material-icons">info</span><i>There is no
+          <b>{{getRoleplayerType(type)}}</b> to capture previous insurance against. Please capture at lease one
+          <b>{{getRoleplayerType(type)}}</b></i><br /></span>
+      <br />
+      <button class="button submit-button" (click)="toggleReadOnlyMode()">Ok</button>
+    </div>
+
+    <div *ngIf="case.mainMember.previousInsurerRolePlayers.length <= 0 && insuredLives.length > 0 && !isMainMember">
+      <span class="material-icons">info</span>
+      <span>
+        <i>No previous insurer found for main member (<b>{{case.mainMember.displayName}})</b>
+          Please capture previous insurer on main member before trying to add previous insurer for
+          <b>insured lives</b></i><br />
+      </span> <br />
+      <button class="button submit-button" (click)="toggleReadOnlyMode()">Ok</button>
+    </div>
+
+    <div
+      *ngIf="insuredLives.length > 0 && ((isMainMember) || case.mainMember.previousInsurerRolePlayers.length > 0)">
+      <form [formGroup]="form" class="mat-container details-form" novalidate>
+        <section>
+          <mat-form-field class="mat-form-field">
+            <label class="mat-label other-label mandatory-field">Insured Life</label>
+            <mat-select #insuredLife formControlName="insuredLives"
+              (selectionChange)="insuredLifeChanged($event.value)">
+              <mat-option *ngFor="let insuredLife of insuredLives" [value]="insuredLife">
+                {{insuredLife.displayName}}</mat-option>
+            </mat-select>
+            <mat-error *ngIf="form.get('insuredLives').hasError('required')">
+              Insured Life is required
+            </mat-error>
+          </mat-form-field>
+        </section>
+
+        <section>
+          <mat-form-field class="mat-form-field">
+            <label class="mat-label other-label mandatory-field">Insurer</label>
+            <mat-select #insurer formControlName="insurers" (selectionChange)="insurerChanged($event.value)">
+              <mat-option *ngFor="let insurer of insurers" [value]="insurer.id">{{insurer.name}}</mat-option>
+            </mat-select>
+            <mat-error *ngIf="form.get('insurers').hasError('required')">
+              Insurer is required
+            </mat-error>
+          </mat-form-field>
+
+          <mat-form-field class="mat-form-field-right">
+            <label class="mat-label other-label">Policy Number</label>
+            <input matInput maxlength="50" formControlName="policyNumber">
+          </mat-form-field>
+        </section>
+
+        <section>
+          <mat-form-field class="mat-form-field">
+            <label class="mat-label other-label mandatory-field">Start Date</label>
+            <input (dateChange)="startDateSelected()" [max]="maxDate" matInput formControlName="startDate"
+              [matDatepicker]="startDate" name="startDate" id="startDate">
+            <mat-datepicker-toggle class="date-icon" matSuffix [for]="startDate">
+            </mat-datepicker-toggle>
+            <mat-datepicker touchUi="true" #startDate></mat-datepicker>
+          </mat-form-field>
+
+          <mat-form-field class="mat-form-field-right">
+            <label class="mat-label other-label mandatory-field">To Date</label>
+            <input (dateChange)="endDateSelected()" [min]="minDate" matInput formControlName="endDate"
+              [matDatepicker]="endDate" name="endDate" id="endDate">
+            <mat-datepicker-toggle class="date-icon" matSuffix [for]="endDate">
+            </mat-datepicker-toggle>
+            <mat-datepicker touchUi="true" #endDate></mat-datepicker>
+          </mat-form-field>
+        </section>
+
+        <br /><br />
+
+        <div class="form-buttons">
+          <button [disabled]="!form.valid" class="button submit-button" (click)="add()">Add</button>
+          <button class="button submit-button" (click)="cancel()">Cancel</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>

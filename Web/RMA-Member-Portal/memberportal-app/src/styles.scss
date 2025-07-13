@@ -1,0 +1,714 @@
+
+// Custom Theming for Angular Material
+// For more information: https://material.angular.io/guide/theming
+@import '~@angular/material/theming';
+// @import '~@angular/material/prebuilt-themes/indigo-pink.css'
+// Plus imports for other components in your app.
+
+// Include the common styles for Angular Material. We include this here so that you only
+// have to load a single css file for Angular Material in your app.
+// Be sure that you only ever include this mixin once!
+@include mat-core();
+
+// Define the palettes for your theme using the Material Design palettes available in palette.scss
+// (imported above). For each palette, you can optionally specify a default, lighter, and darker
+// hue. Available color palettes: https://material.io/design/color/
+$memberportal-app-primary: mat-palette($mat-indigo);
+$memberportal-app-accent: mat-palette($mat-pink, A200, A100, A400);
+
+// The warn palette is optional (defaults to red).
+$memberportal-app-warn: mat-palette($mat-red);
+
+// Create the theme object. A theme consists of configurations for individual
+// theming systems such as "color" or "typography".
+$memberportal-app-theme: mat-light-theme((
+  color: (
+    primary: $memberportal-app-primary,
+    accent: $memberportal-app-accent,
+    warn: $memberportal-app-warn,
+  )
+));
+
+// Include theme styles for core and each component used in your app.
+// Alternatively, you can import and @include the theme mixins for each component
+// that you are using.
+@include angular-material-theme($memberportal-app-theme);
+
+/* You can add global styles to this file, and also import other style files */
+
+html, body { height: 100%; }
+body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
+
+.rma-logo {
+  margin-left: 1.5em;
+  //width: 200px;
+ // margin-top: 45px;
+  // margin-left: -20px;
+}
+
+.mat-toolbar.mat-primary {
+  background-color: white;
+  border-bottom: 1px solid #e9e9e9;
+  box-shadow: 0 0 3px rgba(0,0,0,.1);
+  color: #58585b;
+}
+
+.fill-space {
+  // This fills the remaining space, by using flexbox.
+  // Every toolbar row uses a flexbox row layout.
+  flex: 1 1 auto;
+}
+
+main {
+  padding: 15px;
+}
+
+.mat-row:nth-child(even) {
+  background-color: #dee3eb;
+}
+
+.mat-row:nth-child(odd) {
+  background-color: #ffffff;
+}
+
+.mat-expansion-panel-spacing {
+  margin: 0 !important;
+}
+
+.mat-tab-label {
+  height: 41px !important;
+}
+
+.mat-right-field {
+  margin-left: 18px !important;
+}
+
+.mat-tab-header-error {
+  color: red;
+}
+
+.mat-tab-header {
+  display: flex;
+  overflow: hidden;
+  flex-shrink: 0;
+  z-index: 2;
+  position: sticky !important;
+  top: 184px;
+  background-color: #F2F2F2;
+}
+
+.wizard-font {
+  font-family: 'Oswald', sans-serif;
+}
+
+.wizard-font-height {
+  height: 50px;
+}
+
+.grey {
+  color: rgba(0, 0, 0, .54);
+}
+
+.orange {
+  color: orange;
+}
+
+.red {
+  color: red;
+}
+
+.site-font {
+  font-family: 'Oswald', sans-serif;
+}
+
+.card-title {
+  font-size: 18px;
+}
+
+.mat-expansion-panel-body {
+  margin: 0 !important;
+}
+
+.mat-select {
+  width: 350px;
+  display: inline-block;
+}
+
+.mat-select-value {
+  padding-top: 0px;
+}
+
+.mat-input-element {
+  width: 360px;
+}
+
+.mat-select-arrow-wrapper {
+  padding-top: 4px;
+}
+
+.mat-form-field-ripple,
+.mat-input-underline,
+.mat-form-field-underline {
+  display: none;
+}
+
+.mat-input-element,
+.mat-select {
+  box-sizing: border-box !important;
+  border: 1px solid #51627c !important;
+  border-radius: 1px !important;
+  padding: 5px 9px 5px 9px !important;
+  -webkit-transition: width 0.4s ease-in-out !important;
+  margin: 4px 20px 8px 0px !important;
+  height: 35px
+}
+
+.mat-input-element:disabled,
+.mat-select-disabled,
+.float-button:disabled,
+.submit-button:disabled {
+  background-color: #acb9cd !important;
+}
+
+.mat-primary .mat-option.mat-selected:not(.mat-option-disabled) {
+  color: black !important;
+}
+
+.mat-tab-body-content {
+  overflow: hidden !important;
+}
+
+.mat-pseudo-checkbox-checked {
+  background: #005A7C !important;
+}
+
+.mat-form-field-infix {
+  padding: 0 !important;
+  border-top: 0 !important;
+}
+
+.mat-form-field-wrapper {
+  padding-bottom: 10px !important;
+}
+
+.submit-button {
+  margin-right: 10px;
+}
+
+.mat-label {
+  font-family: 'Oswald', sans-serif;
+  font-size: 14px;
+  color: #58595B;
+  font-weight: 400;
+  overflow: auto;
+  max-height: 500px;
+  margin-left: 0px;
+}
+
+.mat-icon svg {
+  height: 30px;
+  width: 30px;
+}
+
+.mat-container {
+  display: flex;
+  flex-direction: column;
+  min-width: 300px;
+  clear: both;
+  border: none;
+  padding: 10px 5px 0px 10px;
+}
+
+.mat-header {
+  min-height: 64px;
+  align-items: center;
+  font-size: 20px;
+  min-width: 300px;
+  padding: 8px 0 0 0;
+}
+
+.mat-form-field-right {
+  margin-left: 15px;
+}
+
+.mat-form-field-date-right {
+  margin-left: 18px;
+}
+
+
+
+.mat-search {
+  font-size: 14px !important;
+}
+
+.mat-header-cell .mat-sort-header-sorted {
+  color: black;
+  font-size: 14px;
+  padding-right: 24px;
+}
+
+.mat-button {
+  width: 100px;
+  align-self: flex-end;
+}
+
+mat-cell,
+S .new-button {
+  cursor: pointer;
+}
+
+.mat-dialog-container {
+  width: 550px;
+  height: 450px;
+  padding-bottom: 5px;
+  padding-top: 20px;
+  display: table-footer-group !important;
+}
+
+.mat-dialog-footer {
+  padding: 20px;
+  width: 80%;
+}
+
+.mat-cell,
+.mat-header-cell,
+.mat-footer-cell {
+  overflow: hidden;
+  word-wrap: break-word;
+  padding-right: 22px;
+}
+
+.custom-multiselect-mat-error-wrapper {
+  margin-top: -60px !important;
+  margin-left: 30px;
+  font-size: 60%;
+  font-family: 'Oswald', sans-serif;
+}
+
+.mat-pseudo-checkbox-disabled {
+  display: inline-block !important;
+}
+
+.mat-input-small {
+  width: 100px !important;
+}
+
+.mat-toggle-datepicker {
+  position: absolute !important;
+  top: 14px !important;
+  right: 0 !important;
+}
+
+.mat-cell {
+  font-size: 12px !important;
+  line-height: 18px;
+}
+
+.mat-card {
+  background: #F2F2F2 !important;
+}
+
+.mat-header-cell {
+  color: #fff !important;
+  background-color: #19577E;
+  border: 1px solid #ddd;
+}
+
+.mat-select-trigger {
+  display: inline-table;
+  cursor: pointer;
+  position: relative;
+  top: 3px;
+  box-sizing: border-box;
+}
+
+.mat-select-value-text,
+.mat-form-field-appearance-legacy .mat-form-field-label {
+  height: 42px;
+}
+
+.mat-form-field.mat-form-field-invalid .mat-form-field-label {
+  color: #f44336;
+  height: 42px;
+}
+
+.mat-form-field.mat-form-field-invalid .mat-form-field-label .mat-form-field-required-marker,
+.mat-form-field.mat-form-field-invalid .mat-form-field-label.mat-accent {
+  color: #f44336;
+  height: 42px;
+}
+
+.mat-form-field.mat-form-field-invalid .mat-form-field-ripple,
+.mat-form-field.mat-form-field-invalid .mat-form-field-ripple.mat-accent {
+  background-color: #f44336;
+  height: 42px;
+}
+
+.mat-cell,
+.mat-header-cell,
+.mat-footer-cell {
+  padding-right: 20px;
+  padding-left: 20px;
+}
+
+textarea.mat-input-element {
+  background-color: #fff !important;
+  font-size: 14px !important;
+}
+
+.mat-header-cell .mat-sort-header-sorted {
+  color: #fff !important;
+}
+
+.mat-horizontal-stepper-header-container {
+  background-color: #84BBD4;
+  margin-top: -26px;
+  height: 48px;
+  width: 100%;
+  z-index: 1;
+}
+
+.mat-horizontal-stepper-content {
+  top: 35px;
+}
+
+input.mat-input-element {
+  font-size: 14px !important;
+}
+
+.mat-horizontal-stepper-header .mat-step-icon {
+  background: #3D5561;
+  margin-right: 5px !important;
+}
+
+.mat-horizontal-stepper-header {
+  height: 48px !important;
+  padding: 0 10px !important;
+}
+
+.mat-horizontal-stepper-header {
+  height: 48px !important;
+}
+
+.mat-step-header:visited {
+  background-color: #04A6D2;
+}
+
+.mat-form-field-prefix,
+.mat-form-field-suffix {
+  white-space: nowrap;
+  flex: none;
+  position: absolute !important;
+  right: 0;
+  top: 8px;
+  font-size: large;
+}
+
+.mat-expansion-panel-header {
+  font-family: Arial !important;
+  font-size: 13px !important;
+}
+
+.mat-step-header .mat-step-label.mat-step-label-active {
+  font-size: 12px !important;
+}
+
+.mat-option {
+  background: #fff !important;
+  font-size: 14px !important;
+}
+
+.mat-option:hover {
+  background: rgba(0, 0, 0, .04) !important;
+}
+
+.mat-step-header .mat-step-label.mat-step-label-active {
+  font-size: 12px !important;
+}
+
+.mat-datepicker-content-touch .mat-calendar {
+  width: 44vh !important;
+  height: 50vh !important;
+}
+
+
+/* .mat-stepper-horizontal,
+.mat-stepper-vertical {
+  margin-top: 20px;
+} */
+
+.mat-base-rule-align-the-middle {
+  /* this is usd on base-rules.component to align the text */
+  display: flex;
+  align-items: center;
+}
+
+.mat-base-rule-the-labels-width {
+  /* this is usd on base-rules.component to align the labels */
+  vertical-align: top;
+  width: 20%
+}
+
+.mat-base-rule-the-inputs-width {
+  /* this is usd on base-rules.component to align the inputs */
+  width: 20%
+}
+
+.mat-form-field {
+  font-size: 14px;
+  flex-grow: 1;
+  width: 30% !important;
+}
+
+@media screen and (max-width: 1880px) {
+  .mat-horizontal-stepper-header-container {
+      width: auto;
+  }
+}
+
+@media screen and (max-width: 1730px) {
+  .mat-horizontal-stepper-header-container {
+      width: auto;
+  }
+}
+
+@media screen and (max-width: 1400px) {
+  .mat-horizontal-stepper-header-container {
+      width: auto;
+  }
+}
+
+@media screen and (max-width: 1224px) {
+  .mat-horizontal-stepper-header-container {
+      width: auto;
+  }
+}
+
+@media screen and (max-width: 1215px) {
+  .mat-horizontal-stepper-header-container {
+    width: auto;
+}
+  .mat-form-field {
+    font-size: 14px;
+    flex-grow: 1;
+    width: 30% !important;
+  }
+}
+
+@media screen and (max-width: 1105px) {
+  .mat-horizontal-stepper-header-container {
+      width: auto;
+  }
+  .mat-form-field {
+    font-size: 14px;
+    flex-grow: 1;
+    width: 30% !important;
+  }
+}
+
+@media screen and (max-width: 1044px) {
+  .mat-horizontal-stepper-header-container {
+      width: auto;
+  }
+  .mat-form-field {
+    font-size: 14px;
+    flex-grow: 1;
+    width: 40% !important;
+  }
+}
+
+@media screen and (max-width: 960) {
+  .mat-horizontal-stepper-header-container {
+      width: auto;
+  }
+  .mat-form-field {
+    font-size: 14px;
+    flex-grow: 1;
+    width: 30% !important;
+  }
+}
+
+
+@media screen and (max-width: 800px) {
+  .mat-horizontal-stepper-header-container {
+      width: auto;
+  }
+  .mat-form-field {
+    font-size: 14px;
+    flex-grow: 1;
+    width: 40% !important;
+  }
+}
+
+@media screen and (max-width: 600px) {
+ 
+  .mat-form-field-right {
+    margin-left: 0px;
+  }
+  .mat-form-field {
+    font-size: 14px;
+    flex-grow: 1;
+    width: 80% !important;
+  }
+
+  .Arabic {
+  font-family: 'Oswald', sans-serif;
+  margin: 0;
+  /* background: #fff; */
+  font-size: 10px;
+  font-weight: normal;
+  color:#00BCe7;
+  text-shadow: 0 0 0  #4E8BB7;
+}
+}
+
+
+.mat-datepicker-toggle-active{
+  color:#3f51b5
+}
+.mat-datepicker-toggle-active.mat-accent{
+  color:#ff4081
+}
+.mat-datepicker-toggle-active.mat-warn{
+  color:#f44336
+}
+.mat-datepicker-content .mat-calendar-next-button,.mat-datepicker-content .mat-calendar-previous-button,.mat-datepicker-toggle{
+  color:rgba(0,0,0,.54);
+}
+
+// this is where you change the icon to fit in the textbox
+.mat-datepicker-toggle{
+  position: absolute !important;
+  right: 0 !important;
+  top: 25px !important;
+}
+
+.Arabic {
+  font-family: 'Oswald', sans-serif;
+  margin: 0;
+  /* background: #fff; */
+  font-size: 16px/20px;
+  font-weight: normal;
+  color:#00BCe7;
+  text-shadow: 0 0 0  #4E8BB7;
+}
+
+.button {
+  background-color: #51627c;
+  border: none;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  font-size: 14px;
+  cursor: pointer;
+  width: 168px;
+  height: 35px;
+  color: white;
+}
+
+.blue {
+  color: #389cae;
+}
+
+.subOrange{
+
+  position: fixed;
+  color: orange;
+  padding-top: 250px;
+  top: -31px;
+  padding-left: 64px;
+
+}
+
+
+.invalid {
+  color: #f44336;
+  font-family: 'Oswald', sans-serif;
+}
+
+.valid {
+  color: #66cc66;
+  font-family: 'Oswald', sans-serif;
+}
+
+.left-padding {
+  padding-left: 20px;
+}
+
+
+.list-pointer {
+  cursor: pointer;
+}
+
+.material-icons {
+  margin-bottom: 0 !important;
+}
+
+.grey-icon {
+  color: rgba(0, 0, 0, .54) !important;
+}
+
+.small-padding {
+  padding-left: 10px;
+}
+
+.small-margin {
+  margin-left: 10px;
+}
+
+p {
+  font-family: 'Oswald', sans-serif;
+  color: rgba(0, 0, 0, .54);
+}
+
+.wizard-radio-group {
+  display: inline-flex;
+  flex-direction: column;
+}
+
+.wizard-radio-button {
+  margin: 5px;
+}
+
+.wizard-selected-value {
+  margin: 15px 0;
+}
+
+.wizard-mat-card-content {margin-left: 10px;}
+.wizard-mat-card {margin: 0px 30px 15px 30px}
+.wizard-permissions-error{color: orange; font-family: 'Oswald', sans-serif;}
+.wizard-main-content{padding-top: 15px}
+
+.mat-card-subtitle{
+  color:rgba(0,0,0,.54)
+}
+
+.mat-card-content,.mat-card-subtitle{
+  font-size:14px
+}
+
+.details-form {
+  padding-top: 8px;
+}
+
+h1 {
+  font-size: 14pt;
+}
+
+h1,
+h2,
+h3,
+h4,
+p {
+    font-family: 'Oswald', sans-serif;
+}
+
+h1 {
+  font-size: 19pt;
+  font-weight: 400;
+  /* padding: 9px 0 10px 19px; */
+  margin: 0;
+  color: #00BCE7;
+}
+
+.pointer {cursor: pointer;}

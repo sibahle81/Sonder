@@ -1,0 +1,172 @@
+<div class="wizard-main-content">
+  <mat-card class="wizard-mat-card-content">
+    <mat-card-content class="mat-card-content">
+      <form [formGroup]="form" class="mat-container details-form" novalidate>
+        <section>
+          <mat-form-field class="mat-form-field-right">
+            <label class="mat-label other-label"> Death Type</label>
+            <mat-select name="deathType" id="deathType" formControlName="deathType"
+              (selectionChange)="deathTypeChanged($event)">
+              <mat-option [value]="1">Natural</mat-option>
+              <mat-option [value]="2">Unnatural</mat-option>
+              <mat-option [value]="3">Stillborn</mat-option>
+              <mat-option [value]="4">Suicide</mat-option>              
+              <mat-option [value]="6">Under Investigation</mat-option>
+            </mat-select>
+            <mat-error *ngIf="form.get('deathType').hasError('required')">
+              Type of death is <strong>required</strong>
+            </mat-error>
+          </mat-form-field>
+
+          <mat-form-field class="mat-form-field-right">
+            <label class="mat-label other-label ">DHA Reference</label>
+            <input matInput maxlength="50" id="dHAReferenceNo" name="dHAReferenceNo" formControlName="dHAReferenceNo" />
+          </mat-form-field>
+        </section>
+
+        <section>
+          <mat-form-field class="mat-form-field-right">
+            <label class="mat-label other-label ">Death Certificate No</label>
+            <input matInput maxlength="50" id="deathCertificateNo" name="deathCertificateNo"
+              formControlName="deathCertificateNo" />
+          </mat-form-field>
+          
+          <div class="mat-form-field-right">
+            <mat-checkbox id="interviewWithFamilyMemeber" name="interviewWithFamilyMemeber"
+              formControlName="interviewWithFamilyMemeber">
+              <label class="mat-label other-label">Interview with Family Member</label>
+            </mat-checkbox><br />
+
+            <mat-checkbox id="medicalPractitionerOpinion" name="medicalPractitionerOpinion"
+              formControlName="medicalPractitionerOpinion">
+              <label class="mat-label other-label">Medical Practitioner Opinion Received</label>
+            </mat-checkbox>
+          </div>
+        </section>
+
+        <section>
+          <mat-form-field class="mat-form-field-right">
+            <label class="mat-label other-label ">Date Of Death</label>
+            <input matInput [matDatepicker]="deathDatePicker" [min]="minDate" date="true" time="false"
+              formControlName="deathDate" name="deathDate" id="deathDate">
+            <mat-datepicker-toggle matSuffix class="picker-toggle" [for]="deathDatePicker"></mat-datepicker-toggle>
+            <mat-datepicker #deathDatePicker touchUi="true" ng-model-options="{ timezone: 'sast' }"></mat-datepicker>
+            <mat-error *ngIf="form.get('deathDate').hasError('required')">
+              Death date is <strong>required</strong>
+            </mat-error>
+          </mat-form-field>
+
+          <mat-form-field class="mat-form-field-right">
+            <label class="mat-label other-label ">Date Of Post Mortem</label>
+            <input matInput [matDatepicker]="postMortemDatePicker" [min]="minDate" date="true" time="false"
+              formControlName="postMortemDate" name="postMortemDate" id="postMortemDate">
+            <mat-datepicker-toggle matSuffix class="picker-toggle" [for]="postMortemDatePicker"></mat-datepicker-toggle>
+            <mat-datepicker #postMortemDatePicker touchUi="true"
+              ng-model-options="{ timezone: 'sast' }"></mat-datepicker>
+            <mat-error *ngIf="form.get('postMortemDate').hasError('required')">
+              Post mortem date is <strong>required</strong>
+            </mat-error>
+          </mat-form-field>
+        </section>
+        <section>
+          <mat-form-field class="mat-form-field-right">
+            <label class="mat-label other-label ">Post Mortem Number</label>
+            <input matInput maxlength="50" id="postMortemNumber" name="postMortemNumber"
+              formControlName="postMortemNumber" />
+          </mat-form-field>
+
+          <mat-form-field class="mat-form-field-right">
+            <label class="mat-label other-label ">Body Number</label>
+            <input matInput maxlength="50" id="bodyNumber" name="bodyNumber" formControlName="bodyNumber" />
+          </mat-form-field>
+        </section>
+        <section>
+          <mat-form-field class="mat-form-field-right">
+            <label class="mat-label other-label ">Home Affairs Region</label>
+            <input matInput id="homeAffairsRegion" name="homeAffairsRegion" formControlName="homeAffairsRegion" />
+          </mat-form-field>
+
+          <mat-form-field class="mat-form-field-right">
+            <label class="mat-label other-label ">Place Of Death</label>
+            <input matInput id="placeOfDeath" name="placeOfDeath" formControlName="placeOfDeath" />
+          </mat-form-field>
+        </section>
+
+        <section>
+          <mat-form-field class="mat-form-field-right">
+            <label class="mat-label other-label ">SAPS Case Number </label>
+            <input matInput id="sapsCaseNumber" name="sapsCaseNumber" formControlName="sapsCaseNumber" />
+          </mat-form-field>
+
+          <mat-form-field class="mat-form-field-right">
+            <label class="mat-label other-label">Body Collector</label>
+            <mat-select name="bodyCollector" id="bodyCollector" formControlName="bodyCollector"
+              (selectionChange)="bodyCollectorChanged($event)">
+              <mat-option [value]="1">Schalk Undertakers</mat-option>
+              <mat-option [value]="2">Morolong Services</mat-option>
+              <mat-option [value]="3">Taung LTD</mat-option>
+              <mat-option [value]="4">NW Peters PTY</mat-option>
+            </mat-select>
+          </mat-form-field>
+        </section>
+
+        <section>
+          <mat-form-field class="mat-form-field-right">
+            <label class="mat-label other-label">Undertaker</label>
+            <mat-select name="undertaker" id="undertaker" formControlName="undertaker"
+              (selectionChange)="undertakerChanged($event)">
+              <mat-option [value]="1">Ralph Services</mat-option>
+              <mat-option [value]="2">Taung LTD</mat-option>
+              <mat-option [value]="3">NW Peters PTY</mat-option>
+            </mat-select>
+          </mat-form-field>
+
+          <mat-form-field class="mat-form-field-right">
+            <label class="mat-label other-label">Funeral Parlor</label>
+            <mat-select name="funeralParlor" id="funeralParlor" formControlName="funeralParlor"
+              (selectionChange)="funeralParlorChanged($event)">
+              <mat-option [value]="1">Ralph Funeral Parlor</mat-option>
+              <mat-option [value]="2">Disebo Funeral Parlor</mat-option>
+              <mat-option [value]="3">NW Peters PTY</mat-option>
+            </mat-select>
+          </mat-form-field>
+        </section>
+
+        <section>
+          <mat-form-field class="mat-form-field-right">
+            <label class="mat-label other-label">Doctor</label>
+            <mat-select name="doctor" id="doctor" formControlName="doctor" (selectionChange)="doctorChanged($event)">
+              <mat-option [value]="1">Dr Motaung</mat-option>
+              <mat-option [value]="2">Dr Logan Smith</mat-option>
+            </mat-select>
+          </mat-form-field>
+
+          <mat-form-field class="mat-form-field-right">
+            <label class="mat-label other-label">Forensic Pathologist</label>
+            <mat-select name="forensicPathologist" id="forensicPathologist" formControlName="forensicPathologist"
+              (selectionChange)="forensicPathologistChanged($event)">
+              <mat-option [value]="1">Dr Motaung</mat-option>
+              <mat-option [value]="2">Dr Logan Smith</mat-option>
+            </mat-select>
+          </mat-form-field>
+        </section>
+      </form>
+    </mat-card-content>
+  </mat-card>
+</div>
+
+<style>
+  .mat-datepicker-content-touch .mat-calendar {
+    max-height: 312px !important;
+    max-width: 250px !important;
+  }
+
+  .mat-datepicker {
+    width: 375px !important;
+  }
+
+  .picker-toggle {
+    margin: 15px 0px 20px -5px;
+    position: absolute;
+  }
+</style>

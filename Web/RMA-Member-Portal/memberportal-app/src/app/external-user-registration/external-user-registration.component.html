@@ -1,0 +1,13 @@
+<mat-card>
+    <label id="userProfileType">Select your user profile type to begin registration.</label><br>
+    <mat-radio-group aria-labelledby="userProfileType-radio-group-label" [(ngModel)]="profileTypeSelected">
+        <mat-radio-button *ngFor="let userProfileType of userProfileTypes" [value]="userProfileType">
+            {{ userProfileType }}
+        </mat-radio-button>
+    </mat-radio-group>
+    <div>The selected user profile is: {{ profileTypeSelected }}</div>
+</mat-card>
+
+<div *ngIf="profileTypeSelected == userProfileTypeEnum[userProfileTypeEnum.HealthcareProvider]">
+    <app-register-new-healthcare-provider></app-register-new-healthcare-provider>
+</div>

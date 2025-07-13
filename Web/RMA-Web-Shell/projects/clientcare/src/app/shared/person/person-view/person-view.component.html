@@ -1,0 +1,171 @@
+<div class="menu-bar">
+  <span class="material-icons" matTooltip="Person">account_circle</span>
+  {{title}}<span *ngIf="rolePlayer && rolePlayer.person && rolePlayer.memberStatus != _new">: {{rolePlayer.displayName}}
+    ({{rolePlayer.person.idNumber}})</span>
+</div>
+
+<mat-card class="margin-bottom" *ngIf="(isLoading$ | async)">
+  <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+  <label class="mat-label other-label"><i>loading...please wait</i></label>
+</mat-card>
+
+<mat-card
+  *ngIf="!(isLoading$ | async) && rolePlayer && rolePlayer.person && rolePlayer.memberStatus != _new && !basicMode">
+  <div class="flex-parent-element">
+    <div class="flex-child-element">
+      <table class="altRowTable">
+        <tr>
+          <td><b>Name: </b></td>
+          <td>{{rolePlayer.displayName}}</td>
+        </tr>
+        <tr *ngIf="rolePlayer.rolePlayerIdentificationType">
+          <td><b>Role Player Type: </b></td>
+          <td>{{getRolePlayerIdentificationType(rolePlayer.rolePlayerIdentificationType)}}</td>
+        </tr>
+        <tr>
+          <td><b>Client Type: </b></td>
+          <td>{{getClientType(rolePlayer.clientType)}}</td>
+        </tr>
+        <tr *ngIf="rolePlayer.hasActiveCoidPolicies || rolePlayer.hasActiveVapsPolicies">
+          <td><b>Status: </b></td>
+          <td>{{getStatus(rolePlayer.memberStatus)}}</td>
+        </tr>
+        <tr *ngIf="rolePlayer.createdDate">
+          <td><b>Created Date: </b></td>
+          <td>{{rolePlayer.createdDate | date: "yyyy-MM-dd"}}</td>
+        </tr>
+      </table>
+    </div>
+    <div class="flex-child-element">
+      <table class="altRowTable">
+        <tr *ngIf="rolePlayer.person.idNumber">
+          <td><b>Identity / Passport: </b></td>
+          <td>{{rolePlayer.person.idNumber}}</td>
+        </tr>
+        <tr *ngIf="rolePlayer.person.dateOfBirth">
+          <td><b>Date of Birth: </b></td>
+          <td>
+            <span
+              *ngIf="!rolePlayer.person.dateOfDeath && (rolePlayer.person.dateOfBirth | date:'yyyy-MM-dd') == (today | date:'yyyy-MM-dd')"
+              class="material-icons">
+              cake
+            </span>
+            {{rolePlayer.person.dateOfBirth | date: "yyyy-MM-dd"}}
+          </td>
+        </tr>
+        <tr *ngIf="rolePlayer.person">
+          <td><b>Is Alive: </b></td>
+          <td [ngClass]="{'red': !rolePlayer.person.isAlive, 'green': rolePlayer.person.isAlive}">
+            {{rolePlayer.person.isAlive ? 'Yes' : 'No'}}</td>
+        </tr>
+        <tr *ngIf="rolePlayer.person.dateOfDeath">
+          <td><b>Date of Death: </b></td>
+          <td>{{rolePlayer.person.dateOfDeath | date: "yyyy-MM-dd"}}</td>
+        </tr>
+      </table>
+    </div>
+    <div class="flex-child-element">
+      <table class="altRowTable">
+        <tr *ngIf="rolePlayer.finPayee && rolePlayer.finPayee.finPayeNumber">
+          <td><b>Debtor Number: </b></td>
+          <td>{{rolePlayer.finPayee.finPayeNumber}}</td>
+        </tr>
+        <tr *ngIf="rolePlayer.finPayee && rolePlayer.finPayee.debtorStatus">
+          <td><b>Debtor Status: </b></td>
+          <td>{{getDebtorStatus(rolePlayer.finPayee.debtorStatus)}}</td>
+        </tr>
+      </table>
+    </div>
+  </div>
+</mat-card>
+
+<mat-card *ngIf="!(isLoading$ | async) && rolePlayer && rolePlayer.person">
+  <mat-tab-group animationDuration="500ms" [(selectedIndex)]="tabIndex">
+    <mat-tab label="{{title}} Details">
+      <mat-tab-group animationDuration="500ms">
+        <mat-tab label="Account"
+          *ngIf="(rolePlayer.memberStatus != _new && rolePlayer.memberStatus != activeWithoutPolicies) && (rolePlayer.hasActiveCoidPolicies || rolePlayer.hasActiveVapsPolicies) && !basicMode">
+          <mat-tab-group animationDuration="500ms">
+            <mat-tab label="Submissions">
+              <member-declarations [rolePlayerId]="rolePlayer.rolePlayerId"
+                [isReadOnly]="isReadOnly"></member-declarations>
+            </mat-tab>
+
+            <mat-tab label="Collections">
+              <role-player-policy-transaction-search
+                [rolePlayerId]="rolePlayer.rolePlayerId"></role-player-policy-transaction-search>
+            </mat-tab>
+          </mat-tab-group>
+        </mat-tab>
+
+        <mat-tab label="Quotes"
+          *ngIf="rolePlayer.memberStatus != _new  && (rolePlayer.hasActiveCoidPolicies || rolePlayer.hasActiveVapsPolicies) && !basicMode">
+          <mat-tab-group animationDuration="500ms">
+            <mat-tab label="Quotes">
+              <quote-search-V2 [rolePlayerId]="rolePlayer.rolePlayerId" (quoteSelectedEmit)="openQuoteDialog($event)"
+                [hideLeadColumn]="true"></quote-search-V2>
+            </mat-tab>
+            <mat-tab label="Product Offering">
+              <product-selector-V2 [rolePlayerId]="rolePlayer.rolePlayerId"></product-selector-V2>
+            </mat-tab>
+          </mat-tab-group>
+        </mat-tab>
+
+        <mat-tab label="Information">
+          <person [rolePlayer]="rolePlayer" (rolePlayerPersonContextEmit)="setPerson($event)" [isReadOnly]="isReadOnly">
+          </person>
+        </mat-tab>
+
+        <mat-tab *ngIf="rolePlayer.memberStatus != _new" label="Contacts">
+          <member-contacts [member]="rolePlayer" [isReadOnly]="isReadOnly"></member-contacts>
+        </mat-tab>
+
+        <mat-tab *ngIf="rolePlayer.memberStatus != _new" label="Addresses">
+          <role-player-address-list [rolePlayer]="rolePlayer" [isReadOnly]="isReadOnly"></role-player-address-list>
+        </mat-tab>
+
+        <mat-tab *ngIf="rolePlayer.memberStatus != _new" label="Bank Accounts">
+          <role-player-banking-list [rolePlayer]="rolePlayer" [isReadOnly]="isReadOnly" [verifyAccount]="false"
+            [showSelectColumn]="false"></role-player-banking-list>
+        </mat-tab>
+
+        <mat-tab *ngIf="rolePlayer.memberStatus != _new" label="Employment">
+          <person-employment-search [employeeRolePlayer]="rolePlayer" [employerRolePlayer]="employerRolePlayer"
+            (employmentSelectedEmit)="setPersonEmploymentSelected($event)"></person-employment-search>
+        </mat-tab>
+
+        <mat-tab *ngIf="rolePlayer.memberStatus != _new" label="Insured Lives">
+          <person-employment-insured-lives [employeeRolePlayer]="rolePlayer" [employerRolePlayer]="employerRolePlayer" [isReadOnly]="isReadOnly"></person-employment-insured-lives>
+        </mat-tab>
+
+        <mat-tab *ngIf="rolePlayer.memberStatus != _new" label="Benefit Details">
+          <person-employment-benefit-details [employeeRolePlayer]="rolePlayer" [employerRolePlayer]="employerRolePlayer" [isReadOnly]="isReadOnly"></person-employment-benefit-details>
+        </mat-tab>  
+
+        <mat-tab *ngIf="rolePlayer.memberStatus != _new && !basicMode" label="Documents">
+          <document [systemName]="documentSystemName" [keyName]="'RolePlayerId'" [keyValue]="rolePlayer.rolePlayerId">
+          </document>
+        </mat-tab>
+
+        <mat-tab *ngIf="rolePlayer.memberStatus != _new && !userHasPermission(member_agent_permission)" label="Notes">
+          <roleplayer-note [rolePlayerId]="rolePlayer.rolePlayerId"></roleplayer-note>
+        </mat-tab>
+
+        <mat-tab
+          *ngIf="rolePlayer.memberStatus != _new && !userHasPermission(member_agent_permission) && userHasPermission(viewAuditPermission)"
+          label="Communication">
+          <email-audit-search [itemType]="'RolePlayer'" [itemId]="rolePlayer.rolePlayerId"
+          [rolePlayerContactOptions]="rolePlayerContactOptions"></email-audit-search>
+        </mat-tab>
+
+      </mat-tab-group>
+    </mat-tab>
+    <mat-tab label="Policies" *ngIf="!basicMode">
+      <policy-view [rolePlayerId]="rolePlayer.rolePlayerId" [defaultPolicyId]="defaultPolicyId"></policy-view>
+    </mat-tab>
+  </mat-tab-group>
+</mat-card>
+
+<mat-card *ngIf="!(isLoading$ | async) && (!rolePlayer || !rolePlayer.person) && rolePlayer.memberStatus != _new">
+  <label class="mat-label other-label"><i>No person found...</i></label>
+</mat-card>

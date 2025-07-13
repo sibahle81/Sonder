@@ -1,0 +1,21 @@
+<h2 mat-dialog-title>{{title}}</h2>
+<div mat-dialog-content>
+    <form [formGroup]="form" class="mat-container details-form" novalidate>
+        <section>
+            <mat-form-field style="width: 100% !important">
+                <label class="mat-label other-label mandatory-field">Mobile Number</label>
+                <input matInput maxlength="10" NumberOnly id="mobileNumber" name="mobileNumber" formControlName="mobileNumber" />
+                <mat-error *ngIf="form.get('mobileNumber').hasError('required')">
+                  A mobile number is required
+                </mat-error>
+                <mat-error *ngIf="form.get('mobileNumber').hasError('phoneNumber')">
+                  A valid telephone number is required
+                </mat-error>
+              </mat-form-field>
+        </section>
+    </form>
+</div>
+<div mat-dialog-actions>
+    <button mat-button (click)="closeDialog()">Close</button>
+    <button mat-button cdkFocusInitial (click)="checkMobile()">OK</button>
+</div>

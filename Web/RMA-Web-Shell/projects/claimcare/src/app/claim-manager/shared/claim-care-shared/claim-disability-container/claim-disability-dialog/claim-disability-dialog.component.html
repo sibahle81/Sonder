@@ -1,0 +1,21 @@
+<div class="menu-bar">
+    <span class="material-icons menu-button" (click)="cancel()">
+        close
+    </span>
+</div>
+
+<ng-container [ngSwitch]="data.disabilityType">
+    <claim-disability-assessment *ngSwitchCase="disabilityAssessment"
+        [claimDisability]="data.claimDisability" [claimDisabilityAssessment]="data.claimDisabilityAssessment"
+        [personEvent]="data.personEvent" [user]="data.user" [isReadOnly]="data.isReadOnly"
+        [actionType]="data.actionType" (closeEmit)="closeDialog()"></claim-disability-assessment>
+
+    <claim-hearing-assessment *ngSwitchCase="disabilityHearing" 
+        [claimDisability]="data.claimDisability"  [claimHearingAssessment]="data.claimHearingAssessment"
+        [personEvent]="data.personEvent" [user]="data.user"
+        [isReadOnly]="data.isReadOnly" [actionType]="data.actionType" (closeEmit)="closeDialog()"></claim-hearing-assessment>
+
+    <claim-pdlumpsum-award *ngSwitchCase="disabilityPDLumpAward" 
+        [claimDisability]="data.claimDisability"
+        [personEvent]="data.personEvent" [user]="data.user" (closeEmit)="closeDialog()"></claim-pdlumpsum-award>
+</ng-container>

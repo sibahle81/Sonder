@@ -1,0 +1,118 @@
+﻿<div class="page-header"></div>
+
+<div style="padding-top: 15px;">
+
+    <mat-tab-group #matTabGroup>
+        <mat-tab label="Wizard Details">
+
+            <mat-card style="margin: 15px 30px 15px 30px">
+                <mat-card-header>
+                    <mat-card-title class="wizard-font card-title grey">
+                        <h1 class="wizard-font" style="padding: 0;">Wizard Details</h1>
+                    </mat-card-title>
+                </mat-card-header>
+
+                <mat-card-content style="margin-left: 10px;">
+
+                    <form [formGroup]="form" class="mat-container details-form" novalidate>
+
+                        <div class="mat-container">
+
+                            <section>
+
+                                <!--Type-->
+                                <mat-form-field>
+                                    <label class="mat-label other-label">Type</label>
+                                    <input matInput maxlength="50" formControlName="typeDisplay" name="typeDisplay">
+                                </mat-form-field>
+
+                                <!--Type Description-->
+                                <mat-form-field class="mat-form-field-right">
+                                    <label class="mat-label other-label">Description</label>
+                                    <input matInput maxlength="50" formControlName="typeDescription" name="typeDescription">
+                                </mat-form-field>
+
+                            </section>
+
+                            <section>
+
+                                <!--Name-->
+                                <mat-form-field>
+                                    <label class="mat-label other-label">Reference</label>
+                                    <input matInput maxlength="50" formControlName="name" name="name">
+                                </mat-form-field>
+
+                                <!--Current Step-->
+                                <mat-form-field class="mat-form-field-right">
+                                    <label class="mat-label other-label">Current step</label>
+                                    <input matInput maxlength="50" formControlName="currentStep" name="currentStep">
+                                </mat-form-field>
+
+                            </section>
+
+                            <section>
+
+                                <!--Status-->
+                                <mat-form-field>
+                                    <label class="mat-label other-label">Status</label>
+                                    <input matInput maxlength="50" formControlName="status" name="status">
+                                </mat-form-field>
+
+                                <!--Current Step-->
+                                <mat-form-field class="mat-form-field-right">
+                                    <label class="mat-label other-label">Locked</label>
+                                    <input matInput maxlength="50" formControlName="locked" name="locked">
+                                </mat-form-field>
+
+                            </section>
+
+                            <section>
+
+                                <!--Can Approve-->
+                                <mat-form-field>
+                                    <label class="mat-label other-label">Can approve</label>
+                                    <input matInput maxlength="50" formControlName="canApprove" name="canApprove">
+                                </mat-form-field>
+
+                                <!--Cant Approve Reason-->
+                                <mat-form-field class="mat-form-field-right" *ngIf="hasCantApproveReason">
+                                    <label class="mat-label other-label">Can't approve reason</label>
+                                    <input matInput maxlength="50" formControlName="cantApproveReason" name="cantApproveReason">
+                                </mat-form-field>
+
+                            </section>
+
+                        </div>
+
+                        <last-modified-by type="Wizard"></last-modified-by>
+
+                        <div class="form-group-button mat-form-button">
+                          
+                            <!--Open button-->
+                            <div (click)="open()" class="form-buttons submit-button">
+                                <button type="button" class="button">Open</button>
+                            </div>
+
+                            <!--Back button-->
+                            <div (click)="back()" class="form-buttons submit-button">
+                                <button type="button" class="button">Back</button>
+                            </div>
+
+                        </div>
+                    </form>
+
+                </mat-card-content>
+
+            </mat-card>
+        </mat-tab>
+
+        <mat-tab label="Notes">
+            <notes name="wizard"></notes>
+        </mat-tab>
+
+        <mat-tab label="Audit Log">
+            <audit-log name="wizard"></audit-log>
+        </mat-tab>
+
+    </mat-tab-group>
+</div>

@@ -1,0 +1,67 @@
+
+
+<mat-card>
+  <mat-card-content>
+    <h1>Banking details</h1>
+    <div *ngIf="recipientsAccountInfoDataSource.length > 0 && !viewAccountInfo">
+      <mat-table #table
+        [dataSource]="recipientsAccountInfoDataSource" matSort>
+
+        <ng-container matColumnDef="name">
+          <mat-header-cell *matHeaderCellDef> Name </mat-header-cell>
+          <mat-cell *matCellDef="let row"> {{row.accountHolderName}} </mat-cell>
+        </ng-container>
+
+        <ng-container matColumnDef="surname">
+          <mat-header-cell *matHeaderCellDef> Surname </mat-header-cell>
+          <mat-cell *matCellDef="let row"> {{row.accountHolderSurname}} </mat-cell>
+        </ng-container>
+
+        <ng-container matColumnDef="idPassportNumber">
+          <mat-header-cell *matHeaderCellDef> Id/Passport Number </mat-header-cell>
+          <mat-cell *matCellDef="let row"> {{row.rolePlayerId}}
+          </mat-cell>
+        </ng-container>
+
+        <!-- Actions Column -->
+        <ng-container matColumnDef="actions">
+          <mat-header-cell *matHeaderCellDef> Actions </mat-header-cell>
+          <mat-cell *matCellDef="let row" [matMenuTriggerFor]="menu" (click)="filterMenu(row)">
+            <span class="material-icons pointer">more_vert</span>
+            <mat-menu #menu="matMenu">
+              <ng-container *ngFor="let menu of menus">
+                <button *ngIf="!menu.disable" mat-menu-item
+                  (click)="onMenuItemClick(row, menu)">{{menu.title}}</button>
+              </ng-container>
+            </mat-menu>
+          </mat-cell>
+        </ng-container>
+
+
+        <mat-header-row *matHeaderRowDef="recipientsDisplayedColumns"></mat-header-row>
+        <mat-row *matRowDef="let row; columns: recipientsDisplayedColumns;"></mat-row>
+      </mat-table>
+    </div>
+
+    <span [style.visibility]="isLoading ? 'visible' : 'hidden'">
+      <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+      <span class="grey site-font"><i>Loading Banks...please wait</i></span>
+    </span>
+
+    <div *ngIf="viewAccountInfo && recipientsAccountInfoDataSource.length > 0 && formCreated && lookupsLoaded" [hidden]="isLoading">
+      <app-account-information
+        (saveBankingDetail)="onSaveBankingDetail($event)"
+        (cancelForm)="onCancelForm($event)"
+        [componentData]="{
+          viewMode: viewMode,
+          form: form,
+          banks: banks,
+          bankAccountTypes: bankAccountTypes,
+          branches: branches,
+          recipientsAccountInfoDataSource: recipientsAccountInfoDataSource
+        }"></app-account-information>
+    </div>
+  </mat-card-content>
+</mat-card>
+
+

@@ -1,0 +1,167 @@
+<mat-card-header>
+  <mat-card-title class="wizard-font card-title grey">
+    <h1>Adhoc Interest Calculation</h1>
+  </mat-card-title>
+</mat-card-header>
+
+<div *ngIf="!hasPermission">
+  <div style="padding: 15px 0; color: orange; font-family: 'Oswald', sans-serif;">
+    You do not have sufficient permissions to perform interest calculation
+  </div>
+  <div (click)="back()" class="form-buttons submit-button">
+    <button type="button" class="button float-button">Back</button>
+  </div>
+</div>
+
+<div *ngIf="hasPermission">
+  <form [formGroup]="form" class="mat-container details-form" novalidate>
+    <div>
+
+      <section>
+        <mat-form-field class="mat-form-field">
+          <label class="mat-label other-label mandatory-field">From Account</label>
+          <mat-select id="fromAccount" name="fromAccount" matInput formControlName="fromAccount"
+                      (selectionChange)="selectedFromAccountChanged($event)">
+            <mat-option *ngFor="let rmaBankAccount of rmaFromBankAccounts" [value]="rmaBankAccount.rmaBankAccountId">
+              {{rmaBankAccount.product}} {{rmaBankAccount.accountNumber}}
+            </mat-option>
+          </mat-select>
+          <mat-error *ngIf="form.get('fromAccount').hasError('required')">
+            From account is <strong>required</strong>
+          </mat-error>
+          <div *ngIf="isLoadingFromAccounts$ | async">
+            <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+            <label class="mat-label other-label"><i>loading...please wait</i></label>
+          </div>
+        </mat-form-field>
+      </section>
+
+      <section>
+
+        <mat-form-field class="mat-form-field">
+          <label class="mat-label other-label mandatory-field">Search Transactions</label>
+          <input type="search" matInput formControlName="query" name="query" minLength="5" (keyup)="search()"
+                 matTooltip="Search by statement reference, client bank reference!" matTooltipShowDelay="1000">
+          <mat-icon class="search-icon" (click)="search();" matSuffix>search</mat-icon>
+
+          <mat-error *ngIf="form.get('query').hasError('required')">
+            Please enter a search term.
+          </mat-error>
+          <mat-error *ngIf="form.get('query').hasError('minlength')">
+            Please enter a search term longer than <strong>5 characters</strong>
+          </mat-error>
+          <mat-error *ngIf="form.get('query').hasError('fromAccNotChosen')">
+            Please select the bank account to be used to search for transaction/s
+          </mat-error>
+        </mat-form-field>
+        <p *ngIf="isLoadingTransactions$ | async">
+          <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+          <label class="mat-label other-label"><i>loading transactions...please wait</i></label>
+        </p>
+      </section>
+      <section>
+        <div style="margin-top: 15px;"
+             [hidden]="!selectedFromAccount || !(isLoadingTransactions$ | async)  && !transactionsLoaded">
+          <label class="mat-label other-label mandatory-field">Transactions</label>
+          <mat-table #table [dataSource]="datasource" matSort>
+            <ng-container matColumnDef="documentNumber">
+              <mat-header-cell *matHeaderCellDef mat-sort-header>Document Number</mat-header-cell>>
+              <mat-cell *matCellDef="let row" [ngClass]="selectedFromTransactionId === row.unallocatedPaymentId ? 'highlight-selected' : ''">{{row.statementReference}}</mat-cell>
+            </ng-container>
+            <ng-container matColumnDef="bankAccountNumber">
+              <mat-header-cell *matHeaderCellDef mat-sort-header>Bank Account Number</mat-header-cell>>
+              <mat-cell *matCellDef="let row">{{row.bankAccountNumber}}</mat-cell>
+            </ng-container>
+            <ng-container matColumnDef="amount">
+              <mat-header-cell *matHeaderCellDef mat-sort-header>Amount</mat-header-cell>>
+              <mat-cell *matCellDef="let row" class="right-aligned-amounts">{{row.amount | currency:'R'}}</mat-cell>
+            </ng-container>
+            <ng-container matColumnDef="documentDate">
+              <mat-header-cell *matHeaderCellDef mat-sort-header>Document Date</mat-header-cell>>
+              <mat-cell *matCellDef="let row">{{row.transactionDate | date: 'yyyy/MM/dd' }}</mat-cell>
+            </ng-container>
+            <ng-container matColumnDef="bankReference">
+              <mat-header-cell *matHeaderCellDef mat-sort-header>Bank Reference</mat-header-cell>>
+              <mat-cell *matCellDef="let row">{{row.billingReference}}</mat-cell>
+            </ng-container>
+            <ng-container matColumnDef="action">
+              <mat-header-cell *matHeaderCellDef mat-sort-header>Action</mat-header-cell>>
+              <mat-cell *matCellDef="let row">
+                <a role="button" class="link-edit" *ngIf="selectedFromTransactionId != row.unallocatedPaymentId"
+                   (click)="selectedFromTransactionChanged(row.unallocatedPaymentId,row.amount)">Select</a>
+                <a role="button" class="link-edit" *ngIf="selectedFromTransactionId === row.unallocatedPaymentId"
+                   (click)="undoFromTransactionChanged()">Undo</a>
+              </mat-cell>
+            </ng-container>
+            <mat-header-row *matHeaderRowDef="displayedColumns;"></mat-header-row>
+            <mat-row *matRowDef="let row; columns: displayedColumns;"></mat-row>
+          </mat-table>
+          <mat-paginator #paginator [length]="datasource.data ? datasource.data.length : 0" [pageIndex]="0"
+                         [pageSize]="5" [pageSizeOptions]="[5, 10, 25, 100]">
+          </mat-paginator>
+        </div>
+      </section>
+      <br />
+      <section>
+        <mat-form-field class="mat-form-field">
+          <label class="mat-label other-label mandatory-field">Amount</label>
+          <input [(ngModel)]="amountSelected" matInput formControlName="amount" name="amount" id="amount"
+                 DecimalNumber="true" />
+          <mat-error *ngIf="form.get('amount').hasError('required')">
+            Amount is <strong>required</strong>
+          </mat-error>
+          <div *ngIf="!isValidValue">
+            <mat-error>
+              Amount cannot <strong>be more than selected amount</strong>
+            </mat-error>
+          </div>
+        </mat-form-field>
+      </section>
+      <br />
+      <section>
+        <mat-form-field class="mat-form-field">
+          <label class="mat-label other-label mandatory-field">Balance</label>
+          <input [(ngModel)]="amountSelected" matInput formControlName="balance" name="balance" id="balance"
+                 DecimalNumber="true" />
+          <mat-error *ngIf="form.get('balance').hasError('required')">
+            Balance is <strong>required</strong>
+          </mat-error>
+          <div *ngIf="!isValidValue">
+            <mat-error>
+              Balance cannot <strong>be more than selected balance</strong>
+            </mat-error>
+          </div>
+        </mat-form-field>
+      </section>
+      <br />
+      <section>
+        <mat-form-field class="mat-form-field">
+          <label class="mat-label other-label mandatory-field">Interest</label>
+          <input [(ngModel)]="amountSelected" matInput formControlName="interest" name="interest" id="interest"
+                 DecimalNumber="true" />
+          <mat-error *ngIf="form.get('interest').hasError('required')">
+            Interest is <strong>required</strong>
+          </mat-error>
+          <div *ngIf="!isValidValue">
+            <mat-error>
+              Interest cannot <strong>be more than selected interest</strong>
+            </mat-error>
+          </div>
+        </mat-form-field>
+      </section>
+      <br />
+      <div *ngIf="isSubmitting$ | async">
+        <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+        <label class="mat-label other-label"><i>submitting...please wait</i></label>
+      </div>
+      <br />
+      <div class="form-buttons submit-button">
+        <button [disabled]="!form.valid || form.pristine || selectedFromTransactionId === 0 || selectedToAccountId === 0 || (isSubmitting$ | async)"
+                class="button submit-button" (click)="submitInterestCalculate()" style="margin-top: 5px;">
+          Submit
+        </button>
+        <button type="button" class="button submit-button" (click)="back()" style="margin-top: 5px;">Back</button>
+      </div>
+    </div>
+  </form>
+</div>

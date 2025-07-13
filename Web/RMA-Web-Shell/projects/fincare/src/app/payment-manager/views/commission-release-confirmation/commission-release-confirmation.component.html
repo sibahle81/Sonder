@@ -1,0 +1,42 @@
+<div style="text-align: center;width: 95%;">
+    <p>SUBMISSION CONFIRMATION</p>
+</div>
+<div *ngIf="isSumitting">
+    <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+    <label class="mat-label other-label"><i>Submitting payments...please wait</i></label>
+</div>
+<section>
+    <div class="div_scroll" *ngIf="datasource.data.length > 0">
+        <mat-table #table [dataSource]="datasource" matSort matSortActive="headerId" matSortDirection="asc">
+            <ng-container matColumnDef="recepientCode">
+                <mat-header-cell *matHeaderCellDef mat-sort-header>Code</mat-header-cell>
+                <mat-cell *matCellDef="let row">{{row.recepientCode}}</mat-cell>
+                <mat-footer-cell *matFooterCellDef></mat-footer-cell>
+            </ng-container>
+            <ng-container matColumnDef="recepientName">
+                <mat-header-cell *matHeaderCellDef mat-sort-header>Name</mat-header-cell>
+                <mat-cell *matCellDef="let row">{{row.recepientName}}</mat-cell>
+                <mat-footer-cell *matFooterCellDef></mat-footer-cell>
+            </ng-container>
+            <ng-container matColumnDef="totalHeaderAmount">
+                <mat-header-cell *matHeaderCellDef mat-sort-header>Amount</mat-header-cell>
+                <mat-cell *matCellDef="let row" class="amount-adjust">{{row.totalHeaderAmount}}</mat-cell>
+                <mat-footer-cell *matFooterCellDef class="total-commission-adjust">{{calculateTotalCommission() |number:'1.2-2'}}</mat-footer-cell>
+            </ng-container>
+            <ng-container matColumnDef="status">
+                <mat-header-cell *matHeaderCellDef mat-sort-header>Action</mat-header-cell>
+                <mat-cell *matCellDef="let row" class="action-adjust"> {{getStatusName(row.headerStatusId)}} </mat-cell>
+                <mat-footer-cell *matFooterCellDef></mat-footer-cell>
+            </ng-container>
+            <mat-header-row *matHeaderRowDef="displayedColumns; sticky: true"></mat-header-row>
+            <mat-row *matRowDef="let row; columns: displayedColumns;"></mat-row>
+            <mat-footer-row *matFooterRowDef="displayedColumns"></mat-footer-row>
+        </mat-table>
+    </div>
+    <mat-paginator [hidden]="datasource.data.length === 0" [pageSize]="10" [pageSizeOptions]="[5, 10, 25, 100]">
+    </mat-paginator>
+</section>
+<div style="text-align: center">
+    <button class="button  submit-button" (click)="doFinalSubmission()" [disabled]="isSumitting" style="margin-right: 30px;">Confirm</button>
+    <button class="button submit-button" (click)="closeDialog()" style="margin-left: 30px;">Edit</button>
+</div>

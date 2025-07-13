@@ -1,0 +1,37 @@
+<div style="margin: 15px;">
+  <h1>Notes</h1>
+  <div *ngIf="isLoading$ | async">
+    <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+    <label class="mat-label other-label"><i>loading...please wait</i></label>
+  </div>
+
+  <div *ngIf="!(isLoading$ | async) && dataSource">
+    <mat-table #table matSort [(dataSource)]="dataSource" class="mat-elevation-z8">
+      <ng-container matColumnDef="context">
+        <mat-header-cell *matHeaderCellDef mat-sort-header>Context</mat-header-cell>
+        <mat-cell *matCellDef="let row">{{row.context}}</mat-cell>
+      </ng-container>
+
+      <ng-container matColumnDef="text">
+        <mat-header-cell *matHeaderCellDef mat-sort-header>Note</mat-header-cell>
+        <mat-cell *matCellDef="let row">{{row.text}}</mat-cell>
+      </ng-container>
+      <ng-container matColumnDef="createdBy">
+        <mat-header-cell *matHeaderCellDef mat-sort-header>Created By</mat-header-cell>
+        <mat-cell *matCellDef="let row">{{row.createdBy}}</mat-cell>
+      </ng-container>
+      <ng-container matColumnDef="createdDate">
+        <mat-header-cell *matHeaderCellDef mat-sort-header>Date</mat-header-cell>
+        <mat-cell *matCellDef="let row">{{row.createdDate | date:'yyyy-MM-dd HH:mm:ss'}}</mat-cell>
+      </ng-container>
+      <ng-container matColumnDef="action">
+        <mat-header-cell *matHeaderCellDef>Action</mat-header-cell>
+        <mat-cell *matCellDef="let row"><a (click)="view(row.text+' ~ '+row.createdBy)">view</a></mat-cell>
+      </ng-container>
+      <mat-header-row *matHeaderRowDef="displayColumns"></mat-header-row>
+      <mat-row *matRowDef="let row; columns: displayColumns;"></mat-row>
+    </mat-table>
+    <mat-paginator [length]="notes.length" [pageSize]="5" [pageSizeOptions]="[5, 10, 15]" showFirstLastButtons>
+    </mat-paginator>
+  </div>
+</div>

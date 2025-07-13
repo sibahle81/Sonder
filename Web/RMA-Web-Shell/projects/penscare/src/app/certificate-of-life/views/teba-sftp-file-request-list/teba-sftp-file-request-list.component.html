@@ -1,0 +1,149 @@
+<div class="wizard-main-content">
+  <div class="wizard-main-content mat-elevation-z8">
+    <mat-card class="wizard-mat-card wizard-mat-table">
+      <mat-card-header>
+        <mat-card-title>
+          <h4> Teba SFTP Request </h4>
+        </mat-card-title>
+      </mat-card-header>
+
+      <mat-card-content>
+
+        <div class="mat-container" style="margin: 20px">
+
+          <div *ngIf="isLoading$ | async">
+            <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+            <label class="mat-label other-label"><i>loading Teba sftp file requests..please wait</i></label>
+          </div>
+          <br/>
+
+
+          <form [formGroup]="tebaSftpRequestForm" class=" details-form" *ngIf="!showMemberTable">
+            <section>
+              <mat-form-field class="mat-form-field">
+                <label class="other-label">Status</label>
+                <mat-select name="sftpRequestStatus" id="sftpRequestStatus"
+                            (selectionChange)="onSftpRequestStatusTypeChange($event)"
+                            formControlName="sftpRequestStatus">
+                  <mat-option *ngFor="let sftpRequestStatusType of sftpRequestStatusTypes"
+                              [value]="sftpRequestStatusType">
+                    {{ formatLookup(sftpRequestStatusType) }}
+                  </mat-option>
+                </mat-select>
+                <mat-error
+                  *ngIf="tebaSftpRequestForm.get('sftpRequestStatus').hasError('required') && (tebaSftpRequestForm.get('sftpRequestStatus').touched ||tebaSftpRequestForm.get('sftpRequestStatus').dirty )">
+                  Benefit is <strong>required</strong>
+                </mat-error>
+              </mat-form-field>
+            </section>
+            <br/>
+            <section>
+              <mat-form-field class="mat-form-field ">
+                <label class="other-label">From Date</label>
+                <input matInput formControlName="fromDate" [matDatepicker]="fromDate"
+                       (dateChange)="fromDateChanged($event)">
+                <mat-datepicker-toggle matSuffix [for]="fromDate"
+                                       [disabled]="tebaSftpRequestForm.disabled"></mat-datepicker-toggle>
+                <mat-datepicker touchUi="true" #fromDate></mat-datepicker>
+                <mat-error
+                  *ngIf="tebaSftpRequestForm.get('fromDate').hasError('required') && (tebaSftpRequestForm.get('fromDate').touched ||tebaSftpRequestForm.get('fromDate').dirty )">
+                  From Date is <strong>required</strong>
+                </mat-error>
+              </mat-form-field>
+
+              <mat-form-field class="mat-form-field-right">
+                <label class="other-label">To Date</label>
+                <input matInput formControlName="toDate" [matDatepicker]="toDate" (dateChange)="toDateChanged($event)">
+                <mat-datepicker-toggle matSuffix [for]="toDate"
+                                       [disabled]="tebaSftpRequestForm.disabled"></mat-datepicker-toggle>
+                <mat-datepicker touchUi="true" #toDate></mat-datepicker>
+                <mat-error
+                  *ngIf="tebaSftpRequestForm.get('toDate').hasError('required') && (tebaSftpRequestForm.get('toDate').touched ||tebaSftpRequestForm.get('toDate').dirty )">
+                  To Date is <strong>required</strong>
+                </mat-error>
+              </mat-form-field>
+            </section>
+          </form>
+
+          <div *ngIf="!showMemberTable" class="mat-container">
+
+            <div style="padding-bottom: 20px">
+              <button class="button submit-button" (click)="searchSftpFileRequests()">Search sftp requests</button>
+            </div>
+            <table mat-table [dataSource]="dataSource" class="mat-elevation-z8" matSort>
+
+              <ng-container matColumnDef="fileName">
+                <th mat-header-cell *matHeaderCellDef mat-sort-header>file Name</th>
+                <td mat-cell *matCellDef="let element"> {{ element.fileName }}</td>
+              </ng-container>
+
+              <ng-container matColumnDef="sftpRequestStatus">
+                <th mat-header-cell *matHeaderCellDef mat-sort-header>Status</th>
+                <td mat-cell
+                    *matCellDef="let element"> {{ formatLookup(SftpRequestStatusTypeEnum[element.sftpRequestStatus]) }}
+                </td>
+              </ng-container>
+
+              <ng-container matColumnDef="itemsInRequest">
+                <th mat-header-cell *matHeaderCellDef mat-sort-header> Items In Request</th>
+                <td mat-cell *matCellDef="let element"> {{ element.itemsInRequest }}</td>
+              </ng-container>
+
+              <ng-container matColumnDef="noResponses">
+                <th mat-header-cell *matHeaderCellDef mat-sort-header> no Responses</th>
+                <td mat-cell *matCellDef="let element"> {{ element.noResponses }}</td>
+              </ng-container>
+
+
+              <ng-container matColumnDef="requestedDate">
+                <th mat-header-cell *matHeaderCellDef mat-sort-header>Requested Date</th>
+                <td mat-cell *matCellDef="let element"> {{ element.requestedDate | date: 'yyyy-MM-dd' }}
+                </td>
+              </ng-container>
+
+              <ng-container matColumnDef="createdBy">
+                <th mat-header-cell *matHeaderCellDef mat-sort-header> Created By</th>
+                <td mat-cell *matCellDef="let element"> {{ element.createdBy }}</td>
+              </ng-container>
+
+              <ng-container matColumnDef="actions">
+                <th mat-header-cell *matHeaderCellDef>Actions</th>
+                <td mat-cell *matCellDef="let row; let i = index">
+                  <span> <a role="button" class="link-edit action-link" (click)="onViewTebaSftpRequest(row, i)">View</a></span>
+                </td>
+              </ng-container>
+
+              <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+              <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+            </table>
+            <mat-paginator #paginator [length]="dataSource.data.length" [pageSize]="5"
+                           [pageSizeOptions]="[5, 10,100]">
+            </mat-paginator>
+            <br/>
+            <div *ngIf="tebaSftpRequestData.length == 0 ">
+              <label class="no-benefit-rate">No Teba sftp file requests have been created.</label>
+            </div>
+            <br/>
+            <div style="padding-bottom: 10px">
+              <button class="button submit-button" (click)="requestNewTebaSftpFileRequest()">Request Teba validation
+              </button>
+            </div>
+
+          </div>
+
+        </div>
+      </mat-card-content>
+      <mat-card-footer>
+        <div *ngIf="showMemberTable">
+          <app-teba-file-data-list [componentSftpRequestInputData]="selectedTebaSftpRequestData"
+                                   [requestProofOfLifeValidation]="requestProofOfLifeValidation"
+                                   (emitNewSftpRequested)="addNewSftpRequested($event)"></app-teba-file-data-list>
+          <br/>
+          <div (click)="onHideMemberTable()" class="form-buttons submit-button">
+            <button type="button" class="button">Back</button>
+          </div>
+        </div>
+      </mat-card-footer>
+    </mat-card>
+  </div>
+

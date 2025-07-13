@@ -1,0 +1,45 @@
+<div *ngIf="(isLoading$ | async)">
+  <label class="mat-label other-label"><i>{{loadingMessage$ | async}}</i></label>
+</div>
+
+<div *ngIf="!(isLoading$ | async)">
+
+  <div class="reportMenu" *ngIf="!isWizard && !hasError">
+    <span (click)="generateReport(true, 'PDF')" class="material-icons pointer">
+      picture_as_pdf
+    </span> pdf |
+    <span (click)="generateReport(true, 'CSV')" class="material-icons pointer">
+      download_for_offline
+    </span> csv |
+    <span (click)="generateReport(true, 'EXCEL')" class="material-icons pointer">
+      format_list_numbered_rtl
+    </span> excel
+  </div>
+
+  <div *ngIf="!isIE && !hasError" class="iframe-container">
+    <br />
+    <iframe [src]="source | safeUrl" scrolling="auto" id="iframe"></iframe>
+  </div>
+
+  <div *ngIf="hasError">
+    <br />
+    <label class="mat-label other-label error"><i>An error has occured while retrieving the requested report
+        <b>{{reporturl}}</b></i></label>
+    <br /><br />
+  </div>
+
+  <div *ngIf="isIE">
+    <p>
+      Dear User, we have detected you are using a legacy browser (IE), please make use of Chrome,
+      Microsoft Edge, Firefox or Safari to enjoy a richer user experience.
+    </p>
+    <p>
+      The file you have requested, can be viewed by clicking on the Save or Open option found at the bottom of the
+      browser window. If the file has not downloaded after a few minutes, please click <a
+        href="javascript:document.location.reload(true);">here</a> to retry
+    </p>
+  </div>
+</div>
+<div *ngIf="isWizard">
+  <br/>
+</div>

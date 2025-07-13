@@ -1,0 +1,39 @@
+<br/>
+<mat-card>
+  <label class="mat-label other-label"><b>Refund Details</b></label>
+  <br /><br/>
+  <div *ngIf="isLoading$ | async">
+    <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+    <label class="mat-label other-label"><i>loading...please wait</i></label>
+  </div>
+
+  <table *ngIf="!(isLoading$ | async)" class="altRowTable">
+    <tr>
+      <th><b>Month</b></th>
+      <th><b>Debtor Number</b></th>
+      <th><b>Reason</b></th>
+      <th><b>Submission Date</b></th>
+      <th><b>Confirmation Date</b></th>
+      <th><b>Status</b></th>
+      <th><b>Amount</b></th>
+    </tr>
+    <tr *ngFor="let summaryDetail of refundSummaryDetails">
+      <td>{{summaryDetail.createdDate | date:'MMM yyyy'}}</td>
+      <td>{{summaryDetail.finpayeNumber}}</td>
+
+      <td *ngIf="summaryDetail.reason == null">No reason defined</td>
+      <td *ngIf="summaryDetail.reason != null">{{format(summaryDetail.reason)}}</td>
+
+      <td *ngIf="summaryDetail.submissionDate == null">Not submitted</td>
+      <td *ngIf="summaryDetail.submissionDate != null">
+        {{summaryDetail.submissionDate | date:'yyyy-MM-dd'}}</td>
+
+      <td *ngIf="summaryDetail.paymentConfirmationDate == null">Not confirmed</td>
+      <td *ngIf="summaryDetail.paymentConfirmationDate != null">
+        {{summaryDetail.paymentConfirmationDate | date:'yyyy-MM-dd'}}</td>
+
+      <td>{{summaryDetail.name}}</td>
+      <td style="float: right; ">{{summaryDetail.headerTotalAmount | number: '1.2-2'}}</td>
+    </tr>
+  </table>
+</mat-card>

@@ -1,0 +1,72 @@
+<div style="padding-top: 15px;">
+
+  <form [formGroup]="form" class="mat-container details-form" novalidate>
+    <section>
+      <mat-form-field class="mat-form-field">
+        <label class="mat-label other-label">Policy Number</label>
+        <input matInput formControlName="policyNumber" />
+      </mat-form-field>
+      <mat-form-field class="mat-form-field-right">
+        <label class="mat-label other-label ">Status</label>
+        <input matInput formControlName="status" />
+      </mat-form-field>
+    </section>
+    <section>
+      <mat-form-field class="mat-form-field">
+        <label class="mat-label other-label">Inception Date</label>
+        <input matInput formControlName="policyInceptionDate" [matDatepicker]="policyInceptionDate"
+          name="policyInceptionDate" readonly>
+        <mat-datepicker-toggle matSuffix [for]="policyInceptionDate"></mat-datepicker-toggle>
+        <mat-datepicker touchUi="true" #policyInceptionDate></mat-datepicker>
+      </mat-form-field>
+      <mat-form-field class="mat-form-field-right">
+        <label class="mat-label other-label">Juristic Representative</label>
+        <input matInput formControlName="juristicRepresentativeName">
+      </mat-form-field>
+    </section>
+    <section>
+      <mat-form-field class="mat-form-field">
+        <label class="mat-label other-label">Representative</label>
+        <input matInput formControlName="representativeName">
+      </mat-form-field>
+      <mat-form-field class="mat-form-field-right">
+        <label class="mat-label other-label">Brokerage</label>
+        <input matInput formControlName="brokerageName">
+      </mat-form-field>
+    </section>
+    <section>
+      <mat-form-field class="mat-form-field">
+        <label class="mat-label other-label">Insurer</label>
+        <input matInput formControlName="insurer">
+      </mat-form-field>
+    </section>
+     <section  [hidden]="!isCFP" >
+        <label class="mat-label other-label">&nbsp;</label>
+        <mat-checkbox formControlName="affordabilityCheckPassed">
+            <label class="mat-label other-label">Is Affordable</label>
+        </mat-checkbox>
+
+    </section> 
+  </form>
+
+  <policy-product-options [parentModel]="detailsModel" [isDisabled]="isDisabled">
+  </policy-product-options>
+
+  <div *ngIf="isCancelled">
+    <h4>Cancellation Reason</h4>
+    <div>
+      <mat-table #table [dataSource]="datasource" matSort>
+        <ng-container matColumnDef="cancellationReason">
+          <mat-header-cell *matHeaderCellDef mat-sort-header>Cancellation Reason</mat-header-cell>
+          <mat-cell *matCellDef="let row"> {{row.cancellationReason}} </mat-cell>
+        </ng-container>
+        <ng-container matColumnDef="cancellationDate">
+          <mat-header-cell *matHeaderCellDef mat-sort-header>Cancellation Date</mat-header-cell>
+          <mat-cell *matCellDef="let row"> {{row.cancellationDate | date:'yyyy-MM-dd'}} </mat-cell>
+        </ng-container>
+        <mat-header-row *matHeaderRowDef="displayedColumns; sticky: true"></mat-header-row>
+        <mat-row *matRowDef="let row; columns: displayedColumns;"></mat-row>
+      </mat-table>
+    </div>
+  </div>
+</div>

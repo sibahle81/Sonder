@@ -1,0 +1,42 @@
+
+<div *ngIf="(isLoading$ | async)" class="loadingDiv">
+    <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+    <span class="site-font">{{heading}}</span>
+</div>
+
+<div [hidden]="(isLoading$ | async)" class="pageWidth"  mat-dialog-content>
+    <div [hidden]="(dataSource.loading$ | async) 
+    || (dataSource && dataSource.data && dataSource.data.data && dataSource.data.data.length <= 0) 
+    || (paginator && paginator.length === 0 && !(dataSource.loading$ | async))">
+    
+    <mat-table #table [dataSource]="dataSource" matSort id="tblData" (matSortChange)="getData()">
+        <ng-container matColumnDef="AssignedToUser">
+            <mat-header-cell *matHeaderCellDef mat-sort-header> Assigned to user</mat-header-cell>
+            <mat-cell *matCellDef="let row">
+                <user-display-name [userId]="row.assignedToUserId"></user-display-name>
+            </mat-cell>
+        </ng-container>
+        <ng-container matColumnDef="CreatedBy">
+            <mat-header-cell *matHeaderCellDef mat-sort-header> Created By</mat-header-cell>
+            <mat-cell *matCellDef="let row">{{row.createdBy}}</mat-cell>
+        </ng-container>
+        <ng-container matColumnDef="CreatedDate">
+            <mat-header-cell *matHeaderCellDef mat-sort-header> Created Date</mat-header-cell>
+            <mat-cell *matCellDef="let row">{{row.createdDate}}</mat-cell>
+        </ng-container>
+        <ng-container matColumnDef="ModifiedBy">
+            <mat-header-cell *matHeaderCellDef mat-sort-header> Modified By</mat-header-cell>
+            <mat-cell *matCellDef="let row">{{row.modifiedBy}}</mat-cell>
+        </ng-container>
+        <ng-container matColumnDef="ModifiedDate">
+            <mat-header-cell *matHeaderCellDef mat-sort-header> Modified Date</mat-header-cell>
+            <mat-cell *matCellDef="let row">{{row.modifiedDate}}</mat-cell>
+        </ng-container>
+        <mat-header-row *matHeaderRowDef="getDisplayedColumns()"></mat-header-row>
+        <mat-row *matRowDef="let row; columns: getDisplayedColumns();"></mat-row>
+    </mat-table>
+    <mat-paginator #paginator [pageIndex]="0" [pageSize]="5" [pageSizeOptions]="[5, 10, 25, 100]"
+    [length]="this.dataSource.rowCount$ | async" (page)="getData()">
+    </mat-paginator>
+    </div>
+</div>

@@ -1,0 +1,13 @@
+<span *ngIf="isLoading$ | async" class="material-icons rotating" matTooltip="loading icd10 code">
+    loop
+</span>
+
+<div *ngIf="!(isLoading$ | async)">
+    <div *ngIf="icd10Code">
+        <b>{{icd10Code.icd10CodeDescription}}</b> ({{icd10Code.icd10Code}})
+    </div>
+
+    <div *ngIf="message">
+        {{message}}
+    </div>
+</div>

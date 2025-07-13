@@ -1,0 +1,159 @@
+<div *ngIf="showHideDetails == 0">
+    <app-charts-list (chartEmit)="chartChangeHandler($event)"></app-charts-list>
+    <!-- <div>
+        <table class="form-group row" style="    margin-left: 62px;     margin: -52px 0px 0px 0px;">
+            <button type="button" (click)="add()" class="button float-button" style="    margin: 5px 0px 0px 64px;">Add New</button>
+        </table>
+    </div> -->
+</div>
+
+<div *ngIf="showHideDetails == 1">
+    <mat-tab-group>
+        <mat-tab label="Charts Details">
+            <mat-card style="margin: 15px 30px 15px 30px">
+                <mat-card-content style="margin-left: 10px;">
+                    <h1>Manage Charts</h1><br />
+                    <form [formGroup]="form" (ngSubmit)="save()" class="mat-container details-form" novalidate>
+                        <section>
+                            <mat-form-field>
+                                <label>Origin</label>
+                                <input matInput id="origin" name="origin" formControlName="origin">
+                            </mat-form-field>
+
+                            <mat-form-field class="mat-form-field-right">
+                                <label>Product Code</label>
+                                <input matInput id="productCode" name="productCode" formControlName="productCode">
+                                <mat-error *ngIf="form.get('productCode').hasError('required')">
+                                    Product code is <strong>required</strong>
+                                </mat-error>
+                            </mat-form-field>
+
+
+                        </section>
+
+                        <section>
+                            <mat-form-field>
+                                <label>Company</label>
+                                <input matInput id="company" name="company" formControlName="company">
+                                <mat-error *ngIf="form.get('company').hasError('required')">
+                                    Company is <strong>required</strong>
+                                </mat-error>
+                            </mat-form-field>
+                            <mat-form-field class="mat-form-field-right">
+                                <label>Branch</label>
+                                <input matInput id="branch" name="branch" formControlName="branch">
+                                <mat-error *ngIf="form.get('branch').hasError('required')">
+                                    Branch is <strong>required</strong>
+                                </mat-error>
+                            </mat-form-field>
+                        </section>
+
+                        <section>
+                            <mat-form-field>
+                                <label>Transaction Type</label>
+                                <input matInput id="transactionType" name="transactionType" formControlName="transactionType">
+                                <mat-error *ngIf="form.get('transactionType').hasError('required')">
+                                    Transaction Type is <strong>required</strong>
+                                </mat-error>
+                            </mat-form-field>
+                            <mat-form-field class="mat-form-field-right">
+                                <label>Level 1</label>
+                                <input matInput id="level1" name="level1" formControlName="level1">
+                                <mat-error *ngIf="form.get('level1').hasError('required')">
+                                    Level 1 is <strong>required</strong>
+                                </mat-error>
+                            </mat-form-field>
+                        </section>
+
+                        <section>
+                            <mat-form-field>
+                                <label>Level 2</label>
+                                <input matInput id="level2" name="level2" formControlName="level2">
+                                <mat-error *ngIf="form.get('level2').hasError('required')">
+                                    Level 2 is <strong>required</strong>
+                                </mat-error>
+                            </mat-form-field>
+                            <mat-form-field class="mat-form-field-right">
+                                <label>Level 3</label>
+                                <input matInput id="level3" name="level3" formControlName="level3">
+                                <mat-error *ngIf="form.get('level3').hasError('required')">
+                                    Level 3 is <strong>required</strong>
+                                </mat-error>
+                            </mat-form-field>
+                        </section>
+
+                        <section>
+                            <mat-form-field>
+                                <label>IS Chart Number</label>
+                                <input matInput id="ISChartNo" name="ISChartNo" formControlName="ISChartNo">
+                                <mat-error *ngIf="form.get('ISChartNo').hasError('required')">
+                                    IS Chart number is <strong>required</strong>
+                                </mat-error>
+                                <mat-error *ngIf="form.get('ISChartNo').hasError('pattern')">
+                                    Numbers <strong> ONLY required</strong>
+                                </mat-error>
+                            </mat-form-field>
+                            <mat-form-field class="mat-form-field-right">
+                                <label>IS Chart Name</label>
+                                <input matInput id="ISChartName" name="ISChartName" formControlName="ISChartName">
+                                <mat-error *ngIf="form.get('ISChartName').hasError('required')">
+                                    IS Chart name is <strong>required</strong>
+                                </mat-error>
+                            </mat-form-field>
+                        </section>
+
+                        <section>
+                            <mat-form-field>
+                                <label>BS Chart Number</label>
+                                <input matInput id="BSChartNo" name="BSChartNo" formControlName="BSChartNo">
+                                <mat-error *ngIf="form.get('BSChartNo').hasError('required')">
+                                    BS Chart number is <strong>required</strong>
+                                </mat-error>
+                                <mat-error *ngIf="form.get('BSChartNo').hasError('pattern')">
+                                    Numbers <strong> ONLY required</strong>
+                                </mat-error>
+                            </mat-form-field>
+
+                            <mat-form-field class="mat-form-field-right">
+                                <label>BS Chart Name</label>
+                                <input matInput id="BSChartName" name="BSChartName" formControlName="BSChartName">
+                                <mat-error *ngIf="form.get('BSChartName').hasError('required')">
+                                    BS Chart name is <strong>required</strong>
+                                </mat-error>
+                            </mat-form-field>
+                        </section>
+                        <section>
+                            <mat-form-field>
+                                <label>Benefit Code</label>
+                                <input matInput id="BenefitCode" name="BenefitCode" formControlName="BenefitCode">
+                            </mat-form-field>
+                        </section>
+
+                        <div>
+                            <table class="form-group row">
+                                <div id="div1" *ngIf="isSave == 0">
+                                    <button type="button" [disabled]="isAuthorized == 1" (click)="edit()" class="button float-button">Edit</button>
+                                </div>
+                                <div id="div2" *ngIf="isSave == 1">
+                                    <button [disabled]="form.pristine" class="button float-button submit-button">Save</button>
+                                </div>
+                                <div id="div3">
+                                    <button type="button" (click)="clear()" class="button float-button">Back</button>
+                                </div>
+                            </table>
+                        </div>
+                    </form>
+                </mat-card-content>
+            </mat-card>
+        </mat-tab>
+
+        <mat-tab label="Notes">
+            <!--<notes name="charts"></notes>-->
+        </mat-tab>
+
+        <mat-tab label="Audit Log">
+            <!--<audit-log name="charts"></audit-log>-->
+        </mat-tab>
+    </mat-tab-group>
+
+</div>

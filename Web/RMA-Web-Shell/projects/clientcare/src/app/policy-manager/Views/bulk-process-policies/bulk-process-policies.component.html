@@ -1,0 +1,20 @@
+<div>
+  <h1>{{title}}</h1>
+</div>
+<div>
+  <upload-control #uploadControl [acceptedTypes]="'.csv'" [isSingleInput]="false" [allowDelete]="true"
+    [isReadOnly]="false"></upload-control>
+</div>
+<div class="left-padding" *ngIf="uploadControlComponent.uploadFileList.length > 0">
+  <div *ngIf="uploadControlComponent.isUploading">{{ message.value }}</div>
+</div>
+<br />
+<div [hidden]="!hasErrors" class="error-message">
+  <ng-container *ngFor="let msg of errors">
+    <span class="red">{{ msg }}</span><br/>
+  </ng-container>
+</div>
+<br />
+<div class="form-buttons" (click)="save()">
+  <button class="button float-button submit-button" [disabled]="disabled">Upload File</button>
+</div>

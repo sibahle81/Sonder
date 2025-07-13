@@ -1,0 +1,28 @@
+<mat-card>
+  <mat-card-header>
+    <mat-card-title class="wizard-font card-title grey">
+      <h1 style="padding: 0;">Reason</h1>
+    </mat-card-title>
+    <mat-card-subtitle>
+      <span class="grey site-font"><i>Reason for document deletion</i></span>
+    </mat-card-subtitle>
+  </mat-card-header>
+
+  <mat-card-content style="margin-left: 10px;">
+    <form [formGroup]="form" (ngSubmit)="Add()" class="mat-container">
+    <div style="margin-top: 20px;">
+      <section>
+        <section>
+          <mat-label class="mat-label other-label">Reason</mat-label>
+          <input matInput  name="message" id="message" formControlName="message" required>
+        </section>
+      </section>
+    </div>
+
+    <div class="form-group-button mat-form-button">
+      <button  (click)='Add()'  type="button" class="button float-button">Remove Document</button>
+      <button  (click)='onNoClick()' type="button" class="button float-button">Close</button>
+    </div>
+  </form>
+  </mat-card-content>
+</mat-card>

@@ -1,0 +1,92 @@
+<mat-card>
+  <mat-card-content>
+    <h1>Corrective Split Per Date</h1>
+    <div>
+      <form *ngIf="form" [formGroup]="form">
+        <table class="form-table">
+          <thead>
+            <tr>
+              <th>Amount</th>
+              <th>From Date</th>
+              <th>To Date</th>
+              <th>PAYE Tax</th>
+              <th>Day Month Count</th>
+              <th>Action</th>
+            </tr>
+          </thead>
+          <tbody *ngIf="correctiveSplit.controls.length > 0">
+            <tr formArrayName="correctiveSplit" *ngFor="let date of correctiveSplit.controls; let i = index;">
+              <td [formGroupName]="i">
+                <mat-form-field>
+                  <input matInput type="text" formControlName="amount" [errorStateMatcher]="matcher" />
+                  <mat-error *ngIf="form.controls.correctiveSplit.controls[i].invalid">
+                    <!-- {{getError('fromDate',i)}} -->
+                  </mat-error>
+                </mat-form-field>
+              </td>
+
+              <td [formGroupName]="i">
+                <mat-form-field class="mat-form-field">
+                  <input matInput formControlName="fromDate" [matDatepicker]="fromDate"
+                    name="fromDate" readonly>
+                  <mat-datepicker-toggle matSuffix class="date-picker-toggle " [for]="fromDate"></mat-datepicker-toggle>
+                  <mat-datepicker touchUi="true" #fromDate></mat-datepicker>
+                </mat-form-field>
+
+              </td>
+
+              <td [formGroupName]="i">
+                <mat-form-field class="mat-form-field">
+                  <input matInput formControlName="toDate" [matDatepicker]="toDate"
+                    name="toDate" readonly>
+                  <mat-datepicker-toggle matSuffix class="date-picker-toggle" [for]="toDate"></mat-datepicker-toggle>
+                  <mat-datepicker touchUi="true" #toDate></mat-datepicker>
+                </mat-form-field>
+              </td>
+
+
+              <td [formGroupName]="i">
+                <mat-form-field>
+                  <input matInput type="text" formControlName="PAYETax" [errorStateMatcher]="matcher" />
+                  <mat-error *ngIf="form.controls.correctiveSplit.controls[i].invalid">
+                    <!-- {{getError('fromDate',i)}} -->
+                  </mat-error>
+                </mat-form-field>
+              </td>
+
+              <td [formGroupName]="i">
+                <mat-form-field>
+                  <input matInput type="text" formControlName="dayMonthCount" [errorStateMatcher]="matcher" />
+                  <mat-error *ngIf="form.controls.correctiveSplit.controls[i].invalid">
+                    <!-- {{getError('fromDate',i)}} -->
+                  </mat-error>
+                </mat-form-field>
+              </td>
+
+              <td [formGroupName]="i">
+                <div [matMenuTriggerFor]="menu">
+                  <span class="material-icons pointer">more_vert</span>
+                  <mat-menu #menu="matMenu">
+                    <ng-container *ngFor="let menu of menus">
+                      <button *ngIf="!menu?.disable" mat-menu-item (click)="onSelect(i, menu?.action)">{{menu?.title}}</button>
+                    </ng-container>
+                  </mat-menu>
+                </div>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </form>
+
+      <!-- <div *ngIf="correctiveSplit.controls === 0">
+        No corrective entry split have been added.
+      </div> -->
+      <button *ngIf="canEdit" class="button submit-button" (click)="addCorrectiveSplit()">Add Corrective Split</button>
+    </div>
+  </mat-card-content>
+</mat-card>
+
+
+
+
+

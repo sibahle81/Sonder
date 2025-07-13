@@ -1,0 +1,63 @@
+<div class="wizard-main-content mat-elevation-z8">
+  <form [formGroup]="form" class="mat-container details-form">
+    <section>
+      <mat-form-field class="mat-form-field">
+        <label class="mat-label other-label mandatory-field">Conversion Option</label>
+        <mat-select formControlName="conversionOption">
+          <mat-option *ngFor="let option of conversionOptions" [value]="option.benefitOptionItemValueId">
+            {{option.optionItemName}}
+          </mat-option>
+        </mat-select>
+        <mat-error *ngIf="form.get('conversionOption').hasError('required')">
+          Conversion Option is <strong>required</strong>
+        </mat-error>
+      </mat-form-field>
+      <mat-form-field class="mat-form-field-right">
+        <label class="mat-label other-label mandatory-field">Payback Benefit</label>
+        <mat-select formControlName="paybackBenefit">
+          <mat-option *ngFor="let option of paybackBenefitOptions" [value]="option.benefitOptionItemValueId">
+            {{option.optionItemName}}
+          </mat-option>
+        </mat-select>
+        <mat-error *ngIf="form.get('paybackBenefit').hasError('required')">
+          Payback Benefit is <strong>required</strong>
+        </mat-error>
+      </mat-form-field>
+    </section>
+    <section>
+      <mat-form-field class="mat-form-field">
+        <label class="mat-label other-label">Free Cover Limit</label>
+        <input matInput formControlName="freeCoverLimit" type="number" DecimalNumber>
+      </mat-form-field>
+      <mat-form-field class="mat-form-field-right">
+        <label class="mat-label other-label">Previous Insurer FCL</label>
+        <input matInput formControlName="previousInsurerFCL" type="number" DecimalInput>
+      </mat-form-field>
+    </section>
+    <section>
+      <mat-form-field class="mat-form-field">
+        <label class="mat-label other-label">Maximum Sum Assured</label>
+        <span class="material-icons md-18" style="color: lightseagreen;" matTooltip="The maximum sum assured is: R{{maximumSumAssured | number: '1.2-6'}}">
+          info
+        </span>
+        <input matInput formControlName="maximumSumAssured" type="number">
+      </mat-form-field>
+      <mat-form-field class="mat-form-field-right">
+        <label class="mat-label other-label">Maximum Waiver Benefit</label>
+        <span class="material-icons md-18" style="color: lightseagreen;" matTooltip="The maximum waiver benefit is: R{{maximumWaiverBenefit | number: '1.2-6'}}">
+          info
+        </span>
+        <input matInput formControlName="maximumWaiverBenefit" type="number">
+      </mat-form-field>
+    </section>
+    <section>
+      <mat-form-field class="mat-form-field">
+        <label class="mat-label other-label">Maximum Medical Premium Waiver Benefit</label>
+        <span class="material-icons md-18" style="color: lightseagreen;" matTooltip="The maximum medical premium waiver benefit is: R{{maximumMedicalPremiumWaiver | number: '1.2-6'}}">
+          info
+        </span>
+        <input matInput formControlName="maxMedicalPremiumWaiverBenefit" type="number">
+      </mat-form-field>
+    </section>
+  </form>
+</div>

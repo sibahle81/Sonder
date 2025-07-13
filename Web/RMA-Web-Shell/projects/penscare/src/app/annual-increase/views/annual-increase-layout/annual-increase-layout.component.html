@@ -1,0 +1,22 @@
+<div class="menu-container">
+  <nav mat-tab-nav-bar>
+    <ng-container *ngFor="let item of tabItem">
+      <a mat-tab-link (click)="tabSelection(item.path)"> {{item.title}} </a>
+    </ng-container>
+  </nav>
+  <div>
+    <div [hidden]="!isLoading">
+      <div style="margin-right: 15px;">
+        <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+      </div>
+      <span style="color: grey">Loading...</span>
+    </div>
+    <div [hidden]="isLoading">
+      <ng-container [ngSwitch]="loadedTab">
+        <app-home *ngSwitchCase="'home'" (changeLoading)="changeLoading($event)"></app-home>
+        <app-annual-increase-history *ngSwitchCase="'history'" (changeLoading)="changeLoading($event)"></app-annual-increase-history>
+        <bonus-payments-list *ngSwitchCase="'bonus-payments-list'" (changeLoading)="changeLoading($event)"></bonus-payments-list>
+      </ng-container>
+    </div>
+  </div>
+</div>

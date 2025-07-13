@@ -1,0 +1,101 @@
+﻿<mat-tab-group>
+  <mat-tab label="{{this.roleDisplayName}}">
+    <mat-tab-group>
+      <mat-tab label="Role Details">
+        <mat-card>
+          <mat-card-header>
+            <mat-card-title class="wizard-font card-title grey">
+              <h1 class="wizard-font">Role Details</h1>
+            </mat-card-title>
+          </mat-card-header>
+
+          <div [hidden]="!isCurrentRole" class="left-margin wizard-font orange">
+            <span>The below role details are in read-only mode.<br />You may not edit your own role</span>
+          </div>
+
+          <form [formGroup]="form" (ngSubmit)="save()" class="mat-container details-form" novalidate>
+            <!--Role name-->
+            <mat-form-field>
+              <label class="mat-label other-label mandatory-field">Role name</label>
+              <input matInput minlength="3" maxlength="50" id="name" name="name" formControlName="name" unique-validator
+                [table]="'Role'" [field]="'Name'" [currentValue]="currentName" [serviceType]="1" />
+              <mat-error *ngIf="form.get('name').hasError('required')">
+                Role name is <strong>required</strong>
+              </mat-error>
+              <mat-error *ngIf="form.get('name').hasError('minlength')">
+                Role name must be at least <strong>three characters</strong>
+              </mat-error>
+              <mat-error *ngIf="form.get('name').hasError('isTaken')">
+                This role name <strong>already exists</strong>
+              </mat-error>
+            </mat-form-field>
+
+            <last-modified-by type="Role"></last-modified-by>
+
+            <div class="form-group-button mat-form-button" *ngIf="!isSubmitting">
+              <div *ngIf="!form.disabled" class="form-buttons" matTooltip="No changes have been made"
+                [matTooltipDisabled]="!form.pristine">
+                <button [disabled]="form.pristine" class="button float-button submit-button">Save</button>
+              </div>
+
+              <div (click)="edit()" *ngIf="form.disabled && !isSubmitting" class="form-buttons"
+                matTooltip="You may not edit your own role" [matTooltipDisabled]="!isCurrentRole">
+                <button [disabled]="isCurrentRole" type="button" class="button float-button submit-button">Edit</button>
+              </div>
+
+              <div (click)="back()" class="form-buttons">
+                <button type="button" class="button float-button submit-button">Back</button>
+              </div>
+            </div>
+          </form>
+        </mat-card>
+      </mat-tab>
+
+      <mat-tab label="Permissions">
+        <mat-tab-group (selectedTabChange)="onTabChange($event)">
+          <mat-tab label="Authority Limits">
+            <paged-authority-limit-configuration-search [roleId]="roleId"></paged-authority-limit-configuration-search>
+          </mat-tab>
+
+          <mat-tab *ngFor="let module of systemModules" [label]="module.name">
+            <mat-card *ngIf="!permissionGroups || permissionGroups.length <= 0">
+              <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+              <label class="mat-label other-label"><i>loading permission groups...please wait</i></label>
+            </mat-card>
+
+            <ng-container *ngFor="let group of permissionGroups | permissionGroupFilter:module.id">
+              <ng-container *ngIf="group.permissions">
+                <permisson-group [permissionGroup]="group" [roleSecurityRank]="roleSecurityRank"
+                  [currentEntityPermissions]="currentRolePermissionIds" (multipleChecked)="onMultipleSelected($event)"
+                  (singleChecked)="onSingleSelected($event)" [inEditPermissionsMode]="inEditPermissionsMode">
+                </permisson-group>
+              </ng-container>
+            </ng-container>
+          </mat-tab>
+        </mat-tab-group>
+
+        <div class="form-group-button mat-form-button">
+          <div class="form-buttons" *ngIf="inEditPermissionsMode">
+            <button [disabled]="isSubmittingPermissions" (click)="savePermissions()"
+              class="button float-button submit-button">{{isPermissionsEdited && inEditPermissionsMode ? 'Save' : 'Cancel'}}</button>
+          </div>
+          <div (click)="editPermissions()" *ngIf="!inEditPermissionsMode && selectedTabIndex != 0" class="form-buttons"
+            matTooltip="You may not edit your own user details" [matTooltipDisabled]="!isCurrentUser">
+            <button [disabled]="isCurrentUser" type="button" class="button float-button submit-button">Edit</button>
+          </div>
+          <div (click)="back()" class="form-buttons">
+            <button type="button" class="button float-button submit-button">Back</button>
+          </div>
+        </div>
+
+      </mat-tab>
+      <mat-tab label="Notes">
+        <notes name="role"></notes>
+      </mat-tab>
+
+      <mat-tab label="Audit Log">
+        <audit-log name="role"></audit-log>
+      </mat-tab>
+    </mat-tab-group>
+  </mat-tab>
+</mat-tab-group>

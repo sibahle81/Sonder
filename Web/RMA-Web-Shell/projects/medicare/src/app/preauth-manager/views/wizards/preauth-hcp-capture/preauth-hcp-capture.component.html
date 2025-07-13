@@ -1,0 +1,56 @@
+<mat-card>
+    <mat-card-content>
+        <form [formGroup]="form" *ngIf="this.form">
+
+            <div class="mat-header">
+                <h1>Capture Authorisation Details</h1>
+            </div>
+
+            <div>
+                <mat-form-field class="date-field mat-form-field-right" color="accent">
+                    <label class="mat-label other-label">Injury Date</label>
+                    <input matInput [matDatepicker]="picker1" name="injuryDate" id="injuryDate"
+                        formControlName="injuryDate">
+                    <mat-datepicker-toggle
+                        style=" position: absolute !important;right: 0 !important;top: 18px  !important;" matSuffix
+                        [for]="picker1"></mat-datepicker-toggle>
+                    <mat-datepicker #picker1></mat-datepicker>
+                </mat-form-field>
+                <br><br>
+                <mat-form-field class="date-field mat-form-field-right" color="accent">
+                    <label class="mat-label other-label mandatory-field">Date authorised from</label>
+                    <input matInput [matDatepicker]="picker2" name="dateAuthorisedFrom" id="dateAuthorisedFrom"
+                        formControlName="dateAuthorisedFrom">
+                    <mat-datepicker-toggle
+                        style=" position: absolute !important;right: 0 !important;top: 18px  !important;" matSuffix
+                        [for]="picker2"></mat-datepicker-toggle>
+                    <mat-datepicker #picker2></mat-datepicker>
+                </mat-form-field>
+                <mat-form-field class="date-field mat-form-field-right" color="accent">
+                    <label class="mat-label other-label mandatory-field">Date authorised to</label>
+                    <input matInput [matDatepicker]="picker3" name="dateAuthorisedTo" id="dateAuthorisedTo"
+                        formControlName="dateAuthorisedTo">
+                    <mat-datepicker-toggle
+                        style=" position: absolute !important;right: 0 !important;top: 18px  !important;" matSuffix
+                        [for]="picker3"></mat-datepicker-toggle>
+                    <mat-datepicker #picker3></mat-datepicker>
+                </mat-form-field>
+                <br><br>
+                <mat-form-field class="mat-form-field-right">
+                    <label class="mat-label other-label mandatory-field">Description</label>
+                    <textarea matInput cdkTextareaAutosize cdkAutosizeMinRows="3" cdkAutosizeMaxRows="5"
+                        formControlName="description" id="description" class="mat-input-element" minlength="10"
+                        maxlength="1000"></textarea>
+                </mat-form-field>
+                <br><br>
+                <mat-form-field class="mat-form-field-right">
+                    <label class="mat-label other-label mandatory-field">Pre-auth motivation</label>
+                    <textarea matInput cdkTextareaAutosize cdkAutosizeMinRows="3" cdkAutosizeMaxRows="5"
+                        formControlName="authComments" id="authComments" class="mat-input-element" minlength="10"
+                        maxlength="1000"></textarea>
+                </mat-form-field>               
+            </div>
+
+        </form>
+    </mat-card-content>
+</mat-card>

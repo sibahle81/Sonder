@@ -1,0 +1,95 @@
+<!-- PERMISSIONS -->
+<div [hidden]="hasPermission" class="permissionError">
+  <div style="padding: 15px 0; color: orange; font-family: 'Oswald', sans-serif;">
+    You do not have sufficient permissions to perform recovery.
+  </div>
+  <div (click)="back()" class="form-buttons submit-button">
+    <button type="button" class="button float-button">Back</button>
+  </div>
+</div>
+
+<div [hidden]="!hasPermission">
+  <mat-card class="main-container" class="mainContainerDiv">
+    <!-- MAIN HEADER FOR THIS PAGE -->
+    <mat-card-header class="wizardHeader">
+      <mat-card-title class="wizard-font card-title grey">
+        <h1 style="padding: 0;">Recovery Wizard</h1>
+      </mat-card-title>
+      <mat-card-subtitle>
+        <span class="grey site-font">Generating a recovery and Creating a debtors account for claimant</span>
+      </mat-card-subtitle>
+    </mat-card-header>
+
+    <!-- BENEFICIARY DETAILS-->
+    <mat-card class="top-selector-container">
+      <mat-card class="document-container">
+        <mat-card-header>
+          <mat-card-title>
+            <h1 class="wizard-font">Claimant Details</h1>
+          </mat-card-title>
+        </mat-card-header>
+        <mat-card-content class="content">
+          <div *ngIf="this.person !== null">
+            <table class="altRowTable" style="width:100%;">
+              <tr>
+                <td><b>Name:</b>
+                  {{person.person.firstName}}
+                </td>
+              </tr>
+              <tr>
+                <td><b>Surname:</b>
+                  {{person.person.surname}}
+                </td>
+              </tr>
+              <tr>
+                <td><b>ID/Passport:</b>
+                  {{identificationNumber}}
+                </td>
+              </tr>
+              <tr>
+                <td><b>Birth Date:</b>
+                  {{this.person.person.dateOfBirth | date:'yyyy/MM/dd'}}
+                </td>
+              </tr>
+            </table>
+          </div>
+        </mat-card-content>
+      </mat-card>
+
+      <!-- BANKING DETAILS -->
+      <mat-card class="document-container">
+        <mat-card-header>
+          <mat-card-title>
+            <h1 class="wizard-font">Banking Details</h1>
+          </mat-card-title>
+        </mat-card-header>
+        <mat-card-content class="content">
+          <div *ngIf="this.bankingDetails !== null">
+            <table class="altRowTable" style="width:100%;">
+              <tr>
+                <td><b>Account Holder:</b>
+                  {{bankingDetails.accountHolderName}}
+                </td>
+              </tr>
+              <tr>
+                <td><b>Bank Name:</b>
+                  {{bankingDetails.bankName}}
+                </td>
+              </tr>
+              <tr>
+                <td><b>Branch Code:</b>
+                  {{bankingDetails.branchCode}}
+                </td>
+              </tr>
+              <tr>
+                <td><b>Account Number:</b>
+                  {{bankingDetails.accountNumber}}
+                </td>
+              </tr>
+            </table>
+          </div>
+        </mat-card-content>
+      </mat-card>
+    </mat-card>
+  </mat-card>
+</div>

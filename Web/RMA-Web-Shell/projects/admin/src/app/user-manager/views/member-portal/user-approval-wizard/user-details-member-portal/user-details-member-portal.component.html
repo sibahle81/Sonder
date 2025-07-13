@@ -1,0 +1,95 @@
+<div>
+  <br />
+  <mat-card>
+    <mat-card-content>
+      <form [formGroup]="form" class="mat-container details-form" novalidate>
+        <h2 class="Arabic"> {{wizardMessage}}</h2>
+        <br />
+        <div *ngIf="userProfileType == 1">
+          <mat-form-field class="mat-form-field">
+            <label class="mat-label other-label memberLabel">Member Type: </label>
+            <input matInput formControlName="userProfileType">
+          </mat-form-field>
+        </div>
+        <div *ngIf="userProfileType == 3">
+          <mat-form-field class="mat-form-field">
+            <label class="mat-label other-label memberLabel">Member Type: </label>
+            <input matInput formControlName="userProfileType">
+          </mat-form-field>
+          <mat-form-field class="mat-form-field-right">
+            <label class="mat-label other-label memberLabel">FSP No.: </label>
+            <input matInput formControlName="fspNo">
+          </mat-form-field>
+        </div>
+        <div *ngIf="userProfileType == 2">
+          <mat-form-field class="mat-form-field">
+            <label class="mat-label other-label memberLabel">Member Type: </label>
+            <input matInput formControlName="userProfileType">
+          </mat-form-field>
+          <mat-form-field class="mat-form-field-right">
+            <label class="mat-label other-label memberLabel">Company Registration No.: </label>
+            <input matInput formControlName="companyRegistrationNo">
+          </mat-form-field>
+        </div>
+        <br />
+        <h2 class="Arabic">User Information</h2>
+        <br />
+        <section>
+          <mat-form-field class="mat-form-field">
+            <label class="mat-label other-label mandatory-field">Identification Type</label>
+            <input matInput maxlength="13" formControlName="idType" />
+          </mat-form-field>
+          <mat-form-field class="mat-form-field-right">
+            <label class="mat-label other-label mandatory-field">Identification Number</label>
+            <input matInput maxlength="13" formControlName="idNumber" />
+          </mat-form-field>
+        </section>
+        <section [hidden]="idType == 1">
+          <mat-form-field class="mat-form-field">
+            <label class="mat-label other-label mandatory-field">Passport Expiry Date</label>
+            <input matInput maxlength="13" formControlName="passportExpiryDate" />
+          </mat-form-field>
+        </section>
+        <section>
+          <mat-form-field class="mat-form-field">
+            <label class="mat-label other-label mandatory-field">First Name</label>
+            <input matInput AlphaOnly maxlength="50" formControlName="firstName" />
+          </mat-form-field>
+          <mat-form-field class="mat-form-field-right">
+            <label class="mat-label other-label mandatory-field">Surname</label>
+            <input matInput AlphaOnly maxlength="50" formControlName="surname" />
+          </mat-form-field>
+        </section>
+
+        <section>
+          <mat-form-field class="mat-form-field">
+            <label class="mat-label other-label mandatory-field">Date of Birth</label>
+            <input matInput formControlName="dateOfBirth" date="true" [matDatepicker]="dateOfBirth">
+            <mat-datepicker-toggle matSuffix class="mat-toggle-datepicker datePick" [for]="dateOfBirth"
+              [disabled]="form.disabled">
+            </mat-datepicker-toggle>
+            <mat-datepicker touchUi="true" #dateOfBirth></mat-datepicker>
+          </mat-form-field>
+          <mat-form-field class="mat-form-field-right">
+            <label class="mat-label other-label">Telephone Number</label>
+            <input matInput maxlength="10" NumberOnly formControlName="tellNumber" />
+          </mat-form-field>
+        </section>
+        <section>
+          <mat-form-field class="mat-form-field">
+            <label class="mat-label other-label">Mobile Number</label>
+            <input matInput maxlength="10" NumberOnly formControlName="cellNumber" />
+          </mat-form-field>
+          <mat-form-field class="mat-form-field-right">
+            <label class="mat-label other-label mandatory-field">Email</label>
+            <input matInput maxlength="255" formControlName="emailAddress" />
+          </mat-form-field>
+        </section>
+        <br />
+        <br />
+      </form>
+    </mat-card-content>
+  </mat-card>
+  <br />
+  <br />
+</div>

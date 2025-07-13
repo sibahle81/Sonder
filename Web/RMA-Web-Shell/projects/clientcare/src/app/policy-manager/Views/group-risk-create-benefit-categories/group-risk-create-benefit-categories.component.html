@@ -1,0 +1,87 @@
+<div class="wizard-main-content mat-elevation-z8">
+  <mat-card class="wizard-mat-card wizard-mat-table">
+    <mat-card-header>
+      <mat-card-title>
+        <h4>Benefit Categories</h4>
+      </mat-card-title>
+      <div *ngIf="isLoading">
+        <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+      </div>
+    </mat-card-header>
+    <mat-card-content>
+      <form [formGroup]="form" class="mat-container details-form">
+        <section>
+          <mat-form-field>
+            <label class="mat-label other-label">View Details by Effective Date:</label>
+            <mat-select formControlName="selectedDetailDate" (selectionChange)="onDetailsDateChanged($event.value)">
+              <mat-option *ngFor="let detailDate of categoryDetailDates" [value]="detailDate">
+                {{ detailDate | date: 'yyyy-MM-dd'}}
+              </mat-option>
+            </mat-select>
+          </mat-form-field>
+        </section>
+      </form>
+      <create-benefit-category-standard (benefitChanged)="onBenefitChanged($event)" (policyChanged)="onPolicyChanged($event)" (startDateChanged)="onStartDateChanged($event)"></create-benefit-category-standard>
+      <create-benefit-category-ci [hidden]="!isCriticalIllness"></create-benefit-category-ci>
+      <create-benefit-category-death [hidden]="!isDeathBenefit"></create-benefit-category-death>
+      <create-benefit-category-funeral [hidden]="!isFuneralBenefit" (funeralCoverTypeChanged)="onFuneralCoverTypeChanged($event)"></create-benefit-category-funeral>
+      <create-benefit-category-disability [hidden]="!isDisabilityIncome"></create-benefit-category-disability>
+      <create-benefit-category-ttd [hidden]="!isTemporalTotalDisability"></create-benefit-category-ttd>
+      <create-benefit-category-spouse-death [hidden]="!isSpouseDeath"></create-benefit-category-spouse-death>
+      <create-benefit-category-disability-ls [hidden]="!isLumpSumDisability"></create-benefit-category-disability-ls>
+      <grouprisk-funeral-custom-scale [hidden]="!isFuneralCustomScale"></grouprisk-funeral-custom-scale>
+    </mat-card-content>
+    <mat-card-footer>
+      <div class="form-group-button mat-form-button form-buttons submit-button mat-elevation-z8" *ngIf="!isDisabled" style="margin-bottom: 10px;float: right;">
+        <button class="button submit-button" (click)="onSaveBenefitCategory()">Save Category</button>
+      </div>
+    </mat-card-footer>
+  </mat-card>
+  <mat-card class="wizard-mat-card wizard-mat-table">
+    <mat-card-header>
+      <h4>Created Categories</h4>
+    </mat-card-header>
+    <mat-card-content class="wizard-mat-card-content">
+      <mat-table #table [dataSource]="createdCategories" matSort>
+
+        <ng-container matColumnDef="benefitId">
+          <mat-header-cell *matHeaderCellDef mat-sort-header> Benefit Name </mat-header-cell>
+          <mat-cell *matCellDef="let row"> {{ getBenefitName(row.policyId, row.benefitId) }} </mat-cell>
+        </ng-container>
+        <ng-container matColumnDef="policyId">
+          <mat-header-cell *matHeaderCellDef mat-sort-header> Policy Number </mat-header-cell>
+          <mat-cell *matCellDef="let row"> {{ getCustomerReference(row.policyId) }} </mat-cell>
+        </ng-container>
+        <ng-container matColumnDef="categoryDescription">
+          <mat-header-cell *matHeaderCellDef mat-sort-header> Category </mat-header-cell>
+          <mat-cell *matCellDef="let row"> {{ row.categoryDescription }} </mat-cell>
+        </ng-container>
+        <ng-container matColumnDef="startDate">
+          <mat-header-cell *matHeaderCellDef mat-sort-header> BC Start Date </mat-header-cell>
+          <mat-cell *matCellDef="let row"> {{ row.startDate  | date: 'yyyy-MM-dd' }} </mat-cell>
+        </ng-container>
+        <ng-container matColumnDef="endDate">
+          <mat-header-cell *matHeaderCellDef mat-sort-header> BC End Date </mat-header-cell>
+          <mat-cell *matCellDef="let row"> {{ row.endDate | date: 'yyyy-MM-dd' }} </mat-cell>
+        </ng-container>
+        <ng-container matColumnDef="actions">
+          <mat-header-cell *matHeaderCellDef>Actions</mat-header-cell>
+          <mat-cell *matCellDef="let row; let i = index;">
+
+            <span> <img src="/assets/images/edit.png" class="action-icon" /> <a role="button" class="link-edit action-link" (click)="onEdit(row, i)">{{isDisabled ? 'View' : 'Edit'}}</a></span>
+            <span *ngIf="!isDisabled && !isEditWorkflow"> <img src="/assets/images/delete.png" class="action-icon action-icon-right" /> <a role="button" class="link-edit action-link" (click)="onRemove(row, i)">Remove</a></span>
+          </mat-cell>
+        </ng-container>
+        <mat-header-row *matHeaderRowDef="displayedColumns;"></mat-header-row>
+        <mat-row *matRowDef="let row; columns: displayedColumns;"></mat-row>
+      </mat-table>
+      <div [hidden]="createdCategories.data.length > 0 ">
+        <span class="grey site-font">No categories have been added.</span>
+      </div>
+      <mat-paginator #paginator [length]="createdCategories.data.length" [pageIndex]="0" [pageSize]="5"
+                     [pageSizeOptions]="[5, 10,100]">
+      </mat-paginator>
+
+    </mat-card-content>
+  </mat-card>
+</div>

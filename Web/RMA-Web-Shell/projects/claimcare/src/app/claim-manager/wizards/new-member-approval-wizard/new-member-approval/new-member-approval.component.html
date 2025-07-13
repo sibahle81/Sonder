@@ -1,0 +1,81 @@
+<div>
+  <form [formGroup]="memberForm" class="mat-container" novalidate>
+          
+    <div style="margin-top: 20px;">
+        <!-- Line 1 -->
+        <section>
+            <!--Type of death-->
+            <mat-form-field>
+                <label class="mat-label other-label">Type of death</label>
+                <mat-select name="filter" id="filter" formControlName="typeOfDeath">
+                    <mat-option [value]="1">Natural</mat-option>
+                    <mat-option [value]="2">Unnatural</mat-option>
+                    <mat-option [value]="4">Suicide</mat-option>
+                </mat-select>
+            </mat-form-field>
+
+             <!-- Date notified -->
+             <mat-form-field class="mat-form-field-right">
+              <label class="mat-label other-label">Date Notified</label>
+              <input readonly matInput date="true" time="false" formControlName="dateNotified" [matDatepicker]="dateNotified" id="dateNotified" />
+              <mat-datepicker-toggle matSuffix style="position: absolute;right: 0;top: 13px;"
+                  [for]="dateNotified"></mat-datepicker-toggle>
+              <mat-datepicker touchUi="true" #dateNotified></mat-datepicker>
+          </mat-form-field>
+        </section>
+        <section>
+            <!-- Date of Death -->
+            <mat-form-field>
+                <label class="mat-label other-label">Date of Death</label>
+                <input readonly matInput date="true" time="false"
+                    formControlName="dateOfDeath" [matDatepicker]="dateOfDeath" id="dateOfDeath" />
+                <mat-datepicker-toggle matSuffix style="position: absolute;right: 0;top: 13px;"
+                    [for]="dateOfDeath"></mat-datepicker-toggle>
+                <mat-datepicker touchUi="true" #dateOfDeath></mat-datepicker>
+            </mat-form-field>
+
+            <mat-form-field class="mat-form-field-right">
+              <label>First Name</label>
+              <input matInput maxlength="50" formControlName="firstName" name="firstName">
+          </mat-form-field>
+        </section>
+        <section>
+          
+            <mat-form-field>
+                <label>Last Name</label>
+                <input matInput maxlength="50" formControlName="lastName" name="lastName">
+            </mat-form-field>
+
+            <mat-form-field class="mat-form-field-right">
+              <label>ID/Passport Number</label>
+              <input matInput maxlength="50" formControlName="idNumber" name="idNumber" NumberOnly>
+          </mat-form-field>
+        </section>
+
+        <section>
+          <mat-form-field>
+            <label class="mat-label other-label">Date of Birth</label>
+            <input readonly matInput date="true" time="false"
+                formControlName="dateOfBirth" [matDatepicker]="dateOfBirth" id="dateOfBirth" />
+            <mat-datepicker-toggle matSuffix style="position: absolute;right: 0;top: 13px;"
+                [for]="dateOfBirth"></mat-datepicker-toggle>
+            <mat-datepicker touchUi="true" #dateOfBirth></mat-datepicker>
+        </mat-form-field>
+
+
+          <mat-form-field class="mat-form-field-right">
+            <label class="mat-label other-label">Relation to main member</label>
+            <mat-select id="typeOfRelation" name="typeOfRelation" matInput  formControlName="typeOfRelation">
+              <mat-option *ngFor="let rolePlayerTyped of rolePlayerTypes" [value]="rolePlayerTyped.rolePlayerTypeId">
+                {{rolePlayerTyped.name}}
+              </mat-option>
+            </mat-select>
+        </mat-form-field>
+        </section>
+
+        <br>
+      
+    </div>
+
+</form>
+</div>

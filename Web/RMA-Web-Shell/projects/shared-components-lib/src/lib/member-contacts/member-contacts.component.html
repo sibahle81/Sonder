@@ -1,0 +1,115 @@
+<mat-card *ngIf="(dataSource.loading$ | async)">
+  <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+  <label class="mat-label other-label"><i>loading contacts...please wait</i></label>
+</mat-card>
+
+<div [hidden]="(dataSource.loading$ | async) || (showForm$ | async)">
+  <div class="menu-bar">
+    <span class="material-icons">contacts</span>{{title}}
+    <span *ngIf="!isReadOnly && userHasPermission(addPermission)" (click)="showForm(null)"
+      class="material-icons pointer right" matTooltip="add contact">
+      add_circle
+    </span>
+  </div>
+
+  <div [hidden]="!(dataSource && dataSource.data && dataSource.data.data && dataSource.data.data?.length > 0)">
+    <mat-table #table [dataSource]="dataSource" matSort id="tblData" (matSortChange)="getData()">
+      <ng-container matColumnDef="select">
+        <mat-header-cell *matHeaderCellDef> Select </mat-header-cell>
+        <mat-cell *matCellDef="let row">
+          <mat-checkbox (change)="contactSelected(row)">
+          </mat-checkbox>
+        </mat-cell>
+      </ng-container>
+      <ng-container matColumnDef="isConfirmed">
+        <mat-header-cell *matHeaderCellDef mat-sort-header> Confirmed </mat-header-cell>
+        <mat-cell *matCellDef="let row">
+          <span *ngIf="row.isConfirmed" class="material-icons greenFont" matTooltip="confirmed">
+            verified
+          </span>
+          <span *ngIf="!row.isConfirmed" class="material-icons amberFont" matTooltip="not confirmed">
+            warning
+          </span>
+        </mat-cell>
+      </ng-container>
+      <ng-container matColumnDef="title">
+        <mat-header-cell *matHeaderCellDef mat-sort-header> Title </mat-header-cell>
+        <mat-cell *matCellDef="let row">{{getTitle(row.title)}}</mat-cell>
+      </ng-container>
+      <ng-container matColumnDef="name">
+        <mat-header-cell *matHeaderCellDef mat-sort-header> Name </mat-header-cell>
+        <mat-cell *matCellDef="let row">{{row.firstname}}</mat-cell>
+      </ng-container>
+      <ng-container matColumnDef="surname">
+        <mat-header-cell *matHeaderCellDef mat-sort-header> Surname </mat-header-cell>
+        <mat-cell *matCellDef="let row">{{row.surname}}</mat-cell>
+      </ng-container>
+      <ng-container matColumnDef="email">
+        <mat-header-cell *matHeaderCellDef mat-sort-header> Email </mat-header-cell>
+        <mat-cell *matCellDef="let row"><data-masker [text]="row.emailAddress"></data-masker></mat-cell>
+      </ng-container>
+      <ng-container matColumnDef="contact">
+        <mat-header-cell *matHeaderCellDef mat-sort-header> Contact </mat-header-cell>
+        <mat-cell *matCellDef="let row"><data-masker [text]="row.contactNumber"></data-masker></mat-cell>
+      </ng-container>
+      <ng-container matColumnDef="type">
+        <mat-header-cell *matHeaderCellDef mat-sort-header> Preferred </mat-header-cell>
+        <mat-cell *matCellDef="let row">{{getCommunicationType(row.communicationType)}}</mat-cell>
+      </ng-container>
+      <ng-container matColumnDef="designation">
+        <mat-header-cell *matHeaderCellDef mat-sort-header> Designation </mat-header-cell>
+        <mat-cell *matCellDef="let row">{{getContactDesignationType(row.contactDesignationType)}}</mat-cell>
+      </ng-container>
+      <ng-container matColumnDef="context">
+        <mat-header-cell *matHeaderCellDef>Context</mat-header-cell>
+        <mat-cell class="alignLeft" *matCellDef="let row">
+          <ul>
+            <li *ngFor="let context of row.rolePlayerContactInformations">
+              {{getContactInformationType(context.contactInformationType)}}</li>
+          </ul>
+        </mat-cell>
+      </ng-container>
+      <ng-container matColumnDef="actions">
+        <mat-header-cell *matHeaderCellDef>Action</mat-header-cell>
+        <mat-cell *matCellDef="let row">
+          <a (click)="viewDetail(row)" role="button" class="link-edit">
+            <span matTooltip="view" class="material-icons icn pointer">
+              visibility
+            </span>
+          </a>
+          <a *ngIf="!isReadOnly && userHasPermission(editPermission)" (click)="showForm(row)" role="button"
+            class="link-edit">
+            <span matTooltip="edit" class="material-icons icn pointer">
+              settings
+            </span>
+          </a>
+          <a *ngIf="userHasPermission(viewAuditPermission)" (click)="openAuditDialog(row)" role="button"
+            class="link-edit">
+            <span matTooltip="audit" class="material-icons icn pointer">
+              fingerprint
+            </span></a>
+        </mat-cell>
+      </ng-container>
+
+      <mat-header-row *matHeaderRowDef="getDisplayedColumns()"></mat-header-row>
+      <mat-row *matRowDef="let row; columns: getDisplayedColumns();"></mat-row>
+    </mat-table>
+
+    <mat-paginator #paginator [pageIndex]="0" [pageSize]="5" [pageSizeOptions]="[5, 10, 25, 100]"
+      [length]="this.dataSource.rowCount$ | async" (page)="getData()">
+    </mat-paginator>
+  </div>
+
+  <mat-card
+    *ngIf="!(dataSource && dataSource.data && dataSource.data.data && dataSource.data.data?.length > 0 || (dataSource.loading$ | async))">
+    <label class="mat-label other-label"><i>No contacts found...</i></label>
+  </mat-card>
+</div>
+
+<div *ngIf="(showForm$ | async)">
+  <member-contact-details [contact]="selectedRolePlayerContact" (reloadContacts)="reloadContactList($event)"
+    (closeContactDetails)="closeContactDetails($event)" (emitContact)="setWizardContact($event)"
+    (contactEditedEmit)="notifyOnContactEdited($event)" [isViewOnly]="viewOnly" [isWizard]="isWizard"
+    [filteredCommunicationTypes]="filteredCommunicationTypes" [filteredInformationTypes]="filteredInformationTypes"
+    [filteredDesignationTypes]="filteredDesignationTypes"></member-contact-details>
+</div>

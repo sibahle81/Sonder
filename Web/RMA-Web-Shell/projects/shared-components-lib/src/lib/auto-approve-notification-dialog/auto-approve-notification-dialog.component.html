@@ -1,0 +1,16 @@
+<div *ngIf="noAutoApprovalReasons">
+  <h4>
+    Your Term Arrangment application was not auto approved, A debtor clerk will
+    review your application
+  </h4>
+  <p>Reasons not auto approved: </p>
+  <ul>
+    <li *ngFor="let reason of noAutoApprovalReasons">{{ reason }}</li>
+  </ul>
+</div>
+<div *ngIf="!noAutoApprovalReasons">
+  <h2>Your Term arrangement was auto approved</h2>
+</div>
+<div class="form-buttons" (click)="close()">
+  <button class="button float-button submit-button">Close</button>
+</div>

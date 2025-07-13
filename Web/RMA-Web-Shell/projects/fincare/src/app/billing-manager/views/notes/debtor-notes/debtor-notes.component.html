@@ -1,0 +1,65 @@
+<div class="menu-bar">
+    <span class="material-icons">
+        notes
+    </span>
+    Notes
+</div>
+<div>
+    <section>
+        <mat-card>
+            <form [formGroup]="form" novalidate>
+                <div>
+                    <mat-form-field>
+                        <label class="mat-label other-label">Note Type</label>
+                        <mat-select name="noteType" id="noteType" formControlName="noteType"
+                            [(ngModel)]="selectedNoteType" (selectionChange)="noteTypeChanged($event)">
+                            <mat-option *ngFor="let noteType of noteTypes" [value]="noteType.id">
+                                {{splitPascalCaseWord(noteType.name)}}
+                            </mat-option>
+                        </mat-select>
+                    </mat-form-field>
+                </div>
+                <div>
+                    <p class="error">{{errorMessage}}</p>
+                    <button class="button submit-button" (click)="openDialog()">Add</button>&nbsp;&nbsp;<button
+                        (click)="filter()" class="button submit-button">Filter</button>
+                </div>
+                <br />
+            </form>
+        </mat-card>
+    </section>
+</div>
+<div *ngIf="isSubmitting">
+    <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+    <label class="mat-label other-label"><i>Submitting note...please wait</i></label>
+</div>
+<div [hidden]="isLoading && datasource.data.length === 0">
+    <mat-card>
+        <mat-table #table [dataSource]="datasource" matSort>
+            <ng-container matColumnDef="text">
+                <mat-header-cell *matHeaderCellDef mat-sort-header>Note</mat-header-cell>
+                <mat-cell *matCellDef="let row"> {{row.text |titlecase}} </mat-cell>
+            </ng-container>
+            <ng-container matColumnDef="itemType">
+                <mat-header-cell *matHeaderCellDef mat-sort-header>Type</mat-header-cell>
+                <mat-cell *matCellDef="let row"> {{splitPascalCaseWord(row.itemType)}} </mat-cell>
+            </ng-container>
+            <ng-container matColumnDef="createdBy">
+                <mat-header-cell *matHeaderCellDef mat-sort-header>Created By</mat-header-cell>
+                <mat-cell *matCellDef="let row"> {{row.createdBy}} </mat-cell>
+            </ng-container>
+            <ng-container matColumnDef="createdDate">
+                <mat-header-cell *matHeaderCellDef mat-sort-header>Created Date</mat-header-cell>
+                <mat-cell *matCellDef="let row"> {{row.createdDate | date:'yyyy/MM/dd'}} </mat-cell>
+            </ng-container>
+            <ng-container matColumnDef="createdTime">
+                <mat-header-cell *matHeaderCellDef mat-sort-header>Created Time</mat-header-cell>
+                <mat-cell *matCellDef="let row"> {{row.createdDate | date:'H:mm:ss'}} </mat-cell>
+            </ng-container>
+            <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
+            <mat-row *matRowDef="let row; columns: displayedColumns;"></mat-row>
+        </mat-table>
+        <mat-paginator #paginator [pageSize]="5" [pageSizeOptions]="[5, 10, 25, 100]">
+        </mat-paginator>
+    </mat-card>
+</div>

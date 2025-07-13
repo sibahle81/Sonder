@@ -1,0 +1,78 @@
+<mat-card>
+    <div class="menu-bar">
+        <span>
+            <span class="material-icons">
+                search
+            </span>
+            Search for a City
+            <span *ngIf="!(dataSource.loading$ | async) && searchTerm && searchTerm.length > 0" (click)="reset()"
+                class="material-icons pointer right" matTooltip="reset">
+                restart_alt
+            </span>
+        </span>
+    </div>
+
+    <form [formGroup]="form" class="mat-container details-form" novalidate>
+        <section>
+            <mat-form-field class="mat-form-field" [floatLabel]="'never'">
+                <input matInput name="searchTerm" id="searchTerm" formControlName="searchTerm">
+                <mat-placeholder class="placeholder">search by code, suburb, province, name</mat-placeholder>
+            </mat-form-field>
+        </section>
+    </form>
+</mat-card>
+<br />
+<mat-card *ngIf="(dataSource.loading$ | async)">
+    <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+    <label class="mat-label other-label"><i>searching...please wait</i></label>
+</mat-card>
+
+<div [hidden]="(dataSource.loading$ | async) || (!searchTerm || searchTerm == '')">
+    <mat-card>
+        <div *ngIf="searchTerm">Search Results for <b>{{searchTerm}}</b></div>
+        <div [hidden]="!(dataSource.data && dataSource.data.data && dataSource.data.data.length > 0)">
+            <mat-table #table [dataSource]="dataSource" matSort id="tblData" (matSortChange)="getData()">
+
+                <ng-container matColumnDef="code">
+                    <mat-header-cell *matHeaderCellDef mat-sort-header> Code </mat-header-cell>
+                    <mat-cell *matCellDef="let row">{{row.code}}</mat-cell>
+                </ng-container>
+
+                <ng-container matColumnDef="suburb">
+                    <mat-header-cell *matHeaderCellDef mat-sort-header> Suburb </mat-header-cell>
+                    <mat-cell *matCellDef="let row">{{row.suburb}}</mat-cell>
+                </ng-container>
+
+                <ng-container matColumnDef="city">
+                    <mat-header-cell *matHeaderCellDef mat-sort-header> City </mat-header-cell>
+                    <mat-cell *matCellDef="let row">{{row.city ? formatSentenceCase(row.city) : 'N/A'}}</mat-cell>
+                </ng-container>
+
+                <ng-container matColumnDef="province">
+                    <mat-header-cell *matHeaderCellDef mat-sort-header> Province </mat-header-cell>
+                    <mat-cell *matCellDef="let row">{{row.province}}</mat-cell>
+                </ng-container>
+
+                <ng-container matColumnDef="actions">
+                    <mat-header-cell *matHeaderCellDef> Select </mat-header-cell>
+                    <mat-cell *matCellDef="let row">
+                        <span><a role="button" id="btnAction" class="link-edit"
+                                (click)="citySelected(row)">Select</a></span>
+                    </mat-cell>
+                </ng-container>
+
+                <mat-header-row *matHeaderRowDef="getDisplayedColumns()"></mat-header-row>
+                <mat-row *matRowDef="let row; columns: getDisplayedColumns();"></mat-row>
+            </mat-table>
+
+            <mat-paginator #paginator [pageIndex]="0" [pageSize]="5" [pageSizeOptions]="[5, 10, 25, 100]"
+                [length]="this.dataSource.rowCount$ | async" (page)="getData()">
+            </mat-paginator>
+        </div>
+
+        <mat-card
+            *ngIf="!(dataSource.data && dataSource.data.data && dataSource.data.data.length > 0 || (dataSource.loading$ | async))">
+            <label class="mat-label other-label"><i>No cities found...</i></label>
+        </mat-card>
+    </mat-card>
+</div>

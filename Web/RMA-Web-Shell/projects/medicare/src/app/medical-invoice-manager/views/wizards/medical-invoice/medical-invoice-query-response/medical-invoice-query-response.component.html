@@ -1,0 +1,111 @@
+<div class="margine-space">
+  <div class="mat-header">
+    <h1>Capture Query Response (Reference Number {{queryReferenceNumber}})</h1>
+  </div>
+  <div *ngIf="loading$ | async">
+    <mat-progress-bar mode="indeterminate"
+                      [ngClass]="{ 'loading-main-double-menu-progress': doubleMenu, 'loading-main-single-menu-progress': !doubleMenu }">
+    </mat-progress-bar>
+    <p class="site-font grey">Loading Data...</p>
+  </div>
+
+  <div>
+  <mat-card class="matCard">
+    <form [formGroup]="medicalInvoiceQueryResponseForm">
+      <section>
+        <!--Item Query Type-->
+        <div class="field-container">
+          <div><label class="mat-label other-label">Item Query Type</label></div>
+          <mat-form-field>
+            <mat-select formControlName="rolePlayerItemQueryType" id="rolePlayerItemQueryType"
+                        name="rolePlayerItemQueryType">
+              <mat-option *ngFor="let itemQueryType of rolePlayerItemQueryTypes"
+                          [value]="itemQueryType.id">
+                {{itemQueryType.name}}
+              </mat-option>
+            </mat-select>
+          </mat-form-field>
+        </div>
+        <!--Query Item Type-->
+        <div class="field-container-right">
+          <div><label class="mat-label other-label">Query Item Type</label></div>
+          <mat-form-field>
+            <mat-select formControlName="rolePlayerQueryItemType" id="rolePlayerQueryItemType"
+                        name="rolePlayerQueryItemType">
+              <mat-option *ngFor="let queryItemType of rolePlayerQueryItemTypes"
+                          [value]="queryItemType.id">
+                {{queryItemType.name}}
+              </mat-option>
+            </mat-select>
+          </mat-form-field>
+        </div>
+      </section>
+
+      <section> 
+        <!--Item Query Category-->
+        <div class="field-container">
+          <div><label class="mat-label other-label">Item Query Category</label></div>
+          <mat-form-field>
+            <mat-select formControlName="rolePlayerItemQueryCategory" id="rolePlayerItemQueryCategory"
+                        name="rolePlayerItemQueryCategory">
+              <mat-option *ngFor="let itemQueryCategory of rolePlayerItemQueryCategories"
+                          [value]="itemQueryCategory.id">
+                {{itemQueryCategory.name}}
+              </mat-option>
+            </mat-select>
+          </mat-form-field>
+        </div>
+        <!--Query Description-->
+        <div class="field-container-right">
+          <div><label class="mat-label other-label">Query Description</label></div>
+          <mat-form-field>
+            <textarea matInput formControlName="queryDescription" name="queryDescription" id="queryDescription" cdkTextareaAutosize
+                      cdkAutosizeMinRows="3" cdkAutosizeMaxRows="5" maxlength="1000"></textarea>
+          </mat-form-field>
+        </div>
+      </section>
+
+      <section>
+        <!--Item Query Status-->
+        <div class="field-container">
+          <div><label class="mat-label other-label mandatory-field">Item Query Status</label></div>
+          <mat-form-field>
+            <mat-select formControlName="rolePlayerItemQueryStatus" id="rolePlayerItemQueryStatus"
+                        name="rolePlayerItemQueryStatus">
+              <mat-option *ngFor="let itemQueryStatus of rolePlayerItemQueryStatuses"
+                          [value]="itemQueryStatus.id">
+                {{itemQueryStatus.name}}
+              </mat-option>
+            </mat-select>
+            <mat-error *ngIf="medicalInvoiceQueryResponseForm.controls?.rolePlayerItemQueryStatus.invalid">
+              {{getError('rolePlayerItemQueryStatus')}}
+            </mat-error>
+          </mat-form-field>
+        </div>
+        <!--Query Response-->
+        <div class="field-container-right">
+          <div><label class="mat-label other-label mandatory-field">Query Response</label></div>
+          <mat-form-field>
+            <textarea matInput formControlName="queryResponse" name="queryResponse" id="queryResponse" cdkTextareaAutosize
+                      cdkAutosizeMinRows="3" cdkAutosizeMaxRows="5" maxlength="1000"></textarea>
+            <mat-error *ngIf="medicalInvoiceQueryResponseForm.controls?.queryResponse.invalid">
+              {{getError('queryResponse')}}
+            </mat-error>
+          </mat-form-field>
+        </div>
+      </section>
+    </form>
+  </mat-card>
+  </div>
+  <br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/>
+  <div>
+    <mat-card>
+        <document-uploader [documentSet]="documentSet"
+                          [systemName]="documentSystemName"
+                          [keyName]="'ItemQueryReferenceNumber'"
+                          [keyValue]="queryReferenceNumber"
+                          [showDocumentStatusButton]="false">
+        </document-uploader>
+    </mat-card>
+  </div>
+</div>

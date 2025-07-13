@@ -1,0 +1,109 @@
+<div class="main-content pad-bottom">
+  <form [formGroup]="form" class="mat-container details-form" novalidate>
+    <section>
+      <mat-form-field class="mat-form-field">
+        <label class="mat-label other-label">Policy Number</label>
+        <input matInput formControlName="policyNumber" name="policyNumber" id="policyNumber" />
+      </mat-form-field>
+      <mat-form-field class="mat-form-field-right">
+        <label class="mat-label other-label">Client Reference</label>
+        <input matInput formControlName="clientReference" name="clientReference" id="clientReference" />
+      </mat-form-field>
+    </section>
+    <section>
+      <div class="field-container">
+        <div><label class="mat-label other-label">Policy Inception Date</label></div>
+        <mat-form-field class="mat-form-field">
+          <input matInput formControlName="policyInceptionDate" [matDatepicker]="policyInceptionDate"
+            name="policyInceptionDate" id="policyInceptionDate">
+          <mat-datepicker-toggle matSuffix [for]="policyInceptionDate"></mat-datepicker-toggle>
+          <mat-datepicker touchUi="true" #policyInceptionDate></mat-datepicker>
+        </mat-form-field>
+      </div>
+      <div class="field-container-right">
+        <mat-form-field class="mat-form-field">
+          <label class="mat-label other-label">Policy Status</label>
+          <input matInput formControlName="policyStatus" name="policyStatus" id="policyStatus" />
+        </mat-form-field>
+      </div>
+    </section>
+    <section>
+      <mat-form-field class="mat-form-field">
+        <label class="mat-label other-label">Product</label>
+        <input matInput formControlName="product" name="product" id="product" />
+      </mat-form-field>
+      <mat-form-field class="mat-form-field-right">
+        <label class="mat-label other-label">Product Option</label>
+        <input matInput formControlName="productOption" name="productOption" id="productOption" />
+      </mat-form-field>
+    </section>
+    <section>
+      <mat-form-field class="mat-form-field">
+        <label class="mat-label other-label">First Name</label>
+        <input matInput formControlName="firstName" name="firstName" id="firstName" />
+      </mat-form-field>
+      <mat-form-field class="mat-form-field-right">
+        <label class="mat-label other-label">Surname</label>
+        <input matInput formControlName="surname" name="surname" id="surname" />
+      </mat-form-field>
+    </section>
+    <section>
+      <mat-form-field class="mat-form-field">
+        <label class="mat-label other-label">Identification Type</label>
+        <input matInput formControlName="idType" name="idType" id="idType" />
+      </mat-form-field>
+      <mat-form-field class="mat-form-field-right">
+        <label class="mat-label other-label">Identification Number</label>
+        <input matInput formControlName="idNumber" name="idNumber" id="idNumber" />
+      </mat-form-field>
+    </section>
+    <section>
+      <div class="field-container">
+        <mat-form-field class="mat-form-field">
+          <label class="mat-label other-label">Date of Birth</label>
+          <input matInput formControlName="dateOfBirth" [matDatepicker]="dateOfBirth" 
+            name="dateOfBirth" id="dateOfBirth">
+          <mat-datepicker-toggle matSuffix [for]="dateOfBirth"></mat-datepicker-toggle>
+          <mat-datepicker touchUi="true" #dateOfBirth></mat-datepicker>
+        </mat-form-field>
+      </div>
+      <div class="field-container-right">
+        <mat-form-field class="mat-form-field">
+          <label class="mat-label other-label">Age</label>
+          <input matInput formControlName="age" name="age" id="age" />
+        </mat-form-field>
+      </div>
+    </section>
+    <section>
+      <div class="field-container">
+        <mat-form-field class="mat-form-field">
+          <label class="mat-label other-label mandatory-field">Cancellation Date</label>
+          <input matInput formControlName="cancellationDate" [matDatepicker]="cancellationDate"
+            name="cancellationDate" id="cancellationDate" [min]="minCancellationDate"
+            [matDatepickerFilter]="isLastDayOfMonth">
+          <mat-datepicker-toggle matSuffix [for]="cancellationDate"></mat-datepicker-toggle>
+          <mat-datepicker touchUi="true" #cancellationDate></mat-datepicker>
+          <mat-error *ngIf="this.form.get('cancellationDate').hasError('required')">
+            Policy cancellation date is required
+          </mat-error>
+        </mat-form-field>
+      </div>
+      <div class="field-container-right">
+        <mat-form-field class="mat-form-field">
+          <label class="mat-label other-label mandatory-field">Cancellation Reason</label>
+          <mat-select formControlName="cancellationReasonId" name="cancellationReasonId" id="cancellationReasonId">
+            <mat-option *ngFor="let reason of cancellationReasons" [value]="reason.id">
+              {{reason.name}}
+            </mat-option>
+          </mat-select>
+          <mat-error *ngIf="form.get('cancellationReasonId').hasError('required') || form.get('cancellationReasonId').hasError('min')">
+            Cancellation reason is required
+          </mat-error>
+          <div *ngIf="loadingCancellationReasons">
+            <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+          </div>
+        </mat-form-field>
+      </div>
+    </section>
+  </form>
+</div>

@@ -1,0 +1,102 @@
+<mat-card *ngIf="(isLoading$ | async)">
+  <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+  <label class="mat-label other-label"><i>loading ICD10 codes...please wait</i></label>
+</mat-card>
+
+<div [hidden]="(isLoading$ | async)">
+  <mat-card>
+    <div class="menu-bar">
+      <span class="material-icons">
+        qr_code_2
+      </span>&nbsp;Search ICD10 Codes
+      <span class="material-icons pointer right" matTooltip="close" (click)='cancel()'>
+        close
+      </span>
+      <span class="material-icons pointer right pulseGreen" matTooltip="save" (click)='save()'>
+        save
+      </span>
+    </div>
+
+    <mat-expansion-panel [(expanded)]='advancedFiltersExpanded'>
+      <mat-expansion-panel-header>
+        <mat-panel-title>
+          ICD10 Sub-Category Filter
+        </mat-panel-title>
+        <mat-panel-description *ngIf="selectedSubCategory"><span class="material-icons" matTooltip="pinned debtor">
+            push_pin
+          </span> {{selectedSubCategory.icd10SubCategoryCode}}:
+          {{selectedSubCategory.icd10SubCategoryDescription}}</mat-panel-description>
+      </mat-expansion-panel-header>
+      <icd10-sub-category-search [triggerReset]="triggerReset"
+        (icd10SubCategorySelectedEmit)="setIcd10SubCategory($event)"></icd10-sub-category-search>
+    </mat-expansion-panel>
+    <br />
+    <div>
+      <mat-form-field [floatLabel]="'never'">
+        <input matInput maxlength="50" name="query" [(ngModel)]="query" #filter width="300" minLength="3"
+          matTooltip="Search by ICD10 Code, ICD10 Code Description and ICD10 Sub Category" matTooltipShowDelay="1000">
+
+        <mat-placeholder class="placeholder">Search by ICD10 Code, ICD10 Code Description and ICD10 Sub Category
+        </mat-placeholder>
+      </mat-form-field>
+    </div>
+
+    <mat-card *ngIf="(dataSource.loading$ | async)">
+      <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+      <label class="mat-label other-label"><i>searching...please wait</i></label>
+    </mat-card>
+
+    <div [hidden]="(dataSource.loading$ | async) || dataSource?.data?.data?.length <= 0">
+      <mat-table #table [dataSource]="dataSource" matSort>
+
+        <ng-container matColumnDef="ICD10Code">
+          <mat-header-cell *matHeaderCellDef mat-sort-header>ICD10 Code</mat-header-cell>
+          <mat-cell *matCellDef="let row">{{row.icd10Code}}</mat-cell>
+        </ng-container>
+
+        <ng-container matColumnDef="ICD10CodeDescription">
+          <mat-header-cell *matHeaderCellDef mat-sort-header>ICD10 Code Description</mat-header-cell>
+          <mat-cell *matCellDef="let row">{{row.icd10CodeDescription }}</mat-cell>
+        </ng-container>
+
+        <ng-container matColumnDef="ICD10SubCategory">
+          <mat-header-cell *matHeaderCellDef>ICD10 Sub Category</mat-header-cell>
+          <mat-cell *matCellDef="let row">{{row.icd10SubCategoryDescription}}</mat-cell>
+        </ng-container>
+
+        <!-- Checkbox Column -->
+        <ng-container matColumnDef="select">
+          <mat-header-cell *matHeaderCellDef>Select</mat-header-cell>
+          <mat-cell *matCellDef="let row">
+            <mat-checkbox (click)="$event.stopPropagation()" (change)="$event ? selection.toggle(row) : null"
+              [checked]="checkboxSelected(row)" [aria-label]="checkboxLabel(row)">
+            </mat-checkbox>
+          </mat-cell>
+        </ng-container>
+
+        <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
+        <mat-row *matRowDef="let row; columns: displayedColumns;"></mat-row>
+      </mat-table>
+
+      <mat-paginator #paginator [pageIndex]="0" [pageSize]="5" [pageSizeOptions]="[5, 10, 25, 100]">
+      </mat-paginator>
+    </div>
+
+    <mat-card *ngIf="!(dataSource.loading$ | async) && currentQuery?.length > 0 && dataSource?.data?.data?.length <= 0">
+      <div class="site-font grey">
+        <p class="grey">Your search - <strong>{{currentQuery}}</strong> - did not match any records.</p>
+        <span>Suggestions: </span>
+        <ul>
+          <li>Make sure that all words are spelled correctly.</li>
+          <li>Try different keywords.</li>
+          <li>Try more general keywords.</li>
+          <li>Try fewer keywords.</li>
+        </ul>
+      </div>
+    </mat-card>
+
+    <div *ngIf="selectedValue" class="divMessage">
+      {{icd10Message}}
+    </div>
+  </mat-card>
+</div>

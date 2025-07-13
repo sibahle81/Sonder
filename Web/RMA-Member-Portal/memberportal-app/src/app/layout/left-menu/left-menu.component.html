@@ -1,0 +1,56 @@
+<div>
+    <div class="side-nav" [ngClass]="{ 'nav-open': navigationOpen}">
+        <!--User Profile-->
+        <div class="profile-container">
+            <div class="left-profile-container">
+                <div class="leftProfDiv" (dragenter)="dragEnter($event)" (dragover)="dragOver($event)" (drop)="dragDrop($event)" (click)="openUploadControl()"><img class="pic-circle-corner" src="{{profilePic}}" width="99" height="99" alt="" /></div>
+                <input type="file" #fileInput accept="image/*" style="display:none" (change)="proPicChange($event)" />
+            </div>
+            <div class="right-profile-container">
+                <p>
+                    <strong>{{user.name}}</strong><br>
+                    <span>{{user.roleName}}</span><br>
+                    <span><a href="#">Manage</a> | <a href="#" (click)="logout()">Logout</a></span>
+                </p>
+            </div>
+        </div>
+
+        <!--Close Button-->
+        <!--<a class="close-btn" (click)="toggleNavigation()">&times;</a>-->
+        <!--Left Menu Accordion-->
+        <div *ngIf="!menuGroups && !isError" class="menu-container">
+            <div style="margin-right: 15px;">
+                <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+            </div>
+            <span style="color: grey">Loading menu...</span>
+        </div>
+        <div *ngIf="isError" class="menu-container error-container">There was an error loading the menu</div>
+        <mat-accordion *ngIf="menuGroups" class="example-headers-align">
+            <mat-expansion-panel *ngFor="let menuGroup of menuGroups" class="menu-panel menu-panel-top" [expanded]="step === menuGroup.title" (opened)="setStep(menuGroup.title)" hideToggle="true">
+                <mat-expansion-panel-header class="mat-expansion-panel-header">
+                    <mat-panel-title>
+                        <div class="menu-title">
+                            <div [ngSwitch]="menuGroup.title" class="menu-text-label" style="position: absolute;left: 34px;margin-top: -8%;">
+                                <img mat-card-avatar class="menu-image" *ngSwitchCase="'Admin'" src="/assets/images/menu-icons/Admin_button.png" />
+                                <img mat-card-avatar class="menu-image" *ngSwitchCase="'ClaimCare'" src="/assets/images/menu-icons/Claimcare_button.png" />
+                                <img mat-card-avatar class="menu-image" *ngSwitchCase="'ClientCare'" src="/assets/images/menu-icons/ClientCare_button.png" />
+                                <img mat-card-avatar class="menu-image" *ngSwitchCase="'ContactCare'" src="/assets/images/menu-icons/ContactCare_button.png" />
+                                <img mat-card-avatar class="menu-image" *ngSwitchCase="'FinCare'" src="/assets/images/menu-icons/Fincare_button.png" />
+                                <img mat-card-avatar class="menu-image" *ngSwitchCase="'MediCare'" src="/assets/images/menu-icons/Medicare_button.png" />
+                                <img mat-card-avatar class="menu-image" *ngSwitchCase="'PensCare'" src="/assets/images/menu-icons/Penscare_button.png" />
+                                <img mat-card-avatar class="menu-image" *ngSwitchCase="'DigiCare'" src="/assets/images/menu-icons/DigiCare_button.png" />
+                            </div>
+                        </div>
+                        <span class="menu-title">{{menuGroup.title}} </span>
+                    </mat-panel-title>
+                </mat-expansion-panel-header>
+                <div *ngFor="let menuItem of menuGroup.menuItems" (click)="navigate(menuItem);" matTooltip="{{menuItem.title}} is unavailable" [matTooltipDisabled]="menuItem.isActive" class="sub-accordion" [ngClass]="{ 'menu-not-available': !menuItem.isActive}">
+                    <a><span class="title-description">{{menuItem.title}}</span></a>
+                </div>
+            </mat-expansion-panel>
+        </mat-accordion>
+        <footer>
+            <p>2018 - {{currentYear()}} RMA Copyright</p>
+        </footer>
+    </div>
+</div>

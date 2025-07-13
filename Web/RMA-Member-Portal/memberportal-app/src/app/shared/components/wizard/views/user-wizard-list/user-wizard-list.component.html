@@ -1,0 +1,90 @@
+﻿<div class="page-header"></div>
+<div class="mat-container mat-elevation-z8">
+
+    <div [hidden]="dataSource.data.length === 0 || isLoading">
+        <h1>{{title}}</h1>
+        <br />
+        <div [hidden]="dataSource.filteredData.length === 0 || isLoading">
+
+            <mat-table #table [dataSource]="dataSource" matSort>
+
+                <!-- Name -->
+                <ng-container matColumnDef="name">
+                    <mat-header-cell *matHeaderCellDef mat-sort-header> Name </mat-header-cell>
+                    <mat-cell *matCellDef="let row"> {{row.name}} </mat-cell>
+                </ng-container>
+
+                <!-- Type -->
+                <ng-container matColumnDef="type">
+                    <mat-header-cell *matHeaderCellDef mat-sort-header> Type </mat-header-cell>
+                    <mat-cell *matCellDef="let row" matTooltip="{{row.wizardConfiguration.description}}"> {{formatWizardType(row.type)}} </mat-cell>
+                </ng-container>
+
+                <!-- Created By -->
+                <ng-container matColumnDef="createdBy">
+                    <mat-header-cell *matHeaderCellDef mat-sort-header> Created By </mat-header-cell>
+                    <mat-cell *matCellDef="let row"> {{row.createdBy}} </mat-cell>
+                </ng-container>
+
+                <!-- Locked status -->
+                <ng-container matColumnDef="lockedStatus" class="mat-column-overflow">
+                    <mat-header-cell *matHeaderCellDef mat-sort-header>Locked Status</mat-header-cell>
+                    <mat-cell style="text-align: left !important; justify-content: center !important;" *matCellDef="let row">
+                        <span *ngIf="!row.lockedToUser"><span class="material-icons">lock_open</span></span>
+                        <span *ngIf="row.lockedToUser"><span class="material-icons" matTooltip="Locked to {{row.lockedToUser}}">lock</span></span>
+                    </mat-cell>
+                </ng-container>
+
+                <!-- Wizard status -->
+                <ng-container matColumnDef="wizardStatusText">
+                    <mat-header-cell *matHeaderCellDef mat-sort-header> Status </mat-header-cell>
+                    <mat-cell *matCellDef="let row">
+                        {{row.createdDate === row.modifiedDate ? 'New' : row.wizardStatusText}} </mat-cell>
+                </ng-container>
+
+                <!--Overall SLA -->
+                <ng-container matColumnDef="overAllSLAHours">
+                    <mat-header-cell *matHeaderCellDef mat-sort-header> Overall SLA </mat-header-cell>
+                    <mat-cell *matCellDef="let row" [ngClass]="row.slaRAGIndicatorId == '1' ? 'greenSLA' : row.slaRAGIndicatorId == '3' ? 'redSLA' : row.slaRAGIndicatorId == '0' ? 'greenSLA' : row.slaRAGIndicatorId == '2' ? 'amberSLA'  : ''">
+                        <span class="material-icons">av_timer</span> {{row.overAllSLAHours}} </mat-cell>
+                </ng-container>
+
+                <!-- Actions -->
+                <ng-container matColumnDef="actions">
+                    <mat-header-cell *matHeaderCellDef mat-sort-header> Actions </mat-header-cell>
+                    <mat-cell style="text-align: left !important; justify-content: center !important;" *matCellDef="let row">
+                        <a role="button" class="link-edit" (click)="onSelect(row)">open</a>
+                    </mat-cell>
+                </ng-container>
+
+                <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
+                <mat-row *matRowDef="let row; columns: displayedColumns;"></mat-row>
+            </mat-table>
+
+            <mat-paginator style="background-color:#F2F2F2; min-height: 40px !important; padding: 0px !important;" #paginator [length]="dataSource.data.length" [pageIndex]="0" [pageSize]="10" [pageSizeOptions]="[10, 20, 50, 100]">
+            </mat-paginator>
+        </div>
+    </div>
+
+    <div [hidden]="dataSource.data.length > 0" style="margin-left: 20px;">
+        <h1>{{title}}</h1>
+        <p class="grey">No tasks have been added</p>
+    </div>
+
+    <div [hidden]="dataSource.filteredData.length > 0 || dataSource.data.length === 0" class="no-search-results-add-button">
+        <div class="site-font grey">
+            <p class="grey">Your search - <strong>{{filter}}</strong> - did not match any tasks.
+            </p>
+            <span>Suggestions: </span>
+            <ul>
+                <li>Make sure that all words are spelled correctly</li>
+                <li>Try different keywords.</li>
+                <li>Try more general keywords.</li>
+                <li>Try fewer keywords.</li>
+            </ul>
+        </div>
+        <div class="new-button" (click)="clearInput()">
+            <button class="button float-button">Clear search</button>
+        </div>
+    </div>
+</div>

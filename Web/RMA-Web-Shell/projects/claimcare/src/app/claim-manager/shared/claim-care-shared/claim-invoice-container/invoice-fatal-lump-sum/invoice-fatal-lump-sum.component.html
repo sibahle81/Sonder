@@ -1,0 +1,26 @@
+
+<mat-card class="pad" *ngIf="(isLoading$ | async)">
+    <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+    <label class="mat-label other-label"><i>{{loadingMessages$ | async}}</i></label>
+</mat-card>
+
+<div *ngIf="!(isLoading$ | async)">
+    <mat-card>
+        <div class="menu-bar">
+            <span class="material-icons">
+                receipt_long
+            </span>&nbsp;
+            <label>Fatal Lump Sum Invoice</label>
+            <span matTooltip="add" class="material-icons menu-button" *ngIf="formValid() && isAddRecord" (click)="save()">
+                save
+            </span>&nbsp;
+            <span matTooltip="edit" class="material-icons menu-button" *ngIf="formValid() && !isReadOnly && claimInvoice && claimInvoice.claimInvoiceId > 0" (click)="update()">
+                save
+            </span>&nbsp;
+        </div>
+
+        <invoice-generic [claimInvoice]="claimInvoice.claimInvoice" [personEvent]="personEvent" 
+        [claimInvoiceType]="fatalLumpSumInvoice" [isReadOnly]="isReadOnly" [action]="description$ | async"></invoice-generic>
+
+    </mat-card>
+</div>

@@ -1,0 +1,321 @@
+<div>
+    <app-medicare-search-menus></app-medicare-search-menus>
+</div>
+<div *ngIf="isLoading">
+    <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+    <span *ngIf="isLoading" class="site-font grey" style="margin-top: 15px;"><i>Processing, please
+            wait...</i></span>
+</div>
+<br />
+<a mat-flat-button (click)="onNavigateBack()">
+    <mat-icon>arrow_back</mat-icon>
+    Back
+</a>
+<h2 class="heading"> {{title}} </h2>
+<br /><br />
+<div *ngIf="!isLoading">
+
+    <mat-horizontal-stepper [linear]="isLinear" #stepper>
+
+        <mat-step [stepControl]="pensionerDetailsFormGroup">
+            <form [formGroup]="pensionerDetailsFormGroup">
+                <ng-template matStepLabel>Pensioner Details</ng-template>
+
+                <app-pension-case-view *ngIf="pensionCaseId"
+                    [passedPensionCaseId]="pensionCaseId"></app-pension-case-view>
+
+                <div>
+                    <button mat-raised-button color="primary" matStepperNext>Next</button>&nbsp;
+                </div>
+            </form>
+        </mat-step>
+
+        <mat-step [stepControl]="branchMCADetailsFormGroup">
+            <form [formGroup]="branchMCADetailsFormGroup">
+                <ng-template matStepLabel>Branch & PMCA Details</ng-template>
+                <h5>Branch & MCA Details</h5>
+
+                <pmp-schedule-details 
+                    [passedPensionClaim]="selectedPensionCase"></pmp-schedule-details>
+
+
+                <div>
+                    <button mat-raised-button color="primary" matStepperPrevious>Back</button>&nbsp;
+                    <button mat-raised-button color="primary" matStepperNext>Next</button>
+                </div>
+            </form>
+        </mat-step>
+
+        <mat-step [stepControl]="disabilityDetailsFormGroup">
+            <form [formGroup]="disabilityDetailsFormGroup">
+                <ng-template matStepLabel>Disability Details</ng-template>
+                <h5>Details of Disability</h5>
+                <section class="clear-both">
+                    <div class="field-container">
+
+                        <mat-checkbox id="isInjury" name="isInjury" formControlName="isInjury">
+                            Is Injury?
+                        </mat-checkbox>
+
+                        <mat-form-field class="mat-form-field">
+                            <label class="mat-label other-label">Occupational Injury Name</label>
+                            <input matInput type="text" formControlName="occupationalInjuryName"
+                                name="occupationalInjuryName" id="occupationalInjuryName" />
+                        </mat-form-field>
+                    </div>
+                    <div class="field-container-right">
+                        <mat-checkbox id="isDisease" name="isDisease" formControlName="isDisease">
+                            Is Disease?
+                        </mat-checkbox>
+
+                        <mat-form-field class="mat-form-field">
+                            <label class="mat-label other-label">Occupational Disease Name</label>
+                            <input matInput type="text" formControlName="occupationalDiseaseName"
+                                name="occupationalDiseaseName" id="occupationalDiseaseName" />
+                        </mat-form-field>
+
+                    </div>
+                </section>
+
+                <section>
+                    <mat-checkbox id="isAmputee" name="isAmputee" formControlName="isAmputee">
+                        Is Amputee?
+                    </mat-checkbox>
+                </section>
+
+                <section>
+                    <mat-checkbox id="isWheelchairIssued" name="isWheelchairIssued"
+                        formControlName="isWheelchairIssued">
+                        Is Wheelchair Issued?
+                    </mat-checkbox>
+                </section>
+
+                <section>
+                    <mat-form-field class="">
+                        <label class="mat-label other-label">Wheelchair Issued Date</label>
+                        <input matInput formControlName="wheelchairIssuedDate" id="wheelchairIssuedDate"
+                            name="wheelchairIssuedDate" [matDatepicker]="wheelchairIssuedDate">
+                        <mat-datepicker-toggle matSuffix [for]="wheelchairIssuedDate"></mat-datepicker-toggle>
+                        <mat-datepicker touchUi="true" #wheelchairIssuedDate></mat-datepicker>
+                    </mat-form-field>
+                </section>
+
+                <section>
+                    <mat-form-field class="mat-form-field">
+                        <label class="mat-label other-label">Make Model</label>
+                        <input matInput type="text" formControlName="makeModel" name="makeModel" id="makeModel" />
+                    </mat-form-field>
+                </section>
+
+                <section>
+                    <mat-form-field class="">
+                        <label class="mat-label other-label">Appliance Review Date</label>
+                        <input matInput formControlName="applianceReviewDate" id="applianceReviewDate"
+                            name="applianceReviewDate" [matDatepicker]="applianceReviewDate">
+                        <mat-datepicker-toggle matSuffix [for]="applianceReviewDate"></mat-datepicker-toggle>
+                        <mat-datepicker touchUi="true" #applianceReviewDate></mat-datepicker>
+                    </mat-form-field>
+                </section>
+
+                <section class="clear-both">
+                    <div class="field-container">
+                        <mat-form-field>
+                            <label class="mat-label other-label">Limb Amputated</label>
+                            <input matInput type="text" formControlName="limbAmputated" name="limbAmputated"
+                                id="limbAmputated" />
+                        </mat-form-field>
+                    </div>
+                    <div class="field-container-right">
+                        <mat-form-field>
+                            <label class="mat-label other-label">Level Of Amputation</label>
+                            <mat-select name="levelOfAmputation" id="levelOfAmputation"
+                                formControlName="levelOfAmputation">
+                                <mat-option *ngFor="let levelOfAmputationType of levelOfAmputationTypes"
+                                    [value]="levelOfAmputationType">
+                                    {{formatLookup(levelOfAmputationType)}}
+                                </mat-option>
+                            </mat-select>
+                        </mat-form-field>
+                    </div>
+                </section>
+
+                <section>
+                    <mat-checkbox id="isCAA" name="isCAA" formControlName="isCAA">
+                        Is CAA?
+                    </mat-checkbox>
+                </section>
+
+                <section>
+                    <mat-checkbox id="isInstitutionalised" name="isInstitutionalised"
+                        formControlName="isInstitutionalised">
+                        Is Institutionalised?
+                    </mat-checkbox>
+                </section>
+
+                <section class="clear-both">
+                    <div class="field-container">
+                        <mat-form-field>
+                            <label class="mat-label other-label">Name Of Institution</label>
+                            <input matInput type="text" formControlName="nameOfInstitution" name="nameOfInstitution"
+                                id="nameOfInstitution" />
+                        </mat-form-field>
+                    </div>
+                    <div class="field-container-right">
+                        <mat-form-field class="mat-form-field">
+                            <label class="mat-label other-label">Contact No. Of Institution</label>
+                            <input matInput type="tel" formControlName="landlineNumberInst" name="landlineNumberInst"
+                                id="landlineNumberInst" pattern="^[0-9]{10}$" maxlength="10" />
+                            <mat-error *ngIf="disabilityDetailsFormGroup.controls.landlineNumberInst?.errors?.pattern">
+                                Please enter exactly 10 digits.
+                            </mat-error>
+                        </mat-form-field>
+                    </div>
+                </section>
+
+                <br>
+
+                <div>
+                    <button mat-raised-button color="primary" matStepperPrevious>Back</button>&nbsp;
+                    <button mat-raised-button color="primary" matStepperNext>Next</button>
+                </div>
+            </form>
+        </mat-step>
+
+        <mat-step [stepControl]="pensionerInterviewFormDetailsFormGroup">
+            <form [formGroup]="pensionerInterviewFormDetailsFormGroup">
+                <ng-template matStepLabel>Pensioner Interview Form</ng-template>
+                <h5>Briefing on Pension </h5>
+                <section>
+                    <mat-form-field class="mat-form-field">
+                        <label class="other-label mandatory-field">Chronic Medicines and Sundries</label>
+                        <textarea matInput cdkTextareaAutosize cdkAutosizeMinRows="3" cdkAutosizeMaxRows="5"
+                            id="chronicMedicinesAndSundries" formControlName="chronicMedicinesAndSundries"
+                            class="mat-input-element" maxlength="1000"></textarea>
+                    </mat-form-field>
+                </section>
+
+                <section>
+                    <mat-form-field class="mat-form-field">
+                        <label class="other-label mandatory-field">Certification Of Life Yearly and Suspension</label>
+                        <textarea matInput cdkTextareaAutosize cdkAutosizeMinRows="3" cdkAutosizeMaxRows="5"
+                            id="certificationOfLifeYearlyAndSuspension"
+                            formControlName="certificationOfLifeYearlyAndSuspension" maxlength="1000"></textarea>
+                    </mat-form-field>
+                </section>
+
+                <section>
+                    <mat-form-field class="mat-form-field">
+                        <label class="other-label mandatory-field">Information Brochure</label>
+                        <textarea matInput cdkTextareaAutosize cdkAutosizeMinRows="3" cdkAutosizeMaxRows="5"
+                            id="informationBrochure" formControlName="informationBrochure" class="mat-input-element"
+                            maxlength="1000"></textarea>
+                    </mat-form-field>
+                </section>
+
+                <section>
+                    <mat-checkbox id="explainedCalculation" name="explainedCalculation"
+                        formControlName="explainedCalculation">
+                        Explained  to pensioner how disability and pension are calculated?
+                    </mat-checkbox>
+                </section>
+
+                <section>
+                    <mat-checkbox id="explainedPayDates" name="explainedPayDates" formControlName="explainedPayDates">
+                        Explained to pensioner the RMA Pension Pay Dates and supplied a list?
+                    </mat-checkbox>
+                </section>
+                <section>
+                    <mat-checkbox id="explainedProofOfLife" name="explainedProofOfLife"
+                        formControlName="explainedProofOfLife">
+                        Explained to pensioner proof of life process?
+                    </mat-checkbox>
+                </section>
+                <section>
+                    <mat-checkbox id="explainedIncreases" name="explainedIncreases"
+                        formControlName="explainedIncreases">
+                        Explained to pensioner how pension increases are determined and applied?
+                    </mat-checkbox>
+                </section>
+                <section>
+                    <mat-checkbox id="explainedMedicalTreatment" name="explainedMedicalTreatment"
+                        formControlName="explainedMedicalTreatment">
+                        Explained to pensioner the medical treatment RMA is responsible for?
+                    </mat-checkbox>
+                </section>
+                <section>
+                    <mat-checkbox id="explainedPreAuthorisation" name="explainedPreAuthorisation"
+                        formControlName="explainedPreAuthorisation">
+                        Explained to pensioner the pre authorisation process for medical treatment?
+                    </mat-checkbox>
+                </section>
+                <section>
+                    <mat-checkbox id="explainedMaintenance" name="explainedMaintenance"
+                        formControlName="explainedMaintenance">
+                        Explained to pensioner the maintenance of the wheelchair/prosthetic ?
+                    </mat-checkbox>
+                </section>
+                <section>
+                    <mat-checkbox id="suppliedBooklet" name="suppliedBooklet" formControlName="suppliedBooklet">
+                        Supplied pensioner with the “RMA Pension Guide” Booklet?
+                    </mat-checkbox>
+                </section>
+                <section>
+                    <mat-checkbox id="suppliedContactDetails" name="suppliedContactDetails"
+                        formControlName="suppliedContactDetails">
+                        Supplied pensioner with contact number of RMA Contact Centre and the PMCA?
+                    </mat-checkbox>
+                </section>
+                <section>
+                    <mat-checkbox id="explainedChronicMedication" name="explainedChronicMedication"
+                        formControlName="explainedChronicMedication">
+                        Explained chronic medication and sundries?
+                    </mat-checkbox>
+                </section>
+                <section>
+                    <mat-checkbox id="explainedTransportation" name="explainedTransportation"
+                        formControlName="explainedTransportation">
+                        Explained the process of transportation?
+                    </mat-checkbox>
+                </section>
+
+                <section>
+                    <mat-form-field class="">
+                        <label class="mat-label other-label">Date Of Interview</label>
+                        <input matInput formControlName="dateOfinterview" id="dateOfinterview" name="dateOfinterview"
+                            [matDatepicker]="dateOfinterview">
+                        <mat-datepicker-toggle matSuffix [for]="dateOfinterview"></mat-datepicker-toggle>
+                        <mat-datepicker touchUi="true" #dateOfinterview></mat-datepicker>
+                    </mat-form-field>
+                </section>
+
+                <mat-tab-group animationDuration="500ms">
+                    <mat-tab label="Referrals" *ngIf="crudActionTypeEnum[crudActionType] != crudActionTypeEnum[1]">
+                        <referral-view [targetModuleType]="targetModuleType" [referralItemType]="referralItemType"
+                            [referralItemTypeReference]="referralItemTypeReference" [itemId]="pensionCaseId"></referral-view>
+                    </mat-tab>
+    
+                    <mat-tab label="Notes">
+                        <common-notes [moduleType]="moduleType" [noteItemType]="noteItemType"  [itemId]="pensionCaseId"></common-notes>
+                    </mat-tab>
+                </mat-tab-group>
+
+                <div>
+                    <button mat-raised-button color="primary" matStepperPrevious>Back</button>&nbsp;
+                    <button mat-raised-button color="primary" *ngIf="crudActionTypeEnum[crudActionType] != crudActionTypeEnum[5]" matStepperNext>Next</button>
+                </div>
+            </form>
+        </mat-step>
+
+        <mat-step  *ngIf="crudActionTypeEnum[crudActionType] != crudActionTypeEnum[5]">
+            <ng-template matStepLabel>Done</ng-template>
+            <h5>You are now done, click submit to complete.</h5>
+            <div class="form-group-button mat-form-button">
+                <button class="button float-button" matStepperPrevious>Back</button>
+                <button class="button float-button" (click)="submitInterviewForm()">Submit</button>
+                <button class="button float-button" (click)="stepper.reset()">Reset</button>
+            </div>
+            <br>
+        </mat-step>
+
+    </mat-horizontal-stepper>
+</div>

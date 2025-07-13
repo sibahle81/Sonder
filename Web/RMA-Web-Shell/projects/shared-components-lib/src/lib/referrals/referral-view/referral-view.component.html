@@ -1,0 +1,36 @@
+<mat-card>
+    <div class="menu-bar">
+        <span class="material-icons">
+            question_answer
+        </span>
+        Referrals
+        <span *ngIf="!(isLoading$ | async)">
+            <span *ngIf="toggle" (click)="cancel()" class="material-icons pointer right" matTooltip="close">
+                cancel
+            </span>
+            <span *ngIf="!toggle" (click)="addReferral()" class="material-icons pointer right"
+                matTooltip="create referral">
+                add_circle
+            </span>
+            <span (click)="openReferralNatureOfQuerySearchDialog()" class="material-icons pointer right"
+                matTooltip="configure nature of query roles">build</span>
+            <span *ngIf="!toggle && !(referralItemType && itemId)" (click)="openReferralReports()"
+                class="material-icons pointer right" matTooltip="referral reports">
+                query_stats
+            </span>
+        </span>
+    </div>
+
+    <mat-card *ngIf="(isLoading$ | async)">
+        <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+        <label class="mat-label other-label"><i>{{loadingMessage$ | async}}</i></label>
+    </mat-card>
+
+    <paged-referral-search *ngIf="!toggle && !(isLoading$ | async)" [sourceModuleType]="sourceModuleType"
+        [targetModuleType]="targetModuleType" [referralItemType]="referralItemType" [itemId]="itemId"
+        (referralSelectedEmit)="setReferral($event)"></paged-referral-search>
+
+    <referral-detail *ngIf="toggle && !(isLoading$ | async)" [referral]="referral" [sourceModuleType]="sourceModuleType"
+        [targetModuleType]="targetModuleType" [referralItemType]="referralItemType" [itemId]="itemId"
+        [referralItemTypeReference]="referralItemTypeReference"></referral-detail>
+</mat-card>

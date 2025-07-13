@@ -1,0 +1,35 @@
+<mat-card class="mat-card-margin">
+  <mat-card-content class="margin-left-10">
+    <h1>Banking Details</h1>
+
+    <div *ngIf="metaData" [hidden]="dataSource.isLoading || (dataSource.data && dataSource.data.data && dataSource.data.data.length === 0)">
+      <mat-table #table [dataSource]="dataSource" matSort>
+        <ng-container *ngFor="let colName of metaData.displayedColumns" matColumnDef="{{colName}}">
+            <div *ngIf="metaData.columnDef[colName]['sortable']; else nonsortable">
+              <mat-header-cell *matHeaderCellDef mat-sort-header>{{metaData.columnDef[colName]['displayName'] || colName }}</mat-header-cell>
+            </div>
+            <ng-template #nonsortable>
+              <mat-header-cell *matHeaderCellDef>{{metaData.columnDef[colName]['displayName'] || colName }}</mat-header-cell>
+            </ng-template>
+
+            <mat-cell *matCellDef="let row">
+              <div *ngIf="metaData.columnDef[colName]['type'] == 'text'"><span>{{row[colName]}}</span></div>
+              <div *ngIf="metaData.columnDef[colName]['type'] == 'button'">
+                <button class="button submit-button" (click)="editbankingDetail()">Transfer</button>
+              </div>
+              
+            </mat-cell>
+        </ng-container>
+        <mat-header-row *matHeaderRowDef="metaData.displayedColumns"></mat-header-row>
+        <mat-row *matRowDef="let row; columns: metaData.displayedColumns;"></mat-row>
+      </mat-table>
+      <mat-paginator #paginator   [pageIndex]="0" [pageSize]="5" [pageSizeOptions]="[5, 10, 25, 100]">
+      </mat-paginator>
+    </div>  
+  </mat-card-content>
+</mat-card>
+
+
+
+
+

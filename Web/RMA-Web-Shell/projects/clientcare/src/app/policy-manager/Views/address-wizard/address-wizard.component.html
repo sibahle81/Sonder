@@ -1,0 +1,96 @@
+<div class="page-header"></div>
+
+<div style="padding-top: 15px;">
+    <form [formGroup]="form" (ngSubmit)="save()" class="mat-container" novalidate>
+        <div style="margin-top: 20px;">
+            <section>
+                <mat-form-field>
+                    <label class="mat-label other-label mandatory-field">Street address 1</label>
+                    <input matInput maxlength="50" formControlName="addressLine1" name="addressLine1">
+                    <mat-error *ngIf="form.get('addressLine1').hasError('required') ">
+                        Street address 1 is <strong>required</strong>
+                    </mat-error>
+                </mat-form-field>
+                <mat-form-field class="mat-form-field-right">
+                    <label class="mat-label other-label mandatory-field">Postal address</label>
+                    <input matInput maxlength="50" name="postalAddress" formControlName="postalAddress">
+                    <mat-error *ngIf="form.get('postalAddress').hasError('required')">
+                        Postal address is <strong>required</strong>
+                    </mat-error>
+                </mat-form-field>
+            </section>
+            <section>
+                <mat-form-field>
+                    <label class="mat-label other-label">Street address 2 (optional)</label>
+                    <input matInput maxlength="50" formControlName="addressLine2" name="addressLine2">
+                </mat-form-field>
+                <mat-form-field class="mat-form-field-right">
+                    <label class="mat-label other-label mandatory-field">Postal code</label>
+                    <input matInput minlength="4" maxlength="4" name="postalCode" formControlName="postalCode" NumberOnly="true">
+                    <mat-error *ngIf="form.get('postalCode').hasError('required')">
+                        Postal code is <strong>required</strong>
+                    </mat-error>
+                    <mat-error *ngIf="form.get('postalCode').hasError('minlength')">
+                        Postal code must <strong> be 4 digits</strong>
+                    </mat-error>
+                </mat-form-field>
+            </section>
+            <section>
+                <mat-form-field>
+                    <label class="mat-label other-label mandatory-field">Street postal code</label>
+                    <input matInput minlength="4" maxlength="4" name="addressPostalCode" formControlName="addressPostalCode" NumberOnly="true">
+                    <mat-error *ngIf="form.get('addressPostalCode').hasError('required')">
+                        Street postal code <strong>is required</strong>
+                    </mat-error>
+                    <mat-error *ngIf="form.get('addressPostalCode').hasError('minlength')">
+                        Street postal code must <strong> be 4 digits</strong>
+                    </mat-error>
+                </mat-form-field>
+                <mat-form-field class="mat-form-field-right">
+                    <label class="mat-label other-label mandatory-field">Country</label>
+                    <mat-select name="country" id="country" #country formControlName="country" [(value)]="countryId" required>
+                        <mat-option *ngFor="let country of countries" [value]="country.id">{{country.name}}</mat-option>
+                    </mat-select>
+                    <mat-error *ngIf="country.errorState && form.get('country').hasError('required')">
+                        Country is <strong>required</strong>
+                    </mat-error>
+                </mat-form-field>
+            </section>
+            <section>
+                <mat-form-field>
+                    <label class="mat-label other-label mandatory-field">Province</label>
+                    <mat-select name="stateProvince" id="Province" #province formControlName="stateProvince" [(value)]="ProvinceId" (selectionChange)="locationChanged($event)" required>
+                        <mat-option *ngFor="let stateProvince of stateProvinces" [value]="stateProvince.id">{{stateProvince.name}}</mat-option>
+                    </mat-select>
+                    <mat-error *ngIf="province.errorState && form.get('stateProvince').hasError('required')">
+                        Province is <strong>required</strong>
+                    </mat-error>
+                </mat-form-field>
+                <mat-form-field class="mat-form-field-right">
+                    <label class="mat-label other-label mandatory-field">City / Town / Suburb</label>
+                    <input [hidden]="isLoadingCities" matInput [matAutocomplete]="auto" formControlName="city" required>
+                    <div [hidden]="!isLoadingCities" class="mat-label other-label" style="margin-top: 10px;">
+                        <i>Updating cities...</i>
+                    </div>
+                    <mat-autocomplete #auto="matAutocomplete">
+                        <mat-option *ngFor="let city of filterCitiesData | async" [value]="city.name"><span>{{city.name}}</span></mat-option>
+                    </mat-autocomplete>
+                    <mat-error *ngIf="form.get('city').hasError('required')">
+                        City is <strong>required</strong>
+                    </mat-error>
+                </mat-form-field>
+            </section>
+        </div>
+        <div class="form-group-button" *ngIf="!isWizard">
+            <div *ngIf="!form.disabled" class="form-buttons" matTooltip="No changes have been made" [matTooltipDisabled]="!form.pristine">
+                <button [disabled]="form.pristine" class="button float-button submit-button">Save</button>
+            </div>
+            <div (click)="edit()" *ngIf="form.disabled && !isSubmitting" class="form-buttons submit-button">
+                <button type="button" class="button float-button">Edit</button>
+            </div>
+            <div (click)="back()" class="form-buttons submit-button">
+                <button type="button" class="button float-button">Back</button>
+            </div>
+        </div>
+    </form>
+</div>

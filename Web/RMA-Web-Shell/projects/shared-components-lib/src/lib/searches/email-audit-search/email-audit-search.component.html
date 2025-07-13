@@ -1,0 +1,158 @@
+<mat-card *ngIf="(isSending$ | async)">
+  <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+  <label class="mat-label other-label"><i>{{(isSendingMessage$ | async)}}</i></label>
+</mat-card>
+
+<span [hidden]="!userHasPermission('View Audits') || (isSending$ | async)">
+  <mat-card class="removePaddingBottom">
+    <div class="menu-bar">
+      <span class="material-icons">search</span>
+      Search <b *ngIf="itemType">{{ formatLookup(itemType) }}</b> Emails
+      <span *ngIf="!(dataSource.loading$ | async) && !(dataSource.isLoading$ | async)" (click)="reset()"
+        class="material-icons pointer right" matTooltip="refresh">
+        restart_alt
+      </span>
+
+      <span *ngIf="rolePlayerContactOptions" (click)="openRolePlayerContactOptionsDialog(null)"
+        class="material-icons pointer right" matTooltip="compose new email">
+        contact_mail
+      </span>
+    </div>
+
+    <form [formGroup]="form" class="mat-container details-form" novalidate>
+      <section>
+        <mat-form-field class="mat-form-field" [floatLabel]="'never'">
+          <input matInput name="searchTerm" id="searchTerm" formControlName="searchTerm" />
+          <mat-placeholder class="placeholder">search by recipients, subject, from</mat-placeholder>
+        </mat-form-field>
+      </section>
+    </form>
+  </mat-card>
+
+  <mat-card *ngIf="(dataSource.loading$ | async) || (dataSource.isLoading$ | async)">
+    <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+    <label class="mat-label other-label"><i>searching...please wait</i></label>
+  </mat-card>
+
+  <div [hidden]="(dataSource.loading$ | async) || (dataSource.isLoading$ | async)">
+    <mat-card>
+      <div *ngIf="searchTerm">Search Results for <b>{{ searchTerm }}</b></div>
+      <div [hidden]="!(dataSource.data?.data?.length > 0)">
+        <mat-table #table [dataSource]="dataSource" matSort id="tblData" (matSortChange)="getData()">
+          <!-- isSuccess Column -->
+          <ng-container matColumnDef="isSuccess">
+            <mat-header-cell *matHeaderCellDef mat-sort-header>Successful?</mat-header-cell>
+            <mat-cell *matCellDef="let row">
+              <span *ngIf="row.isSuccess === true" class="material-icons greenFont">
+                verified
+              </span>
+              <span *ngIf="row.isSuccess === false">
+                <span class="material-icons amberFont">warning</span>
+                &nbsp;&nbsp;
+                <span (click)="viewFailureReason(row)" matTooltip="failed to send: click to see why"
+                  class="material-icons icn icn-button pointer">
+                  info
+                </span>
+              </span>
+              <span *ngIf="!row.isSuccess && row.isSuccess !== false" class="material-icons blueFont">
+                help
+              </span>
+            </mat-cell>
+          </ng-container>
+
+          <!-- Subject Column -->
+          <ng-container matColumnDef="subject">
+            <mat-header-cell *matHeaderCellDef mat-sort-header>Subject</mat-header-cell>
+            <mat-cell *matCellDef="let row">{{ row.subject }}</mat-cell>
+          </ng-container>
+
+          <!-- Recipients Column -->
+          <ng-container matColumnDef="reciepients">
+            <mat-header-cell *matHeaderCellDef mat-sort-header>Recipient(s)</mat-header-cell>
+            <mat-cell *matCellDef="let row">
+              {{
+              row.reciepients?.length >= 25
+              ? row.reciepients.substring(0, 25) + '...(' + getRecipentCount(row) + ')'
+              : row.reciepients?.length > 0
+              ? row.reciepients
+              : 'N/A'
+              }}
+              &nbsp;&nbsp;
+              <span (click)="viewRecipients(row)" matTooltip="view recipients"
+                class="material-icons icn icn-button pointer">
+                info
+              </span>
+            </mat-cell>
+          </ng-container>
+
+          <!-- Attachments Column -->
+          <ng-container matColumnDef="attachments">
+            <mat-header-cell *matHeaderCellDef mat-sort-header>Attachments</mat-header-cell>
+            <mat-cell *matCellDef="let row">
+              <div *ngIf="row.attachments?.length > 0">
+                <ul>
+                  <li *ngFor="let attachment of row.attachments">
+                    <a (click)="openAttachmentViewer(attachment)">{{ attachment.fileName }}</a>
+                  </li>
+                </ul>
+              </div>
+              <div *ngIf="!row.attachments?.length">
+                <i>N/A</i>
+              </div>
+            </mat-cell>
+          </ng-container>
+
+          <!-- Created Date Column -->
+          <ng-container matColumnDef="createdDate">
+            <mat-header-cell *matHeaderCellDef mat-sort-header>Sent Date</mat-header-cell>
+            <mat-cell *matCellDef="let row">
+              {{ row.createdDate | date: 'yyyy-MM-dd HH:mm:ss' }}
+            </mat-cell>
+          </ng-container>
+
+          <ng-container matColumnDef="createdBy">
+            <mat-header-cell *matHeaderCellDef mat-sort-header> Sent By </mat-header-cell>
+            <mat-cell *matCellDef="let row"><user-display-name
+                [userName]="row.createdBy"></user-display-name></mat-cell>
+          </ng-container>
+
+          <!-- Actions Column -->
+          <ng-container matColumnDef="actions">
+            <mat-header-cell *matHeaderCellDef>Actions</mat-header-cell>
+            <mat-cell *matCellDef="let row">
+              <span (click)="view(row)" matTooltip="view" class="material-icons pointer">
+                visibility
+              </span>
+              <span class="material-icons pointer" (click)="openConfirmationDialog(row)" matTooltip="resend">
+                send
+              </span>
+              <span *ngIf="rolePlayerContactOptions?.length > 0" class="material-icons pointer"
+                (click)="openRolePlayerContactOptionsDialog(row)" matTooltip="manage recipients">
+                add
+              </span>
+            </mat-cell>
+          </ng-container>
+
+          <mat-header-row *matHeaderRowDef="getDisplayedColumns()"></mat-header-row>
+          <mat-row *matRowDef="let row; columns: getDisplayedColumns();"></mat-row>
+        </mat-table>
+
+        <mat-paginator #paginator [pageIndex]="0" [pageSize]="5" [pageSizeOptions]="[5, 10, 25, 100]"
+          [length]="dataSource.rowCount$ | async" (page)="getData()">
+        </mat-paginator>
+      </div>
+
+      <mat-card *ngIf="!(
+          dataSource.data?.data?.length > 0 ||
+          (dataSource.loading$ | async) ||
+          (dataSource.isLoading$ | async)
+        )">
+        <label class="mat-label other-label"><i>No email audits found...</i></label>
+      </mat-card>
+    </mat-card>
+  </div>
+</span>
+
+<span *ngIf="!userHasPermission('View Audits')">
+  <access-denied></access-denied>
+</span>

@@ -1,0 +1,93 @@
+<body [style.backgroundImage]="'url(' + backgroundImage + ')'">
+    <div class="content-container">
+        <div class="header-container">
+            <h1 style="font-weight: lighter;">Member Portal Quote Search</h1>
+        </div>
+        <form [formGroup]="quoteForm" class="login-form" novalidate>
+            
+            <div *ngIf="quote === null">
+                <label class="form-label first-label mandatory-field">Enter Quote Number</label>
+            <mat-form-field>
+                <input value="" matInput id="quotenumber" name="quotenumber" formControlName="quotenumber" type="text">
+                <mat-error *ngIf="quoteForm.get('quotenumber').hasError('required')">
+                    Quote number is required
+                </mat-error>
+                <mat-error *ngIf="quoteForm.get('quotenumber').hasError('quotenumber')">
+                    Please enter a <strong>valid</strong> quote number.
+                </mat-error>
+            </mat-form-field>
+                <div *ngIf="quoteForm.get('quotenumber').value.length > 12">
+                    <div>
+                        <button class="button login-button" id="onetimepinBtn" name="onetimepinBtn" (click)="requestPin()">Request One Time Pin</button>
+                        <div *ngIf="isRequestingOTP">
+                            <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+                            <label class="mat-label other-label"><i>Requesting One Time Pin</i></label>
+                        </div>
+                    </div>
+                    <br>
+                    <label class="form-label first-label">Enter One Time Pin</label>
+                    <mat-form-field>
+                        <input matInput id="onetimepin" name="onetimepin" formControlName="onetimepin" type="number">
+                        <label *ngIf="otpStatus < 200 && otpMessage.length > 0 && quoteForm.get('onetimepin').value < 11111" class="mat-label other-label red-text"><i>{{otpMessage}}</i></label>
+                        <label *ngIf="otpStatus == 200 && otpMessage.length > 0 && quoteForm.get('onetimepin').value < 11111" class="mat-label other-label green-text"><i>{{otpMessage}}</i></label>
+                    </mat-form-field>
+                </div>
+                <div>
+                    <hr />
+                    <button class="button login-button" [disabled]="(quoteForm.get('onetimepin').value < 11111)" (click)="getQuoteDetails()">Search Quote</button>
+                    <hr />
+                </div>
+                <div *ngIf="isfetchingQuote">
+                    <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+                    <label class="mat-label other-label"><i>Fetching Quote Details</i></label>
+                </div>
+                <div *ngIf="fetchMessageStatus === 0 && fetchMessage.length > 0">
+                    <label class="mat-label other-label red-text"><i>{{fetchMessage}}</i></label>
+                </div>
+            </div>
+        </form>
+        <div *ngIf="fetchMessageStatus === 200 && quote != null">
+            <mat-card>
+                <label>Quote: <b>{{quote.quoteNumber}}</b></label><br />
+                <label>Status: <b>{{getQuoteStatus(quote.quoteStatusId)}}</b></label><br />
+                <div *ngIf="quote.quoteStatusId == 6"><label>Reason: <b><span
+                        class="reason">{{quote.declineReason}}</span></b></label></div><br />
+                <br />
+                <div *ngIf="(isSending$ | async)">
+                  <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+                  <label class="mat-label other-label"><i>sending quote {{quote.quoteNumber}}...please wait</i></label>
+                  <br /><br />
+                </div>
+                <div class="form-buttons">
+                  <button class="button submit-button" (click)="openAcceptDialog()"
+                    [disabled]="(isLoading$ | async) || (isSending$ | async) || quote.quoteStatusId == 6 || quote.quoteStatusId == 5 || quote.quoteStatusId == 4">
+                    <span class="material-icons">verified</span>
+                    Accepted</button><br/>
+                  <button type="button" class="button submit-button" (click)="openDialog()" style="margin: 10px 0px 0px 0px;"
+                    [disabled]="(isLoading$ | async) || (isSending$ | async) || quote.quoteStatusId == 6 || quote.quoteStatusId == 5 || quote.quoteStatusId == 4">
+                    <span class="material-icons">thumb_down_off_alt</span>
+                    Declined</button><br/>
+                    <button type="button" class="button submit-button" (click)="exportReport()" style="margin: 10px 0px 0px 0px;"
+                    [disabled]="(isLoading$ | async) || (isSending$ | async) || quote.quoteStatusId == 6 || quote.quoteStatusId == 5 || quote.quoteStatusId == 4">
+                    
+                    Download Quote</button>
+                </div>
+                <br /><br />
+                <div *ngIf="quote.quoteStatusId == 4">
+                  <br />
+                  <label class="info">This quote is being edited and can be viewed once approved</label><br />
+                </div>
+                <div [hidden]="!showReport">
+                    <mat-tab-group>
+                      <mat-tab label="">
+                        <ssrs-reportviewer [reportserver]="reportServerAudit" [reporturl]="reportUrlAudit"
+                          [showparameters]="showParametersAudit" [format]="formatAudit" [parameters]="parametersAudit"
+                          [language]="languageAudit" [width]="widthAudit" [height]="heightAudit" [toolbar]="toolbarAudit">
+                        </ssrs-reportviewer>
+                      </mat-tab>
+                    </mat-tab-group>
+                  </div>
+              </mat-card>
+        </div>
+    </div>
+</body>

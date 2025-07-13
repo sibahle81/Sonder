@@ -1,0 +1,49 @@
+<div>
+  <div class="menu-container">
+    <nav mat-tab-nav-bar>
+      <a mat-tab-link (click)="loadPersonalDetails()"> Personal Details </a>
+      <a mat-tab-link (click)="loadDocuments()"> Documents </a>
+    </nav>
+    <div>
+      <app-personal-details *ngIf="loadedTab === 'personal-details'"
+        [componentData]="{
+          form: form,
+          formHeader: formHeader,
+          showActionButtons: true,
+          model: model,
+          pensCareContext: pensCareContext,
+          personType: personType,
+          lookups: lookups
+        }">
+      </app-personal-details>
+
+      <mat-card *ngIf="loadedTab === 'documents'">
+        <div class="expansionTitle"><span class="material-icons">groups</span> Documents
+          <mat-card-content>
+            <mat-card>
+              <pension-case-document
+                [pensionCaseModel]="model"></pension-case-document>
+            </mat-card>
+          </mat-card-content>
+        </div>
+      </mat-card>
+
+      <div *ngIf="loadedTab === 'claims'">Load claims here</div>
+
+      <div *ngIf="loadedTab === null">
+        <div style="margin-right: 15px;">
+          <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+        </div>
+        <span style="color: grey">Loading...</span>
+      </div>
+    </div>
+
+    <mat-card-actions>
+      <div class="left-margin actions-container">
+        <div>
+          <button class="button submit-button" (click)="backToSearch()">Back to search</button>
+        </div>
+      </div>
+    </mat-card-actions>
+
+</div>

@@ -1,0 +1,73 @@
+<div class="menu-bar">
+    <span class="material-icons">
+        note
+    </span>&nbsp;Note
+    <span (click)="onClose()" class="material-icons pointer right" matTooltip="close">
+        close
+    </span>
+    <span *ngIf="!(isLoading$ | async) && form.valid && !form.pristine" (click)="onSave()"
+        class="material-icons pointer right" matTooltip="save">
+        save
+    </span>
+</div>
+
+<mat-card *ngIf="(isLoading$ | async)">
+    <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+    <label class="mat-label other-label"><i>loading...please wait</i></label>
+</mat-card>
+
+<div *ngIf="!(isLoading$ | async)">
+    <form [formGroup]="form" class="mat-container details-form" novalidate>
+        <section>
+            <mat-form-field class="mat-form-field">
+                <label class="mat-label other-label mandatory-field">Department <i>(only selected departments will see
+                        this note)</i></label>
+                <mat-select name="noteModules" id="noteModules" formControlName="noteModules" multiple>
+                    <mat-option *ngFor="let moduleType of moduleTypes" [value]="moduleType">
+                        {{formatLookup(moduleType)}}
+                    </mat-option>
+                </mat-select>
+                <mat-error *ngIf="form.get('noteModules').hasError('required')">
+                    allowed departments is <strong>required</strong>
+                </mat-error>
+            </mat-form-field>
+        </section>
+        <section>
+            <mat-form-field class="mat-form-field">
+                <label class="mat-label other-label mandatory-field">Category</label>
+                <mat-select name="noteCategory" id="noteCategory" formControlName="noteCategory">
+                    <mat-option *ngFor="let noteCategory of noteCategoryTypes" [value]="noteCategory">
+                        {{formatLookup(noteCategory)}}
+                    </mat-option>
+                </mat-select>
+                <mat-error *ngIf="form.get('noteCategory').hasError('required')">
+                    category is <strong>required</strong>
+                </mat-error>
+            </mat-form-field>
+            <mat-form-field class="mat-form-field right">
+                <label class="mat-label other-label mandatory-field">Type</label>
+                <mat-select name="noteType" id="noteType" formControlName="noteType"
+                (selectionChange)="noteTypeFilterChanged($event.value)">
+                    <input matInput (keyup)="onNoteTypeKeyChange($event.target.value)">
+                    <mat-option *ngFor="let noteType of filteredNoteTypeList" [value]="noteType">
+                        {{formatLookup(noteType)}}
+                    </mat-option>
+                </mat-select>
+                <mat-error *ngIf="form.get('noteType').hasError('required')">
+                    type is <strong>required</strong>
+                </mat-error>
+            </mat-form-field>
+        </section>
+
+        <section>
+            <mat-form-field class="mat-form-field wide">
+                <label class="mat-label other-label mandatory-field">Note</label>
+                <textarea class="full" matInput maxlength="2000" name="noteText" id="noteText" formControlName="noteText"
+                  cdkTextareaAutosize cdkAutosizeMinRows="1" cdkAutosizeMaxRows="10"></textarea>
+                <mat-error *ngIf="form.get('noteText').hasError('required')">
+                    note is <strong>required</strong>
+                </mat-error>
+              </mat-form-field>
+        </section>
+    </form>
+</div>

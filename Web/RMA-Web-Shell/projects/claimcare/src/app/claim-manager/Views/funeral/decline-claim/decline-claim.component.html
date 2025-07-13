@@ -1,0 +1,71 @@
+<h1 class="page-header">Details</h1>
+<mat-card style="margin: 15px 30px 15px 30px">
+    <mat-card-content style="margin-left: -36px;">
+        <form [formGroup]="form" (ngSubmit)="save()" class="mat-container" novalidate style="width:100%">
+
+            <div class="container" style="padding:0px">
+                <div class="card" style="width:350px;float:left;margin-left:-250px;margin-top:-80px;text-align: center;">
+                    <!-- <span><b>Claim Reference:</b></span> {{claimPaymentDetail.claimReferenceNumber}} <br /> -->
+                    <table border="0" style="margin-left:20px;text-align:left;padding: 10px;">
+                        <!-- <th><td colspan="2"><h4>Claim Details</h4></td></th> -->
+                        <tr><td colspan="2" style="text-align: center"><b>Claim Details</b></td></tr>
+                        <tr><td><b>Claim Reference:</b></td><td>{{claimPaymentDetail.claimReferenceNumber}}</td> </tr>
+                        <tr><td><b>Policy:</b></td><td>{{claimPaymentDetail.policyNumber}}</td> </tr>
+                        <tr><td><b>Product:</b></td><td>{{claimPaymentDetail.product}}</td> </tr>
+                        <tr><td><b>Captured Date:</b></td><td>{{dateValue}}</td> </tr>
+                        <tr><td><b>Claim Amount:</b></td><td>{{claimPaymentDetail.claimAmount}}</td> </tr>
+                        <tr><td><b>Outstanding Premium:</b></td><td>{{claimPaymentDetail.outstandingPremium}}</td> </tr>
+                        <tr><td><b>Refund:</b></td><td>{{claimPaymentDetail.refund}}</td> </tr>
+                        <tr><td colspan="2" style="height: 20px;"></tr>
+                        <tr><td colspan="2" style="text-align: center"><b>Beneficiary Details</b></td></tr>
+                        <tr><td><b>First Name:</b></td><td>{{claimPaymentDetailBeneficiary.firstname}}</td> </tr>
+                        <tr><td><b>Last Name:</b></td><td>{{claimPaymentDetailBeneficiary.lastname}}</td> </tr>
+                        <tr><td><b>Email:</b></td><td>{{claimPaymentDetailBeneficiary.email}}</td> </tr>
+                        <tr><td><b>ID:</b></td><td>{{claimPaymentDetailBeneficiary.idNumber}}</td> </tr>
+                        <tr><td><b>Passport:</b></td><td>{{claimPaymentDetailBeneficiary.passportNumber}}</td> </tr>
+                        <tr><td><b>Mobile No:</b></td><td>{{claimPaymentDetailBeneficiary.mobileNumber}}</td> </tr>
+                        <tr><td><b>Relation:</b></td><td>{{claimPaymentDetailBeneficiary.relationOfDeceased}}</td> </tr>
+                    </table>
+                </div>
+
+                <div class="card" style="width:300px;float:left;margin-top:-80px;text-align: center;">
+                    <table border="0" style="margin-left:20px;text-align:left;padding: 10px;">
+                        <tr><td colspan="2" style="text-align: center"><b>Bank Account Details</b></td></tr>
+                        <tr><td><b>Account Holder:</b></td><td>{{claimPaymentDetailBankAccount.nameOfAccountHolder}}</td> </tr>
+                        <tr><td><b>Account Number:</b></td><td>{{claimPaymentDetailBankAccount.accountNumber}}</td> </tr>
+                        <tr><td><b>Account Type:</b></td><td>{{claimPaymentDetailBankAccount.accountType}}</td> </tr>
+                        <tr><td><b>Bank:</b></td><td>{{claimPaymentDetailBankAccount.bankName}}</td> </tr>
+                        <tr><td><b>Universal Branch:</b></td><td>{{claimPaymentDetailBankAccount.universalBranchCode}}</td> </tr>
+                    </table>
+                </div>
+                <div class="card" style="width:350px;float:left;margin-top:-80px;text-align: center;">
+                    <table border="0" style="margin-left:10px;text-align:left;padding: 10px;">
+                        <tr><td colspan="2" style="text-align: center"><b>Rules</b></td></tr>
+                        <tr>
+                            <td colspan="2">
+                                <div *ngFor="let messages of ruleResultMessages">
+                                    <span style="color: red;">--> {{messages}}</span><br />
+                                </div>
+                            </td>
+                        </tr>
+                    </table>
+                </div>
+            </div>
+
+            <!-- <div *ngIf="isLoading"></div>
+                <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+                <span *ngIf="isLoading" class="site-font grey" style="margin-top: 15px;"><i>Processing...</i></span> -->
+            <div *ngIf="showButtons" class="form-group-button mat-form-button">
+                <div class="form-buttons" (click)="acceptDeclinedClaim()">
+                    <button class="button float-button submit-button"  [disabled]="disabled">Accept</button>
+                </div>
+                <div (click)="returnToAssessor()" class="form-buttons submit-button">
+                    <button type="button" class="button float-button">Return To Assessor</button>
+                </div>
+                <div (click)="back()" class="form-buttons submit-button">
+                    <button type="button" class="button float-button">Back</button>
+                </div>
+            </div>
+        </form>
+    </mat-card-content>
+</mat-card>

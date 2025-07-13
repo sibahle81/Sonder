@@ -1,0 +1,13 @@
+<div class="menu-bar">
+  <span class="material-icons">
+    crisis_alert
+  </span>
+  Event View
+  <span class="material-icons pointer right pulse" (click)="close()" matTooltip="close">
+    cancel
+  </span>
+</div>
+
+<div *ngIf="data?.eventId && data?.eventId > 0 && data?.personEventId && data?.personEventId > 0">
+  <holistic-claim-view [eventId]="data.eventId" [personEventId]="data.personEventId"></holistic-claim-view>
+</div>

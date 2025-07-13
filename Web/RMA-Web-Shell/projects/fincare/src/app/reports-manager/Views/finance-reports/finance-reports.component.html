@@ -1,0 +1,76 @@
+
+
+<mat-card>
+    <div class="menu-bar">
+        <span class="material-icons">
+            find_in_page
+        </span>
+        Reports
+    </div>
+
+    <label class="mat-label other-label">Select a Report</label><br />
+    <mat-select class="control" (selectionChange)="reportSelected($event.value)">
+        <mat-option *ngFor="let report of reports" [value]="report">
+            {{report.key}}
+        </mat-option>
+    </mat-select>
+
+    <mat-card *ngIf="selectedReport">
+        <div class="menu-bar">
+            <span class="material-icons">
+                find_in_page
+            </span>
+            {{this.selectedReport.key}}
+            <span class="material-icons pointer right" matTooltip="reset filters" (click)="reset()">
+                restart_alt
+            </span>
+        </div>
+
+
+        <mat-expansion-panel [(expanded)]='standardFiltersExpanded'>
+            <mat-expansion-panel-header>
+                <mat-panel-title>
+                    Standard Report Filters
+                </mat-panel-title>
+            </mat-expansion-panel-header>
+            <payment-type-filter *ngIf="selectedReport.key=='Payment Recon Report' || selectedReport.key=='Bank Recon Report'" [triggerReset]="triggerReset" (parameterEmit)="setParameters($event)">
+            </payment-type-filter>
+            <claim-type-filter *ngIf="(selectedReport.key=='Payment Recon Report' || selectedReport.key=='Bank Recon Report') && isShowClaimTypes" [triggerReset]="triggerReset" (parameterEmit)="setParameters($event)">
+            </claim-type-filter>
+            <date-range-filter [triggerReset]="triggerReset"
+                (parameterEmit)="setParameters($event)"></date-range-filter>
+              
+                <msp-group-filter *ngIf="selectedReport.key=='Detailed Payment Report By Group'" [triggerReset]="triggerReset"
+                (parameterEmit)="setParameters($event)"></msp-group-filter> 
+
+                <search-criteria-filter *ngIf="selectedReport.key=='Detailed Payment Report' || selectedReport.key=='Claim Debtor Recon Report'" [triggerReset]="triggerReset"
+                (parameterEmit)="setParameters($event)"></search-criteria-filter> 
+
+                <month-filter *ngIf="selectedReport.key=='Payment Reversal Report'" [triggerReset]="triggerReset"
+                (parameterEmit)="setParameters($event)"></month-filter> 
+              
+            <branch-filter *ngIf="selectedReport.key=='Payment Reversal Report'" [triggerReset]="triggerReset"
+                (parameterEmit)="setParameters($event)"></branch-filter> 
+               
+                <reversal-reason-filter *ngIf="selectedReport.key=='Payment Reversal Report'" [triggerReset]="triggerReset"
+                (parameterEmit)="setParameters($event)"></reversal-reason-filter> 
+
+                <product-filter *ngIf="selectedReport.key=='Payment Reversal Report' || selectedReport.key=='Age Analysis Report'" [triggerReset]="triggerReset"
+                (parameterEmit)="setParameters($event)"></product-filter> 
+     
+                <product-class-filter *ngIf="selectedReport.key=='Payment Reversal Report' || selectedReport.key=='Age Analysis Report'" [triggerReset]="triggerReset"
+            (parameterEmit)="setParameters($event)"></product-class-filter> 
+
+        </mat-expansion-panel>
+        <br />
+        <div *ngIf="parameters && parameters.length > 0 && reportUrl && (selectedReport.key!='Detailed Payment Report') && (selectedReport.key!='Detailed Payment Report By Group')">
+            <br />
+            <ssrs-report-viewer-V2 [reporturl]="reportUrl" [parameters]="parameters"></ssrs-report-viewer-V2>
+        </div>
+        <br />
+        <div *ngIf="parameters && parameters.length > 0 && reportUrl && (selectedReport.key=='Detailed Payment Report' || selectedReport.key=='Detailed Payment Report By Group') && isSearchCriteriaEntered">
+            <br />
+            <ssrs-report-viewer-V2 [reporturl]="reportUrl" [parameters]="parameters"></ssrs-report-viewer-V2>
+        </div>
+    </mat-card>
+</mat-card>

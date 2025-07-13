@@ -1,0 +1,304 @@
+<h3>Age Analysis</h3>
+
+<div [hidden]="section != 'filters'">
+  <form [formGroup]="form" class="mat-container details-form" novalidate>
+    <section>
+      <div class="field-container">
+        <div><label class="mat-label other-label">Period</label></div>
+        <mat-form-field class="mat-form-field">
+          <input matInput formControlName="period" [matDatepicker]="period" [max]="maxDate" (click)="period.open()" readonly>
+          <mat-datepicker-toggle matSuffix [for]="period"></mat-datepicker-toggle>
+          <mat-datepicker touchUi="true" #period startView="year" (yearSelected)="chosenYearHandler($event)"
+            (monthSelected)="chosenMonthHandler($event, period)">
+          </mat-datepicker>
+        </mat-form-field>
+      </div>
+      <div class="field-container-right">
+        <div><label class="mat-label other-label mandatory-field">End Date</label></div>
+        <mat-form-field class="mat-form-field">
+          <input matInput formControlName="endDate" [matDatepicker]="endDate" [max]="maxDate" [hidden]="true"
+            (ngModelChange)="updateEndDate($event)">
+          <input matInput [ngModel]="displayEndDate | date:'yyyy/MM/dd'" [ngModelOptions]="{standalone: true}"
+            (click)="endDate.open()" [readonly]="true">
+          <mat-datepicker-toggle matSuffix [for]="endDate"></mat-datepicker-toggle>
+          <mat-datepicker touchUi="true" #endDate startView="month"></mat-datepicker>
+        </mat-form-field>
+      </div>
+    </section>
+
+    <section>
+      <mat-form-field class="mat-form-field">
+        <label class="mat-label other-label mandatory-field">Client Type</label>
+        <input matInput formControlName="clientType" [hidden]="true">
+        <mat-select formControlName="clientType">
+          <mat-option [value]="0">All</mat-option>
+          <mat-option [value]="3">Corporate</mat-option>
+          <!-- <mat-option [value]="3">Class</mat-option> -->
+          <mat-option [value]="2">Group</mat-option>
+          <mat-option [value]="1">Individual</mat-option>
+        </mat-select>
+      </mat-form-field>
+      <mat-form-field class="mat-form-field-right">
+        <label class="mat-label other-label mandatory-field">Age Type</label>
+        <input matInput formControlName="ageType" [hidden]="true">
+        <mat-select formControlName="ageType">
+          <mat-option [value]="0">All</mat-option>
+          <mat-option [value]="1">Current</mat-option>
+          <mat-option [value]="2">30 Days</mat-option>
+          <mat-option [value]="3">60 Days</mat-option>
+          <mat-option [value]="4">90 Days</mat-option>
+          <mat-option [value]="5">120 Days</mat-option>
+          <mat-option [value]="6">120+ Days</mat-option>
+        </mat-select>
+      </mat-form-field>
+    </section>
+    <section>
+      <mat-form-field class="mat-form-field">
+        <label class="mat-label other-label mandatory-field">Debtor Status</label>
+        <input matInput formControlName="debtorStatus" [hidden]="true">
+        <mat-select formControlName="debtorStatus">
+          <mat-option [value]="0">All</mat-option>
+          <mat-option [value]="1">Active</mat-option>
+          <mat-option [value]="2">Inactive</mat-option>
+        </mat-select>
+      </mat-form-field>
+      <mat-form-field class="mat-form-field-right">
+        <label class="mat-label other-label mandatory-field">Assigned Status</label>
+        <input matInput formControlName="assignedStatus" [hidden]="true">
+        <mat-select formControlName="assignedStatus">
+          <mat-option [value]="0">All</mat-option>
+          <mat-option [value]="1">Assigned</mat-option>
+          <mat-option [value]="2">Unassigned</mat-option>
+        </mat-select>
+      </mat-form-field>
+    </section>
+    <section>
+      <mat-form-field class="mat-form-field">
+        <label class="mat-label other-label mandatory-field">Balance Outstanding</label>
+        <input matInput formControlName="balanceType" [hidden]="true">
+        <mat-select formControlName="balanceType">
+          <mat-option [value]="0">All</mat-option>
+          <mat-option [value]="1">All Non-Zero</mat-option>
+          <mat-option [value]="2">Greater Than Zero</mat-option>
+          <mat-option [value]="3">Less Than Zero</mat-option>
+        </mat-select>
+      </mat-form-field>
+      <mat-form-field class="mat-form-field-right">
+          <label class="mat-label other-label mandatory-field">Industry Class</label>
+          <input matInput formControlName="industry" [hidden]="true">
+        <div *ngIf="loadingIndustries">
+          <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+        </div>
+        <div [hidden]="loadingIndustries">
+          <mat-select formControlName="industry">
+            <mat-option *ngFor="let industry of industries" [value]="industry.id">
+              {{industry.name}}
+            </mat-option>
+          </mat-select>
+        </div>
+      </mat-form-field>
+    </section>
+    <section>
+      <mat-form-field class="mat-form-field">
+          <label class="mat-label other-label mandatory-field">Product</label>
+          <input matInput formControlName="product" [hidden]="true">
+        <div *ngIf="loadingProducts">
+          <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+        </div>
+        <div [hidden]="loadingProducts">
+          <mat-select formControlName="product">
+            <mat-option *ngFor="let product of productLookup" [value]="product.id">
+              {{product.name}}
+            </mat-option>
+          </mat-select>
+        </div>
+      </mat-form-field>
+    </section>
+   <section>
+      <mat-form-field class="mat-form-field">
+        <label class="mat-label other-label">&nbsp;</label>
+        <input matInput formControlName="includeNotes" [hidden]="true">
+        <mat-checkbox formControlName="includeNotes">
+          <label class="mat-label other-label">Include notes?</label>
+        </mat-checkbox>
+      </mat-form-field>
+    </section>
+  </form>
+  <br/>
+  <div *ngIf="isDownloading">
+    <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+    <label class="mat-label other-label">downloading...please wait</label>
+  </div>
+  <br/>
+  <div class="form-group-button-lookup mat-form-button">
+    <div class="form-buttons" (click)="downloadReport()">
+      <button class="button submit-button" [disabled]="isDownloading">Download</button>
+    </div>
+    <div class="form-buttons" (click)="downloadAgeAnalysisSummaryReport()">
+      <button class="button submit-button" [disabled]="isDownloading">Download Summary</button>
+    </div>
+  </div>
+</div>
+<div [hidden]="section != 'report'">
+  <div *ngIf="isLoading">
+    <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+    <label class="mat-label other-label"><i>loading age analysis results...please wait</i></label>
+  </div>
+  <div *ngIf="!isLoading && dataSource.data.length === 0">
+    <div class="error-information"><i>No matching records found...</i></div>
+  </div>
+  <div class="mat-container details-form" [hidden]="isLoading || dataSource.data.length === 0">
+
+    <div [hidden]="!isAssigning">
+      <table class="assign-agent">
+        <tr>
+          <td><label class="mat-label other-label mandatory-field">Collection Agent</label></td>
+          <td>&nbsp;</td>
+        </tr>
+        <tr>
+          <td>
+            <mat-select id="collectionAgent" name="collectionAgent" class="assign-agent-select"
+              [(value)]="collectionAgentId">
+              <mat-option *ngFor="let agent of collectionAgents" [value]="agent.id">
+                {{ agent.displayName }} <{{ agent.email }}>
+              </mat-option>
+            </mat-select>
+          </td>
+          <td><button class="button submit-button shift-up" (click)="assignSelectedRows()"
+              [disabled]="collectionAgentId === 0">Assign</button></td>
+        </tr>
+      </table>
+    </div>
+
+    <div [hidden]="isLoading || dataSource.data.length === 0">
+      <app-search-input (searchcriteria)="searchData($event)" [placeHolder]="placeHolder"></app-search-input>
+      <mat-table #table [dataSource]="dataSource" matSort>
+        <ng-container matColumnDef="selected">
+          <mat-header-cell *matHeaderCellDef>
+            <mat-checkbox [(ngModel)]="selectAll" (change)="selectRecords($event)" [disabled]="isAssigning">
+            </mat-checkbox>
+          </mat-header-cell>
+          <mat-cell *matCellDef="let row">
+            <mat-checkbox [checked]="row.selected" [(ngModel)]="row.selected" [disabled]="isAssigning"></mat-checkbox>
+          </mat-cell>
+        </ng-container>
+        <ng-container matColumnDef="controlNumber">
+          <mat-header-cell *matHeaderCellDef mat-sort-header>Control Number</mat-header-cell>
+          <mat-cell *matCellDef="let row"> {{row.controlNumber}} </mat-cell>
+        </ng-container>
+        <ng-container matColumnDef="controlName">
+          <mat-header-cell *matHeaderCellDef mat-sort-header>Control Name</mat-header-cell>
+          <mat-cell *matCellDef="let row"> {{row.controlName}} </mat-cell>
+        </ng-container>
+        <ng-container matColumnDef="productName">
+          <mat-header-cell *matHeaderCellDef mat-sort-header>Product</mat-header-cell>
+          <mat-cell *matCellDef="let row">{{row.productName}}</mat-cell>
+        </ng-container>
+        <ng-container matColumnDef="productCoverType">
+          <mat-header-cell *matHeaderCellDef mat-sort-header>Product Cover Type</mat-header-cell>
+          <mat-cell *matCellDef="let row">{{row.productCoverType}}</mat-cell>
+        </ng-container>
+        <ng-container matColumnDef="accountNumber">
+          <mat-header-cell *matHeaderCellDef mat-sort-header>Account Number</mat-header-cell>
+          <mat-cell *matCellDef="let row">{{row.accountNumber}}</mat-cell>
+        </ng-container>
+        <ng-container matColumnDef="clientName">
+          <mat-header-cell *matHeaderCellDef mat-sort-header>Client Name</mat-header-cell>
+          <mat-cell *matCellDef="let row">{{row.clientName}}</mat-cell>
+        </ng-container>
+        <ng-container matColumnDef="interestIndicator">
+          <mat-header-cell *matHeaderCellDef mat-sort-header>Interest Indicator</mat-header-cell>
+          <mat-cell *matCellDef="let row">{{row.interestIndicator}}</mat-cell>
+        </ng-container>
+        <ng-container matColumnDef="industry">
+          <mat-header-cell *matHeaderCellDef mat-sort-header>Industry Class</mat-header-cell>
+          <mat-cell *matCellDef="let row">{{row.industry}}</mat-cell>
+        </ng-container>
+        <ng-container matColumnDef="collectionAgent">
+          <mat-header-cell *matHeaderCellDef mat-sort-header>Collection Agent</mat-header-cell>
+          <mat-cell *matCellDef="let row">{{row.collectionAgent}}</mat-cell>
+        </ng-container>
+        <ng-container matColumnDef="debtorsClerk">
+          <mat-header-cell *matHeaderCellDef mat-sort-header>Debtors Clerk</mat-header-cell>
+          <mat-cell *matCellDef="let row">{{row.debtorsClerk}}</mat-cell>
+        </ng-container>
+        <ng-container matColumnDef="status">
+          <mat-header-cell *matHeaderCellDef mat-sort-header>Status</mat-header-cell>
+          <mat-cell *matCellDef="let row">{{row.status}}</mat-cell>
+        </ng-container>
+        <ng-container matColumnDef="balance">
+          <mat-header-cell *matHeaderCellDef mat-sort-header>Balance</mat-header-cell>
+          <mat-cell *matCellDef="let row" class="right-aligned-amounts">{{row.balance | currency:'R'}}</mat-cell>
+        </ng-container>
+        <ng-container matColumnDef="interest">
+          <mat-header-cell *matHeaderCellDef mat-sort-header>Interest</mat-header-cell>
+          <mat-cell *matCellDef="let row" class="right-aligned-amounts">{{row.interest | currency:'R'}}</mat-cell>
+        </ng-container>
+        <ng-container matColumnDef="current">
+          <mat-header-cell *matHeaderCellDef mat-sort-header>Current</mat-header-cell>
+          <mat-cell *matCellDef="let row" class="right-aligned-amounts">{{row.current | currency:'R'}}</mat-cell>
+        </ng-container>
+        <ng-container matColumnDef="balance30Days">
+          <mat-header-cell *matHeaderCellDef mat-sort-header>30 Days</mat-header-cell>
+          <mat-cell *matCellDef="let row" class="right-aligned-amounts">{{row.balance30Days | currency:'R'}}</mat-cell>
+        </ng-container>
+        <ng-container matColumnDef="balance60Days">
+          <mat-header-cell *matHeaderCellDef mat-sort-header>60 Days</mat-header-cell>
+          <mat-cell *matCellDef="let row" class="right-aligned-amounts">{{row.balance60Days | currency:'R'}}</mat-cell>
+        </ng-container>
+        <ng-container matColumnDef="balance90Days">
+          <mat-header-cell *matHeaderCellDef mat-sort-header>90 Days</mat-header-cell>
+          <mat-cell *matCellDef="let row" class="right-aligned-amounts">{{row.balance90Days | currency:'R'}}</mat-cell>
+        </ng-container>
+        <ng-container matColumnDef="balance120Days">
+          <mat-header-cell *matHeaderCellDef mat-sort-header>120 Days</mat-header-cell>
+          <mat-cell *matCellDef="let row" class="right-aligned-amounts">{{row.balance120Days | currency:'R'}}</mat-cell>
+        </ng-container>
+        <ng-container matColumnDef="balance120PlusDays">
+          <mat-header-cell *matHeaderCellDef mat-sort-header>120+ Days</mat-header-cell>
+          <mat-cell *matCellDef="let row" class="right-aligned-amounts">{{row.balance120PlusDays | currency:'R'}}</mat-cell>
+        </ng-container>
+        <ng-container matColumnDef="notes">
+          <mat-header-cell *matHeaderCellDef>Notes</mat-header-cell>
+          <mat-cell *matCellDef="let row">
+            <span class="add-note-icon" (click)="addNote(row)">
+              <mat-icon>add_circle_outline</mat-icon>
+            </span>
+            <span class="link" (click)="showNotes(row)">{{ getNotesLink(row) }}</span>
+          </mat-cell>
+        </ng-container>
+        <mat-header-row *matHeaderRowDef="getDisplayColumns()"></mat-header-row>
+        <mat-row *matRowDef="let row; columns: getDisplayColumns();"></mat-row>
+      </mat-table>
+      <mat-paginator #paginator [length]="dataSource.data ? dataSource.data.length : 0" [pageIndex]="0" [pageSize]="5"
+        [pageSizeOptions]="[5, 10, 20, 50]">
+      </mat-paginator>
+    </div>
+  </div>
+  <ng-container *ngFor="let error of errors">
+    <mat-error>
+      {{ error }}
+    </mat-error>
+  </ng-container>
+
+  <br/>
+  <div *ngIf="isDownloading">
+    <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+    <label class="mat-label other-label">downloading...please wait</label>
+  </div>
+  <br/>
+
+  <div class="form-buttons" class="push-up">
+    <button *ngIf="isAssigning" class="button submit-button" (click)="clearAssignment()">Back</button>
+    <button *ngIf="!isAssigning" class="button submit-button" (click)="showSection('filters')">Back</button>
+    <button *ngIf="!isAssigning" class="button submit-button" (click)="downloadReport()" [disabled]="isDownloading">Download</button>
+    <button *ngIf="!isAssigning" class="button submit-button" (click)="assignCollections()" [disabled]="isDownloading">Assign</button>
+  </div>
+</div>
+<div [hidden]="true">
+  <ssrs-reportviewer [reportserver]="reportServerAudit" [reporturl]="reportUrlAudit"
+    [showparameters]="showParametersAudit" [parameters]="parametersAudit" [language]="languageAudit"
+    [width]="widthAudit" [height]="heightAudit" [toolbar]="toolbarAudit" [format]="format"
+    (downloadComplete)="completeDownload($event)">
+  </ssrs-reportviewer>
+</div>

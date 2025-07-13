@@ -1,0 +1,62 @@
+<div>
+    <mat-card>
+  
+      <mat-card-header class="margin">
+        <mat-card-title class="wizard-font card-title grey">
+          <h1 class="title">Policy Information Document</h1>
+        </mat-card-title>
+      </mat-card-header>
+      <mat-dialog-content>
+        <mat-card-content>  
+          <div *ngIf="isLoading$ | async">
+            <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+            <label class="mat-label other-label"><i>loading document...please wait</i></label>
+          </div>
+    
+          <div *ngIf="isLoadingSendEmail$ | async">
+            <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+            <label class="mat-label other-label"><i>emailing document...please wait</i></label>
+          </div>
+          <div *ngIf="isLoadingDetails$ | async">
+              <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+              <label class="mat-label other-label"><i>loading details...please wait</i></label>
+          </div>
+          <form [formGroup]="form" novalidate>
+              <section class="formGroup">
+                  <mat-form-field class="mat-form-field">
+                      <label class="mat-label other-label">Email</label>
+                      <input matInput formControlName="emailAddress">
+                      <mat-error *ngIf="form.get('emailAddress').hasError('email')">
+                          A valid email address is required
+                      </mat-error>
+                  </mat-form-field>
+              </section>
+          </form>
+          <div class="form-group-button mat-form-button closeBtn">
+            <div class="form-buttons submit-button">
+              <button type="button" (click)="emailDocument()" class="button float-button">Email Document</button>
+              &nbsp;&nbsp;
+              <button type="button" (click)="close()" class="button float-button">Cancel</button>
+            </div>
+          </div>
+          <br>
+          <div [hidden]="!showReport">
+            <mat-card-content>
+              <section>
+                <div [hidden]="!showReport" class="report">
+                  <!-- width: 100vh; -->
+                  <ssrs-reportviewer [reportserver]="reportServerAudit" [reporturl]="reportUrlAudit"
+                    [showparameters]="showParametersAudit" [parameters]="parametersAudit" [language]="languageAudit"
+                    [width]="widthAudit" [height]="heightAudit" [toolbar]="toolbarAudit">
+                  </ssrs-reportviewer>
+                </div>
+              </section>
+            </mat-card-content>
+          </div>
+          <br>
+          
+        </mat-card-content>
+      </mat-dialog-content>
+      
+    </mat-card>
+  </div>

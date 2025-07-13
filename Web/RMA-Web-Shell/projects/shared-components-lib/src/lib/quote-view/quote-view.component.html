@@ -1,0 +1,172 @@
+<div *ngIf="userHasPermission(viewPermission) || userHasPermission(editPermission)">
+  <mat-card *ngIf="(isLoading$ | async)">
+    <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+    <label class="mat-label other-label"><i>{{loadingMessage$ | async}}</i></label>
+  </mat-card>
+
+  <mat-card *ngIf="!(isLoading$ | async)">
+    <div class="menu-bar">
+      <span class="material-icons">
+        request_quote
+      </span>
+      Quotation <span *ngIf="quote && quote.quotationNumber">({{quote.quotationNumber}})</span>
+      <span *ngIf="quote && quote.quoteId > 0 && userHasPermission(requiredAuditPermission)" (click)="openAuditDialog()"
+        class="material-icons pointer right" matTooltip="view audit details">
+        fingerprint
+      </span>
+    </div>
+
+    <mat-card *ngIf="currentUser?.isInternalUser">
+      <div class="flex-parent-element">
+        <div class="flex-child-element">
+          <table class="altRowTable">
+            <tr>
+              <td><b>Lead:</b></td>
+              <td>({{lead.code}}) {{lead.displayName}}</td>
+            </tr>
+            <tr>
+              <td><b>Client Type:</b></td>
+              <td>{{getClientType(lead.clientType)}}</td>
+            </tr>
+            <tr *ngIf="lead.company">
+              <td><b>Industry Class:</b></td>
+              <td>{{getIndustryClass(lead.company.industryClass)}}</td>
+            </tr>
+          </table>
+        </div>
+        <div class="flex-child-element">
+          <table class="altRowTable">
+            <tr>
+              <td><b>Quote Number:</b></td>
+              <td>{{quote.quotationNumber}}</td>
+            </tr>
+            <tr>
+              <td><b>Created Date:</b></td>
+              <td>{{quote.createdDate | date: 'yyyy-MM-dd'}}</td>
+            </tr>
+            <tr>
+              <td><b>Status:</b></td>
+              <td><b>{{getQuoteStatus(quote.quoteStatus)}}</b></td>
+            </tr>
+          </table>
+        </div>
+
+        <div class="flex-child-element">
+          <table class="altRowTable">
+            <tr>
+              <td><b>Product:</b></td>
+              <td>{{getProductName(quote.productId)}}</td>
+            </tr>
+            <tr>
+              <td><b>Product Option(s):</b></td>
+              <td>{{getProductOptionNames(quote.quoteDetailsV2)}}</td>
+            </tr>
+          </table>
+        </div>
+      </div>
+    </mat-card>
+
+    <span *ngIf="quote.quoteStatus == declined || quote.quoteStatus == rejected">
+      <mat-card>
+        <label class="mat-label other-label">
+          <span class="material-icons info">info</span>&nbsp;
+          <i>Reason for <b>{{getQuoteStatus(quote.quoteStatus)}}</b> status: {{quote.declineReason}}</i></label>
+      </mat-card>
+    </span>
+
+    <br />
+    <mat-tab-group animationDuration="500ms">
+      <mat-tab label="Quote{{quote && quote.quotationNumber ? ': ' + quote.quotationNumber : ''}}">
+        <div>
+          <div class="form-buttons">
+            <div>
+              <button class="button submit-button" (click)="openAcceptDialog()"
+                [disabled]="quote.quoteStatus != quoted">
+                <span class="material-icons">thumb_up</span>
+                Accept</button>
+              <button type="button" class="button submit-button" (click)="openDeclineDialog()"
+                [disabled]="quote.quoteStatus != quoted">
+                <span class="material-icons">thumb_down_alt</span>
+                Decline</button>
+              <button type="button" class="button submit-button" (click)="openEmailDialog()"
+                [disabled]="quote.quoteStatus == _new || quote.quoteStatus == amending || quote.quoteStatus == rejected || quote.quoteStatus == declined">
+                <span class="material-icons">send</span>
+                Email Quote
+              </button>
+              <button
+                *ngIf="(userHasPermission(viewLeadPermission) || userHasPermission(editLeadPermission)) && currentUser?.isInternalUser"
+                type="button" class="button submit-button" (click)="viewLead()" [disabled]="(isLoading$ | async)">
+                <span class="material-icons">visibility</span>
+                View Lead
+              </button>
+              <button
+                *ngIf="userHasPermission(startQuoteWizardPermission) && currentUser?.isInternalUser"
+                type="button" class="button submit-button" (click)="startAmendQuoteWizard()"
+                [disabled]="quote.quoteStatus != quoted">
+                <span class="material-icons">settings</span>
+                Amend
+              </button>
+            </div>
+          </div>
+          <br /><br /><br />
+        </div>
+        <div *ngIf="!(quote.quoteStatus == _new || quote.quoteStatus == amending || quote.quoteStatus == rejected)">
+          <ssrs-report-viewer-V2 [reporturl]="reporturl" [parameters]="parameters"></ssrs-report-viewer-V2>
+        </div>
+
+        <span *ngIf="quote.quoteStatus == rejected">
+          <mat-card>
+            <label class="mat-label other-label">
+              <span class="material-icons info">info</span>&nbsp;
+              <i>quotation workflow was cancelled</i></label>
+          </mat-card>
+        </span>
+
+        <span *ngIf="quote.quoteStatus == _new || quote.quoteStatus == amending">
+          <mat-card>
+            <label class="mat-label other-label">
+              <span class="material-icons info">info</span>&nbsp;
+              <i>quotes that are in the process of being captured or amended cannot
+                be viewed, actioned or emailed</i></label>
+          </mat-card>
+
+          <mat-card
+            *ngIf="currentUser?.isInternalUser && (userHasPermission(continueRMAQuoteWizardPermission) || userHasPermission(continueRMLQuoteWizardPermission))">
+            <lib-running-wizards [moduleName]="'clientcare'" [managerName]="'quote-manager'"
+              [linkedItemId]="quote.quoteId" [wizardTypeCSVs]="'rma-quotation,rml-quotation'">
+            </lib-running-wizards>
+          </mat-card>
+        </span>
+      </mat-tab>
+
+      <mat-tab label="SLA{{quote && quote.quotationNumber ? ': ' + quote.quotationNumber : ''}}"
+        *ngIf="userHasPermission(viewSlaPermission) && currentUser?.isInternalUser">
+        <paged-sla-status-change-audits [slaItemType]="slaItemType"
+          [currentQuery]="quoteId"></paged-sla-status-change-audits>
+      </mat-tab>
+
+      <mat-tab
+        *ngIf="quote && !(quote.quoteStatus == _new || quote.quoteStatus == amending) && userHasPermission(viewPermission)"
+        label="Email Audit{{quote && quote.quotationNumber ? ': ' + quote.quotationNumber : ''}}">
+        <email-audit-search [itemType]="'QuoteV2'" [itemId]="quote.quoteId" [rolePlayerContactOptions]="rolePlayerContactOptions"></email-audit-search>
+      </mat-tab>
+
+      <mat-tab *ngIf="lead && userHasPermission(viewPermission) && currentUser?.isInternalUser"
+        label="All Quotes{{lead.code ? ': ' + lead.code : ''}}">
+        <quote-search-V2 [rolePlayerId]="lead.rolePlayerId" [hideLeadColumn]="true"
+          (quoteSelectedEmit)="viewQuote($event)"></quote-search-V2>
+      </mat-tab>
+
+      <mat-tab *ngIf="lead && userHasPermission(viewPermission) && currentUser?.isInternalUser" label="Referrals">
+        <referral-view [targetModuleType]="targetModuleType" [referralItemType]="referralItemType" [itemId]="quote.quoteId"  [referralItemTypeReference]="referralItemTypeReference"></referral-view>
+      </mat-tab>
+
+    </mat-tab-group>
+  </mat-card>
+</div>
+
+<div *ngIf="!userHasPermission(viewPermission) && !userHasPermission(editPermission)">
+  <mat-card>
+    <label class="mat-label other-label"><i>you do not have permission to view/edit quotes</i></label>
+  </mat-card>
+</div>

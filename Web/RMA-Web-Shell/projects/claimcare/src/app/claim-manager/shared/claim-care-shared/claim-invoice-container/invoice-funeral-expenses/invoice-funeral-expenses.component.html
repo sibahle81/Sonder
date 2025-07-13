@@ -1,0 +1,26 @@
+<mat-card class="pad" *ngIf="(isLoading$ | async)">
+  <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+  <label class="mat-label other-label"><i>{{loadingMessages$ | async}}</i></label>
+</mat-card>
+
+<div *ngIf="!(isLoading$ | async)">
+  <mat-card>
+    
+    <div class="menu-bar">
+      <span class="material-icons">
+        receipt_long
+      </span>&nbsp;
+      <label>Funeral Expenses</label>
+      <span *ngIf="!isReadOnly && isEdit && formValid() && !isRepay" (click)="update()" class="material-icons menu-button" matTooltip="edit">
+        save
+      </span>
+      <span class="material-icons menu-button" (click)="save()" *ngIf="(formValid() && !isEdit && isRepay && selectedRepayReason > 0) || (formValid() && !isEdit && !isRepay)" matTooltip="add">
+        save
+      </span>
+    </div>
+
+      <invoice-generic [claimInvoice]="claimInvoice.claimInvoice" [personEvent]="personEvent" 
+      [claimInvoiceType]="funeral" [isReadOnly]="isReadOnly" [action]="description$ | async"></invoice-generic>
+    
+  </mat-card>
+</div>

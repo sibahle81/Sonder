@@ -1,0 +1,15 @@
+<div class="menu-bar">
+  <span class="material-icons">
+    assignment_add
+  </span>
+  <span *ngIf="data.title">{{data.title}}</span>
+  <span (click)="cancel()" class="material-icons pointer right" matTooltip="close">
+    cancel
+  </span>
+  <span *ngIf="selectedClaimRequirementCategories?.length > 0" (click)="save()" class="material-icons pointer right pulse" matTooltip="save">
+    save
+  </span>
+</div>
+
+<claim-requirement-category-search [eventType]="data.eventType" [allowMultiple]="true" [allowInstructionOverride]="data.allowInstructionOverride"
+  (claimRequirementCategoriesSelectedEmit)="setSelectedClaimRequirementCategories($event)"></claim-requirement-category-search>

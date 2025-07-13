@@ -1,0 +1,298 @@
+<mat-card class="main-card">
+  <mat-card-header>
+    <mat-card-title class="wizard-font card-title grey">
+      <h1 class="blue-text">Collections Pool</h1>
+    </mat-card-title>
+  </mat-card-header>
+  <mat-card-content class="main-card-content">
+    <div class="form">
+      <form>
+        <section>
+          <mat-form-field>
+            <label>From</label>
+            <input matInput [matDatepicker]="startDatePicker" date="true" [value]="startDt.value" time="false"
+              (ngModelChange)="startDateChange($event)" [formControl]="startDt" readonly>
+            <mat-datepicker-toggle matSuffix class="picker-toggle" [for]="startDatePicker"></mat-datepicker-toggle>
+            <mat-datepicker #startDatePicker touchUi="true" ng-model-options="{ timezone: 'sast' }"></mat-datepicker>
+          </mat-form-field>
+          <mat-form-field class="mat-form-field-right">
+            <label>To</label>
+            <input matInput [matDatepicker]="endDatePicker" date="true" [value]="endDt.value" time="false"
+              (ngModelChange)="endDateChange($event)" [formControl]="endDt" readonly>
+            <mat-datepicker-toggle matSuffix class="picker-toggle" [for]="endDatePicker"></mat-datepicker-toggle>
+            <mat-datepicker #endDatePicker touchUi="true" ng-model-options="{ timezone: 'sast' }"></mat-datepicker>
+          </mat-form-field>
+        </section>
+        <section>
+          <mat-form-field>
+            <!--select input field-->
+            <label class="mat-label other-label">Collection Type</label>
+            <mat-select name="collectionTypes" id="collectionTypes" (selectionChange)="collectionTypeChanged($event)"
+              [(ngModel)]="selectedCollectionType">
+              <mat-option *ngFor="let collectionType of collectionTypes" [value]="collectionType.id">
+                {{ collectionType.name}}
+              </mat-option>
+            </mat-select>
+          </mat-form-field>
+          <mat-form-field class="mat-form-field-right">
+            <!--select input field-->
+            <label class="mat-label other-label">Collection Status</label>
+            <mat-select name="collectionStatuses" id="collectionStatuses"
+              (selectionChange)="collectionStatusChanged($event)" [(ngModel)]="selectedCollectionStatus">
+              <mat-option *ngFor="let collectionStatus of collectionStatuses" [value]="collectionStatus.id">
+                {{ collectionStatus.name}}
+              </mat-option>
+            </mat-select>
+          </mat-form-field>
+        </section>
+      </form>
+      <form [formGroup]="form" class="search-form" class="form-text-align" novalidate>
+        <mat-form-field  class="search-input-margin">
+          <label class="mat-label other-label">Filter</label>
+          <mat-select name="filter" id="filter" formControlName="filter"
+            (selectionChange)="selectedFilterChanged($event)">
+            <mat-option [value]="1">Policy Number</mat-option>
+          </mat-select>
+          <mat-error *ngIf="form.get('filter').hasError('required')">
+            Please select a filter.
+          </mat-error>
+        </mat-form-field>
+        <!--search input field-->
+        <mat-form-field class="mat-form-field-right" class="search-input-margin">
+          <label class="mat-label other-label">Query</label>
+          <input type="search" matInput formControlName="query" name="query" minLength="3"
+            matTooltip="Search by policy number, debtor name!" matTooltipShowDelay="1000">
+          <mat-icon class="search-icon" (click)="search();" matSuffix>search</mat-icon>
+          <!--<mat-icon matSuffix>search</mat-icon>-->
+          <mat-error *ngIf="form.get('query').hasError('required')">
+            Please enter a search term.
+          </mat-error>
+          <mat-error *ngIf="form.get('query').hasError('minlength')">
+            Please enter a search term longer than <strong>3 characters</strong>
+          </mat-error>
+        </mat-form-field>
+        <!--<div class="form-buttons" matTooltip="">
+              <button class="button submit-button" (click)="searchData();">
+                Search</button>
+          </div>-->
+      </form>
+    </div>
+
+    <div *ngIf="dataSource.isLoading">
+      <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+      <span *ngIf="dataSource.isLoading" class="site-font grey progress-bar-margin"
+      ><i>{{dataSource.statusMsg}}</i></span>
+    </div>
+    <div [hidden]="paginator.length=== 0">
+      <div class="mat-container mat-elevation-z8" [hidden]="dataSource.isLoading">
+        <div [hidden]="paginator.length=== 0">
+          <mat-table #table [dataSource]="dataSource" multiTemplateDataRows matSort>
+            <!-- Expand Column -->
+            <ng-container matColumnDef="expand">
+              <mat-header-cell *matHeaderCellDef> EXPAND </mat-header-cell>
+              <mat-cell *matCellDef="let row" (click)="expandCollapse(row)">
+                <span *ngIf="!row.isExpanded"><span class="material-icons expand-icon">add_circle</span></span>
+                <span *ngIf="row.isExpanded"><span class="material-icons expand-icon">remove_circle</span></span>
+              </mat-cell>
+            </ng-container>
+            <!-- Id  -->
+            <ng-container matColumnDef="bankReference">
+              <mat-header-cell *matHeaderCellDef mat-sort-header> Bank Reference </mat-header-cell>
+              <mat-cell *matCellDef="let row"> {{row.bankReference}} </mat-cell>
+            </ng-container>
+
+            <ng-container matColumnDef="amount">
+              <mat-header-cell *matHeaderCellDef mat-sort-header> Amount </mat-header-cell>
+              <mat-cell *matCellDef="let row" class="right-aligned-amounts"> {{ row.amount | currency:'R' }} </mat-cell>
+            </ng-container>
+
+            <!-- Date -->
+            <ng-container matColumnDef="createdDate">
+              <mat-header-cell *matHeaderCellDef mat-sort-header> Debit Order Date </mat-header-cell>
+              <mat-cell *matCellDef="let row"> {{this.datePipe.transform(row.debitOrderDate, 'mediumDate')}} </mat-cell>
+            </ng-container>
+
+            <!-- Date -->
+            <ng-container matColumnDef="submissionDate">
+              <mat-header-cell *matHeaderCellDef mat-sort-header> Submission Date </mat-header-cell>
+              <mat-cell *matCellDef="let row"> {{this.datePipe.transform(row.submissionDate, 'mediumDate')}} </mat-cell>
+            </ng-container>
+
+            <!-- Date -->
+            <ng-container matColumnDef="rejectionDate">
+              <mat-header-cell *matHeaderCellDef mat-sort-header> Rejection Date </mat-header-cell>
+              <mat-cell *matCellDef="let row"> {{this.datePipe.transform(row.rejectionDate, 'mediumDate')}} </mat-cell>
+            </ng-container>
+
+            <!-- Date -->
+            <ng-container matColumnDef="collectionConfirmationDate">
+              <mat-header-cell *matHeaderCellDef mat-sort-header> Collection Date </mat-header-cell>
+              <mat-cell *matCellDef="let row"> {{this.datePipe.transform(row.collectionConfirmationDate, 'mediumDate')}}
+              </mat-cell>
+            </ng-container>
+
+            <!-- Date -->
+            <ng-container matColumnDef="reconciliationDate">
+              <mat-header-cell *matHeaderCellDef mat-sort-header> Reconciliation Date </mat-header-cell>
+              <mat-cell *matCellDef="let row"> {{this.datePipe.transform(row.reconciliationDate, 'mediumDate')}}
+              </mat-cell>
+            </ng-container>
+
+            <!-- Date -->
+            <ng-container matColumnDef="reversalDate">
+              <mat-header-cell *matHeaderCellDef mat-sort-header> Reversal Date </mat-header-cell>
+              <mat-cell *matCellDef="let row"> {{this.datePipe.transform(row.reversalDate, 'mediumDate')}} </mat-cell>
+            </ng-container>
+
+            <!--collection type -->
+            <ng-container matColumnDef="collectionType">
+              <mat-header-cell *matHeaderCellDef mat-sort-header> Collection Type </mat-header-cell>
+              <mat-cell *matCellDef="let row"> {{this.getCollectionTypeDesc(row.collectionType)}} </mat-cell>
+            </ng-container>
+
+            <!--collection status -->
+            <ng-container matColumnDef="collectionStatus">
+              <mat-header-cell *matHeaderCellDef mat-sort-header> Collection Status </mat-header-cell>
+              <mat-cell *matCellDef="let row"> {{this.getCollectionStatusDesc(row.collectionStatus)}} </mat-cell>
+            </ng-container>
+
+            <!--Debtor Details -->
+            <ng-container matColumnDef="debtor">
+              <mat-header-cell *matHeaderCellDef mat-sort-header> Debtor Details </mat-header-cell>
+              <mat-cell *matCellDef="let row"> {{row.debtor}} </mat-cell>
+            </ng-container>
+
+            <!--Account Details -->
+            <ng-container matColumnDef="accountNo">
+              <mat-header-cell *matHeaderCellDef mat-sort-header> Account Details </mat-header-cell>
+              <mat-cell *matCellDef="let row"> {{row.accountNo}} </mat-cell>
+            </ng-container>
+
+            <!--Error Code -->
+            <ng-container matColumnDef="errorDescription">
+              <mat-header-cell *matHeaderCellDef mat-sort-header> Error </mat-header-cell>
+              <mat-cell *matCellDef="let row"> {{row.errorDescription}} </mat-cell>
+            </ng-container>
+
+            <!-- Actions -->
+            <ng-container matColumnDef="actions">
+              <mat-header-cell *matHeaderCellDef mat-sort-header></mat-header-cell>
+              <mat-cell *matCellDef="let row" [matMenuTriggerFor]="menu" (click)="filterMenu(row)">
+                <span class="material-icons pointer right">more_vert</span>
+                <mat-menu #menu="matMenu">
+                  <button mat-menu-item *ngFor="let menu of menus" (click)="onMenuItemClick(row, menu)"
+                    disabled={{menu.disable}}>{{menu.title}}</button>
+                </mat-menu>
+              </mat-cell>
+            </ng-container>
+
+            <div [hidden]=" true">
+              <ng-container matColumnDef="expandedDetail">
+                <mat-cell class="expand" *matCellDef="let row">
+                  <div>
+                    <table>
+                      <tr class="ChildData">
+                        <td><b class="mat-cell-label">Collection Type:</b>
+                          {{this.getCollectionTypeDesc(row.collectionType)}}</td>
+                      </tr>
+                      <tr class="ChildData">
+                        <td><b class="mat-cell-label">Batch No:</b> {{row.batchReference}}</td>
+                      </tr>
+                    </table>
+                  </div>
+                </mat-cell>
+              </ng-container>
+            </div>
+            <mat-header-row *matHeaderRowDef="getDisplayedColumns();"></mat-header-row>
+            <mat-row *matRowDef="let row; columns: getDisplayedColumns();" [class.expanded]="row.isExpanded"></mat-row>
+            <mat-row *matRowDef="let row; columns: ['expandedDetail'];"
+              [@detailExpand]="row.isExpanded == true ? 'expanded' : 'collapsed'">
+            </mat-row>
+          </mat-table>
+          <div [hidden]="dataSource.isLoading">
+            <mat-paginator #paginator [length]="dataSource.rowCount$" [pageSize]="25"
+              [pageSizeOptions]="[5, 10, 25, 50, 100]">
+            </mat-paginator>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <div [hidden]="paginator.length> 0 || dataSource.isLoading" class="paginator-margin">
+      <span class="grey site-font">No records in collection pool.</span>
+    </div>
+
+    <div [hidden]="dataSource.isLoading || paginator.length> 0 || !currentQuery || currentQuery == ''"
+      class="no-search-results-add-button">
+      <div class="site-font grey">
+        <p class="grey">Your search - <strong>{{currentQuery}}</strong> - did not match any collection records.</p>
+        <span>Suggestions: </span>
+        <ul>
+          <li>Make sure that all words are spelled correctly.</li>
+          <li>Try different keywords.</li>
+          <li>Try more general keywords.</li>
+          <li>Try fewer keywords.</li>
+        </ul>
+      </div>
+    </div>
+    <div [hidden]="dataSource.isLoading">
+      <p class="underline"></p>
+    </div>
+    <div>
+      <table class="form-group row">
+        <div class="report-download-container">
+          <table>
+            <tr>
+              <td class="whitesmoke-background">
+                <input type="image" alt="Dowload" (click)="downloadReport()" src="/assets/images/downloads-icon.png"
+                  width="40" height="40" />
+              </td>
+              <td class="whitesmoke-background">
+                <mat-radio-group aria-labelledby="reportformat-radio-group-label" class="reportformat-radio-group"
+                  [(ngModel)]="selectedreportFormat" (change)="reportFormatChange($event)">
+                  <mat-radio-button class="reportformat-radio-button" *ngFor="let reportFormat of reportFormats"
+                    [value]="reportFormat">
+                    {{reportFormat}} &nbsp;&nbsp;
+                  </mat-radio-button>
+                </mat-radio-group>
+              </td>
+            </tr>
+            <tr *ngIf="isDownloading">
+              <td colspan="2" class="whitesmoke-background">
+                <div>
+                  <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+                  <label class="mat-label other-label">
+                    <i>
+                      downloading {{selectedreportFormat}} Collection list
+                      report...
+                    </i>
+                  </label>
+                </div>
+              </td>
+            </tr>
+            <tr>
+            </tr>
+          </table>
+        </div>
+        <div [hidden]="true">
+          <ssrs-reportviewer [reportserver]="reportServerAudit" [reporturl]="reportUrlAudit"
+            [showparameters]="showParametersAudit" [parameters]="parametersAudit" [language]="languageAudit"
+            [width]="widthAudit" [height]="heightAudit" [toolbar]="toolbarAudit" [format]="selectedreportFormat"
+            [isDownload]="isDownload" [reportName]="'RMACollectionsReport'">
+          </ssrs-reportviewer>
+        </div>
+        <br />
+        <!-- <div style="display: inline-block;">
+                    <button [disabled]="paginator.length=== 0 || dataSource.isLoading" mat-raised-button style="background-color:#005A7C;" (click)="exportToExcel()">Export</button>
+                </div> -->
+        <div
+          *ngIf="selectedCollectionStatus == 1 && paginator.length> 0 && isVisible && hasPermissionSubmitAllDebitOrders"
+          class="exportButton">
+          <button mat-raised-button class="submit-pending"  (click)="submitAll()">Submit All
+            (Pending)</button>
+        </div>
+      </table>
+    </div>
+  </mat-card-content>
+</mat-card>

@@ -1,0 +1,89 @@
+<mat-tab-group animationDuration="500ms">
+  <mat-tab label="Requirements">
+    
+    <mat-card *ngIf="!selectedPersonEventClaimRequirement">
+      <div class="menu-bar" *ngIf="!(isLoading$ | async)">
+        <span class="material-icons">
+          checklist
+        </span>&nbsp;Claim Requirements
+
+        <span *ngIf="!(isLoading$ | async)" class="material-icons pointer right" matTooltip="refresh"
+          (click)="refresh()">
+          restart_alt
+        </span>
+
+        <span *ngIf="!(isLoading$ | async) && !isReadOnly" class="material-icons pointer right" matTooltip="request additional documents"
+          (click)="requestAdditionalDocuments()">
+          assignment_add
+        </span>
+      </div>
+
+      <div *ngIf="(isLoading$ | async)">
+        <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+        <label class="mat-label other-label"><i>{{loadingMessages$ | async}}</i></label>
+      </div>
+
+      <div *ngIf="personEventClaimRequirements.length == 0 &&  !(isLoading$ | async)">
+        <i>No claim requirements were found</i>
+      </div>
+      
+      <table *ngIf="personEventClaimRequirements.length != 0 && !(isLoading$ | async)" class="altRowTable table">
+        <tr>
+          <th>Requirement Category</th>
+          <th>Date Created</th>
+          <th>Date Closed</th>
+          <th>Instruction</th>
+          <th>Last User</th>
+          <th>Member Visibility</th>
+          <th *ngIf="!isReadOnly">Actions</th>
+        </tr>
+        <tr *ngFor="let personEventClaimRequirement of personEventClaimRequirements"
+          [ngStyle]="{'color':  !personEventClaimRequirement.dateClosed ? 'red' : 'black' }" [ngClass]="personEventClaimRequirement.isDeleted ? 'excluded' : ''" >
+          <td>{{personEventClaimRequirement.claimRequirementCategory.name}}</td>
+          <td>{{personEventClaimRequirement.dateOpened ? (personEventClaimRequirement.dateOpened | date:'yyyy-MM-dd'):
+            (personEvent.createdDate | date:'yyyy-MM-dd')}}</td>
+          <td>{{personEventClaimRequirement.dateClosed ? (personEventClaimRequirement.dateClosed | date:'yyyy-MM-dd') :
+            'N/A'}}</td>
+          <td>{{personEventClaimRequirement.instruction != null ? personEventClaimRequirement.instruction :
+            personEventClaimRequirement.claimRequirementCategory.name}}</td>
+          <td>{{personEventClaimRequirement.modifiedBy}}</td>
+          <td>{{personEventClaimRequirement.claimRequirementCategory.isMemberVisible}}</td>
+          <td *ngIf="!isReadOnly" style="display: flex">
+              <span class="material-icons pointer right" 
+                (click)="uploadRequiredDocument(personEventClaimRequirement)" matTooltip="upload file">
+                upload_file
+              </span>
+              <span class="material-icons pointer right" 
+                (click)="deleteRequirement(personEventClaimRequirement)" matTooltip="delete requirement">
+                delete
+              </span>
+          </td>
+        </tr>
+      </table>
+    </mat-card>
+
+    <mat-card *ngIf="selectedPersonEventClaimRequirement">
+      <div class="menu-bar" *ngIf="!(isLoading$ | async)">
+        <span *ngIf="selectedPersonEventClaimRequirement" class="material-icons pointer right pulse" matTooltip="back"
+          (click)="reset()">
+          arrow_back
+        </span>
+      </div>
+
+      <document-uploader [documentSet]="selectedPersonEventClaimRequirement.claimRequirementCategory.documentSet"
+                [documentTypeFilter]="documentFilter" 
+                [forceRequiredDocumentTypeFilter]="documentFilter" 
+                [systemName]="documentSystemName"
+                [keyName]="'PersonEventId'"
+                [keyValue]="personEvent.personEventId"
+                [documentUploadStatus]="documentUploadStatus"
+                (requiredDocumentsUploadedEmit)="requiredDocumentsUploaded($event)"></document-uploader>
+    </mat-card>
+  </mat-tab>
+
+  <mat-tab label="Additional Requirements">
+    <additional-documents 
+              [additionalRequiredDocuments]="additionalRequiredDocuments" [isAdditionalDocumentsLoading]="isAdditionalRequiredDocumentsLoading$"
+              [personEvent]="personEvent" (fetchAdditionalRequiredDocuments)="getAdditionalRequiredDocuments()"></additional-documents>
+  </mat-tab>
+</mat-tab-group>

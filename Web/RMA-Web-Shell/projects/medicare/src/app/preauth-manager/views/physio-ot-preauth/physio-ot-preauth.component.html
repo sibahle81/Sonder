@@ -1,0 +1,43 @@
+<form [formGroup]="form" *ngIf="this.form">
+    <div class="mat-header">
+        <h1 class="mat-header-text">Capture Physio/OT Authorisation</h1>
+        <button *ngIf="resetbtnShow" class="button submit-button" (click)="resetForm()">Reset</button>
+    </div>
+    <button type="button" title="Click to add Physio/OT auth" class="button float-button submit-button import-button"
+        (click)="addPhysioOTDetails()">+</button>
+    <button type="button" title="Click to remove Physio/OT auth" class="button float-button submit-button import-button"
+        (click)="removePhysioOTDetails()">-</button>
+    <div *ngIf="showPhysioOTCapture">
+        <br />
+        <healthcareprovider-search #healthcareProviderSearch [healthCareProviderSearchType]="PhysioOT"   [showTelephoneNumber]="false"
+            (healthCareProviderChanged)="healthCareProviderChangedFunction($event)"></healthcareprovider-search>
+        <br />
+        <preauth-diagnosis [preAuthDiagnosisType]="PhysioOT" [showTreamentBaskets]="false"></preauth-diagnosis>
+        <br />
+        <mat-form-field class="date-field mat-form-field-right" color="accent">
+            <label class="mat-label other-label mandatory-field">Date authorised from</label>
+            <input matInput [matDatepicker]="pickerPhysioAuthFrom" formControlName="dateAuthorisedFromPhysio">
+            <mat-datepicker-toggle style=" position: absolute !important;right: 0 !important;top: 18px  !important;"
+                matSuffix [for]="pickerPhysioAuthFrom"></mat-datepicker-toggle>
+            <mat-datepicker #pickerPhysioAuthFrom></mat-datepicker>
+        </mat-form-field>
+        <mat-form-field class="date-field mat-form-field-right" color="accent">
+            <label class="mat-label other-label mandatory-field">Date authorised to</label>
+            <input matInput [matDatepicker]="pickerPhysioAuthTo" formControlName="dateAuthorisedToPhysio">
+            <mat-datepicker-toggle style=" position: absolute !important;right: 0 !important;top: 18px  !important;"
+                matSuffix [for]="pickerPhysioAuthTo"></mat-datepicker-toggle>
+            <mat-datepicker #pickerPhysioAuthTo></mat-datepicker>
+        </mat-form-field>
+        <br />
+        <mat-form-field class="mat-form-field-right">
+            <label class="mat-label other-label mandatory-field">Motivation</label>
+            <textarea matInput cdkTextareaAutosize cdkAutosizeMinRows="3" cdkAutosizeMaxRows="5"
+                formControlName="motivation" class="mat-input-element" minlength="10"
+                maxlength="1000"></textarea>
+        </mat-form-field>
+        <br />
+        <preauth-breakdown #preAuthBreakdown [preAuthBreakdownType]="PhysioOT" [showLevelOfCare]="false" [showResetButton]="false" authType="PhysioOT"
+            [healthCareProvider]="healthCareProvider" [preAuthClaimDetail]="preAuthClaimDetail"></preauth-breakdown>
+    </div>
+    <br /><br /><br /><br />
+</form>

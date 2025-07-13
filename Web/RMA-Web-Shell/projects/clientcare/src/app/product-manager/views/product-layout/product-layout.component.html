@@ -1,0 +1,30 @@
+﻿<div>
+    <div>
+        <nav class="innertop-nav">
+            <button mat-button [routerLink]="['/clientcare/product-manager']" class='Activebutton'>Home</button>
+            <button mat-button [routerLink]="['/clientcare/product-manager/product-list']"
+                *ngIf="canAddProduct || canViewProduct" class='Activebutton'>Products</button>
+            <button mat-button [routerLink]="['/clientcare/product-manager/product-option-list']"
+                *ngIf="canAddProductOption || canViewProductOption" class='Activebutton'>Options</button>
+
+            <ng-container *ngIf="!canUploadBenefits">
+                <button mat-button [routerLink]="['/clientcare/product-manager/benefit-list']"
+                *ngIf="canAddBenefit || canViewBenefit" class='Activebutton'>Benefits</button>
+            </ng-container>
+
+            <ng-container *ngIf="canUploadBenefits">
+                <button mat-button [matMenuTriggerFor]="menu2" class='Activebutton'>Benefits</button>
+                <mat-menu #menu2="matMenu" [overlapTrigger]="false">
+                    <button mat-button [routerLink]="['/clientcare/product-manager/benefit-list']" *ngIf="canAddBenefit || canViewBenefit">Manage Benefits</button><br>
+                    <button mat-button [routerLink]="['/clientcare/product-manager/benefit-upload']">Upload Benefit</button>
+                    <button mat-button [routerLink]="['/clientcare/product-manager/benefit-upload-error-audit']">Upload Benefit Errors</button>
+                </mat-menu>
+            </ng-container>
+
+        </nav>
+    </div>
+
+    <div [hidden]="loadingMessage != null || error != null" class="container-padding">
+        <router-outlet></router-outlet>
+    </div>
+</div>

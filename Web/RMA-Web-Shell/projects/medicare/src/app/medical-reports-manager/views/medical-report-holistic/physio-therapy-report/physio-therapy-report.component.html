@@ -1,0 +1,27 @@
+<mat-card>
+    <div class="menu-bar">
+      <span class="material-icons">
+        assignment
+      </span>
+      Physio Therapy
+      <span *ngIf="form && form.valid" (click)="save()" class="material-icons pointer right pulseGreen" matTooltip="save">
+          save
+      </span>
+    </div>
+    <br />
+    <form [formGroup]="form" name="form" class="mat-container details-form" novalidate>
+        <div *ngIf="isLoadingCategories">
+            <mat-progress-bar mode="indeterminate" [ngClass]="{ 'loading-main-double-menu-progress': doubleMenu, 'loading-main-single-menu-progress': !doubleMenu }">
+            </mat-progress-bar>
+            <p class="site-font grey">Loading categories...</p>
+        </div>
+
+        <section>                
+            <mat-form-field class="mat-form-field">
+                <label class="mat-label other-label mandatory-field">Physio Therapy Details</label>
+                <textarea matInput cdkTextareaAutosize cdkAutosizeMinRows="3" cdkAutosizeMaxRows="5" id="preExistingConditions"
+                    formControlName="physioTherapyDescription" id="physioTherapyDescription" name="physioTherapyDescription" class="mat-input-element" maxlength="1000"></textarea>
+            </mat-form-field>
+        </section>
+    </form>
+</mat-card>

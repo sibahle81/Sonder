@@ -1,0 +1,245 @@
+<div class="page-header"></div>
+<div style="margin-top: -28px;" class="page-container">
+  <mat-tab-group>
+    <mat-tab label="{{this.userDisplayName}}"></mat-tab>
+    <mat-tab label="User Details">
+      <mat-card>
+        <mat-card-header>
+          <mat-card-title class="wizard-font card-title grey">
+            <h1 class="wizard-font" style="padding: 0;">User Details</h1>
+          </mat-card-title>
+        </mat-card-header>
+
+        <div [hidden]="!isCurrentUser" class="left-margin wizard-font orange">
+          <span>The below user details are in read-only mode.<br />You may not edit your own user
+            details</span>
+        </div>
+
+        <mat-card-content style="margin-left: 10px;">
+
+          <form [formGroup]="form" (ngSubmit)="save()" class="mat-container details-form" novalidate>
+            <section>
+              <!--User type-->
+              <mat-form-field>
+                <div [hidden]="!authenticationTypes">
+                  <label class="mat-label other-label mandatory-field">Authentication Type</label>
+                  <mat-select name="authenticationType" id="authenticationType" #authenticationType
+                    formControlName="authenticationType" [(value)]="authenticationTypeId">
+                    <mat-option *ngFor="let authenticationType of authenticationTypes" [value]="authenticationType.id">
+                      {{authenticationType.name}}
+                    </mat-option>
+                  </mat-select>
+                  <mat-error *ngIf="authenticationType.errorState">
+                    Authentication type is <strong>required</strong>
+                  </mat-error>
+                </div>
+              </mat-form-field>
+              <!--Tenant-->
+              <mat-form-field class="mat-form-field-right">
+                <label class="mat-label other-label mandatory-field">Tenant</label>
+                <mat-select name="tenant" id="tenant" #tenant formControlName="tenant" [(value)]="tenantId">
+                  <mat-option *ngFor="let tenant of tenants" [value]="tenant.id">{{tenant.name}}
+                  </mat-option>
+                </mat-select>
+                <mat-error *ngIf="tenant.errorState">
+                  Tenant is <strong>required</strong>
+                </mat-error>
+              </mat-form-field>
+            </section>
+            <section>
+              <!--User role-->
+              <mat-form-field>
+                <label class="mat-label other-label mandatory-field">User Role</label>
+                <mat-select name="role" id="role" #role formControlName="role" [(value)]="roleId">
+                  <mat-option *ngFor="let role of roles" [value]="role.id">{{role.name}}</mat-option>
+                </mat-select>
+                <mat-error *ngIf="role.errorState">
+                  User role is <strong>required</strong>
+                </mat-error>
+              </mat-form-field>
+              <!--Email-->
+              <mat-form-field class="mat-form-field-right">
+                <label class="mat-label other-label mandatory-field">Email</label>
+                <!-- // todo  -->
+                <input matInput maxlength="50" id="email" name="email" formControlName="email" unique-validator
+                  [table]="'User'" [field]="'Email'" [serviceType]="1" [currentValue]="currentEmail">
+                <mat-error *ngIf="form.get('email').hasError('email')">
+                  A <strong>valid</strong> email address required
+                </mat-error>
+                <mat-error *ngIf="form.get('email').hasError('isTaken')">
+                  This email <strong>already exists</strong>
+                </mat-error>
+              </mat-form-field>
+            </section>
+            <section>
+              <!--Display name-->
+              <mat-form-field>
+                <label class="mat-label other-label mandatory-field">Display Name</label>
+                <input matInput minlength="3" maxlength="50" id="displayName" name="displayName"
+                  formControlName="displayName" />
+                <mat-error *ngIf="form.get('displayName').hasError('required')">
+                  Display is <strong>required</strong>
+                </mat-error>
+                <mat-error *ngIf="form.get('displayName').hasError('minlength')">
+                  Display name must be at least <strong>three characters</strong>
+                </mat-error>
+              </mat-form-field>
+              <mat-checkbox id="isActive" name="isActive" formControlName="isActive" class="checkbox"
+                (change)="statusChange($event)">
+                <label class="mat-label other-label">Is active?</label>
+                <label [hidden]="isChecked" class="left-margin wizard-font orange">This user will be
+                  deactivated</label>
+              </mat-checkbox>&nbsp;&nbsp;
+              <mat-checkbox id="isInternalUser" name="isInternalUser" formControlName="isInternalUser" class="checkbox"
+                (change)="isInternalUserChange($event)">
+                <label class="mat-label other-label">Is Internal User?</label>
+              </mat-checkbox>
+            </section>
+
+            <last-modified-by type="User"></last-modified-by>
+
+            <div class="form-group-button mat-form-button" *ngIf="!isSubmitting">
+              <div *ngIf="!form.disabled" class="form-buttons" matTooltip="No changes have been made"
+                [matTooltipDisabled]="!form.pristine">
+                <button [disabled]="form.pristine" class="button float-button submit-button"
+                  *ngIf="showSave">Save</button>
+              </div>
+
+              <div (click)="edit()" *ngIf="form.disabled && !isSubmitting" class="form-buttons"
+                matTooltip="You may not edit your own user details" [matTooltipDisabled]="!isCurrentUser">
+                <button [disabled]="isCurrentUser" type="button" class="button float-button submit-button"
+                  *ngIf="showSave">Edit</button>
+              </div>
+
+              <div (click)="resetPassword()" class="form-buttons" *ngIf="showResetPassword">
+                <button type="button" class="button float-button submit-button">Reset Password</button>
+              </div>
+
+              <div (click)="back()" class="form-buttons">
+                <button type="button" class="button float-button submit-button">Back</button>
+              </div>
+            </div>
+          </form>
+        </mat-card-content>
+      </mat-card>
+    </mat-tab>
+    <mat-tab label="Permissions">
+      <div style="position: inherit;">
+        <div *ngIf="permissionRefactorFeatureFlag"><br /><br />
+          <label>User role: </label><label class="brightEmphasisLabel">{{this.roleName}}</label>
+          <br />
+          <ul>
+            <li>Role permissions are underlined</li>
+            <li>User permission overrides are emphasised</li>
+          </ul>
+          <br /><br />
+        </div>
+
+        <mat-tab-group>
+          <mat-tab *ngFor="let module of systemModules" [label]="module.name">
+            <br /><br />
+            <div style="min-height: 120px;">
+              <ng-container *ngFor="let group of permissionGroups | permissionGroupFilter:module.id">
+                <ng-container *ngIf="group.permissions">
+                  <permisson-group [permissionGroup]="group" [roleSecurityRank]="roleSecurityRank"
+                    [currentEntityPermissions]="currentEntityPermissionIds"
+                    (multipleChecked)="onMultipleSelected($event)" (singleChecked)="onSingleSelected($event)"
+                    [inEditPermissionsMode]="inEditPermissionsMode">
+                  </permisson-group>
+                </ng-container>
+              </ng-container>
+            </div>
+          </mat-tab>
+        </mat-tab-group>
+      </div>
+      <div class="form-group-button mat-form-button">
+        <div class="form-buttons" *ngIf="inEditPermissionsMode">
+          <button [disabled]="isSubmittingPermissions" (click)="savePermissions()"
+            class="button float-button submit-button">Save</button>
+        </div>
+        <div (click)="editPermissions()" *ngIf="!inEditPermissionsMode" class="form-buttons"
+          matTooltip="You may not edit your own user details" [matTooltipDisabled]="!isCurrentUser">
+          <button [disabled]="isCurrentUser" type="button" class="button float-button submit-button">Edit</button>
+        </div>
+        <div (click)="back()" class="form-buttons">
+          <button type="button" class="button float-button submit-button">Back</button>
+        </div>
+      </div>
+    </mat-tab>
+    <mat-tab label="Notes">
+      <notes name="role"></notes>
+    </mat-tab>
+    <mat-tab label="Healthcare Provider Access">
+      <form [formGroup]="userHealthcareProviderAccessForm" class="mat-container details-form" novalidate>
+        <section>
+          <label class="emphasisLabel">Healthcare providers linked to user
+            profile:</label>
+          <br>
+          <div style="display: inline-flex;flex-wrap: wrap; padding: 5px; clear:both; word-wrap: inherit"
+            *ngFor="let userHealthCarePractioner of userHealthCareProviders">
+            <div style="display:inline-block">
+              <input type="checkbox" [value]="userHealthCarePractioner.healthCareProviderId" #cb
+                (change)="this.updateHealthcareProviderList(cb)" [disabled]=" !inEditHealthcareProviderMode"
+                checked="true"><label>{{userHealthCarePractioner.name}} ({{
+                userHealthCarePractioner.practiceNumber}})</label>
+            </div>
+          </div>
+        </section>
+        <section>
+          <hr>
+          <div *ngIf="inEditHealthcareProviderMode">
+            <mat-form-field [floatLabel]="'never'">
+              <input matInput maxlength="50" formControlName="healthCareproviderFilter" id="healthCareproviderFilter"
+                width="300" minLength="3" matTooltip="Search by practice name or number" matTooltipShowDelay="1000">
+
+              <mat-placeholder class="placeholder">Search by practice name or number</mat-placeholder>
+              <mat-icon class="search-icon" (click)="searchForHealthCarePractioner()" matSuffix>search</mat-icon>
+              <button style="visibility: hidden;" class="button submit-button" (click)="searchForHealthCarePractioner()"
+                matTooltip="Search by practice name or number" matTooltipShowDelay="1000">Search</button>
+            </mat-form-field>
+            <div *ngIf="healthCareProviderSearchDataSource.loading$ | async">
+              <mat-progress-bar mode="indeterminate"
+                [ngClass]="{ 'loading-main-double-menu-progress': doubleMenu, 'loading-main-single-menu-progress': !doubleMenu }">
+              </mat-progress-bar>
+              <p class="site-font grey">Searching...</p>
+            </div>
+            <section *ngIf="healthCareProviderSearchDataSource && healthCareProviderSearchDataSource.searchResult">
+              <label class="emphasisLabel">Search results for healthCare
+                providers</label><br>
+              <br>
+              <div class="mat-container searchResult"
+                *ngFor="let healthCareProvider of healthCareProviderSearchDataSource.searchResult">
+                <div style="display:inline-block">
+                  <input type="checkbox" [value]="healthCareProvider.healthCareProviderId" #cb
+                    (change)="this.updateHealthcareProviderList(healthCareProvider, cb)"
+                    [disabled]=" !inEditHealthcareProviderMode"><label>{{healthCareProvider.name}} (PN: {{
+                    healthCareProvider.practiceNumber}})</label>
+                </div>
+              </div>
+              <br>
+            </section>
+          </div>
+          <div
+            [ngClass]="healthCareProviderSearchDataSource && healthCareProviderSearchDataSource.searchResult ? 'show' : 'hide'">
+            <mat-paginator #paginator [length]="healthCareProviderSearchDataSource.rowCount$" [pageIndex]="0"
+              [pageSize]="20" [pageSizeOptions]="[20, 50, 100]">
+            </mat-paginator>
+          </div>
+          <div class="form-group-button mat-form-button">
+            <div class="form-buttons" matTooltip="You may not edit your own user details"
+              [matTooltipDisabled]="!isCurrentUser">
+              <button (click)="inEditHealthcareProviderMode = true" *ngIf="!inEditHealthcareProviderMode && showSave"
+                class="button float-button submit-button">Edit</button>
+              <button (click)="saveHealthCarePractionerToUserProfile()" *ngIf="inEditHealthcareProviderMode"
+                class="button float-button submit-button">Save</button>
+              &nbsp;&nbsp;<button type="button" class="button float-button submit-button" (click)="back()">Back</button>
+            </div>
+          </div>
+        </section>
+      </form>
+    </mat-tab>
+    <mat-tab label="Audit Log">
+      <audit-log name="role"></audit-log>
+    </mat-tab>
+  </mat-tab-group>
+</div>

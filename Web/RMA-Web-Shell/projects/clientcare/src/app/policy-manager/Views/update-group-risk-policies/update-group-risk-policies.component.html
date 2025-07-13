@@ -1,0 +1,30 @@
+<div>
+  <h1>Update Group Risk Policies</h1>
+</div>
+<mat-tab-group animationDuration="500ms">
+  <mat-tab label="Search Members">
+    <member-search-V2 [basicMode]="false" (memberSelectedEmit)="setRolePlayer($event)"></member-search-V2>
+  </mat-tab>
+</mat-tab-group>
+<div  *ngIf="schemeRolePlayerPayeeId === 0" >
+  <mat-expansion-panel  [expanded]="true">
+    <!--Selected Employer/Company Details-->
+    <mat-expansion-panel-header>
+    </mat-expansion-panel-header>
+    <mat-card>
+      <div class="menu-bar">
+        Company Details      </div>
+      <mat-card-content>
+        <company-view [rolePlayer]="employerRolePlayer"  [isReadOnly]="true" ></company-view>
+    </mat-card-content>
+    <mat-card-footer>
+      <div class="form-group-button mat-form-button form-buttons submit-button mat-elevation-z8"  style="margin-bottom: 10px;float: right;">
+        <button class="button submit-button" (click)="viewGroupRiskPolicies()">View/Maintain Policies</button>
+      </div>
+    </mat-card-footer>
+    </mat-card>
+  </mat-expansion-panel>
+
+  <br />
+
+</div>

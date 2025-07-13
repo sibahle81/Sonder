@@ -1,0 +1,29 @@
+<mat-card class="pad" *ngIf="(isLoading$ | async)">
+  <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+  <label class="mat-label other-label"><i>Removing claim from STP process...please wait</i></label>
+</mat-card>
+
+<div [hidden]="(isLoading$ | async)">
+  <div class="menu-bar">
+    <span class="material-icons">
+      person_remove
+    </span>&nbsp; Exit Reason Note
+    <span class="material-icons pointer right" matTooltip="cancel" (click)="cancel()">
+      cancel
+    </span>
+    <span class="material-icons pointer right" matTooltip="save" (click)="save()">
+      save
+    </span>
+  </div>
+
+  <mat-card>
+    <div>
+      <textarea [formControl]="noteMessage" class="text-box"></textarea>
+      <div [hidden]="!hasError">
+        <mat-error>
+          Note is required*
+        </mat-error>
+      </div>
+    </div>
+  </mat-card>
+</div>

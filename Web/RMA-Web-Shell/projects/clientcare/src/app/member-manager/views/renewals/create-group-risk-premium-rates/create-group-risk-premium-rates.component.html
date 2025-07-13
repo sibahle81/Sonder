@@ -1,0 +1,115 @@
+<div *ngIf="!selectedCompanyRolePlayerId" >
+  <mat-card>
+    <div class="menu-bar">
+      Search Company
+    </div>
+    <mat-card>
+      <mat-tab-group animationDuration="500ms">
+        <mat-tab label="Search Members">
+          <member-search-V2 [basicMode]="false" (memberSelectedEmit)="setCompanyRolePlayer({$event : $event})"></member-search-V2>
+        </mat-tab>
+      </mat-tab-group>
+      <br/>
+    </mat-card>
+  </mat-card>
+</div>
+
+<!-- Search the premium rate -->
+<div *ngIf="selectedCompanyRolePlayerId">
+  <div class="menu-bar">
+     Premium Rate
+  </div>
+  <mat-card>
+    <mat-card-content class="wizard-mat-card-content">
+
+      <div>
+        <section class="mat-container ">
+          <mat-form-field [floatLabel]="'never'">
+            <input matInput maxlength="50" name="filter" #filter width="300" minLength="3"
+                   matTooltip="Search by name, code, or description" matTooltipShowDelay="1000">
+            <mat-placeholder class="placeholder">Search by Name, Code or Description</mat-placeholder>
+            <mat-icon class="search-icon" (click)="search()" matSuffix>search</mat-icon>
+            <button style="visibility: hidden;" class="button submit-button" (click)="search()"
+                    matTooltip="Search by name, code, or description" matTooltipShowDelay="1000">Search</button>
+          </mat-form-field>
+
+        </section>
+          <section style="padding-top: 50px">
+            <mat-table #table [dataSource]="dataSource" matSort>
+              <ng-container matColumnDef="policyName">
+                <mat-header-cell *matHeaderCellDef mat-sort-header> Policy Name </mat-header-cell>
+                <mat-cell *matCellDef="let row"> {{row.policyName }} </mat-cell>
+              </ng-container>
+
+              <ng-container matColumnDef="benefitName">
+                <mat-header-cell *matHeaderCellDef mat-sort-header>Benefit</mat-header-cell>
+                <mat-cell *matCellDef="let row"> {{row.benefitName }} </mat-cell>
+              </ng-container>
+
+              <ng-container matColumnDef="benefitCategoryName">
+                <mat-header-cell *matHeaderCellDef mat-sort-header>Benefit Category</mat-header-cell>
+                <mat-cell *matCellDef="let row"> {{row.benefitCategoryName }} </mat-cell>
+              </ng-container>
+
+              <ng-container matColumnDef="billingMethodName">
+                <mat-header-cell *matHeaderCellDef mat-sort-header>Billing Method</mat-header-cell>
+                <mat-cell *matCellDef="let row">       {{formatLookup(getBillingMethodName(row.billingMethodCode))}} </mat-cell>
+              </ng-container>
+
+              <ng-container matColumnDef="totalRate">
+                <mat-header-cell *matHeaderCellDef mat-sort-header>Rate</mat-header-cell>
+                <mat-cell *matCellDef="let row"> {{row.totalRate |number:'1.6-6' }} </mat-cell>
+              </ng-container>
+
+              <ng-container matColumnDef="effectiveDate">
+                <mat-header-cell *matHeaderCellDef mat-sort-header> Effective Date </mat-header-cell>
+                <mat-cell *matCellDef="let row"> {{row.effectiveDate  | date: 'yyyy-MM-dd'}} </mat-cell>
+              </ng-container>
+
+              <ng-container matColumnDef="lastUpdateDate">
+                <mat-header-cell *matHeaderCellDef mat-sort-header> LastUpdate Date </mat-header-cell>
+                <mat-cell *matCellDef="let row"> {{row.lastUpdateDate  | date: 'yyyy-MM-dd'}} </mat-cell>
+              </ng-container>
+
+              <ng-container  matColumnDef="actions">
+                <mat-header-cell *matHeaderCellDef>Actions</mat-header-cell>
+                <mat-cell *matCellDef="let row; let i = index;">
+                  <span  > <img src="/assets/images/edit.png" class="action-icon" /> <a role="button" class="link-edit action-link" (click)="onViewPremiumRate(row, i)">View</a></span>
+                </mat-cell>
+              </ng-container>
+
+              <mat-header-row *matHeaderRowDef="displayedColumns;"></mat-header-row>
+              <mat-row *matRowDef="let row; columns: displayedColumns;"></mat-row>
+            </mat-table>
+
+            <mat-paginator #paginator [length]="dataSource.data.length" [pageIndex]="0" [pageSize]="5"
+                           [pageSizeOptions]="[5, 10,100]">
+            </mat-paginator>
+          </section>
+        <div *ngIf="isLoadingGroupRiskPolicies$ | async">
+          <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+          <label class="mat-label other-label"><i>loading prime rates...please wait</i></label>
+        </div>
+          <div [hidden]="dataSource.data.length > 0 ">
+            <span class="grey site-font">No premium rates have been added.</span>
+          </div>
+        </div>
+
+    </mat-card-content>
+    <br/>
+  </mat-card>
+
+</div>
+
+  <mat-card style="margin: 15px 30px 15px 30px">
+  <mat-card-content style="margin-left: 10px;">
+  <mat-divider [inset]="true"></mat-divider>
+  <br>
+  <button class="addProductButton" (click)="addPremiumRate()">
+    <p class="addProductText"> Add Premium Rates<span class="material-icons add">add_circle_outline</span></p>
+  </button>
+  </mat-card-content>
+  </mat-card>
+
+
+

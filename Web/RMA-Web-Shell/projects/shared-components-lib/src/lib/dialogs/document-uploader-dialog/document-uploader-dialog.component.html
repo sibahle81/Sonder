@@ -1,0 +1,21 @@
+<div class="menu-bar">
+  <span class="material-icons">upload</span>
+  {{title}}
+  <span (click)="cancel()" class="material-icons pointer right" matTooltip="cancel">
+    close
+  </span>
+  <span *ngIf="allRequiredDocumentsUploaded" (click)="confirm()" class="material-icons pointer right pulse greenFont" matTooltip="save">
+    save
+  </span>
+</div>
+
+<mat-card *ngIf="documentSet && documentSystemName && keyName && keyValue">
+  <document-uploader [documentSet]="documentSet"
+    [systemName]="documentSystemName" 
+    [keyName]="keyName"
+    [keyValue]="keyValue" 
+    [documentTypeFilter]="documentTypeFilter" 
+    [forceRequiredDocumentTypeFilter]="forceRequiredDocumentTypeFilter" 
+    [isReadOnly]="isReadOnly"
+    (requiredDocumentsUploadedEmit)="isRequiredDocumentsUploaded($event)"></document-uploader>
+</mat-card>

@@ -1,0 +1,112 @@
+<mat-card *ngIf="isLoading$ | async">
+    <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+    <label class="mat-label other-label"><i>{{loadingMessages$ | async}}</i></label>
+</mat-card>
+
+<div class="menu-bar" *ngIf="!(isLoading$ | async)">
+    <span class="material-icons">savings</span>&nbsp;Bank Account Details
+    <span (click)="cancel()" class="material-icons pointer right" matTooltip="close">
+        close
+    </span>
+    <span *ngIf="form.valid && !form.pristine" (click)="save()" class="material-icons pointer right pulseGreen" matTooltip="save">
+        save
+    </span>
+</div>
+
+<div [hidden]="(isLoading$ | async)">
+    <mat-card>
+        <div *ngIf="verifyAccount && !isReadOnly && !errorMessage$ | async">
+            <label class="mat-label other-label info"><span class="material-icons">
+                    info
+                </span><i>&nbsp;Account will be verified before saving</i></label>
+        </div>
+
+        <div *ngIf="errorMessage$ | async">
+            <label class="mat-label other-label error"><span class="material-icons">
+                    error
+                </span><i>&nbsp;{{errorMessage$ | async}}</i></label>
+        </div>
+
+        <form [formGroup]="form" class="mat-container details-form" novalidate>
+            <section>
+                <mat-form-field>
+                    <label class="mat-label other-label mandatory-field">Bank</label>
+                    <mat-select formControlName="bankId" name="bankId" id="bankId" (selectionChange)="loadBranches($event.value)">
+                        <mat-option *ngFor="let bank of banks" [value]="bank.id">
+                            {{formatText(bank.name)}}
+                        </mat-option>
+                    </mat-select>
+                    <mat-error *ngIf="form.get('bankId').hasError('min')">
+                        Please select a bank
+                    </mat-error>
+                </mat-form-field>
+                <mat-form-field *ngIf="filteredBranches && filteredBranches.length > 0" class="mat-form-field-right">
+                    <label class="mat-label other-label mandatory-field">Branch</label>
+                    <mat-select formControlName="bankBranchId" name="bankBranchId" id="bankBranchId"
+                        (selectionChange)="loadBranchCode($event.value)">
+                        <mat-option *ngFor="let branch of filteredBranches" [value]="branch">
+                            {{branch.name}}
+                        </mat-option>
+                    </mat-select>
+                    <mat-error *ngIf="form.get('bankBranchId').hasError('min')">
+                        Please select a bank branch
+                    </mat-error>
+                </mat-form-field>
+            </section>
+
+            <section>
+                <mat-form-field>
+                    <label class="mat-label other-label mandatory-field">Account Type</label>
+                    <mat-select formControlName="bankAccountType" name="bankAccountType" id="bankAccountType">
+                        <mat-option *ngFor="let accountType of bankAccountTypes" [value]="accountType">
+                            {{getAccountType(accountType)}}
+                        </mat-option>
+                    </mat-select>
+                    <mat-error *ngIf="form.get('bankAccountType').hasError('min')">
+                        Please select a bank account type
+                    </mat-error>
+                </mat-form-field>
+                <mat-form-field class="mat-form-field-right">
+                    <label class="mat-label other-label mandatory-field">Branch Code</label>
+                    <input NumberOnly matInput maxlength="6" name="branchCode" id="branchCode"
+                        formControlName="branchCode" />
+                    <mat-error *ngIf="form.get('branchCode').hasError('required')">
+                        Branch code is required
+                    </mat-error>
+                </mat-form-field>
+            </section>
+
+            <section>
+                <mat-form-field>
+                    <label class="mat-label other-label mandatory-field">Account Holder</label>
+                    <input matInput formControlName="name" name="name" id="name" />
+                    <mat-error *ngIf="form.get('name').hasError('required')">
+                        Account Holder is required
+                    </mat-error>
+                </mat-form-field>
+
+                <mat-form-field class="mat-form-field-right">
+                    <label class="mat-label other-label mandatory-field">Account Number</label>
+                    <input NumberOnly matInput maxlength="13" name="accountNumber" id="accountNumber"
+                        formControlName="accountNumber" />
+                    <mat-error *ngIf="form.get('accountNumber').hasError('required')">
+                        Account number is required
+                    </mat-error>
+                </mat-form-field>
+            </section>
+
+            <section>
+                <mat-form-field class="mat-form-field">
+                    <label class="mat-label other-label mandatory-field">Effective From</label>
+                    <input matInput formControlName="effectiveDate" [matDatepicker]="effectiveDate">
+                    <mat-datepicker-toggle matSuffix [for]="effectiveDate">
+                    </mat-datepicker-toggle>
+                    <mat-datepicker touchUi="true" #effectiveDate></mat-datepicker>
+                    <mat-error *ngIf="form.get('effectiveDate').hasError('required')">
+                        Effective date is required
+                    </mat-error>
+                </mat-form-field>
+            </section>
+        </form>
+    </mat-card>
+</div>

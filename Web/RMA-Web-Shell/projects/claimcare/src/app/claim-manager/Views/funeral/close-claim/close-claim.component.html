@@ -1,0 +1,67 @@
+<h1 class="page-header">Close Claim</h1>
+<div *ngIf="isLoading">
+    <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+    <span *ngIf="isLoading" class="site-font grey" style="margin-top: 5px;margin-left:15px;"><i>Loading...</i></span>
+</div>
+<mat-card style="margin: 15px 30px 15px 30px">
+    <mat-card-content style="margin-left: -36px;">
+        <form [formGroup]="form" (ngSubmit)="save()" class="mat-container" novalidate style="width:100%">
+            
+            <div class="container" style="padding:0px">
+                <div class="card" style="width:350px;float:left;margin-left:-250px;margin-top:-80px;text-align: center;">
+                    <!-- <table border="0" style="margin-left:10px;text-align:left;padding: 10px;">
+                        <tr><td colspan="2" style="text-align: center"><b>Rules</b></td></tr>
+                        <tr>
+                            <td colspan="2">
+                                <div *ngFor="let messages of ruleResultMessages">
+                                    <span style="color: red;">{{messages}}</span><br />
+                                </div>
+                            </td>
+                        </tr>
+                    </table> -->
+
+                    <!--Note text-->
+                    <mat-form-field style="padding:20px;">
+                        <label class="mat-label other-label">Note text</label>
+                        <textarea matTextareaAutosize matAutosizeMinRows="5" matAutosizeMaxRows="3" maxlength="255" matInput
+                        minlength="3" id="code" name="text" formControlName="text"></textarea>
+                        <mat-error *ngIf="form.get('text').hasError('required')">
+                        Note is <strong>required</strong>
+                        </mat-error>
+                        <mat-error *ngIf="form.get('text').hasError('minlength')">
+                        Note must be at least <strong>three characters</strong>
+                        </mat-error>
+                    </mat-form-field>
+
+                    <!--ReOpen Reasons-->
+                    <mat-form-field style="padding-left:20px;" class="mat-form-field">
+                        <label class="mat-label other-label">Close Claim Reason</label>
+                        <mat-select id="filter" name="filter" matInput 
+                                    [(ngModel)]="selectedFilterTypeId" 
+                                    formControlName="filter" 
+                                    (selectionChange)="selectedReasonChanged($event)">
+                            <mat-option [value]="0">Select Reason</mat-option>
+                            <mat-option *ngFor="let reason of claimReOpenReasons" [value]="reason.reasonId">
+                                {{reason.reasonDescription}}
+                            </mat-option>
+                        </mat-select>
+                    </mat-form-field>
+
+                </div>
+
+            </div>
+
+            <!-- <div *ngIf="isLoading"></div>
+                <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+                <span *ngIf="isLoading" class="site-font grey" style="margin-top: 15px;"><i>Processing...</i></span> -->
+            <div *ngIf="showButtons" class="form-group-button mat-form-button" style="padding:20px;">
+                <div class="form-buttons" (click)="acceptCloseClaim()">
+                    <button class="button float-button submit-button"  [disabled]="disabled">Close Claim</button>
+                </div>
+                <div (click)="back()" class="form-buttons submit-button">
+                    <button type="button" class="button float-button">Back</button>
+                </div>
+            </div>
+        </form>
+    </mat-card-content>
+</mat-card>

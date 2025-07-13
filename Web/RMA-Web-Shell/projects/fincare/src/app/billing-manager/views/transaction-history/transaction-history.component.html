@@ -1,0 +1,246 @@
+<div [hidden]="showStatement || (isLoading$ | async)">
+  <statement-account-search (resultEmit)="accountSearchChangeHandler($event)" [title]="'Debtor Account Search'">
+  </statement-account-search>
+</div>
+
+<form [formGroup]="form" novalidate>
+  <div [hidden]="!(isDebtorSelected$ | async)">
+    <mat-tab-group>
+      <mat-tab label="Open Transactions">
+        <div *ngIf="searchAccountResults && searchAccountResults.rolePlayerId">
+          <app-open-transactions [roleplayerId]="searchAccountResults.rolePlayerId"></app-open-transactions>
+        </div>
+      </mat-tab>
+      <mat-tab label="Transaction History">
+        <div *ngIf="(isLoading$ | async)">
+          <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+          <label class="mat-label other-label"><i>loading...please wait</i></label>
+        </div>
+        <div [hidden]="!showStatement">
+          <div class="menu-bar">
+            <span class="material-icons">
+              payments
+            </span>
+            Transaction History
+          </div>
+          <mat-card>
+            <form [formGroup]="form">
+              <div class="field-container">
+                <mat-form-field>
+                  <label class="mat-label other-label">Start Date</label>
+                  <input matInput [matDatepicker]="startDate" date="true" time="false" formControlName="startDate"
+                    readonly (ngModelChange)="getStartDate($event)">
+                  <mat-datepicker-toggle matSuffix [for]="startDate"></mat-datepicker-toggle>
+                  <mat-datepicker #startDate touchUi="true">
+                  </mat-datepicker>
+                </mat-form-field>
+              </div>
+              <div class="field-container-right">
+                <mat-form-field>
+                  <label class="mat-label other-label">End Date</label>
+                  <input matInput [matDatepicker]="endDate" date="true" time="false" formControlName="endDate"
+                    [min]="minDate" readonly (ngModelChange)="getEndDate($event)">
+                  <mat-datepicker-toggle matSuffix [for]="endDate"></mat-datepicker-toggle>
+                  <mat-datepicker #endDate touchUi="true"></mat-datepicker>
+                </mat-form-field>
+              </div>
+              <div class="field-container">
+                <mat-form-field>
+                  <label class="mat-label other-label">Transaction Type</label>
+                  <mat-select name="transactionType" id="transactionType" formControlName="transactionType"
+                    (selectionChange)="transactionTypeChanged($event)" [(ngModel)]="selectedTransactionType">
+                    <mat-option *ngFor="let transactionType of transactionTypes" [value]="transactionType.id">
+                      {{transactionType.name}}
+                    </mat-option>
+                  </mat-select>
+                </mat-form-field>
+              </div>
+              <div class="clear-both">
+                <button type="button" (click)="applyFilters()" class="button apply-filter"
+                  [disabled]="dataSource.isLoading">Apply Filters</button>
+                <button type="button" (click)="reset()" class="button"
+                  [disabled]="dataSource.isLoading">Refresh</button>
+              </div><br /><br />
+              <section [hidden]="!dataSource.data">
+                <mat-form-field class="search-filter">
+                  <input matInput maxlength="50" name="filter" id="filter" #filter minLength="3"
+                    matTooltip="{{placeHolder}}" matTooltipShowDelay="1000" [disabled]="dataSource.isLoading"
+                    placeholder="&nbsp;&nbsp;&nbsp;{{placeHolder}}" class="search">
+                  <mat-icon class="search-icon" (click)="search()" matSuffix>search</mat-icon>
+                </mat-form-field>
+              </section>
+            </form>
+          </mat-card>
+          <br />
+          <mat-card>
+            <mat-card-content>
+              <div *ngIf="dataSource.isLoading">
+                <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+                <span *ngIf="dataSource.isLoading" class="site-font grey"
+                  style="margin-top: 15px;"><i>{{dataSource.statusMsg}}</i></span>
+              </div>
+              <div
+                *ngIf="dataSource.data && dataSource.data.data && dataSource.data.data.length === 0 && !(dataSource.isLoading)">
+                <span class="grey site-font">No transactions found.</span> <br />
+              </div>
+              <div [hidden]="paginator.length=== 0" class="searchFilter">
+                <mat-table #table [dataSource]="dataSource" matSort>
+                  <!-- Type  -->
+                  <ng-container matColumnDef="transactionType">
+                    <mat-header-cell *matHeaderCellDef mat-sort-header> Type </mat-header-cell>
+                    <mat-cell *matCellDef="let row"> {{this.getTransactionTypeDescName(row.transactionType)}}</mat-cell>
+                    <mat-footer-cell *matFooterCellDef></mat-footer-cell>
+                  </ng-container>
+
+                  <!--Policy Number -->
+                  <ng-container matColumnDef="policyNumber">
+                    <mat-header-cell *matHeaderCellDef> Policy Number </mat-header-cell>
+                    <mat-cell *matCellDef="let row"> {{getPolicyNumber(row)}} </mat-cell>
+                    <mat-footer-cell *matFooterCellDef></mat-footer-cell>
+                  </ng-container>
+
+                  <!--Member Name -->
+                  <ng-container matColumnDef="documentNumber">
+                    <mat-header-cell *matHeaderCellDef mat-sort-header> Document Number </mat-header-cell>
+                    <mat-cell *matCellDef="let row"> {{row.documentNumber}} </mat-cell>
+                    <mat-footer-cell *matFooterCellDef></mat-footer-cell>
+                  </ng-container>
+
+                  <ng-container matColumnDef="description">
+                    <mat-header-cell *matHeaderCellDef mat-sort-header> Description </mat-header-cell>
+                    <mat-cell *matCellDef="let row"> {{row.description}} </mat-cell>
+                    <mat-footer-cell *matFooterCellDef></mat-footer-cell>
+                  </ng-container>
+
+
+                  <ng-container matColumnDef="transactionDate">
+                    <mat-header-cell *matHeaderCellDef mat-sort-header>Document Date </mat-header-cell>
+                    <mat-cell *matCellDef="let row"> {{getDcoument(row.createdDate, row.transactionDate) |
+                      date:'yyyy/MM/dd'}} </mat-cell>
+                    <mat-footer-cell *matFooterCellDef></mat-footer-cell>
+                  </ng-container>
+                  <ng-container matColumnDef="period">
+                    <mat-header-cell *matHeaderCellDef>Period</mat-header-cell>
+                    <mat-cell *matCellDef="let row"> {{row.transactionDate | date:'MMM yyyy'}} </mat-cell>
+                    <mat-footer-cell *matFooterCellDef></mat-footer-cell>
+                  </ng-container>
+
+                  <!--Debit -->
+                  <ng-container matColumnDef="debitAmount">
+                    <mat-header-cell *matHeaderCellDef mat-sort-header> Debit </mat-header-cell>
+                    <mat-cell *matCellDef="let row" class="right-aligned-amounts"> {{row.debitAmount | currency:'R'}}
+                    </mat-cell>
+                    <mat-footer-cell *matFooterCellDef> </mat-footer-cell>
+                  </ng-container>
+
+                  <!--Credit -->
+                  <ng-container matColumnDef="creditAmount">
+                    <mat-header-cell *matHeaderCellDef mat-sort-header> Credit </mat-header-cell>
+                    <mat-cell *matCellDef="let row" class="right-aligned-amounts"> {{row.creditAmount | currency:'R'}}
+                    </mat-cell>
+                    <mat-footer-cell *matFooterCellDef></mat-footer-cell>
+                  </ng-container>
+
+                  <!--Balance -->
+                  <ng-container matColumnDef="balance">
+                    <mat-header-cell *matHeaderCellDef mat-sort-header> Balance </mat-header-cell>
+                    <mat-cell *matCellDef="let row">
+                      <a (click)="openTransactionViewDialog(row)"> {{row.balance | currency:'R'}} </a>
+                    </mat-cell>
+                    <mat-footer-cell *matFooterCellDef> {{debtorNetBalance | currency:'R'}}</mat-footer-cell>
+                  </ng-container>
+                  <ng-container matColumnDef="action">
+                    <mat-header-cell *matHeaderCellDef> Action </mat-header-cell>
+                    <mat-cell *matCellDef="let row" [matMenuTriggerFor]="menu">
+                      <span class="material-icons pointer right">more_vert</span>
+                      <mat-menu #menu="matMenu">
+                        <button mat-menu-item *ngFor="let menu of menus" (click)="onMenuItemClick(row, menu)"
+                          disabled={{menu.disable}}>{{menu.title}}</button>
+                      </mat-menu>
+                    </mat-cell>
+                    <mat-footer-cell *matFooterCellDef></mat-footer-cell>
+                  </ng-container>
+                  <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
+                  <mat-row *matRowDef="let row; columns: displayedColumns;"></mat-row>
+                  <mat-footer-row *matFooterRowDef="displayedColumns"></mat-footer-row>
+                </mat-table>
+              </div>
+              <div [hidden]="dataSource.isLoading">
+                <mat-paginator #paginator [length]="dataSource.rowCount$" [pageSize]="25"
+                  [pageSizeOptions]="[5, 10, 25, 50, 100]">
+                </mat-paginator>
+              </div>
+            </mat-card-content>
+          </mat-card>
+        </div>
+      </mat-tab>
+      <mat-tab label="Debtor Details">
+        <div class="menu-bar">
+          <span class="material-icons">
+            info
+          </span>
+          Debtor Details
+          <member-compliance class="right" *ngIf="!coidFeaturesDisabled && searchAccountResults"
+            [rolePlayerId]="searchAccountResults.rolePlayerId" (complianceResultEmit)="setComplianceResult($event)">
+          </member-compliance>
+        </div>
+        <mat-card>
+          <div class="grid-inputs">
+            <h4>Client Name</h4>
+            <h4>{{debtorName}}</h4>
+          </div>
+          <div class="grid-inputs">
+            <h4>Debtor Account</h4>
+            <h4>{{debtorNo}}</h4>
+          </div>
+          <div class="grid-inputs">
+            <h4>Industry Class</h4>
+            <h4>{{industryClassName}}</h4>
+          </div>
+          <div class="grid-inputs" *ngIf="debtor && !coidFeaturesDisabled">
+            <h4>Debtor Status</h4>
+            <h4>{{getDebtorStatusEnumDescription(debtor.debtorStatus)}}</h4>
+          </div>
+        </mat-card>
+        <div>
+          <mat-card>
+            <app-debtor-policies *ngIf="searchAccountResults?.rolePlayerId" [roleplayerId]="searchAccountResults?.rolePlayerId" (policiesSelectedHandler)="policiesSelected($event)"
+            [multiselect]="true" [showProductBalances]="false"
+            [checkMemberCompliance]="false"></app-debtor-policies>
+            <br />
+            <br />
+            <mat-form-field>
+              <label class="mat-label other-label">Debtor Status (Update)</label>
+              <mat-select name="debtorStatus" id="debtorStatus" formControlName="debtorStatus"
+                (selectionChange)="debtorStatusChanged($event)" [(ngModel)]="selectedDebtorStatus">
+                <mat-option *ngFor="let debtorStatus of debtorStatuses" [value]="debtorStatus.id">
+                  {{debtorStatus.name}}
+                </mat-option>
+              </mat-select>
+            </mat-form-field><br>
+            <button type="button" (click)="resetStatus()" class="button">Save Status</button>
+          </mat-card>
+        </div>
+        <div *ngIf="showMemberDeclarations">
+          <mat-card>
+            <member-declarations *ngIf="searchAccountResults" [rolePlayerId]="searchAccountResults?.rolePlayerId"
+              [isReadOnly]="true"></member-declarations>
+          </mat-card>
+        </div>
+      </mat-tab>
+      <mat-tab label="Interest Indicator" *ngIf="industryClass === metalsIndustryClass">
+        <mat-progress-bar *ngIf="(isLoading$ | async)" mode="indeterminate" />
+        <div *ngIf="interestIndicator">
+          <app-interest-indicator [interestIndicator]="interestIndicator" [industryClass]="industryClass"
+            [clientName]="debtorName"></app-interest-indicator>
+        </div>
+      </mat-tab>
+      <mat-tab label="Notes">
+        <app-debtor-notes></app-debtor-notes>
+      </mat-tab>
+      <mat-tab label="Referrals">
+        <referral-view [targetModuleType]="targetModuleType" [referralItemType]="referralItemType" [itemId]="searchAccountResults?.rolePlayerId" [referralItemTypeReference]="referralItemTypeReference"></referral-view>
+      </mat-tab>
+    </mat-tab-group>
+  </div>
+</form>

@@ -1,0 +1,23 @@
+﻿<div>
+  <nav class="innertop-nav">
+    <button mat-button [matMenuTriggerFor]="menu">Settings</button>
+    
+    <mat-menu #menu="matMenu" [overlapTrigger]="false">
+      <button mat-menu-item [routerLink]="['public-holidays']">Manage Public Holidays</button>
+      <button mat-menu-item [routerLink]="['required-documents']">Manage Required Documents</button>
+      <button mat-menu-item [routerLink]="['scheduled-tasks']">Manage Scheduled Tasks</button>
+      <button mat-menu-item [routerLink]="['manage-charts']">Manage Posting Charts</button>
+      <button mat-menu-item [routerLink]="['manage-commission-bands']">Manage Commission Bands</button>
+      <button mat-menu-item [routerLink]="['announcements']">Manage Announcements</button>
+      <button *ngIf="hasPermission" mat-menu-item [routerLink]="['manage-periods']">Manage Periods</button>
+      <button *ngIf="hasPermission" mat-menu-item [routerLink]="['manage-prime-rates']">Manage Prime Rates</button>
+      <button mat-menu-item [routerLink]="['authority-limits']">Authority Limits</button>
+      <button *ngIf="hasPermission && !disable_coid_vaps_e2e_admin" mat-menu-item [routerLink]="['manage-claims-benefits-amount']">Manage Claims Benefits Amount(COID Period)</button>
+      <button mat-menu-item [routerLink]="['manage-billing-forecast-rates']">Manage Billing Forecast Rates</button>
+    </mat-menu>
+  </nav>
+</div>
+
+<div [hidden]="loadingMessage != null || error != null" class="container-padding">
+  <router-outlet></router-outlet>
+</div>

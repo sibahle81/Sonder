@@ -1,0 +1,58 @@
+<div>
+  <mat-card class="main-container">
+    <mat-card class="top-selector-container">
+      <mat-card class="summary-container" style="width:607px;margin: -25px 0px -17px -9px;">
+        <mat-card-header>
+          <mat-card-title>
+            <h1 class="wizard-font">Account History</h1>
+          </mat-card-title>
+        </mat-card-header>
+        <mat-card-content class="content-container">
+          <div *ngIf="isLoadingAccount === 0" class="menu-container">
+            <div style="margin-right: 15px;">
+              <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+            </div>
+            <label class="mat-label other-label"><i>loading account
+                history...</i></label>
+          </div>
+          <div *ngIf="statements && statements.length <=0 && isLoadingAccount === 1" class="menu-container">
+            <label class="mat-label other-label"><i>Account history not found.</i></label>
+          </div>
+          <div *ngIf="statements && statements.length >0 && isLoadingAccount === 1">
+            <div class="text-container" *ngIf="statements != null else statementWarning">
+              <table id="brokers">
+                <thead>
+                  <tr>
+                    <th><b>Month</b></th>
+                    <th><b>Description</b></th>
+                    <th><b>Debit</b></th>
+                    <th><b>Credit</b></th>
+                  </tr>
+                </thead>
+
+                <tbody>
+                  <tr *ngFor="let row of statements;let i = index;">
+                    <td>
+                      {{row.transactionDate | date: 'yyyy/MM/dd'}}
+                    </td>
+                    <td>
+                      {{row.description}}
+                    </td>
+                    <td>
+                      {{row.debitAmount | currency: 'R'}}
+                    </td>
+                    <td>
+                      {{row.creditAmount | currency: 'R'}}
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+            <ng-template #statementWarning>&nbsp;&nbsp;&nbsp;&nbsp;No account details have been
+              found</ng-template>
+          </div>
+        </mat-card-content>
+      </mat-card>
+    </mat-card>
+  </mat-card>
+</div>

@@ -1,0 +1,21 @@
+<div class="menu-bar">
+  <span *ngIf="title">{{title}}</span>
+  <span (click)="cancel()" class="material-icons pointer right" matTooltip="close">
+    close
+  </span>
+</div>
+
+<mat-expansion-panel *ngIf="!(selectedPermissions?.length > 0)" [(expanded)]='advancedFiltersExpanded'>
+  <mat-expansion-panel-header>
+      <mat-panel-title>
+          Advanced Filters
+      </mat-panel-title>
+      <mat-panel-description *ngIf="selectedRoles?.length > 0"><span class="material-icons"
+              matTooltip="pinned lead">
+              push_pin
+          </span>{{getRoleNames()}}</mat-panel-description>
+  </mat-expansion-panel-header>
+  <role-search-V2 [triggerReset]="triggerReset" [title]="'Search Role'" (roleSelectedEmit)="setRole($event)"></role-search-V2>
+</mat-expansion-panel>
+
+<user-search-V2 *ngIf="!advancedFiltersExpanded" [title]="'Search Users'" [allowMultiple]="false" [roleIds]="selectedRoleIds" [permissions]="selectedPermissions" [userType]="userType" [isReadOnly]="isReadOnly" (usersSelectedEmit)="userSelected($event)"></user-search-V2>

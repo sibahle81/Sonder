@@ -1,0 +1,39 @@
+<mat-card *ngIf="form">
+    <mat-card-content>
+        <h1>Commutation impact analysis </h1>
+        <form [formGroup]="form">
+          <section>
+            <mat-form-field>
+              <label class="mat-label other-label mandatory-field">Impact Value</label>
+              <input matInput id="impactValue" name="impactValue" formControlName="impactValue">
+            </mat-form-field>
+  
+            <mat-form-field class="mat-form-field-right">
+              <label class="mat-label other-label mandatory-field">Amount Available</label>
+              <input matInput maxlength="50" formControlName="availAmount" name="availAmount" id="availAmount" />
+            </mat-form-field>
+          </section>
+  
+          <section>
+            <mat-form-field>
+              <label class="mat-label other-label">Required Amount</label>
+              <input matInput id="requiredAmount" name="requiredAmount" formControlName="requiredAmount" readonly>
+            </mat-form-field>
+  
+            <mat-form-field class="mat-form-field-right">
+              <label class="mat-label other-label">Current NMP</label>
+              <input matInput id="currentNMP" name="currentNMP" formControlName="currentNMP" readonly>
+            </mat-form-field>
+  
+          </section>
+  
+          <section>
+            <mat-form-field>
+              <label class="mat-label other-label mandatory-field">New NMP</label>
+              <input matInput id="newNMP" name="newNMP" formControlName="newNMP" readonly>
+            </mat-form-field>
+          </section>
+        </form>
+    </mat-card-content>
+  </mat-card>
+  

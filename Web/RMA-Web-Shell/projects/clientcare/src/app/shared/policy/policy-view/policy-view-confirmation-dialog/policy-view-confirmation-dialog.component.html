@@ -1,0 +1,83 @@
+<div *ngIf="isLoading$ | async">
+  <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+  <label class="mat-label other-label"><i>loading...please wait</i></label>
+</div>
+
+<div *ngIf="!(isLoading$ | async)">
+  <div *ngIf="data && data.title" class="menu-bar">
+    {{data.title}}
+    <span *ngIf="!(isLoading$ | async)" (click)="close()" class="material-icons pointer right" matTooltip="close">
+      close
+    </span>
+    <span *ngIf="form.valid && !form.pristine && data.type != maintain && !data.maintenanceInProgress && !data.reviewInProgress" (click)="save()"
+      class="material-icons pointer right pulseGreen" matTooltip="save">
+      save
+    </span>
+    <span *ngIf="data.type == maintain && !data.maintenanceInProgress && !data.reviewInProgress" (click)="confirm()"
+      class="material-icons pointer right pulseBlue" matTooltip="confirm">
+      check_circle
+    </span>
+  </div>
+
+  <mat-card *ngIf="(!data.reasons || data.reasons.length <= 0) && !data.maintenanceInProgress && !data.reviewInProgress">
+    <div mat-dialog-content>
+      {{data.question}}
+    </div>
+  </mat-card>
+
+  <mat-card *ngIf="(data.reasons && data.reasons.length > 0) && !data.maintenanceInProgress && !data.reviewInProgress">
+    <form [formGroup]="form" class="mat-container details-form" novalidate>
+      <section>
+        <mat-form-field class="mat-form-field">
+          <label class="mat-label other-label">{{data.question}}</label>
+          <mat-select name="reason" id="reason" formControlName="reason">
+            <mat-option *ngFor="let reason of data.reasons" [value]="reason">
+              {{formatLookup(reason)}}
+            </mat-option>
+          </mat-select>
+          <mat-error *ngIf="form.get('reason').hasError('required')">
+            Reason is <strong>required</strong>
+          </mat-error>
+        </mat-form-field>
+      </section>
+    </form>
+  </mat-card>
+
+  <div *ngIf="isCoid && data.type != maintain && !data.maintenanceInProgress && !data.reviewInProgress">
+    <label class="mat-label other-label">
+      <mat-card>
+        <span class="material-icons info">
+          info
+        </span>
+        <span>
+          {{data.type == cancellation ? 'Cancelling' : data.type == reinstatement ? 'Reinstating' : 'Actioning'}} the
+          selected policy will also
+          {{data.type == cancellation ? 'cancel' : data.type == reinstatement ? 'reinstate' : 'action'}} any related
+          <b>{{data.type == cancellation ? 'active' : data.type == reinstatement ? 'cancelled' : 'linked'}}</b> VAPS
+          policies</span>
+      </mat-card>
+    </label>
+  </div>
+
+  <div *ngIf="data.maintenanceInProgress">
+    <label class="mat-label other-label">
+      <mat-card>
+        <span class="material-icons info">
+          info
+        </span>
+        Policy <b>maintenance</b> in progress. Please complete the active <b>maintenance</b> workflow, then try again
+      </mat-card>
+    </label>
+  </div>
+
+  <div *ngIf="data.reviewInProgress">
+    <label class="mat-label other-label">
+      <mat-card>
+        <span class="material-icons info">
+          info
+        </span>
+        Declaration submissions with variance above the allowable threshold are <b>under review</b>.<br/>Once the active <b>review</b> workflow is completed,
+         policy maintenance options will be available
+      </mat-card>
+    </label>
+  </div>

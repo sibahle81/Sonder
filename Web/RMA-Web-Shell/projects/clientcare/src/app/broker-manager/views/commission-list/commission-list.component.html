@@ -1,0 +1,115 @@
+﻿<mat-card>
+    <mat-card-header>
+        <mat-card-title>
+            <h1>Commissions</h1>
+        </mat-card-title>
+        <mat-card-subtitle>
+            <span class="grey site-font"><i>Search for commission by selecting a brokerage and period.</i></span>
+        </mat-card-subtitle>
+    </mat-card-header>
+    <mat-card-content>
+        <div>
+            <form [formGroup]="form" class="mat-container" novalidate>
+                <section>
+                    <mat-form-field>
+                        <label>Select a brokerage</label>
+                        <mat-select name="brokerages" id="brokerages" formControlName="brokerages" [(value)]="brokerage">
+                            <mat-option *ngFor="let brokerage of brokerages" [value]="brokerage.id">{{brokerage.name}}
+                            </mat-option>
+                        </mat-select>
+                    </mat-form-field>
+
+                    <mat-form-field class="mat-form-field-right">
+                        <label>Select a period</label>
+                        <mat-select name="periods" id="periods" formControlName="periods" [(value)]="period">
+                            <mat-option *ngFor="let period of periods" [value]="period.period">{{period.displayPeriod}}
+                            </mat-option>
+                        </mat-select>
+                    </mat-form-field>
+                </section>
+
+                <div class="row" style="padding-left: 15px; margin-bottom: 15px;">
+                    <div class="column">
+                        <section>
+                            <!--Query-->
+                            <mat-form-field>
+                                <label>Search by keyword</label>
+                                <input matInput maxlength="50" name="search" width="300" minLength="3" matTooltip="Search by policy number, client, broker, join date, paid for month!" matTooltipShowDelay="1000" #filter>
+                                <mat-error *ngIf="form.get('search').hasError('minlength')">
+                                    Please enter a search term longer than <strong>3 characters</strong>
+                                </mat-error>
+                            </mat-form-field>
+                        </section>
+                    </div>
+                    <div class="column">
+                        <div (click)="search()" class="form-buttons submit-button">
+                            <button type="button" [disabled]="canSearch" class="button float-button">Search</button>
+                        </div>
+                    </div>
+                    <div class="column">
+                        <div (click)="download()" class="form-buttons submit-button">
+                            <button type="button" [disabled]="dataSource.data.length === 0 || dataSource.isLoading" class="button float-button">Download</button>
+                        </div>
+                    </div>
+                    <div class="column">
+                        <div (click)="clear()" class="form-buttons submit-button">
+                            <button type="button" class="button float-button">Clear</button>
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </div>
+
+        <div *ngIf="isLoading">
+            <mat-progress-bar mode="indeterminate" [ngClass]="{ 'loading-main-double-menu-progress': doubleMenu, 'loading-main-single-menu-progress': !doubleMenu }">
+            </mat-progress-bar>
+            <p class="site-font grey">{{loadingMessage}}</p>
+        </div>
+
+        <div [hidden]="!dataSource || dataSource.data.length === 0 || dataSource.isLoading" style="margin-top: 15px;">
+            <mat-table #table [dataSource]="dataSource" matSort>
+                <!--All standard columns-->
+                <ng-container *ngFor="let column of columns" [matColumnDef]="column.columnDefinition">
+                    <mat-header-cell mat-sort-header *matHeaderCellDef class="mat-header-cell ">{{ column.header }}
+                    </mat-header-cell>
+                    <mat-cell *matCellDef="let row" class="mat-cell">{{ column.cell(row) }}</mat-cell>
+                </ng-container>
+                <!-- Actions -->
+                <ng-container *ngIf="!hideActionsLink" matColumnDef="actions">
+                    <mat-header-cell *matHeaderCellDef>Actions</mat-header-cell>
+                    <mat-cell *matCellDef="let row">
+                        <span *ngIf="canEdit"><a role="button" class="link-edit" (click)="onSelect(row)">View /
+                                Edit</a></span>
+                        <span *ngIf="!canEdit"><a role="button" class="link-edit"
+                                (click)="onSelect(row)">View</a></span>
+                        <span *ngIf="canAdd"> | <a role="button" class="link-edit"
+                                (click)="copyCampaign(row)">Copy</a></span>
+                    </mat-cell>
+                </ng-container>
+                <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
+                <mat-row *matRowDef="let row; columns: displayedColumns;"></mat-row>
+            </mat-table>
+
+            <mat-paginator #paginator [length]="dataSource.data.length" [pageIndex]="0" [pageSize]="5" [pageSizeOptions]="[5, 10, 25, 100]">
+            </mat-paginator>
+        </div>
+        <div [hidden]="!dataSource || dataSource.data.length > 0 || isLoading" style="margin-left: 20px;">
+            <p class="grey">You have not yet accessed any {{titlePlural | lowercase}}.</p>
+        </div>
+        <div [hidden]="!dataSource || dataSource.filteredData.length > 0 || dataSource.data.length === 0" class="no-search-results-add-button">
+            <div class="site-font grey">
+                <p class="grey">
+                    Your search - <strong>{{filter.value}}</strong> - did not match any {{titlePlural | lowercase}}.
+                </p>
+                <span>Suggestions: </span>
+                <ul>
+                    <li>Make sure that all words are spelled correctly.</li>
+                    <li>Try different keywords.</li>
+                    <li>Try more general keywords.</li>
+                    <li>Try fewer keywords.</li>
+                </ul>
+            </div>
+        </div>
+
+    </mat-card-content>
+</mat-card>

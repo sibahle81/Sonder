@@ -1,0 +1,118 @@
+﻿<div class="page-header"></div>
+
+<div style="padding-top: 15px;">
+
+    <form [formGroup]="form" (ngSubmit)="save()" class="mat-container details-form" novalidate>
+
+
+        <!--Alert-->
+        <div class="field-container">
+            <div>
+                <label class="mat-label other-label right-field-label">Alert Date</label>
+            </div>
+            <mat-form-field>
+                <input readonly matInput formControlName="alertDate" [min]="minDate" [matDatepicker]="alertDate" id="alertDate" name="alertDate" (dateChange)="validateDates()">
+                <mat-datepicker-toggle matSuffix [for]="alertDate" [disabled]="form.disabled"></mat-datepicker-toggle>
+                <mat-datepicker touchUi="true" #alertDate></mat-datepicker>
+                <mat-error *ngIf="form.get('alertDate').hasError('required')">
+                    Alert date is <strong>required</strong>
+                </mat-error>
+                <mat-error *ngIf="form.get('alertDate').hasError('min')">
+                    Date / Time<strong>cannot be in past</strong>
+                </mat-error>
+            </mat-form-field>
+        </div>
+
+        <mat-form-field>
+            <label class="form-label other-label" style="padding-left: 0 !important;">Hour</label>
+            <mat-select name="hours" id="hours" #hour required formControlName="hours" [(value)]="hours" (change)="hourChange($event)">
+                <mat-option value="0">00</mat-option>
+                <mat-option value="1">01</mat-option>
+                <mat-option value="2">02</mat-option>
+                <mat-option value="3">03</mat-option>
+                <mat-option value="4">04</mat-option>
+                <mat-option value="5">05</mat-option>
+                <mat-option value="6">06</mat-option>
+                <mat-option value="7">07</mat-option>
+                <mat-option value="8">08</mat-option>
+                <mat-option value="9">09</mat-option>
+                <mat-option value="10">10</mat-option>
+                <mat-option value="11">11</mat-option>
+                <mat-option value="12">12</mat-option>
+                <mat-option value="13">13</mat-option>
+                <mat-option value="14">14</mat-option>
+                <mat-option value="15">15</mat-option>
+                <mat-option value="16">16</mat-option>
+                <mat-option value="17">17</mat-option>
+                <mat-option value="18">18</mat-option>
+                <mat-option value="19">19</mat-option>
+                <mat-option value="20">20</mat-option>
+                <mat-option value="21">21</mat-option>
+                <mat-option value="22">22</mat-option>
+                <mat-option value="23">23</mat-option>
+            </mat-select>
+            <mat-error *ngIf="hour.errorState && form.get('hours').hasError('required')">
+                Hours <strong>are required</strong>
+            </mat-error>
+            <mat-error *ngIf="hour.errorState && form.get('hours').hasError('min')">
+                Date and time must be current or future.
+            </mat-error>
+
+        </mat-form-field>
+
+        <mat-form-field>
+            <label class="form-label other-label" style="padding-left: 0 !important;">Minutes</label>
+            <mat-select name="minutes" id="minutes" #minute required formControlName="minutes" [(value)]="minutes" (change)="minuteChange($event)">
+                <mat-option value="0">00</mat-option>
+                <mat-option value="5">05</mat-option>
+                <mat-option value="10">10</mat-option>
+                <mat-option value="15">15</mat-option>
+                <mat-option value="20">20</mat-option>
+                <mat-option value="25">25</mat-option>
+                <mat-option value="30">30</mat-option>
+                <mat-option value="35">35</mat-option>
+                <mat-option value="40">40</mat-option>
+                <mat-option value="45">45</mat-option>
+                <mat-option value="50">50</mat-option>
+                <mat-option value="55">55</mat-option>
+            </mat-select>
+            <mat-error *ngIf="minute.errorState && form.get('minutes').hasError('required')">
+                Minutes <strong>are required</strong>
+            </mat-error>
+            <mat-error *ngIf="minute.errorState && form.get('minutes').hasError('min')">
+                Date and time must be current or future.
+            </mat-error>
+        </mat-form-field>
+
+        <section>
+            <div class="field-container">
+                <!--Reminder Description-->
+                <mat-form-field>
+                    <label class="mat-label other-label">Message <a class="grey site-font" style="font-style:italic">(Maximum of 500 characters allowed)</a> </label>
+                    <textarea matInput maxlength="500" style="height:150px" id="description" name="description" formControlName="description"></textarea>
+                    <mat-error *ngIf="form.get('description').hasError('required')">
+                        Description is <strong>required</strong>
+                    </mat-error>
+                </mat-form-field>
+            </div>
+        </section>
+
+        <last-modified-by type="Reminder"></last-modified-by>
+
+
+        <div class="form-group-button mat-form-button">
+            <div *ngIf="!form.disabled" class="form-buttons submit-button">
+                <button [disabled]="form.pristine" class="button">Save</button>
+            </div>
+
+            <div (click)="edit()" *ngIf="form.disabled" class="form-buttons submit-button">
+                <button type="button" class="button">Edit</button>
+            </div>
+
+            <div (click)="back()" class="form-buttons submit-button">
+                <button type="button" class="button">Back</button>
+            </div>
+        </div>
+
+    </form>
+</div>

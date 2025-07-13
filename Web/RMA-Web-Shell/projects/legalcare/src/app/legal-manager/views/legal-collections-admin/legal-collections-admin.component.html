@@ -1,0 +1,236 @@
+<section class="legal-colledtions">
+
+  <div class="legal-admin">
+
+    <div *ngIf="!isLoading" [ngClass]="isSpinner ? 'on-disabled' : 'on-enabled'" class="legal-admin-content-div">
+
+      <div class="legal-admin-inside">
+        <div class="recovery-btn">
+          <button mat-button class="collection-inside-btn">Collections</button>
+        </div>
+        <div class="notifi-icon">
+        </div>
+      </div>
+
+
+      <div class="tab-views flex-view">
+        <ng-container *ngFor="let item of typeTabs">
+          <div class="type-class" (click)="onSelectTab(item)">
+            <span class="type-class-item" [ngStyle]="currentTabKey == getTabName(item) ? 
+             {'color' : '#006586' } : { 'color': '#5BB5D0' }">{{getTabName(item)}}</span>
+            <span class="type-class-border"
+              [ngStyle]="currentTabKey == getTabName(item) ? 
+              { 'border': '2px solid #006586', 'visibility': 'visible' } : { 'border': '2px solid #5BB5D0','visibility': 'hidden' }"></span>
+          </div>
+        </ng-container>
+      </div>
+
+
+    </div>
+
+    <div *ngIf="!isLoading" [ngClass]="isSpinner ? 'on-disabled' : 'on-enabled'" class="admin-table-div">
+
+      <div class="legal-manager-table">
+        <div class="legal-manager-2">
+
+          <div class="legal-manager-3">
+            <span matPrefix>
+              <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none">
+                <path
+                  d="M19 11C19 12.5823 18.5308 14.129 17.6518 15.4446C16.7727 16.7602 15.5233 17.7856 14.0615 18.3911C12.5997 18.9966 10.9911 19.155 9.43928 18.8463C7.88743 18.5376 6.46197 17.7757 5.34315 16.6569C4.22433 15.5381 3.4624 14.1126 3.15372 12.5608C2.84504 11.0089 3.00347 9.40038 3.60897 7.93857C4.21447 6.47676 5.23985 5.22733 6.55544 4.34828C7.87103 3.46923 9.41775 3.00004 11 3.00004C12.0515 2.99674 13.0933 3.20141 14.0654 3.60228C15.0375 4.00315 15.9207 4.5923 16.6642 5.33582C17.4077 6.07935 17.9969 6.96257 18.3978 7.93467C18.7986 8.90677 19.0033 9.94854 19 11Z"
+                  stroke="#292929" stroke-linecap="round" stroke-linejoin="round" />
+                <path d="M20.9993 21L16.6562 16.657" stroke="#292929" stroke-linecap="round" stroke-linejoin="round" />
+              </svg>
+            </span>
+            <input matInput (keyup)="applyFilter($event)" placeholder="Search here..." #input class="search-input">
+          </div>
+
+          <div class="filter-action-icon">
+
+            <div (click)="openFilterBox()" class="filter-icon">
+              <span matPrefix class="information-list">
+                  <svg xmlns="http://www.w3.org/2000/svg" id="Outline" viewBox="0 0 24 24" width="20" height="20"><path d="M1,4.75H3.736a3.728,3.728,0,0,0,7.195,0H23a1,1,0,0,0,0-2H10.931a3.728,3.728,0,0,0-7.195,0H1a1,1,0,0,0,0,2ZM7.333,2a1.75,1.75,0,1,1-1.75,1.75A1.752,1.752,0,0,1,7.333,2Z"/><path d="M23,11H20.264a3.727,3.727,0,0,0-7.194,0H1a1,1,0,0,0,0,2H13.07a3.727,3.727,0,0,0,7.194,0H23a1,1,0,0,0,0-2Zm-6.333,2.75A1.75,1.75,0,1,1,18.417,12,1.752,1.752,0,0,1,16.667,13.75Z"/><path d="M23,19.25H10.931a3.728,3.728,0,0,0-7.195,0H1a1,1,0,0,0,0,2H3.736a3.728,3.728,0,0,0,7.195,0H23a1,1,0,0,0,0-2ZM7.333,22a1.75,1.75,0,1,1,1.75-1.75A1.753,1.753,0,0,1,7.333,22Z"/></svg>
+              </span>
+            </div>
+
+            <div *ngIf="showFilterBox" class="filter-details-box">
+              <div class="filter-details">
+  
+                  <mat-icon (click)="closeBox()" class="box-close-icon">close</mat-icon>
+  
+                  <form [formGroup]="filterDetailsForm">
+                      <div class="create-message-temp-tabs-fields">
+                          <div class="attorney-label">
+                            <label>Attorney Name</label>
+                          </div>
+                          <div class="attorney-name-input">
+                          <mat-form-field appearance="outline" class="multi-agent-list-dropdown">
+                              <input #selectedAgent type="text" matInput 
+                              [matAutocomplete]="auto" (input)="searchValueAgent(selectedAgent.value)" formControlName="attorney"
+                              class="search-input border-none-imp search-input-agent">
+                              <mat-autocomplete #auto="matAutocomplete" class="agent-list-dropdown-scroll">
+                                  <mat-option *ngFor="let item of assignLits" [value]="item.attorneyName" 
+                                  (click)="selectAnAgent(item.id)"> {{item.attorneyName}}</mat-option>
+                              </mat-autocomplete>
+                              <button mat-button matSuffix mat-icon-button aria-label="Toggle dropdown">
+                                  <mat-icon>arrow_drop_down</mat-icon>
+                              </button>
+                          </mat-form-field>  
+                          </div>
+  
+                      </div>  
+                      
+                  </form>
+  
+                  <div class="action-div-box action-btn-right">
+                      <button class="select-action action-submit btn-reset" (click)="resetFilterForm()" mat-button>Reset</button>
+                      <button class="select-action action-submit" (click)="filterData()" mat-button>Apply Filter</button>
+                  </div>
+  
+              </div>
+            </div>
+
+            <div class="pointer-cursor" matTooltip="download" (click)="downloadList()">
+              <mat-icon>arrow_downward</mat-icon>
+            </div>
+          </div>
+
+        </div>
+
+        <div *ngIf="dataSource.data.length > 0" class="legal-table-content">
+
+          <div class="table-insie">
+            <table mat-table [dataSource]="dataSource"  class="mat-table-data legal-table-recovery">
+
+              <ng-container matColumnDef="customerName">
+                <th mat-header-cell *matHeaderCellDef class="table-data-head align-text-left">
+                  <span class="tableHeaderSapn select-text"> Customer Name </span></th>
+                <td mat-cell *matCellDef="let row">
+                  <span class="select-td">
+                    <span class="select-text" (click)="showDetails(row)">
+                      <div>{{row.customerName}}</div>
+                      </span>
+                  </span>
+                </td>
+              </ng-container>
+
+              <ng-container matColumnDef="policyNumber">
+                <th mat-header-cell *matHeaderCellDef class="table-data-head align-text-left">
+                  <span class="tableHeaderSapn select-text"> Policy Number </span></th>
+                <td mat-cell *matCellDef="let row">
+                  <span class="select-td">
+                    <span class="select-text" (click)="showDetails(row)">
+                      <div>{{row.policyNumber}}</div>
+                      </span>
+                  </span>
+                </td>
+              </ng-container>
+
+              <ng-container matColumnDef="policyId">
+                <th mat-header-cell *matHeaderCellDef class="table-data-head align-text-left">
+                  <span class="tableHeaderSapn select-text"> Policy Id </span></th>
+                <td mat-cell *matCellDef="let row">
+                  <span class="select-td">
+                    <span class="select-text" (click)="showDetails(row)">
+                      <div>{{row.policyId}}</div>
+                      </span>
+                  </span>
+                </td>
+              </ng-container>
+
+              <ng-container matColumnDef="status">
+                <th mat-header-cell *matHeaderCellDef  class="tableHeaderSapn select-text"> 
+                  <span class="tableHeaderSapn"> Declared / Not Declared </span>
+                  </th>
+                <td mat-cell *matCellDef="let row" (click)="showDetails(row)">
+                  <span class="select-td">
+                    <span class="select-text" (click)="showDetails(row)">
+                      <div>{{row.declaredValue}}</div>
+                    </span>
+                  </span> </td>
+              </ng-container>
+
+              <ng-container matColumnDef="lastNoticeSentDate">
+                <th mat-header-cell *matHeaderCellDef  class="tableHeaderSapn select-text">
+                  <span class="tableHeaderSapn"> Last Notice Sent  </span>
+                   </th>
+                <td mat-cell *matCellDef="let row" (click)="showDetails(row)">
+                  <span class="select-td">
+                    <span class="select-text" (click)="showDetails(row)">
+                      <div> {{row.lastNoticeSentDate | date:
+                        "yyyy-MM-dd"}}</div>
+                    </span>
+                  </span>
+                </td>
+              </ng-container>
+
+              <ng-container matColumnDef="createdDate">
+                <th mat-header-cell *matHeaderCellDef  class="tableHeaderSapn select-text">
+                  <span class="tableHeaderSapn">Days since notice sent </span>
+                </th>
+                <td mat-cell *matCellDef="let row" (click)="showDetails(row)">
+                   <span>
+                    <span class="select-td">
+                      <span class="select-text" (click)="showDetails(row)">
+                        <div>{{row.daySinceNoticeSent}}</div>
+                      </span>
+                    </span></span>
+                </td>
+              </ng-container>
+              <ng-container matColumnDef="assign_attorney">
+                <th mat-header-cell *matHeaderCellDef class="tableHeaderSapn select-text">
+                  <span *ngIf="currentTabKey == 'New'">
+                    <span class="tableHeaderSapn">Assign Attorney</span>
+                   </span>
+                  <span *ngIf="currentTabKey != 'New'">
+                    <span class="tableHeaderSapn">Re-Assign Attorney</span>
+                   </span>
+                </th>
+                <td mat-cell *matCellDef="let row; let i = index">
+                  <mat-form-field class="legal-manager-assign view-three-fourth" appearance="fill">
+                    <mat-select class="border-none table-data-head" [placeholder]=" currentTabKey == 'Ongoing' ? row.attorneyName : 'Select' "
+                      panelClass="below">
+                      <ng-container *ngFor="let item of assign">
+                        <mat-option [value]="item.id" (click)="onSelectValue(item,row,i)">
+                          {{item.attorneyName}}
+                        </mat-option>
+                      </ng-container>
+                    </mat-select>
+                  </mat-form-field>
+                </td>
+              </ng-container>
+
+
+              <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+              <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+
+
+            </table>
+
+            <hr>
+
+            <mat-paginator #paginator class="demo-paginator" (page)="handlePageinatorEventCollectionAdmin($event)"
+              [hidePageSize]="false" [length]="totalItems" [pageIndex]="page - 1" [pageSize]="pageSize"
+              [pageSizeOptions]="pageSizeOptions" [showFirstLastButtons]="false">
+            </mat-paginator>
+          </div>
+        </div>
+        <div *ngIf="dataSource.data.length == 0">
+          <h1 class="no-data-text">No data available</h1>
+        </div>
+
+      </div>
+
+    </div>
+
+    <div [hidden]="!isSpinner" class="spinner-view">
+      <mat-spinner *ngIf="isSpinner"></mat-spinner>
+    </div>
+
+    <div [hidden]="!isLoading" [ngClass]="isLoading ? 'progress-bar-container' : '' " class="progress-bar">
+      <mat-progress-bar *ngIf="isLoading" mode="indeterminate"></mat-progress-bar>
+    </div>
+
+  </div>
+
+</section>

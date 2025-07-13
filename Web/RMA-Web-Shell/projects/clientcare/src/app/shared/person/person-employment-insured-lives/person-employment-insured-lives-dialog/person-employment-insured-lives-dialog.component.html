@@ -1,0 +1,130 @@
+<div class="menu-bar">
+    <span class="material-icons">
+        work
+    </span>
+    Capture Other Insured Life Details
+    <span *ngIf="!(isLoading$ | async)" class="material-icons pointer right pulse" (click)="close(false)" matTooltip="close">
+        cancel
+    </span>
+    <span *ngIf="isEdit && !(isLoading$ | async)" class="material-icons pointer right pulse" (click)="edit()" matTooltip="edit">
+        settings
+    </span>
+    <span *ngIf="form.valid && !form.pristine && !(isLoading$ | async)" class="material-icons pointer right pulse" (click)="save()"
+        matTooltip="save">
+        save
+    </span>
+</div>
+<mat-card *ngIf="(isLoading$ | async)">
+    <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+    <label class="mat-label other-label"><i>loading...please wait</i></label>
+</mat-card>
+
+<mat-card *ngIf="!(isLoading$ | async)">
+    <form [formGroup]="form" class="mat-container details-form" novalidate>  
+        <section>
+            <mat-form-field class="mat-form-field">
+                <label class="mat-label other-label mandatory-field">Id Type</label>
+                <mat-select id="idType" name="idType" formControlName="idType">
+                    <mat-option *ngFor="let idType of idTypes" [value]="idType">
+                        {{getIdType(idType)}}
+                    </mat-option>
+                </mat-select>
+                <mat-error *ngIf="form.get('idType').hasError('required') && (form.get('idType').touched ||form.get('idType').dirty )">
+                    ID Type is <strong>required</strong>
+                </mat-error>
+            </mat-form-field>
+            <mat-form-field class="mat-form-field-right">                
+                <label class="mat-label other-label  mandatory-field">ID Number</label>
+                <input matInput formControlName="idNumber" name="idNumber" id="idNumber" />
+                <mat-error *ngIf="form.get('idNumber').hasError('required')">
+                    ID Number <strong>required</strong>
+                </mat-error>
+            </mat-form-field>
+        </section>
+
+        <section>
+            <mat-form-field class="mat-form-field">
+                <label class="mat-label other-label mandatory-field">Title</label>
+                <mat-select id="title" name="title" formControlName="title">
+                    <mat-option *ngFor="let title of titles" [value]="title.id">
+                        {{title.name}}
+                    </mat-option>
+                </mat-select>
+                <mat-error *ngIf="form.get('title').hasError('required') && (form.get('title').touched ||form.get('title').dirty )">
+                    Title is <strong>required</strong>
+                </mat-error>
+            </mat-form-field>
+            <mat-form-field class="mat-form-field-right">
+                <label class="mat-label other-label">Initials</label>
+                <input matInput formControlName="initials" name="initials" id="initials" />
+            </mat-form-field>
+        </section>
+
+        <section>
+            <mat-form-field class="mat-form-field">
+                <label class="mat-label other-label mandatory-field">Name</label>
+                <input matInput formControlName="name" name="name" id="name" />
+                <mat-error *ngIf="form.get('name').hasError('required')">
+                    Name is <strong>required</strong>
+                </mat-error>
+            </mat-form-field>
+            <mat-form-field class="mat-form-field-right">
+                <label class="mat-label other-label mandatory-field">Surname</label>
+                <input matInput formControlName="surname" name="surname" id="surname" />
+                <mat-error *ngIf="form.get('surname').hasError('required')">
+                    Surname is <strong>required</strong>
+                </mat-error>
+            </mat-form-field>
+        </section>
+        
+        <section>
+            <mat-form-field class="mat-form-field">
+                <label class="mat-label other-label mandatory-field">Birth Date</label>
+                <input matInput  formControlName="dateOfBirth" [matDatepicker]="dateOfBirth">
+                <mat-datepicker-toggle matSuffix [for]="dateOfBirth" [disabled]="form.disabled"></mat-datepicker-toggle>
+                <mat-datepicker touchUi="true" #dateOfBirth></mat-datepicker>
+                <mat-error *ngIf="form.get('dateOfBirth').hasError('required')">
+                    Birth Date is <strong>required</strong>
+                </mat-error>
+            </mat-form-field>
+            <mat-form-field class="mat-form-field-right">
+                <label class="mat-label other-label mandatory-field">Relationship</label>
+                <mat-select id="relationship" name="relationship" formControlName="relationship">
+                    <mat-option *ngFor="let relationship of relationships" [value]="relationship">
+                        {{getRelationshipType(relationship)}}
+                    </mat-option>
+                </mat-select>
+                <mat-error *ngIf="form.get('relationship').hasError('required') && (form.get('relationship').touched ||form.get('relationship').dirty )">
+                    Relationship is <strong>required</strong>
+                </mat-error>
+            </mat-form-field>
+        </section>
+
+        <section>
+            <mat-form-field class="mat-form-field">
+                <label class="mat-label other-label">Gender</label>
+                <mat-select id="gender" name="gender" formControlName="gender">
+                    <mat-option *ngFor="let gender of genders" [value]="gender.id">
+                        {{formatLookup(gender.name)}}
+                    </mat-option>
+                </mat-select>
+            </mat-form-field>
+            <mat-form-field class="mat-form-field-right">
+                <label class="mat-label other-label">Nationality</label>
+                <mat-select id="nationality" name="nationality" formControlName="nationality">
+                    <mat-option *ngFor="let nationality of nationalities" [value]="nationality.id">
+                        {{formatLookup(nationality.name)}}
+                    </mat-option>
+                </mat-select>
+            </mat-form-field>
+        </section>
+
+        <section>
+            <mat-form-field class="mat-form-field">
+                <label class="mat-label other-label">Tax Number</label>
+                <input matInput formControlName="taxNumber" name="taxNumber" id="taxNumber" />
+            </mat-form-field>
+        </section>
+
+    </form>
+</mat-card>

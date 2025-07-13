@@ -1,0 +1,11 @@
+<member-view [rolePlayerId]="rolePlayerId" [hideExpandOption]="true" [expanded]="false" [triggerRefresh]="triggerRefresh"></member-view>
+
+<mat-tab-group animationDuration="500ms" [(selectedIndex)]="tabIndex">
+    <mat-tab label="Member">
+        <member-view [rolePlayerId]="rolePlayerId" [hideMenuBar]="true" [expanded]="true"
+            [showMinimumDetails]="false" (refreshEmit)="refresh($event)"></member-view>
+    </mat-tab>
+    <mat-tab label="Policies">
+        <policy-view [rolePlayerId]="rolePlayerId" [defaultPolicyId]="defaultPolicyId"></policy-view>
+    </mat-tab>
+</mat-tab-group>

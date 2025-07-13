@@ -1,0 +1,27 @@
+<div *ngIf="isSending">
+    <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+    <label class="mat-label other-label"><i>Re-sending email...please wait</i></label>
+</div>
+
+<section>
+    <form [formGroup]="form" class="mat-container details-form" novalidate>
+        <div>
+            <mat-form-field class="mat-form-field">
+                <label class="mat-label other-label">Recipient</label>
+                <input matInput formControlName="recipient" id="recipient">
+            </mat-form-field>
+            <mat-error *ngIf="form.get('recipient').hasError('required')">
+                recipient is required
+            </mat-error>
+            <mat-error *ngIf="form.get('recipient').hasError('email')">
+                invalid email provided
+            </mat-error>
+        </div>
+    </form>
+</section>
+<section>
+    <div>
+        <button class="button  submit-button" (click)="send()">Send</button>
+        <button class="button submit-button" (click)="closeDialog()" style="margin-left: 20px;">Close</button>
+    </div>
+</section>

@@ -1,0 +1,100 @@
+<mat-card class="removePaddingBottom">
+    <div class="menu-bar">
+        <span>
+            <span class="material-icons">
+                search
+            </span>
+            {{title}} <span *ngIf="!(hideRolePlayerSearch | async) && rolePlayer">{{rolePlayer?.displayName}}
+                ({{rolePlayer?.finPayee?.finPayeNumber}})</span>
+            <span *ngIf="!(dataSource.loading$ | async)" (click)="reset()" class="material-icons pointer right"
+                matTooltip="refresh">
+                restart_alt
+            </span>
+        </span>
+    </div>
+
+    <date-range-filter [defaultDateRange]="defaultDateRange" (parameterEmit)="setDateRange($event)"></date-range-filter>
+    <transaction-type-filter (parameterEmit)="setTransactionType($event)"></transaction-type-filter>
+
+    <span *ngIf="!(hideRolePlayerSearch | async)">
+        <mat-expansion-panel [(expanded)]='advancedFiltersExpanded'>
+            <mat-expansion-panel-header>
+                <mat-panel-title>
+                    Debtor Filter
+                </mat-panel-title>
+                <mat-panel-description *ngIf="rolePlayer"><span class="material-icons" matTooltip="pinned context">
+                        push_pin
+                    </span>
+                    <span *ngIf="rolePlayer"><b>(Debtor):</b> {{rolePlayer?.displayName}}
+                        ({{rolePlayer?.finPayee?.finPayeNumber}})</span>
+                </mat-panel-description>
+            </mat-expansion-panel-header>
+            <debtor-search [title]="'Search Debtor'" (debtorSelectedEmit)="setDebtor($event)"></debtor-search>
+        </mat-expansion-panel>
+    </span>
+
+    <form [formGroup]="form" class="mat-container details-form" novalidate>
+        <section>
+            <mat-form-field class="mat-form-field" [floatLabel]="'never'">
+                <input matInput name="searchTerm" id="searchTerm" formControlName="searchTerm">
+                <mat-placeholder class="placeholder">search by bank reference number</mat-placeholder>
+            </mat-form-field>
+        </section>
+    </form>
+</mat-card>
+<mat-card *ngIf="(dataSource.loading$ | async)">
+    <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+    <label class="mat-label other-label"><i>searching...please wait</i></label>
+</mat-card>
+
+<div [hidden]="(dataSource.loading$ | async)">
+    <mat-card>
+        <div *ngIf="searchTerm?.length > 2">Search Results for <b>{{searchTerm}}</b></div>
+        <div [hidden]="!(dataSource.data && dataSource.data.data && dataSource.data.data.length > 0)">
+            <mat-table #table [dataSource]="dataSource" matSort id="tblData" (matSortChange)="getData()">
+
+                <ng-container matColumnDef="bankReference">
+                    <mat-header-cell *matHeaderCellDef mat-sort-header> Bank Reference </mat-header-cell>
+                    <mat-cell *matCellDef="let row">{{row.bankReference}}</mat-cell>
+                </ng-container>
+
+                <ng-container matColumnDef="amount">
+                    <mat-header-cell *matHeaderCellDef mat-sort-header> Amount </mat-header-cell>
+                    <mat-cell *matCellDef="let row">{{row.amount}}</mat-cell>
+                </ng-container>
+
+                <ng-container matColumnDef="transactionDate">
+                    <mat-header-cell *matHeaderCellDef mat-sort-header> Transaction Date </mat-header-cell>
+                    <mat-cell *matCellDef="let row">{{row.transactionDate | date: "yyyy-MM-dd"}}</mat-cell>
+                </ng-container>
+
+                <ng-container matColumnDef="selectMultiple">
+                    <mat-header-cell *matHeaderCellDef> Select </mat-header-cell>
+                    <mat-cell *matCellDef="let row">
+                        <mat-checkbox (change)="transactionSelected(row)" [checked]="isSelected(row)"></mat-checkbox>
+                    </mat-cell>
+                </ng-container>
+
+                <ng-container matColumnDef="selectSingle">
+                    <mat-header-cell *matHeaderCellDef> Select </mat-header-cell>
+                    <mat-cell *matCellDef="let row">
+                        <span><a role="button" id="btnAction" class="link-edit"
+                                (click)="transactionSelected(row)">Select</a></span>
+                    </mat-cell>
+                </ng-container>
+
+                <mat-header-row *matHeaderRowDef="getDisplayedColumns()"></mat-header-row>
+                <mat-row *matRowDef="let row; columns: getDisplayedColumns();"></mat-row>
+            </mat-table>
+
+            <mat-paginator #paginator [pageIndex]="0" [pageSize]="5" [pageSizeOptions]="[5, 10, 25, 100]"
+                [length]="this.dataSource.rowCount$ | async" (page)="getData()">
+            </mat-paginator>
+        </div>
+
+        <div
+            *ngIf="!(dataSource.data && dataSource.data.data && dataSource.data.data.length > 0 || (dataSource.loading$ | async))">
+            <label class="mat-label other-label"><i>No transactions found...</i></label>
+        </div>
+    </mat-card>
+</div>

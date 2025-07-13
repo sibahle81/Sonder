@@ -1,0 +1,132 @@
+<mat-card>
+    <div class="menu-bar">
+        <span class="material-icons">
+            search
+        </span>
+        Authority Limits <span *ngIf="role">(Role: {{role.name}})</span>
+        <span *ngIf="!(dataSource.loading$ | async) && !(isLoading$ | async)">
+            <span *ngIf="isReadOnly" (click)="reset(false)" class="material-icons pointer right" matTooltip="reset">
+                restart_alt
+            </span>
+
+            <span *ngIf="userHasPermission(assignPermissionsToRolePermission)">
+                <span *ngIf="isReadOnly" (click)="toggleIsReadOnly()" class="material-icons pointer right"
+                    matTooltip="edit">
+                    settings
+                </span>
+                <span *ngIf="!isReadOnly">
+                    <span (click)="reset(false)" class="material-icons pointer right" matTooltip="cancel">
+                        cancel
+                    </span>
+                    <span (click)="save()" class="material-icons pointer right pulse" matTooltip="save">
+                        save
+                    </span>
+                </span>
+            </span>
+        </span>
+    </div>
+
+    <form [formGroup]="form" class="mat-container details-form" novalidate>
+        <section>
+            <mat-form-field class="mat-form-field controlSize">
+                <label class="mat-label other-label">Item Type</label>
+                <mat-select name="authorityLimitItemTypeFilter" id="authorityLimitItemTypeFilter"
+                    formControlName="authorityLimitItemTypeFilter"
+                    (selectionChange)="authorityLimitItemTypeFilterChanged($event.value)">
+                    <mat-option [value]="'All'">All</mat-option>
+                    <mat-option *ngFor="let authorityLimitItemType of authorityLimitItemTypes"
+                        [value]="authorityLimitItemType">
+                        {{formatLookup(authorityLimitItemType)}}
+                    </mat-option>
+                </mat-select>
+            </mat-form-field>
+        </section>
+    </form>
+</mat-card>
+
+<mat-card *ngIf="(dataSource.loading$ | async) || (isLoading$ | async)">
+    <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+    <label class="mat-label other-label"><i>{{(loadingMessage$ | async)}}</i></label>
+</mat-card>
+
+<div [hidden]="(dataSource.loading$ | async) || (isLoading$ | async)">
+    <mat-card>
+        <div [hidden]="!(dataSource.data && dataSource.data.data && dataSource.data.data.length > 0)">
+            <mat-table #table [dataSource]="dataSource" matSort id="tblData" (matSortChange)="getData()">
+
+                <ng-container matColumnDef="authorityLimitItemType">
+                    <mat-header-cell *matHeaderCellDef> Item Type </mat-header-cell>
+                    <mat-cell *matCellDef="let row">{{getAuthorityLimitItemType(row.authorityLimitItemType)}}</mat-cell>
+                </ng-container>
+
+                <ng-container matColumnDef="authorityLimitValueType">
+                    <mat-header-cell *matHeaderCellDef> Value Type </mat-header-cell>
+                    <mat-cell
+                        *matCellDef="let row">{{getAuthorityLimitValueType(row.authorityLimitValueType)}}</mat-cell>
+                </ng-container>
+
+                <ng-container matColumnDef="permissionName">
+                    <mat-header-cell *matHeaderCellDef> Permission </mat-header-cell>
+                    <mat-cell *matCellDef="let row">{{row.permissionName}} &nbsp;
+                        <span (click)="openUserSearchDialog(row)" class="material-icons icn pointer icn-button"
+                            matTooltip="view users with this permission">account_circle</span>
+                    </mat-cell>
+                </ng-container>
+
+                <ng-container matColumnDef="authorityLimitConfigurationType">
+                    <mat-header-cell *matHeaderCellDef> Type
+                    </mat-header-cell>
+                    <mat-cell
+                        *matCellDef="let row">{{getAuthorityLimitConfigurationType(row.authorityLimitConfigurationType)}}</mat-cell>
+                </ng-container>
+
+                <ng-container matColumnDef="value">
+                    <mat-header-cell *matHeaderCellDef> Value </mat-header-cell>
+                    <mat-cell *matCellDef="let row" [ngClass]="{ 'edited-cell': isEdited(row) }">
+
+                        <!-- Display value when input is not allowed -->
+                        <span *ngIf="isReadOnly || roleId > -1">
+                            <span *ngIf="row.value != null">
+                                <span *ngIf="row.authorityLimitValueType == monetaryValue">
+                                    {{ row.value | number:'1.2-2' }}
+                                </span>
+                                <span *ngIf="row.authorityLimitValueType == dayCount">
+                                    {{ row.value | number:'1.0-0' }}
+                                </span>
+                            </span>
+                            <span *ngIf="row.value == null">N/A</span>
+                        </span>
+
+                        <!-- Allow manual input when editing is enabled -->
+                        <span *ngIf="!isReadOnly && userHasPermission(manageValuesPermission) && roleId <= -1">
+                            <input NumberOnly class="inputWidth" matInput [(ngModel)]="row.value"
+                                (ngModelChange)="onValueChange(row)" placeholder="Enter value" />
+                        </span>
+
+                    </mat-cell>
+                </ng-container>
+
+                <!-- Actions -->
+                <ng-container matColumnDef="actions">
+                    <mat-header-cell *matHeaderCellDef>Actions</mat-header-cell>
+                    <mat-cell *matCellDef="let row">
+                        <mat-checkbox [disabled]="isDisabled(row)" (change)="authorityLimitConfigurationSelected(row)"
+                            [checked]="isSelected(row)"></mat-checkbox>
+                    </mat-cell>
+                </ng-container>
+
+                <mat-header-row *matHeaderRowDef="getDisplayedColumns()"></mat-header-row>
+                <mat-row *matRowDef="let row; columns: getDisplayedColumns();"></mat-row>
+            </mat-table>
+
+            <mat-paginator #paginator [pageIndex]="0" [pageSize]="5" [pageSizeOptions]="[5, 10, 25, 100]"
+                [length]="this.dataSource.rowCount$ | async" (page)="getData()">
+            </mat-paginator>
+        </div>
+
+        <mat-card
+            *ngIf="!(dataSource.data && dataSource.data.data && dataSource.data.data.length > 0 || (dataSource.loading$ | async) || (isLoading$ | async))">
+            <label class="mat-label other-label"><i>no authority limit configurations found...</i></label>
+        </mat-card>
+    </mat-card>
+</div>

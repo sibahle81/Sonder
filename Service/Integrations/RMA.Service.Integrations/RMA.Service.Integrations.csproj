@@ -1,0 +1,323 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="14.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">x64</Platform>
+    <ProjectGuid>{D8AEB73E-233D-4E41-B3F8-CBF26B0D1AF2}</ProjectGuid>
+    <OutputType>Exe</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>RMA.Service.Integrations</RootNamespace>
+    <AssemblyName>RMA.Service.Integrations</AssemblyName>
+    <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
+    <NuGetPackageImportStamp>
+    </NuGetPackageImportStamp>
+    <IsWebBootstrapper>false</IsWebBootstrapper>
+    <PublishUrl>publish\</PublishUrl>
+    <Install>true</Install>
+    <InstallFrom>Disk</InstallFrom>
+    <UpdateEnabled>false</UpdateEnabled>
+    <UpdateMode>Foreground</UpdateMode>
+    <UpdateInterval>7</UpdateInterval>
+    <UpdateIntervalUnits>Days</UpdateIntervalUnits>
+    <UpdatePeriodically>false</UpdatePeriodically>
+    <UpdateRequired>false</UpdateRequired>
+    <MapFileExtensions>true</MapFileExtensions>
+    <ApplicationRevision>0</ApplicationRevision>
+    <ApplicationVersion>1.0.0.%2a</ApplicationVersion>
+    <UseApplicationTrust>false</UseApplicationTrust>
+    <BootstrapperEnabled>true</BootstrapperEnabled>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|x64' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\x64\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <PlatformTarget>x64</PlatformTarget>
+    <CodeAnalysisRuleSet>..\..\..\Solution Items\RMA.ruleset</CodeAnalysisRuleSet>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|x64' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\x64\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <PlatformTarget>x64</PlatformTarget>
+    <CodeAnalysisRuleSet>..\..\..\Solution Items\RMA.ruleset</CodeAnalysisRuleSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|AnyCPU'">
+    <DebugSymbols>true</DebugSymbols>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <DebugType>full</DebugType>
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>..\..\..\Solution Items\RMA.ruleset</CodeAnalysisRuleSet>
+    <Prefer32Bit>true</Prefer32Bit>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|AnyCPU'">
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <Optimize>true</Optimize>
+    <DebugType>pdbonly</DebugType>
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>..\..\..\Solution Items\RMA.ruleset</CodeAnalysisRuleSet>
+    <Prefer32Bit>true</Prefer32Bit>
+  </PropertyGroup>
+  <PropertyGroup>
+    <AdditionalFileItemNames>$(AdditionalFileItemNames);None</AdditionalFileItemNames>
+  </PropertyGroup>
+  <PropertyGroup>
+    <IsServiceFabricServiceProject>true</IsServiceFabricServiceProject>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="Hyphen.FACS">
+      <HintPath>..\..\..\Lib\Hyphen.FACS.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.VisualBasic" />
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Runtime.Serialization" />
+    <Reference Include="System.ServiceModel" />
+    <Reference Include="System.Xml" />
+    <Reference Include="System.Xml.Linq" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="AutoMapperConfiguration.cs" />
+    <Compile Include="Connected Services\AstuteFspeV2\Reference.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </Compile>
+    <Compile Include="ContainerConfiguration.cs" />
+    <Compile Include="ContainerConfiguration1.cs">
+      <DependentUpon>ContainerConfiguration.tt</DependentUpon>
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+    </Compile>
+    <Compile Include="GlobalSuppressions.cs" />
+    <Compile Include="Mappers\IntegrationMapperProfile.cs" />
+    <Compile Include="Program.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Services\AzureBlob\BinaryStorageFacade.cs" />
+    <Compile Include="Services\CompCare\CCClaimFacade.cs" />
+    <Compile Include="Services\CompCare\MedicalReportFacade.cs" />
+    <Compile Include="Services\EuropAssistNotification\EuropAssistNotificationFacade.cs" />
+    <Compile Include="Services\Exchange\ExchangeMonitorService.cs" />
+    <Compile Include="Services\Fspe\FspeDataProcessor.cs" />
+    <Compile Include="Services\Fspe\FspeFacade.cs" />
+    <Compile Include="Services\Fspe\FspeImportIntegrationDataProcessor.cs" />
+    <Compile Include="Services\Fspe\FspeImportIntegrationFacade.cs" />
+    <Compile Include="Services\Hyphen\HyphenAccountVerificationFacade.cs" />
+    <Compile Include="Services\Hyphen\HyphenAccountVerificationResponseListener.cs" />
+    <Compile Include="Services\Qlink\QlinkIntegrationFacade.cs" />
+    <Compile Include="Services\Sms\SmsRequestFacade.cs" />
+    <Compile Include="Services\Vopd\VopdRequestProcessorFacade.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <AdditionalFiles Include="..\..\..\Solution Items\RMA.DependencyValidation\ServicePlatform.layerdiagram">
+      <Link>ServicePlatform.layerdiagram</Link>
+      <Visible>False</Visible>
+    </AdditionalFiles>
+    <None Include="App.config" />
+    <None Include="Connected Services\AstuteFspeV2\FspEnquiryServiceV2.wsdl" />
+    <None Include="Connected Services\AstuteFspeV2\RMA.Service.Integrations.AstuteFspeV2.GetAllFromSubscriptionListResponseGetAllFromSubscriptionListResult.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </None>
+    <None Include="Connected Services\AstuteFspeV2\RMA.Service.Integrations.AstuteFspeV2.GetDebarredByRepresentativeResponseGetDebarredByRepresentativeResult.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </None>
+    <None Include="Connected Services\AstuteFspeV2\RMA.Service.Integrations.AstuteFspeV2.GetFSPNumbersResponseGetFSPNumbersResult.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </None>
+    <None Include="Connected Services\AstuteFspeV2\RMA.Service.Integrations.AstuteFspeV2.GetLatestFromSubscriptionListResponseGetLatestFromSubscriptionListResult.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </None>
+    <None Include="Connected Services\AstuteFspeV2\RMA.Service.Integrations.AstuteFspeV2.GetPersonFpDetailsResponseGetPersonFpDetailsResult.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </None>
+    <None Include="Connected Services\AstuteFspeV2\RMA.Service.Integrations.AstuteFspeV2.GetRepresentativeCategoryResponseGetRepresentativeCategoryResult.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </None>
+    <None Include="Connected Services\AstuteFspeV2\RMA.Service.Integrations.AstuteFspeV2.GetRepresentativeEmploymentHistoryResponseGetRepresentativeEmploymentHistoryResult.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </None>
+    <None Include="Connected Services\AstuteFspeV2\RMA.Service.Integrations.AstuteFspeV2.GetRepresentativeReferenceResponseGetRepresentativeReferenceResult.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </None>
+    <None Include="Connected Services\AstuteFspeV2\RMA.Service.Integrations.AstuteFspeV2.RegisterRepresentativesResponseRegisterRepresentativesResult.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </None>
+    <None Include="Connected Services\AstuteFspeV2\RMA.Service.Integrations.AstuteFspeV2.SubmitSubscriptionListResponseSubmitSubscriptionListResult.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </None>
+    <None Include="PackageRoot\Config\Settings.xml" />
+    <None Include="PackageRoot\ServiceManifest.xml">
+      <SubType>Designer</SubType>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="ABCpdf">
+      <Version>12.5.0.7</Version>
+    </PackageReference>
+    <PackageReference Include="Autofac">
+      <Version>4.9.4</Version>
+    </PackageReference>
+    <PackageReference Include="AutoMapper">
+      <Version>8.0.0</Version>
+    </PackageReference>
+    <PackageReference Include="Azure.Identity">
+      <Version>1.13.2</Version>
+    </PackageReference>
+    <PackageReference Include="CommonServiceLocator">
+      <Version>2.0.7</Version>
+    </PackageReference>
+    <PackageReference Include="EntityFramework">
+      <Version>6.4.4</Version>
+    </PackageReference>
+    <PackageReference Include="Microsoft.CodeAnalysis.FxCopAnalyzers">
+      <Version>3.3.2</Version>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+      <PrivateAssets>all</PrivateAssets>
+    </PackageReference>
+    <PackageReference Include="Microsoft.CodeAnalysis.VersionCheckAnalyzer">
+      <Version>3.3.2</Version>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+      <PrivateAssets>all</PrivateAssets>
+    </PackageReference>
+    <PackageReference Include="Microsoft.CodeQuality.Analyzers">
+      <Version>3.3.2</Version>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+      <PrivateAssets>all</PrivateAssets>
+    </PackageReference>
+    <PackageReference Include="Microsoft.DependencyValidation.Analyzers">
+      <Version>0.11.0</Version>
+    </PackageReference>
+    <PackageReference Include="Microsoft.Graph">
+      <Version>5.70.0</Version>
+    </PackageReference>
+    <PackageReference Include="Microsoft.Identity.Client">
+      <Version>4.68.0</Version>
+    </PackageReference>
+    <PackageReference Include="Microsoft.NetFramework.Analyzers">
+      <Version>3.3.2</Version>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+      <PrivateAssets>all</PrivateAssets>
+    </PackageReference>
+    <PackageReference Include="Microsoft.ServiceFabric.Actors">
+      <Version>3.4.664</Version>
+    </PackageReference>
+    <PackageReference Include="Microsoft.VisualStudio.Threading.Analyzers">
+      <Version>16.3.52</Version>
+    </PackageReference>
+    <PackageReference Include="Newtonsoft.Json">
+      <Version>13.0.3</Version>
+    </PackageReference>
+    <PackageReference Include="Roslynator.Analyzers">
+      <Version>2.1.0</Version>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+      <PrivateAssets>all</PrivateAssets>
+    </PackageReference>
+    <PackageReference Include="WindowsAzure.Storage">
+      <Version>9.3.3</Version>
+    </PackageReference>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Connected Services\AstuteFspeV2\configuration91.svcinfo" />
+    <None Include="Connected Services\AstuteFspeV2\configuration.svcinfo" />
+    <None Include="Connected Services\AstuteFspeV2\Reference.svcmap">
+      <Generator>WCF Proxy Generator</Generator>
+      <LastGenOutput>Reference.cs</LastGenOutput>
+    </None>
+    <Content Include="ContainerConfiguration.tt">
+      <Generator>TextTemplatingFileGenerator</Generator>
+      <LastGenOutput>ContainerConfiguration1.cs</LastGenOutput>
+    </Content>
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\Common\RMA.Common.Database\RMA.Common.Database.csproj">
+      <Project>{5a742fb8-0332-42de-9d56-07315b898b32}</Project>
+      <Name>RMA.Common.Database</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\..\Common\RMA.Common.Service\RMA.Common.Service.csproj">
+      <Project>{4aa3772e-d3d5-458c-bc16-99d93df9185a}</Project>
+      <Name>RMA.Common.Service</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\..\Common\RMA.Common\RMA.Common.csproj">
+      <Project>{c30fb382-556d-41e4-b987-dea4f962059a}</Project>
+      <Name>RMA.Common</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\Admin\RMA.Service.Admin.MasterDataManager.Contracts\RMA.Service.Admin.MasterDataManager.Contracts.csproj">
+      <Project>{81ABD00C-262F-48DF-A933-63E3730F0245}</Project>
+      <Name>RMA.Service.Admin.MasterDataManager.Contracts</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\Admin\RMA.Service.Admin.SecurityManager.Contracts\RMA.Service.Admin.SecurityManager.Contracts.csproj">
+      <Project>{05202D9C-BE63-4105-8CE4-A9BFA19413D8}</Project>
+      <Name>RMA.Service.Admin.SecurityManager.Contracts</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\Billing\RMA.Service.Billing.Contracts\RMA.Service.Billing.Contracts.csproj">
+      <Project>{DA2EE1AE-A96F-447A-98C8-C2F65651478C}</Project>
+      <Name>RMA.Service.Billing.Contracts</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\ClientCare\RMA.Service.ClientCare.Contracts\RMA.Service.ClientCare.Contracts.csproj">
+      <Project>{AEAB775A-A0FE-497B-8947-14FE5AC961D1}</Project>
+      <Name>RMA.Service.ClientCare.Contracts</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\DigiCare\RMA.Service.DigiCare.Contracts\RMA.Service.DigiCare.Contracts.csproj">
+      <Project>{34EABD0E-0F2D-495A-9D33-CE0AA125A5A6}</Project>
+      <Name>RMA.Service.DigiCare.Contracts</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\DigiCare\RMA.Service.DigiCare.Database\RMA.Service.DigiCare.Database.csproj">
+      <Project>{6E16123F-1E48-4A8F-B59A-D10AB88C7DDB}</Project>
+      <Name>RMA.Service.DigiCare.Database</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\FinCare\RMA.Service.FinCare.Contracts\RMA.Service.FinCare.Contracts.csproj">
+      <Project>{D989A1CF-E3C8-4AC9-A110-BD658869C9BD}</Project>
+      <Name>RMA.Service.FinCare.Contracts</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\FinCare\RMA.Service.FinCare\RMA.Service.FinCare.csproj">
+      <Project>{675f59e2-b2d5-4f71-99d1-9e97c44aa80f}</Project>
+      <Name>RMA.Service.FinCare</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\ScanCare\RMA.Service.ScanCare.Contracts\RMA.Service.ScanCare.Contracts.csproj">
+      <Project>{42afab1f-7719-4afc-9dd4-76ad32a045a5}</Project>
+      <Name>RMA.Service.ScanCare.Contracts</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\ScanCare\RMA.Service.ScanCare\RMA.Service.ScanCare.csproj">
+      <Project>{A6DCCFB5-826D-4DBF-9877-C0433D9EE943}</Project>
+      <Name>RMA.Service.ScanCare</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\RMA.Service.Integrations.Contracts\RMA.Service.Integrations.Contracts.csproj">
+      <Project>{66928FA0-0AA5-4E2A-842C-61A1EC14960C}</Project>
+      <Name>RMA.Service.Integrations.Contracts</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\RMA.Service.Integrations.Database\RMA.Service.Integrations.Database.csproj">
+      <Project>{1fb50bbf-dc1d-470f-9eff-73ec24d9a60c}</Project>
+      <Name>RMA.Service.Integrations.Database</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Service Include="{508349B6-6B84-4DF5-91F0-309BEEBAD82D}" />
+  </ItemGroup>
+  <ItemGroup>
+    <WCFMetadata Include="Connected Services\" />
+  </ItemGroup>
+  <ItemGroup>
+    <WCFMetadataStorage Include="Connected Services\AstuteFspeV2\" />
+  </ItemGroup>
+  <ItemGroup />
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>

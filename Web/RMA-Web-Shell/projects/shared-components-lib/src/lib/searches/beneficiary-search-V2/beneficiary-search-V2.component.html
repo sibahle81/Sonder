@@ -1,0 +1,70 @@
+<div class="menu-bar">
+    <span>
+        <span class="material-icons">
+            search
+        </span>
+        {{title}}
+        <span *ngIf="!(dataSource.loading$ | async)" (click)="reset()" class="material-icons pointer right"
+            matTooltip="reset">
+            restart_alt
+        </span>
+    </span>
+</div>
+<mat-card *ngIf="(dataSource.loading$ | async)">
+    <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+    <label class="mat-label other-label"><i>searching...please wait</i></label>
+</mat-card>
+
+<div [hidden]="(dataSource.loading$ | async)">
+    <mat-card>
+        <div [hidden]="!(dataSource.data && dataSource.data.data && dataSource.data.data.length > 0)">
+            <mat-table #table [dataSource]="dataSource" matSort id="tblData" (matSortChange)="getData()">
+
+                <ng-container matColumnDef="beneficiaryName">
+                    <mat-header-cell *matHeaderCellDef> Beneficiary Name </mat-header-cell>
+                    <mat-cell *matCellDef="let row"> {{row.person.firstName}}
+                    </mat-cell>
+                </ng-container>
+
+                <ng-container matColumnDef="beneficiaryLastName">
+                    <mat-header-cell *matHeaderCellDef> Beneficiary Surname </mat-header-cell>
+                    <mat-cell *matCellDef="let row"> {{row.person.surname}}
+                    </mat-cell>
+                </ng-container>
+
+                <ng-container matColumnDef="idNumber">
+                    <mat-header-cell *matHeaderCellDef> ID / Passport </mat-header-cell>
+                    <mat-cell *matCellDef="let row"> {{row.person.idNumber ?? row.person.passportNumber}}
+                    </mat-cell>
+                </ng-container>
+
+                <ng-container matColumnDef="relation">
+                    <mat-header-cell *matHeaderCellDef> Relation </mat-header-cell>
+                    <mat-cell *matCellDef="let row"> {{row.fromRolePlayers[0]?.rolePlayerTypeId ?
+                        getRelationName(row.fromRolePlayers[0]?.rolePlayerTypeId) : 'N/A'}}
+                    </mat-cell>
+                </ng-container>
+
+                <ng-container matColumnDef="action">
+                    <mat-header-cell *matHeaderCellDef> Select </mat-header-cell>
+                    <mat-cell *matCellDef="let row">
+                        <span><a role="button" id="btnAction" class="link-edit"
+                                (click)="beneficiarySelected(row)">Select</a></span>
+                    </mat-cell>
+                </ng-container>
+
+                <mat-header-row *matHeaderRowDef="getDisplayedColumns()"></mat-header-row>
+                <mat-row *matRowDef="let row; columns: getDisplayedColumns();"></mat-row>
+            </mat-table>
+
+            <mat-paginator #paginator [pageIndex]="0" [pageSize]="5" [pageSizeOptions]="[5, 10, 25, 100]"
+                [length]="this.dataSource.rowCount$ | async" (page)="getData()">
+            </mat-paginator>
+        </div>
+
+        <div
+            *ngIf="!(dataSource.data && dataSource.data.data && dataSource.data.data.length > 0 || (dataSource.loading$ | async))">
+            <label class="mat-label other-label"><i>No beneficiaries found...</i></label>
+        </div>
+    </mat-card>
+</div>

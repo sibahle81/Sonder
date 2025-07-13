@@ -1,0 +1,83 @@
+<mat-card>
+    <div *ngIf="(dataSource?.loading$ | async)">
+        <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+        <span class="site-font"><i>loading PD lumpsum award...please wait</i></span>
+    </div>
+  
+    <div [hidden]="((dataSource.loading$ | async) 
+                  || (dataSource && dataSource.data && dataSource.data.data && dataSource.data.data.length <= 0) 
+                  || (paginator && paginator.length === 0 && !(dataSource.loading$ | async)))
+                  ">
+        <mat-table #table [dataSource]="dataSource" matSort id="tblData" (matSortChange)="getData()">
+            <ng-container matColumnDef="authorised">
+                <mat-header-cell *matHeaderCellDef mat-sort-header> Authorised </mat-header-cell>
+                <mat-cell *matCellDef="let element"><label [ngClass]="{
+                      'amber' : element.awardStatusId == 0,
+                      'green' : element.awardStatusId !== 0
+                      }"> {{ element.awardStatusId == 0 ? 'Not Authorised' : 'Authorised' }}
+                    </label>
+                </mat-cell>
+            </ng-container>
+    
+            <ng-container matColumnDef="payee">
+                <mat-header-cell *matHeaderCellDef mat-sort-header> Payee Name</mat-header-cell>
+                <mat-cell *matCellDef="let element"><role-player-display-name
+                        [rolePlayerId]="element.payeeId"></role-player-display-name></mat-cell>
+            </ng-container>
+    
+            <ng-container matColumnDef="awardPercentage">
+                <mat-header-cell *matHeaderCellDef mat-sort-header> Award Percentage</mat-header-cell>
+                <mat-cell *matCellDef="let element"> {{ element.awardPercentage + '%' }}</mat-cell>
+            </ng-container>
+    
+            <ng-container matColumnDef="awardAmount">
+                <mat-header-cell *matHeaderCellDef mat-sort-header> Award Amount</mat-header-cell>
+                <mat-cell *matCellDef="let element"> {{ element.awardAmount | currency:'ZAR ' }}</mat-cell>
+            </ng-container>
+    
+            <ng-container matColumnDef="awardStatus">
+                <mat-header-cell *matHeaderCellDef mat-sort-header> Award Status</mat-header-cell>
+                <mat-cell *matCellDef="let element"> {{ getclaimInvoiceStatus(element.awardStatusId) }}</mat-cell>
+            </ng-container>
+    
+            <ng-container matColumnDef="createdBy">
+                <mat-header-cell *matHeaderCellDef mat-sort-header> Created By </mat-header-cell>
+                <mat-cell *matCellDef="let element"> {{ element.createdBy }}</mat-cell>
+            </ng-container>
+
+            <ng-container matColumnDef="createdDate">
+                <mat-header-cell *matHeaderCellDef mat-sort-header> Awarded Date </mat-header-cell>
+                <mat-cell *matCellDef="let element"> {{ element.createdDate | date: "yyyy-MM-dd" }}</mat-cell>
+              </ng-container>
+    
+            <ng-container matColumnDef="assessedBy">
+                <mat-header-cell *matHeaderCellDef mat-sort-header> Assessed By </mat-header-cell>
+                <mat-cell *matCellDef="let element"><user-display-name
+                        [userId]="element.assessedBy"></user-display-name></mat-cell>
+            </ng-container>
+    
+            <ng-container matColumnDef="status">
+                <mat-header-cell *matHeaderCellDef> Status </mat-header-cell>
+                <mat-cell *matCellDef="let row" [matMenuTriggerFor]="menu" (click)="filterMenu(row)">
+                    <mat-icon [matMenuTriggerFor]="menu2"
+                        *ngIf="row.disabilityAssessmentStatusId !== approved">list</mat-icon>
+                    <mat-menu #menu="matMenu">
+                        <button mat-menu-item *ngFor="let menu of menus" (click)="onMenuItemClick(row, menu)"
+                            disabled={{menu.disable}}>{{menu.title}}</button>
+                    </mat-menu>
+                </mat-cell>
+            </ng-container>
+    
+            <mat-header-row *matHeaderRowDef="getDisplayedColumns()"></mat-header-row>
+            <mat-row *matRowDef="let row; columns: getDisplayedColumns();"></mat-row>
+        </mat-table>
+        <mat-paginator #paginator [pageIndex]="0" [pageSize]="5" [pageSizeOptions]="[5, 10, 25]"
+            [length]="this.dataSource.rowCount$ | async" (page)="getData()">
+        </mat-paginator>
+    </div>
+  
+    <div *ngIf="paginator.length === 0 && !(dataSource.loading$ | async)">
+        <i>No PD Lumpsum award found...</i>
+    </div>
+  </mat-card>
+  

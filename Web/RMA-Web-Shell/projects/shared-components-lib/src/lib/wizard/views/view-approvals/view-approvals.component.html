@@ -1,0 +1,54 @@
+<mat-card>
+    <mat-card-title>
+      <h1>Approvals</h1>
+    </mat-card-title>
+  
+  
+    <mat-card-content>
+      <mat-form-field [floatLabel]="'never'">
+        <input matInput maxlength="50" type="number" name="query" id="query" #filter width="300" minLength="3"
+          matTooltip="Search by Business Process Id" matTooltipShowDelay="1000" (keypress)="keyPress($event)" 
+          type="number" 
+          pattern="[0-9]*"
+          inputmode="numeric" 
+        >
+  
+        <mat-placeholder class="placeholder"></mat-placeholder>
+  
+        <mat-icon class="search-icon" (click)="search()" matSuffix>search</mat-icon>
+        <button style="visibility: hidden;" class="button submit-button" (click)="search()"
+          matTooltip="Search by Business Process Id" matTooltipShowDelay="1000">Search</button>
+      </mat-form-field>
+      <div class="error-message">
+        {{errorMessage}}
+      </div>
+      <div *ngIf="wizardApprovalStages && wizardApprovalStages.length > 0">
+        <mat-table #table matSort [dataSource]="wizardApprovalStages">
+          <!-- Action by -->
+          <ng-container matColumnDef="actionBy">
+            <mat-header-cell *matHeaderCellDef mat-sort-header> Actioned By </mat-header-cell>
+            <mat-cell *matCellDef="let row"> {{row.actionedBy}} </mat-cell>
+          </ng-container>
+          <!-- Action date -->
+          <ng-container matColumnDef="actionDate">
+            <mat-header-cell *matHeaderCellDef mat-sort-header> Actioned Date </mat-header-cell>
+            <mat-cell *matCellDef="let row"> {{row.actionedDate | date:'yyyy/MM/dd'}} </mat-cell>
+          </ng-container>
+          <!-- status -->
+          <ng-container matColumnDef="status">
+            <mat-header-cell *matHeaderCellDef mat-sort-header> Status </mat-header-cell>
+            <mat-cell *matCellDef="let row"> {{row.statusName}} </mat-cell>
+          </ng-container>
+          <!-- reason -->
+          <ng-container matColumnDef="reason">
+            <mat-header-cell *matHeaderCellDef mat-sort-header> Reason </mat-header-cell>
+            <mat-cell *matCellDef="let row"> {{row.reason}} </mat-cell>
+          </ng-container>
+  
+          <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
+          <mat-row *matRowDef="let row; columns: displayedColumns;"></mat-row>
+        </mat-table>
+      </div>
+      <!-- pagination not necessary, dataset is too small -->
+    </mat-card-content>
+  </mat-card>

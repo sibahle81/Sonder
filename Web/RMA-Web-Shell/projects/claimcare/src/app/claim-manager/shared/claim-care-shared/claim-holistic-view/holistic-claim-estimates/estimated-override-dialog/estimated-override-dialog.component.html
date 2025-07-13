@@ -1,0 +1,33 @@
+<div class="menu-bar">
+  <span class="material-icons">calculate</span>
+  Override Estimates
+  <span (click)="cancel()" class="material-icons pointer right" matTooltip="close">
+    close
+  </span>
+  <span *ngIf="form.valid && !form.pristine" (click)="save()" class="material-icons pointer right" matTooltip="save">
+    save
+  </span>
+</div>
+
+<mat-card>
+  <form [formGroup]="form" class="mat-container details-form" novalidate>
+    <section>
+      <mat-form-field class="mat-form-field">
+        <label class="mat-label other-label">Estimated PD% (PD)</label>
+        <input NumberOnly matInput formControlName="estimatedPd" name="estimatedPd" id="estimatedPd" />
+        <mat-error *ngIf="form.get('estimatedPd').hasError('min')">
+          PD% must be <strong>more than 0%</strong>
+        </mat-error>
+        <mat-error *ngIf="form.get('estimatedPd').hasError('max')">
+          PD% must be <strong>less than 100%</strong>
+        </mat-error>
+      </mat-form-field>
+    </section>
+    <section>
+      <mat-form-field class="mat-form-field">
+        <label class="mat-label other-label">Estimated Days Off (TTD)</label>
+        <input NumberOnly matInput formControlName="estimatedTtd" name="estimatedTtd" id="estimatedTtd" />
+      </mat-form-field>
+    </section>
+  </form>
+</mat-card>

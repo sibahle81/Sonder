@@ -1,0 +1,1037 @@
+{
+    "$schema": "https://schema.management.azsre.com/schemas/2019-04-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "namespaces_azs_mcc_sbus_01_name": {
+            "defaultValue": "azs-mcc-sbus-01",
+            "type": "String"
+        }
+    },
+    "variables": {},
+    "resources": [
+        {
+            "type": "Microsoft.ServiceBus/namespaces",
+            "apiVersion": "2022-10-01-preview",
+            "name": "[parameters('namespaces_azs_mcc_sbus_01_name')]",
+            "location": "northeurope",
+            "sku": {
+                "name": "Basic",
+                "tier": "Basic"
+            },
+            "properties": {
+                "premiumMessagingPartitions": 0,
+                "minimumTlsVersion": "1.0",
+                "publicNetworkAccess": "Enabled",
+                "disableLocalAuth": false,
+                "zoneRedundant": false
+            }
+        },
+        {
+            "type": "Microsoft.ServiceBus/namespaces/authorizationrules",
+            "apiVersion": "2022-10-01-preview",
+            "name": "[concat(parameters('namespaces_azs_mcc_sbus_01_name'), '/RootManageSharedAccessKey')]",
+            "location": "northeurope",
+            "dependsOn": [
+                "[resourceId('Microsoft.ServiceBus/namespaces', parameters('namespaces_azs_mcc_sbus_01_name'))]"
+            ],
+            "properties": {
+                "rights": [
+                    "Listen",
+                    "Manage",
+                    "Send"
+                ]
+            }
+        },
+        {
+            "type": "Microsoft.ServiceBus/namespaces/networkrulesets",
+            "apiVersion": "2022-10-01-preview",
+            "name": "[concat(parameters('namespaces_azs_mcc_sbus_01_name'), '/default')]",
+            "location": "northeurope",
+            "dependsOn": [
+                "[resourceId('Microsoft.ServiceBus/namespaces', parameters('namespaces_azs_mcc_sbus_01_name'))]"
+            ],
+            "properties": {
+                "publicNetworkAccess": "Enabled",
+                "defaultAction": "Allow",
+                "virtualNetworkRules": [],
+                "ipRules": [],
+                "trustedServiceAccessEnabled": false
+            }
+        },
+        {
+            "type": "Microsoft.ServiceBus/namespaces/queues",
+            "apiVersion": "2022-10-01-preview",
+            "name": "[concat(parameters('namespaces_azs_mcc_sbus_01_name'), '/stable.mcc.audit.auditlog')]",
+            "location": "northeurope",
+            "dependsOn": [
+                "[resourceId('Microsoft.ServiceBus/namespaces', parameters('namespaces_azs_mcc_sbus_01_name'))]"
+            ],
+            "properties": {
+                "maxMessageSizeInKilobytes": 256,
+                "lockDuration": "PT1M",
+                "maxSizeInMegabytes": 1024,
+                "requiresDuplicateDetection": false,
+                "requiresSession": false,
+                "defaultMessageTimeToLive": "P14D",
+                "deadLetteringOnMessageExpiration": true,
+                "enableBatchedOperations": true,
+                "duplicateDetectionHistoryTimeWindow": "PT10M",
+                "maxDeliveryCount": 10,
+                "status": "Active",
+                "autoDeleteOnIdle": "P10675199DT2H48M5.4775807S",
+                "enablePartitioning": false,
+                "enableExpress": false
+            }
+        },
+        {
+            "type": "Microsoft.ServiceBus/namespaces/queues",
+            "apiVersion": "2022-10-01-preview",
+            "name": "[concat(parameters('namespaces_azs_mcc_sbus_01_name'), '/stable.mcc.audit.lastviewed')]",
+            "location": "northeurope",
+            "dependsOn": [
+                "[resourceId('Microsoft.ServiceBus/namespaces', parameters('namespaces_azs_mcc_sbus_01_name'))]"
+            ],
+            "properties": {
+                "maxMessageSizeInKilobytes": 256,
+                "lockDuration": "PT30S",
+                "maxSizeInMegabytes": 1024,
+                "requiresDuplicateDetection": false,
+                "requiresSession": false,
+                "defaultMessageTimeToLive": "P14D",
+                "deadLetteringOnMessageExpiration": false,
+                "enableBatchedOperations": true,
+                "duplicateDetectionHistoryTimeWindow": "PT10M",
+                "maxDeliveryCount": 10,
+                "status": "Active",
+                "autoDeleteOnIdle": "P10675199DT2H48M5.4775807S",
+                "enablePartitioning": false,
+                "enableExpress": false
+            }
+        },
+        {
+            "type": "Microsoft.ServiceBus/namespaces/queues",
+            "apiVersion": "2022-10-01-preview",
+            "name": "[concat(parameters('namespaces_azs_mcc_sbus_01_name'), '/stable.mcc.bill.debtorstatusupdates')]",
+            "location": "northeurope",
+            "dependsOn": [
+                "[resourceId('Microsoft.ServiceBus/namespaces', parameters('namespaces_azs_mcc_sbus_01_name'))]"
+            ],
+            "properties": {
+                "maxMessageSizeInKilobytes": 256,
+                "lockDuration": "PT1M",
+                "maxSizeInMegabytes": 1024,
+                "requiresDuplicateDetection": false,
+                "requiresSession": false,
+                "defaultMessageTimeToLive": "P14D",
+                "deadLetteringOnMessageExpiration": false,
+                "enableBatchedOperations": true,
+                "duplicateDetectionHistoryTimeWindow": "PT10M",
+                "maxDeliveryCount": 10,
+                "status": "Active",
+                "autoDeleteOnIdle": "P10675199DT2H48M5.4775807S",
+                "enablePartitioning": false,
+                "enableExpress": false
+            }
+        },
+        {
+            "type": "Microsoft.ServiceBus/namespaces/queues",
+            "apiVersion": "2022-10-01-preview",
+            "name": "[concat(parameters('namespaces_azs_mcc_sbus_01_name'), '/stable.mcc.bill.invoiceallocations')]",
+            "location": "northeurope",
+            "dependsOn": [
+                "[resourceId('Microsoft.ServiceBus/namespaces', parameters('namespaces_azs_mcc_sbus_01_name'))]"
+            ],
+            "properties": {
+                "maxMessageSizeInKilobytes": 256,
+                "lockDuration": "PT1M",
+                "maxSizeInMegabytes": 1024,
+                "requiresDuplicateDetection": false,
+                "requiresSession": false,
+                "defaultMessageTimeToLive": "P14D",
+                "deadLetteringOnMessageExpiration": false,
+                "enableBatchedOperations": true,
+                "duplicateDetectionHistoryTimeWindow": "PT10M",
+                "maxDeliveryCount": 10,
+                "status": "Active",
+                "autoDeleteOnIdle": "P10675199DT2H48M5.4775807S",
+                "enablePartitioning": false,
+                "enableExpress": false
+            }
+        },
+        {
+            "type": "Microsoft.ServiceBus/namespaces/queues",
+            "apiVersion": "2022-10-01-preview",
+            "name": "[concat(parameters('namespaces_azs_mcc_sbus_01_name'), '/stable.mcc.bill.regenerateinvoicenonfinancials')]",
+            "location": "northeurope",
+            "dependsOn": [
+                "[resourceId('Microsoft.ServiceBus/namespaces', parameters('namespaces_azs_mcc_sbus_01_name'))]"
+            ],
+            "properties": {
+                "maxMessageSizeInKilobytes": 256,
+                "lockDuration": "PT1M",
+                "maxSizeInMegabytes": 1024,
+                "requiresDuplicateDetection": false,
+                "requiresSession": false,
+                "defaultMessageTimeToLive": "P14D",
+                "deadLetteringOnMessageExpiration": false,
+                "enableBatchedOperations": true,
+                "duplicateDetectionHistoryTimeWindow": "PT10M",
+                "maxDeliveryCount": 10,
+                "status": "Active",
+                "autoDeleteOnIdle": "P10675199DT2H48M5.4775807S",
+                "enablePartitioning": false,
+                "enableExpress": false
+            }
+        },
+        {
+            "type": "Microsoft.ServiceBus/namespaces/queues",
+            "apiVersion": "2022-10-01-preview",
+            "name": "[concat(parameters('namespaces_azs_mcc_sbus_01_name'), '/stable.mcc.cda.idnumbervalidation')]",
+            "location": "northeurope",
+            "dependsOn": [
+                "[resourceId('Microsoft.ServiceBus/namespaces', parameters('namespaces_azs_mcc_sbus_01_name'))]"
+            ],
+            "properties": {
+                "maxMessageSizeInKilobytes": 256,
+                "lockDuration": "PT30S",
+                "maxSizeInMegabytes": 1024,
+                "requiresDuplicateDetection": false,
+                "requiresSession": false,
+                "defaultMessageTimeToLive": "P14D",
+                "deadLetteringOnMessageExpiration": false,
+                "enableBatchedOperations": true,
+                "duplicateDetectionHistoryTimeWindow": "PT10M",
+                "maxDeliveryCount": 10,
+                "status": "Active",
+                "autoDeleteOnIdle": "P10675199DT2H48M5.4775807S",
+                "enablePartitioning": false,
+                "enableExpress": false
+            }
+        },
+        {
+            "type": "Microsoft.ServiceBus/namespaces/queues",
+            "apiVersion": "2022-10-01-preview",
+            "name": "[concat(parameters('namespaces_azs_mcc_sbus_01_name'), '/stable.mcc.cda.policyadd')]",
+            "location": "northeurope",
+            "dependsOn": [
+                "[resourceId('Microsoft.ServiceBus/namespaces', parameters('namespaces_azs_mcc_sbus_01_name'))]"
+            ],
+            "properties": {
+                "maxMessageSizeInKilobytes": 256,
+                "lockDuration": "PT5M",
+                "maxSizeInMegabytes": 1024,
+                "requiresDuplicateDetection": false,
+                "requiresSession": false,
+                "defaultMessageTimeToLive": "P14D",
+                "deadLetteringOnMessageExpiration": false,
+                "enableBatchedOperations": true,
+                "duplicateDetectionHistoryTimeWindow": "PT10M",
+                "maxDeliveryCount": 10,
+                "status": "Active",
+                "autoDeleteOnIdle": "P10675199DT2H48M5.4775807S",
+                "enablePartitioning": false,
+                "enableExpress": false
+            }
+        },
+        {
+            "type": "Microsoft.ServiceBus/namespaces/queues",
+            "apiVersion": "2022-10-01-preview",
+            "name": "[concat(parameters('namespaces_azs_mcc_sbus_01_name'), '/stable.mcc.cda.vopdupdate')]",
+            "location": "northeurope",
+            "dependsOn": [
+                "[resourceId('Microsoft.ServiceBus/namespaces', parameters('namespaces_azs_mcc_sbus_01_name'))]"
+            ],
+            "properties": {
+                "maxMessageSizeInKilobytes": 256,
+                "lockDuration": "PT30S",
+                "maxSizeInMegabytes": 1024,
+                "requiresDuplicateDetection": false,
+                "requiresSession": false,
+                "defaultMessageTimeToLive": "P14D",
+                "deadLetteringOnMessageExpiration": false,
+                "enableBatchedOperations": true,
+                "duplicateDetectionHistoryTimeWindow": "PT10M",
+                "maxDeliveryCount": 10,
+                "status": "Active",
+                "autoDeleteOnIdle": "P10675199DT2H48M5.4775807S",
+                "enablePartitioning": false,
+                "enableExpress": false
+            }
+        },
+        {
+            "type": "Microsoft.ServiceBus/namespaces/queues",
+            "apiVersion": "2022-10-01-preview",
+            "name": "[concat(parameters('namespaces_azs_mcc_sbus_01_name'), '/stable.mcc.clc.clientaudit')]",
+            "location": "northeurope",
+            "dependsOn": [
+                "[resourceId('Microsoft.ServiceBus/namespaces', parameters('namespaces_azs_mcc_sbus_01_name'))]"
+            ],
+            "properties": {
+                "maxMessageSizeInKilobytes": 256,
+                "lockDuration": "PT1M",
+                "maxSizeInMegabytes": 1024,
+                "requiresDuplicateDetection": false,
+                "requiresSession": false,
+                "defaultMessageTimeToLive": "P14D",
+                "deadLetteringOnMessageExpiration": false,
+                "enableBatchedOperations": true,
+                "duplicateDetectionHistoryTimeWindow": "PT10M",
+                "maxDeliveryCount": 10,
+                "status": "Active",
+                "autoDeleteOnIdle": "P10675199DT2H48M5.4775807S",
+                "enablePartitioning": false,
+                "enableExpress": false
+            }
+        },
+        {
+            "type": "Microsoft.ServiceBus/namespaces/queues",
+            "apiVersion": "2022-10-01-preview",
+            "name": "[concat(parameters('namespaces_azs_mcc_sbus_01_name'), '/stable.mcc.clc.clientlastviewed')]",
+            "location": "northeurope",
+            "dependsOn": [
+                "[resourceId('Microsoft.ServiceBus/namespaces', parameters('namespaces_azs_mcc_sbus_01_name'))]"
+            ],
+            "properties": {
+                "maxMessageSizeInKilobytes": 256,
+                "lockDuration": "PT1M",
+                "maxSizeInMegabytes": 1024,
+                "requiresDuplicateDetection": false,
+                "requiresSession": false,
+                "defaultMessageTimeToLive": "P14D",
+                "deadLetteringOnMessageExpiration": false,
+                "enableBatchedOperations": true,
+                "duplicateDetectionHistoryTimeWindow": "PT10M",
+                "maxDeliveryCount": 10,
+                "status": "Active",
+                "autoDeleteOnIdle": "P10675199DT2H48M5.4775807S",
+                "enablePartitioning": false,
+                "enableExpress": false
+            }
+        },
+        {
+            "type": "Microsoft.ServiceBus/namespaces/queues",
+            "apiVersion": "2022-10-01-preview",
+            "name": "[concat(parameters('namespaces_azs_mcc_sbus_01_name'), '/stable.mcc.clc.close-renewal-period')]",
+            "location": "northeurope",
+            "dependsOn": [
+                "[resourceId('Microsoft.ServiceBus/namespaces', parameters('namespaces_azs_mcc_sbus_01_name'))]"
+            ],
+            "properties": {
+                "maxMessageSizeInKilobytes": 256,
+                "lockDuration": "PT1M",
+                "maxSizeInMegabytes": 1024,
+                "requiresDuplicateDetection": false,
+                "requiresSession": false,
+                "defaultMessageTimeToLive": "P14D",
+                "deadLetteringOnMessageExpiration": false,
+                "enableBatchedOperations": true,
+                "duplicateDetectionHistoryTimeWindow": "PT10M",
+                "maxDeliveryCount": 10,
+                "status": "Active",
+                "autoDeleteOnIdle": "P10675199DT2H48M5.4775807S",
+                "enablePartitioning": false,
+                "enableExpress": false
+            }
+        },
+        {
+            "type": "Microsoft.ServiceBus/namespaces/queues",
+            "apiVersion": "2022-10-01-preview",
+            "name": "[concat(parameters('namespaces_azs_mcc_sbus_01_name'), '/stable.mcc.clc.createlead')]",
+            "location": "northeurope",
+            "dependsOn": [
+                "[resourceId('Microsoft.ServiceBus/namespaces', parameters('namespaces_azs_mcc_sbus_01_name'))]"
+            ],
+            "properties": {
+                "maxMessageSizeInKilobytes": 256,
+                "lockDuration": "PT1M",
+                "maxSizeInMegabytes": 1024,
+                "requiresDuplicateDetection": false,
+                "requiresSession": false,
+                "defaultMessageTimeToLive": "P14D",
+                "deadLetteringOnMessageExpiration": false,
+                "enableBatchedOperations": true,
+                "duplicateDetectionHistoryTimeWindow": "PT10M",
+                "maxDeliveryCount": 10,
+                "status": "Active",
+                "autoDeleteOnIdle": "P10675199DT2H48M5.4775807S",
+                "enablePartitioning": false,
+                "enableExpress": false
+            }
+        },
+        {
+            "type": "Microsoft.ServiceBus/namespaces/queues",
+            "apiVersion": "2022-10-01-preview",
+            "name": "[concat(parameters('namespaces_azs_mcc_sbus_01_name'), '/stable.mcc.clc.leadaudit')]",
+            "location": "northeurope",
+            "dependsOn": [
+                "[resourceId('Microsoft.ServiceBus/namespaces', parameters('namespaces_azs_mcc_sbus_01_name'))]"
+            ],
+            "properties": {
+                "maxMessageSizeInKilobytes": 256,
+                "lockDuration": "PT1M",
+                "maxSizeInMegabytes": 1024,
+                "requiresDuplicateDetection": false,
+                "requiresSession": false,
+                "defaultMessageTimeToLive": "P14D",
+                "deadLetteringOnMessageExpiration": false,
+                "enableBatchedOperations": true,
+                "duplicateDetectionHistoryTimeWindow": "PT10M",
+                "maxDeliveryCount": 10,
+                "status": "Active",
+                "autoDeleteOnIdle": "P10675199DT2H48M5.4775807S",
+                "enablePartitioning": false,
+                "enableExpress": false
+            }
+        },
+        {
+            "type": "Microsoft.ServiceBus/namespaces/queues",
+            "apiVersion": "2022-10-01-preview",
+            "name": "[concat(parameters('namespaces_azs_mcc_sbus_01_name'), '/stable.mcc.clc.leadlastviewed')]",
+            "location": "northeurope",
+            "dependsOn": [
+                "[resourceId('Microsoft.ServiceBus/namespaces', parameters('namespaces_azs_mcc_sbus_01_name'))]"
+            ],
+            "properties": {
+                "maxMessageSizeInKilobytes": 256,
+                "lockDuration": "PT1M",
+                "maxSizeInMegabytes": 1024,
+                "requiresDuplicateDetection": false,
+                "requiresSession": false,
+                "defaultMessageTimeToLive": "P14D",
+                "deadLetteringOnMessageExpiration": false,
+                "enableBatchedOperations": true,
+                "duplicateDetectionHistoryTimeWindow": "PT10M",
+                "maxDeliveryCount": 10,
+                "status": "Active",
+                "autoDeleteOnIdle": "P10675199DT2H48M5.4775807S",
+                "enablePartitioning": false,
+                "enableExpress": false
+            }
+        },
+        {
+            "type": "Microsoft.ServiceBus/namespaces/queues",
+            "apiVersion": "2022-10-01-preview",
+            "name": "[concat(parameters('namespaces_azs_mcc_sbus_01_name'), '/stable.mcc.clc.policyaudit')]",
+            "location": "northeurope",
+            "dependsOn": [
+                "[resourceId('Microsoft.ServiceBus/namespaces', parameters('namespaces_azs_mcc_sbus_01_name'))]"
+            ],
+            "properties": {
+                "maxMessageSizeInKilobytes": 256,
+                "lockDuration": "PT1M",
+                "maxSizeInMegabytes": 1024,
+                "requiresDuplicateDetection": false,
+                "requiresSession": false,
+                "defaultMessageTimeToLive": "P14D",
+                "deadLetteringOnMessageExpiration": false,
+                "enableBatchedOperations": true,
+                "duplicateDetectionHistoryTimeWindow": "PT10M",
+                "maxDeliveryCount": 10,
+                "status": "Active",
+                "autoDeleteOnIdle": "P10675199DT2H48M5.4775807S",
+                "enablePartitioning": false,
+                "enableExpress": false
+            }
+        },
+        {
+            "type": "Microsoft.ServiceBus/namespaces/queues",
+            "apiVersion": "2022-10-01-preview",
+            "name": "[concat(parameters('namespaces_azs_mcc_sbus_01_name'), '/stable.mcc.clc.policyimportagentinfo')]",
+            "location": "northeurope",
+            "dependsOn": [
+                "[resourceId('Microsoft.ServiceBus/namespaces', parameters('namespaces_azs_mcc_sbus_01_name'))]"
+            ],
+            "properties": {
+                "maxMessageSizeInKilobytes": 256,
+                "lockDuration": "PT1M",
+                "maxSizeInMegabytes": 1024,
+                "requiresDuplicateDetection": false,
+                "requiresSession": false,
+                "defaultMessageTimeToLive": "P14D",
+                "deadLetteringOnMessageExpiration": false,
+                "enableBatchedOperations": true,
+                "duplicateDetectionHistoryTimeWindow": "PT10M",
+                "maxDeliveryCount": 10,
+                "status": "Active",
+                "autoDeleteOnIdle": "P10675199DT2H48M5.4775807S",
+                "enablePartitioning": false,
+                "enableExpress": false
+            }
+        },
+        {
+            "type": "Microsoft.ServiceBus/namespaces/queues",
+            "apiVersion": "2022-10-01-preview",
+            "name": "[concat(parameters('namespaces_azs_mcc_sbus_01_name'), '/stable.mcc.clc.policylastviewed')]",
+            "location": "northeurope",
+            "dependsOn": [
+                "[resourceId('Microsoft.ServiceBus/namespaces', parameters('namespaces_azs_mcc_sbus_01_name'))]"
+            ],
+            "properties": {
+                "maxMessageSizeInKilobytes": 256,
+                "lockDuration": "PT1M",
+                "maxSizeInMegabytes": 1024,
+                "requiresDuplicateDetection": false,
+                "requiresSession": false,
+                "defaultMessageTimeToLive": "P14D",
+                "deadLetteringOnMessageExpiration": false,
+                "enableBatchedOperations": true,
+                "duplicateDetectionHistoryTimeWindow": "PT10M",
+                "maxDeliveryCount": 10,
+                "status": "Active",
+                "autoDeleteOnIdle": "P10675199DT2H48M5.4775807S",
+                "enablePartitioning": false,
+                "enableExpress": false
+            }
+        },
+        {
+            "type": "Microsoft.ServiceBus/namespaces/queues",
+            "apiVersion": "2022-10-01-preview",
+            "name": "[concat(parameters('namespaces_azs_mcc_sbus_01_name'), '/stable.mcc.clc.productaudit')]",
+            "location": "northeurope",
+            "dependsOn": [
+                "[resourceId('Microsoft.ServiceBus/namespaces', parameters('namespaces_azs_mcc_sbus_01_name'))]"
+            ],
+            "properties": {
+                "maxMessageSizeInKilobytes": 256,
+                "lockDuration": "PT1M",
+                "maxSizeInMegabytes": 1024,
+                "requiresDuplicateDetection": false,
+                "requiresSession": false,
+                "defaultMessageTimeToLive": "P14D",
+                "deadLetteringOnMessageExpiration": false,
+                "enableBatchedOperations": true,
+                "duplicateDetectionHistoryTimeWindow": "PT10M",
+                "maxDeliveryCount": 10,
+                "status": "Active",
+                "autoDeleteOnIdle": "P10675199DT2H48M5.4775807S",
+                "enablePartitioning": false,
+                "enableExpress": false
+            }
+        },
+        {
+            "type": "Microsoft.ServiceBus/namespaces/queues",
+            "apiVersion": "2022-10-01-preview",
+            "name": "[concat(parameters('namespaces_azs_mcc_sbus_01_name'), '/stable.mcc.clc.productlastviewed')]",
+            "location": "northeurope",
+            "dependsOn": [
+                "[resourceId('Microsoft.ServiceBus/namespaces', parameters('namespaces_azs_mcc_sbus_01_name'))]"
+            ],
+            "properties": {
+                "maxMessageSizeInKilobytes": 256,
+                "lockDuration": "PT1M",
+                "maxSizeInMegabytes": 1024,
+                "requiresDuplicateDetection": false,
+                "requiresSession": false,
+                "defaultMessageTimeToLive": "P14D",
+                "deadLetteringOnMessageExpiration": false,
+                "enableBatchedOperations": true,
+                "duplicateDetectionHistoryTimeWindow": "PT10M",
+                "maxDeliveryCount": 10,
+                "status": "Active",
+                "autoDeleteOnIdle": "P10675199DT2H48M5.4775807S",
+                "enablePartitioning": false,
+                "enableExpress": false
+            }
+        },
+        {
+            "type": "Microsoft.ServiceBus/namespaces/queues",
+            "apiVersion": "2022-10-01-preview",
+            "name": "[concat(parameters('namespaces_azs_mcc_sbus_01_name'), '/stable.mcc.clc.sendlogs')]",
+            "location": "northeurope",
+            "dependsOn": [
+                "[resourceId('Microsoft.ServiceBus/namespaces', parameters('namespaces_azs_mcc_sbus_01_name'))]"
+            ],
+            "properties": {
+                "maxMessageSizeInKilobytes": 256,
+                "lockDuration": "PT5M",
+                "maxSizeInMegabytes": 1024,
+                "requiresDuplicateDetection": false,
+                "requiresSession": false,
+                "defaultMessageTimeToLive": "P14D",
+                "deadLetteringOnMessageExpiration": false,
+                "enableBatchedOperations": true,
+                "duplicateDetectionHistoryTimeWindow": "PT10M",
+                "maxDeliveryCount": 10,
+                "status": "Active",
+                "autoDeleteOnIdle": "P10675199DT2H48M5.4775807S",
+                "enablePartitioning": false,
+                "enableExpress": false
+            }
+        },
+        {
+            "type": "Microsoft.ServiceBus/namespaces/queues",
+            "apiVersion": "2022-10-01-preview",
+            "name": "[concat(parameters('namespaces_azs_mcc_sbus_01_name'), '/stable.mcc.clm.emailcomms')]",
+            "location": "northeurope",
+            "dependsOn": [
+                "[resourceId('Microsoft.ServiceBus/namespaces', parameters('namespaces_azs_mcc_sbus_01_name'))]"
+            ],
+            "properties": {
+                "maxMessageSizeInKilobytes": 256,
+                "lockDuration": "PT5M",
+                "maxSizeInMegabytes": 5120,
+                "requiresDuplicateDetection": false,
+                "requiresSession": false,
+                "defaultMessageTimeToLive": "P14D",
+                "deadLetteringOnMessageExpiration": false,
+                "enableBatchedOperations": true,
+                "duplicateDetectionHistoryTimeWindow": "PT10M",
+                "maxDeliveryCount": 10,
+                "status": "Active",
+                "autoDeleteOnIdle": "P10675199DT2H48M5.4775807S",
+                "enablePartitioning": false,
+                "enableExpress": false
+            }
+        },
+        {
+            "type": "Microsoft.ServiceBus/namespaces/queues",
+            "apiVersion": "2022-10-01-preview",
+            "name": "[concat(parameters('namespaces_azs_mcc_sbus_01_name'), '/stable.mcc.clm.paymentcreationrequests')]",
+            "location": "northeurope",
+            "dependsOn": [
+                "[resourceId('Microsoft.ServiceBus/namespaces', parameters('namespaces_azs_mcc_sbus_01_name'))]"
+            ],
+            "properties": {
+                "maxMessageSizeInKilobytes": 256,
+                "lockDuration": "PT1M",
+                "maxSizeInMegabytes": 1024,
+                "requiresDuplicateDetection": false,
+                "requiresSession": false,
+                "defaultMessageTimeToLive": "P14D",
+                "deadLetteringOnMessageExpiration": false,
+                "enableBatchedOperations": true,
+                "duplicateDetectionHistoryTimeWindow": "PT10M",
+                "maxDeliveryCount": 10,
+                "status": "Active",
+                "autoDeleteOnIdle": "P10675199DT2H48M5.4775807S",
+                "enablePartitioning": false,
+                "enableExpress": false
+            }
+        },
+        {
+            "type": "Microsoft.ServiceBus/namespaces/queues",
+            "apiVersion": "2022-10-01-preview",
+            "name": "[concat(parameters('namespaces_azs_mcc_sbus_01_name'), '/stable.mcc.clm.paymentcreationresponses')]",
+            "location": "northeurope",
+            "dependsOn": [
+                "[resourceId('Microsoft.ServiceBus/namespaces', parameters('namespaces_azs_mcc_sbus_01_name'))]"
+            ],
+            "properties": {
+                "maxMessageSizeInKilobytes": 256,
+                "lockDuration": "PT1M",
+                "maxSizeInMegabytes": 1024,
+                "requiresDuplicateDetection": false,
+                "requiresSession": false,
+                "defaultMessageTimeToLive": "P14D",
+                "deadLetteringOnMessageExpiration": false,
+                "enableBatchedOperations": true,
+                "duplicateDetectionHistoryTimeWindow": "PT10M",
+                "maxDeliveryCount": 10,
+                "status": "Active",
+                "autoDeleteOnIdle": "P10675199DT2H48M5.4775807S",
+                "enablePartitioning": false,
+                "enableExpress": false
+            }
+        },
+        {
+            "type": "Microsoft.ServiceBus/namespaces/queues",
+            "apiVersion": "2022-10-01-preview",
+            "name": "[concat(parameters('namespaces_azs_mcc_sbus_01_name'), '/stable.mcc.emailsend')]",
+            "location": "northeurope",
+            "dependsOn": [
+                "[resourceId('Microsoft.ServiceBus/namespaces', parameters('namespaces_azs_mcc_sbus_01_name'))]"
+            ],
+            "properties": {
+                "maxMessageSizeInKilobytes": 256,
+                "lockDuration": "PT1M",
+                "maxSizeInMegabytes": 1024,
+                "requiresDuplicateDetection": false,
+                "requiresSession": false,
+                "defaultMessageTimeToLive": "P14D",
+                "deadLetteringOnMessageExpiration": false,
+                "enableBatchedOperations": true,
+                "duplicateDetectionHistoryTimeWindow": "PT10M",
+                "maxDeliveryCount": 10,
+                "status": "Active",
+                "autoDeleteOnIdle": "P10675199DT2H48M5.4775807S",
+                "enablePartitioning": false,
+                "enableExpress": false
+            }
+        },
+        {
+            "type": "Microsoft.ServiceBus/namespaces/queues",
+            "apiVersion": "2022-10-01-preview",
+            "name": "[concat(parameters('namespaces_azs_mcc_sbus_01_name'), '/stable.mcc.fin.billingpolicychanges')]",
+            "location": "northeurope",
+            "dependsOn": [
+                "[resourceId('Microsoft.ServiceBus/namespaces', parameters('namespaces_azs_mcc_sbus_01_name'))]"
+            ],
+            "properties": {
+                "maxMessageSizeInKilobytes": 256,
+                "lockDuration": "PT30S",
+                "maxSizeInMegabytes": 1024,
+                "requiresDuplicateDetection": false,
+                "requiresSession": false,
+                "defaultMessageTimeToLive": "P14D",
+                "deadLetteringOnMessageExpiration": false,
+                "enableBatchedOperations": true,
+                "duplicateDetectionHistoryTimeWindow": "PT10M",
+                "maxDeliveryCount": 10,
+                "status": "Active",
+                "autoDeleteOnIdle": "P10675199DT2H48M5.4775807S",
+                "enablePartitioning": false,
+                "enableExpress": false
+            }
+        },
+        {
+            "type": "Microsoft.ServiceBus/namespaces/queues",
+            "apiVersion": "2022-10-01-preview",
+            "name": "[concat(parameters('namespaces_azs_mcc_sbus_01_name'), '/stable.mcc.fin.bulkpaymentallocations')]",
+            "location": "northeurope",
+            "dependsOn": [
+                "[resourceId('Microsoft.ServiceBus/namespaces', parameters('namespaces_azs_mcc_sbus_01_name'))]"
+            ],
+            "properties": {
+                "maxMessageSizeInKilobytes": 256,
+                "lockDuration": "PT5M",
+                "maxSizeInMegabytes": 1024,
+                "requiresDuplicateDetection": false,
+                "requiresSession": false,
+                "defaultMessageTimeToLive": "P14D",
+                "deadLetteringOnMessageExpiration": false,
+                "enableBatchedOperations": true,
+                "duplicateDetectionHistoryTimeWindow": "PT10M",
+                "maxDeliveryCount": 10,
+                "status": "Active",
+                "autoDeleteOnIdle": "P10675199DT2H48M5.4775807S",
+                "enablePartitioning": false,
+                "enableExpress": false
+            }
+        },
+        {
+            "type": "Microsoft.ServiceBus/namespaces/queues",
+            "apiVersion": "2022-10-01-preview",
+            "name": "[concat(parameters('namespaces_azs_mcc_sbus_01_name'), '/stable.mcc.fin.collections')]",
+            "location": "northeurope",
+            "dependsOn": [
+                "[resourceId('Microsoft.ServiceBus/namespaces', parameters('namespaces_azs_mcc_sbus_01_name'))]"
+            ],
+            "properties": {
+                "maxMessageSizeInKilobytes": 256,
+                "lockDuration": "PT1M",
+                "maxSizeInMegabytes": 1024,
+                "requiresDuplicateDetection": false,
+                "requiresSession": false,
+                "defaultMessageTimeToLive": "P14D",
+                "deadLetteringOnMessageExpiration": false,
+                "enableBatchedOperations": true,
+                "duplicateDetectionHistoryTimeWindow": "PT10M",
+                "maxDeliveryCount": 10,
+                "status": "Active",
+                "autoDeleteOnIdle": "P10675199DT2H48M5.4775807S",
+                "enablePartitioning": false,
+                "enableExpress": false
+            }
+        },
+        {
+            "type": "Microsoft.ServiceBus/namespaces/queues",
+            "apiVersion": "2022-10-01-preview",
+            "name": "[concat(parameters('namespaces_azs_mcc_sbus_01_name'), '/stable.mcc.fin.payments')]",
+            "location": "northeurope",
+            "dependsOn": [
+                "[resourceId('Microsoft.ServiceBus/namespaces', parameters('namespaces_azs_mcc_sbus_01_name'))]"
+            ],
+            "properties": {
+                "maxMessageSizeInKilobytes": 256,
+                "lockDuration": "PT1M",
+                "maxSizeInMegabytes": 1024,
+                "requiresDuplicateDetection": false,
+                "requiresSession": false,
+                "defaultMessageTimeToLive": "P14D",
+                "deadLetteringOnMessageExpiration": false,
+                "enableBatchedOperations": true,
+                "duplicateDetectionHistoryTimeWindow": "PT10M",
+                "maxDeliveryCount": 10,
+                "status": "Active",
+                "autoDeleteOnIdle": "P10675199DT2H48M5.4775807S",
+                "enablePartitioning": false,
+                "enableExpress": false
+            }
+        },
+        {
+            "type": "Microsoft.ServiceBus/namespaces/queues",
+            "apiVersion": "2022-10-01-preview",
+            "name": "[concat(parameters('namespaces_azs_mcc_sbus_01_name'), '/stable.mcc.med.paymentresponse')]",
+            "location": "northeurope",
+            "dependsOn": [
+                "[resourceId('Microsoft.ServiceBus/namespaces', parameters('namespaces_azs_mcc_sbus_01_name'))]"
+            ],
+            "properties": {
+                "maxMessageSizeInKilobytes": 256,
+                "lockDuration": "PT30S",
+                "maxSizeInMegabytes": 1024,
+                "requiresDuplicateDetection": false,
+                "requiresSession": false,
+                "defaultMessageTimeToLive": "P14D",
+                "deadLetteringOnMessageExpiration": false,
+                "enableBatchedOperations": true,
+                "duplicateDetectionHistoryTimeWindow": "PT10M",
+                "maxDeliveryCount": 10,
+                "status": "Active",
+                "autoDeleteOnIdle": "P10675199DT2H48M5.4775807S",
+                "enablePartitioning": false,
+                "enableExpress": false
+            }
+        },
+        {
+            "type": "Microsoft.ServiceBus/namespaces/queues",
+            "apiVersion": "2022-10-01-preview",
+            "name": "[concat(parameters('namespaces_azs_mcc_sbus_01_name'), '/stable.mcc.med.switchbatchinvoice')]",
+            "location": "northeurope",
+            "dependsOn": [
+                "[resourceId('Microsoft.ServiceBus/namespaces', parameters('namespaces_azs_mcc_sbus_01_name'))]"
+            ],
+            "properties": {
+                "maxMessageSizeInKilobytes": 256,
+                "lockDuration": "PT5M",
+                "maxSizeInMegabytes": 1024,
+                "requiresDuplicateDetection": false,
+                "requiresSession": false,
+                "defaultMessageTimeToLive": "P14D",
+                "deadLetteringOnMessageExpiration": false,
+                "enableBatchedOperations": true,
+                "duplicateDetectionHistoryTimeWindow": "PT10M",
+                "maxDeliveryCount": 10,
+                "status": "Active",
+                "autoDeleteOnIdle": "P10675199DT2H48M5.4775807S",
+                "enablePartitioning": false,
+                "enableExpress": false
+            }
+        },
+        {
+            "type": "Microsoft.ServiceBus/namespaces/queues",
+            "apiVersion": "2022-10-01-preview",
+            "name": "[concat(parameters('namespaces_azs_mcc_sbus_01_name'), '/stable.mcc.pen.calculate-pension-paye')]",
+            "location": "northeurope",
+            "dependsOn": [
+                "[resourceId('Microsoft.ServiceBus/namespaces', parameters('namespaces_azs_mcc_sbus_01_name'))]"
+            ],
+            "properties": {
+                "maxMessageSizeInKilobytes": 256,
+                "lockDuration": "PT1M",
+                "maxSizeInMegabytes": 1024,
+                "requiresDuplicateDetection": false,
+                "requiresSession": false,
+                "defaultMessageTimeToLive": "P14D",
+                "deadLetteringOnMessageExpiration": false,
+                "enableBatchedOperations": true,
+                "duplicateDetectionHistoryTimeWindow": "PT10M",
+                "maxDeliveryCount": 10,
+                "status": "Active",
+                "autoDeleteOnIdle": "P10675199DT2H48M5.4775807S",
+                "enablePartitioning": false,
+                "enableExpress": false
+            }
+        },
+        {
+            "type": "Microsoft.ServiceBus/namespaces/queues",
+            "apiVersion": "2022-10-01-preview",
+            "name": "[concat(parameters('namespaces_azs_mcc_sbus_01_name'), '/stable.mcc.pen.generate-pension-monthend')]",
+            "location": "northeurope",
+            "dependsOn": [
+                "[resourceId('Microsoft.ServiceBus/namespaces', parameters('namespaces_azs_mcc_sbus_01_name'))]"
+            ],
+            "properties": {
+                "maxMessageSizeInKilobytes": 256,
+                "lockDuration": "PT1M",
+                "maxSizeInMegabytes": 1024,
+                "requiresDuplicateDetection": false,
+                "requiresSession": false,
+                "defaultMessageTimeToLive": "P14D",
+                "deadLetteringOnMessageExpiration": false,
+                "enableBatchedOperations": true,
+                "duplicateDetectionHistoryTimeWindow": "PT10M",
+                "maxDeliveryCount": 10,
+                "status": "Active",
+                "autoDeleteOnIdle": "P10675199DT2H48M5.4775807S",
+                "enablePartitioning": false,
+                "enableExpress": false
+            }
+        },
+        {
+            "type": "Microsoft.ServiceBus/namespaces/queues",
+            "apiVersion": "2022-10-01-preview",
+            "name": "[concat(parameters('namespaces_azs_mcc_sbus_01_name'), '/stable.mcc.pen.paymentresponse')]",
+            "location": "northeurope",
+            "dependsOn": [
+                "[resourceId('Microsoft.ServiceBus/namespaces', parameters('namespaces_azs_mcc_sbus_01_name'))]"
+            ],
+            "properties": {
+                "maxMessageSizeInKilobytes": 256,
+                "lockDuration": "PT30S",
+                "maxSizeInMegabytes": 1024,
+                "requiresDuplicateDetection": false,
+                "requiresSession": false,
+                "defaultMessageTimeToLive": "P14D",
+                "deadLetteringOnMessageExpiration": false,
+                "enableBatchedOperations": true,
+                "duplicateDetectionHistoryTimeWindow": "PT10M",
+                "maxDeliveryCount": 10,
+                "status": "Active",
+                "autoDeleteOnIdle": "P10675199DT2H48M5.4775807S",
+                "enablePartitioning": false,
+                "enableExpress": false
+            }
+        },
+        {
+            "type": "Microsoft.ServiceBus/namespaces/queues",
+            "apiVersion": "2022-10-01-preview",
+            "name": "[concat(parameters('namespaces_azs_mcc_sbus_01_name'), '/stable.mcc.pen.pay-pension-monthend')]",
+            "location": "northeurope",
+            "dependsOn": [
+                "[resourceId('Microsoft.ServiceBus/namespaces', parameters('namespaces_azs_mcc_sbus_01_name'))]"
+            ],
+            "properties": {
+                "maxMessageSizeInKilobytes": 256,
+                "lockDuration": "PT1M",
+                "maxSizeInMegabytes": 1024,
+                "requiresDuplicateDetection": false,
+                "requiresSession": false,
+                "defaultMessageTimeToLive": "P14D",
+                "deadLetteringOnMessageExpiration": false,
+                "enableBatchedOperations": true,
+                "duplicateDetectionHistoryTimeWindow": "PT10M",
+                "maxDeliveryCount": 10,
+                "status": "Active",
+                "autoDeleteOnIdle": "P10675199DT2H48M5.4775807S",
+                "enablePartitioning": false,
+                "enableExpress": false
+            }
+        },
+        {
+            "type": "Microsoft.ServiceBus/namespaces/queues",
+            "apiVersion": "2022-10-01-preview",
+            "name": "[concat(parameters('namespaces_azs_mcc_sbus_01_name'), '/stable.mcc.penmonthendrun')]",
+            "location": "northeurope",
+            "dependsOn": [
+                "[resourceId('Microsoft.ServiceBus/namespaces', parameters('namespaces_azs_mcc_sbus_01_name'))]"
+            ],
+            "properties": {
+                "maxMessageSizeInKilobytes": 256,
+                "lockDuration": "PT30S",
+                "maxSizeInMegabytes": 1024,
+                "requiresDuplicateDetection": false,
+                "requiresSession": false,
+                "defaultMessageTimeToLive": "P14D",
+                "deadLetteringOnMessageExpiration": false,
+                "enableBatchedOperations": true,
+                "duplicateDetectionHistoryTimeWindow": "PT10M",
+                "maxDeliveryCount": 10,
+                "status": "Active",
+                "autoDeleteOnIdle": "P10675199DT2H48M5.4775807S",
+                "enablePartitioning": false,
+                "enableExpress": false
+            }
+        },
+        {
+            "type": "Microsoft.ServiceBus/namespaces/queues",
+            "apiVersion": "2022-10-01-preview",
+            "name": "[concat(parameters('namespaces_azs_mcc_sbus_01_name'), '/stable.mcc.qlink.processqlinttransaction')]",
+            "location": "northeurope",
+            "dependsOn": [
+                "[resourceId('Microsoft.ServiceBus/namespaces', parameters('namespaces_azs_mcc_sbus_01_name'))]"
+            ],
+            "properties": {
+                "maxMessageSizeInKilobytes": 256,
+                "lockDuration": "PT1M",
+                "maxSizeInMegabytes": 1024,
+                "requiresDuplicateDetection": false,
+                "requiresSession": false,
+                "defaultMessageTimeToLive": "P14D",
+                "deadLetteringOnMessageExpiration": false,
+                "enableBatchedOperations": true,
+                "duplicateDetectionHistoryTimeWindow": "PT10M",
+                "maxDeliveryCount": 10,
+                "status": "Active",
+                "autoDeleteOnIdle": "P10675199DT2H48M5.4775807S",
+                "enablePartitioning": false,
+                "enableExpress": false
+            }
+        },
+        {
+            "type": "Microsoft.ServiceBus/namespaces/queues",
+            "apiVersion": "2022-10-01-preview",
+            "name": "[concat(parameters('namespaces_azs_mcc_sbus_01_name'), '/stable.mcc.smssend')]",
+            "location": "northeurope",
+            "dependsOn": [
+                "[resourceId('Microsoft.ServiceBus/namespaces', parameters('namespaces_azs_mcc_sbus_01_name'))]"
+            ],
+            "properties": {
+                "maxMessageSizeInKilobytes": 256,
+                "lockDuration": "PT1M",
+                "maxSizeInMegabytes": 1024,
+                "requiresDuplicateDetection": false,
+                "requiresSession": false,
+                "defaultMessageTimeToLive": "P14D",
+                "deadLetteringOnMessageExpiration": false,
+                "enableBatchedOperations": true,
+                "duplicateDetectionHistoryTimeWindow": "PT10M",
+                "maxDeliveryCount": 10,
+                "status": "Active",
+                "autoDeleteOnIdle": "P10675199DT2H48M5.4775807S",
+                "enablePartitioning": false,
+                "enableExpress": false
+            }
+        },
+        {
+            "type": "Microsoft.ServiceBus/namespaces/queues",
+            "apiVersion": "2022-10-01-preview",
+            "name": "[concat(parameters('namespaces_azs_mcc_sbus_01_name'), '/stable.mcc.vopd.quicktransact')]",
+            "location": "northeurope",
+            "dependsOn": [
+                "[resourceId('Microsoft.ServiceBus/namespaces', parameters('namespaces_azs_mcc_sbus_01_name'))]"
+            ],
+            "properties": {
+                "maxMessageSizeInKilobytes": 256,
+                "lockDuration": "PT5M",
+                "maxSizeInMegabytes": 1024,
+                "requiresDuplicateDetection": false,
+                "requiresSession": false,
+                "defaultMessageTimeToLive": "P14D",
+                "deadLetteringOnMessageExpiration": false,
+                "enableBatchedOperations": true,
+                "duplicateDetectionHistoryTimeWindow": "PT10M",
+                "maxDeliveryCount": 10,
+                "status": "Active",
+                "autoDeleteOnIdle": "P10675199DT2H48M5.4775807S",
+                "enablePartitioning": false,
+                "enableExpress": false
+            }
+        },
+        {
+            "type": "Microsoft.ServiceBus/namespaces/queues",
+            "apiVersion": "2022-10-01-preview",
+            "name": "[concat(parameters('namespaces_azs_mcc_sbus_01_name'), '/stable.mcc.vopdsend')]",
+            "location": "northeurope",
+            "dependsOn": [
+                "[resourceId('Microsoft.ServiceBus/namespaces', parameters('namespaces_azs_mcc_sbus_01_name'))]"
+            ],
+            "properties": {
+                "maxMessageSizeInKilobytes": 256,
+                "lockDuration": "PT1M",
+                "maxSizeInMegabytes": 1024,
+                "requiresDuplicateDetection": false,
+                "requiresSession": false,
+                "defaultMessageTimeToLive": "P14D",
+                "deadLetteringOnMessageExpiration": false,
+                "enableBatchedOperations": true,
+                "duplicateDetectionHistoryTimeWindow": "PT10M",
+                "maxDeliveryCount": 10,
+                "status": "Active",
+                "autoDeleteOnIdle": "P10675199DT2H48M5.4775807S",
+                "enablePartitioning": false,
+                "enableExpress": false
+            }
+        }
+    ]
+}

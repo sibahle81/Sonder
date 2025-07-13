@@ -1,0 +1,130 @@
+<h3>Bad Debt Reinstatement</h3>
+<div *ngIf="isAuthorized; else notAuthorized">
+    <form [formGroup]="form" novalidate>
+        <div class="div_actions">
+            <div>&nbsp;      
+            </div>
+          <div *ngIf="showGetTransactions"  >
+            <button type="button" class="button float-button submit-button" (click)="getTransactions()">Get
+              Transactions</button>
+            <button type="button" class="button float-button submit-button" (click)="back()">Back</button>
+          </div>
+          <div *ngIf="canSubmit()" class="form-buttons">
+            <br /><br />
+            <button class="button float-button submit-button" (click)="openConfirmationDialog()">Submit</button>
+            <button type="button" class="button float-button submit-button" (click)="back()">Back</button>
+          </div>
+          <div *ngIf="!canSubmit() && rolePlayerId === 0 " class="div_submit">
+            <button type="button" class="button float-button submit-button" (click)="back()">Back</button>
+          </div>    
+        </div>
+        <section>
+            <mat-accordion>
+                <mat-expansion-panel [expanded]="panelOpenState">
+                    <mat-expansion-panel-header>
+                        <mat-panel-title>
+                            <h4>Search</h4>
+                        </mat-panel-title>
+                    </mat-expansion-panel-header>
+                    <app-seach-debtor (itemSelected)="onAccountSelected($event)"></app-seach-debtor>
+                </mat-expansion-panel>
+            </mat-accordion>
+            <br />
+        </section>
+        <section>
+            <div *ngIf="rolePlayerId > 0  && transactionsSearched" class="grid-inputs">
+                <h4>Debtor Account</h4><h4>{{debtorSearchResult.finPayeNumber }} : {{debtorSearchResult.displayName }}</h4>
+              </div>
+        </section>
+        <section [hidden]="rolePlayerId === 0 && !transactionsSearched">
+            <concurrent-period [showPeriodControl]="showPeriodControl" (periodSelected)="concurrentPeriodSelected($event)"
+                (isValid)="isValidPeriodSelected($event)" [title]="periodTitle"></concurrent-period>
+        </section>
+        <section *ngIf="rolePlayerId > 0 && transactionsSearched">
+            <mat-form-field class="mat-form-field">
+                <label class="mat-label other-label">Reinstatement Reason</label>
+                <mat-select [(value)]="selectedReasonId" name="reinstateReason" id="reinstateReason"
+                    formControlName="reinstateReason" >
+                    <mat-option *ngFor="let reinstateReason of reinstateReasons" [value]="reinstateReason.id">
+                        {{formatLookup(reinstateReason.name)}}
+                    </mat-option>
+                </mat-select>
+                <mat-error *ngIf="form.get('reinstateReason').hasError('required')">
+                    Reinstatement Reason is <strong>required</strong>
+                </mat-error>
+            </mat-form-field>
+        </section>
+    </form>
+    <div>
+        <div *ngIf="isLoading && !isRefreshing">
+            <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+            <label class="mat-label other-label"><i>Loading Written-off Transactions...please wait</i></label>
+        </div>
+        <div *ngIf="isLoadingPolicies">
+            <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+            <label class="mat-label other-label"><i>Loading Policies...please wait</i></label>
+        </div>
+        <div *ngIf="isSubmitting">
+            <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+            <label class="mat-label other-label"><i>Submitting transactions...please wait</i></label>
+        </div>
+        <div class="errorMessage" *ngIf="searchFailedMessage.length > 0">{{searchFailedMessage}}</div>
+        <div *ngIf="!isLoading && datasourceBadDebtsWrittenOff.data.length > 0">
+            <mat-card>
+                <p class="labelParagraph">Transactions</p>
+                <mat-table #table [dataSource]="datasourceBadDebtsWrittenOff">
+                    <ng-container matColumnDef="documentNumber">
+                        <mat-header-cell *matHeaderCellDef>Document No.</mat-header-cell>
+                        <mat-cell *matCellDef="let row"> {{row.documentNumber}} </mat-cell>
+                        <mat-footer-cell *matFooterCellDef></mat-footer-cell>
+                    </ng-container>
+                    <ng-container matColumnDef="transactionDate">
+                        <mat-header-cell *matHeaderCellDef matTooltip="Date transaction is posted to the GL">Effective
+                            Date</mat-header-cell>
+                        <mat-cell *matCellDef="let row"> {{row.transactionDate | date:'yyyy/MM/dd'}} </mat-cell>
+                        <mat-footer-cell *matFooterCellDef class="footerBold">Total</mat-footer-cell>
+                    </ng-container>
+                    <ng-container matColumnDef="amount">
+                        <mat-header-cell *matHeaderCellDef>Amount</mat-header-cell>
+                        <mat-cell *matCellDef="let row" class="right-aligned-amounts"> {{row.amount | currency:'':''}}
+                        </mat-cell>
+                        <mat-footer-cell *matFooterCellDef class="footerBold right-aligned-amounts">{{getTransactionsTotals()
+                            | currency:'':''}}</mat-footer-cell>
+                    </ng-container>
+                    <ng-container matColumnDef="balance">
+                        <mat-header-cell *matHeaderCellDef>Balance</mat-header-cell>
+                        <mat-cell *matCellDef="let row" class="right-aligned-amounts"> {{row.balance | currency:'':''}}
+                        </mat-cell>
+                        <mat-footer-cell *matFooterCellDef></mat-footer-cell>
+                    </ng-container>
+                    <ng-container matColumnDef="actions">
+                        <mat-header-cell *matHeaderCellDef> <mat-checkbox
+                                [checked]="selectedBabDebtWrittenOffTransactionIds.length === datasourceBadDebtsWrittenOff.data.length"
+                                (change)="TransactionAllChecked($event)">
+                            </mat-checkbox></mat-header-cell>
+                        <mat-cell *matCellDef="let row">
+                            <mat-checkbox [checked]="selectedBabDebtWrittenOffTransactionIds.indexOf(row.transactionId) > -1"
+                                (change)="transactionChecked($event,row)">
+                            </mat-checkbox>
+                        </mat-cell>
+                        <mat-footer-cell *matFooterCellDef></mat-footer-cell>
+                    </ng-container>
+                    <mat-header-row *matHeaderRowDef="displayedColumnsTransactions"></mat-header-row>
+                    <mat-row *matRowDef="let row; columns: displayedColumnsTransactions;"></mat-row>
+                    <mat-footer-row class="sticky-footer" *matFooterRowDef="displayedColumnsTransactions"></mat-footer-row>
+                </mat-table>
+                <mat-paginator #paginatorInvoices [pageSize]="5" [pageSizeOptions]="[5, 10, 25, 100]">
+                </mat-paginator>
+            </mat-card>
+        </div>
+   
+    </div>
+</div>
+<ng-template #notAuthorized>
+    <div>
+        <div class="wizard-permissions-error">You do not have sufficient permissions to do Bad Debt Reinstatement</div>
+        <div (click)="back()" class="form-buttons submit-button">
+            <button type="button" class="button float-button">Back</button>
+        </div>
+    </div>
+</ng-template>

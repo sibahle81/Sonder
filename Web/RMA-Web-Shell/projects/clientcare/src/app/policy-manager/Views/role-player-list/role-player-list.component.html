@@ -1,0 +1,137 @@
+<h4>{{title}}</h4>
+ 
+<mat-table #table [dataSource]="datasource" matSort>
+  <ng-container matColumnDef="beneficiary">
+    <mat-header-cell class="beneficiary-column" [style.display]="showBeneficiary ? 'flex' : 'none'" *matHeaderCellDef mat-sort-header>Beneficiary</mat-header-cell>
+    <mat-cell class="beneficiary-column" [style.display]="showBeneficiary ? 'flex' : 'none'" *matCellDef="let row">
+      <span *ngIf="row.person; else noCheck" class="check-box">
+        <mat-checkbox [checked]="row.person.isBeneficiary" (change)="selectBeneficiary($event, row)"
+          [disabled]="isMinorChild(row) || isReadOnly || !isWizard"></mat-checkbox>
+      </span>
+      <ng-template #noCheck><span>&nbsp;</span></ng-template>
+    </mat-cell>
+  </ng-container>
+  <ng-container matColumnDef="displayName">
+    <mat-header-cell *matHeaderCellDef mat-sort-header>Name</mat-header-cell>
+    <mat-cell [style.color]="row.isDeleted ? 'red' : 'black'" *matCellDef="let row">{{row.displayName}}</mat-cell>
+  </ng-container>
+  <ng-container matColumnDef="idNumber">
+    <mat-header-cell *matHeaderCellDef mat-sort-header>Identification #</mat-header-cell>
+    <mat-cell [style.color]="row.isDeleted ? 'red' : 'black'" *matCellDef="let row">
+      <span *ngIf="row.person; else noValue">{{ getIdNumber(row) }}</span>
+      <ng-template #noValue><span>&nbsp;</span></ng-template>
+    </mat-cell>
+  </ng-container>
+  <ng-container matColumnDef="verified">
+    <mat-header-cell [style.display]="showVopd ? 'flex' : 'none'" *matHeaderCellDef mat-sort-header>VoPD
+    </mat-header-cell>
+    <mat-cell [style.display]="showVopd ? 'flex' : 'none'" *matCellDef="let row">
+      <span *ngIf="row.person; else noCheck" class="check-box">
+        <mat-checkbox [checked]="row.person.isVopdVerified" [disabled]="!isWizard"></mat-checkbox>
+      </span>
+      <ng-template #noCheck><span>&nbsp;</span></ng-template>
+    </mat-cell>
+  </ng-container>
+  <ng-container matColumnDef="dateOfBirth">
+    <mat-header-cell *matHeaderCellDef mat-sort-header>DOB</mat-header-cell>
+    <mat-cell [style.color]="row.isDeleted ? 'red' : 'black'" *matCellDef="let row">
+      <span *ngIf="row.person; else noDate">{{row.person.dateOfBirth | date:'yyyy-MM-dd'}}</span>
+      <ng-template #noDate><span>&nbsp;</span></ng-template>
+    </mat-cell>
+  </ng-container>
+  <ng-container matColumnDef="age">
+    <mat-header-cell *matHeaderCellDef mat-sort-header>Age</mat-header-cell>
+    <mat-cell [style.color]="row.isDeleted ? 'red' : 'black'" *matCellDef="let row">{{getAge(row)}}</mat-cell>
+  </ng-container>
+  <ng-container matColumnDef="relation">
+    <mat-header-cell *matHeaderCellDef mat-sort-header>Relation</mat-header-cell>
+    <mat-cell [style.color]="row.isDeleted ? 'red' : 'black'" *matCellDef="let row">{{getRelation(row)}}</mat-cell>
+  </ng-container>
+  <ng-container matColumnDef="emailAddress">
+    <mat-header-cell *matHeaderCellDef mat-sort-header>Email</mat-header-cell>
+    <mat-cell [style.color]="row.isDeleted ? 'red' : 'black'" *matCellDef="let row">{{row.emailAddress}}</mat-cell>
+  </ng-container>
+  <ng-container matColumnDef="cellNumber">
+    <mat-header-cell *matHeaderCellDef mat-sort-header>Mobile</mat-header-cell>
+    <mat-cell [style.color]="row.isDeleted ? 'red' : 'black'" *matCellDef="let row">{{row.cellNumber}}</mat-cell>
+  </ng-container>
+  <ng-container matColumnDef="policyStartDate">
+    <mat-header-cell *matHeaderCellDef mat-sort-header>Start Date</mat-header-cell>
+    <mat-cell [style.color]="row.isDeleted ? 'red' : 'black'" *matCellDef="let row">{{ getPolicyStartDate(row) | date:'yyyy-MM-dd'}}</mat-cell>
+  </ng-container>
+  <ng-container matColumnDef="endDate">
+    <mat-header-cell *matHeaderCellDef mat-sort-header>End Date</mat-header-cell>
+    <mat-cell [style.color]="row.isDeleted ? 'red' : 'black'" *matCellDef="let row">{{ getPolicyEndDate(row) | date:'yyyy-MM-dd'}}</mat-cell>
+  </ng-container>
+  <ng-container  matColumnDef="split">
+    <mat-header-cell [style.display]="isBeneficiaryView ? 'flex' : 'none'" *matHeaderCellDef>Benefit %</mat-header-cell>
+    <mat-cell [style.display]="isBeneficiaryView ? 'flex' : 'none'" *matCellDef="let row">
+      <table class="benefit-table">
+        <tr>
+          <td>Funeral:</td>
+          <td>
+            <input type="number" min="0" max="100" step="5" 
+              value={{getFuneralBenefitSplit(row)}}
+              [disabled]="disableSlider"
+              (input)="setFuneralBenefitSplit($event, row)">
+          </td>
+        </tr>
+        <tr [style.display]="isLifeBeneficiary(row) ? 'table-row' : 'none'">
+          <td>Life:</td>
+          <td>
+            <input type="number" min="0" max="100" step="5" 
+              value={{getLifeBenefitSplit(row)}}
+              [disabled]="disableSlider"
+              (input)="setLifeBenefitSplit($event, row)">
+          </td>
+        </tr>
+      </table>
+    </mat-cell>
+  </ng-container>
+  <ng-container matColumnDef="actions">
+    <mat-header-cell *matHeaderCellDef mat-sort-header>Actions</mat-header-cell>
+    <mat-cell *matCellDef="let row; let i = index">
+      <div>
+        <span>
+          <a role="button" class="link-edit" (click)="editPerson(row, i)">
+            <span *ngIf="canEditRolePlayer(row)">Edit</span>
+            <span *ngIf="!canEditRolePlayer(row)">View</span>
+          </a>
+        </span>
+        <span *ngIf="rolePlayerPolicies.length > 0 && canAddRemove && isWizard && permitPolicyChanges">
+          <span>&nbsp;|&nbsp;</span>
+          <a role="button" class="link-edit" (click)="editPolicies(row, i)">Policies</a>
+        </span>
+        <span *ngIf="canAddRemove && isWizard && permitPolicyChanges && !row.isDeleted">
+          <span>&nbsp;|&nbsp;</span>
+          <a role="button" class="link-edit" (click)="removeRelation(row)">Remove</a>
+        </span>
+        <span *ngIf="canAddRemove && isWizard && permitPolicyChanges && row.isDeleted">
+          <span>&nbsp;|&nbsp;</span>
+          <a role="button" class="link-edit" (click)="undoRemoveRelation(row)">Undo</a>
+        </span>
+      </div>
+    </mat-cell>
+  </ng-container>
+  <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
+  <mat-row *matRowDef="let row; columns: displayedColumns;"></mat-row>
+</mat-table>
+<div class="button-container" *ngIf="canAdd && canAddRemove && isWizard">
+  <div (click)="addRelation()" class="link-container" *ngIf="permitPolicyChanges">
+    <a role="button">
+      <mat-icon class="person-link">person_add</mat-icon>
+      <span class="person-link person-link-text">
+        Add {{title}}
+      </span>
+    </a>
+  </div>
+  <div *ngIf="showVopd" class="verify-checkbox">
+    <mat-checkbox [disabled]="!isWizard">VoPD (SA Id Numbers)</mat-checkbox>
+  </div>
+</div>
+<mat-paginator #paginator [length]="datasource.data.length" [pageIndex]="0" [pageSize]="5" [pageSizeOptions]="[5, 10]">
+</mat-paginator>
+<div class="error-box" *ngIf="isWizard">
+  <div *ngFor="let error of errors">{{error}}</div>
+</div>
+ 

@@ -1,0 +1,97 @@
+<mat-card *ngIf="isLoading$ | async">
+    <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+    <label class="mat-label other-label"><i>{{loadingMessages$ | async}}</i></label>
+</mat-card>
+
+<div *ngIf="!(isLoading$ | async)">
+    <mat-card>
+        <div class="menu-bar">
+            <span class="material-icons">
+                receipt_long
+            </span>&nbsp;
+            <label>Sundry Invoice</label>
+            <span class="material-icons menu-button">
+                save
+            </span>
+        </div>
+        
+        <invoice-generic [claimInvoice]="claimInvoice" [personEvent]="personEvent" (formDetailsEmit)="formDetailsEmit($event)"></invoice-generic>
+
+        <form [formGroup]="form" class="mat-container" novalidate>
+            <section>
+                <mat-form-field class="mat-form-field">
+                    <label class="mat-label other-label">Supplier Invoice Number</label>
+                    <input matInput formControlName="supplierInvNumber" name="supplierInvNumber"
+                        id="supplierInvNumber" />
+                </mat-form-field>
+                <mat-form-field class="mat-form-field-right">
+                    <label class="mat-label other-label">Service Date</label>
+                    <input matInput formControlName="serviceDate" [matDatepicker]="serviceDate">
+                    <mat-datepicker-toggle matSuffix [for]="serviceDate">
+                    </mat-datepicker-toggle>
+                    <mat-datepicker touchUi="true" #serviceDate></mat-datepicker>
+                </mat-form-field>
+            </section>
+            <section>
+                <mat-form-field class="mat-form-field">
+                    <label class="mat-label other-label">Provider Type</label>
+                    <mat-select name="providerType" id="providerType" formControlName="providerType">
+                        <mat-option *ngFor="let providerType of providerTypes" [value]="providerType">
+                            {{formatLookup(providerType)}}
+                        </mat-option>
+                    </mat-select>
+                    <mat-error *ngIf="form.get('providerType').hasError('required')">
+                        payee type is <strong>required</strong>
+                    </mat-error>
+                </mat-form-field>
+
+                <mat-form-field class="mat-form-field">
+                    <label class="mat-label other-label">Provider Name</label>
+                    <mat-select name="providerName" id="providerName" formControlName="providerName">
+                        <mat-option *ngFor="let providerName of providerNames" [value]="providerName">
+                            {{formatLookup(providerName)}}
+                        </mat-option>
+                    </mat-select>
+                    <mat-error *ngIf="form.get('providerName').hasError('required')">
+                        payee type is <strong>required</strong>
+                    </mat-error>
+                </mat-form-field>
+            </section>
+            <section>
+                <mat-form-field class="mat-form-field">
+                    <label class="mat-label other-label">Service Type</label>
+                    <mat-select name="serviceType" id="serviceType" formControlName="serviceType">
+                        <mat-option *ngFor="let serviceType of serviceTypes" [value]="serviceType">
+                            {{formatLookup(serviceType)}}
+                        </mat-option>
+                    </mat-select>
+                    <mat-error *ngIf="form.get('serviceType').hasError('required')">
+                        service type is <strong>required</strong>
+                    </mat-error>
+                </mat-form-field>
+                <mat-form-field class="mat-form-field">
+                    <label class="mat-label other-label">Vat Rate</label>
+                    <mat-select name="vatRate" id="vatRate" formControlName="vatRate">
+                        <mat-option *ngFor="let vatRate of vatRates" [value]="vatRate">
+                            {{formatLookup(vatRate)}}
+                        </mat-option>
+                    </mat-select>
+                    <mat-error *ngIf="form.get('vatRate').hasError('required')">
+                        vat rate is <strong>required</strong>
+                    </mat-error>
+                </mat-form-field>
+            </section>
+            <section>
+                <mat-form-field class="mat-form-field">
+                    <label class="mat-label other-label">Vat</label>
+                    <input matInput formControlName="vat" name="vat" id="vat" />
+                </mat-form-field>
+                <mat-form-field class="mat-form-field">
+                    <label class="mat-label other-label">Invoice Total</label>
+                    <input matInput formControlName="invoiceTotal" name="invoiceTotal"
+                        id="invoiceTotal" />
+                </mat-form-field>
+            </section>
+        </form>
+    </mat-card>
+</div>

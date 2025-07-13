@@ -1,0 +1,67 @@
+<div class="pad-form">
+  <h3>Policy Letters</h3>
+  <div [hidden]="showMemberCertificate">
+    <div *ngIf="isLoading">
+      <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+      <span class="grey"><i>Checking for amendments...</i></span>
+    </div>
+    <div >
+      <div *ngIf="">
+        <span class="grey"><i>No policy changes found...</i></span>
+      </div>
+      <div  > 
+        
+        
+        <mat-table #table [dataSource]="dataSource"   matSort matSortActive="RolePlayerTypeId" matSortDirection="asc"
+          matSortDisableClear>
+          <ng-container matColumnDef="policyNumber">
+            <mat-header-cell *matHeaderCellDef>Policy</mat-header-cell>
+            <mat-cell *matCellDef="let row">{{row.policyNumber}}</mat-cell>
+          </ng-container>
+          
+          <ng-container matColumnDef="modifiedBy">
+            <mat-header-cell *matHeaderCellDef>Modified By</mat-header-cell>
+            <mat-cell *matCellDef="let row">{{this.wizardModifiedBy}}</mat-cell>
+          </ng-container>
+         
+        
+          <ng-container matColumnDef="modifiedDt">
+            <mat-header-cell *matHeaderCellDef>Modified Date</mat-header-cell>
+            <mat-cell *matCellDef="let row">{{this.wizardModifiedDt | date:'yyyy/MM/dd'}}</mat-cell>
+          </ng-container>
+
+          <ng-container matColumnDef="actions">
+            <mat-header-cell *matHeaderCellDef>Policy Letters</mat-header-cell>
+            <mat-cell *matCellDef="let row">
+              <div>
+                <div *ngIf="showEmailAmendmentLetter()"><a class="show-pointer" (click)="previewEmailLetter(row.policyId)">Email Amendment Letter</a></div>
+                <div *ngIf="showContactAmendmentLetter()"><a class="show-pointer" (click)="previewContactLetter(row.policyId)">Contact Amendment Letter</a></div>
+                <div *ngIf="showPostalAmendmentLetter()"><a class="show-pointer" (click)="previewPostalLetter(row.policyId)">Postal Amendment Letter</a></div>
+                <div *ngIf="showBankingAmendmentLetter()"><a class="show-pointer" (click)="previewBankingLetter(row.policyId)">Banking Detail Amendment Letter</a></div>
+                <div *ngIf="showGroupCancelLetter()"><a class="show-pointer" (click)="previewPartialCancelLetter(row.policyId)">Cancellation Letter</a></div>
+              </div>
+            </mat-cell>
+          </ng-container>
+          <mat-header-row *matHeaderRowDef="memberColumns"></mat-header-row>
+          <mat-row *matRowDef="let row; columns: memberColumns;"></mat-row>
+        </mat-table>
+        
+
+      </div>
+    </div>
+  </div>
+  <div [hidden]="!showMemberCertificate">
+    <mat-card-actions>
+      <div class="left-margin" style="padding-bottom: 15px;">
+        <button class="button submit-button" (click)="showMembers()">Back to Letters</button>
+      </div>
+    </mat-card-actions>
+    <div [hidden]="!showReport" style="width: 100%; height: auto; margin-left: auto; margin-right: auto;">
+      <ssrs-reportviewer [reportserver]="reportServer" [reporturl]="reportUrl" [showparameters]="showParameters"
+        [parameters]="parameters" [language]="language" [width]="width" [height]="height" [toolbar]="toolbar"
+        (error)="reportError($event)">
+      </ssrs-reportviewer>
+    </div>
+  </div>
+</div>
+<div class="spacer"></div>

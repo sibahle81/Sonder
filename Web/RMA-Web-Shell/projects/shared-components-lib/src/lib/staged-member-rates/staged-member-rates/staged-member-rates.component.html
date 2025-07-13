@@ -1,0 +1,84 @@
+<div class="menu-bar">
+    <span class="material-icons">
+        balance
+    </span>
+    Staged Member Rates
+    <span *ngIf="(canApprove$ | async) && !(isLoading$ | async) && !message || message == ''"
+        (click)="openConfirmationDialog()" class="material-icons pointer right pulseBlue"
+        matTooltip="open renewal period">
+        play_circle
+    </span>
+
+    <span *ngIf="!(isLoading$ | async)" (click)="resetAll()" class="material-icons pointer right"
+        matTooltip="reset all">
+        restart_alt
+    </span>
+</div>
+
+<span *ngIf="!userHasPermission(permission)">
+    <access-denied></access-denied>
+</span>
+
+<span *ngIf="userHasPermission(permission)">
+    <mat-card *ngIf="isLoading$ | async">
+        <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+        <label class="mat-label other-label"><i>loading...please wait</i></label>
+    </mat-card>
+
+    <mat-card *ngIf="!(isLoading$ | async)">
+        <span *ngIf="message && message != ''">
+            <label class="mat-label other-label">
+                <mat-card>
+                    <span class="material-icons info">info</span>
+                    <span> {{message}}</span>
+                </mat-card>
+            </label><br />
+        </span>
+
+        <mat-expansion-panel [(expanded)]='standardFiltersExpanded'>
+            <mat-expansion-panel-header>
+                <mat-panel-title>
+                    Standard Report Filters
+                </mat-panel-title>
+                <mat-panel-description *ngIf="selectedIndustryClassName && selectedIndustryClassName != ''"><span
+                        class="material-icons" matTooltip="pinned industry class">
+                        push_pin
+                    </span> {{selectedIndustryClassName}}</mat-panel-description>
+            </mat-expansion-panel-header>
+            <industry-class-filter [triggerReset]="triggerReset"
+                (parameterEmit)="setIndustryClass($event)"></industry-class-filter>
+        </mat-expansion-panel>
+        <br />
+        <mat-expansion-panel [(expanded)]='advancedFiltersExpanded'>
+            <mat-expansion-panel-header>
+                <mat-panel-title>
+                    Advanced Report Filters
+                </mat-panel-title>
+                <mat-panel-description *ngIf="selectedDebtor"><span class="material-icons"
+                        matTooltip="pinned debtor">
+                        push_pin
+                    </span> {{selectedDebtor.finPayee.finPayeNumber}}:
+                    {{selectedDebtor.displayName}}</mat-panel-description>
+            </mat-expansion-panel-header>
+            <debtor-search [triggerReset]="triggerReset" [title]="'Search Member'" (debtorSelectedEmit)="setDebtor($event)"
+                (resetEmit)="reset()" [industryClassId]="selectedIndustryClass"></debtor-search>
+        </mat-expansion-panel>
+        <br />
+        <mat-tab-group animationDuration="500ms">
+            <mat-tab label="Report">
+                <div *ngIf="parameters && parameters.length > 0 && reportUrl">
+                    <br />
+                    <ssrs-report-viewer-V2 [reporturl]="reportUrl" [parameters]="parameters"></ssrs-report-viewer-V2>
+                </div>
+            </mat-tab>
+            <mat-tab *ngIf="selectedDebtor" label="Manage Rates: ({{selectedDebtor.finPayee.finPayeNumber}})">
+                <staged-client-rates-search *ngIf="!(showForm$ | async)"
+                    [memberNumber]="selectedDebtor.finPayee.finPayeNumber"
+                    (rateSelectedEmit)="rateSelected($event)"></staged-client-rates-search>
+                <mat-card *ngIf="showForm$ | async">
+                    <a (click)="toggleForm()">form here</a>
+                </mat-card>
+            </mat-tab>
+        </mat-tab-group>
+    </mat-card>
+</span>

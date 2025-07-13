@@ -1,0 +1,65 @@
+<mat-card *ngIf="isLoading">
+  <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+  <span style="color: grey"><i>loading...please wait</i></span>
+</mat-card>
+<div [hidden]="isLoading" class="menu-container"><br />
+  <div class="menu-bar">
+    <span matTooltip="Back to search" class="material-icons pointer right" (click)="close()">
+      close
+    </span>
+  </div>
+  <mat-tab-group>
+    <mat-tab label="Policy Details">
+      <policy-information></policy-information>
+    </mat-tab>
+    <mat-tab label="Documents">
+      <app-verify-case></app-verify-case>
+    </mat-tab>
+    <mat-tab label="Correspondence">
+      <mat-accordion>
+        <mat-expansion-panel>
+          <mat-expansion-panel-header>
+            <mat-panel-title>
+              <h4>Email</h4>
+            </mat-panel-title>
+          </mat-expansion-panel-header>
+          <email-audit-search [itemType]="'Policy'" [itemId]="policyId" [consolidatedView]="true"></email-audit-search>
+        </mat-expansion-panel>
+        <mat-expansion-panel>
+          <mat-expansion-panel-header>
+            <mat-panel-title>
+              <h4>SMS</h4>
+            </mat-panel-title>
+          </mat-expansion-panel-header>
+          <sms-audit-search [itemType]="'Policy'" [itemId]="policyId" [consolidatedView]="true"></sms-audit-search>
+        </mat-expansion-panel>
+      </mat-accordion>
+    </mat-tab>
+    <mat-tab label="Main Member">
+      <policy-info-main-member></policy-info-main-member>
+    </mat-tab>
+    <mat-tab label="Account History">
+      <member-account-history [policyId]="policyId"></member-account-history>
+    </mat-tab>
+    <mat-tab label="Spouse & Children">
+      <spouse-children-list></spouse-children-list>
+    </mat-tab>
+    <mat-tab label="Extended Family">
+      <extended-family-list></extended-family-list>
+    </mat-tab>
+    <mat-tab label="Beneficiaries">
+      <beneficiary-list></beneficiary-list>
+    </mat-tab>
+    <mat-tab label="Contacts">
+      <policy-child-contact-details></policy-child-contact-details>
+    </mat-tab>
+    <mat-tab label="Collection">
+      <policy-collection-details></policy-collection-details>
+    </mat-tab>
+    <mat-tab label="Premium Calculation">
+      <policy-summary></policy-summary>
+    </mat-tab>
+    <mat-tab label="Notes">
+      <role-player-policy-notes></role-player-policy-notes>
+    </mat-tab>
+  </mat-tab-group>

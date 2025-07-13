@@ -1,0 +1,192 @@
+<div *ngIf="!hasCreateCasePermission">
+  <h1>Create New Case</h1>
+  <div class="permissionDiv">
+    You do not have sufficient permissions to add a new case.
+  </div>
+  <div (click)="back()" class="form-buttons submit-button">
+    <button type="button" class="button float-button">Back</button>
+  </div>
+</div>
+
+<div *ngIf="isLoading | async">
+  <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+  <label class="mat-label other-label"><i>submitting...please wait</i></label>
+</div>
+
+<div *ngIf="!(isLoading | async)">
+  <div *ngIf="hasCreateCasePermission">
+    <mat-tab-group [selectedIndex]="selectedIndex" (selectedIndexChange)="tabSelectionChanged($event)">
+      <mat-tab label="Details">
+        <form [formGroup]="form" class="mat-container" novalidate>
+          <section>
+            <mat-form-field class="caseCode">
+              <label class="mat-label other-label">Case Code</label>
+              <input matInput id="code" name="code" formControlName="code">
+            </mat-form-field>
+            <mat-form-field class="mat-form-field-right">
+              <label class="mat-label other-label">Type</label>
+              <input matInput [hidden]="true" formControlName="caseType" />
+              <mat-select name="caseType" id="caseType" formControlName="caseType"
+                (selectionChange)="caseTypeChanged($event)">
+                <mat-option *ngIf="hasIndividualPermission" [value]="1">Individual New Business</mat-option>
+                <mat-option *ngIf="hasGroupPermission" [value]="2">Group New Business</mat-option>
+              </mat-select>
+              <div *ngIf="documentSetLoading">
+                <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+                <label class="mat-label other-label"><i>loading document sets...please wait</i></label>
+              </div>
+            </mat-form-field>
+          </section>
+          <section>
+            <div *ngIf="hasBroker">
+              <mat-form-field class="mat-form-field">
+                <label class="mat-label other-label">Linked Brokerage</label>
+                <div *ngIf="isBrokerageLoading | async">
+                  <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+                  <label class="mat-label other-label"><i>loading linked brokerage...please wait</i></label>
+                </div>
+                <div [hidden]="isBrokerageLoading | async">
+                  <div style="margin-top:10px" *ngIf="!hasBroker && !(isBrokerageLoading | async)">
+                    <span><i>No active linked brokerages found for representative</i></span>
+                  </div>
+                  <div>
+                    <input matInput id="brokerage" name="brokerage" formControlName="brokerage">
+                  </div>
+                </div>
+              </mat-form-field>
+              <mat-form-field class="mat-form-field-right"
+                *ngIf="juristicRepresentativeId && selectedBrokerId > 0 && brokerages.length !== 0 && !setRepresentativeValidation">
+                <label class="mat-label other-label">Juristic Representative</label>
+                <input matInput formControlName="juristicRepresentative" name="juristicRepresentative"
+                  id="juristicRepresentative">
+                <div *ngIf="form.get('juristicRepresentative').hasError('juristicRepRequired')" class="errorMessage">
+                  Could not find juristic representative
+                </div>
+              </mat-form-field>
+            </div>
+          </section>
+          <section>
+            <mat-form-field class="mat-form-field">
+              <label class="mat-label other-label">Representative</label>
+              <input matInput formControlName="representative" readonly>
+              <div *ngIf="searchingReps">
+                <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+                <label class="mat-label other-label"><i>searching representatives...please wait</i></label>
+              </div>
+            </mat-form-field>
+          </section>
+          <section>
+            <div *ngIf="selectedCaseTypeId === 1">
+              <mat-form-field class="mat-form-field-left">
+                <label class="mat-label other-label mandatory-field">Identification Type</label>
+                <mat-select (selectionChange)="idTypeChanged($event)" name="idType" id="idType"
+                  formControlName="idType">
+                  <mat-option *ngFor="let type of idTypes" [value]="type.id">
+                    {{type.name}}
+                  </mat-option>
+                </mat-select>
+                <mat-error *ngIf="form.get('idType').hasError('required')">
+                  Identification type is required
+                </mat-error>
+              </mat-form-field>
+              <mat-form-field class="mat-form-field-right" *ngIf="idType === 1">
+                <label class="mat-label other-label">Identity Number <i>(Main Member)</i></label>
+                <input matInput minlength="13" maxlength="13" name="idNumber" id="idNumber" formControlName="idNumber"
+                  NumberOnly="true">
+                <mat-error
+                  *ngIf="form.get('idNumber').hasError('minlength') || form.get('idNumber').hasError('idNumber') || form.get('idNumber').hasError('required')">
+                  A valid South African identity number is <strong>required</strong>
+                </mat-error>
+              </mat-form-field>
+              <mat-form-field class="mat-form-field-right" *ngIf="idType == 2">
+                <label class="mat-label other-label">Passport <i>(Main Member)</i></label>
+                <input matInput minlength="3" maxlength="30" name="idNumber" id="idNumber" formControlName="idNumber">
+                <mat-error *ngIf="form.get('idNumber').hasError('required')">
+                  Passport number is <strong>required</strong>
+                </mat-error>
+                <mat-error *ngIf="form.get('idNumber').hasError('minlength')">
+                  Passport number must be at least <strong>three characters</strong>
+                </mat-error>
+              </mat-form-field>
+            </div>
+          </section>
+          <section>
+            <div *ngIf="this.selectedCaseTypeId === 1 || this.selectedCaseTypeId === 2">
+              <mat-form-field class="mat-form-field">
+                <label class="mat-label other-label">Active Products</label>
+                <div *ngIf="isProductsLoading | async">
+                  <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+                  <label class="mat-label other-label"><i>loading active products...please wait</i></label>
+                </div>
+                <div [hidden]="isProductsLoading | async">
+                  <div *ngIf="activeProducts.length === 0 && !(isProductsLoading | async)" style="margin-top:10px">
+                    <span><i>No active products found for representative</i></span>
+                  </div>
+                  <div [hidden]="activeProducts.length === 0">
+                    <mat-select formControlName="product" name="product" id="product"
+                      (selectionChange)="productChanged($event)">
+                      <mat-option *ngFor="let product of activeProducts" [value]="product.id">{{product.name}}
+                      </mat-option>
+                    </mat-select>
+                  </div>
+                </div>
+              </mat-form-field>
+            </div>
+          </section>
+        </form>
+        <div class="form-group-button-lookup mat-form-button" style="margin-top: 15px;">
+          <div class="form-buttons btn" (click)="selectTab(selectedIndex + 1)" style="margin-left: 10px">
+            <button class="button float-button" [disabled]="selectedCaseTypeId <= 0">Next</button>
+          </div>
+        </div>
+      </mat-tab>
+      <mat-tab label="Documents" [disabled]="selectedCaseTypeId <= 0">
+        <br />
+        <div class="docDiv">
+          <create-case-documents (changeDocument)="checkDocuments()" [showAdditionalDocuments]="false">
+          </create-case-documents>
+        </div>
+
+        <div style="margin-left:16px">
+          <label *ngIf="!hasBroker" class="mat-label other-label" style="color: red;">
+            There are no linked brokerages for the selected representative<br />
+          </label>
+          <label *ngIf="activeProducts.length === 0  && selectedCaseTypeId !== 7 && !(isProductsLoading | async)"
+            class="mat-label other-label" style="color: red;">
+            There are no active products for the selected representative<br />
+          </label>
+          <div *ngIf="selectedCaseTypeId === 1 || selectedCaseTypeId === 2">
+            <label *ngIf="form.get('product').errors" class="red site-font" style="font-size: smaller;">
+              Please select an active product<br />
+            </label>
+          </div>
+          <label *ngIf="(!allDocumentsSupplied || !requiredDoc) && !isGroup" class="red site-font">
+            All required documents have not been uploaded<br />
+          </label>
+          <br />
+          <label *ngIf="(!allDocumentsSupplied || !requiredDoc) && !isGroup" class="red site-font">
+            Please upload FICA Declaration or ID copy<br />
+          </label>
+        </div>
+        <div style="margin-left:16px">
+          <label *ngIf="!documentsRequired" class="mat-label other-label">
+            Documents not required<br />
+          </label>
+        </div>
+        <div class="form-group-button mat-form-button">
+          <div class="form-buttons submit-button btnSubmit">
+            <button (click)="selectTab(selectedIndex - 1)" class="button float-button submit-button">Back</button>
+            <button (click)="navigateToWorkflow()"
+              [disabled]="!form.valid || (!allDocumentsSupplied || !requiredDoc) || (isLoading | async)"
+              class="button float-button submit-button">Submit</button>
+          </div>
+        </div>
+      </mat-tab>
+    </mat-tab-group>
+  </div>
+</div>
+<br />
+<br />
+<div>
+  <app-case-list></app-case-list>
+</div>

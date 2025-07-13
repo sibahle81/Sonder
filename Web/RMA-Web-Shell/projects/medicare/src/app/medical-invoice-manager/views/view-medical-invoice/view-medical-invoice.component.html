@@ -1,0 +1,282 @@
+<div class="margine-space">
+    <div class="mat-header">
+        <h1>{{switchBatchType == switchBatchTypeEnum.MedEDI ? 'View Medical Invoice':'Teba Medical Invoice'}}</h1>
+    </div>
+    <a *ngIf="!isDialog" mat-flat-button (click)="onNavigateBack()">
+        <mat-icon>arrow_back</mat-icon>
+        Back
+    </a>
+
+    <mat-card class="matCard">
+        <div>
+            <div *ngIf="loading$ | async">
+                <mat-progress-bar mode="indeterminate"
+                    [ngClass]="{ 'loading-main-double-menu-progress': doubleMenu, 'loading-main-single-menu-progress': !doubleMenu }">
+                </mat-progress-bar>
+                <p class="site-font grey">Loading.....</p>
+            </div>
+            <div class="grid">
+                <div>
+                    <span class="title">Service Provider</span>
+                    <span class="value">{{ invoiceData.healthCareProviderName }} </span>
+                </div>
+
+                <div>
+                    <span class="title">Practice Number</span>
+                    <span class="value">{{ invoiceData.practiceNumber }}</span>
+                </div>
+
+                <div>
+                    <span class="title"></span>
+                    <span class="value"> </span>
+                </div>
+            </div>
+
+            <div class="grid">
+                <div>
+                    <span class="title">Payee Name</span>
+                    <span class="value">{{ payeeName?.length > 0 ? payeeName : "loading..."  }} </span>
+                </div>
+
+                <div>
+                    <span class="title">Payee Type</span>
+                    <span class="value">{{ this.payeeTypeEnum[invoiceData.payeeTypeId] }}</span>
+                </div>
+
+                <div>
+                    <span class="title"></span>
+                    <span class="value"> </span>
+                </div>
+            </div>
+
+            <div class="grid">
+                <div>
+                    <span class="title">Invoicer Name</span>
+                    <span class="value">{{ invoiceData.healthCareProviderName }} </span>
+                </div>
+
+                <div>
+                    <span class="title">Invoicer Type</span>
+                    <span class="value">{{ this.payeeTypeEnum[invoiceData.payeeTypeId] }}</span>
+                </div>
+
+                <div>
+                    <span class="title">HCP Invoice Number</span>
+                    <span class="value">{{invoiceData.hcpInvoiceNumber}}</span>
+                </div>
+            </div>
+
+            <div class="grid">
+                <div>
+                    <span class="title">RMA Invoice No.</span>
+                    <span class="value">{{ invoiceData.hcpInvoiceNumber }} </span>
+                </div>
+
+                <div>
+                    <span class="title">Patient Account No.</span>
+                    <span class="value">{{ invoiceData.hcpAccountNumber }}</span>
+                </div>
+
+                <div>
+                    <span class="title"></span>
+                    <span class="value"> </span>
+                </div>
+            </div>
+
+            <div class="grid">
+                <div>
+                    <span class="title">Invoice Date</span>
+                    <span class="value">{{ invoiceData.invoiceDate | date:'yyyy-MM-dd' }} </span>
+                </div>
+
+                <div>
+                    <span class="title">Date Recieved</span>
+                    <span class="value">{{ invoiceData.dateReceived | date:'yyyy-MM-dd' }}</span>
+                </div>
+
+                <div>
+                    <span class="title">Date Submitted</span>
+                    <span class="value">{{ invoiceData.dateSubmitted | date:'yyyy-MM-dd' }}</span>
+                </div>
+            </div>
+
+            <div class="grid">
+                <div>
+                    <span class="title">Invoice Amount (Excl)</span>
+                    <span class="value">{{ invoiceData.invoiceAmount | currency:"R":"symbol"}} </span>
+                </div>
+
+                <div>
+                    <span class="title">Invoice VAT</span>
+                    <span class="value">{{ invoiceData.invoiceVat | currency:"R":"symbol"}}</span>
+                </div>
+
+                <div>
+                    <span class="title">Invoice Total (Incl)</span>
+                    <span class="value"> {{ invoiceData.invoiceTotalInclusive | currency:"R":"symbol"}}</span>
+                </div>
+            </div>
+
+            <div class="grid">
+                <div>
+                    <span class="title">Assessed Total (Excl)</span>
+                    <span class="value">{{ invoiceData.authorisedAmount | currency:"R":"symbol"}} </span>
+                </div>
+
+                <div>
+                    <span class="title">Assessed VAT</span>
+                    <span class="value">{{ invoiceData.authorisedVat | currency:"R":"symbol"}}</span>
+                </div>
+
+                <div>
+                    <span class="title">Assessed Total (Incl)</span>
+                    <span class="value">{{ invoiceData.authorisedTotalInclusive | currency:"R":"symbol"}} </span>
+                </div>
+            </div>
+
+            <div class="grid">
+                <div>
+                    <span class="title">Date Treatment From</span>
+                    <span class="value">{{ invoiceData.dateAdmitted | date:'yyyy-MM-dd' }} </span>
+                </div>
+
+                <div>
+                    <span class="title">Date Treatment To</span>
+                    <span class="value">{{ invoiceData.dateDischarged | date:'yyyy-MM-dd' }}</span>
+                </div>
+
+                <div>
+                    <!-- need to revist the method -->
+                    <span class="title">> 731 Days?</span>
+                    <!-- <span class="value"> {{ (isChronic(invoiceData.dateAdmitted, invoiceData.dateDischarged)  == true ) ? 'Yes':'No'}}</span> -->
+                    <span class="value">{{ (invoiceData.greaterThan731Days == true ) ? 'Yes':'No' }}</span>
+                </div>
+            </div>
+
+            <div class="grid">
+                <div>
+                    <span class="title">Description</span>
+                    <span class="value">{{ invoiceData.underAssessedComments }} </span>
+                </div>
+
+                <div>
+                    <span class="title">Assessment</span>
+                    <span class="value warning-text"
+                        matTooltip="{{invoiceData | medicalInvoiceValidations:validationStateEnum[5]:validationStateEnum[1]:validationStateEnum.defaultIndex}}">
+                        {{ invoiceData |
+                        medicalInvoiceValidations:validationStateEnum[5]:validationStateEnum[2]:validationStateEnum.defaultIndex
+                        }}
+                    </span>
+                </div>
+
+                <div>
+                    <span class="title">Status</span>
+                    <span class="value">{{ invoiceStatusEnum[invoiceData.invoiceStatus] }}
+                        <span class="invoice-status-color material-icons"
+                            [style.color]="invoiceData.invoiceStatus | invoiceStatusColor">
+                            circle
+                        </span>
+                    </span>
+                    <span *ngIf="invoiceStatusEnum[invoiceData.invoiceStatus] == invoiceStatusEnum[1]"
+                        class="value">(within {{ getInvoicePaidDays(invoiceData.dateSubmitted,
+                        invoiceData.paymentConfirmationDate) }} days)
+                        <span class="material-icons"
+                            [style.color]="getInvoicePaidDaysColor(invoiceData.dateSubmitted, invoiceData.paymentConfirmationDate)">
+                            timelapse
+                        </span>
+                    </span>
+                </div>
+            </div>
+
+
+
+            <div class="grid">
+                <div>
+                    <span class="title">PreAuth Number</span>
+                    <span class="value">{{ invoiceData.preAuthNumber }}</span>
+                </div>
+
+                <div>
+                    <span class="title">Is Payment Delay</span>
+                    <span class="value"> {{ (invoiceData.isPaymentDelay == true) ? 'Yes':'No' }} </span>
+                </div>
+
+                <div>
+                    <span class="title"></span>
+                    <span class="value"> </span>
+                </div>
+            </div>
+
+        </div>
+
+        <app-under-assess-reasons-viewer [invoiceUnderAssessReasons]="invoiceData"></app-under-assess-reasons-viewer>
+
+    </mat-card>
+
+    <div *ngIf="documentSet && documentSystemName && key && this.invoiceData.invoiceId > 0" #elementDocUploader>
+        <document-uploader [documentSet]="documentSet" [systemName]="documentSystemName" [keyName]="key"
+            [keyValue]="this.invoiceData.invoiceId" [documentTypeFilter]="documentTypeEnums"
+            [canDelete]="true"></document-uploader>
+    </div>
+
+    <app-medical-invoice-breakdown-details  [switchBatchType]="switchBatchType"
+      [dataSource]="dataSource" [invoiceData]="invoiceData" [showEditOptions]="false"></app-medical-invoice-breakdown-details>
+
+    <div *ngIf="loadingClaimsData$ | async">
+        <mat-progress-bar mode="indeterminate"
+            [ngClass]="{ 'loading-main-double-menu-progress': doubleMenu, 'loading-main-single-menu-progress': !doubleMenu }">
+        </mat-progress-bar>
+        <p class="site-font grey">Searching for record...</p>
+    </div>
+    <mat-expansion-panel *ngIf="switchBatchType != switchBatchTypeEnum.Teba">
+        <mat-expansion-panel-header>
+            <mat-panel-title>
+                Linked Medical reports
+            </mat-panel-title>
+        </mat-expansion-panel-header>
+        <br>
+        <div *ngIf="medicalReportList.length > 0;else no_medical_report">
+            <medical-report-list [medicalReports]="medicalReportList" [event]="selectedEvent"
+                [isWizard]="false"></medical-report-list>
+        </div>
+    </mat-expansion-panel>
+    <ng-template #no_medical_report>
+        <span class="red-text-status-message">{{"No Medical Report Found"}}</span>
+    </ng-template>
+    <hr>
+
+    <div *ngIf="loading$ | async">
+        <mat-progress-bar mode="indeterminate"
+            [ngClass]="{ 'loading-main-double-menu-progress': doubleMenu, 'loading-main-single-menu-progress': !doubleMenu }">
+        </mat-progress-bar>
+        <p class="site-font grey">Loading.....</p>
+    </div>
+    <mat-expansion-panel *ngIf="!(loading$ | async)">
+        <mat-expansion-panel-header>
+            <mat-panel-title>
+                Linked PreAuth Details
+            </mat-panel-title>
+        </mat-expansion-panel-header>
+        <br>
+        <app-medical-invoice-linked-preauth-list [linkPreAuthDetails]="linkPreAuthDetailsList"
+            [switchBatchType]="this.switchBatchType">
+        </app-medical-invoice-linked-preauth-list>
+        <p class="value warning-text" *ngIf="linkPreAuthDetailsList.length < 1">No linked preauth exist</p>
+    </mat-expansion-panel>
+    <br />
+    <div class="clear">&nbsp;</div>
+
+    <h1>Action</h1>
+
+    <div class="form-buttons submit-button" *ngIf="canViewImages">
+        <button type="button" class="button float-button">View Images</button>
+    </div>
+    <div *ngIf="!isDialog" class="form-buttons submit-button">
+        <button type="button" class="button float-button" (click)="onNavigateBack()">Close</button>
+    </div>
+
+</div>
+<div *ngIf="isDialog" class="form-buttons submit-button" mat-dialog-actions>
+  <button type="button" class="button float-button" [mat-dialog-close]>Close</button>
+</div>
+<div class="clear">&nbsp;</div><br>

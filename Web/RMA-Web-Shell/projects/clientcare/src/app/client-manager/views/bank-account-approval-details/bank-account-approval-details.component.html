@@ -1,0 +1,88 @@
+<div class="page-header"></div>
+<mat-card style="margin: 15px 30px 15px 30px">
+    <mat-card-content style="margin-left: 10px;">
+        <mat-card-header>
+            <mat-card-title class="wizard-font card-title grey">
+                <h1 class="wizard-font" style="padding: 0;">Banking Details</h1>
+            </mat-card-title>
+        </mat-card-header>
+
+        <form [formGroup]="form" (ngSubmit)="save()" class="mat-container" novalidate>
+            <div *ngIf="!isLoaded">
+              <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+            </div>
+            <!--Edit Banking Details-->
+            <div *ngIf="isLoaded">
+                <section>
+                    <!--Account type-->
+                    <mat-form-field>
+                        <label class="mat-label other-label">Account type</label>
+                        <mat-select name="accountType" id="accountType" #account formControlName="accountType">
+                            <mat-option *ngFor="let accountType of bankAccountTypes" [value]="accountType.id">{{accountType.name}}</mat-option>
+                        </mat-select>
+                        <mat-error *ngIf="account.errorState && form.get('accountType').hasError('required')">
+                            Account type <strong> is required</strong>
+                        </mat-error>
+                    </mat-form-field>
+
+                    <!--Bank name-->
+                    <mat-form-field class="mat-form-field-right">
+                        <label class="mat-label other-label">Bank name</label>
+                        <mat-select name="bank" id="banks" formControlName="bank" #bank (selectionChange)="bankChange($event)">
+                            <mat-option *ngFor="let bank of banks" [value]="bank.id">{{bank.name}}</mat-option>
+                        </mat-select>
+                        <mat-error *ngIf="bank.errorState && form.get('bank').hasError('required')">
+                            Bank <strong>is required</strong>
+                        </mat-error>
+                    </mat-form-field>
+                </section>
+
+                <section>
+                    <!-- AccountNumber -->
+                    <mat-form-field>
+                        <label class="mat-label other-label">Account Number</label>
+                        <input matInput maxlength="50" name="accountNumber" id="accountNumber" formControlName="accountNumber">
+                    </mat-form-field>
+                    <!-- AccountHolderName -->
+                    <mat-form-field class="mat-form-field-right">
+                        <label class="mat-label other-label">Account Holder Name</label>
+                        <input matInput maxlength="50" name="accountHolderName" id="accountHolderName" formControlName="accountHolderName">
+                    </mat-form-field>
+                </section>
+
+                <section>
+                    <!--Branch code-->
+                    <mat-form-field>
+                        <label class="mat-label other-label">Branch code</label>
+                        <input matInput id="universalBranchCode" name="universalBranchCode" formControlName="universalBranchCode" NumberOnly="true">
+                    </mat-form-field>
+                </section>
+
+                <section>
+                    <!-- Approval/Rejection Reason -->
+                    <mat-form-field class="mat-form-field">
+                        <label class="mat-label other-label">Approval/Rejection reason</label>
+                        <input matInput maxlength="50" name="reason" id="reason" formControlName="reason">
+                    </mat-form-field>
+                </section>
+
+                <div *ngIf="isLoading">
+                    <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+                  </div>
+
+                <div class="form-group-button mat-form-button">
+                    <div (click)="approve()" class="form-buttons submit-button" >
+                        <button type="button" class="button float-button" [disabled] ="disable">Approve</button>
+                    </div>
+                    <div (click)="reject()" class="form-buttons submit-button">
+                        <button type="button" class="button float-button" [disabled] ="disable">Reject</button>
+                    </div>
+                    <div (click)="cancel()" class="form-buttons submit-button">
+                        <button type="button" class="button float-button">Back</button>
+                    </div>
+                </div>
+            </div>
+
+        </form>
+    </mat-card-content>
+</mat-card>

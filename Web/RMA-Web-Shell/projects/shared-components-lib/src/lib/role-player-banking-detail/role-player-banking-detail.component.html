@@ -1,0 +1,162 @@
+<mat-card class="container-margin">
+  <mat-card-content style="margin-left: 10px;">
+    <div [hidden]="activeSection !== 'showAccounts'">
+      <mat-card-content class="wizard-mat-card-content">
+        <div *ngIf="isLoading">
+          <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+        </div>
+        <div *ngIf="noBankAccounts">
+          <span class="grey site-font">No role player bank accounts have been added.</span>
+        </div>
+        <div [hidden]="!hasBankAccounts">
+          <mat-table #table [dataSource]="dataSource" matSort>
+            <ng-container matColumnDef="accountNumber">
+              <mat-header-cell *matHeaderCellDef mat-sort-header>Account Number</mat-header-cell>
+              <mat-cell *matCellDef="let row"> {{row.accountNumber}} </mat-cell>
+            </ng-container>
+            <ng-container matColumnDef="accountHolderName">
+              <mat-header-cell *matHeaderCellDef mat-sort-header>Account Holder</mat-header-cell>
+              <mat-cell *matCellDef="let row"> {{row.accountHolderName}} </mat-cell>
+            </ng-container>
+            <ng-container matColumnDef="bankAccountType">
+              <mat-header-cell *matHeaderCellDef mat-sort-header>Account Type</mat-header-cell>
+              <mat-cell *matCellDef="let row"> {{ getAccountType(row.bankAccountType) }} </mat-cell>
+            </ng-container>
+            <ng-container matColumnDef="bank">
+              <mat-header-cell *matHeaderCellDef mat-sort-header>Bank</mat-header-cell>
+              <mat-cell *matCellDef="let row"> {{ getBank(row.bankBranchId) }} </mat-cell>
+            </ng-container>
+            <ng-container matColumnDef="branch">
+              <mat-header-cell *matHeaderCellDef mat-sort-header>Branch</mat-header-cell>
+              <mat-cell *matCellDef="let row"> {{ getBranch(row.bankBranchId) }} </mat-cell>
+            </ng-container>
+            <ng-container matColumnDef="branchCode">
+              <mat-header-cell *matHeaderCellDef mat-sort-header>Branch Code</mat-header-cell>
+              <mat-cell *matCellDef="let row"> {{ row.branchCode }} </mat-cell>
+            </ng-container>
+            <ng-container matColumnDef="effectiveDate">
+              <mat-header-cell *matHeaderCellDef mat-sort-header>Effective Date</mat-header-cell>
+              <mat-cell *matCellDef="let row"> {{ row.effectiveDate | date:'yyyy/MM/dd'}} </mat-cell>
+            </ng-container>
+            <ng-container matColumnDef="statusText">
+              <mat-header-cell *matHeaderCellDef mat-sort-header>Status</mat-header-cell>
+              <mat-cell *matCellDef="let row"> {{ row.statusText }} </mat-cell>
+            </ng-container>
+            <mat-header-row *matHeaderRowDef="getDisplayedColumns();"></mat-header-row>
+            <mat-row *matRowDef="let row; columns: getDisplayedColumns();"></mat-row>
+          </mat-table>
+          <mat-paginator #paginator [length]="dataSource.data ? dataSource.data.length : 0" [pageIndex]="0"
+            [pageSize]="5" [pageSizeOptions]="[5, 10]">
+          </mat-paginator>
+        </div>
+        <div style="margin-top: 15px;margin-bottom: 10px;" *ngIf="!isDisabled">
+          <button (click)="showAddAccount()" class="button">Add</button>
+        </div>
+      </mat-card-content>
+    </div>
+    <!-- <div *ngIf="dataSource.isLoading">
+      <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+      <span *ngIf="dataSource.isLoading" class="site-font grey"
+        style="margin-top: 15px;"><i>{{dataSource.statusMsg}}</i></span>
+    </div> -->
+    <div [hidden]="activeSection !== 'addAccount'">
+      <mat-card-content>
+        <form [formGroup]="addForm" class="mat-container details-form" novalidate>
+          <section>
+            <mat-form-field>
+              <label class="mat-label other-label mandatory-field">Bank</label>
+              <mat-select formControlName="bankId" name="bankId" id="bankId" (selectionChange)="loadBranches()">
+                <mat-option *ngFor="let bank of banks" [value]="bank.id">
+                  {{bank.name}}
+                </mat-option>
+              </mat-select>
+              <mat-error *ngIf="addForm.get('bankId').hasError('min')">
+                Please select a bank
+              </mat-error>
+            </mat-form-field>
+            <mat-form-field class="mat-form-field-right">
+              <label class="mat-label other-label mandatory-field">Branch</label>
+              <mat-select formControlName="bankBranchId" name="bankBranchId" id="bankBranchId"  (selectionChange)="loadBranchCode()">
+                <mat-option *ngFor="let branch of filteredBranches" [value]="branch.id">
+                  {{branch.name}}
+                </mat-option>
+              </mat-select>
+              <mat-error *ngIf="addForm.get('bankBranchId').hasError('min')">
+                Please select a bank branch
+              </mat-error>
+            </mat-form-field>
+          </section>
+
+          <section>
+            <mat-form-field>
+              <label class="mat-label other-label mandatory-field">Account Type</label>
+              <mat-select formControlName="bankAccountType" name="bankAccountType" id="bankAccountType" >
+                <mat-option *ngFor="let accountType of bankAccountTypes" [value]="accountType.id">
+                  {{accountType.name}}
+                </mat-option>
+              </mat-select>
+              <mat-error *ngIf="addForm.get('bankAccountType').hasError('min')">
+                Please select a bank account type
+              </mat-error>
+            </mat-form-field>
+            <mat-form-field class="mat-form-field-right">
+              <label class="mat-label other-label mandatory-field">Branch Code</label>
+              <input NumberOnly matInput maxlength="50"  name="branchCode" id="branchCode" formControlName="branchCode" />
+              <mat-error *ngIf="addForm.get('branchCode').hasError('required')">
+                Branch code is required
+              </mat-error>
+            </mat-form-field>
+          </section>
+
+          <section>
+            <mat-form-field>
+              <label class="mat-label other-label mandatory-field">Account Holder</label>
+              <input matInput formControlName="name"  name="name" id="name" />
+              <mat-error *ngIf="addForm.get('name').hasError('required')">
+                Account Holder is required
+              </mat-error>
+            </mat-form-field>
+          </section>
+
+          <section>
+            <mat-form-field>
+              <label class="mat-label other-label mandatory-field">Account Number</label>
+              <input NumberOnly matInput maxlength="13"  name="accountNumber" id="accountNumber" formControlName="accountNumber" />
+              <mat-error *ngIf="addForm.get('accountNumber').hasError('required')">
+                Account number is required
+              </mat-error>
+            </mat-form-field>
+            <mat-form-field class="mat-form-field-right">
+              <label class="mat-label other-label mandatory-field">Effective Date</label>
+              <input matInput formControlName="effectiveDate" name="effectiveDate" id="effectiveDate"  [matDatepicker]="effectiveDate">
+              <mat-datepicker-toggle class="date-icon" matSuffix [for]="effectiveDate" [disabled]="isDisabled">
+              </mat-datepicker-toggle>
+              <mat-datepicker touchUi="true" #effectiveDate></mat-datepicker>
+              <mat-error *ngIf="addForm.get('effectiveDate').hasError('required')">
+                Effective date is required
+              </mat-error>
+            </mat-form-field>
+          </section>
+          <section>
+            <div *ngIf="accountValidationErrorMsg != ''">
+              <span style="color: red;font-size: small;" class="site-font"> {{accountValidationErrorMsg}}</span>
+            </div><br />
+          </section>
+          <div *ngIf="dataSource.isLoading">
+            <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+            <span *ngIf="dataSource.isLoading" class="site-font grey"
+              style="margin-top: 15px;"><i>{{dataSource.statusMsg}}</i></span>
+          </div>
+          <section>
+            <div class="form-group-button mat-form-button form-buttons submit-button" *ngIf="isWizard"
+              style="margin-bottom: 10px;">
+              <button class="button submit-button" (click)="addBankAccount()" [disabled]="dataSource.isLoading">Save</button>
+              <button class="button submit-button" (click)="showSection('showAccounts')">Cancel</button>
+            </div>
+          </section>
+        </form>
+
+      </mat-card-content>
+    </div>
+  </mat-card-content>
+</mat-card>

@@ -1,0 +1,61 @@
+<app-medicare-search-menus></app-medicare-search-menus>
+
+<mat-tab-group animationDuration="500ms">
+    <mat-tab label="Work Pool">
+        <user-wizard-list
+            [wizardConfigIds]='"176,181,188,189,70,195,205"' [lockStatus]="lockStatus"
+            [showItemsLockedToOtherUsers]="false"></user-wizard-list>
+    </mat-tab>
+    <mat-tab label="Referrals" *ngIf="!this.isExternalUser">
+        <referral-view [targetModuleType]="targetModuleType"></referral-view>
+    </mat-tab>
+    <mat-tab label="Notifications"  *ngIf="!isExternalUser">
+        <div class="menu-bar">
+            <span class="material-icons">
+                insert_comment
+            </span>
+            My MediCare Notifications
+        </div>
+
+        <mat-card *ngIf="!showView">
+            <paged-user-reminders [userId]="userId" [userReminderItemType]="userReminderItemType"
+                (selectedUserReminderEmit)="viewUserReminder($event)"></paged-user-reminders>
+        </mat-card>
+
+        <mat-card *ngIf="showView">
+            <div class="menu-bar">
+                <span class="material-icons">
+                    insert_comment
+                </span>
+                Notification
+                <span (click)="toggleView()" class="material-icons pointer right" matTooltip="close">
+                    cancel
+                </span>
+            </div>
+
+            <mat-card>
+                <div>
+                    {{selectedUserReminder.text}}
+                    <br /><br />
+                    <div *ngIf="selectedUserReminder.linkUrl && selectedUserReminder.linkUrl != ''">
+                        <a href="{{selectedUserReminder.linkUrl}}"><span class="material-icons">
+                                saved_search
+                            </span>Click <b>HERE</b> to navigate to the
+                            {{getUserReminderItemType(selectedUserReminder.userReminderItemType)}}</a>
+                    </div>
+                    <br />
+                    <div class="menu-bar">
+                        <label class="mat-label other-label"><i>
+                                <user-display-name [userName]="selectedUserReminder.createdBy"></user-display-name>
+                                {{selectedUserReminder.modifiedDate | date: "yyyy-MM-dd h:mm:ss"}}
+                            </i></label>
+                    </div>
+                </div>
+            </mat-card>
+        </mat-card>
+    </mat-tab>
+    <mat-tab label="Workpool Reports" *ngIf="!isExternalUser">
+        <medicare-workpool-sla-report>
+        </medicare-workpool-sla-report>
+    </mat-tab>
+</mat-tab-group>

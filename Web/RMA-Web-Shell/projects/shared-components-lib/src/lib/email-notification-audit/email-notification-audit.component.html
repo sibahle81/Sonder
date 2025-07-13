@@ -1,0 +1,84 @@
+<mat-card>
+  <div *ngIf="isLoading">
+    <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+    <span *ngIf="isLoading" class="site-font grey"><i>Loading email audits...</i></span>
+  </div>
+
+  <div class="menu-bar" *ngIf="!isLoading">
+    <span class="material-icons">email</span>Email Audit
+    <span class="material-icons pointer addIcon right" matTooltip="close" (click)="closeDialog()">
+      close
+    </span>
+  </div>
+
+  <div [hidden]="dataSource.data.length === 0">
+    <mat-table #table [dataSource]="dataSource" matSort id="tblData" class="scrollTable">
+
+      <ng-container matColumnDef="fromAddress">
+        <mat-header-cell *matHeaderCellDef mat-sort-header> From </mat-header-cell>
+        <mat-cell class="alignLeft" *matCellDef="let row" mat-dialog-content>
+          <ul>
+            <li *ngFor="let email of splitEmails(row.fromAddress)">
+              {{email}}</li>
+          </ul>
+        </mat-cell>
+      </ng-container>
+ 
+      <ng-container matColumnDef="reciepients" mat-dialog-content>
+        <mat-header-cell *matHeaderCellDef mat-sort-header>Recipient(s)</mat-header-cell>
+        <mat-cell class="alignLeft" *matCellDef="let row">
+          <ul>
+            <li *ngFor="let email of splitEmails(row.reciepients)">
+              {{email}}</li>
+          </ul>
+        </mat-cell>
+      </ng-container>
+ 
+      <ng-container matColumnDef="subject">
+        <mat-header-cell *matHeaderCellDef mat-sort-header> Subject </mat-header-cell>
+        <mat-cell *matCellDef="let row"> {{row.subject}} </mat-cell>
+      </ng-container>
+
+      <ng-container matColumnDef="isSuccess">
+        <mat-header-cell *matHeaderCellDef mat-sort-header> Success </mat-header-cell>
+        <mat-cell *matCellDef="let row"> {{row.isSuccess}} </mat-cell>
+      </ng-container>
+ 
+      <ng-container matColumnDef="processDescription">
+        <mat-header-cell *matHeaderCellDef mat-sort-header> Failure Reason </mat-header-cell>
+        <mat-cell *matCellDef="let row"> {{row.processDescription}} </mat-cell>
+      </ng-container>
+      
+      <ng-container matColumnDef="createdDate">
+        <mat-header-cell *matHeaderCellDef mat-sort-header> Sent Date </mat-header-cell>
+        <mat-cell *matCellDef="let row"> {{row.createdDate | date:"yyyy-MM-dd "}} </mat-cell>
+      </ng-container>
+
+      <ng-container matColumnDef="actions">
+        <mat-header-cell *matHeaderCellDef>
+          <span class="material-icons noHover">
+            more_vert
+          </span>
+        </mat-header-cell>
+        <mat-cell *matCellDef="let row" [matMenuTriggerFor]="menu" (click)="filterMenu(row)">
+          <span class="material-icons pointer right">
+            more_vert
+          </span>
+          <mat-menu #menu="matMenu">
+            <button mat-menu-item *ngFor="let menu of menus"
+              (click)="onMenuSelect(row, menu.title)">{{menu.title}}</button>
+          </mat-menu>
+        </mat-cell>
+      </ng-container>
+
+      <mat-header-row *matHeaderRowDef="getDisplayedColumns();"></mat-header-row>
+      <mat-row *matRowDef="let row; columns: getDisplayedColumns();"></mat-row>
+    </mat-table>
+    <mat-paginator #paginator [length]="dataSource.data.length" [pageIndex]="0" [pageSize]="5"
+      [pageSizeOptions]="[5, 10, 25, 100]">
+    </mat-paginator>
+  </div>
+  <div [hidden]="dataSource.data.length > 0 || isLoading" style="margin-left: 20px;">
+    <span class="grey site-font">No records found.</span>
+  </div>
+</mat-card>

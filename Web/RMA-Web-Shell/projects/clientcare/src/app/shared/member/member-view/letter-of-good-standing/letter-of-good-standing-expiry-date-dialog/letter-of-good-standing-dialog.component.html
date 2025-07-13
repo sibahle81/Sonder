@@ -1,0 +1,30 @@
+<div class="menu-bar">
+  <span class="material-icons">
+    volunteer_activism
+  </span>
+  Letter of Good Standing
+  <span (click)="close()" class="material-icons pointer right" matTooltip="close">
+    close
+  </span>
+  <span *ngIf="form.valid && !form.pristine" (click)="save()" class="material-icons pointer right pulseGreen"
+    matTooltip="save">
+    save
+  </span>
+</div>
+
+<mat-card>
+  <form [formGroup]="form" class="mat-container details-form" novalidate>
+    <section>
+      <mat-form-field class="mat-form-field">
+        <label class="mat-label other-label">Expiry Date</label>
+        <input matInput formControlName="expiryDate" [matDatepicker]="expiryDate" [min]="today">
+        <mat-datepicker-toggle matSuffix [for]="expiryDate">
+        </mat-datepicker-toggle>
+        <mat-datepicker touchUi="true" #expiryDate></mat-datepicker>
+        <mat-error *ngIf="form.get('expiryDate').hasError('required')">
+          Expiry Date is <strong>required</strong>
+        </mat-error>
+      </mat-form-field>
+    </section>
+  </form>
+</mat-card>

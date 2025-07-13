@@ -1,0 +1,79 @@
+<div class="menu-bar">
+  <span class="material-icons">
+    insert_link
+  </span>
+  Self Service Users
+  <span *ngIf="userHasPermission(editPermission) && !(isLoading$ | async) && !(dataSource.loading$ | async)"
+    (click)="openAddDialog()" class="material-icons pointer right pulse" matTooltip="add">
+    add_circle
+  </span>
+</div>
+
+<mat-card *ngIf="(dataSource.loading$ | async) || (isLoading$ | async)">
+  <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+  <label class="mat-label other-label"><i>loading users...please wait</i></label>
+</mat-card>
+
+<div [hidden]="(dataSource.loading$ | async) || (isLoading$ | async)">
+  <div [hidden]="!(dataSource.data && dataSource.data.data && dataSource.data.data?.length > 0)">
+    <mat-table #table [dataSource]="dataSource" matSort id="tblData">
+      <ng-container matColumnDef="userId">
+        <mat-header-cell *matHeaderCellDef> User </mat-header-cell>
+        <mat-cell *matCellDef="let row"><b>{{row.displayName}}</b> (<a href="mailto:">{{row.userName}}</a>)</mat-cell>
+      </ng-container>
+
+      <ng-container matColumnDef="roleId">
+        <mat-header-cell *matHeaderCellDef> Role </mat-header-cell>
+        <mat-cell *matCellDef="let row">{{row.roleName}}</mat-cell>
+      </ng-container>
+
+      <ng-container matColumnDef="userCompanyMapStatus">
+        <mat-header-cell *matHeaderCellDef> Status </mat-header-cell>
+        <mat-cell *matCellDef="let row">
+          {{row.userCompanyMapStatus ? getUserCompanyMapStatus(row.userCompanyMapStatus) : 'N/A'}}
+        </mat-cell>
+      </ng-container>
+
+      <ng-container matColumnDef="actions">
+        <mat-header-cell *matHeaderCellDef>Action</mat-header-cell>
+        <mat-cell *matCellDef="let row">
+          <a *ngIf="row.userId && userHasPermission(editPermission)" (click)="edit(row)" role="button"
+            class="link-edit">
+            <span matTooltip="edit" class="material-icons icn pointer">
+              settings
+            </span></a>
+
+          <a *ngIf="row.userId" (click)="openContactsDialog(row)" role="button" class="link-edit">
+            <span matTooltip="contact details" class="material-icons icn pointer">
+              phone
+            </span></a>
+
+          <a *ngIf="!row.userId && row.userActivationId && row.userActivationId > 0"
+            (click)="openConfirmationDialog(row)" role="button" class="link-edit">
+            <span matTooltip="re-send user activation email" class="material-icons icn pointer">
+              send
+            </span></a>
+
+          <a *ngIf="row.userCompanyMapId && row.userCompanyMapId > 0 && userHasPermission(viewAuditPermission)"
+            (click)="openAuditDialog(row)" role="button" class="link-edit">
+            <span matTooltip="view audit details" class="material-icons pointer">
+              fingerprint
+            </span></a>
+        </mat-cell>
+      </ng-container>
+
+
+      <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
+      <mat-row *matRowDef="let row; columns: displayedColumns;"></mat-row>
+    </mat-table>
+
+    <mat-paginator #paginator [pageIndex]="0" [pageSize]="5" [pageSizeOptions]="[5, 10, 25, 100]"
+      [length]="this.dataSource.rowCount$ | async" (page)="getData()">
+    </mat-paginator>
+  </div>
+
+  <mat-card
+    *ngIf="!(dataSource.data && dataSource.data.data && dataSource.data.data?.length > 0 || (dataSource.loading$ | async))">
+    <label class="mat-label other-label"><i>No users found...</i></label>
+  </mat-card>
+</div>

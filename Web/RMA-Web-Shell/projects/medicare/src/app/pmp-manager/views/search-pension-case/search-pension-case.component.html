@@ -1,0 +1,40 @@
+<form [formGroup]="form" name="form" class="mat-container details-form" novalidate>    
+    
+    <div class="mat-header">
+        <h1>Search Pension Case</h1><br />
+    </div>
+
+    <div *ngIf="showSearchProgress">
+        <mat-progress-bar mode="indeterminate"
+            [ngClass]="{ 'loading-main-double-menu-progress': doubleMenu, 'loading-main-single-menu-progress': !doubleMenu }">
+        </mat-progress-bar>
+        <p class="site-font grey">Searching for pension details, please wait till form details are populated
+            before proceeding to the next step.</p>
+    </div>
+    
+    <mat-card>
+        <mat-card-content>
+            <div>
+                <mat-form-field class="mat-form-field">
+                    <label class="mat-label other-label mandatory-field">Pension Case Number</label>
+                    <input matInput id="pensionCaseNumber" name="pensionCaseNumber" formControlName="pensionCaseNumber"
+                    (change)="search($event.target.value)" />
+                    <mat-error *ngIf="form.get('pensionCaseNumber').hasError('required')">
+                    Pension case number is <strong>required</strong>
+                    </mat-error>
+                    <div class="pensionCaseNumberError" *ngIf="pensionCaseNumberErrorMessage">
+                    {{pensionCaseNumberErrorMessage}}
+                    </div>
+                    <input matInput formControlName="personEventId" class="hidden" />
+                    <input matInput formControlName="eventTypeId" class="hidden" />
+                    <input matInput formControlName="claimId" class="hidden" />
+                </mat-form-field>
+            </div>
+        </mat-card-content>
+    </mat-card>
+
+    <div *ngIf="selectedEvent && personEventId > 0">
+            <holistic-person-event-list [showMedicalInvoice] ="false" *ngIf="selectedEvent && personEventId" [event]="selectedEvent"
+            [personEventId]="personEventId" (emitPersonEvent)="setPersonEvent($event)" [selectedTab]="selectedTab" [icd10List]="icd10List"></holistic-person-event-list>  
+    </div>
+</form>

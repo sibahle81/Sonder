@@ -1,0 +1,144 @@
+<div class="margine-space">
+    <div class="mat-header">
+        <h1>Prosthetist Quote Capture</h1>
+    </div>
+
+    <div *ngIf="loading$ | async">
+        <mat-progress-bar mode="indeterminate"
+            [ngClass]="{ 'loading-main-double-menu-progress': doubleMenu, 'loading-main-single-menu-progress': !doubleMenu }">
+        </mat-progress-bar>
+        <p class="site-font grey">Loading Prosthetist Quote Data...</p>
+    </div>
+
+    <hr>
+    <div *ngIf="preAuthId > 0 && quotationTypeId;else documents_not_uploaded">
+        <app-prosthetic-quotation-type [hideQuotationTypeDropdown]="false" [claimId]="claimId"
+        [preAuthId]="preAuthId"
+        [quotationTypeDocsType]="quotationTypeId"></app-prosthetic-quotation-type>
+    </div>
+    <ng-template #documents_not_uploaded><span class="authorised">Prosthetic Documents not uploaded, please liaise
+            with Healthcare
+            Provider...</span></ng-template>
+    <hr>
+
+    <form [formGroup]="prosthetistQuoteForm">
+        <br>
+        <mat-card class="matCard">
+            <div class="clear">&nbsp;</div>
+            <section>
+                <!--practiceNumber-->
+                <div class="field-container">
+                    <div><label class="mat-label other-label mandatory-field">Practice Number</label></div>
+                    <mat-form-field>
+                        <input matInput formControlName="practiceNumber" id="practiceNumber" name="practiceNumber">
+                    </mat-form-field>
+                </div>
+                <!--quotationAmount-->
+                <div class="field-container-right">
+                    <mat-form-field>
+                        <label class="mat-label other-label">Prosthetic JV</label>
+                        <mat-select (selectionChange)="onChangeProstheticJV($event)" formControlName="prostheticsJV"
+                            id="prostheticsJV" name="prostheticsJV">
+                            <mat-option *ngFor="let jVPartner of jvPartners" [value]="jVPartner.rolePlayerId">
+                                {{jVPartner.name}}</mat-option>
+                        </mat-select>
+                        <mat-error *ngIf="prosthetistQuoteForm.controls?.prostheticsJV.invalid">
+                            {{getError('prostheticsJV')}}
+                        </mat-error>
+                    </mat-form-field>
+                </div>
+            </section>
+            <div class="clear">&nbsp;</div>
+            <section>
+                <!--serviceProvider-->
+                <div class="">
+                    <div><label class="mat-label other-label  mandatory-field">Service Provider</label></div>
+                    <mat-form-field>
+                        <input matInput formControlName="serviceProvider" id="serviceProvider" name="serviceProvider">
+                    </mat-form-field>
+                </div>
+            </section>
+            <div class="clear">&nbsp;</div>
+            <section>
+                <!--quotationAmount-->
+                <div class="">
+                    <div><label class="mat-label other-label mandatory-field">Quotated Amount</label></div>
+                    <mat-form-field>
+                        <input matInput type="number" class="" placeholder="" formControlName="quotationAmount"
+                            id="quotationAmount" name="quotationAmount">
+                          </mat-form-field>
+                </div>
+            </section>
+            <div class="clear">&nbsp;</div>
+            <section>
+                <!--prostheticTypeId-->
+                <div class="">
+                    <mat-form-field>
+                        <label class="mat-label other-label mandatory-field">For Prosthetics</label>
+                        <mat-select (selectionChange)="onChangeProstheticType($event)" formControlName="prostheticType"
+                            id="prostheticType" name="payeeType">
+                            <mat-option *ngFor="let prosthetistType of prostheticTypes"
+                                [value]="prosthetistType">
+                                {{prosthetistType}}
+                            </mat-option>
+                        </mat-select>
+                        <mat-error *ngIf="prosthetistQuoteForm.controls?.prostheticType.invalid">
+                            {{getError('prostheticType')}}
+                        </mat-error>
+                    </mat-form-field>
+                </div>
+            </section>
+            <section>
+                <!--comments-->
+                <div class="">
+                    <div><label class="mat-label other-label">Comments</label></div>
+                    <mat-form-field>
+                        <textarea matInput formControlName="comments" id="comments" name="comments"></textarea>
+                    </mat-form-field>
+
+                </div>
+            </section>
+            <section>
+                <!--signedByMCA-->
+                <div class="" [hidden]="currentUrl.includes('capture-medical-invoice')">
+                    <div><label class="mat-label other-label mandatory-field">Signed By (MCA)</label></div>
+                    <mat-form-field>
+                        <input matInput formControlName="signedByMCA" id="signedByMCA" name="signedByMCA">
+                        <mat-error *ngIf="prosthetistQuoteForm.controls?.signedByMCA.invalid">
+                            {{getError('signedByMCA')}}
+                        </mat-error>
+                    </mat-form-field>
+                </div>
+            </section>
+            <br />
+            <div class="clear">&nbsp;</div>
+
+            <section>
+                <!--isApproved-->
+                <div class="">
+                    <div><label class="mat-label other-label">Approved</label></div>
+                    <mat-form-field>
+                        <input matInput formControlName="isApproved" id="isApproved" name="isApproved">
+                    </mat-form-field>
+                </div>
+                <!--review comment (RMA)-->
+                <div class="">
+                    <div><label class="mat-label other-label">Review Comment (RMA)</label></div>
+                    <mat-form-field>
+                        <textarea matInput formControlName="reviewCommentRMA" id="reviewCommentRMA"
+                            name="reviewCommentRMA"></textarea>
+                    </mat-form-field>
+                </div>
+            </section>
+
+            <button type="button" class="button float-button"
+            (click)="onReset()">Clear Form</button>
+            <br />
+            <div class="clear">&nbsp;</div>
+        </mat-card>
+
+        <br>
+
+    </form>
+
+</div>

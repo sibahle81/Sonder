@@ -1,0 +1,103 @@
+<form [formGroup]="form" class="mat-container details-form">
+  <section>
+    <mat-form-field class="mat-form-field">
+      <label class="mat-label other-label mandatory-field">Policy</label>
+      <mat-select formControlName="policyId" (selectionChange)="onPolicyChanged($event.value)">
+        <mat-option *ngFor="let currentPolicy of createdPolicies" [value]="currentPolicy.policyId">
+          {{currentPolicy.clientReference}}
+        </mat-option>
+      </mat-select>
+    </mat-form-field>
+  </section>
+  <section>
+    <mat-form-field class="mat-form-field">
+      <label class="mat-label other-label mandatory-field">Benefit</label>
+      <mat-select formControlName="benefitId" (selectionChange)="onBenefitChanged($event.value)">
+        <mat-option *ngFor="let benefit of linkedBenefits" [value]="benefit.benefitId">
+          {{benefit.name}}
+        </mat-option>
+      </mat-select>
+      <mat-error *ngIf="form.get('benefitId').hasError('required')">
+        Benefit is <strong>required</strong>
+      </mat-error>
+    </mat-form-field>
+    <mat-form-field class="mat-form-field-right">
+      <label class="mat-label other-label mandatory-field">Category Short Description</label>
+      <input matInput formControlName="categoryDescription">
+      <mat-error *ngIf="form.get('categoryDescription').hasError('required')">
+        Category Short Description is <strong>required</strong>
+      </mat-error>
+    </mat-form-field>
+  </section>
+  <section>
+    <mat-form-field class="mat-form-field">
+      <label class="mat-lable other-label mandatory-field">Start Date</label>
+      <input matInput formControlName="startDate" [matDatepicker]="startDate" (dateChange)="onStartDateChanged($event.value)"/>
+      <mat-datepicker-toggle matSuffix [for]="startDate" [disabled]="form.disabled"></mat-datepicker-toggle>
+      <mat-datepicker touchUi="true" #startDate></mat-datepicker>
+      <mat-error *ngIf="form.get('startDate').hasError('required')">
+        Start Date is <strong>required</strong>
+      </mat-error>
+    </mat-form-field>
+    <mat-form-field class="mat-form-field-right">
+      <label class="mat-label other-label mandatory-field">New Effective Date</label>
+      <input matInput formControlName="newEffectiveDate" [matDatepicker]="newEffectiveDate" />
+      <mat-datepicker-toggle matSuffix [for]="newEffectiveDate" [disabled]="form.disabled"></mat-datepicker-toggle>
+      <mat-datepicker touchUi="true" #newEffectiveDate></mat-datepicker>
+      <mat-error *ngIf="form.get('newEffectiveDate').hasError('required')">
+        New Effective Date is <strong>required</strong>.
+      </mat-error>
+    </mat-form-field>
+  </section>
+  <section>
+    <mat-form-field class="mat-form-field">
+      <label class="mat-label other-label mandatory-field">Minimum Entry Age</label>
+      <input matInput formControlName="minimumEntryAge" type="number" />
+      <mat-error>
+        Minimum Entry Age is <strong>required</strong>.
+      </mat-error>
+    </mat-form-field>
+    <mat-form-field class="mat-form-field-right">
+      <label class="mat-label other-label mandatory-field">Normal Retirement Age</label>
+      <input matInput formControlName="normalRetirementAge" type="number" />
+      <mat-error *ngIf="form.get('normalRetirementAge').hasError('required')">
+        Normal Retirement Age is <strong>required</strong>.
+      </mat-error>
+    </mat-form-field>
+  </section>
+  <section>
+    <mat-form-field class="mat-form-field">
+      <label class="mat-lable other-label mandatory-field">Flat Cover</label>
+      <input matInput formControlName="flatCoverAmount" type="number" step=".01" />
+      <mat-error *ngIf="form.get('flatCoverAmount').hasError('required')">
+        Flat Cover is <strong>required</strong>.
+      </mat-error>
+    </mat-form-field>
+    <mat-form-field class="mat-form-field-right">
+      <label class="mat-label other-label mandatory-field">How is benefit payable</label>
+      <mat-select formControlName="benefitPaymentOption">
+        <mat-option *ngFor="let option of benefitPaymentOptions" [value]="option.benefitOptionItemValueId">
+          {{option.optionItemName}}
+        </mat-option>
+      </mat-select>
+      <mat-error *ngIf="form.get('benefitPaymentOption').hasError('required')">
+        How is benefit payable is <strong>required</strong>.
+      </mat-error>
+    </mat-form-field>
+  </section>
+  <section>
+    <mat-form-field class="mat-form-field">
+      <label class="mat-lable other-label mandatory-field">Maximum Entry Age</label>
+      <input matInput formControlName="maxEntryAge" type="number" />
+      <mat-error *ngIf="form.get('maxEntryAge').hasError('required')">
+        Maximum Entry Age is <strong>required</strong>.
+      </mat-error>
+    </mat-form-field>
+    <mat-form-field class="mat-form-field-right">
+      <label class="mat-label other-label">End Date</label>
+      <input matInput formControlName="endDate" [matDatepicker]="endDate" />
+      <mat-datepicker-toggle matSuffix [for]="endDate" [disabled]="form.disabled"></mat-datepicker-toggle>
+      <mat-datepicker touchUi="true" #endDate></mat-datepicker>
+    </mat-form-field>
+  </section>
+</form>

@@ -1,0 +1,50 @@
+<div class="page-header"></div>
+<span class="wizard-main-content">
+  <!-- <mat-card class="wizard-mat-card-content">
+    <mat-card-content class="mat-card-content"> -->
+      <form [formGroup]="form" class="mat-container details-form" novalidate>
+        <section>
+          <mat-form-field class="mat-form-field">
+            <label class="mat-label other-label mandatory-field">Display Name</label>
+            <input matInput maxlength="255" formControlName="displayName" />
+          </mat-form-field>
+          <mat-form-field class="mat-form-field-right">
+            <label class="mat-label other-label">Telephone Number</label>
+            <input matInput maxlength="10" formControlName="tellNumber" />
+          </mat-form-field>
+        </section>
+        <section>
+          <mat-form-field class="mat-form-field">
+            <label class="mat-label other-label">Email</label>
+            <input matInput maxlength="255" formControlName="emailAddress" />
+          </mat-form-field>
+          <mat-form-field class="mat-form-field-right">
+            <label class="mat-label other-label">Mobile Number</label>
+            <input matInput maxlength="10" formControlName="cellNumber" />
+          </mat-form-field>
+        </section>
+        <section>
+          <mat-form-field class="mat-form-field">
+            <label class="mat-label other-label mandatory-field">Preferred Communication</label>
+            <mat-select formControlName="preferredCommunicationTypeId" name="preferredCommunicationTypeId" id="preferredCommunicationTypeId" >
+              <mat-option *ngFor="let type of communicationTypes" [value]="type.id">
+                {{type.name}}
+              </mat-option>
+            </mat-select>
+          </mat-form-field>
+          <mat-form-field class="mat-form-field-right">
+            <div class="entity-label"><label class="mat-label other-label">&nbsp;</label></div>
+            <input matInput [hidden]="true" formControlName="isNatural" />
+            <mat-checkbox formControlName="isNatural" >
+              <label class="mat-label other-label">Is natural entity?</label>
+            </mat-checkbox>
+            <span (click)="showPersonDialog()" class="details-button">
+              <!-- <button type="button" class="button">Person Details</button> -->
+              <a role="button" class="link-edit">Edit Person Details</a>
+            </span>
+          </mat-form-field>
+        </section>
+      </form>
+    <!-- </mat-card-content>
+  </mat-card> -->
+</span>

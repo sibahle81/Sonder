@@ -1,0 +1,48 @@
+<div class="wizard-main-content mat-elevation-z8">
+  <form [formGroup]="form" class="mat-container details-form">
+    <section>
+      <mat-form-field class="mat-form-field">
+        <label class="mat-label other-label mandatory-field">Benefit Package</label>
+        <mat-select formControlName="benefitPackageId" required>
+          <mat-option *ngFor="let option of benefitPackageOptions" [value]="option.benefitOptionItemValueId">
+            {{option.optionItemName}}
+          </mat-option>
+        </mat-select>
+        <mat-error *ngIf="form.get('benefitPackageId').hasError('required')">
+          Benefit Package is <strong>required</strong>
+        </mat-error>
+      </mat-form-field>
+      <mat-form-field class="mat-form-field-right">
+        <label class="mat-label other-label mandatory-field">Salary (Benfit Purpose)</label>
+        <mat-select formControlName="benefitSalaryTypeOptionItemId" required>
+          <mat-option *ngFor="let option of benefitSalaryTypeOptions" [value]="option.benefitOptionItemValueId">
+            {{option.optionItemName}}
+          </mat-option>
+        </mat-select>
+        <mat-error *ngIf="form.get('benefitSalaryTypeOptionItemId').hasError('required')">
+          Salary (Benfit Purpose) is <strong>required</strong>
+        </mat-error>
+      </mat-form-field>
+    </section>
+    <section>
+      <mat-form-field class="mat-form-field">
+        <label class="mat-label other-label mandatory-field">Salary (Premium Purpose)</label>
+        <mat-select formControlName="premiumSalaryTypeOptionItemId" required>
+          <mat-option *ngFor="let option of premiumSalaryTypeOptions" [value]="option.benefitOptionItemValueId">
+            {{option.optionItemName}}
+          </mat-option>
+        </mat-select>
+        <mat-error *ngIf="form.get('premiumSalaryTypeOptionItemId').hasError('required')">
+          Salary (Premium Purpose) is <strong>required</strong>
+        </mat-error>
+      </mat-form-field>
+      <mat-form-field class="mat-form-field-right">
+        <label class="mat-label other-label mandatory-field">Multiple of salary</label>
+        <input matInput formControlName="salaryMultiple" DecimalNineFour>
+        <mat-error *ngIf="form.get('salaryMultiple').hasError('required')">
+          Multiple of salary is <strong>required</strong>
+        </mat-error>
+      </mat-form-field>
+    </section>
+  </form>
+</div>

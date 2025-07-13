@@ -1,0 +1,18 @@
+<div>
+    <form [formGroup]="form" class="mat-container details-form" novalidate>
+        <section>
+            <span>
+                <mat-form-field class="mat-form-field">
+                    <label class="mat-label other-label">Status</label><br />
+                    <mat-select class="control" (selectionChange)="readForm()" formControlName="status" name="status"
+                        id="status">
+                        <mat-option [value]="'all'">All</mat-option>
+                        <mat-option *ngFor="let status of statuses" [value]="status">
+                            {{formatLookup(status)}}
+                        </mat-option>
+                    </mat-select>
+                </mat-form-field>
+            </span>
+        </section>
+    </form>
+</div>

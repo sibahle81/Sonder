@@ -1,0 +1,93 @@
+<div style="margin: 20px 0 40px 0 !important;">
+  <form [formGroup]="form" class="mat-container details-form" novalidate>
+    <section>
+      <mat-form-field class="mat-form-field">
+        <label class="mat-label other-label mandatory-field">Identification Type</label>
+        <mat-select formControlName="idType">
+          <mat-option *ngFor="let type of idTypes" [value]="type.id">
+            {{type.name}}
+          </mat-option>
+        </mat-select>
+      </mat-form-field>
+      <mat-form-field class="mat-form-field-right">
+        <label class="mat-label other-label mandatory-field">Identification Number</label>
+        <input matInput formControlName="idNumber" />
+      </mat-form-field>
+    </section>
+    <section>
+      <mat-form-field class="mat-form-field">
+        <label class="mat-label other-label mandatory-field">First Name</label>
+        <input matInput formControlName="firstName" />
+      </mat-form-field>
+      <mat-form-field class="mat-form-field-right">
+        <label class="mat-label other-label mandatory-field">Surname</label>
+        <input matInput formControlName="surname" />
+      </mat-form-field>
+    </section>
+    <section>
+      <div class="field-container">
+        <div><label class="mat-label other-label mandatory-field">Date of Birth</label></div>
+        <mat-form-field class="mat-form-field">
+          <input matInput formControlName="dateOfBirth" [matDatepicker]="dateOfBirth">
+          <mat-datepicker-toggle matSuffix [for]="dateOfBirth"></mat-datepicker-toggle>
+          <mat-datepicker touchUi="true" #dateOfBirth></mat-datepicker>
+        </mat-form-field>
+      </div>
+      <div class="field-container-right">
+        <mat-form-field class="mat-form-field">
+          <label class="mat-label other-label">Age</label>
+          <input matInput formControlName="age" />
+        </mat-form-field>
+      </div>
+    </section>
+    <section>
+      <div class="field-container">
+        <mat-form-field class="mat-form-field">
+          <input matInput [hidden]="true" formControlName="isAlive" disabled/>
+          <mat-checkbox formControlName="isAlive" disabled>
+            <label class="mat-label other-label">Is alive?</label>
+          </mat-checkbox>
+        </mat-form-field>
+      </div>
+    </section>
+
+    <section >
+      <div [hidden]="isAlive" >
+        <div class="field-container">
+          <div><label class="mat-label other-label">Date of Death</label></div>
+          <mat-form-field class="mat-form-field">
+            <input matInput formControlName="dateOfDeath" [matDatepicker]="dateOfDeath" />
+            <mat-datepicker-toggle matSuffix [for]="dateOfDeath"></mat-datepicker-toggle>
+            <mat-datepicker touchUi="true" #dateOfDeath></mat-datepicker>
+          </mat-form-field>
+        </div>
+        <div class="field-container-right">
+          <mat-form-field class="mat-form-field">
+            <label class="mat-label other-label">Death Certificate Number</label>
+            <input matInput maxlength="50" formControlName="deathCertificateNumber"/>
+          </mat-form-field>
+        </div>
+      </div>
+    </section>
+
+    <section>
+      <div class="field-container" >
+        <div><label class="mat-label other-label mandatory-field">Date of VOPD</label></div>
+        <mat-form-field class="mat-form-field">
+          <input matInput formControlName="vopdVerifyDate" [matDatepicker]="dateVopdVerified">
+          <mat-datepicker-toggle matSuffix [for]="dateVopdVerified"></mat-datepicker-toggle>
+          <mat-datepicker touchUi="true" #dateVopdVerified></mat-datepicker>
+        </mat-form-field>
+      </div>
+      <div class="field-container-right" >
+        <mat-form-field class="mat-form-field">
+          <div class="person-checkbox-container"><label class="mat-label other-label">&nbsp;</label></div>
+          <input matInput [hidden]="true" formControlName="vopdVerified" />
+          <mat-checkbox formControlName="vopdVerified">
+            <label class="mat-label other-label">VOPD verified?</label>
+          </mat-checkbox>
+        </mat-form-field>
+      </div>
+    </section>
+  </form>
+</div>

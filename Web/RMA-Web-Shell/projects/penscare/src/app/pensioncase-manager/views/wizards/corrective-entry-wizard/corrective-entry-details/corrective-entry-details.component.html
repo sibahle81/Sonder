@@ -1,0 +1,93 @@
+<div class="expansionTitle">
+  <span class="material-icons">groups</span>Corrective Entry Detail
+</div>
+<mat-card *ngIf="model">
+  <mat-card-content>
+    <form [formGroup]="form" *ngIf="form">
+      <section class="top-section">
+        <mat-form-field *ngIf="entryTypes">
+          <label class="mat-label other-label mandatory-field">Entry Type</label>
+          <mat-select formControlName="entryType" name="entryType" id="entryType">
+            <mat-option *ngFor="let type of entryTypes" [value]="type.id">
+              {{type.name}}
+            </mat-option>
+          </mat-select>
+          <mat-error *ngIf="form.get('entryType').hasError('required')">
+            Entry Type is required
+          </mat-error>
+        </mat-form-field>
+
+        <mat-form-field class="mat-form-field-right">
+          <label class="mat-label other-label mandatory-field">Entry Date</label>
+          <input matInput formControlName="entryDate" id="entryDate" name="entryDate" [max]="today" date="true" [matDatepicker]="entryDate">
+          <mat-datepicker-toggle matSuffix class="mat-toggle-datepicker datePick" [for]="entryDate">
+          </mat-datepicker-toggle>
+          <mat-datepicker touchUi="true" #entryDate></mat-datepicker>
+          <mat-error *ngIf="form.get('entryDate').hasError('required')">
+            Entry Date is required
+          </mat-error>
+        </mat-form-field>
+      </section>
+
+      <section class="top-section">
+        <mat-form-field *ngIf="entryChangeReasons">
+          <label class="mat-label other-label mandatory-field">Entry Reason</label>
+          <mat-select formControlName="entryChangeReason" name="entryChangeReason" id="entryChangeReason">
+            <mat-option *ngFor="let type of entryChangeReasons" [value]="type.id">
+              {{type.name}}
+            </mat-option>
+          </mat-select>
+          <mat-error *ngIf="form.get('entryChangeReason').hasError('required')">
+            Entry Reason is required
+          </mat-error>
+        </mat-form-field>
+
+        <mat-form-field *ngIf="scheduleTypes" class="mat-form-field-right">
+          <label class="mat-label other-label mandatory-field">Schedule</label>
+          <mat-select formControlName="scheduleType" name="scheduleType" id="scheduleType">
+            <mat-option *ngFor="let type of scheduleTypes" [value]="type.id">
+              {{type.name}}
+            </mat-option>
+          </mat-select>
+          <mat-error *ngIf="form.get('scheduleType').hasError('required')">
+            Schedule is required
+          </mat-error>
+        </mat-form-field>
+      </section>
+
+      <section class="top-section">
+        <mat-form-field>
+          <label class="mat-label other-label">Amount</label>
+          <input matInput  formControlName="amount" name="amount" id="amount"  DecimalNumber />
+        </mat-form-field>
+
+        <mat-form-field class="mat-form-field-right">
+          <label class="mat-label other-label">Paye Amount</label>
+          <input matInput  formControlName="payeAmount" name="payeAmount" id="payeAmount"  DecimalNumber />
+        </mat-form-field>
+      </section>
+
+      <section class="top-section">
+        <mat-form-field>
+          <label class="mat-label other-label">Normal Monthly Pension</label>
+          <input matInput  formControlName="normalMonthlyPension" name="normalMonthlyPension" id="normalMonthlyPension" DecimalNumber readonly/>
+        </mat-form-field>
+
+        <mat-form-field class="mat-form-field-right">
+          <label class="mat-label other-label">Current Monthly Pension</label>
+          <input matInput  formControlName="currentMonthlyPension" name="currentMonthlyPension" id="currentMonthlyPension" DecimalNumber readonly/>
+        </mat-form-field>
+      </section>
+
+      <section>
+        <mat-form-field>
+          <label class="mat-label other-label">Payment Date</label>
+          <input matInput formControlName="paymentDate" id="paymentDate" name="paymentDate" [min]="today" date="true" [matDatepicker]="paymentDate">
+          <mat-datepicker-toggle matSuffix class="mat-toggle-datepicker datePick" [for]="paymentDate">
+          </mat-datepicker-toggle>
+          <mat-datepicker touchUi="true" #paymentDate></mat-datepicker>
+        </mat-form-field>
+      </section>
+    </form>
+  </mat-card-content>
+</mat-card>

@@ -1,0 +1,385 @@
+<mat-card-header>
+  <mat-card-title class="wizard-font card-title grey">
+    <h1 style="padding: 0;">Payment Allocation</h1>
+  </mat-card-title>
+</mat-card-header>
+
+<div *ngIf="isSubmitting$ | async">
+  <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+  <label class="mat-label other-label"><i>submitting...please wait</i></label>
+</div>
+
+<div *ngIf="!hasPermission && !hasclaimRecoveryAllocationPermission">
+  <div style="padding: 15px 0; color: orange; font-family: 'Oswald', sans-serif;">
+    You do not have sufficient permissions to perform payment allocations.
+  </div>
+  <div (click)="back()" class="form-buttons submit-button">
+    <button type="button" class="button float-button">Back</button>
+  </div>
+</div>
+
+<div *ngIf="!(isSubmitting$ | async)">
+  <form [formGroup]="form" class="mat-container details-form" novalidate>
+    <mat-card>
+      <section>
+        <mat-radio-group aria-label="Select an option" [disabled]="(isLoadingInvoices$ | async) || (isLoadingPayments$ | async)">
+          <div *ngIf="hasPermission">
+            <mat-radio-button value="DBT" (change)="toggle($event.value)" [disabled]="this.allocatingOutgoingPayment || allocationType == 'DBT'"
+              [checked]="this.allocatingOutgoingPayment">{{this.paymentAllocationToDebtorMsg}}
+            </mat-radio-button>
+            <span class="material-icons md-18" style="color: lightseagreen;"
+              matTooltip="Allocate a payment or part there of to the selected debtors account. Any remaining balance will still reflect in the suspense account">info</span>
+            <br />
+            <mat-radio-button value="INV" (change)="toggle($event.value)" [checked]="allocationType == 'DBT'"
+              [disabled]="this.allocatingOutgoingPayment">Allocate
+              payment to outstanding invoices on a debtors account
+            </mat-radio-button>
+            <span class="material-icons md-18" style="color: lightseagreen;" matTooltip="Allocate a payment or part there of, to unpaid invoices for a selected debtors account
+          ">info</span>
+          </div>
+          <div *ngIf="hasclaimRecoveryAllocationPermission">
+            <mat-radio-button value="REC" (change)="toggle($event.value)"
+              [disabled]="allocationType == 'DBT' || this.allocatingOutgoingPayment">Allocate
+              payment to a claim recovery invoice</mat-radio-button>
+            <span class="material-icons md-18" style="color: lightseagreen;"
+              matTooltip="Allocate a payment or part there of, to an invoice, that was generated to recover a claim payment, paid to an incorrect beneficiary">info</span>
+          </div>
+          <div>
+            <mat-radio-button value="TRA" (change)="toggle($event.value)"
+              [disabled]="this.allocatingOutgoingPayment">Allocate
+              payment to a reallocation, interdebtor transaction, interest or payment reversal</mat-radio-button>
+            <span class="material-icons md-18" style="color: lightseagreen;"
+              matTooltip="Allocate a payment or part there of, to a reallocation, interdebtor, or payment reversal transaction">info</span>
+          </div>
+        </mat-radio-group>
+      </section>
+    </mat-card>
+
+    <br />
+
+    <mat-card *ngIf="!blockSearch && hideSearch">
+      <section>
+        <span (click)="toggleSearch(false)" class="material-icons pointer">search</span>
+      </section>
+    </mat-card>
+
+    <section [hidden]="hideSearch" *ngIf="optionSelected">
+      <account-search [title]="'Debtor Account Search'" (itemSelected)="onAccountSelected($event)"></account-search>
+    </section>
+
+    <br />
+    <div *ngIf="isLoadingPayments$ | async">
+      <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+      <label class="mat-label other-label"><i>loading payment...please wait</i></label>
+    </div>
+    <div *ngIf="isCheckingBankAccountClass$ | async">
+      <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+      <label class="mat-label other-label"><i>checking for cross class allocation...please wait</i></label>
+    </div>
+    <div style="font-size:x-small; color: red;">{{message}}</div>
+    <br />
+    <mat-card *ngIf="!(isLoadingPayments$ | async)">
+      <section>
+        <mat-form-field class="mat-form-field">
+          <label>Original Payment Amount</label>
+          <input matInput formControlName="paymentAmount" name="paymentAmount" id="paymentAmount" DecimalNumber />
+        </mat-form-field>
+
+        <mat-form-field class="mat-form-field-right">
+          <label class="mat-label other-label">Amount Remaining</label>
+          <input matInput formControlName="allocatableAmount" name="allocatableAmount" id="allocatableAmount"
+            DecimalNumber />
+        </mat-form-field>
+      </section>
+
+      <section>
+        <mat-form-field class="mat-form-field">
+          <label *ngIf="allocationType === 'INV'" class="mat-label other-label">Account Number</label>
+          <label *ngIf="allocationType === 'DBT'" class="mat-label other-label">Reference Number</label>
+          <input matInput formControlName="accountNumber" name="accountNumber" id="accountNumber" />
+        </mat-form-field>
+
+        <mat-form-field class="mat-form-field-right" [hidden]="!selectedDebtor">
+          <label class="mat-label other-label">Allocating To Account <i>(finpaye number)</i></label>
+          <input matInput formControlName="accountName" name="accountName" id="accountName" />
+        </mat-form-field>
+
+      </section>
+
+      <section *ngIf="accountAllocation && selectedDebtor">
+        <mat-form-field class="mat-form-field">
+          <label class="mat-label other-label required">Amount <i>(max: {{allocatableAmount}})</i></label>
+          <input matInput formControlName="amount" name="amount" id="amount" (change)="disableSubmit()" DecimalNumber
+            min="1" max="{{allocatableAmount}}" />
+          <mat-error *ngIf="form.get('amount').hasError('required')" class="text-danger">
+            Amount is <strong>required</strong>
+          </mat-error>
+          <span *ngIf="amountIsInvalid" style="font-size: x-small; color: red;">
+            Amount must be between <strong>1 and {{allocatableAmount}}</strong>
+          </span>
+        </mat-form-field>
+      </section>
+
+      <section *ngIf="allocatingOutgoingPayment && this.selectedDebtor">
+        <mat-form-field>
+          <label class="mat-label other-label">Transaction Type</label>
+          <input matInput formControlName="transactionTypes" name="transactionTypes" id="transactionTypes" readonly />
+          <mat-error *ngIf="form.get('transactionTypes').hasError('transactionTypeRequired')">
+            Transaction type is required
+          </mat-error>
+          <mat-error *ngIf="form.get('transactionTypes').hasError('interDebtorTransferLinkNotFound')">
+            There is no interdebtor transfer to link for debtor
+          </mat-error>
+          <mat-error *ngIf="form.get('transactionTypes').hasError('refundLinkNotFound')">
+            There is no refund to link for debtor
+          </mat-error>
+          <mat-error *ngIf="form.get('transactionTypes').hasError('paymentLinkNotFound')">
+            Please allocate the return to a payment
+          </mat-error>
+        </mat-form-field>
+        <debit-transaction-allocation-link *ngIf="showDebitTransactionLinkSelection"
+          [rolePlayerId]="selectedDebtor.rolePlayerId" [selectedTransactionTypeId]="selectedTransactionTypeId"
+          (interDebtorTransferLinkSelected)="debitTransactionAllocationLinkSelected($event)"
+          (refundLinkSelected)="debitTransactionAllocationLinkSelected($event)"
+          (paymentLinkSelected)="debitTransactionAllocationLinkSelected($event)" [amount]="selectedPayment.unallocatedAmount"></debit-transaction-allocation-link>
+      </section>
+
+      <section>
+        <concurrent-period (periodSelected)="concurrentPeriodSelected($event)" (isValid)="isValidPeriodSelected($event)"
+          [validationDate]="selectedPayment.transactionDate"></concurrent-period>
+      </section>
+    </mat-card>
+
+    <br />
+    <div [hidden]="crossAccountAllocation">
+      <div *ngIf="(isLoadingInvoices$ | async)">
+        <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+        <label class="mat-label other-label"><i>loading invoices...please wait</i></label>
+      </div>
+
+      <mat-card
+        *ngIf="(invoiceAllocation || claimRecoveryAllocation) && invoicePaymentAllocations && invoicePaymentAllocations.length == 0 && !(isLoadingInvoices$ | async)">
+        <div *ngIf="invoiceAllocation">
+          No unpaid or partially paid invoices for {{selectedDebtor.finPayeNumber}}
+        </div>
+        <div *ngIf="claimRecoveryAllocation">
+          No unpaid or partially paid claim recovery invoices for {{selectedDebtor.finPayeNumber}}
+        </div>
+        <div style="font-size:x-small; color: red;">{{message}}</div>
+        <br />
+      </mat-card>
+
+      <mat-card
+        *ngIf="invoiceAllocation && invoicePaymentAllocations && invoicePaymentAllocations.length > 0 && !(isLoadingInvoices$ | async) && !(isCheckingBankAccountClass$ | async)">
+        <table [hidden]="showOwnAmount">
+          <tr>
+            <th>Invoice Number</th>
+            <th>Payee</th>
+            <th>Invoice Amount</th>
+            <th>Outstanding Amount</th>
+            <th>Status</th>
+            <th>Invoice Date</th>
+            <th>Allocated Amount</th>
+            <th>Action</th>
+          </tr>
+          <tr *ngFor="let invoicePaymentAllocation of invoicePaymentAllocations  | paginate: config">
+            <td>{{invoicePaymentAllocation.invoiceNumber}}</td>
+            <td>{{invoicePaymentAllocation.displayName}}</td>
+            <td>{{invoicePaymentAllocation.totalInvoiceAmount}}</td>
+
+            <td *ngIf="getStatusName(invoicePaymentAllocation) === 'Unpaid'">
+              {{invoicePaymentAllocation.amountOutstanding | number:'1.2-2'}}</td>
+            <td *ngIf="getStatusName(invoicePaymentAllocation) === 'Paid'" class="green">
+              {{invoicePaymentAllocation.amountOutstanding | number:'1.2-2'}}</td>
+            <td
+              *ngIf="getStatusName(invoicePaymentAllocation) === 'Partially' && invoicePaymentAllocation.amountAllocated != undefined || invoicePaymentAllocation.amountAllocated > 0 && invoicePaymentAllocation.amountOutstanding > 0"
+              class="amber">
+              {{invoicePaymentAllocation.amountOutstanding | number:'1.2-2'}}</td>
+            <td
+              *ngIf="getStatusName(invoicePaymentAllocation) === 'Partially' && invoicePaymentAllocation.amountAllocated == undefined || invoicePaymentAllocation.amountAllocated <= 0">
+              {{invoicePaymentAllocation.amountOutstanding | number:'1.2-2'}}</td>
+
+            <td>{{getStatusName(invoicePaymentAllocation)}}</td>
+            <td>{{invoicePaymentAllocation.invoiceDate | date: 'yyyy/MM/dd'}}</td>
+
+            <td *ngIf="getStatusName(invoicePaymentAllocation) === 'Unpaid'">0</td>
+            <td *ngIf="getStatusName(invoicePaymentAllocation) === 'Paid'" class="green">
+              {{invoicePaymentAllocation.amountAllocated}}</td>
+            <td
+              *ngIf="getStatusName(invoicePaymentAllocation) === 'Partially' && invoicePaymentAllocation.amountAllocated != undefined || invoicePaymentAllocation.amountAllocated > 0 && invoicePaymentAllocation.amountOutstanding > 0"
+              class="amber">
+              {{invoicePaymentAllocation.amountAllocated}}</td>
+            <td
+              *ngIf="getStatusName(invoicePaymentAllocation) === 'Partially' && invoicePaymentAllocation.amountAllocated == undefined || invoicePaymentAllocation.amountAllocated <= 0">
+              {{invoicePaymentAllocation.amountAllocated}}</td>
+            <td class="pointer">
+              <a role="button" class="link-edit"
+                *ngIf="!(selectedInvoiceIds.includes(invoicePaymentAllocation.invoiceId))"
+                (click)="invoiceSelected(invoicePaymentAllocation.invoiceId, 0)">full amount | </a>
+              <a role="button" class="link-edit"
+                *ngIf="!(selectedInvoiceIds.includes(invoicePaymentAllocation.invoiceId))"
+                (click)="toggleOwnAmount(invoicePaymentAllocation.invoiceId, invoicePaymentAllocation.amountOutstanding)">own
+                amount</a>
+              <a role="button" class="link-edit" *ngIf="selectedInvoiceIds.includes(invoicePaymentAllocation.invoiceId)"
+                (click)="invoiceRemoved(invoicePaymentAllocation.invoiceId, invoicePaymentAllocation.amountAllocated)">remove</a>
+            </td>
+          </tr>
+        </table>
+        <pagination-controls (pageChange)="pageChanged($event)"></pagination-controls>
+
+        <br />
+        <div [hidden]="!showOwnAmount">
+          <section>
+            <mat-form-field class="mat-form-field">
+              <label class="mat-label other-label mandatory-field">Amount</label>
+              <input matInput formControlName="partialAmount" name="partialAmount" id="partialAmount" DecimalNumber
+                min="1" max="{{maxAmountAllowed}}" />
+              <div style="color: red; font-size: x-small;" *ngIf="showMessage">Amount must be between 1 and
+                {{maxAmountAllowed | currency:'R'}}</div>
+            </mat-form-field>
+          </section>
+          <button type="button" (click)="addPartialAmount()" class="button float-button">Continue</button>
+          <br />
+          <br />
+        </div>
+      </mat-card>
+
+      <mat-card
+        *ngIf="claimRecoveryAllocation && invoicePaymentAllocations && invoicePaymentAllocations.length > 0 && !(isLoadingInvoices$ | async) && !(isCheckingBankAccountClass$ | async)">
+        <table [hidden]="showOwnAmount">
+          <tr>
+            <th>Payee</th>
+            <th>Invoice Amount</th>
+            <th>Outstanding Amount</th>
+            <th>Status</th>
+            <th>Allocated Amount</th>
+            <th>Action</th>
+          </tr>
+          <tr *ngFor="let invoicePaymentAllocation of invoicePaymentAllocations">
+            <td>{{invoicePaymentAllocation.displayName}}</td>
+            <td>{{invoicePaymentAllocation.totalInvoiceAmount}}</td>
+
+            <td *ngIf="getStatusName(invoicePaymentAllocation) === 'Unpaid'">
+              {{invoicePaymentAllocation.amountOutstanding | number:'1.2-2'}}</td>
+            <td *ngIf="getStatusName(invoicePaymentAllocation) === 'Paid'" class="green">
+              {{invoicePaymentAllocation.amountOutstanding | number:'1.2-2'}}</td>
+            <td
+              *ngIf="getStatusName(invoicePaymentAllocation) === 'Partially' && invoicePaymentAllocation.amountAllocated != undefined || invoicePaymentAllocation.amountAllocated > 0 && invoicePaymentAllocation.amountOutstanding > 0"
+              class="amber">
+              {{invoicePaymentAllocation.amountOutstanding | number:'1.2-2'}}</td>
+            <td
+              *ngIf="getStatusName(invoicePaymentAllocation) === 'Partially' && invoicePaymentAllocation.amountAllocated == undefined || invoicePaymentAllocation.amountAllocated <= 0">
+              {{invoicePaymentAllocation.amountOutstanding | number:'1.2-2'}}</td>
+
+            <td>{{getStatusName(invoicePaymentAllocation)}}</td>
+
+            <td *ngIf="getStatusName(invoicePaymentAllocation) === 'Unpaid'">0</td>
+            <td *ngIf="getStatusName(invoicePaymentAllocation) === 'Paid'" class="green">
+              {{invoicePaymentAllocation.amountAllocated}}</td>
+            <td
+              *ngIf="getStatusName(invoicePaymentAllocation) === 'Partially' && invoicePaymentAllocation.amountAllocated != undefined || invoicePaymentAllocation.amountAllocated > 0 && invoicePaymentAllocation.amountOutstanding > 0"
+              class="amber">
+              {{invoicePaymentAllocation.amountAllocated}}</td>
+            <td
+              *ngIf="getStatusName(invoicePaymentAllocation) === 'Partially' && invoicePaymentAllocation.amountAllocated == undefined || invoicePaymentAllocation.amountAllocated <= 0">
+              {{invoicePaymentAllocation.amountAllocated}}</td>
+            <td class="pointer">
+              <a role="button" class="link-edit"
+                *ngIf="!(selectedInvoiceIds.includes(invoicePaymentAllocation.invoiceId))"
+                (click)="invoiceSelected(invoicePaymentAllocation.invoiceId, 0)">full amount | </a>
+              <a role="button" class="link-edit"
+                *ngIf="!(selectedInvoiceIds.includes(invoicePaymentAllocation.invoiceId))"
+                (click)="toggleOwnAmount(invoicePaymentAllocation.invoiceId, invoicePaymentAllocation.amountOutstanding)">own
+                amount</a>
+              <a role="button" class="link-edit" *ngIf="selectedInvoiceIds.includes(invoicePaymentAllocation.invoiceId)"
+                (click)="invoiceRemoved(invoicePaymentAllocation.invoiceId, invoicePaymentAllocation.amountAllocated)">remove</a>
+            </td>
+          </tr>
+        </table>
+
+        <br />
+        <div [hidden]="!showOwnAmount">
+          <section>
+            <mat-form-field class="mat-form-field">
+              <label class="mat-label other-label mandatory-field">Amount</label>
+              <input matInput formControlName="partialAmount" name="partialAmount" id="partialAmount" DecimalNumber
+                min="1" max="{{maxAmountAllowed}}" />
+              <div style="color: red; font-size: x-small;" *ngIf="showMessage">Amount must be between 1 and
+                {{maxAmountAllowed | currency:'R'}}</div>
+            </mat-form-field>
+          </section>
+          <button *ngIf="showOwnAmount" type="button" (click)="addPartialAmount()" class="button float-button">Continue</button>
+        </div>
+      </mat-card>
+
+      <mat-card *ngIf="debitTransactionAllocation && selectedDebtor && !(isCheckingBankAccountClass$ | async)">
+        <div *ngIf="(isLoadingTransactions$ | async)">
+          <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+          <label class="mat-label other-label"><i>loading debit transactions...please wait</i></label>
+        </div>
+
+        <div [hidden]="!showOwnAmountTransaction">
+          <section>
+            <mat-form-field class="mat-form-field">
+              <label class="mat-label other-label mandatory-field">Amount</label>
+              <input matInput formControlName="partialAmount" name="partialAmount" id="partialAmount" DecimalNumber
+                min="1" max="{{maxAmountAllowed}}" />
+              <div style="color: red; font-size: x-small;" *ngIf="showMessage">Amount must be between 1 and
+                {{maxAmountAllowed | currency:'R'}}</div>
+            </mat-form-field>
+          </section>
+          <button type="button" (click)="addPartialAmountTransaction()" class="button float-button">Continue</button>
+          <br/><br/>
+        </div>
+
+        <div *ngIf="!(isLoadingTransactions$ | async) && debitTransactions.length > 0">
+          <table [hidden]="showOwnAmountTransaction">
+            <tr>
+              <!-- RYAN TODO -->
+              <th>Document Number</th>
+              <th>Document Date</th>
+              <th>Type</th>
+              <th>Amount</th>
+              <th>Outstanding Amount</th>
+              <th>Allocted Amount</th>
+              <th>Action</th>
+            </tr>
+            <tr *ngFor="let debitTransaction of debitTransactions">
+              <td>{{debitTransaction.rmaReference}}</td>
+              <td>{{debitTransaction.transactionDate | date: 'yyyy/MM/dd'}}</td>
+              <td>{{getTransactionTypeName(debitTransaction.transactionType)}}</td>
+              <td>{{debitTransaction.amount | number:'1.2-2'}}</td>
+              <td>{{debitTransaction.balance | number:'1.2-2'}}</td>
+              <td>{{debitTransaction.amountAllocated | number:'1.2-2'}}</td>
+
+              <td class="pointer">
+                <a role="button" class="link-edit"
+                  *ngIf="!(selectedDebitTransactionIds.includes(debitTransaction.transactionId))"
+                  (click)="debitTransactionSelected(debitTransaction.transactionId, 0)">full amount |</a>
+                  <a role="button" class="link-edit"
+                  *ngIf="!(selectedDebitTransactionIds.includes(debitTransaction.transactionId)) && debitTransaction.transactionType != 1"
+                  (click)="toggleOwnAmountTransaction(debitTransaction.transactionId, debitTransaction.balance)">own
+                  amount</a>
+                <a role="button" class="link-edit"
+                  *ngIf="selectedDebitTransactionIds.includes(debitTransaction.transactionId)"
+                  (click)="debitTransactionRemoved(debitTransaction.transactionId, debitTransaction.amountAllocated)">remove</a>
+              </td>
+            </tr>
+          </table>
+        </div>
+
+        <div *ngIf="!(isLoadingTransactions$ | async) && debitTransactions.length <= 0">
+          No debit transactions found for {{selectedDebtor.finPayeNumber}}
+        </div>
+      </mat-card>
+    </div>
+
+    <div class="form-buttons submit-button">
+
+      <button [disabled]="submitDisabled || (isSubmitting$ | async) || crossAccountAllocation || !periodIsValid"
+        class="button submit-button" (click)="submit()" style="margin-top: 5px;">Submit</button>
+      <button type="button" class="button submit-button" (click)="back()" style="margin-top: 5px;">Back</button>
+
+    </div>
+  </form>
+</div>

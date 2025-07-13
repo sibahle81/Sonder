@@ -1,0 +1,102 @@
+﻿<div class="left-margin">
+    <mat-card *ngIf="isSubmitting && !submitSuccess">
+        <mat-card-header>
+            <mat-card-title class="wizard-font card-title grey">
+                <h1>Submitting {{wizardContext.wizard.wizardConfiguration.displayName}} Wizard -
+                    '{{wizardContext.wizard.name}}'</h1>
+            </mat-card-title>
+            <mat-card-subtitle>
+                <div class="wizard-font grey" style="font-size: 18px;">This shouldn't take long...</div>
+            </mat-card-subtitle>
+        </mat-card-header>
+        <mat-card-content>
+            <div *ngIf="progressMessage">
+                <mat-progress-bar mode="determinate" [value]="progressMessage.progress"></mat-progress-bar>
+                <span class="small-padding wizard-font grey"><i>{{progressMessage.message}}</i></span>
+            </div>
+            <div *ngIf="!progressMessage">
+                <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+            </div>
+        </mat-card-content>
+    </mat-card>
+
+    <mat-card *ngIf="submitSuccess">
+        <mat-card-header>
+            <mat-card-title class="wizard-font card-title grey">
+                <h1>Wizard Submit Result</h1>
+            </mat-card-title>
+            <mat-card-subtitle>
+                <div class="wizard-font grey" style="font-size: 18px;">
+                    {{wizardContext.wizard.wizardConfiguration.displayName}}
+                    Completed!.</div>
+            </mat-card-subtitle>
+        </mat-card-header>
+    </mat-card>
+
+    <mat-card *ngIf="isApprovalRequested">
+        <mat-card-header>
+            <mat-card-title class="wizard-font card-title grey">
+                <h1>Approval requested for {{wizardContext.wizard.wizardConfiguration.displayName}}!</h1>
+            </mat-card-title>
+        </mat-card-header>
+        <mat-card-content>
+
+            <div class="left-margin">
+
+                <div class="wizard-font card-title grey">Reference: {{wizardContext.wizard.name}}</div>
+                <div class="wizard-font" style="font-size: 18px;">
+                    <span class="grey">Status:&nbsp;</span>
+                    <span class="valid">Awaiting approval someone with permission: <span
+                            *ngFor="let permission of wizardContext.wizard.wizardConfiguration.approvalPermissions">{{permission}}</span></span>
+                </div>
+            </div>
+
+        </mat-card-content>
+
+        <mat-card-actions>
+            <div class="left-margin" style="padding-bottom: 15px;">
+                <button class="button submit-button" (click)="back()">Back</button>
+            </div>
+        </mat-card-actions>
+    </mat-card>
+
+    <mat-card *ngIf="isApprovalResolved">
+        <mat-card-header>
+            <mat-card-title *ngIf="wizardStatus === disputed"
+                class="wizard-font card-title grey">
+                <h1>{{wizardContext.wizard.wizardConfiguration.displayName}} has been disputed!</h1>
+            </mat-card-title>
+            <mat-card-title *ngIf="wizardContext.wizard.wizardStatusId === rejected"
+                class="wizard-font card-title grey">
+                <h1>{{wizardContext.wizard.wizardConfiguration.displayName}} has been finally rejected!</h1>
+            </mat-card-title>
+        </mat-card-header>
+        <mat-card-content>
+
+            <div class="left-margin" *ngIf="wizardStatus === disputed">
+
+                <div class="wizard-font card-title grey">Reference: {{wizardContext.wizard.name}}</div>
+                <div class="wizard-font" style="font-size: 18px;">
+                    <span class="grey">Status:&nbsp;</span>
+                    <span class="orange">Disputed: It has been sent back to the available wizards pool.</span>
+                </div>
+            </div>
+
+            <div class="left-margin" *ngIf="wizardStatus === rejected">
+
+                <div class="wizard-font card-title grey">Reference: {{wizardContext.wizard.name}}</div>
+                <div class="wizard-font" style="font-size: 18px;">
+                    <span class="grey">Status:&nbsp;</span>
+                    <span class="invalid">Rejected: No additional work can be performed on this task</span>
+                </div>
+            </div>
+
+        </mat-card-content>
+
+        <mat-card-actions>
+            <div class="left-margin" style="padding-bottom: 15px;">
+                <button class="button submit-button" (click)="back()">Back</button>
+            </div>
+        </mat-card-actions>
+    </mat-card>
+</div>

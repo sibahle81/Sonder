@@ -1,0 +1,55 @@
+<div *ngIf="claimEstimate">
+  <div class="menu-bar">
+    <span class="material-icons">
+      info
+    </span>
+    More Information ({{getEstimateType(claimEstimate.estimateType)}})
+    <span class="material-icons pointer right" matTooltip="close" (click)="cancel()">
+      cancel
+    </span>
+  </div>
+
+  <mat-card>
+    <table class="altRowTable">
+      <tr>
+        <td><b>Outstanding Days Off: </b><i>(estimated days off - authorised days off) = outstanding days</i></td>
+        <td>{{calculateOutstandingdays()}}</td>
+      </tr>
+      <tr>
+        <td><b>Outstanding PD%: </b><i>(estimated pd% - authorised pd%) = outstanding pd%</i></td>
+        <td>{{calculateOutstandingPd()}}</td>
+      </tr>
+      <tr>
+        <td><b> Outstanding Amount: </b><i>(estimated amount - authorised amount) = outstanding amount</i></td>
+        <td>{{calculateOutstandingAmount()}}</td>
+      </tr>
+      <tr>
+        <td><b> Benefit Formula: </b></td>
+        <td>{{data.claimEstimate.calcOperands == null || data.claimEstimate.calcOperands === '' ? 'N/A' : data.claimEstimate.calcOperands }}</td>
+      </tr>
+    </table>
+
+    <mat-card>
+      <div class="menu-bar">
+        Payout Breakdown
+      </div>
+
+      <div *ngIf="(isLoading$ | async)">
+        <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+        <label class="mat-label other-label"><i>loading...please wait</i></label>
+      </div>
+
+      <div *ngIf="!(isLoading$ | async)">
+        <table class="altRowTable" *ngIf="payoutBreakdowns?.length > 0">
+          <tr *ngFor="let payoutBreakdown of payoutBreakdowns">
+            <td>{{getRelationName(payoutBreakdown.beneficiaryType)}} <b>({{payoutBreakdown.displayName}})</b></td>
+            <td>{{payoutBreakdown.amount ? formatMoney(payoutBreakdown.amount) : '0.00'}}</td>
+            <td>{{payoutBreakdown.detail}}</td>
+          </tr>
+        </table>
+        <label *ngIf="payoutBreakdowns?.length <= 0 && hasBreakdown" class="mat-label other-label"><i>No eligible beneficiaries found to calculate payout breakdown</i></label>
+        <label *ngIf="!hasBreakdown" class="mat-label other-label"><i>No payout breakdown available</i></label>
+      </div>
+    </mat-card>
+  </mat-card>
+</div>

@@ -1,0 +1,238 @@
+<form class="container-fluid" [formGroup]="form">
+  <div class="mat-header">
+    <h1 class="mat-header-text">Capture Clinical Update</h1>
+  </div>
+  <div *ngIf="showSearchProgress">
+    <mat-progress-bar mode="indeterminate"
+      [ngClass]="{ 'loading-main-double-menu-progress': doubleMenu, 'loading-main-single-menu-progress': !doubleMenu }">
+    </mat-progress-bar>
+    <p class="site-font grey">Searching for claim details...</p>
+  </div>
+  <fieldset>
+    <div class="errorMessage" *ngIf="errorMessage">
+      {{errorMessage}}
+    </div>
+    <legend>PreAuth Details</legend>
+    <div class="grid">
+      <div>
+        <span class="title">HPAC</span>
+        <span class="value">
+          <mat-form-field>
+            <div>
+              <label class="mat-label other-label mandatory-field">
+                Enter Claim Number
+              </label>
+              <input matInput id="claimReferenceNumber" name="claimReferenceNumber"
+                (change)="searchClaim($event.target.value)" />
+            </div>
+          </mat-form-field>
+        </span>
+      </div>
+      <div class="grid">
+        <div>
+          <span class="value">
+            <mat-form-field *ngIf="showPreAuthList">
+              <label class="mat-label other-label">Select PreAuthNumber</label>
+              <mat-select name="preAuthorisationList" id="preAuthorisationList"
+                (selectionChange)="selectPreAuthNumber($event)" [value]="PreAuthorisation">
+                <mat-option *ngFor="let PreAuthorisation of PreAuths" [value]="PreAuthorisation">
+                  {{PreAuthorisation.preAuthNumber}}
+                </mat-option>
+              </mat-select>
+              <span [style.visibility]="isLoading ? 'visible' : 'hidden'">
+                <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+                <span class="grey site-font"><i>Loading Data...please wait</i></span>
+              </span>
+            </mat-form-field>
+          </span>
+        </div>
+      </div>
+    </div>
+    <span class="mat-label orSpan">OR</span>
+    <div class="grid">
+      <div>
+        <span class="title"> </span>
+        <span class="value">
+          <mat-form-field>
+            <div>
+              <label class="mat-label other-label mandatory-field">
+                Enter Preauth Number
+              </label>
+              <input matInput id="preAuthNumber" name="preAuthNumber" (change)="searchPreauth($event.target.value)" />
+            </div>
+          </mat-form-field>
+        </span>
+      </div>
+    </div>
+
+  </fieldset>
+  <fieldset>
+    <legend>Client Details</legend>
+    <div class="grid">
+      <div>
+        <span class="title">Full Name</span>
+        <span class="value">{{ preAuthClaimDetail?.personName }}</span>
+      </div>
+      <div>
+        <span class="title">Cell/Tell Number</span>
+        <span class="value">{{ preAuthClaimDetail?.claimContactNo }}</span>
+      </div>
+    </div>
+    <div class="grid">
+      <div>
+        <span class="title">Physical Address</span>
+        <span class="value"></span>
+      </div>
+    </div>
+    <div class="grid">
+      <div>
+        <span class="title">Date Of Injury</span>
+        <span class="value">{{ preAuthClaimDetail?.eventDate }}</span>
+      </div>
+      <div>
+        <span class="title">Claim/Pension No.</span>
+        <span class="value">{{ preAuthClaimDetail?.claimReferenceNumber }}</span>
+      </div>
+    </div>
+    <div class="grid">
+      <div>
+        <span class="title">Industry No.</span>
+        <span class="value">{{ preAuthClaimDetail?.industryNumber }}</span>
+      </div>
+      <div>
+        <span class="title">Company No.</span>
+        <span class="value">{{ preAuthClaimDetail?.employerName }}</span>
+      </div>
+    </div>
+    <div class="grid">
+      <div>
+        <span class="title">Id No.</span>
+        <span class="value">{{ preAuthClaimDetail?.idNumber }}</span>
+      </div>
+      <div>
+        <span class="title">Passport Number</span>
+        <span class="value">{{ preAuthClaimDetail?.passportNumber }}</span>
+      </div>
+    </div>
+    <!-- </div> -->
+  </fieldset>
+  <div *ngIf="preAuthView$ | async as auth">
+    <mat-expansion-panel *ngIf="isHospitalAuth">
+      <mat-expansion-panel-header>
+        <mat-panel-title>
+          Hospital Auth Details
+        </mat-panel-title>
+      </mat-expansion-panel-header>
+      <hr>
+      <preauth-details [auth]="auth"></preauth-details>
+    </mat-expansion-panel>
+    <mat-expansion-panel *ngIf="isTreatingDoctorAuth">
+      <mat-expansion-panel-header>
+        <mat-panel-title>
+          Treating Doctor Auth Details
+        </mat-panel-title>
+      </mat-expansion-panel-header>
+      <hr>
+      <preauth-treating-doctor-details [auth]="auth?.subPreAuthorisations"></preauth-treating-doctor-details>
+    </mat-expansion-panel>
+  </div>
+  <hr>
+  <fieldset>
+    <legend>Capture ItemCodes</legend>
+    <preauth-breakdown authType="Hospital" [showLevelOfCare]="!isTreatingDoctorAuth"
+      [healthCareProvider]="healthCareProvider" [personEventId]="personEventId" preAuthBreakdownType="ClinicalUpdate"
+      (onPreAuthorisationBreakdownChange)="getPreauthorisationBreakDown($event)" [isClinicalUpdate]="true">
+    </preauth-breakdown>
+
+    <preauth-diagnosis></preauth-diagnosis>
+  </fieldset>
+
+  <fieldset>
+    <legend>Treatment Plan(Mandatory)</legend>
+    <span class="treating-plan" *ngFor="let plan of treatmentPlan$ | async">
+      <mat-checkbox class="treating-plan-option" [value]="plan.treatmentPlanId"
+        (change)="addTreatmentPlan(plan, $event)">
+        {{ plan.name }}
+      </mat-checkbox>
+    </span>
+
+    <div>
+      <div>
+        <mat-form-field>
+          <label class="mat-label other-label mandatory-field">Interim Account Balance</label>
+          <input type="number" matInput id="filter" name="filter" formControlName="interimAccountBalance" />
+          <mat-error *ngIf="form.get('interimAccountBalance').hasError('required')">
+            Interim Account Balance is <strong>required</strong>
+          </mat-error>
+        </mat-form-field>
+
+        <mat-form-field class="date-field mat-form-field-right" color="accent">
+          <label class="mat-label other-label">Discharge Date</label>
+          <input matInput [matDatepicker]="dischargeDate" formControlName="dischargeDate">
+          <mat-datepicker-toggle class="datePicker" matSuffix [for]="dischargeDate"></mat-datepicker-toggle>
+          <mat-datepicker #dischargeDate></mat-datepicker>
+        </mat-form-field>
+      </div>
+
+      <div>
+        <mat-form-field>
+          <label class="mat-label other-label mandatory-field">Subsequent Care</label>
+          <mat-select formControlName="subsequentCare">
+            <mat-option [value]="true">Yes</mat-option>
+            <mat-option [value]="false">No</mat-option>
+          </mat-select>
+          <mat-error *ngIf="form.get('subsequentCare').hasError('required')">
+            Subsequent Care is <strong>required</strong>
+          </mat-error>
+        </mat-form-field>
+      </div>
+
+    </div>
+  </fieldset>
+
+  <fieldset>
+    <legend class="mandatory-field">Comments(Min 10 characters)</legend>
+    <mat-form-field class="full-width">
+      <textarea matInput formControlName="comments" matAutosizeMinRows="5" matAutosizeMaxRows="3" minlength="10"></textarea>
+      <mat-error *ngIf="form.get('comments').hasError('minlength')">
+         Comments must be at least <strong>10 characters</strong>
+      </mat-error>
+    </mat-form-field>
+  </fieldset>
+
+  <fieldset>
+    <legend class="mandatory-field">Diagnosis Comments(Min 10 characters)</legend>
+    <mat-form-field class="full-width">
+      <textarea matInput formControlName="diagnosis" matAutosizeMinRows="5" matAutosizeMaxRows="3" minlength="10"></textarea>
+      <mat-error *ngIf="form.get('diagnosis').hasError('minlength')">
+        Diagnosis must be at least <strong>10 characters</strong>
+     </mat-error>
+    </mat-form-field>
+  </fieldset>
+
+  <fieldset>
+    <legend class="mandatory-field">Medication Comments(Min 10 characters)</legend>
+    <mat-form-field class="full-width">
+      <textarea matInput formControlName="medication" matAutosizeMinRows="5" matAutosizeMaxRows="3" minlength="10"></textarea>
+      <mat-error *ngIf="form.get('medication').hasError('minlength')">
+        Medication must be at least <strong>10 characters</strong>
+     </mat-error>
+    </mat-form-field>
+  </fieldset>
+
+  <div *ngIf="isLoading">
+    <mat-progress-bar mode="indeterminate"
+      [ngClass]="{ 'loading-main-double-menu-progress': doubleMenu, 'loading-main-single-menu-progress': !doubleMenu }">
+    </mat-progress-bar>
+    <p class="site-font grey">Creating Clinical Update...</p>
+  </div>
+
+  <div>
+  <button type="button" class="button" [disabled]="isSubmitted" mat-flat-button (click)="onSubmit()" >submit</button>  
+  <button type="button" class="button" mat-flat-button (click)="onCancel()" >cancel</button>
+  <br>
+  <br>
+  </div>
+</form>
+<br />
+<br />

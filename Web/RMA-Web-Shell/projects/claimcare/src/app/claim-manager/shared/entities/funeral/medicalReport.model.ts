@@ -1,0 +1,54 @@
+import { ICD10CodeModel } from 'projects/shared-components-lib/src/lib/icd10-code-filter-dialog/icd10-code-model';
+import { BaseClass } from 'projects/shared-models-lib/src/lib/common/base-class';
+import { MedicalReportCategoryEnum } from 'projects/shared-models-lib/src/lib/enums/medical-report-category-enum';
+import { MedicalReportTypeEnum } from 'projects/shared-models-lib/src/lib/enums/medical-report-enum';
+
+export class MedicalReportModel extends BaseClass {
+    medicalReportId: number;
+    medicalReportFormId: number;
+    personEventId: number;
+    personId: number;
+    reportDate: Date;
+    medicalReportType: MedicalReportTypeEnum;
+    firstConsultationDate: Date;
+    isStabilised: boolean;
+    stabilisedDate: Date;
+    notStabilisedReason: string;
+    clinicalDescription: string;
+    isInjuryConsistent: boolean;
+    isContributingCauses: boolean;
+    contributingDescription: string;
+    psPreExistingDefect: boolean;
+    preExistingDefectDescription: string;
+    isUnfitForWork: boolean;
+    isUnfitForWorkAuth: boolean;
+    firstDayOff: Date;
+    estimatedDaysOff: number | null;
+    lastDayOff: Date;
+    referralHistory: string;
+    radiologicalExaminations: string;
+    operationsProcedures: string;
+    physioTherapyDetails: string;
+    isRefusedCompensation: boolean;
+    detailedImpairmentEval: string;
+    medicalServiceProviderId: number | null;
+    patientNumber: string;
+    dateAssurerNotified: Date;
+    medicalReportCategoryId: number;
+    medicalReportCategoryXml: string;
+    isActive: boolean;
+    isDeleted: boolean;
+    createdBy: string;
+    createdDate: Date;
+    modifiedBy: string;
+    modifiedDate: Date;
+    treatmentDate: Date;
+    dateReceived: Date;
+    icd10codes: ICD10CodeModel[]
+    reportStatus: number;
+    rejectionReason: string;
+    assessmentTypeId: number;
+    rejectPendReasonId: number;
+    practiceNo: string;
+    icd10CodesJson: string;
+}

@@ -1,0 +1,78 @@
+
+
+<div *ngIf="(isLoading$ | async)" class="loadingDiv">
+    <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+    <span class="site-font">{{heading}}</span>
+</div>
+<div [hidden]="(isLoading$ | async)" class="pageWidth"  mat-dialog-content>
+    <mat-card>
+        <div class="menu-bar">
+            <span class="material-icons">
+                rule
+            </span>&nbsp; Schedule users
+            <span (click)="cancel()" class="material-icons pointer right" matTooltip="Close">
+                close
+            </span>
+            <span *ngIf=" selectedUsers && selectedUsers.length >0   && monthlyScheduledWorkPoolUserStartDate && monthlyScheduledWorkPoolUserEndDate" (click)="saveWorkPoolUser()" class="material-icons pointer right pulseGreen"
+                matTooltip="save">
+                save
+            </span>
+        </div>
+        <form [formGroup]="form" novalidate>
+            <section>
+                <mat-form-field class="mat-form-field controlSize">
+                    <label class="mat-label other-label">Start Time Off</label>
+                    <input matInput [matDatepicker]="picker1" (dateChange)="monthlyScheduledWorkPoolUserStartDateChange($event)" name="dtPicker1"
+                        id="dtPicker1" formControlName="dtPicker1" [min]="minDate">
+                    <mat-datepicker-toggle matSuffix [for]="picker1"></mat-datepicker-toggle>
+                    <mat-datepicker #picker1></mat-datepicker>
+                </mat-form-field>
+
+                <mat-form-field class="mat-form-field-right controlSize">
+                    <label class="mat-label other-label">End Time Off</label>
+                    <input matInput [matDatepicker]="picker2" (dateChange)="monthlyScheduledWorkPoolUserEndDateChange($event)" name="dtPicker2"
+                        id="dtPicker2" formControlName="dtPicker2" [min]="minDate">
+                    <mat-datepicker-toggle matSuffix [for]="picker2"></mat-datepicker-toggle>
+                    <mat-datepicker #picker2></mat-datepicker>
+                </mat-form-field>
+            </section>
+
+        </form>
+        <message-float [floatMessage]="floatMessage"></message-float>
+
+
+        <div [hidden]="(dataSource.loading$ | async) 
+        || (dataSource && dataSource.data && dataSource.data.data && dataSource.data.data.length <= 0) 
+        || (paginator && paginator.length === 0 && !(dataSource.loading$ | async))">
+
+            <mat-table #table [dataSource]="dataSource" matSort id="tblData" (matSortChange)="getData()">
+                    <ng-container matColumnDef="select">
+                        <mat-header-cell *matHeaderCellDef>
+                            <span class="material-icons noHover">
+                                security_update_good
+                            </span>
+                        </mat-header-cell>
+                        <mat-cell *matCellDef="let row">
+                            <mat-checkbox (change)="userSelected(row)" [checked]="isSelected(row)"></mat-checkbox>
+                        </mat-cell>
+                    </ng-container>
+                    <ng-container matColumnDef="displayName">
+                        <mat-header-cell *matHeaderCellDef mat-sort-header> Display Name </mat-header-cell>
+                        <mat-cell *matCellDef="let row"><user-display-name [userId]="row.id"></user-display-name></mat-cell>
+                    </ng-container>
+    
+                    <ng-container matColumnDef="email">
+                        <mat-header-cell *matHeaderCellDef mat-sort-header> Email </mat-header-cell>
+                        <mat-cell *matCellDef="let row">{{row.email}}</mat-cell>
+                    </ng-container>
+                    <mat-header-row *matHeaderRowDef="getDisplayedColumns()"></mat-header-row>
+                    <mat-row *matRowDef="let row; columns: getDisplayedColumns();"></mat-row>
+                </mat-table>
+                <mat-paginator #paginator [pageIndex]="0" [pageSize]="5" [pageSizeOptions]="[5, 10, 25, 100]"
+                [length]="this.dataSource.rowCount$ | async" (page)="getData()">
+            </mat-paginator>
+            </div>
+            </mat-card>
+
+</div>
+<monthly-scheduled-work-pool-user-view > </monthly-scheduled-work-pool-user-view>

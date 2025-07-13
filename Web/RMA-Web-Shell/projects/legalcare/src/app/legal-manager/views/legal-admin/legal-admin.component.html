@@ -1,0 +1,211 @@
+<section class="legal-admin">
+
+  <div *ngIf="!isLoading" [ngClass]="isSpinner ? 'on-disabled' : 'on-enabled'" class="legal-admin-content-div">
+
+    <div class="legal-admin-inside">
+      <div class="recovery-btn">
+        <button mat-button class="rvc-btn-heading">Recovery</button>
+      </div>
+      <div class="notifi-icon">
+      </div>
+    </div>
+
+
+    <div class="tab-views">
+      <ng-container *ngFor="let item of typeTabs">
+        <div class="type-class" (click)="onSelectTab(item)">
+          <span class="type-class-item" [ngStyle]="currentTabKey == getTabName(item) ? 
+             {'color' : '#006586' } : { 'color': '#5BB5D0' }">{{ getTabName(item) }}</span>
+          <span class="type-class-border"
+            [ngStyle]="currentTabKey == getTabName(item) ? 
+              { 'border': '2px solid #006586', 'visibility': 'visible' } : { 'border': '2px solid #5BB5D0','visibility': 'hidden' }"></span>
+        </div>
+      </ng-container>
+    </div>
+
+
+  </div>
+
+  <div *ngIf="!isLoading" [ngClass]="isSpinner ? 'on-disabled' : 'on-enabled'" class="admin-table-div">
+
+    <div class="legal-manager-table">
+      <div  class="legal-manager-2">
+
+        <div  class="legal-manager-3">
+          <span matPrefix class="flex-view">
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none">
+              <path
+                d="M19 11C19 12.5823 18.5308 14.129 17.6518 15.4446C16.7727 16.7602 15.5233 17.7856 14.0615 18.3911C12.5997 18.9966 10.9911 19.155 9.43928 18.8463C7.88743 18.5376 6.46197 17.7757 5.34315 16.6569C4.22433 15.5381 3.4624 14.1126 3.15372 12.5608C2.84504 11.0089 3.00347 9.40038 3.60897 7.93857C4.21447 6.47676 5.23985 5.22733 6.55544 4.34828C7.87103 3.46923 9.41775 3.00004 11 3.00004C12.0515 2.99674 13.0933 3.20141 14.0654 3.60228C15.0375 4.00315 15.9207 4.5923 16.6642 5.33582C17.4077 6.07935 17.9969 6.96257 18.3978 7.93467C18.7986 8.90677 19.0033 9.94854 19 11Z"
+                stroke="#292929" stroke-linecap="round" stroke-linejoin="round" />
+              <path d="M20.9993 21L16.6562 16.657" stroke="#292929" stroke-linecap="round" stroke-linejoin="round" />
+            </svg>
+          </span>
+          <input matInput (keyup)="applyFilter($event)" placeholder="Search here..." #input class="search-input">
+        </div>
+
+        <div class="filter-action-icon">
+          <div class="filter-icon">
+            <svg matTooltip="download" (click)="downloadList()" xmlns="http://www.w3.org/2000/svg" id="Outline" viewBox="0 0 24 24" width="22" height="22"><path d="M9.878,18.122a3,3,0,0,0,4.244,0l3.211-3.211A1,1,0,0,0,15.919,13.5l-2.926,2.927L13,1a1,1,0,0,0-1-1h0a1,1,0,0,0-1,1l-.009,15.408L8.081,13.5a1,1,0,0,0-1.414,1.415Z"/><path d="M23,16h0a1,1,0,0,0-1,1v4a1,1,0,0,1-1,1H3a1,1,0,0,1-1-1V17a1,1,0,0,0-1-1H1a1,1,0,0,0-1,1v4a3,3,0,0,0,3,3H21a3,3,0,0,0,3-3V17A1,1,0,0,0,23,16Z"/></svg>
+          </div>
+         </div>
+
+      </div>
+
+      <div *ngIf="dataSource.data?.length > 0" class="legal-table-content">
+
+        <div class="table-insie">
+          <table mat-table [dataSource]="dataSource" matSort class="mat-table-data legal-table-recovery">
+
+            <ng-container matColumnDef="claimNumber">
+              <th mat-header-cell *matHeaderCellDef class="legalAdmin table-data-head">
+                <span class="tableHeaderSapn select-text">Claim Number</span></th>
+              <td mat-cell *matCellDef="let row">
+                <span class="select-td">
+                  <span class="select-text" (click)="showDetails(row)">
+                    <div>{{row.claimNumber}}</div>
+                  </span>
+                </span>
+              </td>
+            </ng-container>
+
+            <ng-container matColumnDef="policyNumber">
+              <th mat-header-cell *matHeaderCellDef> 
+                <span class="tableHeaderSapn select-text">Policy Number </span></th>
+              <td mat-cell *matCellDef="let row" (click)="showDetails(row)">
+                <span class="select-td">
+                  <span class="select-text" (click)="showDetails(row)">
+                    <div>{{row.policyNumber}}</div>
+                  </span>
+                </span>
+              </td>
+            </ng-container>
+
+            <ng-container matColumnDef="customerName">
+              <th mat-header-cell *matHeaderCellDef> 
+                <span class="tableHeaderSapn select-text">Customer Name </span>
+                </th>
+              <td mat-cell *matCellDef="let row" (click)="showDetails(row)">
+                <span class="select-td">
+                  <span class="select-text" (click)="showDetails(row)">
+                    <div> {{row.customerName}}</div>
+                  </span>
+                </span> </td>
+            </ng-container>
+
+            <ng-container *ngIf="selectedTab == 'Ongoing'" matColumnDef="aasignTo">
+              <th mat-header-cell *matHeaderCellDef> 
+                <span class="tableHeaderSapn select-text">Assign To </span> </th>
+              <td mat-cell *matCellDef="let row" (click)="showDetails(row)">
+                <span class="select-td">
+                  <span class="select-text" (click)="showDetails(row)">
+                    <div>{{row.assignedName}}</div>
+                  </span>
+                </span>
+              </td>
+            </ng-container>
+
+            <ng-container matColumnDef="createdDate">
+              <th mat-header-cell *matHeaderCellDef>
+                <span class="tableHeaderSapn select-text"> {{ selectedTab == 'Ongoing' ? 'Assign On' : 'Date'}} </span></th>
+              <td mat-cell *matCellDef="let row" class="date-div-content" (click)="showDetails(row)">
+                <span class="select-td">
+                  <span class="select-text" (click)="showDetails(row)">
+                    <div> {{row.createdDate.split('T')[0]}} </div>
+                  </span>
+                </span>
+               </td>
+            </ng-container>
+
+            <ng-container *ngIf="selectedTab == 'Ongoing'" matColumnDef="lastActionDate">
+              <th mat-header-cell *matHeaderCellDef>
+                <span class="tableHeaderSapn select-text"> Last Action Date </span> </th>
+              <td mat-cell *matCellDef="let row" class="date-div-content" (click)="showDetails(row)">
+                <span class="select-td">
+                  <span class="select-text" (click)="showDetails(row)">
+                    <div> {{row.modifiedDate.split('T')[0]}} </div>
+                  </span>
+                </span>
+                </td>
+            </ng-container>
+
+            <ng-container matColumnDef="status">
+              <th mat-header-cell *matHeaderCellDef>
+                <span class="tableHeaderSapn"> Status </span> </th>
+              <td mat-cell *matCellDef="let row">
+                <span class="status-data" [ngClass]="selectedTab == 'Pending' ? 'status-pending' : ''">
+                  <span class="select-status-td">
+                      {{ getStatusText(row.legalCareReferralStatus) }}
+                    </span>
+                </span>
+              </td>
+            </ng-container>
+
+            <ng-container *ngIf="currentTabKey == 'New'" matColumnDef="assign">
+              <th mat-header-cell *matHeaderCellDef>
+                <span class="tableHeaderSapn select-text">  Assign Legal Advisor  </span></th>
+              <td mat-cell *matCellDef="let row;let i = index">
+
+                <form [formGroup]="selectForm[i]">
+                  <mat-form-field class="legal-manager-assign " appearance="fill">
+                    <mat-select class="legalAdminList" formControlName="assignValue" [placeholder]=" selectedTab == 'Open' ? row.displayName : 'Select' "
+                      panelClass="below">
+                      <ng-container *ngFor="let item of assign">
+                        <mat-option [value]="item.email" (click)="onSelectValue(item,row,i)">
+                          {{item.displayName}}
+                        </mat-option>
+                      </ng-container>
+                    </mat-select>
+                  </mat-form-field>
+                </form>
+              </td>
+            </ng-container>
+            <ng-container *ngIf="currentTabKey == 'New' || selectedTab == 'Pending' " matColumnDef="acknowledgement">
+              <th mat-header-cell *matHeaderCellDef class="ack-div">
+                <span class="tableHeaderSapn select-text">  Acknowledgement</span> </th>
+              <td mat-cell *matCellDef="let row;let i = index" class="ack-div">
+
+                <div *ngIf="currentTabKey == 'New'">
+                  <span (click)="openDialog(row,'Pending',i)"
+                    [ngClass]="isAcknowledgeArr[i] ? 'on-enabled' : 'on-disabled' ">ACKNOWLEDGE</span>
+                </div>
+
+                <div *ngIf="currentTabKey == 'Pending'">
+                  <span (click)="openDialog(row,'Pending',i)">ACKNOWLEDGE</span>
+                </div>
+
+              </td>
+            </ng-container>
+
+            <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+            <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+
+
+          </table>
+
+          <hr>
+
+          <mat-paginator [hidePageSize]="false" [length]="totalItems" [pageIndex]="page - 1"
+            [pageSize]="pageSize" [pageSizeOptions]="pageSizeOptions" [showFirstLastButtons]="false"
+            (page)="handlePageChange($event)">
+          </mat-paginator>
+        </div>
+
+      </div>
+
+      <div *ngIf="dataSource.data?.length == 0">
+        <h1 class="no-data-text">No data available</h1>
+      </div>
+
+    </div>
+
+  </div>
+
+  <div [hidden]="!isLoading" [ngClass]="isLoading ? 'progress-bar-container' : '' " class="progress-bar">
+    <mat-progress-bar *ngIf="isLoading" mode="indeterminate"></mat-progress-bar>
+  </div>
+
+  <div [hidden]="!isSpinner" class="spinner-view">
+    <mat-spinner *ngIf="isSpinner"></mat-spinner>
+  </div>
+
+</section>

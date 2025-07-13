@@ -1,0 +1,37 @@
+<app-dialog-header  [showSubmit] ="showSubmit" (closeHandler)="close()" (submitHandler)="addAdjustment()" titleIcon="payments" title="Interest Adjustment">
+</app-dialog-header> 
+<mat-card>
+<form [formGroup]="form" class="mat-container details-form" novalidate>
+    <p class="labelParagraph">{{labelType}} Adjustment</p> 
+    <p class="lblError">{{labelMessageError}}</p> 
+    <section>
+        <mat-form-field class="mat-form-field">
+          <label class="mat-label other-label">Original Transaction Amount</label>
+          <input matInput formControlName="transactionAmount" type="number"  name="transactionAmount"
+            id="transactionAmount" />       
+        </mat-form-field>
+      </section>
+      <section>
+        <mat-form-field class="mat-form-field">
+          <label class="mat-label other-label">Total After Adjustment</label>
+          <input matInput formControlName="total" type="number"  min="0" name="total" (input)="onAmountChanged($event.target.value)"
+            id="total" />         
+        </mat-form-field>
+      </section>
+    <section>
+      <mat-form-field class="mat-form-field">
+        <label class="mat-label other-label">{{labelMessage}}</label>
+        <input matInput formControlName="amount" type="number"  name="amount"
+          id="amount"   />
+        <mat-error *ngIf="form.get('amount').hasError('required')">
+          Amount is <strong>required</strong>
+        </mat-error>
+      </mat-form-field>
+    </section>
+  </form>
+    <section> 
+      <br />
+      <button  *ngIf="this.form.get('amount').value > 0" class="button submit-button" (click)="addAdjustment()">Create Workflow</button>
+      <br />
+    </section>
+  </mat-card>

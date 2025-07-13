@@ -1,0 +1,41 @@
+import { EstimateType } from "./personEvent/estimateType";
+
+export class ClaimEstimate {
+    claimEstimateId: number;
+    personEventId: number;
+    estimateTypeId: number;
+    benefitId: number | null;
+    estimatedExtent: number | null;
+    estimatedValue: number | null;
+    estimatedDaysOff: number | null;
+    allocatedExtent: number | null;
+    allocatedValue: number | null;
+    allocatedDaysOff: number | null;
+    authorisedExtent: number | null;
+    authorisedValue: number | null;
+    authorisedDaysOff: number | null;
+    settledExtent: number | null;
+    settledValue: number | null;
+    settledDaysOff: number | null;
+    earningsId: number | null;
+    isOverrideExtent: boolean;
+    isOverrideValue: boolean;
+    isOverrideDaysOff: boolean;
+    isFinalised: boolean;
+    calcOperands: string;
+    outstandingValue: number | null;
+    outstandingExtent: number | null;
+    outstandingDaysOff: number | null;
+    autoIncreasedAmount: number | null;
+    outstandingReserved: number | null;
+    automatedStpProcess: boolean | null;
+    notes: string;
+    estimatedValueExclVat: number | null;
+    estimatedValueVat: number | null;
+    isDeleted: boolean;
+    createdBy: string;
+    createdDate: string;
+    modifiedBy: string;
+    modifiedDate: string;
+    estimateType: EstimateType;
+}

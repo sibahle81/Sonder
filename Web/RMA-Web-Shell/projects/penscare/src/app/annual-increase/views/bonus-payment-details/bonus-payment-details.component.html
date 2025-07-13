@@ -1,0 +1,93 @@
+<mat-card>
+  <mat-card-content>
+    <h1>Bonus Payment Form</h1>
+    <div>
+      <form [formGroup]="form" *ngIf="form">
+        <div>
+          <section class="top-section">
+            <mat-form-field class="readonly-wrapper">
+              <label class="mat-label other-label mandatory-field">Increase Type</label>
+              <mat-select formControlName="increaseType" name="increaseType" id="increaseType" [(ngModel)]="bonusTypeValue">
+                <mat-option *ngFor="let type of lookups.increaseTypes" [value]="type.id" [disabled]="true">
+                  {{type.name}}
+                </mat-option>
+              </mat-select>
+            </mat-form-field>
+
+            <mat-form-field class="mat-form-field-right">
+              <label class="mat-label other-label mandatory-field">Legislative Value</label>
+              <mat-select formControlName="legislativeValue" name="legislativeValue" id="legislativeValue">
+                <mat-option *ngFor="let type of lookups.legislativeValues" [value]="type.id">
+                  {{type.name}}
+                </mat-option>
+              </mat-select>
+              <mat-error *ngIf="form.get('legislativeValue').hasError('required') && form.get('legislativeValue').touched">
+                Legislative Value Type is required
+              </mat-error>
+            </mat-form-field>
+          </section>
+
+          <section>
+            <mat-form-field *ngIf="amountTypes && amountTypes.length > 0">
+              <label class="mat-label other-label mandatory-field">Increase Amount type</label>
+              <mat-select id="amountType" name="amountType" formControlName="amountType">
+                <mat-option *ngFor="let type of amountTypes" [value]="type">
+                  {{type}}
+                </mat-option>
+              </mat-select>
+              <mat-error *ngIf="form.get('amountType').hasError('required') && form.get('amountType').touched">
+                Increase Amount Type is required
+              </mat-error>
+            </mat-form-field>
+
+            <mat-form-field class="mat-form-field-right" *ngIf="form.controls['amountType'].value === increaseAmt[1]">
+              <label class="mat-label other-label mandatory-field">Increase Amount</label>
+              <input matInput maxlength="50" formControlName="increaseAmount" name="increaseAmount" id="increaseAmount" (keypress)="validatorService.decimalEntryCheck($event)" />
+              <mat-error *ngIf="form.get('increaseAmount').hasError('required') && form.get('increaseAmount').touched">
+                increase Amount is required
+              </mat-error>
+            </mat-form-field>
+
+            <mat-form-field class="mat-form-field-right" *ngIf="form.controls['amountType'].value === increaseAmt[2]">
+              <label class="mat-label other-label mandatory-field">Increase Percentage(%)</label>
+              <input matInput maxlength="50" formControlName="increasePercent" name="increasePercent" id="increasePercent" (keypress)="validatorService.decimalEntryCheck($event)" />
+              <mat-error *ngIf="form.get('increasePercent').hasError('required') && form.get('increasePercent').touched">
+                increase Amount is required
+              </mat-error>
+            </mat-form-field>
+          </section>
+
+          <section>
+            <mat-form-field>
+              <label class="mat-label other-label mandatory-field">Effective Date</label>
+              <input matInput formControlName="effectiveDate" id="effectiveDate" name="effectiveDate" date="true" 
+              readonly [matDatepicker]="effectiveDate">
+              <mat-datepicker-toggle matSuffix class="mat-toggle-datepicker datePick" [for]="effectiveDate">
+              </mat-datepicker-toggle>
+              <mat-datepicker touchUi="true" #effectiveDate></mat-datepicker>
+              <mat-error *ngIf="form.get('effectiveDate').hasError('required')">
+                Effective Date is required
+              </mat-error>
+            </mat-form-field>
+          </section>
+
+          <section>
+            <mat-form-field>
+              <label class="mat-label other-label mandatory-field">Description</label>
+              <input matInput maxlength="50" formControlName="description" name="description" id="description" />
+              <mat-error *ngIf="form.get('description').hasError('required') && form.get('description').touched">
+                Details are required
+              </mat-error>
+            </mat-form-field>
+          </section>
+        </div>
+        <mat-card-actions *ngIf="!isWizard">
+          <div class="left-margin actions-container">
+            <button class="button submit-button" (click)="save()">Request Bonus Payment</button>
+            <button class="button submit-button" (click)="cancel()">Cancel</button>
+          </div>
+        </mat-card-actions>
+      </form>
+    </div>
+  </mat-card-content>
+</mat-card>

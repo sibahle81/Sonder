@@ -1,0 +1,40 @@
+<div class="pad-form">
+  <mat-card>
+    <mat-card-header>
+      <mat-card-title class="wizard-font card-title grey">
+        <h1 style="color:#389cae">Group Policy</h1>
+      </mat-card-title>
+    </mat-card-header>
+    <mat-card-content>
+      <div *ngIf="isLoading">
+        <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+      </div>
+      <div [hidden]="isLoading">
+        <form [formGroup]="form" class="mat-container details-form" novalidate>
+          <section>
+            <mat-form-field class="mat-form-field">
+              <label class="mat-label other-label">Group Name</label>
+              <input matInput formControlName="company">
+            </mat-form-field>
+            <mat-form-field class="mat-form-field-right">
+              <label class="mat-label other-label">Group Policy Number</label>
+              <input matInput formControlName="policyNumber">
+            </mat-form-field>
+          </section>
+          <section>
+            <mat-form-field class="mat-form-field">
+              <label class="mat-label other-label">Product Option</label>
+              <input matInput formControlName="productOption">
+            </mat-form-field>
+            <mat-form-field class="mat-form-field-right">
+              <label class="mat-label other-label">Client Reference</label>
+              <input matInput formControlName="clientReference">
+            </mat-form-field>
+          </section>
+        </form>
+      </div>
+
+    </mat-card-content>
+  </mat-card>
+</div>
+<div class="spacer"></div>

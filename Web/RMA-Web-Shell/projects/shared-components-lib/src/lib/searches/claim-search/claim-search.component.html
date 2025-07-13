@@ -1,0 +1,91 @@
+<mat-card>
+    <div class="menu-bar">
+        <span class="material-icons">
+            search
+        </span>
+        {{title}}
+        <span *ngIf="!(dataSource.loading$ | async)" (click)="reset()" class="material-icons pointer right"
+            matTooltip="reset">
+            restart_alt
+        </span>
+    </div>
+
+    <form [formGroup]="form" class="mat-container details-form" novalidate>
+        <section>
+            <mat-form-field class="mat-form-field" [floatLabel]="'never'">
+                <input matInput name="searchTerm" id="searchTerm" formControlName="searchTerm">
+                <mat-placeholder class="placeholder">search claims by event number, person event reference number, claim number, claimant identity number OR claimant passport number...</mat-placeholder>
+            </mat-form-field>
+        </section>
+    </form>
+</mat-card>
+
+<mat-card *ngIf="(dataSource.loading$ | async)">
+    <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+    <label class="mat-label other-label"><i>searching...please wait</i></label>
+</mat-card>
+
+<div [hidden]="(dataSource.loading$ | async)">
+    <mat-card>
+        <div *ngIf="searchTerm">Search Results for <b>{{searchTerm}}</b></div>
+        <div [hidden]="!(dataSource.data && dataSource.data.data && dataSource.data.data.length > 0)">
+            <mat-table #table [dataSource]="dataSource" matSort id="tblData" (matSortChange)="getData()">
+
+                <ng-container matColumnDef="eventReferenceNumber">
+                    <mat-header-cell *matHeaderCellDef mat-sort-header> Event Number </mat-header-cell>
+                    <mat-cell *matCellDef="let row"><b>{{row.eventReferenceNumber ? row.eventReferenceNumber :
+                            'N/A'}}</b></mat-cell>
+                </ng-container>
+
+                <ng-container matColumnDef="eventDate">
+                    <mat-header-cell *matHeaderCellDef mat-sort-header> Event Date </mat-header-cell>
+                    <mat-cell *matCellDef="let row">{{row.eventDate | date: "yyyy-MM-dd"}}</mat-cell>
+                </ng-container>
+
+                <ng-container matColumnDef="member">
+                    <mat-header-cell *matHeaderCellDef mat-sort-header> Member </mat-header-cell>
+                    <mat-cell *matCellDef="let row">{{row.memberSiteDisplayName}}</mat-cell>
+                </ng-container>
+
+                <ng-container matColumnDef="claimant">
+                    <mat-header-cell *matHeaderCellDef mat-sort-header> Claimant </mat-header-cell>
+                    <mat-cell *matCellDef="let row">{{row.claimantDisplayName}}</mat-cell>
+                </ng-container>
+
+                <ng-container matColumnDef="personEventReferenceNumber">
+                    <mat-header-cell *matHeaderCellDef mat-sort-header> PEV Number </mat-header-cell>
+                    <mat-cell *matCellDef="let row"><b>{{row.personEventReferenceNumber ? row.personEventReferenceNumber :
+                            'N/A'}}</b></mat-cell>
+                </ng-container>
+
+                <ng-container matColumnDef="claimReferenceNumber">
+                    <mat-header-cell *matHeaderCellDef mat-sort-header> Claim Number </mat-header-cell>
+                    <mat-cell *matCellDef="let row"><b>{{row.claimReferenceNumber ? row.claimReferenceNumber :
+                            'N/A'}}</b></mat-cell>
+                </ng-container>
+
+                <!-- Actions -->
+                <ng-container matColumnDef="actions">
+                    <mat-header-cell *matHeaderCellDef>Actions</mat-header-cell>
+                    <mat-cell *matCellDef="let row">
+                        <a (click)="claimSelected(row)"
+                            matTooltip="select">select</a>
+                    </mat-cell>
+                </ng-container>
+
+
+                <mat-header-row *matHeaderRowDef="getDisplayedColumns()"></mat-header-row>
+                <mat-row *matRowDef="let row; columns: getDisplayedColumns();"></mat-row>
+            </mat-table>
+
+            <mat-paginator #paginator [pageIndex]="0" [pageSize]="5" [pageSizeOptions]="[5, 10, 25, 100]"
+                [length]="this.dataSource.rowCount$ | async" (page)="getData()">
+            </mat-paginator>
+        </div>
+
+        <mat-card
+            *ngIf="!(dataSource.data && dataSource.data.data && dataSource.data.data.length > 0 || (dataSource.loading$ | async))">
+            <label class="mat-label other-label"><i>no claims found...</i></label>
+        </mat-card>
+    </mat-card>
+</div>

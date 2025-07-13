@@ -1,0 +1,77 @@
+<h3>Group Policy Members</h3>
+<div *ngIf="dataSource.isLoading">
+  <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+  <span class="grey"><i>Loading policy members...</i></span>
+</div><p></p>
+<div [hidden]="dataSource.isLoading">
+  <div *ngIf="paginator.length === 0">
+    <span class="grey"><i>No policy members found...</i></span><br><br>
+  </div>
+   
+  <div> 
+    <div class="mat-form-field">
+      <label class="mat-label">Policy Status</label>
+      <mat-select name="policyStatus" id="policyStatus" (selectionChange)="policyStatusChanged($event)" >
+        <mat-option *ngFor="let status of policyStatuses" [value]="status.id">
+          {{status.name}}
+        </mat-option>
+      </mat-select>
+    </div>
+      <div class="mat-form-field field-right">
+      <button  class="button submit-button up" 
+          matTooltip="Please enter a search term." matTooltipShowDelay="1000" (click)="applyFilter(filter.value)">Apply</button>
+  
+          <!-- <button  class="button submit-button up" 
+          matTooltip="Show all member policies." matTooltipShowDelay="1000" (click)="resetFilter();filter.value=''">Reset</button>
+   -->
+   </div>
+    
+    <p></p>
+    <mat-form-field [floatLabel]="'never'">
+     <input matInput maxlength="250" name="search" class="mat-input-element mat-form-field-autofill-control mat-tooltip-trigger ng-tns-c69-137 ng-untouched ng-pristine ng-valid cdk-text-field-autofill-monitored" minLength="3"
+          matTooltip="Search for a policy using policy number, member name or ID number" matTooltipShowDelay="1000" #filter >
+          <mat-placeholder class="placeholder">Search using policy number, member name or ID number
+          </mat-placeholder>
+          <mat-icon class="search-icon" (click)="applyFilter(filter.value)" matTooltip="Search " matSuffix>search
+          </mat-icon>
+    </mat-form-field>
+      
+    <h4><mat-checkbox  [checked]="!isShown" [disabled]="!canCheck" id="checkAll" name="checkAll" (change)="allChange($event)" >Cancel Group (<i>select this option to cancel the whole group</i>)</mat-checkbox></h4>
+    
+    <mat-table #table [dataSource]="dataSource" matSort matSortActive="RolePlayerTypeId" matSortDirection="asc" matSortDisableClear>
+      <ng-container matColumnDef="isDelete">
+        <mat-header-cell *matHeaderCellDef>Cancel Policy</mat-header-cell>
+        <mat-cell *matCellDef="let row" class="select-align">
+          <mat-checkbox *ngIf="isShown" [disabled]="!canCheck" (change)="tagChange($event, row.policyId)"  [checked]="isChecked(row.policyStatusId)"  ></mat-checkbox>
+        
+        </mat-cell>
+      </ng-container>
+      <ng-container matColumnDef="policyStatus">
+        <mat-header-cell *matHeaderCellDef>Policy Status</mat-header-cell>
+        <mat-cell *matCellDef="let row">{{getPolicyStatus(row.policyStatusId)}}
+        </mat-cell>
+      </ng-container>
+      
+      <ng-container matColumnDef="policyNumber">
+        <mat-header-cell *matHeaderCellDef mat-sort-header>Policy</mat-header-cell>
+        <mat-cell *matCellDef="let row">{{row.policyNumber}}</mat-cell>
+      </ng-container>
+      <ng-container matColumnDef="memberName">
+        <mat-header-cell *matHeaderCellDef mat-sort-header>Main Member</mat-header-cell>
+        <mat-cell *matCellDef="let row">{{row.memberName}}</mat-cell>
+      </ng-container>
+      <ng-container matColumnDef="idType">
+        <mat-header-cell *matHeaderCellDef>ID Type</mat-header-cell>
+        <mat-cell *matCellDef="let row">{{row.idType}}</mat-cell>
+      </ng-container>
+      <ng-container matColumnDef="idNumber">
+        <mat-header-cell *matHeaderCellDef>ID Number</mat-header-cell>
+        <mat-cell *matCellDef="let row">{{row.idNumber}}</mat-cell>
+      </ng-container>
+       <mat-header-row *matHeaderRowDef="memberColumns"></mat-header-row>
+      <mat-row *matRowDef="let row; columns: memberColumns;"></mat-row>
+    </mat-table>
+    <mat-paginator #paginator [length]="dataSource.rowCount$" [pageSize]="25" [pageSizeOptions]="[10, 25, 100]">
+    </mat-paginator>
+  </div>
+</div>

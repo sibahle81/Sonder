@@ -1,0 +1,190 @@
+<mat-card *ngIf="isLoading$ | async">
+    <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+    <label class="mat-label other-label"><i>loading...please wait</i></label>
+</mat-card>
+
+<div *ngIf="!(isLoading$ | async)">
+
+    <div class="menu-bar">
+        <span class="material-icons">
+            business
+        </span>
+        Company
+        <span
+            *ngIf="member && member.rolePlayerId > 0 && !showCompanySearch && !isEdit && userHasPermission(viewAuditPermission)"
+            class="material-icons pointer right" matTooltip="audit" (click)="openAuditDialog()">
+            fingerprint
+        </span>
+        <span *ngIf="isEdit" (click)="cancel()" class="material-icons pointer right" matTooltip="cancel">
+            close
+        </span>
+        <span
+            *ngIf="form.valid && !form.pristine && !showCompanySearch && (userHasPermission(addPermission) || userHasPermission(editPermission)) && !(isValidatingUniqueRegistrationNumber$ | async) && !(isValidatingUniqueCFReferenceNumber$ | async) && !(isValidatingUniqueCFRegistrationNumber$ | async)"
+            (click)="isValid()" class="material-icons pointer right pulseGreen" matTooltip="save">
+            save
+        </span>
+        <span
+            *ngIf="!isReadOnly && (form.pristine && member && member.rolePlayerId > 0 && !isEdit && userHasPermission(editPermission) && currentUser?.isInternalUser)"
+            (click)="edit()" class="material-icons pointer right" matTooltip="edit">
+            settings
+        </span>
+    </div>
+
+    <form *ngIf="!showCompanySearch" [formGroup]="form" class="mat-container details-form" novalidate>
+        <section>
+            <mat-form-field class="mat-form-field">
+                <label class="mat-label other-label">Industry Class</label>
+                <mat-select name="industryClass" id="industryClass" formControlName="industryClass">
+                    <mat-option *ngFor="let industryClass of industryClasses" [value]="industryClass">
+                        {{formatLookup(industryClass)}}
+                    </mat-option>
+                </mat-select>
+                <mat-error *ngIf="form.get('industryClass').hasError('required')">
+                    industry class is <strong>required</strong>
+                </mat-error>
+            </mat-form-field>
+            <mat-form-field class="mat-form-field-right">
+                <label class="mat-label other-label">Industry Type</label>
+                <mat-select name="industryType" id="industryType" formControlName="industryType">
+                    <mat-option *ngFor="let industryType of industryTypes" [value]="industryType">
+                        {{formatLookup(industryType)}}
+                    </mat-option>
+                </mat-select>
+                <mat-error *ngIf="form.get('industryType').hasError('required')">
+                    industry type is <strong>required</strong>
+                </mat-error>
+            </mat-form-field>
+        </section>
+
+        <section>
+            <mat-form-field class="mat-form-field">
+                <label class="mat-label other-label">Registration Type</label>
+                <mat-select name="registrationType" id="registrationType" formControlName="registrationType">
+                    <mat-option *ngFor="let registrationType of registrationTypes" [value]="registrationType">
+                        {{formatLookup(registrationType)}}
+                    </mat-option>
+                </mat-select>
+                <mat-error *ngIf="form.get('registrationType').hasError('required')">
+                    registration type is <strong>required</strong>
+                </mat-error>
+            </mat-form-field>
+            <mat-form-field class="mat-form-field-right">
+                <label class="mat-label other-label">Company Registration Number</label>
+                <input [hidden]="(isValidatingUniqueRegistrationNumber$ | async)" matInput
+                    formControlName="registrationNumber" name="registrationNumber" id="registrationNumber" />
+                <div *ngIf="(isValidatingUniqueRegistrationNumber$ | async)">
+                    <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+                    <label class="mat-label other-label"><i>validating...please wait</i></label>
+                </div>
+                <mat-error *ngIf="form.get('registrationNumber').hasError('required')">
+                    registration number is <strong>required</strong>
+                </mat-error>
+                <mat-error *ngIf="form.get('registrationNumber').hasError('notUnique')">
+                    unique registration number is <strong>required</strong>
+                </mat-error>
+            </mat-form-field>
+        </section>
+
+        <section>
+            <mat-form-field class="mat-form-field">
+                <label class="mat-label other-label">Compensation Fund Reference Number</label>
+                <input [hidden]="(isValidatingUniqueCFReferenceNumber$ | async)" matInput
+                    formControlName="compensationFundReferenceNumber" name="compensationFundReferenceNumber"
+                    id="compensationFundReferenceNumber" />
+                <div *ngIf="(isValidatingUniqueCFReferenceNumber$ | async)">
+                    <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+                    <label class="mat-label other-label"><i>validating...please wait</i></label>
+                </div>
+                <mat-error *ngIf="form.get('compensationFundReferenceNumber').hasError('required')">
+                    compensation fund reference number is <strong>required</strong>
+                </mat-error>
+                <mat-error *ngIf="form.get('registrationNumber').hasError('notUnique')">
+                    unique compensation fund reference number is <strong>required</strong>
+                </mat-error>
+            </mat-form-field>
+            <mat-form-field class="mat-form-field-right">
+                <label class="mat-label other-label">Compensation Fund Registration Number</label>
+                <input [hidden]="(isValidatingUniqueCFRegistrationNumber$ | async)" matInput
+                    formControlName="compensationFundRegistrationNumber" name="compensationFundRegistrationNumber"
+                    id="compensationFundRegistrationNumber" />
+                <div *ngIf="(isValidatingUniqueCFRegistrationNumber$ | async)">
+                    <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+                    <label class="mat-label other-label"><i>validating...please wait</i></label>
+                </div>
+                <mat-error *ngIf="form.get('compensationFundRegistrationNumber').hasError('required')">
+                    compensation fund registration number is <strong>required</strong>
+                </mat-error>
+                <mat-error *ngIf="form.get('registrationNumber').hasError('notUnique')">
+                    unique compensation fund registration number is <strong>required</strong>
+                </mat-error>
+            </mat-form-field>
+        </section>
+
+        <section>
+            <mat-form-field class="mat-form-field">
+                <label class="mat-label other-label">VAT Registration Number</label>
+                <input matInput formControlName="vatRegistrationNo" name="vatRegistrationNo" id="vatRegistrationNo" />
+                <mat-error *ngIf="form.get('vatRegistrationNo').hasError('required')">
+                    vat registration number is <strong>required</strong>
+                </mat-error>
+            </mat-form-field>
+            <mat-form-field class="mat-form-field-right">
+                <label class="mat-label other-label">Compensation Fund Status</label>
+                <mat-select name="compensationFundStatus" id="compensationFundStatus"
+                    formControlName="compensationFundStatus">
+                    <mat-option *ngFor="let compensationFundStatus of compensationFundStatuses"
+                        [value]="compensationFundStatus">
+                        {{formatLookup(compensationFundStatus)}}
+                    </mat-option>
+                </mat-select>
+            </mat-form-field>
+        </section>
+
+        <section>
+            <mat-form-field class="mat-form-field">
+                <label class="mat-label other-label">Company Level</label>
+                <mat-select (selectionChange)="companyLevelChanged($event.value)" name="companyLevel" id="companyLevel"
+                    formControlName="companyLevel">
+                    <mat-option *ngFor="let companyLevel of companyLevels" [value]="companyLevel">
+                        {{formatLookup(companyLevel)}}
+                    </mat-option>
+                </mat-select>
+                <mat-error *ngIf="form.get('companyLevel').hasError('required')">
+                    company level is <strong>required</strong>
+                </mat-error>
+            </mat-form-field>
+
+            <mat-form-field *ngIf="(selectedCompanyLevel && selectedCompanyLevel == subsidiary)"
+                class="mat-form-field-right">
+                <label class="mat-label other-label">Holding Company</label>
+                <input matInput id="holdingCompany" name="holdingCompany" formControlName="holdingCompany">
+                <mat-icon *ngIf="isEdit" class="search-icon" (click)="toggleCompanySearch()" matSuffix>search</mat-icon>
+                <mat-error *ngIf="form.get('holdingCompany').hasError('required')">
+                    holding company is <strong>required</strong>
+                </mat-error>
+            </mat-form-field>
+        </section>
+
+        <section>
+            <mat-form-field class="mat-form-field">
+                <label class="mat-label other-label">Nature of Business</label>
+                <input matInput formControlName="natureOfBusiness" name="natureOfBusiness" id="natureOfBusiness" />
+                <mat-error *ngIf="form.get('natureOfBusiness').hasError('required')">
+                    nature of business is <strong>required</strong>
+                </mat-error>
+            </mat-form-field>
+        </section>
+
+        <section>
+            <mat-checkbox name="isTopEmployer" id="isTopEmployer" formControlName="isTopEmployer"
+                [(ngModel)]="member.company.isTopEmployer" [disabled]="isReadOnly">
+                <label class="mat-label other-label">Top employer?</label>
+            </mat-checkbox>
+        </section>
+    </form>
+
+    <div *ngIf="showCompanySearch">
+        <company-search [title]="'Search Holding Company'" [companyLevel]="holdingCompany" [allowAddOnNoResult]="true"
+            (companySelectedEmit)="setCompany($event)"></company-search>
+    </div>
+</div>

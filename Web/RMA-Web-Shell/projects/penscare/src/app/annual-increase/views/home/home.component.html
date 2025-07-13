@@ -1,0 +1,14 @@
+<mat-card>
+  <mat-card-content>
+    <h1>Annual Increase (Current Year)</h1>
+    <app-table [hidden]="creatingWizard" [dataSource]="dataSource" [pageMetaData]="metaData" [buttonTitle]="'New Annual Increase'" (buttonClick)="newApplication()"></app-table>
+    <div *ngIf="creatingWizard">
+      <mat-progress-bar mode="indeterminate" [ngClass]="{ 'loading-main-double-menu-progress': doubleMenu, 'loading-main-single-menu-progress': !doubleMenu }"></mat-progress-bar>
+      <p class="site-font grey">Creating Wizard...</p>
+    </div>
+
+    <app-initiate-gazette-pension-increase >  </app-initiate-gazette-pension-increase >
+
+
+ </mat-card-content>
+</mat-card>

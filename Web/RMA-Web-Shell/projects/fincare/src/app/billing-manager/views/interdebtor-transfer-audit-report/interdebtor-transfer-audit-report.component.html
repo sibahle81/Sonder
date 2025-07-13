@@ -1,0 +1,15 @@
+<mat-card>
+
+  <div [hidden]="showReport">
+    <account-search (itemSelected)="onAccountSelected($event)"></account-search>
+  </div>
+
+  <div [hidden]="!showReport">
+    <report-viewer-with-date-and-period-filter (resetClicked)="onReset()"
+      [reportTitle]="'Interdebtor Transfer Audit'" [reportUrl]="'RMA.Reports.FinCare/InterDebtorTransferAuditStandard'"
+      [friendlyReportUrl]="'RMA.Reports.FinCare/InterDebtorAudit'" [dataParameterName]="'FinPayeeNumber'"
+      [data]="selectedFinPayeNumber" [offerFriendlyVersion]="true">
+    </report-viewer-with-date-and-period-filter>
+  </div>
+
+</mat-card>

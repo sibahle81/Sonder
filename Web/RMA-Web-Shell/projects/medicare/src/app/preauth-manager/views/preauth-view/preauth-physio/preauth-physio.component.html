@@ -1,0 +1,72 @@
+<div>
+  <preauth-breakdowns [breakdowns]="data.preAuthorisationBreakdowns"  [preAuthType]="data?.preAuthType"></preauth-breakdowns>  
+
+  <div class="grid">
+    <div>
+      <span class="title">Health Care Provider</span>
+      <span class="value">{{ (healthCareProvider$ |async)?.name }} </span>
+    </div>
+
+    <div>
+      <span class="title">Practice Number</span>
+      <span class="value">{{ (healthCareProvider$ |async)?.practiceNumber }}</span>
+    </div>
+  </div>
+
+  <div class="grid"> 
+    <div>
+      <span class="title">Auth Date From</span>
+      <span class="value"
+        >{{ data.dateAuthorisedFrom | date: "d MMM y" }}
+      </span>
+    </div>
+
+    <div>
+      <span class="title">Auth Date To</span>
+      <span class="value">{{ data.dateAuthorisedTo | date: "d MMM y" }} </span>
+    </div>
+  </div>
+
+  <div class="grid">
+    <div>
+      <span class="title">Medical Service PAC No</span>
+      <span class="value"> {{ data.preAuthNumber }}</span>
+    </div>
+
+    <div>
+      <span class="title">injury Date</span>
+      <span class="value">{{ data.injuryDate | date: "d MMM y" }} </span>
+    </div>
+  </div>
+
+  <div class="grid">
+    <div>
+      <span class="title">Pre-Auth ICD10</span>
+      <preauth-icd10-codes  class="value" [bodySides]="bodySides" [icd10Codes]="data?.preAuthIcd10Codes"  [preAuthType]="data?.preAuthType"></preauth-icd10-codes>
+    </div>
+  </div>
+
+  <div class="grid">
+    <div>
+      <span class="title">Requested Amount</span>
+      <span class="value"> {{data.requestedAmount | currency:'R '}}</span>
+    </div>
+
+    <div>
+      <span class="title">Authorised Amount</span>
+      <span class="value"> {{ data.authorisedAmount | currency:'R '}} </span>
+    </div>
+  </div>
+
+  <div class="grid">
+    <div>
+      <span class="title">Requested Comments</span>
+      <span class="value">{{data.requestComments }} </span>
+    </div>
+
+    <div>
+      <span class="title">Authorisation Comments</span>
+      <span class="value"> </span>
+    </div>
+  </div>
+</div>

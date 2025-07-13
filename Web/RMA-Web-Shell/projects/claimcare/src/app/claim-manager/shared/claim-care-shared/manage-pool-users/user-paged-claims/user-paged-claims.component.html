@@ -1,0 +1,42 @@
+<mat-card class="pad" *ngIf="(dataSource.loading$ | async)">
+    <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+    <label class="mat-label other-label"><i>loading assigned claims...please wait</i></label>
+</mat-card>
+
+<div [hidden]="(dataSource.loading$ | async)">
+    <mat-card>
+        <div class="menu-bar" *ngIf="!(dataSource.loading$ | async)">
+            <span class="material-icons"><span class="material-icons">
+                    assignment_add</span></span>&nbsp;<b>Assigned Claims</b>
+        </div>
+        <div *ngIf="!(dataSource.data?.data?.length > 0 || (dataSource.loading$ | async))">
+            <label class="mat-label other-label"><i>no assigned claims found...</i></label>
+        </div>
+        <div [hidden]="!(dataSource.data?.data?.length > 0)">
+            <mat-table #table [dataSource]="dataSource" matSort id="tblData">
+
+                <ng-container matColumnDef="claimNumber">
+                    <mat-header-cell *matHeaderCellDef> Claim NUmber </mat-header-cell>
+                    <mat-cell *matCellDef="let row">{{row.claimReferenceNumber}}</mat-cell>
+                </ng-container>
+
+                <ng-container matColumnDef="claimStatus">
+                    <mat-header-cell *matHeaderCellDef> Claim Status </mat-header-cell>
+                    <mat-cell *matCellDef="let row">{{getClaimStatus(row.claimStatusId)}}</mat-cell>
+                </ng-container>
+
+                <ng-container matColumnDef="liabilityStatus">
+                    <mat-header-cell *matHeaderCellDef> Liability Status </mat-header-cell>
+                    <mat-cell *matCellDef="let row">{{getLiabilityStatus(row.claimLiabilityStatus)}}</mat-cell>
+                </ng-container>
+
+                <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
+                <mat-row *matRowDef="let row; columns: displayedColumns;"></mat-row>
+            </mat-table>
+
+            <mat-paginator #paginator [pageIndex]="0" [pageSize]="5" [pageSizeOptions]="[5, 10, 25, 100]"
+                [length]="this.dataSource.rowCount$ | async" (page)="getData()">
+            </mat-paginator>
+        </div>
+    </mat-card>
+</div>

@@ -1,0 +1,92 @@
+<!-- PERMISSIONS -->
+<div [hidden]="hasPermission" class="permissionError">
+  <div style="padding: 15px 0; color: orange; font-family: 'Oswald', sans-serif;">
+    You do not have sufficient permissions to perform recovery.
+  </div>
+  <div (click)="back()" class="form-buttons submit-button">
+    <button type="button" class="button float-button">Back</button>
+  </div>
+</div>
+
+<div [hidden]="!hasPermission">
+  <form [formGroup]="form" class="mat-container">
+    <mat-card class="main-container" class="mainContainerDiv">
+
+      <!-- MAIN HEADER FOR THIS PAGE -->
+      <mat-card-header class="wizardHeader">
+        <mat-card-title class="wizard-font card-title grey">
+          <h1 style="padding: 0;">Recovery Reason</h1>
+        </mat-card-title>
+        <mat-card-subtitle>
+          <span class="grey site-font">Documented Reasons for Payment Recovery</span>
+        </mat-card-subtitle>
+      </mat-card-header>
+
+      <!-- REASON AND RECOVERY AMOUNT -->
+      <mat-card class="top-selector-container">
+        <mat-card class="document-container">
+          <mat-card-content class="content">
+            <mat-form-field>
+              <label class="mat-label other-label mandatory-field">Recovery Reason</label>
+              <mat-select name="recoveryReason" id="recoveryReason" formControlName="recoveryReason" required>
+                <mat-option value="1">Paid To The Incorrect Person</mat-option>
+                <mat-option value="2">Paid To The Incorrect Account</mat-option>
+                <mat-option value="3">Incorrect Decision Should Not Have Paid</mat-option>
+                <mat-option value="4">Duplicate Payment</mat-option>
+                <mat-option value="5">Paid The Incorrect Amount</mat-option>
+              </mat-select>
+              <mat-error *ngIf="form.get('recoveryReason').hasError('required')">
+                                                    Recovery reason is required
+                                                </mat-error> 
+            </mat-form-field>
+
+            <mat-form-field class="recoverAmountControl">
+              <label class="mat-label other-label mandatory-field">Amount to be Recovered</label>
+              <input matInput maxlength="50" formControlName="recoverAmount" name="recoverAmount" id="recoverAmount"
+                required>
+                <mat-error *ngIf="form.get('recoverAmount').hasError('required')">
+                                                      Recovery amount is required
+                                                  </mat-error> 
+            </mat-form-field>
+            <br />
+            <mat-form-field>
+              <label class="mat-label other-label mandatory-field">Payment Plan</label>
+              <mat-select name="paymentPlan" id="paymentPlan" formControlName="paymentPlan" required>
+                <mat-option value="1">Once Off</mat-option>
+                <mat-option value="2">Six Months</mat-option>
+              </mat-select>
+              <mat-error *ngIf="form.get('paymentPlan').hasError('required')">
+                                                    Payment plan is required
+                                                </mat-error> 
+            </mat-form-field>
+
+            <mat-form-field class="recoverAmountControl">
+              <label class="mat-label other-label mandatory-field">Payment Day</label>
+              <mat-select name="paymentDay" id="paymentDay" formControlName="paymentDay" required>
+                <mat-option [value]="0">Select Day</mat-option>
+                <mat-option *ngFor="let day of paymentDays" [value]="day.id">
+                  {{day.value}}
+                </mat-option>
+              </mat-select>
+              <mat-error *ngIf="form.get('paymentDay').hasError('required')">
+                                                    Payment day is required
+                                                </mat-error> 
+            </mat-form-field>
+
+            <!-- NOTES -->
+            <div [hidden]="!isNotes" class="notesDiv">
+              <claim-notes [hideButtons]="true"></claim-notes>
+            </div>
+          </mat-card-content>
+        </mat-card>
+
+
+        <mat-card class="document-container">
+          <mat-card-content class="content">
+
+          </mat-card-content>
+        </mat-card>
+      </mat-card>
+    </mat-card>
+  </form>
+</div>

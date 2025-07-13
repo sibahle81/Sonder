@@ -1,0 +1,72 @@
+<div class="menu-bar">
+  <span class="material-icons">contact_mail</span>
+  {{title}}
+  <span (click)="cancel()" class="material-icons pointer right" matTooltip="close">
+    close
+  </span>
+  <span *ngIf="form.valid && !form.pristine" (click)="send()" class="material-icons pointer right pulse"
+    matTooltip="send">
+    send
+  </span>
+</div>
+
+<mat-card>
+  <form [formGroup]="form" class="mat-container details-form" novalidate>
+    <section>
+      <mat-form-field class="mat-form-field wide">
+        <label class="mat-label other-label mandatory-field">Recipient(s)</label>
+        <input matInput formControlName="recipients" name="recipients" id="recipients" />
+      </mat-form-field>
+      <mat-form-field class="mat-form-field wide">
+        <label class="mat-label other-label mandatory-field">Subject</label>
+        <input matInput formControlName="subject" name="subject" id="subject" />
+        <mat-error *ngIf="form.get('subject').hasError('required')">
+          subject is <strong>required</strong>
+        </mat-error>
+      </mat-form-field>
+    </section>
+    <mat-form-field class="mat-form-field wide-search">
+      <label class="mat-label other-label">CC</label>
+      <input matInput formControlName="cc" name="cc" id="cc" />
+      <mat-icon matTooltip="search" (click)="openUserSearchDialog('cc')" class="icn icn-button shift-icn-down"
+        matSuffix>search</mat-icon>
+    </mat-form-field>
+
+    <mat-form-field class="mat-form-field wide-search">
+      <label class="mat-label other-label">BCC</label>
+      <input matInput formControlName="bcc" name="bcc" id="bcc" />
+      <mat-icon matTooltip="search" (click)="openUserSearchDialog('bcc')" class="icn icn-button shift-icn-down"
+        matSuffix>search</mat-icon>
+    </mat-form-field>
+
+    <section>
+      <mat-form-field class="mat-form-field wide">
+        <label class="mat-label other-label mandatory-field">Body</label>
+        <textarea class="full" matInput maxlength="4000" name="body" id="body" formControlName="body"
+          cdkTextareaAutosize cdkAutosizeMinRows="1" cdkAutosizeMaxRows="10"></textarea>
+        <mat-error *ngIf="form.get('body').hasError('required')">
+          body is <strong>required</strong>
+        </mat-error>
+      </mat-form-field>
+    </section>
+  </form>
+</mat-card>
+
+<mat-card>
+  <div class="menu-bar">
+    <span class="material-icons">attachment</span>
+    Attachments
+  </div>
+  <input type="file" (change)="onFilesSelected($event)" accept="*.*" multiple />
+  <ul>
+    <li *ngFor="let attachment of mailAttachments; let i = index">
+      {{ attachment.fileName }}
+      <button type="button" (click)="removeAttachment(i)">Remove</button>
+    </li>
+  </ul>
+
+  <mat-card *ngIf="data.documentSystemName && data.keyName && data.keyValue">
+    <document [systemName]="data.documentSystemName" [keyName]="data.keyName" [keyValue]="data.keyValue"
+      [isReadOnly]="true" [enableMultiSelect]="true" (selectedDocumentsEmit)="setSelectedDocuments($event)"></document>
+  </mat-card>
+</mat-card>

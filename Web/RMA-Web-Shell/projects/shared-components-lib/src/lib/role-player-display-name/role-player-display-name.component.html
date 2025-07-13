@@ -1,0 +1,15 @@
+<span *ngIf="isLoading$ | async" class="material-icons rotating" matTooltip="loading roleplayer">
+    loop
+</span>
+
+<div *ngIf="!(isLoading$ | async)">
+    <div *ngIf="rolePlayer">
+        <b>{{rolePlayer.displayName}}</b>
+        <span *ngIf="rolePlayer.finPayeNumber"><br />({{rolePlayer.finPayeNumber}})</span>
+        <span *ngIf="rolePlayer.idNumber"><br />({{rolePlayer.idNumber}})</span>
+    </div>
+
+    <div *ngIf="!rolePlayer && message">
+        {{message}}
+    </div>
+</div>

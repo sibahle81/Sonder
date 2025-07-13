@@ -1,0 +1,48 @@
+<mat-card *ngIf="!(isContextReady()) || (isLoading$ | async)">
+    <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+    <label class="mat-label other-label"><i>{{loadingMessage$ | async}}</i></label>
+</mat-card>
+
+<div *ngIf="isContextReady() && !(isLoading$ | async)">
+    <div *ngIf="!(getSelectedMemberContext() > 0)">
+        <member-search-V2 [basicMode]="false" (memberSelectedEmit)="setRolePlayer($event)"></member-search-V2>
+    </div>
+
+    <div *ngIf="getSelectedMemberContext() > 0">
+        <div class="menu-bar" *ngIf="linkedUserMember && linkedUserMember.memberName">
+            <span class="material-icons">
+                push_pin
+            </span>
+            Self Service Member Portal
+            <span matTooltip="back to search" class="material-icons pointer right pulse blueFont" (click)="reset()">
+                arrow_back
+            </span>
+        </div>
+
+        <member-view [rolePlayerId]="getSelectedMemberContext()" [hideExpandOption]="true"
+            [expanded]="false"></member-view>
+
+        <mat-tab-group animationDuration="500ms" [(selectedIndex)]="selectedTabIndex">
+            <mat-tab *ngIf="userHasPermission(viewMemberPermission)" label="Member">
+                <member-view [rolePlayerId]="getSelectedMemberContext()" [hideMenuBar]="true" [expanded]="true"
+                    [showMinimumDetails]="false"></member-view>
+            </mat-tab>
+
+            <mat-tab *ngIf="userHasPermission(viewPolicyPermission)" label="Policies">
+                <policy-view [rolePlayerId]="getSelectedMemberContext()"></policy-view>
+            </mat-tab>
+
+            <mat-tab *ngIf="userHasPermission(viewClaimPermission)" label="Claims">
+                <mat-tab-group animationDuration="500ms">
+                    <mat-tab label="Submitted">
+                        <person-event-search-V2 [title]="'Search Submitted Claim Notifications'" [rolePlayerId]="getSelectedMemberContext()" [showRemittanceMenuOption]="true"
+                            (PEVSelectedEmit)="setPEV($event)"></person-event-search-V2>
+                    </mat-tab>
+                    <mat-tab *ngIf="userHasPermission(createClaimsPermission)" label="Saved (not submitted)">
+                        <my-workflows-search [title]="'Saved Claim Notifications (not submitted)'" [wizardConfigIds]="'77,78'"></my-workflows-search>
+                    </mat-tab>
+                </mat-tab-group>
+            </mat-tab>
+        </mat-tab-group>
+    </div>
+</div>

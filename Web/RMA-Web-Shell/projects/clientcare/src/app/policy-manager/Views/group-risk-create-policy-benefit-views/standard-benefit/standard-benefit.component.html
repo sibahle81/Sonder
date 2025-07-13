@@ -1,0 +1,109 @@
+<form [formGroup]="form" class="mat-container details-form">
+  <section>
+    <mat-form-field class="mat-form-field">
+      <label class="mat-label other-label mandatory-field">Policy</label>
+      <mat-select formControlName="policyId" (selectionChange)="groupRiskPolicyChange($event)">
+        <mat-option *ngFor="let groupRiskPolicy of groupRiskPolicies" [value]="groupRiskPolicy.policyId">
+          {{ groupRiskPolicy.clientReference || groupRiskPolicy.policyNumber }}
+        </mat-option>
+      </mat-select>
+      <mat-error *ngIf="form.get('policyId').hasError('required') && (form.get('policyId').touched ||form.get('policyId').dirty )">
+        Policy is <strong>required</strong>
+      </mat-error>
+    </mat-form-field>
+
+
+    <mat-form-field class="mat-form-field-right">
+      <label class="mat-label other-label mandatory-field">Benefit</label>
+      <mat-select formControlName="benefitId" (selectionChange)="onBenefitChange($event.value)">
+        <mat-option *ngFor="let benefit of benefits" [value]="benefit.id">
+          {{benefit.name}}
+        </mat-option>
+      </mat-select>
+      <mat-error *ngIf="form.get('benefitId').hasError('required')">
+        Benefit is <strong>required</strong>
+      </mat-error>
+    </mat-form-field>
+  </section>
+
+  <section>
+    <mat-form-field class="mat-form-field">
+      <label class="mat-label other-label mandatory-field">Start Date</label>
+      <input matInput formControlName="startDate" [matDatepicker]="startDate" (dateChange)="onStartDateChanged($event.value)">
+      <mat-datepicker-toggle matSuffix [for]="startDate" [disabled]="form.disabled"></mat-datepicker-toggle>
+      <mat-datepicker touchUi="true" #startDate></mat-datepicker>
+      <mat-error *ngIf="form.get('startDate').hasError('required')">
+        Start Date is <strong>required</strong>
+      </mat-error>
+    </mat-form-field>
+
+    <mat-form-field class="mat-form-field-right">
+      <label class="mat-label other-label">End Date</label>
+      <input matInput formControlName="endDate" [matDatepicker]="endDate">
+      <mat-datepicker-toggle matSuffix [for]="endDate" [disabled]="form.disabled"></mat-datepicker-toggle>
+      <mat-datepicker touchUi="true" #endDate></mat-datepicker>
+    </mat-form-field>
+  </section>
+
+  <section>
+    <mat-form-field class="mat-form-field">
+      <label class="mat-label other-label mandatory-field">Benefit Calculation</label>
+      <mat-select formControlName="benefitCalcId">
+        <mat-option *ngFor="let option of benefitCalcOptions" [value]="option.benefitOptionItemValueId">
+          {{option.optionItemName}}
+        </mat-option>
+      </mat-select>
+      <mat-error *ngIf="form.get('benefitCalcId').hasError('required')">
+        Benefit calculation is <strong>required</strong>
+      </mat-error>
+    </mat-form-field>
+
+    <mat-form-field class="mat-form-field-right">
+      <label class="mat-label other-label mandatory-field">Who is The Benefit Paid To</label>
+      <mat-select formControlName="benefitPayeeId">
+        <mat-option *ngFor="let option of benefitPayeeOptions" [value]="option.benefitOptionItemValueId">
+          {{option.optionItemName}}
+        </mat-option>
+      </mat-select>
+      <mat-error *ngIf="form.get('benefitPayeeId').hasError('required')">
+        Who is The Benefit Paid To is <strong>required</strong>
+      </mat-error>
+    </mat-form-field>
+  </section>
+  <section>
+    <mat-form-field class="mat-form-field">
+      <label class="mat-label other-label mandatory-field">Billing Level</label>
+      <mat-select formControlName="billingLevel">
+        <mat-option *ngFor="let option of billingLevelOptions" [value]="option.benefitOptionItemValueId">
+          {{option.optionItemName}}
+        </mat-option>
+      </mat-select>
+      <mat-error *ngIf="form.get('billingLevel').hasError('required')">
+        Billing Level is <strong>required</strong>
+      </mat-error>
+    </mat-form-field>
+
+    <mat-form-field class="mat-form-field-right">
+      <label class="mat-label other-label mandatory-field">Branch Billing</label>
+      <mat-select formControlName="branchBilling">
+        <mat-option *ngFor="let option of branchBillingOptions" [value]="option.benefitOptionItemValueId">
+          {{option.optionItemName}}
+        </mat-option>
+      </mat-select>
+      <mat-error *ngIf="form.get('branchBilling').hasError('required')">
+        Branch Billing is <strong>required</strong>
+      </mat-error>
+    </mat-form-field>
+  </section>
+  <section>
+    <mat-form-field class="mat-form-field">
+      <label class="mat-label other-label mandatory-field">New Effective Date</label>
+      <input matInput formControlName="effectiveDate" [matDatepicker]="effectiveDate">
+      <mat-datepicker-toggle matSuffix [for]="effectiveDate" [disabled]="form.disabled"></mat-datepicker-toggle>
+      <mat-datepicker touchUi="true" #effectiveDate></mat-datepicker>
+      <mat-error *ngIf="form.get('effectiveDate').hasError('required')">
+        Effective Date is <strong>required</strong>
+      </mat-error>
+    </mat-form-field>
+  </section>
+</form>

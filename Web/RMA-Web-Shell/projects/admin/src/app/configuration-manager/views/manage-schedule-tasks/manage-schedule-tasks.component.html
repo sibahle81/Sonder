@@ -1,0 +1,111 @@
+<div *ngIf="showHideDetails == 1">
+  <scheduled-tasks-list (scheduledTaskEmit)="scheduleTaskChangeHandler($event)"></scheduled-tasks-list>
+
+  <div>
+      <div class="rates-button">
+          <table class="form-group row">
+              <div style="margin: 0px 0px 0px 32px;">
+                  <!-- <button type="button" (click)="addNew()" class="button float-button">Add</button> -->
+                  <button type="button" (click)="backToSearch()" class="button float-button">Back</button>
+              </div>
+          </table>
+      </div>
+  </div>
+</div>
+
+<div *ngIf="showHideDetails == 2">
+  <mat-card style="margin: 15px 30px 15px 30px">
+      <mat-card-content style="margin-left: 10px;">
+          <h1>Scheduled Tasks Details</h1><br />
+          <form [formGroup]="form" (ngSubmit)="save()" class="mat-container details-form" novalidate>
+              <section>
+                  <mat-form-field>
+                      <label>Task Category</label>
+                      <input matInput id="category" name="category" formControlName="category">
+                  </mat-form-field>
+
+                  <mat-form-field class="mat-form-field-right">
+                      <label>Task Description</label>
+                      <input matInput id="description" name="description" formControlName="description">
+                  </mat-form-field>
+              </section>
+
+              <section>
+                <mat-form-field>
+                    <label>Number Of Retries</label>
+                    <input matInput id="retriesNumber" name="retriesNumber" formControlName="retriesNumber">
+                </mat-form-field>
+
+                <mat-form-field class="mat-form-field-right">
+                    <label class="mat-label other-label">IsEnabled</label>
+                    <mat-select name="isEnabled" id="isEnabled" formControlName="isEnabled">
+                        <mat-option *ngFor="let item of enableList"
+                            [value]="item.value">
+                            {{item.Name}}</mat-option>
+                    </mat-select>
+                  </mat-form-field>
+              </section>
+
+              <section>
+                <mat-form-field>
+                    <label class="mat-label other-label">Frequency</label>
+                    <mat-select name="frequency" id="frequency" formControlName="frequency">
+                        <mat-option *ngFor="let freq of taskFrequency"
+                            [value]="freq.Id">
+                            {{freq.Name}}</mat-option>
+                    </mat-select>
+                  </mat-form-field>
+              </section>
+
+
+
+              <div class="rates-button">
+                  <table class="form-group row">
+                      <div class="rates-button">
+                          <div id="div1" *ngIf="showEditBtn==1"><button [disabled]="!hasPermission" type="button" (click)="edit()" class="button float-button">Edit</button></div>
+                          <div id="div2" *ngIf="showEditBtn==0"><button [disabled]="form.pristine" class="button float-button submit-button">Save</button></div>
+                          <div id="div3"><button type="button" (click)="clear()" class="button float-button">Back</button></div>
+                      </div>
+                  </table>
+              </div>
+          </form>
+      </mat-card-content>
+  </mat-card>
+</div>
+
+<style>
+  .mat-datepicker-content-touch .mat-calendar {
+      max-width: 250px !important;
+      max-height: 312px !important;
+  }
+  
+  .mat-datepicker {
+      width: 375px !important;
+  }
+  
+  .picker-toggle {
+      position: absolute;
+      margin: 15px 0px 20px -5px;
+  }
+  
+  #div1 {
+      display: inline-block;
+  }
+  
+  #div2 {
+      display: inline-block;
+  }
+  
+  #div3 {
+      display: inline-block;
+  }
+  
+  .mat-form-field-prefix,
+  .mat-form-field-suffix {
+      right: 22px !important;
+      flex: none;
+      position: absolute !important;
+      top: 8px;
+      font-size: large;
+  }
+</style>

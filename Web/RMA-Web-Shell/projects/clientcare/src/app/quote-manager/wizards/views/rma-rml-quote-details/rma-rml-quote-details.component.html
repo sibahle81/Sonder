@@ -1,0 +1,21 @@
+<mat-card *ngIf="!model || (isLoading$ | async)">
+    <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+    <label class="mat-label other-label"><i>loading...please wait</i></label>
+</mat-card>
+
+<div *ngIf="model && !(isLoading$ | async)">
+    <lead-view [leadId]="model.leadId" [isReadOnly]="true" (leadContextEmit)="setLead($event)"></lead-view>
+
+    <span *ngIf="lead">
+        <div *ngIf="documentTypeFilter && documentTypeFilter.length > 0 && !(isLoadingIndustryClassConfiguration | async)">
+            <document-uploader [documentSet]="documentSet" [systemName]="documentSystemName" [keyName]="'MemberId'"
+                [keyValue]="lead.rolePlayerId" [documentTypeFilter]="documentTypeFilter"
+                [forceRequiredDocumentTypeFilter]="documentTypeFilter"
+                [expiryDate]="currentCoverPeriodEndDate"
+                (requiredDocumentsUploadedEmit)="setRequiredDocumentsUploaded($event)">
+            </document-uploader>
+        </div>
+
+        <rma-rml-quote-details-capture [quote]="model" [isReadOnly]="inApprovalMode"></rma-rml-quote-details-capture>
+    </span>
+</div>

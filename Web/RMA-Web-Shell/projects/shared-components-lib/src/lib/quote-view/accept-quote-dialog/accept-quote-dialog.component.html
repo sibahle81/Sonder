@@ -1,0 +1,12 @@
+<div class="menu-bar">
+  Accept Quote <span *ngIf="quote && quote.quotationNumber">({{quote.quotationNumber}})</span>
+  <span (click)="cancel()" class="material-icons pointer right" matTooltip="close">
+    cancel
+  </span>
+  <span *ngIf="requiredDocumentsUploaded" (click)="submit()" class="material-icons pointer right pulseGreen" matTooltip="save">
+    save
+  </span>
+</div>
+
+<document-uploader [documentSet]="documentSet" [systemName]="documentSystemName" [keyName]="'QuoteId'"
+  [keyValue]="quote.quoteId" (requiredDocumentsUploadedEmit)="isRequiredDocumentsUploaded($event)"></document-uploader>

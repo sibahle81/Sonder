@@ -1,0 +1,31 @@
+<mat-card>
+    <div class="menu-bar">
+      <!-- Delete Final Medical Report -->
+      {{dialogTitle}}
+    </div>
+    <div mat-dialog-content>
+      <form [formGroup]="form" (ngSubmit)="submit()" class="mat-container" novalidate>
+            <div>
+                <mat-form-field class="mat-form-field-right controlSize">
+                    <label class="mat-label other-label">{{dialogFor}} Reason</label>
+                    <mat-select id="reasonOption" name="reasonOption" matInput formControlName="reasonOption"
+                        (selectionChange)="reasonsOptionChange($event)">
+                        <mat-option *ngFor="let reasons of filteredReasons" [value]="reasons">
+                            {{(formatText(reasons)).toUpperCase()}}
+                        </mat-option>
+                    </mat-select>
+                    <mat-error *ngIf="form.get('reasonOption').hasError('required')">
+                      Delete reason <strong>required</strong>
+                    </mat-error>
+                </mat-form-field>
+                <br />
+            </div>
+
+            <div class="form-group-button mat-form-button">
+              <button (click)='submit()' type="button" class="button float-button">Submit</button>
+              <button (click)='onNoClick()' type="button" class="button float-button">Close</button>
+            </div>
+
+      </form>
+    </div>
+</mat-card>

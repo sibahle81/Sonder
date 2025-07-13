@@ -1,0 +1,40 @@
+<div class="mat-header">
+  <h1>Capture ICD10 Codes</h1>
+</div>
+<mat-card>
+  <mat-card-content>
+    <form [formGroup]="form" *ngIf="this.form">
+      <div>
+        <i (click)="onClickAddICD10Code()">Add ICD10 Codes</i>
+        <i class="material-icons" (click)="onClickAddICD10Code()">add</i>
+      </div>
+      <div>
+        <ul>
+          <li *ngFor="let x of icd10Codes">
+            <div><span class="listitem-hover">{{ x.displayValue }}</span></div>
+            <div><span class="listitem-hover">{{ getBodySideDescription(x.bodySideId) }}</span></div>
+            <div class="injury-div"><span class="listitem-hover">{{ getInjuryTypeDescription(x.injuryTypeId) }}</span>
+            </div>
+            <div class="clear"><i class="material-icons icon" (click)="onClickRemoveICD10Code(x)"
+                matTooltip="Delete ICD10 Code">clear</i>
+            </div>
+          </li>
+        </ul>
+      </div>
+      <br><br>
+      <div *ngIf="showTreamentBaskets">
+        <div>Treatment baskets</div>
+        <div>
+          <ul>
+            <li *ngFor="let x of addedTreatmentBaskets">
+              <div><span class="listitem-hover">{{ x.description }}</span></div>
+              <div class="clear"><i class="material-icons icon" (click)="onClickRemoveTreatmentBasket(x)"
+                  matTooltip="Remove treatment basket">clear</i>
+              </div>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </form>
+  </mat-card-content>
+</mat-card>

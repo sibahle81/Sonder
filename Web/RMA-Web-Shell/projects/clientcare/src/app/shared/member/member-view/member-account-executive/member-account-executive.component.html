@@ -1,0 +1,54 @@
+<div *ngIf="(isLoading$ | async)">
+  <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+  <label class="mat-label other-label"><i>loading...please wait</i></label>
+</div>
+
+<div *ngIf="!(isLoading$ | async)">
+  <div class="menu-bar">
+    <span>
+      <span class="material-icons">
+        support_agent
+      </span>
+      Account Executive
+      <span *ngIf="!isReadOnly && !showSearch && !accountExecutive && userHasPermission(addPermission)"
+        (click)="toggle()" class="material-icons pointer right" matTooltip="add">
+        add_circle
+      </span>
+      <span *ngIf="showSearch" (click)="toggle()" class="material-icons pointer right" matTooltip="cancel">
+        close
+      </span>
+    </span>
+  </div>
+
+  <div *ngIf="!showSearch && accountExecutive">
+    <table class="altRowTable">
+      <tr>
+        <th>Name</th>
+        <th>Username</th>
+        <th>Email</th>
+        <th *ngIf="!isReadOnly && userHasPermission(editPermission)">Action</th>
+      </tr>
+      <tr>
+        <td>{{accountExecutive.displayName}}</td>
+        <td>{{accountExecutive.userName}}</td>
+        <td><data-masker [text]="accountExecutive.email"></data-masker></td>
+        <td *ngIf=" !isReadOnly && userHasPermission(editPermission)">
+          <span (click)="toggle()" matTooltip="edit" class="material-icons pointer">
+            settings
+          </span>
+          <span (click)="delete()" matTooltip="delete" class="material-icons pointer">
+            delete
+          </span>
+        </td>
+      </tr>
+    </table>
+  </div>
+
+  <div *ngIf="!this.showSearch && !accountExecutive">
+    <label class="mat-label other-label"><i>No account executive found...</i></label>
+  </div>
+
+  <div *ngIf="showSearch">
+    <user-search-V2 (usersSelectedEmit)="userSelected($event)"></user-search-V2>
+  </div>
+</div>
