@@ -1,0 +1,500 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<ApplicationManifest xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" ApplicationTypeName="RMA.ServiceFabric.ClientCare" ApplicationTypeVersion="1.0.0" xmlns="http://schemas.microsoft.com/2011/01/fabric">
+  <Parameters>
+    <Parameter Name="ASPNETCORE_ENVIRONMENT" DefaultValue="Development" />
+    <Parameter Name="APPINSIGHTS_INSTRUMENTATIONKEY" DefaultValue="7fcf47fb-0942-4335-949f-715116aaabf5" />
+    <Parameter Name="Diagnostics_LogLevel" DefaultValue="Warning" />
+    <Parameter Name="Api_InstanceCount" DefaultValue="1" />
+    <Parameter Name="Service_InstanceCount" DefaultValue="1" />
+    <Parameter Name="Port" DefaultValue="80" />
+    <Parameter Name="EnvName" DefaultValue="Local." />
+    <Parameter Name="OpenId.Authority" DefaultValue="http://localhost/auth" />
+    <Parameter Name="clc.OpenId.RmaApiClientId" DefaultValue="RmaSF.ClientCareApi" />
+    <Parameter Name="clc.OpenId.RmaApiClientSecret" DefaultValue="wrtaazuxa1qcexu95mvzd4fzcr8b65cugkxknksg3cghg" />
+    <Parameter Name="CLC_DBConnection" DefaultValue="data source=azt-mcc-sql-01.rma.msft;initial catalog=AZD-MCC;user id=RMAAdmin;password=RMA@dmin@001;MultipleActiveResultSets=True;App=EntityFramework" />
+    <Parameter Name="CLC_DataMaskDBConnection" DefaultValue="data source=azt-mcc-sql-01.rma.msft;initial catalog=AZD-MCC;user id=RMAMaskedUser;password=RMA@Masked5User@0%$#R;MultipleActiveResultSets=True;App=EntityFramework" />
+    <Parameter Name="DIAG_DBConnection" DefaultValue="data source=azt-mcc-sql-01.rma.msft;initial catalog=AZD-MCC;user id=RMAAdmin;password=RMA@dmin@001;MultipleActiveResultSets=True" />
+    <Parameter Name="SBConnectionString" DefaultValue="Endpoint=sb://azd-mcc-sbus-01.servicebus.windows.net/;SharedAccessKeyName=RootManageSharedAccessKey;SharedAccessKey=Z9P2achony0fqap2ixono7tNWcyMKbvHE3AnGIhE8OU=" />
+    <Parameter Name="IntegrationsSBConnectionString" DefaultValue="Endpoint=sb://azq-int-sbus-01.servicebus.windows.net/;SharedAccessKeyName=Modernization;SharedAccessKey=NauehDw9UlYI9KKNdn3/HMMESc7h2OgS7D5hO/IDabI=" />
+    <Parameter Name="SmtpMailServer" DefaultValue="smtp.office365.com" />
+    <Parameter Name="SmtpMailPort" DefaultValue="587" />
+    <Parameter Name="SmtpUsername" DefaultValue="modtest@randmutual.co.za" />
+    <Parameter Name="SmtpPassword" DefaultValue="RMA@Pa$$1234" />
+    <Parameter Name="SmtpEnableSsl" DefaultValue="true" />
+  </Parameters>
+  <!-- Import the ServiceManifest from the ServicePackage. The ServiceManifestName and ServiceManifestVersion 
+       should match the Name and Version attributes of the ServiceManifest element defined in the 
+       ServiceManifest.xml file. -->
+  <ServiceManifestImport>
+    <ServiceManifestRef ServiceManifestName="RMA.Service.ClientCare.ApiPkg" ServiceManifestVersion="1.0.0" />
+    <ConfigOverrides />
+    <ResourceOverrides>
+      <Endpoints>
+        <Endpoint Name="ServiceEndpoint" Port="[Port]" Protocol="http" Type="Input" />
+      </Endpoints>
+    </ResourceOverrides>
+    <EnvironmentOverrides CodePackageRef="code">
+      <EnvironmentVariable Name="ASPNETCORE_ENVIRONMENT" Value="[ASPNETCORE_ENVIRONMENT]" />
+      <EnvironmentVariable Name="APPINSIGHTS_INSTRUMENTATIONKEY" Value="[APPINSIGHTS_INSTRUMENTATIONKEY]" />
+      <EnvironmentVariable Name="DIAG_DBConnection" Value="[DIAG_DBConnection]" />
+      <EnvironmentVariable Name="Diagnostics_LogLevel" Value="[Diagnostics_LogLevel]" />
+      <EnvironmentVariable Name="EnvName" Value="[EnvName]" />
+      <EnvironmentVariable Name="OpenId.Authority" Value="[OpenId.Authority]" />
+      <EnvironmentVariable Name="OpenId.RmaApiClientId" Value="[clc.OpenId.RmaApiClientId]" />
+      <EnvironmentVariable Name="OpenId.RmaApiClientSecret" Value="[clc.OpenId.RmaApiClientSecret]" />
+    </EnvironmentOverrides>
+  </ServiceManifestImport>
+  <ServiceManifestImport>
+    <ServiceManifestRef ServiceManifestName="RMA.Service.ClientCarePkg" ServiceManifestVersion="1.0.0" />
+    <ConfigOverrides />
+    <EnvironmentOverrides CodePackageRef="code">
+      <EnvironmentVariable Name="APPINSIGHTS_INSTRUMENTATIONKEY" Value="[APPINSIGHTS_INSTRUMENTATIONKEY]" />
+      <EnvironmentVariable Name="DIAG_DBConnection" Value="[DIAG_DBConnection]" />
+      <EnvironmentVariable Name="Diagnostics_LogLevel" Value="[Diagnostics_LogLevel]" />
+      <EnvironmentVariable Name="EnvName" Value="[EnvName]" />
+      <EnvironmentVariable Name="DB" Value="[CLC_DBConnection]" />
+      <EnvironmentVariable Name="DataMaskDBConn" Value="[CLC_DataMaskDBConnection]" />
+      <EnvironmentVariable Name="SBConnectionString" Value="[SBConnectionString]" />
+      <EnvironmentVariable Name="IntegrationsSBConnectionString" Value="[IntegrationsSBConnectionString]" />
+      <EnvironmentVariable Name="SmtpMailServer" Value="[SmtpMailServer]" />
+      <EnvironmentVariable Name="SmtpMailPort" Value="[SmtpMailPort]" />
+      <EnvironmentVariable Name="SmtpUsername" Value="[SmtpUsername]" />
+      <EnvironmentVariable Name="SmtpPassword" Value="[SmtpPassword]" />
+      <EnvironmentVariable Name="SmtpEnableSsl" Value="[SmtpEnableSsl]" />
+    </EnvironmentOverrides>
+  </ServiceManifestImport>
+  <DefaultServices>
+    <!--Generated by T4 Template-->
+    <Service Name="RMA.Service.ClientCare.Api" ServicePackageActivationMode="ExclusiveProcess">
+      <StatelessService ServiceTypeName="RMA.Service.ClientCare.ApiType" InstanceCount="[Api_InstanceCount]">
+        <SingletonPartition />
+      </StatelessService>
+    </Service>
+    <!--Remoting Services-->
+    <Service Name="broker/IAuditLogService">
+      <StatelessService ServiceTypeName="broker/IAuditLogService" InstanceCount="[Service_InstanceCount]">
+        <SingletonPartition />
+      </StatelessService>
+    </Service>
+    <Service Name="broker/IBrokerageNoteService">
+      <StatelessService ServiceTypeName="broker/IBrokerageNoteService" InstanceCount="[Service_InstanceCount]">
+        <SingletonPartition />
+      </StatelessService>
+    </Service>
+    <Service Name="broker/IBrokerageService">
+      <StatelessService ServiceTypeName="broker/IBrokerageService" InstanceCount="[Service_InstanceCount]">
+        <SingletonPartition />
+      </StatelessService>
+    </Service>
+    <Service Name="broker/IFspeImportMessageListener">
+      <StatelessService ServiceTypeName="broker/IFspeImportMessageListener" InstanceCount="[Service_InstanceCount]">
+        <SingletonPartition />
+      </StatelessService>
+    </Service>
+    <Service Name="broker/IRepresentativeNoteService">
+      <StatelessService ServiceTypeName="broker/IRepresentativeNoteService" InstanceCount="[Service_InstanceCount]">
+        <SingletonPartition />
+      </StatelessService>
+    </Service>
+    <Service Name="broker/IRepresentativeService">
+      <StatelessService ServiceTypeName="broker/IRepresentativeService" InstanceCount="[Service_InstanceCount]">
+        <SingletonPartition />
+      </StatelessService>
+    </Service>
+    <Service Name="client/IAuditLogService">
+      <StatelessService ServiceTypeName="client/IAuditLogService" InstanceCount="[Service_InstanceCount]">
+        <SingletonPartition />
+      </StatelessService>
+    </Service>
+    <Service Name="client/ICloseRenewalPeriodServiceBusListener">
+      <StatelessService ServiceTypeName="client/ICloseRenewalPeriodServiceBusListener" InstanceCount="[Service_InstanceCount]">
+        <SingletonPartition />
+      </StatelessService>
+    </Service>
+    <Service Name="client/ILastViewedService">
+      <StatelessService ServiceTypeName="client/ILastViewedService" InstanceCount="[Service_InstanceCount]">
+        <SingletonPartition />
+      </StatelessService>
+    </Service>
+    <Service Name="client/ILetterOfGoodStandingServiceBusListener">
+      <StatelessService ServiceTypeName="client/ILetterOfGoodStandingServiceBusListener" InstanceCount="[Service_InstanceCount]">
+        <SingletonPartition />
+      </StatelessService>
+    </Service>
+    <Service Name="lead/IAuditLogService">
+      <StatelessService ServiceTypeName="lead/IAuditLogService" InstanceCount="[Service_InstanceCount]">
+        <SingletonPartition />
+      </StatelessService>
+    </Service>
+    <Service Name="lead/ILeadCommunicationService">
+      <StatelessService ServiceTypeName="lead/ILeadCommunicationService" InstanceCount="[Service_InstanceCount]">
+        <SingletonPartition />
+      </StatelessService>
+    </Service>
+    <Service Name="lead/ILeadService">
+      <StatelessService ServiceTypeName="lead/ILeadService" InstanceCount="[Service_InstanceCount]">
+        <SingletonPartition />
+      </StatelessService>
+    </Service>
+    <Service Name="client/ILeadUploadServiceBusListener">
+      <StatelessService ServiceTypeName="client/ILeadUploadServiceBusListener" InstanceCount="[Service_InstanceCount]">
+        <SingletonPartition />
+      </StatelessService>
+    </Service>
+    <Service Name="member/IAuditLogService">
+      <StatelessService ServiceTypeName="member/IAuditLogService" InstanceCount="[Service_InstanceCount]">
+        <SingletonPartition />
+      </StatelessService>
+    </Service>
+    <Service Name="member/IDeclarationService">
+      <StatelessService ServiceTypeName="member/IDeclarationService" InstanceCount="[Service_InstanceCount]">
+        <SingletonPartition />
+      </StatelessService>
+    </Service>
+    <Service Name="member/ILetterOfGoodStandingService">
+      <StatelessService ServiceTypeName="member/ILetterOfGoodStandingService" InstanceCount="[Service_InstanceCount]">
+        <SingletonPartition />
+      </StatelessService>
+    </Service>
+    <Service Name="member/IMemberCommunicationService">
+      <StatelessService ServiceTypeName="member/IMemberCommunicationService" InstanceCount="[Service_InstanceCount]">
+        <SingletonPartition />
+      </StatelessService>
+    </Service>
+    <Service Name="member/IMemberService">
+      <StatelessService ServiceTypeName="member/IMemberService" InstanceCount="[Service_InstanceCount]">
+        <SingletonPartition />
+      </StatelessService>
+    </Service>
+    <Service Name="policy/IAuditLogService">
+      <StatelessService ServiceTypeName="policy/IAuditLogService" InstanceCount="[Service_InstanceCount]">
+        <SingletonPartition />
+      </StatelessService>
+    </Service>
+    <Service Name="policy/IBillingFuneralPolicyChangeService">
+      <StatelessService ServiceTypeName="policy/IBillingFuneralPolicyChangeService" InstanceCount="[Service_InstanceCount]">
+        <SingletonPartition />
+      </StatelessService>
+    </Service>
+    <Service Name="policy/ICDAPolicyOnboardingListener">
+      <StatelessService ServiceTypeName="policy/ICDAPolicyOnboardingListener" InstanceCount="[Service_InstanceCount]">
+        <SingletonPartition />
+      </StatelessService>
+    </Service>
+    <Service Name="policy/ICfpOnboardingRequestMessageListener">
+      <StatelessService ServiceTypeName="policy/ICfpOnboardingRequestMessageListener" InstanceCount="[Service_InstanceCount]">
+        <SingletonPartition />
+      </StatelessService>
+    </Service>
+    <Service Name="policy/IClientPolicyScheduleDocumentsService">
+      <StatelessService ServiceTypeName="policy/IClientPolicyScheduleDocumentsService" InstanceCount="[Service_InstanceCount]">
+        <SingletonPartition />
+      </StatelessService>
+    </Service>
+    <Service Name="policy/IConsolidatedFuneralService">
+      <StatelessService ServiceTypeName="policy/IConsolidatedFuneralService" InstanceCount="[Service_InstanceCount]">
+        <SingletonPartition />
+      </StatelessService>
+    </Service>
+    <Service Name="policy/IDiscountFileListingService">
+      <StatelessService ServiceTypeName="policy/IDiscountFileListingService" InstanceCount="[Service_InstanceCount]">
+        <SingletonPartition />
+      </StatelessService>
+    </Service>
+    <Service Name="policy/IEligibilityService">
+      <StatelessService ServiceTypeName="policy/IEligibilityService" InstanceCount="[Service_InstanceCount]">
+        <SingletonPartition />
+      </StatelessService>
+    </Service>
+    <Service Name="policy/IFuneralPolicyPremiumService">
+      <StatelessService ServiceTypeName="policy/IFuneralPolicyPremiumService" InstanceCount="[Service_InstanceCount]">
+        <SingletonPartition />
+      </StatelessService>
+    </Service>
+    <Service Name="policy/IGeneratePolicyDocumentService">
+      <StatelessService ServiceTypeName="policy/IGeneratePolicyDocumentService" InstanceCount="[Service_InstanceCount]">
+        <SingletonPartition />
+      </StatelessService>
+    </Service>
+    <Service Name="policy/IGeneratePolicyScheduleService">
+      <StatelessService ServiceTypeName="policy/IGeneratePolicyScheduleService" InstanceCount="[Service_InstanceCount]">
+        <SingletonPartition />
+      </StatelessService>
+    </Service>
+    <Service Name="policy/IGroupRiskPolicyCaseService">
+      <StatelessService ServiceTypeName="policy/IGroupRiskPolicyCaseService" InstanceCount="[Service_InstanceCount]">
+        <SingletonPartition />
+      </StatelessService>
+    </Service>
+    <Service Name="policy/IGroupRiskService">
+      <StatelessService ServiceTypeName="policy/IGroupRiskService" InstanceCount="[Service_InstanceCount]">
+        <SingletonPartition />
+      </StatelessService>
+    </Service>
+    <Service Name="policy/IInsuredLifeService">
+      <StatelessService ServiceTypeName="policy/IInsuredLifeService" InstanceCount="[Service_InstanceCount]">
+        <SingletonPartition />
+      </StatelessService>
+    </Service>
+    <Service Name="policy/IInsuredLifeUploadErrorAuditService">
+      <StatelessService ServiceTypeName="policy/IInsuredLifeUploadErrorAuditService" InstanceCount="[Service_InstanceCount]">
+        <SingletonPartition />
+      </StatelessService>
+    </Service>
+    <Service Name="policy/ILastViewedService">
+      <StatelessService ServiceTypeName="policy/ILastViewedService" InstanceCount="[Service_InstanceCount]">
+        <SingletonPartition />
+      </StatelessService>
+    </Service>
+    <Service Name="policy/ILeadTimeTrackerService">
+      <StatelessService ServiceTypeName="policy/ILeadTimeTrackerService" InstanceCount="[Service_InstanceCount]">
+        <SingletonPartition />
+      </StatelessService>
+    </Service>
+    <Service Name="policy/ILifeExtensionService">
+      <StatelessService ServiceTypeName="policy/ILifeExtensionService" InstanceCount="[Service_InstanceCount]">
+        <SingletonPartition />
+      </StatelessService>
+    </Service>
+    <Service Name="policy/IMvpOnboardingRequestMessageListener">
+      <StatelessService ServiceTypeName="policy/IMvpOnboardingRequestMessageListener" InstanceCount="[Service_InstanceCount]">
+        <SingletonPartition />
+      </StatelessService>
+    </Service>
+    <Service Name="policy/IMyValuePlusService">
+      <StatelessService ServiceTypeName="policy/IMyValuePlusService" InstanceCount="[Service_InstanceCount]">
+        <SingletonPartition />
+      </StatelessService>
+    </Service>
+    <Service Name="policy/IOnboardingNotificationService">
+      <StatelessService ServiceTypeName="policy/IOnboardingNotificationService" InstanceCount="[Service_InstanceCount]">
+        <SingletonPartition />
+      </StatelessService>
+    </Service>
+    <Service Name="policy/IPolicyCaseService">
+      <StatelessService ServiceTypeName="policy/IPolicyCaseService" InstanceCount="[Service_InstanceCount]">
+        <SingletonPartition />
+      </StatelessService>
+    </Service>
+    <Service Name="policy/IPolicyCommunicationService">
+      <StatelessService ServiceTypeName="policy/IPolicyCommunicationService" InstanceCount="[Service_InstanceCount]">
+        <SingletonPartition />
+      </StatelessService>
+    </Service>
+    <Service Name="policy/IPolicyDocumentService">
+      <StatelessService ServiceTypeName="policy/IPolicyDocumentService" InstanceCount="[Service_InstanceCount]">
+        <SingletonPartition />
+      </StatelessService>
+    </Service>
+    <Service Name="policy/IPolicyDocumentsService">
+      <StatelessService ServiceTypeName="policy/IPolicyDocumentsService" InstanceCount="[Service_InstanceCount]">
+        <SingletonPartition />
+      </StatelessService>
+    </Service>
+    <Service Name="policy/IPolicyIntegrationService">
+      <StatelessService ServiceTypeName="policy/IPolicyIntegrationService" InstanceCount="[Service_InstanceCount]">
+        <SingletonPartition />
+      </StatelessService>
+    </Service>
+    <Service Name="policy/IPolicyMonitoringService">
+      <StatelessService ServiceTypeName="policy/IPolicyMonitoringService" InstanceCount="[Service_InstanceCount]">
+        <SingletonPartition />
+      </StatelessService>
+    </Service>
+    <Service Name="policy/IPolicyNoteService">
+      <StatelessService ServiceTypeName="policy/IPolicyNoteService" InstanceCount="[Service_InstanceCount]">
+        <SingletonPartition />
+      </StatelessService>
+    </Service>
+    <Service Name="policy/IPolicyReportService">
+      <StatelessService ServiceTypeName="policy/IPolicyReportService" InstanceCount="[Service_InstanceCount]">
+        <SingletonPartition />
+      </StatelessService>
+    </Service>
+    <Service Name="policy/IPolicyScheduleMessageListener">
+      <StatelessService ServiceTypeName="policy/IPolicyScheduleMessageListener" InstanceCount="[Service_InstanceCount]">
+        <SingletonPartition />
+      </StatelessService>
+    </Service>
+    <Service Name="policy/IPolicyService">
+      <StatelessService ServiceTypeName="policy/IPolicyService" InstanceCount="[Service_InstanceCount]">
+        <SingletonPartition />
+      </StatelessService>
+    </Service>
+    <Service Name="policy/IPolicyStatusService">
+      <StatelessService ServiceTypeName="policy/IPolicyStatusService" InstanceCount="[Service_InstanceCount]">
+        <SingletonPartition />
+      </StatelessService>
+    </Service>
+    <Service Name="policy/IPostRetirementMedicalAnnuityService">
+      <StatelessService ServiceTypeName="policy/IPostRetirementMedicalAnnuityService" InstanceCount="[Service_InstanceCount]">
+        <SingletonPartition />
+      </StatelessService>
+    </Service>
+    <Service Name="policy/IPremiumListingErrorAuditService">
+      <StatelessService ServiceTypeName="policy/IPremiumListingErrorAuditService" InstanceCount="[Service_InstanceCount]">
+        <SingletonPartition />
+      </StatelessService>
+    </Service>
+    <Service Name="policy/IPremiumListingFileAuditService">
+      <StatelessService ServiceTypeName="policy/IPremiumListingFileAuditService" InstanceCount="[Service_InstanceCount]">
+        <SingletonPartition />
+      </StatelessService>
+    </Service>
+    <Service Name="policy/IPremiumListingPolicyPremiumMovementService">
+      <StatelessService ServiceTypeName="policy/IPremiumListingPolicyPremiumMovementService" InstanceCount="[Service_InstanceCount]">
+        <SingletonPartition />
+      </StatelessService>
+    </Service>
+    <Service Name="policy/IPremiumListingService">
+      <StatelessService ServiceTypeName="policy/IPremiumListingService" InstanceCount="[Service_InstanceCount]">
+        <SingletonPartition />
+      </StatelessService>
+    </Service>
+    <Service Name="policy/IProcessQlinkTransactionListener">
+      <StatelessService ServiceTypeName="policy/IProcessQlinkTransactionListener" InstanceCount="[Service_InstanceCount]">
+        <SingletonPartition />
+      </StatelessService>
+    </Service>
+    <Service Name="policy/IQLinkService">
+      <StatelessService ServiceTypeName="policy/IQLinkService" InstanceCount="[Service_InstanceCount]">
+        <SingletonPartition />
+      </StatelessService>
+    </Service>
+    <Service Name="policy/IQlinkTransactionFalsePositiveReportMessageListener">
+      <StatelessService ServiceTypeName="policy/IQlinkTransactionFalsePositiveReportMessageListener" InstanceCount="[Service_InstanceCount]">
+        <SingletonPartition />
+      </StatelessService>
+    </Service>
+    <Service Name="product/IAuditLogService">
+      <StatelessService ServiceTypeName="product/IAuditLogService" InstanceCount="[Service_InstanceCount]">
+        <SingletonPartition />
+      </StatelessService>
+    </Service>
+    <Service Name="product/IBenefitNoteService">
+      <StatelessService ServiceTypeName="product/IBenefitNoteService" InstanceCount="[Service_InstanceCount]">
+        <SingletonPartition />
+      </StatelessService>
+    </Service>
+    <Service Name="product/IBenefitRuleService">
+      <StatelessService ServiceTypeName="product/IBenefitRuleService" InstanceCount="[Service_InstanceCount]">
+        <SingletonPartition />
+      </StatelessService>
+    </Service>
+    <Service Name="product/IBenefitService">
+      <StatelessService ServiceTypeName="product/IBenefitService" InstanceCount="[Service_InstanceCount]">
+        <SingletonPartition />
+      </StatelessService>
+    </Service>
+    <Service Name="product/IDiscountTypeService">
+      <StatelessService ServiceTypeName="product/IDiscountTypeService" InstanceCount="[Service_InstanceCount]">
+        <SingletonPartition />
+      </StatelessService>
+    </Service>
+    <Service Name="product/ILastViewedService">
+      <StatelessService ServiceTypeName="product/ILastViewedService" InstanceCount="[Service_InstanceCount]">
+        <SingletonPartition />
+      </StatelessService>
+    </Service>
+    <Service Name="product/IProductNoteService">
+      <StatelessService ServiceTypeName="product/IProductNoteService" InstanceCount="[Service_InstanceCount]">
+        <SingletonPartition />
+      </StatelessService>
+    </Service>
+    <Service Name="product/IProductOptionNoteService">
+      <StatelessService ServiceTypeName="product/IProductOptionNoteService" InstanceCount="[Service_InstanceCount]">
+        <SingletonPartition />
+      </StatelessService>
+    </Service>
+    <Service Name="product/IProductOptionRuleService">
+      <StatelessService ServiceTypeName="product/IProductOptionRuleService" InstanceCount="[Service_InstanceCount]">
+        <SingletonPartition />
+      </StatelessService>
+    </Service>
+    <Service Name="product/IProductOptionService">
+      <StatelessService ServiceTypeName="product/IProductOptionService" InstanceCount="[Service_InstanceCount]">
+        <SingletonPartition />
+      </StatelessService>
+    </Service>
+    <Service Name="product/IProductRuleService">
+      <StatelessService ServiceTypeName="product/IProductRuleService" InstanceCount="[Service_InstanceCount]">
+        <SingletonPartition />
+      </StatelessService>
+    </Service>
+    <Service Name="product/IProductService">
+      <StatelessService ServiceTypeName="product/IProductService" InstanceCount="[Service_InstanceCount]">
+        <SingletonPartition />
+      </StatelessService>
+    </Service>
+    <Service Name="product/IStatisticsService">
+      <StatelessService ServiceTypeName="product/IStatisticsService" InstanceCount="[Service_InstanceCount]">
+        <SingletonPartition />
+      </StatelessService>
+    </Service>
+    <Service Name="product/IUniqueFieldValidatorService">
+      <StatelessService ServiceTypeName="product/IUniqueFieldValidatorService" InstanceCount="[Service_InstanceCount]">
+        <SingletonPartition />
+      </StatelessService>
+    </Service>
+    <Service Name="quote/IAuditLogService">
+      <StatelessService ServiceTypeName="quote/IAuditLogService" InstanceCount="[Service_InstanceCount]">
+        <SingletonPartition />
+      </StatelessService>
+    </Service>
+    <Service Name="quote/IQuoteService">
+      <StatelessService ServiceTypeName="quote/IQuoteService" InstanceCount="[Service_InstanceCount]">
+        <SingletonPartition />
+      </StatelessService>
+    </Service>
+    <Service Name="roleplayer/IPolicyInsuredLifeService">
+      <StatelessService ServiceTypeName="roleplayer/IPolicyInsuredLifeService" InstanceCount="[Service_InstanceCount]">
+        <SingletonPartition />
+      </StatelessService>
+    </Service>
+    <Service Name="roleplayer/IQuickTransactionVopdService">
+      <StatelessService ServiceTypeName="roleplayer/IQuickTransactionVopdService" InstanceCount="[Service_InstanceCount]">
+        <SingletonPartition />
+      </StatelessService>
+    </Service>
+    <Service Name="roleplayer/IRolePlayerBatchInfoUpdateMessageListener">
+      <StatelessService ServiceTypeName="roleplayer/IRolePlayerBatchInfoUpdateMessageListener" InstanceCount="[Service_InstanceCount]">
+        <SingletonPartition />
+      </StatelessService>
+    </Service>
+    <Service Name="roleplayer/IRolePlayerNoteService">
+      <StatelessService ServiceTypeName="roleplayer/IRolePlayerNoteService" InstanceCount="[Service_InstanceCount]">
+        <SingletonPartition />
+      </StatelessService>
+    </Service>
+    <Service Name="roleplayer/IRolePlayerPolicyService">
+      <StatelessService ServiceTypeName="roleplayer/IRolePlayerPolicyService" InstanceCount="[Service_InstanceCount]">
+        <SingletonPartition />
+      </StatelessService>
+    </Service>
+    <Service Name="roleplayer/IRolePlayerService">
+      <StatelessService ServiceTypeName="roleplayer/IRolePlayerService" InstanceCount="[Service_InstanceCount]">
+        <SingletonPartition />
+      </StatelessService>
+    </Service>
+    <Service Name="roleplayer/IVopdQuickTransactRequestMessageListener">
+      <StatelessService ServiceTypeName="roleplayer/IVopdQuickTransactRequestMessageListener" InstanceCount="[Service_InstanceCount]">
+        <SingletonPartition />
+      </StatelessService>
+    </Service>
+    <Service Name="roleplayer/IVopdRequestMessageListener">
+      <StatelessService ServiceTypeName="roleplayer/IVopdRequestMessageListener" InstanceCount="[Service_InstanceCount]">
+        <SingletonPartition />
+      </StatelessService>
+    </Service>
+    <Service Name="roleplayer/IVopdResponseSubscriptionListener">
+      <StatelessService ServiceTypeName="roleplayer/IVopdResponseSubscriptionListener" InstanceCount="[Service_InstanceCount]">
+        <SingletonPartition />
+      </StatelessService>
+    </Service>
+    <Service Name="roleplayer/IVopdUpdateMessageListener">
+      <StatelessService ServiceTypeName="roleplayer/IVopdUpdateMessageListener" InstanceCount="[Service_InstanceCount]">
+        <SingletonPartition />
+      </StatelessService>
+    </Service>
+  </DefaultServices>
+</ApplicationManifest>

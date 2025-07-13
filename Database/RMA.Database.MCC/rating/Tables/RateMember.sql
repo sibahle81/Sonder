@@ -1,0 +1,24 @@
+﻿CREATE TABLE [rating].[RateMember] (
+    [RateMemberId]            INT              IDENTITY (1, 1) NOT NULL,
+    [RefNo]                   VARCHAR (50)     NULL,
+    [CompanyName]             VARCHAR (100)    NULL,
+    [Industry]                VARCHAR (50)     NULL,
+    [IndustryGroup]           VARCHAR (6)      NOT NULL,
+    [EmpCat]                  VARCHAR (50)     NULL,
+    [IndRate]                 NUMERIC (25, 11) NOT NULL,
+    [PremRate]                NUMERIC (25, 11) NOT NULL,
+    [GPLimited]               NUMERIC (25, 11) NOT NULL,
+    [FinalRate]               NUMERIC (25, 11) NOT NULL,
+    [DiscountOrLoading]       NUMERIC (25, 11) NULL,
+    [DiscountOrLoadingStatus] VARCHAR (9)      NOT NULL,
+    [RatingYear]              INT              NOT NULL,
+    [LoadDate]                DATETIME         NOT NULL,
+    [Product]                 VARCHAR (1000)   NULL,
+    [IsProcessed]             BIT              DEFAULT ((0)) NOT NULL,
+    [IsDeleted]               BIT              DEFAULT ((0)) NOT NULL,
+    [CreatedBy]               VARCHAR (50)     DEFAULT ('BackendProcess') NOT NULL,
+    [CreatedDate]             DATETIME         DEFAULT (getdate()) NOT NULL,
+    [ModifiedBy]              VARCHAR (50)     DEFAULT ('BackendProcess') NOT NULL,
+    [ModifiedDate]            DATETIME         DEFAULT (getdate()) NOT NULL
+);
+

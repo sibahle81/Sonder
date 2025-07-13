@@ -1,0 +1,26 @@
+﻿CREATE TABLE [medical].[ICD10ProductCode_Temp] (
+    [ICD10ProductCodeID] INT          IDENTITY (1, 1) NOT NULL,
+    [ICD10CodeID]        INT          NOT NULL,
+    [ProductCodeID]      INT          NULL,
+    [CostLookupID]       INT          NOT NULL,
+    [PDExtentLookupID]   INT          NOT NULL,
+    [DaysLookupID]       INT          NOT NULL,
+    [StartDate]          DATETIME     NOT NULL,
+    [EndDate]            DATETIME     NOT NULL,
+    [LastChangedBy]      VARCHAR (30) NULL,
+    [LastChangedDate]    DATETIME     NULL,
+    [IsActive]           BIT          NOT NULL,
+    [IsDeleted]          BIT          NOT NULL,
+    [CreatedBy]          VARCHAR (50) NOT NULL,
+    [CreatedDate]        DATETIME     NOT NULL,
+    [ModifiedBy]         VARCHAR (50) NOT NULL,
+    [ModifiedDate]       DATETIME     NOT NULL,
+    CONSTRAINT [PK_Compensation_ICD10ProductCode_ICD10ProductCodeID] PRIMARY KEY CLUSTERED ([ICD10ProductCodeID] ASC) WITH (FILLFACTOR = 90, PAD_INDEX = ON),
+    CONSTRAINT [FK_Medical_ICD10ProductCode_CostLookupID] FOREIGN KEY ([CostLookupID]) REFERENCES [claim].[MedicalCostLookup] ([MedicalCostLookupId]),
+    CONSTRAINT [FK_Medical_ICD10ProductCode_DaysLookupID] FOREIGN KEY ([DaysLookupID]) REFERENCES [medical].[DaysLookup_Temp] ([DaysLookupID]),
+    CONSTRAINT [FK_Medical_ICD10ProductCode_ICD10CodeID] FOREIGN KEY ([ICD10CodeID]) REFERENCES [medical].[ICD10Code] ([ICD10CodeID]),
+    CONSTRAINT [FK_Medical_ICD10ProductCode_PDExtentLookupID] FOREIGN KEY ([PDExtentLookupID]) REFERENCES [claim].[PDExtentLookup] ([PDExtentLookupId]),
+    CONSTRAINT [FK_Medical_ICD10ProductCode_ProductCodeID] FOREIGN KEY ([ProductCodeID]) REFERENCES [product].[ProductOption] ([Id]),
+    CONSTRAINT [UK_Compensation_ICD10ProductCode] UNIQUE NONCLUSTERED ([ICD10CodeID] ASC, [ProductCodeID] ASC, [StartDate] ASC, [EndDate] ASC) WITH (FILLFACTOR = 90, PAD_INDEX = ON)
+);
+

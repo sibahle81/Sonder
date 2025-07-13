@@ -1,0 +1,28 @@
+﻿CREATE TABLE [pension].[OutstandingOverpayments] (
+    [Id]                   INT          IDENTITY (1, 1) NOT NULL,
+    [LedgerID]             INT          NOT NULL,
+    [Amount]               MONEY        NOT NULL,
+    [VATAmount]            MONEY        NOT NULL,
+    [PAYEAmount]           MONEY        NOT NULL,
+    [SITEAmount]           MONEY        NOT NULL,
+    [AdditionalAmount]     MONEY        NOT NULL,
+    [DateOfDeath]          DATETIME     NOT NULL,
+    [PensionTransactionID] INT          NULL,
+    [TypeID]               INT          NOT NULL,
+    [Status]               INT          NULL,
+    [IndividualID]         INT          NULL,
+    [PersonId]             VARCHAR (25) NOT NULL,
+    [ReversalID]           INT          NULL,
+    [IsActive]             BIT          CONSTRAINT [DF_OutstandingOverpayments_IsActive] DEFAULT ((1)) NOT NULL,
+    [IsDeleted]            BIT          NOT NULL,
+    [CreatedBy]            VARCHAR (50) NOT NULL,
+    [CreatedDate]          DATETIME     NOT NULL,
+    [ModifiedBy]           VARCHAR (50) NOT NULL,
+    [ModifiedDate]         DATETIME     NOT NULL,
+    CONSTRAINT [PK_Pension_OutstandingOverpayments_OutstandingOverpaymentsID] PRIMARY KEY CLUSTERED ([Id] ASC) WITH (FILLFACTOR = 95),
+    CONSTRAINT [FK_OutstandingOverpayments_Individual] FOREIGN KEY ([IndividualID]) REFERENCES [pension].[Individual] ([IndividualId]),
+    CONSTRAINT [FK_OutstandingOverpayments_Ledger] FOREIGN KEY ([LedgerID]) REFERENCES [pension].[Ledger] ([PensionLedgerId]),
+    CONSTRAINT [FK_OutstandingOverpayments_OutstandingOverpaymentType] FOREIGN KEY ([TypeID]) REFERENCES [common].[OutstandingOverpaymentType] ([Id]),
+    CONSTRAINT [FK_OutstandingOverpayments_OverpaymentStatus] FOREIGN KEY ([Status]) REFERENCES [common].[OverPaymentStatus] ([Id])
+);
+

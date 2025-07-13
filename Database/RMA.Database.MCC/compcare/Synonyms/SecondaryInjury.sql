@@ -1,0 +1,1 @@
+﻿CREATE SYNONYM [compcare].[SecondaryInjury] FOR [AZT-COMP-SQL-01].[RMATest].[Compensation].[SecondaryInjury];

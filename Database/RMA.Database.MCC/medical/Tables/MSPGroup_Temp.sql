@@ -1,0 +1,13 @@
+﻿CREATE TABLE [medical].[MSPGroup_Temp] (
+    [MSPGroupId]   INT            IDENTITY (1000, 1) NOT NULL,
+    [Name]         VARCHAR (50)   NOT NULL,
+    [Description]  VARCHAR (2048) NULL,
+    [IsActive]     BIT            DEFAULT ((1)) NOT NULL,
+    [IsDeleted]    BIT            DEFAULT ((0)) NOT NULL,
+    [CreatedBy]    VARCHAR (50)   NOT NULL,
+    [CreatedDate]  DATETIME       DEFAULT (getdate()) NOT NULL,
+    [ModifiedBy]   VARCHAR (50)   NOT NULL,
+    [ModifiedDate] DATETIME       NOT NULL,
+    CONSTRAINT [PK_medical_MSPGroup] PRIMARY KEY CLUSTERED ([MSPGroupId] ASC) WITH (FILLFACTOR = 95)
+);
+

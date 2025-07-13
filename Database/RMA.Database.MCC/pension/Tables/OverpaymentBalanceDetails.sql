@@ -1,0 +1,27 @@
+﻿CREATE TABLE [pension].[OverpaymentBalanceDetails] (
+    [OverpaymentBalanceDetailsID] INT                                        IDENTITY (1, 1) NOT NULL,
+    [OverpaymentBalanceID]        INT                                        NOT NULL,
+    [PensionLedgerID]             INT                                        NOT NULL,
+    [entryAmount]                 MONEY MASKED WITH (FUNCTION = 'default()') NOT NULL,
+    [VATAmount]                   MONEY MASKED WITH (FUNCTION = 'default()') NOT NULL,
+    [PAYEAmount]                  MONEY MASKED WITH (FUNCTION = 'default()') NOT NULL,
+    [SITEAmount]                  MONEY MASKED WITH (FUNCTION = 'default()') NOT NULL,
+    [AdditionalAmount]            MONEY MASKED WITH (FUNCTION = 'default()') NOT NULL,
+    [OutstandingOverpaymentID]    INT                                        NULL,
+    [EntryStatusID]               INT                                        NOT NULL,
+    [IsProcessedVat]              BIT                                        NOT NULL,
+    [IsProcessedTax]              BIT                                        NOT NULL,
+    [IsActive]                    BIT                                        DEFAULT ((1)) NOT NULL,
+    [IsDeleted]                   BIT                                        NOT NULL,
+    [CreatedBy]                   VARCHAR (50)                               NOT NULL,
+    [CreatedDate]                 DATETIME                                   NOT NULL,
+    [ModifiedBy]                  VARCHAR (50)                               NOT NULL,
+    [ModifiedDate]                DATETIME                                   NOT NULL,
+    CONSTRAINT [PK_Pension_OverpaymentBalanceDetails_OverpaymentBalanceDetailsID] PRIMARY KEY CLUSTERED ([OverpaymentBalanceDetailsID] ASC) WITH (FILLFACTOR = 90, PAD_INDEX = ON),
+    CONSTRAINT [FK_OverpaymentBalanceDetails_EntryStatus] FOREIGN KEY ([EntryStatusID]) REFERENCES [common].[EntryStatus] ([Id]),
+    CONSTRAINT [FK_OverpaymentBalanceDetails_Ledger] FOREIGN KEY ([PensionLedgerID]) REFERENCES [pension].[Ledger] ([PensionLedgerId]),
+    CONSTRAINT [FK_OverpaymentBalanceDetails_OutstandingOverpayments] FOREIGN KEY ([OutstandingOverpaymentID]) REFERENCES [pension].[OutstandingOverpayments] ([Id]),
+    CONSTRAINT [FK_OverpaymentBalanceDetails_OverpaymentBalance] FOREIGN KEY ([OverpaymentBalanceID]) REFERENCES [pension].[OverpaymentBalance] ([OverpaymentBalanceID]),
+    CONSTRAINT [FK_OverpaymentBalanceDetails_OverpaymentBalance1] FOREIGN KEY ([OverpaymentBalanceID]) REFERENCES [pension].[OverpaymentBalance] ([OverpaymentBalanceID])
+);
+

@@ -1,0 +1,7 @@
+﻿CREATE TABLE [common].[ScheduleType] (
+    [Id]   INT          IDENTITY (1, 1) NOT NULL,
+    [Name] VARCHAR (50) NOT NULL,
+    CONSTRAINT [PK_ScheduleType] PRIMARY KEY CLUSTERED ([Id] ASC),
+    CONSTRAINT [UQ__Schedule__3214EC06B348ECE6] UNIQUE NONCLUSTERED ([Id] ASC)
+);
+

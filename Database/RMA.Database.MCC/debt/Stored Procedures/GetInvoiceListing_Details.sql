@@ -1,0 +1,58 @@
+﻿
+CREATE   Procedure [debt].[getInvoiceListing_Details]
+(
+@userId int,
+@PageNumber AS INT,
+@RowsOfPage AS INT,
+@SortingCol AS VARCHAR(100) ='StartDateAndTime',
+@SortType AS VARCHAR(100) = 'DESC',
+@SearchCreatia as VARCHAR(150) = '',
+@FinPayeeId as INT,
+@RecordCount INT = 0 OUTPUT
+)
+AS
+Begin
+
+DECLARE @SelectCount As NVARCHAR(MAX)
+
+SET @SelectCount = (select 
+		Count (*)
+	from 
+	 [billing].[Invoice]
+	where 
+	IsDeleted = 0)
+
+SET @RecordCount = (select 
+		Count (*)
+	from 
+	 [billing].[Invoice]
+	where 
+	IsDeleted = 0)
+
+	select 
+		[billing].[Invoice].InvoiceId,			
+		[billing].[Invoice].PolicyId,
+		[billing].[Invoice].InvoiceNumber,
+		[billing].[Invoice].InvoiceDate,
+		[billing].[Invoice].TotalInvoiceAmount,
+		[billing].[Invoice].CollectionDate,	
+		DATEDIFF(day,GETDATE(),[billing].[Invoice].CollectionDate) DueByDay, 
+		[billing].[Invoice].InvoiceStatusId Status,
+		[billing].[Invoice].IsDeleted,		
+		[billing].[Invoice].CreatedBy,	
+		[billing].[Invoice].CreatedDate,	
+		[billing].[Invoice].ModifiedBy,
+		[billing].[Invoice].ModifiedDate 		
+		from [client].FinPayee 
+		inner join [client].RolePlayer on [client].RolePlayer.RolePlayerId =[client].FinPayee.RolePlayerId 
+		inner join [policy].Policy  on [policy].Policy.PolicyOwnerId = [client].FinPayee.RolePlayerId 
+		inner join [billing].[Invoice] on [billing].[Invoice].PolicyId = [policy].Policy.PolicyId 
+		where 
+		([billing].[Invoice].InvoiceNumber like '%'+ @SearchCreatia +'%')
+		and [client].[Roleplayer].RolePlayerId=@FinPayeeId 
+		ORDER BY [client].FinPayee.RolePlayerId 
+		OFFSET (@PageNumber+-1)* @RowsOfPage
+		ROW FETCH NEXT @RowsOfPage ROWS ONLY
+END
+
+--exec [debt].[GetInvoiceListing_Details] 23,1,10,'','','',880  --Parameter is @FinPayeeId 880  to Pass finpayee id wise invoice listing

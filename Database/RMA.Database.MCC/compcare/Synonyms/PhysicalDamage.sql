@@ -1,0 +1,1 @@
+﻿CREATE SYNONYM [compcare].[PhysicalDamage] FOR [AZT-COMP-SQL-01].[RMATest].[Compensation].[PhysicalDamage];

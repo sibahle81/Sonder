@@ -1,0 +1,7 @@
+﻿CREATE TABLE [common].[EntryStatus] (
+    [Id]   INT          IDENTITY (0, 1) NOT NULL,
+    [Name] VARCHAR (50) NOT NULL,
+    CONSTRAINT [PK_EntryStatus] PRIMARY KEY CLUSTERED ([Id] ASC),
+    CONSTRAINT [UQ__EntrySta__3214EC06C6EBB512] UNIQUE NONCLUSTERED ([Id] ASC)
+);
+

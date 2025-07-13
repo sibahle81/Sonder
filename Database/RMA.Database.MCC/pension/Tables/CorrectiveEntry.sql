@@ -1,0 +1,28 @@
+﻿CREATE TABLE [pension].[CorrectiveEntry] (
+    [CorrectiveEntryId]     INT          IDENTITY (1, 1) NOT NULL,
+    [EntryTypeId]           INT          NOT NULL,
+    [ScheduleTypeId]        INT          NOT NULL,
+    [RecipientId]           INT          NOT NULL,
+    [BeneficiaryId]         INT          NOT NULL,
+    [Amount]                MONEY        NOT NULL,
+    [VATAmount]             MONEY        NOT NULL,
+    [NormalMonthlyPension]  MONEY        NOT NULL,
+    [CurrentMonthlyPension] MONEY        NOT NULL,
+    [EntryStatusId]         INT          NOT NULL,
+    [LedgerId]              INT          NOT NULL,
+    [PaymentDate]           DATETIME     NULL,
+    [IsActive]              BIT          NOT NULL,
+    [IsDeleted]             BIT          NOT NULL,
+    [CreatedBy]             VARCHAR (50) NOT NULL,
+    [CreatedDate]           DATETIME     NOT NULL,
+    [ModifiedBy]            VARCHAR (50) NOT NULL,
+    [ModifiedDate]          DATETIME     NOT NULL,
+    CONSTRAINT [PK__Correcti__1E6C50F808A61D49] PRIMARY KEY CLUSTERED ([CorrectiveEntryId] ASC),
+    CONSTRAINT [FK_CorrectiveEntry_EntryStatus] FOREIGN KEY ([EntryStatusId]) REFERENCES [common].[EntryStatus] ([Id]),
+    CONSTRAINT [FK_CorrectiveEntry_EntryType] FOREIGN KEY ([EntryTypeId]) REFERENCES [common].[EntryType] ([Id]),
+    CONSTRAINT [FK_CorrectiveEntry_Ledger] FOREIGN KEY ([LedgerId]) REFERENCES [pension].[Ledger] ([PensionLedgerId]),
+    CONSTRAINT [FK_CorrectiveEntry_PensionBeneficiary] FOREIGN KEY ([BeneficiaryId]) REFERENCES [pension].[PensionBeneficiary] ([PensionBeneficiaryId]),
+    CONSTRAINT [FK_CorrectiveEntry_PensionRecipient] FOREIGN KEY ([RecipientId]) REFERENCES [pension].[PensionRecipient] ([PensionRecipientId]),
+    CONSTRAINT [FK_CorrectiveEntry_ScheduleType] FOREIGN KEY ([ScheduleTypeId]) REFERENCES [common].[ScheduleType] ([Id])
+);
+

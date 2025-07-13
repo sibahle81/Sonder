@@ -1,0 +1,26 @@
+﻿CREATE TABLE [Load].[GPAMembers] (
+    [Id]              INT              IDENTITY (1, 1) NOT NULL,
+    [FileIdentifier]  UNIQUEIDENTIFIER NOT NULL,
+    [ClientReference] VARCHAR (64)     NOT NULL,
+    [JoinDate]        DATE             NULL,
+    [IdTypeId]        INT              NOT NULL,
+    [IdNumber]        VARCHAR (64)     NOT NULL,
+    [FirstName]       VARCHAR (64)     NOT NULL,
+    [LastName]        VARCHAR (64)     NOT NULL,
+    [DateOfBirth]     DATE             NULL,
+    [Gender]          VARCHAR (16)     NULL,
+    [Age]             INT              NOT NULL,
+    [JoinAge]         INT              NOT NULL,
+    [PolicyId]        INT              NOT NULL,
+    [PolicyNumber]    VARCHAR (32)     NULL,
+    [PolicyPremium]   DECIMAL (18, 2)  NOT NULL,
+    [PolicyCover]     DECIMAL (18, 2)  NOT NULL,
+    [RolePlayerId]    INT              NOT NULL,
+    [ProductOptionId] INT              NOT NULL,
+    [BenefitId]       INT              NOT NULL,
+    [PolicyExists]    BIT              NOT NULL,
+    [CelNo]           VARCHAR (32)     NULL,
+    [Email]           VARCHAR (128)    NULL,
+    CONSTRAINT [PK_GPAMembers] PRIMARY KEY CLUSTERED ([Id] ASC)
+);
+

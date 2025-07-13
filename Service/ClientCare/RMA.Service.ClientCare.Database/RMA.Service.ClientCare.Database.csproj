@@ -1,0 +1,2051 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">x64</Platform>
+    <ProjectGuid>{A2DE3936-B91B-4E93-9136-A92CB603C558}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>RMA.Service.ClientCare.Database</RootNamespace>
+    <AssemblyName>RMA.Service.ClientCare.Database</AssemblyName>
+    <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <Deterministic>true</Deterministic>
+    <NuGetPackageImportStamp>
+    </NuGetPackageImportStamp>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x64'">
+    <DebugSymbols>true</DebugSymbols>
+    <OutputPath>bin\x64\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <DebugType>full</DebugType>
+    <PlatformTarget>x64</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>..\..\..\Solution Items\RMA.ruleset</CodeAnalysisRuleSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x64'">
+    <OutputPath>bin\x64\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <Optimize>true</Optimize>
+    <DebugType>pdbonly</DebugType>
+    <PlatformTarget>x64</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>..\..\..\Solution Items\RMA.ruleset</CodeAnalysisRuleSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|AnyCPU'">
+    <DebugSymbols>true</DebugSymbols>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <DebugType>full</DebugType>
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>..\..\..\Solution Items\RMA.ruleset</CodeAnalysisRuleSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|AnyCPU'">
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <Optimize>true</Optimize>
+    <DebugType>pdbonly</DebugType>
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>..\..\..\Solution Items\RMA.ruleset</CodeAnalysisRuleSet>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="System" />
+    <Reference Include="System.ComponentModel.DataAnnotations" />
+    <Reference Include="System.Core" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Configuration\broker_BrokerageAddressConfiguration.cs">
+      <DependentUpon>Configuration.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Configuration\broker_BrokerageBankAccountConfiguration.cs">
+      <DependentUpon>Configuration.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Configuration\broker_BrokerageBranchConfiguration.cs">
+      <DependentUpon>Configuration.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Configuration\broker_BrokerageBrokerConsultantConfiguration.cs">
+      <DependentUpon>Configuration.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Configuration\broker_BrokerageCheckConfiguration.cs">
+      <DependentUpon>Configuration.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Configuration\broker_BrokerageConfiguration.cs">
+      <DependentUpon>Configuration.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Configuration\broker_BrokerageContactConfiguration.cs">
+      <DependentUpon>Configuration.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Configuration\broker_BrokerageFscaLicenseCategoryConfiguration.cs">
+      <DependentUpon>Configuration.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Configuration\broker_BrokerageImportRequestConfiguration.cs">
+      <DependentUpon>Configuration.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Configuration\broker_BrokerageNoteConfiguration.cs">
+      <DependentUpon>Configuration.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Configuration\broker_BrokerageProductOptionConfiguration.cs">
+      <DependentUpon>Configuration.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Configuration\broker_BrokerageRepresentativeConfiguration.cs">
+      <DependentUpon>Configuration.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Configuration\broker_BrokerPartnershipConfiguration.cs">
+      <DependentUpon>Configuration.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Configuration\broker_FscaLicenseCategoryConfiguration.cs">
+      <DependentUpon>Configuration.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Configuration\broker_RepQualificationConfiguration.cs">
+      <DependentUpon>Configuration.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Configuration\broker_RepresentativeBankAccountConfiguration.cs">
+      <DependentUpon>Configuration.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Configuration\broker_RepresentativeCheckConfiguration.cs">
+      <DependentUpon>Configuration.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Configuration\broker_RepresentativeConfiguration.cs">
+      <DependentUpon>Configuration.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Configuration\broker_RepresentativeFscaLicenseCategoryConfiguration.cs">
+      <DependentUpon>Configuration.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Configuration\broker_RepresentativeNoteConfiguration.cs">
+      <DependentUpon>Configuration.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Configuration\client_AuditLogConfiguration.cs">
+      <DependentUpon>Configuration.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Configuration\client_BankingPurposeConfiguration.cs">
+      <DependentUpon>Configuration.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Configuration\client_BodyCollectorConfiguration.cs">
+      <DependentUpon>Configuration.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Configuration\client_CompanyConfiguration.cs">
+      <DependentUpon>Configuration.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Configuration\client_CompanyPremisConfiguration.cs">
+      <DependentUpon>Configuration.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Configuration\client_DeclarationAllowanceConfiguration.cs">
+      <DependentUpon>Configuration.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Configuration\client_DeclarationBillingIntegrationConfiguration.cs">
+      <DependentUpon>Configuration.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Configuration\client_DeclarationConfiguration.cs">
+      <DependentUpon>Configuration.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Configuration\client_DeclarationPenaltyPercentageConfiguration.cs">
+      <DependentUpon>Configuration.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Configuration\client_DoctorConfiguration.cs">
+      <DependentUpon>Configuration.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Configuration\client_EmploymentConfiguration.cs">
+      <DependentUpon>Configuration.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Configuration\client_FinPayeeConfiguration.cs">
+      <DependentUpon>Configuration.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Configuration\client_FuneralParlorConfiguration.cs">
+      <DependentUpon>Configuration.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Configuration\client_IndustryClassDeclarationConfigurationConfiguration.cs">
+      <DependentUpon>Configuration.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Configuration\client_IndustryClassRenewalConfiguration.cs">
+      <DependentUpon>Configuration.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Configuration\client_InflationPercentageConfiguration.cs">
+      <DependentUpon>Configuration.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Configuration\client_LastViewedConfiguration.cs">
+      <DependentUpon>Configuration.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Configuration\client_LetterOfGoodStandingConfiguration.cs">
+      <DependentUpon>Configuration.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Configuration\client_LiveInAllowanceConfiguration.cs">
+      <DependentUpon>Configuration.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Configuration\client_MaxAverageEarningConfiguration.cs">
+      <DependentUpon>Configuration.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Configuration\client_MinimumAllowablePremiumConfiguration.cs">
+      <DependentUpon>Configuration.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Configuration\client_OrganisationOptionItemValueConfiguration.cs">
+      <DependentUpon>Configuration.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Configuration\client_PersalCutOffDateConfiguration.cs">
+      <DependentUpon>Configuration.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Configuration\client_PersonConfiguration.cs">
+      <DependentUpon>Configuration.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Configuration\client_PersonEmploymentConfiguration.cs">
+      <DependentUpon>Configuration.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Configuration\client_PolicyContactOverrideConfiguration.cs">
+      <DependentUpon>Configuration.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Configuration\client_PreviousInsurerRolePlayerConfiguration.cs">
+      <DependentUpon>Configuration.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Configuration\client_QlinkReservationTransactionConfiguration.cs">
+      <DependentUpon>Configuration.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Configuration\client_QlinkTransactionConfiguration.cs">
+      <DependentUpon>Configuration.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Configuration\client_RateConfiguration.cs">
+      <DependentUpon>Configuration.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Configuration\client_ReinsurerConfiguration.cs">
+      <DependentUpon>Configuration.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Configuration\client_RolePlayerAddressConfiguration.cs">
+      <DependentUpon>Configuration.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Configuration\client_RolePlayerBankingDetailConfiguration.cs">
+      <DependentUpon>Configuration.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Configuration\client_RolePlayerConfiguration.cs">
+      <DependentUpon>Configuration.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Configuration\client_RolePlayerContactConfiguration.cs">
+      <DependentUpon>Configuration.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Configuration\client_RolePlayerContactInformationConfiguration.cs">
+      <DependentUpon>Configuration.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Configuration\client_RolePlayerMedicalAidDetailConfiguration.cs">
+      <DependentUpon>Configuration.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Configuration\client_RolePlayerNoteConfiguration.cs">
+      <DependentUpon>Configuration.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Configuration\client_RolePlayerPersalDetailConfiguration.cs">
+      <DependentUpon>Configuration.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Configuration\client_RolePlayerPolicyDeclarationConfiguration.cs">
+      <DependentUpon>Configuration.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Configuration\client_RolePlayerPolicyDeclarationDetailConfiguration.cs">
+      <DependentUpon>Configuration.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Configuration\client_RolePlayerPolicyOnlineSubmissionConfiguration.cs">
+      <DependentUpon>Configuration.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Configuration\client_RolePlayerPolicyOnlineSubmissionDetailConfiguration.cs">
+      <DependentUpon>Configuration.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Configuration\client_RolePlayerPolicyTransactionConfiguration.cs">
+      <DependentUpon>Configuration.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Configuration\client_RolePlayerPolicyTransactionDetailConfiguration.cs">
+      <DependentUpon>Configuration.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Configuration\client_RolePlayerRelationConfiguration.cs">
+      <DependentUpon>Configuration.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Configuration\client_RolePlayerRelationLifeConfiguration.cs">
+      <DependentUpon>Configuration.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Configuration\client_RolePlayerRetirementConfiguration.cs">
+      <DependentUpon>Configuration.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Configuration\client_RolePlayerTypeConfiguration.cs">
+      <DependentUpon>Configuration.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Configuration\client_SchemeClassificationConfiguration.cs">
+      <DependentUpon>Configuration.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Configuration\client_StillBornConfiguration.cs">
+      <DependentUpon>Configuration.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Configuration\client_UndertakerConfiguration.cs">
+      <DependentUpon>Configuration.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Configuration\client_UserVopdResponseConfiguration.cs">
+      <DependentUpon>Configuration.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Configuration\client_VopdResponseConfiguration.cs">
+      <DependentUpon>Configuration.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Configuration\common_AccidentTypeConfiguration.cs">
+      <DependentUpon>Configuration.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Configuration\common_AnnouncementConfiguration.cs">
+      <DependentUpon>Configuration.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Configuration\common_AnnouncementRoleConfiguration.cs">
+      <DependentUpon>Configuration.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Configuration\common_AnnouncementUserAcceptanceConfiguration.cs">
+      <DependentUpon>Configuration.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Configuration\common_ClaimTypeMappingConfiguration.cs">
+      <DependentUpon>Configuration.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Configuration\common_CommissionBandConfiguration.cs">
+      <DependentUpon>Configuration.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Configuration\common_DepartmentLookupConfiguration.cs">
+      <DependentUpon>Configuration.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Configuration\common_DesignationTypeConfiguration.cs">
+      <DependentUpon>Configuration.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Configuration\common_EuropAssistPremiumMatrixConfiguration.cs">
+      <DependentUpon>Configuration.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Configuration\common_EventActionConfiguration.cs">
+      <DependentUpon>Configuration.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Configuration\common_EventActivityConfiguration.cs">
+      <DependentUpon>Configuration.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Configuration\common_EventAgentConfiguration.cs">
+      <DependentUpon>Configuration.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Configuration\common_FeatureFlagSettingConfiguration.cs">
+      <DependentUpon>Configuration.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Configuration\common_FuneralCoverTypeConfiguration.cs">
+      <DependentUpon>Configuration.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Configuration\common_FuneralInsuredTypeConfiguration.cs">
+      <DependentUpon>Configuration.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Configuration\common_GroupCompanyBckConfiguration.cs">
+      <DependentUpon>Configuration.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Configuration\common_LookupValueConfiguration.cs">
+      <DependentUpon>Configuration.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Configuration\common_MonthlyScheduledWorkPoolUserConfiguration.cs">
+      <DependentUpon>Configuration.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Configuration\common_MunicipalityConfiguration.cs">
+      <DependentUpon>Configuration.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Configuration\common_NoteConfiguration.cs">
+      <DependentUpon>Configuration.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Configuration\common_NoteModuleConfiguration.cs">
+      <DependentUpon>Configuration.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Configuration\common_OccupationTypeConfiguration.cs">
+      <DependentUpon>Configuration.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Configuration\common_OneTimePinConfiguration.cs">
+      <DependentUpon>Configuration.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Configuration\common_OptionItemConfiguration.cs">
+      <DependentUpon>Configuration.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Configuration\common_OptionItemValueConfiguration.cs">
+      <DependentUpon>Configuration.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Configuration\common_OptionTypeConfiguration.cs">
+      <DependentUpon>Configuration.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Configuration\common_PayeeTypeConfiguration.cs">
+      <DependentUpon>Configuration.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Configuration\common_PensCareSettingConfiguration.cs">
+      <DependentUpon>Configuration.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Configuration\common_PeriodConfiguration.cs">
+      <DependentUpon>Configuration.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Configuration\common_PoolWorkFlowConfiguration.cs">
+      <DependentUpon>Configuration.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Configuration\common_PremiumComponentConfiguration.cs">
+      <DependentUpon>Configuration.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Configuration\common_PreviousInsurerConfiguration.cs">
+      <DependentUpon>Configuration.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Configuration\common_PriorityConfiguration.cs">
+      <DependentUpon>Configuration.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Configuration\common_ReferralConfiguration.cs">
+      <DependentUpon>Configuration.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Configuration\common_ReferralFeedbackConfiguration.cs">
+      <DependentUpon>Configuration.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Configuration\common_ReferralNatureOfQueryConfiguration.cs">
+      <DependentUpon>Configuration.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Configuration\common_ReferralPerformanceRatingConfiguration.cs">
+      <DependentUpon>Configuration.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Configuration\common_ReferralStatusChangeAuditConfiguration.cs">
+      <DependentUpon>Configuration.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Configuration\common_ReportViewedAuditConfiguration.cs">
+      <DependentUpon>Configuration.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Configuration\common_ResolutionTypeConfiguration.cs">
+      <DependentUpon>Configuration.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Configuration\common_ServiceBusMessageConfiguration.cs">
+      <DependentUpon>Configuration.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Configuration\common_SlaItemTypeConfigurationConfiguration.cs">
+      <DependentUpon>Configuration.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Configuration\common_SlaMovementAuditConfiguration.cs">
+      <DependentUpon>Configuration.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Configuration\common_SlaStatusChangeAuditConfiguration.cs">
+      <DependentUpon>Configuration.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Configuration\common_TmpDebtorsDetailConfiguration.cs">
+      <DependentUpon>Configuration.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Configuration\common_UnderAssessReasonConfiguration.cs">
+      <DependentUpon>Configuration.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Configuration\common_UpfrontCommClawbackratioConfiguration.cs">
+      <DependentUpon>Configuration.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Configuration\common_UserReminderConfiguration.cs">
+      <DependentUpon>Configuration.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Configuration\common_VatConfiguration.cs">
+      <DependentUpon>Configuration.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Configuration\common_WorkItemTypeConfiguration.cs">
+      <DependentUpon>Configuration.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Configuration\Configuration.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Configuration.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Configuration\lead_AddressConfiguration.cs">
+      <DependentUpon>Configuration.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Configuration\lead_CompanyConfiguration.cs">
+      <DependentUpon>Configuration.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Configuration\lead_ContactConfiguration.cs">
+      <DependentUpon>Configuration.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Configuration\lead_ContactV2Configuration.cs">
+      <DependentUpon>Configuration.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Configuration\lead_LeadConfiguration.cs">
+      <DependentUpon>Configuration.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Configuration\lead_NoteConfiguration.cs">
+      <DependentUpon>Configuration.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Configuration\lead_PersonConfiguration.cs">
+      <DependentUpon>Configuration.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Configuration\Load_BankStatementEntryStagingConfiguration.cs">
+      <DependentUpon>Configuration.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Configuration\Load_BenefitConfiguration.cs">
+      <DependentUpon>Configuration.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Configuration\Load_BenefitsUploadErrorAuditConfiguration.cs">
+      <DependentUpon>Configuration.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Configuration\Load_BulkAllocationFileConfiguration.cs">
+      <DependentUpon>Configuration.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Configuration\Load_BulkManualAllocationConfiguration.cs">
+      <DependentUpon>Configuration.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Configuration\Load_BulkPaymentListingConfiguration.cs">
+      <DependentUpon>Configuration.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Configuration\Load_CdaPolicyScheduleEmailQueueConfiguration.cs">
+      <DependentUpon>Configuration.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Configuration\Load_ClientClass13RatesConfiguration.cs">
+      <DependentUpon>Configuration.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Configuration\Load_ClientClass4RatesConfiguration.cs">
+      <DependentUpon>Configuration.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Configuration\Load_ConsolidatedFuneralBankConfiguration.cs">
+      <DependentUpon>Configuration.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Configuration\Load_ConsolidatedFuneralBenefitConfiguration.cs">
+      <DependentUpon>Configuration.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Configuration\Load_ConsolidatedFuneralConfiguration.cs">
+      <DependentUpon>Configuration.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Configuration\Load_ConsolidatedFuneralDeductionConfiguration.cs">
+      <DependentUpon>Configuration.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Configuration\Load_ConsolidatedFuneralErrorConfiguration.cs">
+      <DependentUpon>Configuration.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Configuration\Load_ConsolidatedFuneralFileConfiguration.cs">
+      <DependentUpon>Configuration.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Configuration\Load_ConsolidatedFuneralInsuranceConfiguration.cs">
+      <DependentUpon>Configuration.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Configuration\Load_ConsolidatedFuneralMemberConfiguration.cs">
+      <DependentUpon>Configuration.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Configuration\Load_DiscountFileAuditConfiguration.cs">
+      <DependentUpon>Configuration.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Configuration\Load_DiscountFileConfiguration.cs">
+      <DependentUpon>Configuration.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Configuration\Load_DiscountFileListingConfiguration.cs">
+      <DependentUpon>Configuration.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Configuration\Load_ExternalPartnerPolicyDataConfiguration.cs">
+      <DependentUpon>Configuration.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Configuration\Load_FuneralPremiumConfiguration.cs">
+      <DependentUpon>Configuration.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Configuration\Load_GpaConfiguration.cs">
+      <DependentUpon>Configuration.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Configuration\Load_GpaFileConfiguration.cs">
+      <DependentUpon>Configuration.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Configuration\Load_GpaMemberConfiguration.cs">
+      <DependentUpon>Configuration.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Configuration\Load_GroupPolicyScheduleBatchConfiguration.cs">
+      <DependentUpon>Configuration.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Configuration\Load_IndustryRateConfiguration.cs">
+      <DependentUpon>Configuration.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Configuration\Load_InsuredLifeConfiguration.cs">
+      <DependentUpon>Configuration.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Configuration\Load_InsuredLivesBenefitConfiguration.cs">
+      <DependentUpon>Configuration.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Configuration\Load_InsuredLivesCompanyConfiguration.cs">
+      <DependentUpon>Configuration.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Configuration\Load_InsuredLivesErrorConfiguration.cs">
+      <DependentUpon>Configuration.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Configuration\Load_InsuredLivesMemberConfiguration.cs">
+      <DependentUpon>Configuration.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Configuration\Load_InsuredLivesMessageConfiguration.cs">
+      <DependentUpon>Configuration.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Configuration\Load_LeadConfiguration.cs">
+      <DependentUpon>Configuration.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Configuration\Load_LeadsProductConfiguration.cs">
+      <DependentUpon>Configuration.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Configuration\Load_LeadsProductWizardConfiguration.cs">
+      <DependentUpon>Configuration.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Configuration\Load_LeadsUploadErrorAuditConfiguration.cs">
+      <DependentUpon>Configuration.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Configuration\Load_LeadTimeTrackerConfiguration.cs">
+      <DependentUpon>Configuration.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Configuration\Load_LegalHandOverFileConfiguration.cs">
+      <DependentUpon>Configuration.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Configuration\Load_LegalHandOverFileDetailConfiguration.cs">
+      <DependentUpon>Configuration.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Configuration\Load_MemberCancelConfiguration.cs">
+      <DependentUpon>Configuration.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Configuration\Load_MyValuePluConfiguration.cs">
+      <DependentUpon>Configuration.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Configuration\Load_MyValuePlusBankConfiguration.cs">
+      <DependentUpon>Configuration.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Configuration\Load_MyValuePlusBenefitConfiguration.cs">
+      <DependentUpon>Configuration.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Configuration\Load_MyValuePlusDeductionConfiguration.cs">
+      <DependentUpon>Configuration.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Configuration\Load_MyValuePlusErrorConfiguration.cs">
+      <DependentUpon>Configuration.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Configuration\Load_MyValuePlusFileConfiguration.cs">
+      <DependentUpon>Configuration.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Configuration\Load_MyValuePlusInsuranceConfiguration.cs">
+      <DependentUpon>Configuration.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Configuration\Load_MyValuePlusMemberConfiguration.cs">
+      <DependentUpon>Configuration.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Configuration\Load_PaymentStagingConfiguration.cs">
+      <DependentUpon>Configuration.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Configuration\Load_PaymentStagingFileConfiguration.cs">
+      <DependentUpon>Configuration.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Configuration\Load_PostRetirementMedicalAidDataConfiguration.cs">
+      <DependentUpon>Configuration.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Configuration\Load_PostRetirementMedicalAidInvoiceDetailConfiguration.cs">
+      <DependentUpon>Configuration.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Configuration\Load_PostRetirementMedicalAidInvoiceHeaderConfiguration.cs">
+      <DependentUpon>Configuration.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Configuration\Load_PostRetirementMedicalAnnuityDataConfiguration.cs">
+      <DependentUpon>Configuration.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Configuration\Load_PostRetirementMedicalAnnuityLatestDataConfiguration.cs">
+      <DependentUpon>Configuration.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Configuration\Load_PremiumListingBenefitConfiguration.cs">
+      <DependentUpon>Configuration.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Configuration\Load_PremiumListingCompanyConfiguration.cs">
+      <DependentUpon>Configuration.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Configuration\Load_PremiumListingConfiguration.cs">
+      <DependentUpon>Configuration.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Configuration\Load_PremiumListingErrorConfiguration.cs">
+      <DependentUpon>Configuration.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Configuration\Load_PremiumListingFileConfiguration.cs">
+      <DependentUpon>Configuration.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Configuration\Load_PremiumListingMemberConfiguration.cs">
+      <DependentUpon>Configuration.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Configuration\Load_PremiumListingMessageConfiguration.cs">
+      <DependentUpon>Configuration.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Configuration\Load_PremiumListingPaymentConfiguration.cs">
+      <DependentUpon>Configuration.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Configuration\Load_PremiumListingPaymentErrorConfiguration.cs">
+      <DependentUpon>Configuration.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Configuration\Load_PremiumListingPaymentFileConfiguration.cs">
+      <DependentUpon>Configuration.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Configuration\Load_PremiumListingPolicyPremiumMovementConfiguration.cs">
+      <DependentUpon>Configuration.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Configuration\Load_PremiumPaymentDueCreditNoteConfiguration.cs">
+      <DependentUpon>Configuration.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Configuration\Load_PremiumPaymentFileValidationConfiguration.cs">
+      <DependentUpon>Configuration.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Configuration\Load_PremiumPaymentFileValidationContentConfiguration.cs">
+      <DependentUpon>Configuration.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Configuration\Load_QLinkPaymentRecordStagingConfiguration.cs">
+      <DependentUpon>Configuration.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Configuration\Load_RateConfiguration.cs">
+      <DependentUpon>Configuration.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Configuration\Load_RatesUploadErrorAuditConfiguration.cs">
+      <DependentUpon>Configuration.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Configuration\Load_StageGroupRiskConfiguration.cs">
+      <DependentUpon>Configuration.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Configuration\Load_StageGroupRiskErrorConfiguration.cs">
+      <DependentUpon>Configuration.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Configuration\Load_StagePolicyIntegrationRequestConfiguration.cs">
+      <DependentUpon>Configuration.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Configuration\Load_StagePostRetirementMedicalAidConfiguration.cs">
+      <DependentUpon>Configuration.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Configuration\Load_StagePostRetirementMedicalAnnuityConfiguration.cs">
+      <DependentUpon>Configuration.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Configuration\Load_ThirdPartyPolicyListingConfiguration.cs">
+      <DependentUpon>Configuration.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Configuration\Load_ThirdPartyPolicyListingErrorConfiguration.cs">
+      <DependentUpon>Configuration.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Configuration\medical_HealthCareProviderAgreedTariffConfiguration.cs">
+      <DependentUpon>Configuration.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Configuration\medical_HealthCareProviderConfiguration.cs">
+      <DependentUpon>Configuration.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Configuration\policy_AnnualIncreaseConfiguration.cs">
+      <DependentUpon>Configuration.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Configuration\policy_BenefitCategoryFuneralConfiguration.cs">
+      <DependentUpon>Configuration.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Configuration\policy_BenefitCategoryOptionConfiguration.cs">
+      <DependentUpon>Configuration.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Configuration\policy_BenefitPayrollConfiguration.cs">
+      <DependentUpon>Configuration.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Configuration\policy_BenefitRateConfiguration.cs">
+      <DependentUpon>Configuration.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Configuration\policy_BenefitRateDetailConfiguration.cs">
+      <DependentUpon>Configuration.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Configuration\policy_BenefitRateSplitConfiguration.cs">
+      <DependentUpon>Configuration.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Configuration\policy_BenefitReinsAverageConfiguration.cs">
+      <DependentUpon>Configuration.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Configuration\policy_GroupSchemePremiumRoundingExclusionConfiguration.cs">
+      <DependentUpon>Configuration.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Configuration\policy_InsuredSumAssuredConfiguration.cs">
+      <DependentUpon>Configuration.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Configuration\policy_PersonInsuredCategoryConfiguration.cs">
+      <DependentUpon>Configuration.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Configuration\policy_PolicyBenefitCategoryConfiguration.cs">
+      <DependentUpon>Configuration.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Configuration\policy_PolicyBenefitDetailConfiguration.cs">
+      <DependentUpon>Configuration.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Configuration\policy_PolicyExtendedSettingConfiguration.cs">
+      <DependentUpon>Configuration.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Configuration\policy_PolicyScheduleOwnerMapConfiguration.cs">
+      <DependentUpon>Configuration.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Configuration\policy_PostRetirementMedicalAnnuityInvoiceDetailConfiguration.cs">
+      <DependentUpon>Configuration.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Configuration\policy_PostRetirementMedicalAnnuityInvoiceHeaderConfiguration.cs">
+      <DependentUpon>Configuration.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Configuration\product_ProductBenefitFormulaConfiguration.cs">
+      <DependentUpon>Configuration.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Configuration\reinsurance_CoInsuranceConfiguration.cs">
+      <DependentUpon>Configuration.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Entities\client_RolePlayerMedicalAidDetail.cs">
+      <DependentUpon>Entities.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Entities\common_FuneralCoverType.cs">
+      <DependentUpon>Entities.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Entities\common_GroupCompanyBck.cs">
+      <DependentUpon>Entities.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Entities\common_Municipality.cs">
+      <DependentUpon>Entities.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Entities\common_Note.cs">
+      <DependentUpon>Entities.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Entities\common_NoteModule.cs">
+      <DependentUpon>Entities.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Entities\common_PremiumComponent.cs">
+      <DependentUpon>Entities.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Configuration\policy_AuditLogConfiguration.cs">
+      <DependentUpon>Configuration.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Configuration\policy_BenefitCategoryExtensionConfiguration.cs">
+      <DependentUpon>Configuration.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Configuration\policy_CategoryInsuredCoverConfiguration.cs">
+      <DependentUpon>Configuration.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Configuration\policy_ChildCoverConfiguration.cs">
+      <DependentUpon>Configuration.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Configuration\policy_CoverConfiguration.cs">
+      <DependentUpon>Configuration.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Configuration\policy_InsuredLifeErrorAuditConfiguration.cs">
+      <DependentUpon>Configuration.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Configuration\policy_InsuredLifeFileAuditConfiguration.cs">
+      <DependentUpon>Configuration.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Configuration\policy_InsurerConfiguration.cs">
+      <DependentUpon>Configuration.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Configuration\policy_InsurerGroupSchemeAccessConfiguration.cs">
+      <DependentUpon>Configuration.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Configuration\policy_LastViewedConfiguration.cs">
+      <DependentUpon>Configuration.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Configuration\policy_NoteConfiguration.cs">
+      <DependentUpon>Configuration.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Configuration\policy_PolicyBenefitOptionConfiguration.cs">
+      <DependentUpon>Configuration.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Configuration\policy_PolicyBinderConfiguration.cs">
+      <DependentUpon>Configuration.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Configuration\policy_PolicyBrokerConfiguration.cs">
+      <DependentUpon>Configuration.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Configuration\policy_PolicyChangeBenefitConfiguration.cs">
+      <DependentUpon>Configuration.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Configuration\policy_PolicyChangeProductConfiguration.cs">
+      <DependentUpon>Configuration.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Configuration\policy_PolicyConfiguration.cs">
+      <DependentUpon>Configuration.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Configuration\policy_PolicyContactConfiguration.cs">
+      <DependentUpon>Configuration.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Configuration\policy_PolicyDetailConfiguration.cs">
+      <DependentUpon>Configuration.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Configuration\policy_PolicyDocumentCommunicationMatrixConfiguration.cs">
+      <DependentUpon>Configuration.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Configuration\policy_PolicyInsuredLifeAdditionalBenefitConfiguration.cs">
+      <DependentUpon>Configuration.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Configuration\policy_PolicyInsuredLifeConfiguration.cs">
+      <DependentUpon>Configuration.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Configuration\policy_PolicyInvoiceConfiguration.cs">
+      <DependentUpon>Configuration.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Configuration\policy_PolicyInvoiceDetailConfiguration.cs">
+      <DependentUpon>Configuration.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Configuration\policy_PolicyLifeExtensionConfiguration.cs">
+      <DependentUpon>Configuration.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Configuration\policy_PolicyMovementConfiguration.cs">
+      <DependentUpon>Configuration.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Configuration\policy_PolicyNoteConfiguration.cs">
+      <DependentUpon>Configuration.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Configuration\policy_PolicyOptionConfiguration.cs">
+      <DependentUpon>Configuration.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Configuration\policy_PolicyProductDeviationConfiguration.cs">
+      <DependentUpon>Configuration.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Configuration\policy_PolicyStatusActionsMatrixConfiguration.cs">
+      <DependentUpon>Configuration.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Configuration\policy_PolicyStatusChangeAuditConfiguration.cs">
+      <DependentUpon>Configuration.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Configuration\policy_PolicyTreatyConfiguration.cs">
+      <DependentUpon>Configuration.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Configuration\policy_PremiumListingCompanyConfiguration.cs">
+      <DependentUpon>Configuration.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Configuration\policy_PremiumListingErrorAuditConfiguration.cs">
+      <DependentUpon>Configuration.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Configuration\policy_PremiumListingErrorConfiguration.cs">
+      <DependentUpon>Configuration.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Configuration\policy_PremiumListingFileAuditConfiguration.cs">
+      <DependentUpon>Configuration.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Configuration\policy_PremiumListingMemberConfiguration.cs">
+      <DependentUpon>Configuration.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Configuration\policy_PremiumListingPolicyConfiguration.cs">
+      <DependentUpon>Configuration.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Configuration\policy_PremiumListingScheduleConfiguration.cs">
+      <DependentUpon>Configuration.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Configuration\policy_PremiumPaybackConfiguration.cs">
+      <DependentUpon>Configuration.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Configuration\product_AuditLogConfiguration.cs">
+      <DependentUpon>Configuration.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Configuration\product_BenefitAddBeneficiaryConfiguration.cs">
+      <DependentUpon>Configuration.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Configuration\product_BenefitBeneficiaryTypeConfiguration.cs">
+      <DependentUpon>Configuration.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Configuration\product_BenefitCaptureEarningConfiguration.cs">
+      <DependentUpon>Configuration.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Configuration\product_BenefitCompensationAmountConfiguration.cs">
+      <DependentUpon>Configuration.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Configuration\product_BenefitConfiguration.cs">
+      <DependentUpon>Configuration.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Configuration\product_BenefitCoverMemberTypeConfiguration.cs">
+      <DependentUpon>Configuration.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Configuration\product_BenefitEarningsRangeCalcConfiguration.cs">
+      <DependentUpon>Configuration.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Configuration\product_BenefitEarningsTypeConfiguration.cs">
+      <DependentUpon>Configuration.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Configuration\product_BenefitMedicalReportRequiredConfiguration.cs">
+      <DependentUpon>Configuration.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Configuration\product_BenefitMedicalReportTypeConfiguration.cs">
+      <DependentUpon>Configuration.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Configuration\product_BenefitNoteConfiguration.cs">
+      <DependentUpon>Configuration.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Configuration\product_BenefitOptionItemValueConfiguration.cs">
+      <DependentUpon>Configuration.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Configuration\product_BenefitProductConfiguration.cs">
+      <DependentUpon>Configuration.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Configuration\product_BenefitRateConfiguration.cs">
+      <DependentUpon>Configuration.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Configuration\product_BenefitRuleConfiguration.cs">
+      <DependentUpon>Configuration.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Configuration\product_DiscountTypeConfiguration.cs">
+      <DependentUpon>Configuration.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Configuration\product_LastViewedConfiguration.cs">
+      <DependentUpon>Configuration.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Configuration\product_ProductBankAccountConfiguration.cs">
+      <DependentUpon>Configuration.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Configuration\product_ProductConfiguration.cs">
+      <DependentUpon>Configuration.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Configuration\product_ProductNoteConfiguration.cs">
+      <DependentUpon>Configuration.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Configuration\product_ProductOptionAllowanceTypeConfiguration.cs">
+      <DependentUpon>Configuration.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Configuration\product_ProductOptionBillingIntegrationConfiguration.cs">
+      <DependentUpon>Configuration.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Configuration\product_ProductOptionConfiguration.cs">
+      <DependentUpon>Configuration.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Configuration\product_ProductOptionCoverTypeConfiguration.cs">
+      <DependentUpon>Configuration.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Configuration\product_ProductOptionDependencyConfiguration.cs">
+      <DependentUpon>Configuration.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Configuration\product_ProductOptionNoteConfiguration.cs">
+      <DependentUpon>Configuration.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Configuration\product_ProductOptionOptionItemValueConfiguration.cs">
+      <DependentUpon>Configuration.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Configuration\product_ProductOptionPaymentFrequencyConfiguration.cs">
+      <DependentUpon>Configuration.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Configuration\product_ProductOptionRuleConfiguration.cs">
+      <DependentUpon>Configuration.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Configuration\product_ProductOptionSettingConfiguration.cs">
+      <DependentUpon>Configuration.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Configuration\product_ProductRuleConfiguration.cs">
+      <DependentUpon>Configuration.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Configuration\product_TemplateConfiguration.cs">
+      <DependentUpon>Configuration.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Configuration\quote_QuoteAllowanceConfiguration.cs">
+      <DependentUpon>Configuration.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Configuration\quote_QuoteConfiguration.cs">
+      <DependentUpon>Configuration.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Configuration\quote_QuoteDetailsV2Configuration.cs">
+      <DependentUpon>Configuration.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Configuration\quote_QuoteV2Configuration.cs">
+      <DependentUpon>Configuration.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Configuration\reinsurance_TreatyConfiguration.cs">
+      <DependentUpon>Configuration.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Constants\DatabaseConstants.cs" />
+    <Compile Include="Context\Context.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Context.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Context\EfDbContext.cs">
+      <DependentUpon>Context.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Entities\broker_Brokerage.cs">
+      <DependentUpon>Entities.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Entities\broker_BrokerageAddress.cs">
+      <DependentUpon>Entities.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Entities\broker_BrokerageBankAccount.cs">
+      <DependentUpon>Entities.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Entities\broker_BrokerageBranch.cs">
+      <DependentUpon>Entities.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Entities\broker_BrokerageBrokerConsultant.cs">
+      <DependentUpon>Entities.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Entities\broker_BrokerageCheck.cs">
+      <DependentUpon>Entities.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Entities\broker_BrokerageContact.cs">
+      <DependentUpon>Entities.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Entities\broker_BrokerageFscaLicenseCategory.cs">
+      <DependentUpon>Entities.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Entities\broker_BrokerageImportRequest.cs">
+      <DependentUpon>Entities.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Entities\broker_BrokerageNote.cs">
+      <DependentUpon>Entities.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Entities\broker_BrokerageProductOption.cs">
+      <DependentUpon>Entities.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Entities\broker_BrokerageRepresentative.cs">
+      <DependentUpon>Entities.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Entities\broker_BrokerPartnership.cs">
+      <DependentUpon>Entities.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Entities\broker_FscaLicenseCategory.cs">
+      <DependentUpon>Entities.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Entities\broker_RepQualification.cs">
+      <DependentUpon>Entities.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Entities\broker_Representative.cs">
+      <DependentUpon>Entities.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Entities\broker_RepresentativeBankAccount.cs">
+      <DependentUpon>Entities.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Entities\broker_RepresentativeCheck.cs">
+      <DependentUpon>Entities.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Entities\broker_RepresentativeFscaLicenseCategory.cs">
+      <DependentUpon>Entities.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Entities\broker_RepresentativeNote.cs">
+      <DependentUpon>Entities.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Entities\client_AuditLog.cs">
+      <DependentUpon>Entities.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Entities\client_BankingPurpose.cs">
+      <DependentUpon>Entities.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Entities\client_BodyCollector.cs">
+      <DependentUpon>Entities.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Entities\client_Company.cs">
+      <DependentUpon>Entities.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Entities\client_CompanyPremis.cs">
+      <DependentUpon>Entities.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Entities\client_Declaration.cs">
+      <DependentUpon>Entities.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Entities\client_DeclarationAllowance.cs">
+      <DependentUpon>Entities.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Entities\client_DeclarationBillingIntegration.cs">
+      <DependentUpon>Entities.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Entities\client_DeclarationPenaltyPercentage.cs">
+      <DependentUpon>Entities.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Entities\client_Doctor.cs">
+      <DependentUpon>Entities.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Entities\client_Employment.cs">
+      <DependentUpon>Entities.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Entities\client_FinPayee.cs">
+      <DependentUpon>Entities.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Entities\client_FuneralParlor.cs">
+      <DependentUpon>Entities.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Entities\client_IndustryClassDeclarationConfiguration.cs">
+      <DependentUpon>Entities.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Entities\client_IndustryClassRenewal.cs">
+      <DependentUpon>Entities.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Entities\client_InflationPercentage.cs">
+      <DependentUpon>Entities.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Entities\client_LastViewed.cs">
+      <DependentUpon>Entities.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Entities\client_LetterOfGoodStanding.cs">
+      <DependentUpon>Entities.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Entities\client_LiveInAllowance.cs">
+      <DependentUpon>Entities.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Entities\client_MaxAverageEarning.cs">
+      <DependentUpon>Entities.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Entities\client_MinimumAllowablePremium.cs">
+      <DependentUpon>Entities.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Entities\client_OrganisationOptionItemValue.cs">
+      <DependentUpon>Entities.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Entities\client_PersalCutOffDate.cs">
+      <DependentUpon>Entities.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Entities\client_Person.cs">
+      <DependentUpon>Entities.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Entities\client_PersonEmployment.cs">
+      <DependentUpon>Entities.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Entities\client_PolicyContactOverride.cs">
+      <DependentUpon>Entities.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Entities\client_PreviousInsurerRolePlayer.cs">
+      <DependentUpon>Entities.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Entities\client_QlinkReservationTransaction.cs">
+      <DependentUpon>Entities.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Entities\client_QlinkTransaction.cs">
+      <DependentUpon>Entities.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Entities\client_Rate.cs">
+      <DependentUpon>Entities.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Entities\client_Reinsurer.cs">
+      <DependentUpon>Entities.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Entities\client_RolePlayer.cs">
+      <DependentUpon>Entities.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Entities\client_RolePlayerAddress.cs">
+      <DependentUpon>Entities.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Entities\client_RolePlayerBankingDetail.cs">
+      <DependentUpon>Entities.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Entities\client_RolePlayerContact.cs">
+      <DependentUpon>Entities.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Entities\client_RolePlayerContactInformation.cs">
+      <DependentUpon>Entities.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Entities\client_RolePlayerNote.cs">
+      <DependentUpon>Entities.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Entities\client_RolePlayerPersalDetail.cs">
+      <DependentUpon>Entities.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Entities\client_RolePlayerPolicyDeclaration.cs">
+      <DependentUpon>Entities.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Entities\client_RolePlayerPolicyDeclarationDetail.cs">
+      <DependentUpon>Entities.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Entities\client_RolePlayerPolicyOnlineSubmission.cs">
+      <DependentUpon>Entities.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Entities\client_RolePlayerPolicyOnlineSubmissionDetail.cs">
+      <DependentUpon>Entities.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Entities\client_RolePlayerPolicyTransaction.cs">
+      <DependentUpon>Entities.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Entities\client_RolePlayerPolicyTransactionDetail.cs">
+      <DependentUpon>Entities.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Entities\client_RolePlayerRelation.cs">
+      <DependentUpon>Entities.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Entities\client_RolePlayerRelationLife.cs">
+      <DependentUpon>Entities.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Entities\client_RolePlayerRetirement.cs">
+      <DependentUpon>Entities.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Entities\client_RolePlayerType.cs">
+      <DependentUpon>Entities.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Entities\client_SchemeClassification.cs">
+      <DependentUpon>Entities.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Entities\client_StillBorn.cs">
+      <DependentUpon>Entities.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Entities\client_Undertaker.cs">
+      <DependentUpon>Entities.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Entities\client_UserVopdResponse.cs">
+      <DependentUpon>Entities.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Entities\client_VopdResponse.cs">
+      <DependentUpon>Entities.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Entities\common_AccidentType.cs">
+      <DependentUpon>Entities.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Entities\common_Announcement.cs">
+      <DependentUpon>Entities.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Entities\common_AnnouncementRole.cs">
+      <DependentUpon>Entities.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Entities\common_AnnouncementUserAcceptance.cs">
+      <DependentUpon>Entities.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Entities\common_ClaimTypeMapping.cs">
+      <DependentUpon>Entities.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Entities\common_CommissionBand.cs">
+      <DependentUpon>Entities.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Entities\common_DepartmentLookup.cs">
+      <DependentUpon>Entities.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Entities\common_DesignationType.cs">
+      <DependentUpon>Entities.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Entities\common_EuropAssistPremiumMatrix.cs">
+      <DependentUpon>Entities.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Entities\common_EventAction.cs">
+      <DependentUpon>Entities.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Entities\common_EventActivity.cs">
+      <DependentUpon>Entities.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Entities\common_EventAgent.cs">
+      <DependentUpon>Entities.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Entities\common_ExcelToDatabaseMap.cs">
+      <DependentUpon>Entities.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Entities\common_FeatureFlagSetting.cs">
+      <DependentUpon>Entities.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Entities\common_LookupValue.cs">
+      <DependentUpon>Entities.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Entities\common_MonthlyScheduledWorkPoolUser.cs">
+      <DependentUpon>Entities.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Entities\common_OccupationType.cs">
+      <DependentUpon>Entities.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Entities\common_OneTimePin.cs">
+      <DependentUpon>Entities.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Entities\common_OptionItem.cs">
+      <DependentUpon>Entities.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Entities\common_OptionItemValue.cs">
+      <DependentUpon>Entities.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Entities\common_OptionType.cs">
+      <DependentUpon>Entities.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Entities\common_PayeeType.cs">
+      <DependentUpon>Entities.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Entities\common_PensCareSetting.cs">
+      <DependentUpon>Entities.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Entities\common_Period.cs">
+      <DependentUpon>Entities.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Entities\common_PoolWorkFlow.cs">
+      <DependentUpon>Entities.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Entities\common_PreviousInsurer.cs">
+      <DependentUpon>Entities.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Entities\common_Priority.cs">
+      <DependentUpon>Entities.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Entities\common_Referral.cs">
+      <DependentUpon>Entities.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Entities\common_ReferralFeedback.cs">
+      <DependentUpon>Entities.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Entities\common_ReferralNatureOfQuery.cs">
+      <DependentUpon>Entities.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Entities\common_ReferralPerformanceRating.cs">
+      <DependentUpon>Entities.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Entities\common_ReferralStatusChangeAudit.cs">
+      <DependentUpon>Entities.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Entities\common_ReportViewedAudit.cs">
+      <DependentUpon>Entities.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Entities\common_ResolutionType.cs">
+      <DependentUpon>Entities.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Entities\common_ServiceBusMessage.cs">
+      <DependentUpon>Entities.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Entities\common_SlaItemTypeConfiguration.cs">
+      <DependentUpon>Entities.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Entities\common_SlaMovementAudit.cs">
+      <DependentUpon>Entities.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Entities\common_SlaStatusChangeAudit.cs">
+      <DependentUpon>Entities.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Entities\common_TmpDebtorsDetail.cs">
+      <DependentUpon>Entities.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Entities\common_UnderAssessReason.cs">
+      <DependentUpon>Entities.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Entities\common_UpfrontCommClawbackratio.cs">
+      <DependentUpon>Entities.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Entities\common_UserReminder.cs">
+      <DependentUpon>Entities.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Entities\common_Vat.cs">
+      <DependentUpon>Entities.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Entities\common_WorkItemType.cs">
+      <DependentUpon>Entities.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Entities\Entities.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Entities.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Entities\lead_Address.cs">
+      <DependentUpon>Entities.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Entities\lead_Company.cs">
+      <DependentUpon>Entities.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Entities\lead_Contact.cs">
+      <DependentUpon>Entities.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Entities\lead_ContactV2.cs">
+      <DependentUpon>Entities.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Entities\lead_Lead.cs">
+      <DependentUpon>Entities.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Entities\lead_Note.cs">
+      <DependentUpon>Entities.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Entities\lead_Person.cs">
+      <DependentUpon>Entities.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Entities\Load_BankStatementEntryStaging.cs">
+      <DependentUpon>Entities.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Entities\Load_Benefit.cs">
+      <DependentUpon>Entities.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Entities\Load_BenefitsUploadErrorAudit.cs">
+      <DependentUpon>Entities.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Entities\Load_BestmedMedicalAidData.cs">
+      <DependentUpon>Entities.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Entities\Load_BulkAllocationFile.cs">
+      <DependentUpon>Entities.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Entities\Load_BulkManualAllocation.cs">
+      <DependentUpon>Entities.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Entities\Load_BulkPaymentListing.cs">
+      <DependentUpon>Entities.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Entities\Load_CdaPolicyScheduleEmailQueue.cs">
+      <DependentUpon>Entities.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Entities\Load_ClientClass13Rates.cs">
+      <DependentUpon>Entities.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Entities\Load_ClientClass4Rates.cs">
+      <DependentUpon>Entities.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Entities\Load_ConsolidatedFuneral.cs">
+      <DependentUpon>Entities.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Entities\Load_ConsolidatedFuneralBank.cs">
+      <DependentUpon>Entities.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Entities\Load_ConsolidatedFuneralBenefit.cs">
+      <DependentUpon>Entities.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Entities\Load_ConsolidatedFuneralDeduction.cs">
+      <DependentUpon>Entities.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Entities\Load_ConsolidatedFuneralError.cs">
+      <DependentUpon>Entities.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Entities\Load_ConsolidatedFuneralFile.cs">
+      <DependentUpon>Entities.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Entities\Load_ConsolidatedFuneralInsurance.cs">
+      <DependentUpon>Entities.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Entities\Load_ConsolidatedFuneralMember.cs">
+      <DependentUpon>Entities.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Entities\Load_DiscountFile.cs">
+      <DependentUpon>Entities.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Entities\Load_DiscountFileAudit.cs">
+      <DependentUpon>Entities.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Entities\Load_DiscountFileListing.cs">
+      <DependentUpon>Entities.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Entities\Load_ExternalPartnerPolicyData.cs">
+      <DependentUpon>Entities.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Entities\Load_FuneralPremium.cs">
+      <DependentUpon>Entities.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Entities\Load_Gpa.cs">
+      <DependentUpon>Entities.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Entities\Load_GpaFile.cs">
+      <DependentUpon>Entities.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Entities\Load_GpaMember.cs">
+      <DependentUpon>Entities.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Entities\Load_GroupPolicyScheduleBatch.cs">
+      <DependentUpon>Entities.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Entities\Load_IndustryRate.cs">
+      <DependentUpon>Entities.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Entities\Load_InsuredLife.cs">
+      <DependentUpon>Entities.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Entities\Load_InsuredLivesBenefit.cs">
+      <DependentUpon>Entities.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Entities\Load_InsuredLivesCompany.cs">
+      <DependentUpon>Entities.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Entities\Load_InsuredLivesError.cs">
+      <DependentUpon>Entities.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Entities\Load_InsuredLivesMember.cs">
+      <DependentUpon>Entities.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Entities\Load_InsuredLivesMessage.cs">
+      <DependentUpon>Entities.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Entities\Load_Lead.cs">
+      <DependentUpon>Entities.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Entities\Load_LeadsProduct.cs">
+      <DependentUpon>Entities.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Entities\Load_LeadsProductWizard.cs">
+      <DependentUpon>Entities.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Entities\Load_LeadsUploadErrorAudit.cs">
+      <DependentUpon>Entities.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Entities\Load_LeadTimeTracker.cs">
+      <DependentUpon>Entities.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Entities\Load_LegalHandOverFile.cs">
+      <DependentUpon>Entities.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Entities\Load_LegalHandOverFileDetail.cs">
+      <DependentUpon>Entities.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Entities\Load_MemberCancel.cs">
+      <DependentUpon>Entities.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Entities\Load_MyValuePlu.cs">
+      <DependentUpon>Entities.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Entities\Load_MyValuePlusBank.cs">
+      <DependentUpon>Entities.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Entities\Load_MyValuePlusBenefit.cs">
+      <DependentUpon>Entities.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Entities\Load_MyValuePlusDeduction.cs">
+      <DependentUpon>Entities.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Entities\Load_MyValuePlusError.cs">
+      <DependentUpon>Entities.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Entities\Load_MyValuePlusFile.cs">
+      <DependentUpon>Entities.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Entities\Load_MyValuePlusInsurance.cs">
+      <DependentUpon>Entities.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Entities\Load_MyValuePlusMember.cs">
+      <DependentUpon>Entities.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Entities\Load_PaymentStaging.cs">
+      <DependentUpon>Entities.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Entities\Load_PaymentStagingFile.cs">
+      <DependentUpon>Entities.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Entities\Load_PostRetirementMedicalAidData.cs">
+      <DependentUpon>Entities.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Entities\Load_PostRetirementMedicalAidInvoiceDetail.cs">
+      <DependentUpon>Entities.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Entities\Load_PostRetirementMedicalAidInvoiceHeader.cs">
+      <DependentUpon>Entities.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Entities\Load_PostRetirementMedicalAnnuityData.cs">
+      <DependentUpon>Entities.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Entities\Load_PostRetirementMedicalAnnuityLatestData.cs">
+      <DependentUpon>Entities.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Entities\Load_PremiumListing.cs">
+      <DependentUpon>Entities.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Entities\Load_PremiumListingBenefit.cs">
+      <DependentUpon>Entities.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Entities\Load_PremiumListingCompany.cs">
+      <DependentUpon>Entities.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Entities\Load_PremiumListingError.cs">
+      <DependentUpon>Entities.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Entities\Load_PremiumListingFile.cs">
+      <DependentUpon>Entities.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Entities\Load_PremiumListingMember.cs">
+      <DependentUpon>Entities.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Entities\Load_PremiumListingMessage.cs">
+      <DependentUpon>Entities.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Entities\Load_PremiumListingPayment.cs">
+      <DependentUpon>Entities.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Entities\Load_PremiumListingPaymentError.cs">
+      <DependentUpon>Entities.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Entities\Load_PremiumListingPaymentFile.cs">
+      <DependentUpon>Entities.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Entities\Load_PremiumListingPolicyPremiumMovement.cs">
+      <DependentUpon>Entities.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Entities\Load_PremiumPaymentDueCreditNote.cs">
+      <DependentUpon>Entities.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Entities\Load_PremiumPaymentFileValidation.cs">
+      <DependentUpon>Entities.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Entities\Load_PremiumPaymentFileValidationContent.cs">
+      <DependentUpon>Entities.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Entities\Load_QLinkPaymentRecordStaging.cs">
+      <DependentUpon>Entities.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Entities\Load_Rate.cs">
+      <DependentUpon>Entities.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Entities\Load_RatesUploadErrorAudit.cs">
+      <DependentUpon>Entities.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Entities\Load_StageGroupRisk.cs">
+      <DependentUpon>Entities.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Entities\Load_StageGroupRiskError.cs">
+      <DependentUpon>Entities.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Entities\Load_StagePolicyIntegrationRequest.cs">
+      <DependentUpon>Entities.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Entities\Load_StagePostRetirementMedicalAid.cs">
+      <DependentUpon>Entities.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Entities\Load_StagePostRetirementMedicalAnnuity.cs">
+      <DependentUpon>Entities.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Entities\Load_ThirdPartyPolicyListing.cs">
+      <DependentUpon>Entities.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Entities\Load_ThirdPartyPolicyListingError.cs">
+      <DependentUpon>Entities.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Entities\medical_HealthCareProvider.cs">
+      <DependentUpon>Entities.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Entities\medical_HealthCareProviderAgreedTariff.cs">
+      <DependentUpon>Entities.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Entities\policy_AnnualIncrease.cs">
+      <DependentUpon>Entities.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Entities\policy_AuditLog.cs">
+      <DependentUpon>Entities.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Entities\policy_BenefitCategoryExtension.cs">
+      <DependentUpon>Entities.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Entities\policy_BenefitCategoryFuneral.cs">
+      <DependentUpon>Entities.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Entities\common_FuneralInsuredType.cs">
+      <DependentUpon>Entities.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Entities\policy_BenefitCategoryOption.cs">
+      <DependentUpon>Entities.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Entities\policy_BenefitPayroll.cs">
+      <DependentUpon>Entities.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Entities\policy_BenefitRate.cs">
+      <DependentUpon>Entities.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Entities\policy_BenefitRateDetail.cs">
+      <DependentUpon>Entities.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Entities\policy_BenefitRateSplit.cs">
+      <DependentUpon>Entities.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Entities\policy_BenefitReinsAverage.cs">
+      <DependentUpon>Entities.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Entities\policy_CategoryInsuredCover.cs">
+      <DependentUpon>Entities.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Entities\policy_ChildCover.cs">
+      <DependentUpon>Entities.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Entities\policy_Cover.cs">
+      <DependentUpon>Entities.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Entities\policy_GroupSchemePremiumRoundingExclusion.cs">
+      <DependentUpon>Entities.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Entities\policy_InsuredSumAssured.cs">
+      <DependentUpon>Entities.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Entities\policy_InsuredLifeErrorAudit.cs">
+      <DependentUpon>Entities.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Entities\policy_InsuredLifeFileAudit.cs">
+      <DependentUpon>Entities.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Entities\policy_Insurer.cs">
+      <DependentUpon>Entities.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Entities\policy_InsurerGroupSchemeAccess.cs">
+      <DependentUpon>Entities.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Entities\policy_LastViewed.cs">
+      <DependentUpon>Entities.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Entities\policy_Note.cs">
+      <DependentUpon>Entities.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Entities\policy_PersonInsuredCategory.cs">
+      <DependentUpon>Entities.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Entities\policy_Policy.cs">
+      <DependentUpon>Entities.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Entities\policy_PolicyBenefitCategory.cs">
+      <DependentUpon>Entities.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Entities\policy_PolicyBenefitDetail.cs">
+      <DependentUpon>Entities.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Entities\policy_PolicyBenefitOption.cs">
+      <DependentUpon>Entities.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Entities\policy_PolicyBinder.cs">
+      <DependentUpon>Entities.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Entities\policy_PolicyBroker.cs">
+      <DependentUpon>Entities.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Entities\policy_PolicyChangeBenefit.cs">
+      <DependentUpon>Entities.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Entities\policy_PolicyChangeProduct.cs">
+      <DependentUpon>Entities.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Entities\policy_PolicyContact.cs">
+      <DependentUpon>Entities.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Entities\policy_PolicyDetail.cs">
+      <DependentUpon>Entities.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Entities\policy_PolicyDocumentCommunicationMatrix.cs">
+      <DependentUpon>Entities.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Entities\policy_PolicyExtendedSetting.cs">
+      <DependentUpon>Entities.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Entities\policy_PolicyInsuredLife.cs">
+      <DependentUpon>Entities.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Entities\policy_PolicyInsuredLifeAdditionalBenefit.cs">
+      <DependentUpon>Entities.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Entities\policy_PolicyInvoice.cs">
+      <DependentUpon>Entities.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Entities\policy_PolicyInvoiceDetail.cs">
+      <DependentUpon>Entities.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Entities\policy_PolicyLifeExtension.cs">
+      <DependentUpon>Entities.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Entities\policy_PolicyMovement.cs">
+      <DependentUpon>Entities.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Entities\policy_PolicyNote.cs">
+      <DependentUpon>Entities.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Entities\policy_PolicyOption.cs">
+      <DependentUpon>Entities.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Entities\policy_PolicyProductDeviation.cs">
+      <DependentUpon>Entities.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Entities\policy_PolicyScheduleOwnerMap.cs">
+      <DependentUpon>Entities.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Entities\policy_PolicyStatusActionsMatrix.cs">
+      <DependentUpon>Entities.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Entities\policy_PolicyStatusChangeAudit.cs">
+      <DependentUpon>Entities.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Entities\policy_PolicyTreaty.cs">
+      <DependentUpon>Entities.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Entities\policy_PostRetirementMedicalAnnuityInvoiceDetail.cs">
+      <DependentUpon>Entities.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Entities\policy_PostRetirementMedicalAnnuityInvoiceHeader.cs">
+      <DependentUpon>Entities.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Entities\policy_PremiumListingCompany.cs">
+      <DependentUpon>Entities.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Entities\policy_PremiumListingError.cs">
+      <DependentUpon>Entities.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Entities\policy_PremiumListingErrorAudit.cs">
+      <DependentUpon>Entities.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Entities\policy_PremiumListingFileAudit.cs">
+      <DependentUpon>Entities.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Entities\policy_PremiumListingMember.cs">
+      <DependentUpon>Entities.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Entities\policy_PremiumListingPolicy.cs">
+      <DependentUpon>Entities.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Entities\policy_PremiumListingSchedule.cs">
+      <DependentUpon>Entities.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Entities\policy_PremiumPayback.cs">
+      <DependentUpon>Entities.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Entities\product_AuditLog.cs">
+      <DependentUpon>Entities.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Entities\product_Benefit.cs">
+      <DependentUpon>Entities.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Entities\product_BenefitAddBeneficiary.cs">
+      <DependentUpon>Entities.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Entities\product_BenefitBeneficiaryType.cs">
+      <DependentUpon>Entities.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Entities\product_BenefitCaptureEarning.cs">
+      <DependentUpon>Entities.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Entities\product_BenefitCompensationAmount.cs">
+      <DependentUpon>Entities.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Entities\product_BenefitCoverMemberType.cs">
+      <DependentUpon>Entities.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Entities\product_BenefitEarningsRangeCalc.cs">
+      <DependentUpon>Entities.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Entities\product_BenefitEarningsType.cs">
+      <DependentUpon>Entities.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Entities\product_BenefitMedicalReportRequired.cs">
+      <DependentUpon>Entities.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Entities\product_BenefitMedicalReportType.cs">
+      <DependentUpon>Entities.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Entities\product_BenefitNote.cs">
+      <DependentUpon>Entities.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Entities\product_BenefitOptionItemValue.cs">
+      <DependentUpon>Entities.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Entities\product_BenefitProduct.cs">
+      <DependentUpon>Entities.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Entities\product_BenefitRate.cs">
+      <DependentUpon>Entities.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Entities\product_BenefitRule.cs">
+      <DependentUpon>Entities.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Entities\product_DiscountType.cs">
+      <DependentUpon>Entities.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Entities\product_LastViewed.cs">
+      <DependentUpon>Entities.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Entities\product_Product.cs">
+      <DependentUpon>Entities.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Entities\product_ProductBankAccount.cs">
+      <DependentUpon>Entities.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Entities\product_ProductBenefitFormula.cs">
+      <DependentUpon>Entities.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Entities\product_ProductNote.cs">
+      <DependentUpon>Entities.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Entities\product_ProductOptionAllowanceType.cs">
+      <DependentUpon>Entities.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Entities\product_ProductOption.cs">
+      <DependentUpon>Entities.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Entities\product_ProductOptionBillingIntegration.cs">
+      <DependentUpon>Entities.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Entities\product_ProductOptionCoverType.cs">
+      <DependentUpon>Entities.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Entities\product_ProductOptionDependency.cs">
+      <DependentUpon>Entities.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Entities\product_ProductOptionNote.cs">
+      <DependentUpon>Entities.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Entities\product_ProductOptionOptionItemValue.cs">
+      <DependentUpon>Entities.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Entities\product_ProductOptionPaymentFrequency.cs">
+      <DependentUpon>Entities.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Entities\product_ProductOptionRule.cs">
+      <DependentUpon>Entities.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Entities\product_ProductOptionSetting.cs">
+      <DependentUpon>Entities.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Entities\product_ProductRule.cs">
+      <DependentUpon>Entities.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Entities\product_Template.cs">
+      <DependentUpon>Entities.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Entities\quote_Quote.cs">
+      <DependentUpon>Entities.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Entities\quote_QuoteAllowance.cs">
+      <DependentUpon>Entities.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Entities\quote_QuoteDetailsV2.cs">
+      <DependentUpon>Entities.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Entities\quote_QuoteV2.cs">
+      <DependentUpon>Entities.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Entities\reinsurance_CoInsurance.cs">
+      <DependentUpon>Entities.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Entities\reinsurance_Treaty.cs">
+      <DependentUpon>Entities.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="ServiceRegistry.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>ServiceRegistry.tt</DependentUpon>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <AdditionalFiles Include="..\..\..\Solution Items\RMA.DependencyValidation\ServicePlatform.layerdiagram">
+      <Link>ServicePlatform.layerdiagram</Link>
+      <Visible>False</Visible>
+    </AdditionalFiles>
+    <None Include="App.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Queries\" />
+    <Folder Include="Types\" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Configuration\Configuration.tt">
+      <Generator>TextTemplatingFileGenerator</Generator>
+      <LastGenOutput>Configuration.cs</LastGenOutput>
+    </Content>
+    <Content Include="Context\Context.tt">
+      <Generator>TextTemplatingFileGenerator</Generator>
+      <LastGenOutput>Context.cs</LastGenOutput>
+    </Content>
+    <Content Include="Entities\Entities.tt">
+      <Generator>TextTemplatingFileGenerator</Generator>
+      <LastGenOutput>Entities.cs</LastGenOutput>
+    </Content>
+    <Content Include="ServiceRegistry.tt">
+      <Generator>TextTemplatingFileGenerator</Generator>
+      <LastGenOutput>ServiceRegistry.cs</LastGenOutput>
+    </Content>
+    <None Include="ClassDiagram1.cd" />
+    <None Include="T4Templates\ModuleConfig.ttinclude" />
+  </ItemGroup>
+  <ItemGroup>
+    <Service Include="{508349B6-6B84-4DF5-91F0-309BEEBAD82D}" />
+  </ItemGroup>
+  <ItemGroup>
+    <WCFMetadata Include="Connected Services\" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\Common\RMA.Common.Database\RMA.Common.Database.csproj">
+      <Project>{5a742fb8-0332-42de-9d56-07315b898b32}</Project>
+      <Name>RMA.Common.Database</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\..\Common\RMA.Common\RMA.Common.csproj">
+      <Project>{C30FB382-556D-41E4-B987-DEA4F962059A}</Project>
+      <Name>RMA.Common</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\Admin\RMA.Service.Admin.MasterDataManager.Contracts\RMA.Service.Admin.MasterDataManager.Contracts.csproj">
+      <Project>{81ABD00C-262F-48DF-A933-63E3730F0245}</Project>
+      <Name>RMA.Service.Admin.MasterDataManager.Contracts</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\Admin\RMA.Service.Admin.MasterDataManager.Database\RMA.Service.Admin.MasterDataManager.Database.csproj">
+      <Project>{a0206676-f13e-488d-9cb1-837587225c86}</Project>
+      <Name>RMA.Service.Admin.MasterDataManager.Database</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\RMA.Service.ClientCare.Contracts\RMA.Service.ClientCare.Contracts.csproj">
+      <Project>{AEAB775A-A0FE-497B-8947-14FE5AC961D1}</Project>
+      <Name>RMA.Service.ClientCare.Contracts</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="Autofac">
+      <Version>4.9.4</Version>
+    </PackageReference>
+    <PackageReference Include="EntityFramework">
+      <Version>6.4.4</Version>
+    </PackageReference>
+    <PackageReference Include="Microsoft.CodeAnalysis.FxCopAnalyzers">
+      <Version>3.3.2</Version>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+      <PrivateAssets>all</PrivateAssets>
+    </PackageReference>
+    <PackageReference Include="Microsoft.CodeAnalysis.VersionCheckAnalyzer">
+      <Version>3.3.2</Version>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+      <PrivateAssets>all</PrivateAssets>
+    </PackageReference>
+    <PackageReference Include="Microsoft.CodeQuality.Analyzers">
+      <Version>3.3.2</Version>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+      <PrivateAssets>all</PrivateAssets>
+    </PackageReference>
+    <PackageReference Include="Microsoft.DependencyValidation.Analyzers">
+      <Version>0.11.0</Version>
+    </PackageReference>
+    <PackageReference Include="Microsoft.NetFramework.Analyzers">
+      <Version>3.3.2</Version>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+      <PrivateAssets>all</PrivateAssets>
+    </PackageReference>
+    <PackageReference Include="Microsoft.VisualStudio.Threading.Analyzers">
+      <Version>16.3.52</Version>
+    </PackageReference>
+    <PackageReference Include="Roslynator.Analyzers">
+      <Version>2.1.0</Version>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+      <PrivateAssets>all</PrivateAssets>
+    </PackageReference>
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+</Project>

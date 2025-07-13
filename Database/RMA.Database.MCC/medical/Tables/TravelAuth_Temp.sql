@@ -1,0 +1,26 @@
+﻿CREATE TABLE [medical].[TravelAuth_Temp] (
+    [TravelAuthID]            INT           IDENTITY (1, 1) NOT NULL,
+    [PersonEventID]           INT           NOT NULL,
+    [Description]             VARCHAR (200) NULL,
+    [AuthorisedAmount]        DECIMAL (18)  NULL,
+    [AuthorisedKilometers]    DECIMAL (18)  NULL,
+    [AuthorisedKilometerRate] DECIMAL (18)  NOT NULL,
+    [InvoicerTypeID]          INT           NOT NULL,
+    [InvoicerID]              INT           NOT NULL,
+    [TravelRateTypeID]        INT           NOT NULL,
+    [IsPreAuthorisation]      BIT           NOT NULL,
+    [PreAuthNumber]           VARCHAR (50)  NULL,
+    [DateAuthorisedFrom]      DATETIME      NULL,
+    [DateAuthorisedTo]        DATETIME      NULL,
+    [DateCaptured]            DATETIME      NULL,
+    [IsActive]                BIT           NOT NULL,
+    [IsDeleted]               BIT           NOT NULL,
+    [CreatedBy]               VARCHAR (50)  NOT NULL,
+    [CreatedDate]             DATETIME      NOT NULL,
+    [ModifiedBy]              VARCHAR (50)  NOT NULL,
+    [ModifiedDate]            DATETIME      NOT NULL,
+    CONSTRAINT [PK_Medical_TravelAuth_TravelAuthID] PRIMARY KEY CLUSTERED ([TravelAuthID] ASC) WITH (FILLFACTOR = 95),
+    CONSTRAINT [FK_Medical_TravelAuth_PersonEventID] FOREIGN KEY ([PersonEventID]) REFERENCES [claim].[PersonEvent] ([PersonEventId]),
+    CONSTRAINT [FK_Medical_TravelAuth_TravelRateTypeID] FOREIGN KEY ([TravelRateTypeID]) REFERENCES [claim].[TravelRateType] ([TravelRateTypeId])
+);
+

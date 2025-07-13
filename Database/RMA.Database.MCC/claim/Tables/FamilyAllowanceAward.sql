@@ -1,0 +1,27 @@
+﻿CREATE TABLE [claim].[FamilyAllowanceAward] (
+    [FamilyAllowanceAwardId] INT             IDENTITY (1, 1) NOT NULL,
+    [PersonEventId]          INT             NOT NULL,
+    [BenefitCodeId]          INT             NULL,
+    [AwardAmount]            DECIMAL (10, 2) NOT NULL,
+    [AwardVAT]               DECIMAL (10, 2) CONSTRAINT [DF_FamilyAllowanceAward_AwardVAT] DEFAULT ((0)) NOT NULL,
+    [AuthorisedAmount]       DECIMAL (10, 2) NOT NULL,
+    [AuthorisedVAT]          DECIMAL (10, 2) CONSTRAINT [DF_FamilyAllowanceAward_AuthorisedVAT] DEFAULT ((0)) NOT NULL,
+    [VATPercentage]          DECIMAL (10, 2) CONSTRAINT [DF_FamilyAllowanceAward_VATPercentage] DEFAULT ((0)) NOT NULL,
+    [VATCodeId]              INT             NOT NULL,
+    [MedicalAssessmentId]    INT             NULL,
+    [AwardPercentage]        DECIMAL (10, 2) NOT NULL,
+    [PayeeId]                INT             NOT NULL,
+    [PayeeTypeId]            INT             NOT NULL,
+    [AwardStatusId]          INT             NOT NULL,
+    [Description]            VARCHAR (250)   NOT NULL,
+    [CalcOperands]           VARCHAR (250)   NOT NULL,
+    [EarningsId]             INT             NOT NULL,
+    [CreatedBy]              VARCHAR (50)    NOT NULL,
+    [CreatedDate]            DATETIME        NOT NULL,
+    [ModifiedBy]             VARCHAR (50)    NOT NULL,
+    [ModifiedDate]           DATETIME        NOT NULL,
+    CONSTRAINT [PK_FamilyAllowanceAward] PRIMARY KEY CLUSTERED ([FamilyAllowanceAwardId] ASC),
+    CONSTRAINT [FK_FamilyAllowanceAward_Earnings] FOREIGN KEY ([EarningsId]) REFERENCES [claim].[Earnings] ([EarningId]),
+    CONSTRAINT [FK_FamilyAllowanceAward_PersonEvent] FOREIGN KEY ([PersonEventId]) REFERENCES [claim].[PersonEvent] ([PersonEventId])
+);
+

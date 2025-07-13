@@ -1,0 +1,23 @@
+﻿CREATE TABLE [medical].[PensionerInterviewFormDetails](
+	[PensionerInterviewFormDetailsId] [int] IDENTITY(1,1) NOT NULL,
+	[PensionerInterviewFormId] [int] NOT NULL,
+	[ExplainedCalculation] [bit] NOT NULL,
+	[ExplainedPayDates] [bit] NOT NULL,
+	[ExplainedProofOfLife] [bit] NOT NULL,
+	[ExplainedIncreases] [bit] NOT NULL,
+	[ExplainedMedicalTreatment] [bit] NOT NULL,
+	[ExplainedPreAuthorisation] [bit] NOT NULL,
+	[ExplainedMaintenance] [bit] NOT NULL,
+	[SuppliedBooklet] [bit] NOT NULL,
+	[SuppliedContactDetails] [bit] NOT NULL,
+	[ExplainedChronicMedication] [bit] NOT NULL,
+	[ExplainedTransportation] [bit] NOT NULL,
+	[IsActive] [bit] NOT NULL,
+	[IsDeleted] [bit] NOT NULL,
+	[CreatedBy] [varchar](50) NOT NULL,
+	[CreatedDate] [datetime] NOT NULL,
+	[ModifiedBy] [varchar](50) NOT NULL,
+	[ModifiedDate] [datetime] NOT NULL,
+    CONSTRAINT [PK_PensionerInterviewFormDetails] PRIMARY KEY CLUSTERED ([PensionerInterviewFormDetailsId] ASC) WITH (FILLFACTOR = 90, PAD_INDEX = ON),
+    CONSTRAINT [FK_PensionerInterviewFormDetails_PensionerInterviewForm] FOREIGN KEY ([PensionerInterviewFormId]) REFERENCES [medical].[PensionerInterviewForm] ([PensionerInterviewFormId])
+);

@@ -1,0 +1,20 @@
+﻿<#@ include file="../T4Templates/ModuleConfig.ttinclude" #>
+<#@ include file="../../../../Common/RMA.Common.Database/T4Templates/EF.Reverse.POCO.Core.ttinclude" #>
+<#
+	Settings.Namespace = DefaultNamespace; // Override the default namespace here
+	Settings.ElementsToGenerate = Elements.Context; //Elements.Poco | Elements.Context | Elements.UnitOfWork | Elements.PocoConfiguration;
+    Config.Init();
+
+    // Read schema
+    var factory = GetDbProviderFactory();
+    Settings.Tables = LoadTables(factory);
+    Settings.StoredProcs = LoadStoredProcs(factory);
+
+    // Generate output
+    if (Settings.Tables.Count > 0 || Settings.StoredProcs.Count > 0)
+    {
+#>
+<#@ include file="../../../../Common/RMA.Common.Database/T4Templates/EF.Reverse.POCO.ttinclude" #>
+<#  }
+    if(Settings.GenerateSeparateFiles)
+        GenerationEnvironment.Clear();#>

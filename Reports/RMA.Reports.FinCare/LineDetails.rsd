@@ -1,0 +1,84 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<SharedDataSet xmlns="http://schemas.microsoft.com/sqlserver/reporting/2010/01/shareddatasetdefinition" xmlns:rd="http://schemas.microsoft.com/SQLServer/reporting/reportdesigner">
+  <Description />
+  <DataSet Name="LineDetails">
+    <Query>
+      <DataSourceReference>FincareDataSource</DataSourceReference>
+      <DataSetParameters>
+        <DataSetParameter Name="@InvoiceId">
+          <ReadOnly>false</ReadOnly>
+          <Nullable>true</Nullable>
+          <OmitFromQuery>false</OmitFromQuery>
+          <rd:DbType>Object</rd:DbType>
+        </DataSetParameter>
+      </DataSetParameters>
+      <CommandText>DECLARE @SearchTable TABLE (InvoiceId Int, PolicyId Int, TransactionDate Date, TransactionType Varchar(50), DocumentNumber Varchar(50), Reference Varchar(50), DebitAmount Decimal(18, 2), CreditAmount Decimal(18, 2), 
+Balance Decimal(18, 2)); DECLARE @ResultTable TABLE (InvoiceId Int, PolicyId Int, TransactionDate Date, TransactionType Varchar(50), DocumentNumber Varchar(50), Reference Varchar(50), DebitAmount Decimal(18, 2), 
+CreditAmount Decimal(18, 2), Balance Decimal(18, 2), RunningBalance Decimal(18, 2)); INSERT INTO @SearchTable
+                                                                                                                                                                                            SELECT DISTINCT 
+                                                                                                                                                                                                                     Invoice.InvoiceId, Invoice.PolicyId, Transactions.TransactionDate, TransactionType.Name, Invoice.InvoiceNumber, 
+                                                                                                                                                                                                                     Transactions.BankReference, CASE WHEN TransactionTypeLink.IsDebit = 1 THEN Transactions.Amount ELSE 0 END AS DebitAmount, 
+                                                                                                                                                                                                                     CASE WHEN TransactionTypeLink.IsDebit = 0 THEN Transactions.Amount ELSE 0 END AS CreditAmount, 
+                                                                                                                                                                                                                     CASE WHEN TransactionTypeLink.IsDebit = 1 THEN Transactions.Amount ELSE - Transactions.Amount END AS Balance
+                                                                                                                                                                                            FROM            [billing].[Invoice] Invoice INNER JOIN
+                                                                                                                                                                                                                     [billing].[Transactions] Transactions ON Invoice.InvoiceId = Transactions.InvoiceId INNER JOIN
+                                                                                                                                                                                                                     [policy].[Policy] Policy ON Invoice.PolicyId = Policy.PolicyId INNER JOIN
+                                                                                                                                                                                                                     [client].[RolePlayer] RolePlayer ON Policy.PolicyOwnerId = RolePlayer.RolePlayerId INNER JOIN
+                                                                                                                                                                                                                     [common].[TransactionType] TransactionType ON Transactions.TransactionTypeId = TransactionType.Id INNER JOIN
+                                                                                                                                                                                                                     [billing].[TransactionTypeLink] TransactionTypeLink ON Transactions.TransactionTypeLinkId = TransactionTypeLink.Id LEFT JOIN
+                                                                                                                                                                                                                     [client].[RolePlayerAddress] RolePlayerAddress ON RolePlayerAddress.RolePlayerId = RolePlayer.RolePlayerId
+                                                                                                                                                                                            WHERE        Invoice.InvoiceId = @InvoiceId
+                                                                                                                                                                                                                         INSERT        
+                                                                                                                                                                                                                          INTO               @ResultTable
+                                                                                                                                                                                                                                                       SELECT        InvoiceId, PolicyId, TransactionDate, TransactionType, DocumentNumber, Reference, DebitAmount, 
+                                                                                                                                                                                                                                                                                 CreditAmount, Balance, SUM(Balance) OVER (ORDER BY TransactionDate) AS RunningBalance
+                                                                                                                                                                                                                     FROM            @SearchTable
+                                                                                                                                                                                                                                                   SELECT        InvoiceId, PolicyId, TransactionDate, TransactionType, DocumentNumber, Reference, DebitAmount, CreditAmount, 
+                                                                                                                                                                                                                                                                             Balance, RunningBalance
+                                                                                                                                                                                                                                                    FROM            @ResultTable</CommandText>
+      <rd:UseGenericDesigner>true</rd:UseGenericDesigner>
+    </Query>
+    <Fields>
+      <Field Name="InvoiceId">
+        <DataField>InvoiceId</DataField>
+        <rd:TypeName>System.Int32</rd:TypeName>
+      </Field>
+      <Field Name="PolicyId">
+        <DataField>PolicyId</DataField>
+        <rd:TypeName>System.Int32</rd:TypeName>
+      </Field>
+      <Field Name="TransactionDate">
+        <DataField>TransactionDate</DataField>
+        <rd:TypeName>System.DateTime</rd:TypeName>
+      </Field>
+      <Field Name="TransactionType">
+        <DataField>TransactionType</DataField>
+        <rd:TypeName>System.String</rd:TypeName>
+      </Field>
+      <Field Name="DocumentNumber">
+        <DataField>DocumentNumber</DataField>
+        <rd:TypeName>System.String</rd:TypeName>
+      </Field>
+      <Field Name="Reference">
+        <DataField>Reference</DataField>
+        <rd:TypeName>System.String</rd:TypeName>
+      </Field>
+      <Field Name="DebitAmount">
+        <DataField>DebitAmount</DataField>
+        <rd:TypeName>System.Decimal</rd:TypeName>
+      </Field>
+      <Field Name="CreditAmount">
+        <DataField>CreditAmount</DataField>
+        <rd:TypeName>System.Decimal</rd:TypeName>
+      </Field>
+      <Field Name="Balance">
+        <DataField>Balance</DataField>
+        <rd:TypeName>System.Decimal</rd:TypeName>
+      </Field>
+      <Field Name="RunningBalance">
+        <DataField>RunningBalance</DataField>
+        <rd:TypeName>System.Decimal</rd:TypeName>
+      </Field>
+    </Fields>
+  </DataSet>
+</SharedDataSet>

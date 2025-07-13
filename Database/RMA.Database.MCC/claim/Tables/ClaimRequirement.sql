@@ -1,0 +1,27 @@
+﻿CREATE TABLE [claim].[ClaimRequirement] (
+    [ClaimRequirementId]     INT            IDENTITY (1, 1) NOT NULL,
+    [ClaimId]                INT            NOT NULL,
+    [PersonEventId]          INT            NOT NULL,
+    [WorkflowNotificationId] INT            NULL,
+    [CategoryId]             INT            NOT NULL,
+    [IsOptional]             BIT            CONSTRAINT [DF_ClaimRequirement_IsOptional] DEFAULT ((0)) NOT NULL,
+    [Instruction]            VARCHAR (2048) NULL,
+    [Result]                 VARCHAR (2048) NULL,
+    [DateOpened]             DATETIME       NOT NULL,
+    [DateClosed]             DATETIME       NULL,
+    [IsMemberVisible]        BIT            CONSTRAINT [DF_ClaimRequirement_IsMemberVisible] DEFAULT ((0)) NOT NULL,
+    [IsAssurerVisible]       BIT            CONSTRAINT [DF_ClaimRequirement_IsAssurerVisible] DEFAULT ((0)) NOT NULL,
+    [RequirementXML]         VARCHAR (MAX)  NULL,
+    [IsManuallyAdded]        BIT            CONSTRAINT [DF_ClaimRequirement_IsManuallyAdded] DEFAULT ((0)) NULL,
+    [isActive]               BIT            NOT NULL,
+    [isDeleted]              BIT            NOT NULL,
+    [CreatedBy]              VARCHAR (100)  NOT NULL,
+    [CreatedDate]            DATETIME       NOT NULL,
+    [ModifiedBy]             VARCHAR (100)  NOT NULL,
+    [ModifiedDate]           DATETIME       NOT NULL,
+    CONSTRAINT [PK__ClaimReq__E44F03AFB173BB1D] PRIMARY KEY CLUSTERED ([ClaimRequirementId] ASC),
+    CONSTRAINT [FK_ClaimRequirement_Claim] FOREIGN KEY ([ClaimId]) REFERENCES [claim].[Claim] ([ClaimId]),
+    CONSTRAINT [FK_ClaimRequirement_ClaimRequirementCategory] FOREIGN KEY ([CategoryId]) REFERENCES [claim].[ClaimRequirementCategory] ([ClaimRequirementCategoryId]),
+    CONSTRAINT [FK_ClaimRequirement_PersonEvent] FOREIGN KEY ([PersonEventId]) REFERENCES [claim].[PersonEvent] ([PersonEventId])
+);
+

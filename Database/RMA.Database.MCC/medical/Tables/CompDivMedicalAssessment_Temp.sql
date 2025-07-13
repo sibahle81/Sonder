@@ -1,0 +1,27 @@
+﻿CREATE TABLE [medical].[CompDivMedicalAssessment_Temp] (
+    [CompDivMedicalAssessmentID] INT                                                  IDENTITY (1, 1) NOT NULL,
+    [AssessedPD]                 DECIMAL (18)                                         NULL,
+    [MedicalReportID]            INT                                                  NULL,
+    [FinalDiagnosis]             NVARCHAR (2048) MASKED WITH (FUNCTION = 'default()') NULL,
+    [AssessedByName]             NVARCHAR (50) MASKED WITH (FUNCTION = 'default()')   NULL,
+    [AssessedByUser]             INT                                                  NULL,
+    [AssessmentDate]             DATETIME                                             NULL,
+    [IsAuthorised]               BIT                                                  NULL,
+    [AuthorisedUserID]           INT                                                  NULL,
+    [RawPD]                      DECIMAL (18)                                         NOT NULL,
+    [HearingAssessmentID]        INT                                                  NULL,
+    [AssessmentCentre]           NVARCHAR (50)                                        NULL,
+    [AssessmentLevelID]          INT                                                  NULL,
+    [PersonEventID]              INT                                                  NULL,
+    [LastChangedBy]              VARCHAR (30)                                         NULL,
+    [LastChangedDate]            DATETIME                                             NULL,
+    [IsActive]                   BIT                                                  NOT NULL,
+    [IsDeleted]                  BIT                                                  NOT NULL,
+    [CreatedBy]                  VARCHAR (50)                                         NOT NULL,
+    [CreatedDate]                DATETIME                                             NOT NULL,
+    [ModifiedBy]                 VARCHAR (50)                                         NOT NULL,
+    [ModifiedDate]               DATETIME                                             NOT NULL,
+    CONSTRAINT [PK_Compensation_CompDivMedicalAssessment_CompDivMedicalAssessmentID] PRIMARY KEY CLUSTERED ([CompDivMedicalAssessmentID] ASC) WITH (FILLFACTOR = 95),
+    CONSTRAINT [FK_Medical_CompDivMedicalAssessment_HearingAssessmentID] FOREIGN KEY ([HearingAssessmentID]) REFERENCES [claim].[HearingAssessment] ([HearingAssessmentId])
+);
+

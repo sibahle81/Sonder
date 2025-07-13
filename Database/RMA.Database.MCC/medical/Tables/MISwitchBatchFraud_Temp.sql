@@ -1,0 +1,25 @@
+﻿CREATE TABLE [medical].[MISwitchBatchFraud_Temp] (
+    [Id]                          INT            IDENTITY (1, 1) NOT NULL,
+    [MISwitchBatchInvoiceIdOne]   INT            NULL,
+    [MiSwitchBatchInvoiceIdTwo]   INT            NULL,
+    [MedicalInvoiceIdOne]         INT            NULL,
+    [MedicalInvoiceIdTwo]         INT            NULL,
+    [Reason]                      VARCHAR (2000) NULL,
+    [DateIdentified]              DATETIME       NULL,
+    [DateVerified]                DATETIME       NULL,
+    [InvoiceOneStatus]            INT            NULL,
+    [InvoiceTwoStatus]            INT            NULL,
+    [FraudType]                   INT            NULL,
+    [MedicalServiceProviderIdOne] INT            NULL,
+    [MedicalServiceProviderIdTwo] INT            NULL,
+    [ClaimNumberOne]              VARCHAR (50)   NULL,
+    [ClaimNumberTwo]              VARCHAR (50)   NULL,
+    [IsActive]                    BIT            DEFAULT ((1)) NOT NULL,
+    [IsDeleted]                   BIT            DEFAULT ((0)) NOT NULL,
+    [CreatedBy]                   VARCHAR (50)   NOT NULL,
+    [CreatedDate]                 DATETIME       DEFAULT (getdate()) NOT NULL,
+    [ModifiedBy]                  VARCHAR (50)   NOT NULL,
+    [ModifiedDate]                DATETIME       NOT NULL,
+    CONSTRAINT [PK_medical_MISwitchBatchFraud] PRIMARY KEY CLUSTERED ([Id] ASC) WITH (FILLFACTOR = 90, PAD_INDEX = ON)
+);
+

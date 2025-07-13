@@ -1,0 +1,28 @@
+﻿CREATE TABLE [medical].[ProsthetistQuote_Temp] (
+    [ProsthetistQuoteId]    INT            IDENTITY (1, 1) NOT NULL,
+    [RolePlayerId]          INT            NOT NULL,
+    [ProsthetistId]         INT            NULL,
+    [PensionCaseId]         INT            NULL,
+    [ClaimId]               INT            NOT NULL,
+    [QuotationAmount]       MONEY          NULL,
+    [Comments]              VARCHAR (2000) NULL,
+    [ProstheticTypeId]      INT            NOT NULL,
+    [ProsTypeSpecification] VARCHAR (200)  NULL,
+    [IsApproved]            BIT            NULL,
+    [ReviewedBy]            INT            NULL,
+    [ReviewedDateTime]      DATETIME       NULL,
+    [ReviewedComments]      VARCHAR (200)  NULL,
+    [SignedBy]              INT            NULL,
+    [IsSentForReview]       BIT            NULL,
+    [QuotationTypeID]       INT            NULL,
+    [IsRejected]            BIT            NULL,
+    [IsAutoApproved]        BIT            NULL,
+    [IsRequestInfo]         BIT            NULL,
+    [IsActive]              BIT            NOT NULL,
+    [IsDeleted]             BIT            NOT NULL,
+    [CreatedBy]             VARCHAR (50)   NOT NULL,
+    [CreatedDate]           DATETIME       NOT NULL,
+    [ModifiedBy]            VARCHAR (50)   NOT NULL,
+    [ModifiedDate]          DATETIME       NOT NULL
+);
+

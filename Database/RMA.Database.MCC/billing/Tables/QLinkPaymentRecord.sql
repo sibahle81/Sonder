@@ -1,0 +1,28 @@
+﻿CREATE TABLE [billing].[QLinkPaymentRecord] (
+    [QLinkMonthlyPremiumEntryId] INT           IDENTITY (1, 1) NOT NULL,
+    [SalaryMonth]                NVARCHAR (10) NOT NULL,
+    [OperationType]              NVARCHAR (10) NOT NULL,
+    [Payroll]                    NVARCHAR (10) NOT NULL,
+    [EmployeeNumber]             NVARCHAR (50) NOT NULL,
+    [Surname]                    NVARCHAR (50) NOT NULL,
+    [Initials]                   NVARCHAR (4)  NOT NULL,
+    [IdNumber]                   NVARCHAR (13) NOT NULL,
+    [ReferenceNumber]            NVARCHAR (50) NOT NULL,
+    [Amount]                     INT           NOT NULL,
+    [StartDate]                  NVARCHAR (10) NOT NULL,
+    [EndDate]                    NVARCHAR (10) NOT NULL,
+    [DeductionType]              NVARCHAR (10) NOT NULL,
+    [Department]                 NVARCHAR (50) NOT NULL,
+    [Location]                   NVARCHAR (50) NOT NULL,
+    [BranchCode]                 NVARCHAR (10) NOT NULL,
+    [AppointmentCode]            NVARCHAR (10) NOT NULL,
+    [Partner]                    NVARCHAR (50) NOT NULL,
+    [IsActive]                   BIT           CONSTRAINT [DF_QLinkPaymentRecord_IsActive] DEFAULT ((1)) NOT NULL,
+    [IsDeleted]                  BIT           NOT NULL,
+    [ModifiedBy]                 VARCHAR (50)  NOT NULL,
+    [ModifiedDate]               DATETIME      NOT NULL,
+    [CreatedBy]                  VARCHAR (50)  NOT NULL,
+    [CreatedDate]                DATETIME      NOT NULL,
+    CONSTRAINT [PK_QLinkMonthlyPremiumEntry] PRIMARY KEY CLUSTERED ([QLinkMonthlyPremiumEntryId] ASC)
+);
+

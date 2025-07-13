@@ -1,0 +1,3 @@
+﻿CREATE SCHEMA [Imaging]
+   AUTHORIZATION [dbo];
+

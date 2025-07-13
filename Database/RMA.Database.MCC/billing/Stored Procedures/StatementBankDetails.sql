@@ -1,0 +1,18 @@
+﻿ CREATE  PROCEDURE [billing].[StatementBankDetails] 
+	@invoiceId int 
+AS
+BEGIN
+SELECT        TOP (1) Bank.Name AS BankName, Branch.Name AS BranchName, Branch.Code AS BranchCode, BankAccount.AccountNumber AS AccNumber
+FROM            policy.Policy AS Policy 
+				INNER JOIN client.FinPayee AS RolePlayer ON Policy.PolicyOwnerId = RolePlayer.RolePlayerId 
+				INNER JOIN common.Industry AS Industry ON RolePlayer.IndustryId = Industry.Id 
+				INNER JOIN common.IndustryClass AS Class ON Industry.IndustryClassId = Class.Id 
+				INNER JOIN product.ProductOption AS ProductOption ON Policy.ProductOptionId = ProductOption.Id 
+				INNER JOIN product.Product AS Product ON ProductOption.ProductId = Product.Id 
+				INNER JOIN product.ProductBankAccount AS ProductBankAccount ON ProductBankAccount.IndustryClassId = Class.Id AND Product.Id =ProductBankAccount.ProductId
+				INNER JOIN common.BankAccount AS BankAccount ON ProductBankAccount.BankAccountId = BankAccount.Id 
+				INNER JOIN common.Bank AS Bank ON BankAccount.BankId = Bank.Id 
+				INNER JOIN common.BankBranch AS Branch ON BankAccount.BranchId = Branch.Id
+WHERE        (Policy.PolicyId = @invoiceId)
+END
+GO

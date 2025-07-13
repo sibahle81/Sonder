@@ -1,0 +1,1 @@
+﻿CREATE SYNONYM [compcare].[ServiceBusMessage] FOR [AZT-COMP-SQL-01\Dev].[RMATest].common.ServiceBusMessage

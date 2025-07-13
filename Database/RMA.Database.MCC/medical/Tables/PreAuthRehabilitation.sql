@@ -1,0 +1,28 @@
+﻿CREATE TABLE [medical].[PreAuthRehabilitation] (
+    [PreAuthRehabilitationId]         INT                                               IDENTITY (1, 1) NOT NULL,
+    [PreAuthId]                       INT                                               NOT NULL,
+    [IsNewRequest]                    BIT                                               NOT NULL,
+    [TherapistName]                   VARCHAR (80)                                      NOT NULL,
+    [InitialConsultationDate]         DATETIME                                          NOT NULL,
+    [TreatmentFrequency]              VARCHAR (25)                                      NULL,
+    [TreatmentDuration]               VARCHAR (25)                                      NULL,
+    [TreatmentSessionCount]           INT                                               NULL,
+    [TreatmentSessionCompletedCount]  INT                                               NULL,
+    [TreatmentSessionAdditionalCount] INT                                               NULL,
+    [ExtensionAuthFromDate]           DATETIME                                          NULL,
+    [ExtensionAuthToDate]             DATETIME                                          NULL,
+    [ReferringDoctorId]               INT                                               NULL,
+    [ReferringDoctorContact]          VARCHAR (30) MASKED WITH (FUNCTION = 'default()') NULL,
+    [RehabilitationGoal]              VARCHAR (2048)                                    NOT NULL,
+    [RequestStatus]                   BIT                                               DEFAULT ((0)) NOT NULL,
+    [IsActive]                        BIT                                               NOT NULL,
+    [IsDeleted]                       BIT                                               NOT NULL,
+    [CreatedBy]                       VARCHAR (50)                                      NOT NULL,
+    [CreatedDate]                     DATETIME                                          NOT NULL,
+    [ModifiedBy]                      VARCHAR (50)                                      NOT NULL,
+    [ModifiedDate]                    DATETIME                                          NOT NULL,
+    PRIMARY KEY CLUSTERED ([PreAuthRehabilitationId] ASC) WITH (FILLFACTOR = 90, PAD_INDEX = ON),
+    CONSTRAINT [FK_medical_PreAuthRehabilitation_PreAuthID] FOREIGN KEY ([PreAuthId]) REFERENCES [medical].[PreAuthorisation] ([PreAuthId]),
+    CONSTRAINT [FK_medical_PreAuthRehabilitation_ReferringDoctorId] FOREIGN KEY ([ReferringDoctorId]) REFERENCES [medical].[HealthCareProvider] ([RolePlayerId])
+);
+

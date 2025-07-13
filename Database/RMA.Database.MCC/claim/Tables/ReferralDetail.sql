@@ -1,0 +1,25 @@
+﻿CREATE TABLE [claim].[ReferralDetail] (
+    [ReferralDetailID]            INT            IDENTITY (1, 1) NOT NULL,
+    [ClaimId]                     INT            NOT NULL,
+    [OwnerID]                     INT            NOT NULL,
+    [ReferralQueryTypeID]         INT            NOT NULL,
+    [ReferralQuery]               VARCHAR (2048) NOT NULL,
+    [QueryFeedBack]               VARCHAR (2048) NULL,
+    [FeedbackDate]                DATETIME       NULL,
+    [ReceivedDate]                DATETIME       NOT NULL,
+    [ReferralRatingID]            INT            NULL,
+    [ReferrerUser]                INT            NOT NULL,
+    [WorkFlowNotificationID]      INT            NULL,
+    [ReferralStatusID]            TINYINT        NOT NULL,
+    [isActive]                    BIT            DEFAULT ((0)) NOT NULL,
+    [ContactCenterNotificationID] INT            NULL,
+    [ResolutionTypeId]            INT            NULL,
+    [ContextualData]              VARCHAR (2048) NULL,
+    [CreatedBy]                   VARCHAR (100)  NOT NULL,
+    [CreatedDate]                 DATETIME       DEFAULT (getdate()) NOT NULL,
+    [ModifiedBy]                  VARCHAR (100)  NOT NULL,
+    [ModifiedDate]                DATETIME       DEFAULT (getdate()) NOT NULL,
+    [ReferredToUserName]          VARCHAR (100)  NULL,
+    CONSTRAINT [PK_Claim_ReferralDetail_ReferralDetailID ] PRIMARY KEY CLUSTERED ([ReferralDetailID] ASC)
+);
+

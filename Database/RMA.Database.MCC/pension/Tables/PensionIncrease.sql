@@ -1,0 +1,26 @@
+﻿CREATE TABLE [pension].[PensionIncrease] (
+    [Id]                        INT          IDENTITY (1, 1) NOT NULL,
+    [GazetteId]                 INT          NOT NULL,
+    [LegislativeValue]          INT          NOT NULL,
+    [IncreaseType]              INT          NOT NULL,
+    [PensionIncreaseAmountType] INT          NOT NULL,
+    [Percentage]                INT          NOT NULL,
+    [PensionIncreaseStatusId]   INT          NOT NULL,
+    [Amount]                    DECIMAL (18) NOT NULL,
+    [FromAccidentDate]          DATETIME     NOT NULL,
+    [ToAccidentDate]            DATETIME     NOT NULL,
+    [EffectiveDate]             DATETIME     NOT NULL,
+    [Description]               VARCHAR (50) NOT NULL,
+    [IsActive]                  BIT          NOT NULL,
+    [IsDeleted]                 BIT          NOT NULL,
+    [CreatedBy]                 VARCHAR (50) NOT NULL,
+    [CreatedDate]               DATETIME     NOT NULL,
+    [ModifiedBy]                VARCHAR (50) NOT NULL,
+    [ModifiedDate]              DATETIME     NOT NULL,
+    CONSTRAINT [PK_PensionIncrease] PRIMARY KEY CLUSTERED ([Id] ASC),
+    CONSTRAINT [FK_PensionIncrease_PensionIncreaseAmountType] FOREIGN KEY ([PensionIncreaseAmountType]) REFERENCES [common].[PensionIncreaseAmountType] ([Id]),
+    CONSTRAINT [FK_PensionIncrease_PensionIncreaseLegislativeValue] FOREIGN KEY ([LegislativeValue]) REFERENCES [common].[PensionIncreaseLegislativeValue] ([Id]),
+    CONSTRAINT [FK_PensionIncrease_PensionIncreaseStatus] FOREIGN KEY ([PensionIncreaseStatusId]) REFERENCES [common].[PensionIncreaseStatus] ([Id]),
+    CONSTRAINT [FK_PensionIncrease_PensionIncreaseType] FOREIGN KEY ([IncreaseType]) REFERENCES [common].[PensionIncreaseType] ([Id])
+);
+

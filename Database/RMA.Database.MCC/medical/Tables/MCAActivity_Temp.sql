@@ -1,0 +1,25 @@
+﻿CREATE TABLE [medical].[MCAActivity_Temp] (
+    [MedicalActivityId] INT                                                  IDENTITY (1, 1) NOT NULL,
+    [MCAId]             INT                                                  NOT NULL,
+    [StartDate]         DATETIME                                             NOT NULL,
+    [Location]          VARCHAR (50) MASKED WITH (FUNCTION = 'default()')    NULL,
+    [StartTime]         TIME (7)                                             NULL,
+    [EndTime]           TIME (7)                                             NULL,
+    [Description]       NVARCHAR (2048) MASKED WITH (FUNCTION = 'default()') NOT NULL,
+    [IsAllDayEvent]     BIT                                                  NULL,
+    [IsRecurrence]      BIT                                                  NULL,
+    [IsWorkShop]        BIT                                                  NULL,
+    [LastChangedBy]     VARCHAR (50)                                         NULL,
+    [LastChangedDate]   DATETIME                                             NULL,
+    [EndDate]           DATETIME                                             NOT NULL,
+    [IsOutOfOffice]     BIT                                                  NULL,
+    [RecurrenceType]    TINYINT                                              NULL,
+    [IsActive]          BIT                                                  NOT NULL,
+    [IsDeleted]         BIT                                                  NOT NULL,
+    [CreatedBy]         VARCHAR (50)                                         NOT NULL,
+    [CreatedDate]       DATETIME                                             NOT NULL,
+    [ModifiedBy]        VARCHAR (50)                                         NOT NULL,
+    [ModifiedDate]      DATETIME                                             NOT NULL,
+    CONSTRAINT [PK_MCAActivity] PRIMARY KEY CLUSTERED ([MedicalActivityId] ASC) WITH (FILLFACTOR = 95)
+);
+

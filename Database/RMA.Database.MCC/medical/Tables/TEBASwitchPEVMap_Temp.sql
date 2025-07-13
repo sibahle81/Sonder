@@ -1,0 +1,26 @@
+﻿CREATE TABLE [medical].[TEBASwitchPEVMap_Temp] (
+    [TEBASwitchPEVMapId]  INT           IDENTITY (1, 1) NOT NULL,
+    [TEBASwitchBatchId]   INT           NOT NULL,
+    [SwitchBatchNo]       VARCHAR (50)  NULL,
+    [SPInvoiceNumber]     VARCHAR (50)  NULL,
+    [ServiceProviderName] VARCHAR (50)  NULL,
+    [CompanyRegNos]       VARCHAR (50)  NULL,
+    [SPAccountNumber]     VARCHAR (50)  NULL,
+    [InvoiceDate]         VARCHAR (50)  NULL,
+    [Surname]             VARCHAR (50)  NULL,
+    [FirstName]           VARCHAR (50)  NULL,
+    [ClaimFileRefNumber]  VARCHAR (50)  NULL,
+    [ServiceDate]         VARCHAR (50)  NULL,
+    [InclInvoiceTotal]    VARCHAR (50)  NULL,
+    [PossiblePEV]         INT           NOT NULL,
+    [PossibleEvent]       INT           NOT NULL,
+    [IsActive]            TINYINT       NOT NULL,
+    [IsDeleted]           BIT           NOT NULL,
+    [CreatedBy]           VARCHAR (50)  NOT NULL,
+    [CreatedDate]         DATETIME      NOT NULL,
+    [ModifiedBy]          VARCHAR (50)  NOT NULL,
+    [ModifiedDate]        DATETIME      NOT NULL,
+    [SwitchTransactionNo] VARCHAR (200) NULL,
+    CONSTRAINT [PK_medical_TEBASwitchPEVMap_Temp_TEBASwitchPEVMapId] PRIMARY KEY CLUSTERED ([TEBASwitchPEVMapId] ASC) WITH (FILLFACTOR = 95)
+);
+
