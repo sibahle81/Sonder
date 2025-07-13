@@ -1,0 +1,622 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">x64</Platform>
+    <ProjectGuid>{AEAB775A-A0FE-497B-8947-14FE5AC961D1}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>RMA.Service.ClientCare.Contracts</RootNamespace>
+    <AssemblyName>RMA.Service.ClientCare.Contracts</AssemblyName>
+    <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <Deterministic>true</Deterministic>
+    <NuGetPackageImportStamp>
+    </NuGetPackageImportStamp>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x64'">
+    <DebugSymbols>true</DebugSymbols>
+    <OutputPath>bin\x64\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <DebugType>full</DebugType>
+    <PlatformTarget>x64</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>..\..\..\Solution Items\RMA.ruleset</CodeAnalysisRuleSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x64'">
+    <OutputPath>bin\x64\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <Optimize>true</Optimize>
+    <DebugType>pdbonly</DebugType>
+    <PlatformTarget>x64</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>..\..\..\Solution Items\RMA.ruleset</CodeAnalysisRuleSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|AnyCPU'">
+    <DebugSymbols>true</DebugSymbols>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <DebugType>full</DebugType>
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>..\..\..\Solution Items\RMA.ruleset</CodeAnalysisRuleSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|AnyCPU'">
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <Optimize>true</Optimize>
+    <DebugType>pdbonly</DebugType>
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>..\..\..\Solution Items\RMA.ruleset</CodeAnalysisRuleSet>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="System" />
+    <Reference Include="System.ComponentModel.DataAnnotations" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Attributes\ImportFieldParameterAttribute.cs" />
+    <Compile Include="Entities\Broker\BrokerageModel.cs" />
+    <Compile Include="Entities\Broker\BrokerageAddress.cs" />
+    <Compile Include="Entities\Broker\BrokerageBankAccount.cs" />
+    <Compile Include="Entities\Broker\BrokerageContact.cs" />
+    <Compile Include="Entities\Broker\BrokerageFscaLicenseCategory.cs" />
+    <Compile Include="Entities\Broker\BrokerageRepresentativeRequest.cs" />
+    <Compile Include="Entities\Broker\BrokerageRepresentative.cs" />
+    <Compile Include="Entities\Broker\BrokerageProductOption.cs" />
+    <Compile Include="Entities\Broker\BrokerPartnership.cs" />
+    <Compile Include="Entities\Broker\FscaLicenseCategory.cs" />
+    <Compile Include="Entities\Broker\LinkAgent.cs" />
+    <Compile Include="Entities\Broker\RepresentativeBankAccount.cs" />
+    <Compile Include="Entities\Broker\RepresentativeLicenseCategory.cs" />
+    <Compile Include="Entities\Broker\RepresentativeModel.cs" />
+    <Compile Include="Entities\Broker\RepresentativeQualification.cs" />
+    <Compile Include="Entities\Broker\RepresentativeFscaLicenseCategory.cs" />
+    <Compile Include="Entities\Broker\BrokerConsultant.cs" />
+    <Compile Include="Entities\Client\ConsolidatedFuneralMember.cs" />
+    <Compile Include="Entities\Client\PolicyBankVerificationDetails.cs" />
+    <Compile Include="Entities\Lead\LeadContactV2.cs" />
+    <Compile Include="Entities\Lead\LeadUploadServiceBusMessage.cs" />
+    <Compile Include="Entities\Member\InflationPercentage.cs" />
+    <Compile Include="Entities\Member\LetterOfGoodStanding.cs" />
+    <Compile Include="Entities\Member\CloseRenewalPeriodServiceBusMessage.cs" />
+    <Compile Include="Entities\Member\MinimumAllowablePremium.cs" />
+    <Compile Include="Entities\Member\LoadRate.cs" />
+    <Compile Include="Entities\Member\ComplianceResult.cs" />
+    <Compile Include="Entities\Member\LiveInAllowance.cs" />
+    <Compile Include="Entities\Member\EmployeeSearchRequest.cs" />
+    <Compile Include="Entities\Member\RolePlayerPolicyOnlineSubmissionDetail.cs" />
+    <Compile Include="Entities\Member\RolePlayerPolicyOnlineSubmission.cs" />
+    <Compile Include="Entities\Member\RolePlayerPolicyTransactionDetail.cs" />
+    <Compile Include="Entities\Member\RolePlayerPolicyTransaction.cs" />
+    <Compile Include="Entities\Member\RolePlayerPolicyDeclarationDetail.cs" />
+    <Compile Include="Entities\Member\RolePlayerPolicyDeclaration.cs" />
+    <Compile Include="Entities\Policy\AnnualIncrease.cs" />
+    <Compile Include="Entities\Policy\BenefitCategoryFuneral.cs" />
+    <Compile Include="Entities\Policy\BenefitPayroll.cs" />
+    <Compile Include="Entities\Policy\BillingPolicyChangeDetail.cs" />
+    <Compile Include="Entities\Policy\BillingPolicyChangeDuration.cs" />
+    <Compile Include="Entities\Policy\BillingPolicyChangeMessage.cs" />
+    <Compile Include="Entities\Policy\CategoryInsuredCover.cs" />
+    <Compile Include="Entities\Policy\CompanyStopOrderDetail.cs" />
+    <Compile Include="Entities\Policy\DeathClaimDocument.cs" />
+    <Compile Include="Entities\Policy\DiscountFile.cs" />
+    <Compile Include="Entities\Policy\DiscountFileListing.cs" />
+    <Compile Include="Entities\Policy\CompanyStopOrder.cs" />
+    <Compile Include="Entities\Policy\ExternalPartnerPolicyData.cs" />
+    <Compile Include="Entities\Policy\FuneralPolicyPremiumCalculation.cs" />
+    <Compile Include="Entities\Policy\GroupRisk\BenefitCategoryInsured.cs" />
+    <Compile Include="Entities\Policy\GroupRisk\BenefitReinsuranceAverageModel.cs" />
+    <Compile Include="Entities\Policy\GroupRisk\EmployeeInsuredCategoryModel.cs" />
+    <Compile Include="Entities\Policy\GroupRisk\EmployeeOtherInsuredlifeModel.cs" />
+    <Compile Include="Entities\Policy\GroupRisk\GroupRiskBenefitPayroll.cs" />
+    <Compile Include="Entities\Policy\GroupRisk\InsuredSumAssured.cs" />
+    <Compile Include="Entities\Policy\GroupRisk\PersonInsuredCategory.cs" />
+    <Compile Include="Entities\Policy\GroupRisk\PolicyBenefitRate.cs" />
+    <Compile Include="Entities\Policy\GroupSchemePremiumRoundingExclusion.cs" />
+    <Compile Include="Entities\Policy\Integrations\Request\PolicyCommunicationRequest.cs" />
+    <Compile Include="Entities\Policy\PolicyBenefitCategoryOption.cs" />
+    <Compile Include="Entities\Policy\PolicyBenefitOption.cs" />
+    <Compile Include="Entities\Policy\PolicyCommunicationUnfulfilledDetail.cs" />
+    <Compile Include="Entities\Policy\PolicyDocumentContacts.cs" />
+    <Compile Include="Entities\Policy\PolicyDocumentTemplate.cs" />
+    <Compile Include="Entities\Policy\PolicyMessageTemplate.cs" />
+    <Compile Include="Entities\Policy\PolicyOption.cs" />
+    <Compile Include="Entities\Policy\PolicyTemplate.cs" />
+    <Compile Include="Entities\Policy\PostRetirementMedicalAnnuityInvoiceHeader.cs" />
+    <Compile Include="Entities\Product\BenefitEarningsRangeCalcs.cs" />
+    <Compile Include="Entities\Product\BenefitOptionItemValue.cs" />
+    <Compile Include="Entities\Policy\OptionItem.cs" />
+    <Compile Include="Entities\Product\BenefitOptionItemValueResponse.cs" />
+    <Compile Include="Entities\Product\ProductBenefitFormula.cs" />
+    <Compile Include="Entities\Product\ProductOptionItemValuesResponse.cs" />
+    <Compile Include="Enums\PolicySchedule\ScheduleRecipientTypeEnum.cs" />
+    <Compile Include="Enums\Product\ProductOptionCodeEnum.cs" />
+    <Compile Include="Entities\Policy\GroupRisk\GroupRiskEmployerPremiumRateModel.cs" />
+    <Compile Include="Entities\Policy\GroupRisk\PolicyPremiumRateDetailModel.cs" />
+    <Compile Include="Entities\Policy\GroupRisk\PolicyBenefitCategory .cs" />
+    <Compile Include="Entities\Policy\GroupRisk\PolicyBenefitDetail.cs" />
+    <Compile Include="Entities\Policy\GroupRisk\PolicyDetail.cs" />
+    <Compile Include="Entities\Policy\GroupRisk\PolicyTreaty.cs" />
+    <Compile Include="Entities\Policy\GroupRisk\PremiumRateComponentModel.cs" />
+    <Compile Include="Interfaces\Policy\IPolicyDocumentService.cs" />
+    <Compile Include="Interfaces\Policy\IPolicyScheduleMessageListener.cs" />
+    <Compile Include="Entities\Policy\PolicyScheduleMessage.cs" />
+    <Compile Include="Entities\Policy\PremiumAllocationRequest.cs" />
+    <Compile Include="Entities\Policy\InvoiceAdjustmentDetails.cs" />
+    <Compile Include="Entities\Policy\ReinsuranceTreaty.cs" />
+    <Compile Include="Entities\RolePlayer\GroupRiskCaseModel.cs" />
+    <Compile Include="Entities\Policy\Integrations\Request\Attachments.cs" />
+    <Compile Include="Entities\Policy\Integrations\Request\AuthorityDetails.cs" />
+    <Compile Include="Entities\Policy\Integrations\Request\BeneficiaryBankingDetails.cs" />
+    <Compile Include="Entities\Policy\Integrations\Request\BeneficiaryDetails.cs" />
+    <Compile Include="Entities\Policy\Integrations\Request\Claimant.cs" />
+    <Compile Include="Entities\Policy\Integrations\Request\ClaimantAddress.cs" />
+    <Compile Include="Entities\Policy\Integrations\Request\DeceasedAddress.cs" />
+    <Compile Include="Entities\Policy\Integrations\Request\DeceasedDetails.cs" />
+    <Compile Include="Entities\Policy\Integrations\Request\DoctorDetails.cs" />
+    <Compile Include="Entities\Policy\Integrations\Request\FuneralParlourDetails.cs" />
+    <Compile Include="Entities\Policy\Integrations\Request\PolicyDetailsRequest.cs" />
+    <Compile Include="Entities\Policy\Integrations\Request\SchemeDeathDetailRequest.cs" />
+    <Compile Include="Entities\Policy\Integrations\Response\DeathClaimResponse.cs" />
+    <Compile Include="Entities\Policy\Common\Address.cs" />
+    <Compile Include="Entities\Policy\Common\BankingDetails.cs" />
+    <Compile Include="Entities\Policy\Common\ChangeType.cs" />
+    <Compile Include="Entities\Policy\Common\ContactDetails.cs" />
+    <Compile Include="Entities\Policy\Common\EmployerDetails.cs" />
+    <Compile Include="Entities\Policy\Common\Member.cs" />
+    <Compile Include="Entities\Policy\Common\PolicyCover.cs" />
+    <Compile Include="Entities\Policy\MVP\Member.cs" />
+    <Compile Include="Entities\Policy\MVP\PolicyCover.cs" />
+    <Compile Include="Entities\Policy\MVP\PolicyRequest.cs" />
+    <Compile Include="Entities\Policy\MVP\PolicyResponse.cs" />
+    <Compile Include="Entities\Policy\Common\PreviousInsurer.cs" />
+    <Compile Include="Entities\Policy\MyValuePlusRequest.cs" />
+    <Compile Include="Entities\Policy\MyValuePlusSummary.cs" />
+    <Compile Include="Entities\Policy\PremiumListingModel.cs" />
+    <Compile Include="Entities\Policy\MemberBenefitModel.cs" />
+    <Compile Include="Entities\Policy\PaymentAllocationRecord.cs" />
+    <Compile Include="Entities\Policy\PaymentAllocationScheme.cs" />
+    <Compile Include="Entities\Policy\PolicyContact.cs" />
+    <Compile Include="Entities\Policy\PolicyDocumentCommunicationMatrix.cs" />
+    <Compile Include="Entities\Policy\PolicyholderBirthdaySMSModel.cs" />
+    <Compile Include="Entities\Policy\PolicyProductOptionModel.cs" />
+    <Compile Include="Entities\Policy\PremiumPayback.cs" />
+    <Compile Include="Entities\Policy\PremiumPaybackCase.cs" />
+    <Compile Include="Entities\Policy\PremiumPaybackItem.cs" />
+    <Compile Include="Entities\Policy\SchemeDeathDetail.cs" />
+    <Compile Include="Entities\Policy\SchemeDeathDetailSearchResult.cs" />
+    <Compile Include="Entities\Policy\SchemeDeathRegistrationResult.cs" />
+    <Compile Include="Entities\Policy\SchemePaymentAllocationResponse.cs" />
+    <Compile Include="Entities\Policy\SchemePaymentCreditTransaction.cs" />
+    <Compile Include="Entities\Policy\StageGroupRiskMember.cs" />
+    <Compile Include="Entities\Policy\MemberVopdStatus.cs" />
+    <Compile Include="Entities\Policy\Cover.cs" />
+    <Compile Include="Entities\Policy\PolicyMinimumData.cs" />
+    <Compile Include="Entities\Policy\CFP\PolicyRequest.cs" />
+    <Compile Include="Entities\Policy\CFP\PolicyResponse.cs" />
+    <Compile Include="Entities\Client\PolicyRenewal.cs" />
+    <Compile Include="Entities\Dashboard\Dashboard.cs" />
+    <Compile Include="Entities\Lead\ImportLeadsSummary.cs" />
+    <Compile Include="Entities\Lead\LeadsUploadErrorAuditDetails.cs" />
+    <Compile Include="Entities\MediCare\MedicalSwitchBatchSearchPersonEvent.cs" />
+    <Compile Include="Entities\Member\ClientRateRequest.cs" />
+    <Compile Include="Entities\Member\ClientRate.cs" />
+    <Compile Include="Entities\Member\RatesUploadErrorAudit.cs" />
+    <Compile Include="Entities\Member\DeclarationBillingIntegration.cs" />
+    <Compile Include="Entities\Member\DeclarationAllowance.cs" />
+    <Compile Include="Entities\Member\DeclarationPenaltyPercentage.cs" />
+    <Compile Include="Entities\Member\LinkedUserMember.cs" />
+    <Compile Include="Entities\Member\MaxAverageEarning.cs" />
+    <Compile Include="Entities\Member\IndustryClassDeclarationConfiguration.cs" />
+    <Compile Include="Entities\Member\MemberResendEmailRequest.cs" />
+    <Compile Include="Entities\Member\UploadRatesSummary.cs" />
+    <Compile Include="Entities\Member\LetterOfGoodStandingServiceBusMessage.cs" />
+    <Compile Include="Entities\Member\IndustryClassRenewal.cs" />
+    <Compile Include="Entities\Member\Declaration.cs" />
+    <Compile Include="Entities\Client\BrokerBankAccount.cs" />
+    <Compile Include="Entities\Client\ClientAddress.cs" />
+    <Compile Include="Entities\Client\ClientBankAccount.cs" />
+    <Compile Include="Entities\Client\BankAccountServiceType.cs" />
+    <Compile Include="Entities\Client\Branch.cs" />
+    <Compile Include="Entities\Broker\BrokerageLicenseCategory.cs" />
+    <Compile Include="Entities\Broker\Representative.cs" />
+    <Compile Include="Entities\Broker\Brokerage.cs" />
+    <Compile Include="Entities\Client\CallbackRequest.cs" />
+    <Compile Include="Entities\Client\Client.cs" />
+    <Compile Include="Entities\Client\ClientLogo.cs" />
+    <Compile Include="Entities\Client\CommunicationPreference.cs" />
+    <Compile Include="Entities\Client\Contact.cs" />
+    <Compile Include="Entities\Client\Department.cs" />
+    <Compile Include="Entities\Client\Enquiry.cs" />
+    <Compile Include="Entities\Client\ClientGroup.cs" />
+    <Compile Include="Entities\Client\ClientNote.cs" />
+    <Compile Include="Entities\Client\LastViewedItem.cs" />
+    <Compile Include="Entities\Member\CancelMemberSummary.cs" />
+    <Compile Include="Entities\Member\MemberCancelFileAudit.cs" />
+    <Compile Include="Entities\Member\MemberSearch.cs" />
+    <Compile Include="Entities\Policy\AffordabilityCheck.cs" />
+    <Compile Include="Entities\Policy\PolicyDataRequest.cs" />
+    <Compile Include="Entities\Policy\PolicyOperationResult.cs" />
+    <Compile Include="Entities\Policy\PolicyRequestReference.cs" />
+    <Compile Include="Entities\Policy\ChangePolicyOption.cs" />
+    <Compile Include="Entities\Policy\ChildCover.cs" />
+    <Compile Include="Entities\Policy\CompanyPolicy.cs" />
+    <Compile Include="Entities\Policy\ConsolidatedFuneralRequest.cs" />
+    <Compile Include="Entities\Policy\ConsolidatedFuneralSummary.cs" />
+    <Compile Include="Entities\Policy\FileImportPremiumPayementModel.cs" />
+    <Compile Include="Entities\Policy\MoveSchemeCase.cs" />
+    <Compile Include="Entities\Policy\PolicyPersalDetail.cs" />
+    <Compile Include="Entities\Policy\PolicyStatusChangeAudit.cs" />
+    <Compile Include="Entities\Policy\PolicyBrokerage.cs" />
+    <Compile Include="Entities\Policy\PolicyChangeBenefit.cs" />
+    <Compile Include="Entities\Policy\PolicyChangeDetail.cs" />
+    <Compile Include="Entities\Policy\PolicyChangeMessage.cs" />
+    <Compile Include="Entities\Policy\PolicyChangeProduct.cs" />
+    <Compile Include="Entities\Policy\PolicyDataAddress.cs" />
+    <Compile Include="Entities\Policy\PolicyDataMember.cs" />
+    <Compile Include="Entities\Policy\PolicyDataOrganisation.cs" />
+    <Compile Include="Entities\Policy\PolicyInsuredLifeAdditionalBenefit.cs" />
+    <Compile Include="Entities\Policy\PolicyLifeExtension.cs" />
+    <Compile Include="Entities\Policy\PolicyRequest.cs" />
+    <Compile Include="Entities\Policy\PolicyData.cs" />
+    <Compile Include="Entities\Policy\PolicyResponse.cs" />
+    <Compile Include="Entities\Policy\InsuredLifeErrorAudit.cs" />
+    <Compile Include="Entities\Policy\InsuredLifeFileAudit.cs" />
+    <Compile Include="Entities\Policy\PremiumListingFile.cs" />
+    <Compile Include="Entities\Policy\PremiumListingMember.cs" />
+    <Compile Include="Entities\Policy\PremiumPaymentException.cs" />
+    <Compile Include="Entities\Policy\ProcessQlinkTransactionRequest.cs" />
+    <Compile Include="Entities\Policy\StagePolicyIntegrationRequest.cs" />
+    <Compile Include="Entities\Policy\UpgradeDownGradePolicyCase.cs" />
+    <Compile Include="Entities\Policy\UploadInsuredLife.cs" />
+    <Compile Include="Entities\Policy\PolicyMember.cs" />
+    <Compile Include="Entities\Policy\VapsPolicyDetails.cs" />
+    <Compile Include="Entities\Policy\PolicyEmail.cs" />
+    <Compile Include="Entities\Product\BenefitMedicalReportRequired.cs" />
+    <Compile Include="Entities\Product\BenefitCoverMemberType.cs" />
+    <Compile Include="Entities\Product\BenefitCompensationAmount.cs" />
+    <Compile Include="Entities\Product\BenefitCaptureEarning.cs" />
+    <Compile Include="Entities\Product\BenefitAddBeneficiary.cs" />
+    <Compile Include="Entities\Product\BenefitImport.cs" />
+    <Compile Include="Entities\Product\BenefitImportRequest.cs" />
+    <Compile Include="Entities\Product\BenefitModel.cs" />
+    <Compile Include="Entities\Product\ImportBenefitsSummary.cs" />
+    <Compile Include="Entities\Product\BenefitsUploadErrorAuditDetails.cs" />
+    <Compile Include="Entities\Client\OrganisationOptionItemValue.cs" />
+    <Compile Include="Entities\Product\ProductBenefitRate.cs" />
+    <Compile Include="Entities\Product\ProductCategory.cs" />
+    <Compile Include="Entities\Product\ProductOptionConfiguration.cs" />
+    <Compile Include="Entities\Product\ProductOptionRuleConfigurationModel.cs" />
+    <Compile Include="Entities\Product\Template.cs" />
+    <Compile Include="Entities\Product\ProductOptionBillingIntegration.cs" />
+    <Compile Include="Entities\Product\ProductOptionAllowanceType.cs" />
+    <Compile Include="Entities\Product\ProductOptionDependency.cs" />
+    <Compile Include="Entities\Quote\DependentQuote.cs" />
+    <Compile Include="Entities\Quote\QuoteDetailsV2.cs" />
+    <Compile Include="Entities\Quote\QuoteV2.cs" />
+    <Compile Include="Entities\Quote\QuoteAllowance.cs" />
+    <Compile Include="Entities\Quote\OneTimePinModel.cs" />
+    <Compile Include="Entities\Quote\QuoteSearchResult.cs" />
+    <Compile Include="Entities\Client\Scheme.cs" />
+    <Compile Include="Entities\Client\ClientStatisticDetail.cs" />
+    <Compile Include="Entities\Client\ClientStatistics.cs" />
+    <Compile Include="Entities\Lead\LeadDetails.cs" />
+    <Compile Include="Entities\Lead\LeadPerson.cs" />
+    <Compile Include="Entities\Lead\LeadNote.cs" />
+    <Compile Include="Entities\Lead\LeadContact.cs" />
+    <Compile Include="Entities\Lead\LeadCompany.cs" />
+    <Compile Include="Entities\Lead\LeadAddress.cs" />
+    <Compile Include="Entities\Quote\QuoteEmailRequest.cs" />
+    <Compile Include="Entities\Quote\Quote.cs" />
+    <Compile Include="Entities\Policy\CancellationSummary.cs" />
+    <Compile Include="Entities\Policy\FuneralPolicyPremium.cs" />
+    <Compile Include="Entities\Policy\PremiumListingErrorAudit.cs" />
+    <Compile Include="Entities\Policy\PremiumListingFileAudit.cs" />
+    <Compile Include="Entities\RolePlayer\HealthCareProviderModel.cs" />
+    <Compile Include="Entities\RolePlayer\InsuredLifeResponse.cs" />
+    <Compile Include="Entities\RolePlayer\PersonEmployment.cs" />
+    <Compile Include="Entities\RolePlayer\Reinsurer.cs" />
+    <Compile Include="Entities\RolePlayer\RolePlayerNote.cs" />
+    <Compile Include="Entities\RolePlayer\RolePlayerContact.cs" />
+    <Compile Include="Entities\RolePlayer\RolePlayerContactInformation.cs" />
+    <Compile Include="Entities\RolePlayer\RolePlayerExternal.cs" />
+    <Compile Include="Entities\RolePlayer\RolePlayerGroupPolicy.cs" />
+    <Compile Include="Entities\RolePlayer\PersalDetail.cs" />
+    <Compile Include="Entities\RolePlayer\RolePlayerRelationLife.cs" />
+    <Compile Include="Entities\RolePlayer\SchemeClassification.cs" />
+    <Compile Include="Entities\RolePlayer\UserVopdResponse.cs" />
+    <Compile Include="Entities\Client\SupportingDocument.cs" />
+    <Compile Include="Entities\Client\SupportingDocumentImportRequest.cs" />
+    <Compile Include="Entities\Client\ClientUniqueValidationRequest.cs" />
+    <Compile Include="Entities\Lead\Lead.cs" />
+    <Compile Include="Entities\Policy\BeneficiaryBankingDetail.cs" />
+    <Compile Include="Entities\Policy\FileContentImport.cs" />
+    <Compile Include="Entities\Policy\ImportInsuredLivesRequest.cs" />
+    <Compile Include="Entities\Policy\ImportInsuredLivesSummary.cs" />
+    <Compile Include="Entities\Policy\Policy.cs" />
+    <Compile Include="Entities\Policy\MovePoliciesCase.cs" />
+    <Compile Include="Entities\Policy\EligiblePolicy.cs" />
+    <Compile Include="Entities\Policy\PolicyBeneficiary.cs" />
+    <Compile Include="Entities\Policy\OneTimePinModel.cs" />
+    <Compile Include="Entities\Policy\PolicyBroker.cs" />
+    <Compile Include="Entities\Policy\BrokerageCommissionWithholdingSummary.cs" />
+    <Compile Include="Entities\Policy\BrokerCommissionDetail.cs" />
+    <Compile Include="Entities\Policy\ClientCover.cs" />
+    <Compile Include="Entities\Policy\ClientCoverOption.cs" />
+    <Compile Include="Entities\Policy\CommissionDetail.cs" />
+    <Compile Include="Entities\Policy\CommissionHeader.cs" />
+    <Compile Include="Entities\Policy\BrokerageCommissionSummary.cs" />
+    <Compile Include="Entities\Policy\CommissionSummary.cs" />
+    <Compile Include="Entities\Policy\CommissionWithholding.cs" />
+    <Compile Include="Entities\Policy\CommissionWithholdingSummary.cs" />
+    <Compile Include="Entities\Policy\ImportLog.cs" />
+    <Compile Include="Entities\Policy\PaymentInstruction.cs" />
+    <Compile Include="Entities\Policy\PolicyAgent.cs" />
+    <Compile Include="Entities\Policy\PolicyAgentList.cs" />
+    <Compile Include="Entities\Policy\PolicyBrokerMoveRequest.cs" />
+    <Compile Include="Entities\Policy\PolicyCommunication.cs" />
+    <Compile Include="Entities\Policy\PolicyMovement.cs" />
+    <Compile Include="Entities\Policy\PremiumListing.cs" />
+    <Compile Include="Entities\Policy\PremiumListingError.cs" />
+    <Compile Include="Entities\Policy\PremiumListingRuleRequestResult.cs" />
+    <Compile Include="Entities\Policy\PremiumListingRuleResult.cs" />
+    <Compile Include="Entities\Policy\PremiumListingSchedule.cs" />
+    <Compile Include="Entities\Product\ProductBankAccount.cs" />
+    <Compile Include="Entities\RolePlayer\ClientVopdResponse.cs" />
+    <Compile Include="Entities\RolePlayer\DebtorSearchResult.cs" />
+    <Compile Include="Entities\Policy\RunCommissionRequest.cs" />
+    <Compile Include="Entities\Policy\PolicyImport.cs" />
+    <Compile Include="Entities\Policy\ImportRequest.cs" />
+    <Compile Include="Entities\Policy\InsuredLife.cs" />
+    <Compile Include="Entities\Policy\InsuredLifePolicyProduct.cs" />
+    <Compile Include="Entities\Policy\LastViewedItem.cs" />
+    <Compile Include="Entities\Policy\PolicyNote.cs" />
+    <Compile Include="Entities\Policy\CommissionPeriod.cs" />
+    <Compile Include="Entities\Policy\PolicyCancellationRequest.cs" />
+    <Compile Include="Entities\Policy\PolicyDocument.cs" />
+    <Compile Include="Entities\Policy\PolicyPremium.cs" />
+    <Compile Include="Entities\Policy\RemoveCommissionDetailRequest.cs" />
+    <Compile Include="Entities\Policy\SendScheduleRequest.cs" />
+    <Compile Include="Entities\Policy\PolicyStatistics.cs" />
+    <Compile Include="Entities\Policy\PolicyUniqueValidationRequest.cs" />
+    <Compile Include="Entities\Policy\TotalCoverAmount.cs" />
+    <Compile Include="Entities\Policy\GroupRiskMemberRecord.cs" />
+    <Compile Include="Entities\Policy\Xsd\IndividualPolicySchedule.cs">
+      <DependentUpon>IndividualPolicySchedule.xsd</DependentUpon>
+    </Compile>
+    <Compile Include="Entities\Policy\ProductPolicy.cs" />
+    <Compile Include="Entities\Product\BenefitRate.cs" />
+    <Compile Include="Entities\Product\Benefit.cs" />
+    <Compile Include="Entities\Product\BenefitRuleRequest.cs" />
+    <Compile Include="Entities\Product\ProductOptionCoverType.cs" />
+    <Compile Include="Entities\Product\ProductOptionPaymentFrequency.cs" />
+    <Compile Include="Entities\RolePlayer\AccountSearchResult.cs" />
+    <Compile Include="Entities\RolePlayer\BodyCollector.cs" />
+    <Compile Include="Entities\RolePlayer\Case.cs" />
+    <Compile Include="Entities\RolePlayer\Company.cs" />
+    <Compile Include="Entities\RolePlayer\FinPayee.cs" />
+    <Compile Include="Entities\RolePlayer\Claimant.cs" />
+    <Compile Include="Entities\RolePlayer\Informant.cs" />
+    <Compile Include="Entities\RolePlayer\FuneralParlor.cs" />
+    <Compile Include="Entities\RolePlayer\MedicalServiceProvider.cs" />
+    <Compile Include="Entities\RolePlayer\Person.cs" />
+    <Compile Include="Entities\RolePlayer\PolicyGroupMember.cs" />
+    <Compile Include="Entities\RolePlayer\PolicyInsuredLife.cs" />
+    <Compile Include="Entities\RolePlayer\PreviousInsurerRolePlayer.cs" />
+    <Compile Include="Entities\RolePlayer\Refund.cs" />
+    <Compile Include="Entities\RolePlayer\RefundTransaction.cs" />
+    <Compile Include="Entities\RolePlayer\CorporateResult.cs" />
+    <Compile Include="Entities\RolePlayer\RolePlayer.cs" />
+    <Compile Include="Entities\RolePlayer\RolePlayerAddress.cs" />
+    <Compile Include="Entities\RolePlayer\RolePlayerBankingDetail.cs" />
+    <Compile Include="Entities\RolePlayer\RolePlayerBenefit.cs" />
+    <Compile Include="Entities\RolePlayer\RolePlayerPolicy.cs" />
+    <Compile Include="Entities\RolePlayer\RolePlayerPolicyMovement.cs" />
+    <Compile Include="Entities\RolePlayer\RolePlayerRelation.cs" />
+    <Compile Include="Entities\RolePlayer\RolePlayerType.cs" />
+    <Compile Include="Entities\RolePlayer\ForensicPathologist.cs" />
+    <Compile Include="Entities\RolePlayer\Undertaker.cs" />
+    <Compile Include="Entities\RolePlayer\VopdQuickTransactRequestMessage.cs" />
+    <Compile Include="Entities\RolePlayer\VopdUpdateResponse.cs" />
+    <Compile Include="Entities\RolePlayer\RolePlayerBatchInfoUpdate.cs" />
+    <Compile Include="Entities\RolePlayer\VopdUpdateResponseModel.cs" />
+    <Compile Include="Enums\RolePlayer\RolePlayerTypeEnum.cs" />
+    <Compile Include="Interfaces\Broker\IAuditLogService.cs" />
+    <Compile Include="Interfaces\Broker\IBrokerageNoteService.cs" />
+    <Compile Include="Interfaces\Broker\IFspeImportMessageListener.cs" />
+    <Compile Include="Interfaces\Broker\IRepresentativeNoteService.cs" />
+    <Compile Include="Interfaces\Client\ICloseRenewalPeriodServiceBusListener.cs" />
+    <Compile Include="Interfaces\Client\ILetterOfGoodStandingServiceBusListener.cs" />
+    <Compile Include="Interfaces\Lead\IAuditLogService.cs" />
+    <Compile Include="Interfaces\Lead\ILeadService.cs" />
+    <Compile Include="Interfaces\Lead\ILeadCommunicationService.cs" />
+    <Compile Include="Interfaces\Lead\ILeadUploadServiceBusListener.cs" />
+    <Compile Include="Interfaces\Member\IAuditLogService.cs" />
+    <Compile Include="Interfaces\Member\IMemberCommunicationService.cs" />
+    <Compile Include="Interfaces\Member\ILetterOfGoodStandingService.cs" />
+    <Compile Include="Interfaces\Member\IMemberService.cs" />
+    <Compile Include="Interfaces\Policy\IBillingFuneralPolicyChangeService.cs" />
+    <Compile Include="Interfaces\Policy\ICDAPolicyOnboardingListener.cs" />
+    <Compile Include="Interfaces\Policy\IMvpOnboardingRequestMessageListener.cs" />
+    <Compile Include="Interfaces\Policy\IMyValuePlusService.cs" />
+    <Compile Include="Interfaces\Policy\IGroupRiskPolicyCaseService.cs" />
+    <Compile Include="Interfaces\Policy\IPolicyReportService.cs" />
+    <Compile Include="Interfaces\Policy\IPostRetirementMedicalAnnuityService.cs" />
+    <Compile Include="Interfaces\Policy\IQlinkTransactionFalsePositiveReportMessageListener.cs" />
+    <Compile Include="Interfaces\Policy\ICfpOnboardingRequestMessageListener.cs" />
+    <Compile Include="Interfaces\Policy\IConsolidatedFuneralService.cs" />
+    <Compile Include="Interfaces\Policy\IDiscountFileListingService.cs" />
+    <Compile Include="Interfaces\Policy\IEligibilityService.cs" />
+    <Compile Include="Interfaces\Policy\IFuneralPolicyPremiumService.cs" />
+    <Compile Include="Interfaces\Policy\IGroupRiskService.cs" />
+    <Compile Include="Interfaces\Policy\IInsuredLifeService.cs" />
+    <Compile Include="Interfaces\Policy\IInsuredLifeUploadErrorAuditService.cs" />
+    <Compile Include="Interfaces\Policy\ILeadTimeTrackerService.cs" />
+    <Compile Include="Interfaces\Policy\ILifeExtensionService.cs" />
+    <Compile Include="Interfaces\Policy\IOnboardingNotificationService.cs" />
+    <Compile Include="Interfaces\Policy\IPolicyCaseService.cs" />
+    <Compile Include="Interfaces\Policy\IGeneratePolicyDocumentService.cs" />
+    <Compile Include="Interfaces\Policy\IPolicyDocumentsService.cs" />
+    <Compile Include="Interfaces\Policy\IPolicyCommunicationService.cs" />
+    <Compile Include="Interfaces\Policy\IPolicyMonitoringService.cs" />
+    <Compile Include="Interfaces\Policy\IPolicyNoteService.cs" />
+    <Compile Include="Interfaces\Policy\IClientPolicyScheduleDocumentsService.cs" />
+    <Compile Include="Interfaces\Member\IDeclarationService.cs" />
+    <Compile Include="Interfaces\Policy\IPolicyIntegrationService.cs" />
+    <Compile Include="Interfaces\Policy\IPolicyStatusService.cs" />
+    <Compile Include="Interfaces\Policy\IPremiumListingErrorAuditService.cs" />
+    <Compile Include="Interfaces\Policy\IPremiumListingFileAuditService.cs" />
+    <Compile Include="Interfaces\Policy\IPremiumListingPolicyPremiumMovementService.cs" />
+    <Compile Include="Interfaces\Policy\IPremiumListingService.cs" />
+    <Compile Include="Interfaces\Policy\IProcessQlinkTransactionListener.cs" />
+    <Compile Include="Interfaces\Policy\IQLinkService.cs" />
+    <Compile Include="Interfaces\Product\IProductOptionNoteService.cs" />
+    <Compile Include="Interfaces\Quote\IAuditLogService.cs" />
+    <Compile Include="Interfaces\Quote\IQuoteService.cs" />
+    <Compile Include="Interfaces\RolePlayer\IPolicyInsuredLifeService.cs" />
+    <Compile Include="Interfaces\RolePlayer\IQuickTransactionVopdService.cs" />
+    <Compile Include="Interfaces\RolePlayer\IRolePlayerNoteService.cs" />
+    <Compile Include="Interfaces\RolePlayer\IRolePlayerService.cs" />
+    <Compile Include="Interfaces\RolePlayer\IRolePlayerPolicyService.cs" />
+    <Compile Include="Interfaces\RolePlayer\IRolePlayerBatchInfoUpdateMessageListener.cs" />
+    <Compile Include="Interfaces\RolePlayer\IVopdQuickTransactRequestMessageListener.cs" />
+    <Compile Include="Interfaces\RolePlayer\IVopdUpdateMessageListener.cs" />
+    <Compile Include="Interfaces\RolePlayer\IVopdRequestMessageListener.cs" />
+    <Compile Include="Interfaces\RolePlayer\IVopdResponseSubscriptionListener.cs" />
+    <Compile Include="Obsolete\BenefitSet.cs" />
+    <Compile Include="Obsolete\BenefitSetSkillCategory.cs" />
+    <Compile Include="Obsolete\BenefitSkillCategory.cs" />
+    <Compile Include="Obsolete\BenefitSkillCategoryRequest.cs" />
+    <Compile Include="Entities\Product\DiscountType.cs" />
+    <Compile Include="Entities\Product\LastViewedItem.cs" />
+    <Compile Include="Entities\Product\Product.cs" />
+    <Compile Include="Entities\Product\ProductNotificationRequest.cs" />
+    <Compile Include="Entities\Product\ProductOption.cs" />
+    <Compile Include="Entities\Product\ProductOptionSetting.cs" />
+    <Compile Include="Obsolete\ProductOptionCover.cs" />
+    <Compile Include="Entities\Product\ProductOptionRuleRequest.cs" />
+    <Compile Include="Entities\Product\ProductRuleRequest.cs" />
+    <Compile Include="Obsolete\ProductSkillCategory.cs" />
+    <Compile Include="Obsolete\ProductSkillCategoryRequest.cs" />
+    <Compile Include="Entities\Product\StatisticDetail.cs" />
+    <Compile Include="Entities\Product\Statistics.cs" />
+    <Compile Include="Entities\Product\Underwriter.cs" />
+    <Compile Include="Entities\Product\UniqueValidationRequest.cs" />
+    <Compile Include="Enums\Client\ClientItemType.cs" />
+    <Compile Include="Enums\Lead\LeadItemType.cs" />
+    <Compile Include="Enums\Product\ProductItemType.cs" />
+    <Compile Include="Interfaces\Client\IAuditLogService.cs" />
+    <Compile Include="Interfaces\Broker\IBrokerageService.cs" />
+    <Compile Include="Interfaces\Broker\IRepresentativeService.cs" />
+    <Compile Include="Interfaces\Client\ILastViewedService.cs" />
+    <Compile Include="Interfaces\Policy\IAuditLogService.cs" />
+    <Compile Include="Interfaces\Policy\IGeneratePolicyScheduleService.cs" />
+    <Compile Include="Interfaces\Policy\ILastViewedService.cs" />
+    <Compile Include="Interfaces\Policy\IPolicyService.cs" />
+    <Compile Include="Interfaces\Product\IAuditLogService.cs" />
+    <Compile Include="Interfaces\Product\IBenefitNoteService.cs" />
+    <Compile Include="Interfaces\Product\IBenefitRuleService.cs" />
+    <Compile Include="Interfaces\Product\IBenefitService.cs" />
+    <Compile Include="Obsolete\IBenefitSetService.cs" />
+    <Compile Include="Obsolete\IBenefitSetSkillCategoryService.cs" />
+    <Compile Include="Obsolete\IBenefitSkillCategoryService.cs" />
+    <Compile Include="Interfaces\Product\IDiscountTypeService.cs" />
+    <Compile Include="Interfaces\Product\ILastViewedService.cs" />
+    <Compile Include="Interfaces\Product\IProductNoteService.cs" />
+    <Compile Include="Obsolete\IProductOptionCoverService.cs" />
+    <Compile Include="Interfaces\Product\IProductOptionRuleService.cs" />
+    <Compile Include="Interfaces\Product\IProductOptionService.cs" />
+    <Compile Include="Interfaces\Product\IProductRuleService.cs" />
+    <Compile Include="Interfaces\Product\IProductService.cs" />
+    <Compile Include="Obsolete\IProductSkillCategoryService.cs" />
+    <Compile Include="Interfaces\Product\IStatisticsService.cs" />
+    <Compile Include="Interfaces\Product\IUniqueFieldValidatorService.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Utils\FnbPacsFileUtil.cs" />
+    <Compile Include="Utils\GroupRiskPolicyCaseUtility.cs" />
+    <Compile Include="Utils\PersonHelper.cs" />
+    <Compile Include="Utils\PolicyPremiumCalculationHelper.cs" />
+    <Compile Include="Utils\RegexUtilities.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <AdditionalFiles Include="..\..\..\Solution Items\RMA.DependencyValidation\ServicePlatform.layerdiagram">
+      <Link>ServicePlatform.layerdiagram</Link>
+      <Visible>False</Visible>
+    </AdditionalFiles>
+    <None Include="Entities\Policy\Xsd\IndividualPolicySchedule.xsd">
+      <SubType>Designer</SubType>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\Common\RMA.Common\RMA.Common.csproj">
+      <Project>{c30fb382-556d-41e4-b987-dea4f962059a}</Project>
+      <Name>RMA.Common</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\Admin\RMA.Service.Admin.CampaignManager.Contracts\RMA.Service.Admin.CampaignManager.Contracts.csproj">
+      <Project>{d530d89b-c158-40db-8999-2d476155a8b2}</Project>
+      <Name>RMA.Service.Admin.CampaignManager.Contracts</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\Admin\RMA.Service.Admin.MasterDataManager.Contracts\RMA.Service.Admin.MasterDataManager.Contracts.csproj">
+      <Project>{81ABD00C-262F-48DF-A933-63E3730F0245}</Project>
+      <Name>RMA.Service.Admin.MasterDataManager.Contracts</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\Admin\RMA.Service.Admin.RulesManager.Contracts\RMA.Service.Admin.RulesManager.Contracts.csproj">
+      <Project>{19B2A261-514C-4887-9930-2378A6DB7381}</Project>
+      <Name>RMA.Service.Admin.RulesManager.Contracts</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\Billing\RMA.Service.Billing.Database\RMA.Service.Billing.Database.csproj">
+      <Project>{9bae9530-6ebd-4229-bb07-10ef0f601688}</Project>
+      <Name>RMA.Service.Billing.Database</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\Integrations\RMA.Service.Integrations.Contracts\RMA.Service.Integrations.Contracts.csproj">
+      <Project>{66928FA0-0AA5-4E2A-842C-61A1EC14960C}</Project>
+      <Name>RMA.Service.Integrations.Contracts</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\Admin\RMA.Service.Admin.SecurityManager.Contracts\RMA.Service.Admin.SecurityManager.Contracts.csproj">
+      <Project>{05202D9C-BE63-4105-8CE4-A9BFA19413D8}</Project>
+      <Name>RMA.Service.Admin.SecurityManager.Contracts</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="Microsoft.CodeAnalysis.FxCopAnalyzers">
+      <Version>3.3.2</Version>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+      <PrivateAssets>all</PrivateAssets>
+    </PackageReference>
+    <PackageReference Include="Microsoft.CodeAnalysis.VersionCheckAnalyzer">
+      <Version>3.3.2</Version>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+      <PrivateAssets>all</PrivateAssets>
+    </PackageReference>
+    <PackageReference Include="Microsoft.CodeQuality.Analyzers">
+      <Version>3.3.2</Version>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+      <PrivateAssets>all</PrivateAssets>
+    </PackageReference>
+    <PackageReference Include="Microsoft.DependencyValidation.Analyzers">
+      <Version>0.11.0</Version>
+    </PackageReference>
+    <PackageReference Include="Microsoft.NetFramework.Analyzers">
+      <Version>3.3.2</Version>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+      <PrivateAssets>all</PrivateAssets>
+    </PackageReference>
+    <PackageReference Include="Microsoft.ServiceFabric.Actors">
+      <Version>3.4.664</Version>
+    </PackageReference>
+    <PackageReference Include="Microsoft.VisualStudio.Threading.Analyzers">
+      <Version>16.3.52</Version>
+    </PackageReference>
+    <PackageReference Include="Roslynator.Analyzers">
+      <Version>2.1.0</Version>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+      <PrivateAssets>all</PrivateAssets>
+    </PackageReference>
+  </ItemGroup>
+  <ItemGroup />
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+</Project>

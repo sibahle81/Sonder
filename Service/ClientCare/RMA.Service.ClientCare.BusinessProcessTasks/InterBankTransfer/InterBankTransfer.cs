@@ -1,0 +1,98 @@
+﻿using CommonServiceLocator;
+
+using RMA.Service.Admin.BusinessProcessManager.Contracts.Entities;
+using RMA.Service.Admin.BusinessProcessManager.Contracts.SDK;
+using RMA.Service.Admin.RulesManager.Contracts.Entities;
+
+using System;
+using System.Collections.Generic;
+using System.Threading.Tasks;
+
+namespace RMA.Service.ClientCare.BusinessProcessTasks.InterBankTransfer
+{
+    public class InterBankTransfer : IWizardProcess
+    {
+        private readonly StartWizard _startWizard;
+        private readonly SubmitWizard _submitWizard;
+
+        public InterBankTransfer()
+        {
+            _startWizard = ServiceLocator.Current.GetInstance<StartWizard>();
+            _submitWizard = ServiceLocator.Current.GetInstance<SubmitWizard>();
+        }
+
+        public async Task<int> StartWizard(IWizardContext context)
+        {
+            var wizardId = await _startWizard.Process(context);
+            return wizardId;
+        }
+
+        public async Task SubmitWizard(IWizardContext context)
+        {
+            // await _submitWizard.Process(context);
+        }
+
+        public Task CancelWizard(IWizardContext context)
+        {
+            throw new NotImplementedException();
+        }
+
+        public async Task<RuleRequestResult> ExecuteWizardRules(IWizardContext context)
+        {
+            return await Task.FromResult(new RuleRequestResult()
+            {
+                OverallSuccess = true,
+                RequestId = Guid.NewGuid(),
+                RuleResults = new List<RuleResult>()
+            });
+        }
+
+        public Task<int?> GetCustomApproverRole(IWizardContext context)
+        {
+            throw new NotImplementedException();
+        }
+
+        public async Task<string> ChangeTheNameWizard(string data, int wizardid, string currentwizardname)
+        {
+            return string.Empty;
+        }
+
+        public async Task UpdateStatus(IWizardContext context)
+        {
+            return;
+        }
+
+        public async Task OnRejected(RejectWizardRequest rejectWizardRequest, IWizardContext context)
+        {
+            return;
+        }
+
+        public async Task OnDispute(RejectWizardRequest rejectWizardRequest, IWizardContext context)
+        {
+            return;
+        }
+
+        public async Task OnApprove(IWizardContext context)
+        {
+            return;
+        }
+
+        public async Task OnRequestForApproval(IWizardContext context)
+        {
+            return;
+        }
+
+        public async Task OnSaveStep(IWizardContext context)
+        {
+            return;
+        }
+        public async Task OverrideWizard(IWizardContext context)
+        {
+            return;
+        }
+        public Task OnSetApprovalStages(IWizardContext context)
+        {
+            return Task.CompletedTask;
+        }
+    }
+}

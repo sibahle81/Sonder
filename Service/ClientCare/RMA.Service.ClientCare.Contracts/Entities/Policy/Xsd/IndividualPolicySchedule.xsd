@@ -1,0 +1,123 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<xs:schema attributeFormDefault="unqualified" elementFormDefault="qualified" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+  <xs:element name="IndividualPolicySchedule">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element name="policyHolderName" type="xs:string" />
+        <xs:element name="policyHolderSurname" type="xs:string" />
+        <xs:element name="policyHolderAddress" >
+          <xs:simpleType>
+            <xs:restriction base="xs:string">
+              <xs:whiteSpace value="preserve"/>
+            </xs:restriction>
+          </xs:simpleType>
+        </xs:element>
+        <xs:element name="policyHolderPostalCode" type="xs:string" />
+        <xs:element name="documentDate" type="xs:date" />
+        <xs:element name="policyStartDate" type="xs:date" />
+        <xs:element name="anniversaryDate" type="xs:date" />
+        <xs:element name="issueDate" type="xs:date" />
+        <xs:element name="commissionAmount" type="xs:string" />
+        <xs:element name="benefit" type="xs:string" />
+        <xs:element name="commenceDate" type="xs:date" />
+        <xs:element name="administrationFee" type="xs:decimal" />
+        <xs:element name="applicationDate" type="xs:date" />
+        <xs:element name="policyNumber" type="xs:string" />
+        <xs:element name="paymentMethod" type="xs:string" />
+        <xs:element name="policyName" type="xs:string" />
+        <xs:element name="premium" type="xs:string" />
+        <xs:element name="mainMember">
+          <xs:complexType>
+            <xs:sequence>
+              <xs:element maxOccurs="unbounded" name="member">
+                <xs:complexType>
+                  <xs:sequence>
+                    <xs:element name="name" type="xs:string" />
+                    <xs:element name="dateOfBirth" type="xs:date" />
+                    <xs:element name="idNumber" type="xs:string" />
+                    <xs:element name="amount" type="xs:decimal" />
+                  </xs:sequence>
+                </xs:complexType>
+              </xs:element>
+            </xs:sequence>
+            <xs:attribute name="format" type="xs:string"  />
+            <xs:attribute name="headers" type="xs:string"  />
+          </xs:complexType>
+        </xs:element>
+        <xs:element name="spouse">
+          <xs:complexType>
+            <xs:sequence>
+              <xs:element maxOccurs="unbounded" name="member">
+                <xs:complexType>
+                  <xs:sequence>
+                    <xs:element name="name" type="xs:string" />
+                    <xs:element name="dateOfBirth" type="xs:date" />
+                    <xs:element name="idNumber" type="xs:string" />
+                    <xs:element name="amount" type="xs:decimal" />
+                  </xs:sequence>
+                </xs:complexType>
+              </xs:element>
+            </xs:sequence>
+            <xs:attribute name="format" type="xs:string"  />
+            <xs:attribute name="headers" type="xs:string"  />
+          </xs:complexType>
+        </xs:element>
+        <xs:element name="children">
+          <xs:complexType>
+            <xs:sequence>
+              <xs:element maxOccurs="unbounded" name="member">
+                <xs:complexType>
+                  <xs:sequence>
+                    <xs:element name="name" type="xs:string" />
+                    <xs:element name="dateOfBirth" type="xs:date" />
+                    <xs:element name="idNumber" type="xs:string" />
+                    <xs:element name="amount" type="xs:decimal" />
+                  </xs:sequence>
+                </xs:complexType>
+              </xs:element>
+            </xs:sequence>
+            <xs:attribute name="format" type="xs:string" />
+            <xs:attribute name="headers" type="xs:string" />
+          </xs:complexType>
+        </xs:element>
+        <xs:element name="extendedFamily">
+          <xs:complexType>
+            <xs:sequence>
+              <xs:element maxOccurs="unbounded" name="member">
+                <xs:complexType>
+                  <xs:sequence>
+                    <xs:element name="name" type="xs:string" />
+                    <xs:element name="dateOfBirth" type="xs:date" />
+                    <xs:element name="idNumber" type="xs:string" />
+                    <xs:element name="amount" type="xs:decimal" />
+                  </xs:sequence>
+                </xs:complexType>
+              </xs:element>
+            </xs:sequence>
+            <xs:attribute name="format" type="xs:string" />
+            <xs:attribute name="headers" type="xs:string"  />
+          </xs:complexType>
+        </xs:element>
+        <xs:element name="beneficiaries">
+          <xs:complexType>
+            <xs:sequence>
+              <xs:element maxOccurs="unbounded" name="member">
+                <xs:complexType>
+                  <xs:sequence>
+                    <xs:element name="name" type="xs:string" />
+                    <xs:element name="dateOfBirth" type="xs:date" />
+                    <xs:element name="idNumber" type="xs:string" />
+                    <xs:element name="benefit" type="xs:string" />
+                    <xs:element name="relationship" type="xs:string" />
+                  </xs:sequence>
+                </xs:complexType>
+              </xs:element>
+            </xs:sequence>
+            <xs:attribute name="format" type="xs:string" />
+            <xs:attribute name="headers" type="xs:string" />
+          </xs:complexType>
+        </xs:element>
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+</xs:schema>

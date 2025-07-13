@@ -1,0 +1,282 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="14.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">x64</Platform>
+    <ProjectGuid>{39FC15B9-BE04-46CD-8A90-46C0C674AA75}</ProjectGuid>
+    <OutputType>Exe</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>RMA.Service.ClaimCare</RootNamespace>
+    <AssemblyName>RMA.Service.ClaimCare</AssemblyName>
+    <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
+    <NuGetPackageImportStamp>
+    </NuGetPackageImportStamp>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|x64' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\x64\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <PlatformTarget>x64</PlatformTarget>
+    <CodeAnalysisRuleSet>..\..\..\Solution Items\RMA.ruleset</CodeAnalysisRuleSet>
+    <LangVersion>latest</LangVersion>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|x64' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\x64\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <PlatformTarget>x64</PlatformTarget>
+    <CodeAnalysisRuleSet>..\..\..\Solution Items\RMA.ruleset</CodeAnalysisRuleSet>
+    <LangVersion>latest</LangVersion>
+  </PropertyGroup>
+  <PropertyGroup>
+    <AdditionalFileItemNames>$(AdditionalFileItemNames);None</AdditionalFileItemNames>
+  </PropertyGroup>
+  <PropertyGroup>
+    <IsServiceFabricServiceProject>true</IsServiceFabricServiceProject>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|AnyCPU'">
+    <DebugSymbols>true</DebugSymbols>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <DebugType>full</DebugType>
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>..\..\..\Solution Items\RMA.ruleset</CodeAnalysisRuleSet>
+    <Prefer32Bit>true</Prefer32Bit>
+    <LangVersion>latest</LangVersion>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|AnyCPU'">
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <Optimize>true</Optimize>
+    <DebugType>pdbonly</DebugType>
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>..\..\..\Solution Items\RMA.ruleset</CodeAnalysisRuleSet>
+    <Prefer32Bit>true</Prefer32Bit>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Data" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="AutoMapperConfiguration.cs" />
+    <Compile Include="Constants\ClaimConstants.cs" />
+    <Compile Include="ContainerConfiguration.cs" />
+    <Compile Include="ContainerConfiguration1.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>ContainerConfiguration.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Mappers\ClaimCareMappingProfile.cs" />
+    <Compile Include="Mappers\CsvUnclaimedBenefitMapping.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Program.cs" />
+    <Compile Include="Services\Claim\ClaimFinalizedIntegrationFacade.cs" />
+    <Compile Include="Services\Claim\ClaimCommunicationListener.cs" />
+    <Compile Include="Services\Claim\ClaimEarningFacade.cs" />
+    <Compile Include="Services\Claim\ClaimDisabilityFacade.cs" />
+    <Compile Include="Services\Claim\ClaimRequirementFacade.cs" />
+    <Compile Include="Services\Claim\AuditLogFacade.cs" />
+    <Compile Include="Services\Claim\MedicalEstimatesFacade.cs" />
+    <Compile Include="Services\Claim\ClaimCommunicationFacade.cs" />
+    <Compile Include="Services\Claim\ClaimIntegrationFacade.cs" />
+    <Compile Include="Services\Claim\DiseaseFacade.cs" />
+    <Compile Include="Services\Claim\AccidentFacade.cs" />
+    <Compile Include="Services\Claim\FatalFacade.cs" />
+    <Compile Include="Services\Claim\ClaimFacade.cs" />
+    <Compile Include="Services\Claim\BillingInterfaceFacade.cs" />
+    <Compile Include="Services\Claim\MedicalInvoiceClaimFacade.cs" />
+    <Compile Include="Services\Claim\NoteFacade.cs" />
+    <Compile Include="Services\Claim\PreAuthClaimFacade.cs" />
+    <Compile Include="Services\Claim\SuspiciousTransactionModelFacade.cs" />
+    <Compile Include="Services\Claim\ClaimInvoiceFacade.cs" />
+    <Compile Include="Services\Claim\UnclaimedBenefitFacade.cs" />
+    <Compile Include="Services\Cost\CostFacade.cs" />
+    <Compile Include="Services\Event\EventFacade.cs" />
+    <Compile Include="Services\Event\NoteFacade.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <AdditionalFiles Include="..\..\..\Solution Items\RMA.DependencyValidation\ServicePlatform.layerdiagram">
+      <Link>ServicePlatform.layerdiagram</Link>
+      <Visible>False</Visible>
+    </AdditionalFiles>
+    <None Include="PackageRoot\Config\Settings.xml" />
+    <None Include="PackageRoot\ServiceManifest.xml" />
+    <None Include="App.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\Common\RMA.Common.Database\RMA.Common.Database.csproj">
+      <Project>{5a742fb8-0332-42de-9d56-07315b898b32}</Project>
+      <Name>RMA.Common.Database</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\..\Common\RMA.Common.Service\RMA.Common.Service.csproj">
+      <Project>{4aa3772e-d3d5-458c-bc16-99d93df9185a}</Project>
+      <Name>RMA.Common.Service</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\..\Common\RMA.Common\RMA.Common.csproj">
+      <Project>{c30fb382-556d-41e4-b987-dea4f962059a}</Project>
+      <Name>RMA.Common</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\Admin\RMA.Service.Admin.BusinessProcessManager.Contracts\RMA.Service.Admin.BusinessProcessManager.Contracts.csproj">
+      <Project>{9FF86F02-EA7C-4921-8B87-79C21FFC38E7}</Project>
+      <Name>RMA.Service.Admin.BusinessProcessManager.Contracts</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\Admin\RMA.Service.Admin.CampaignManager.Contracts\RMA.Service.Admin.CampaignManager.Contracts.csproj">
+      <Project>{d530d89b-c158-40db-8999-2d476155a8b2}</Project>
+      <Name>RMA.Service.Admin.CampaignManager.Contracts</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\Admin\RMA.Service.Admin.MasterDataManager.Contracts\RMA.Service.Admin.MasterDataManager.Contracts.csproj">
+      <Project>{81abd00c-262f-48df-a933-63e3730f0245}</Project>
+      <Name>RMA.Service.Admin.MasterDataManager.Contracts</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\Admin\RMA.Service.Admin.MasterDataManager.Database\RMA.Service.Admin.MasterDataManager.Database.csproj">
+      <Project>{A0206676-F13E-488D-9CB1-837587225C86}</Project>
+      <Name>RMA.Service.Admin.MasterDataManager.Database</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\Admin\RMA.Service.Admin.RulesManager.Contracts\RMA.Service.Admin.RulesManager.Contracts.csproj">
+      <Project>{19B2A261-514C-4887-9930-2378A6DB7381}</Project>
+      <Name>RMA.Service.Admin.RulesManager.Contracts</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\Admin\RMA.Service.Admin.SecurityManager.Contracts\RMA.Service.Admin.SecurityManager.Contracts.csproj">
+      <Project>{05202D9C-BE63-4105-8CE4-A9BFA19413D8}</Project>
+      <Name>RMA.Service.Admin.SecurityManager.Contracts</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\Audit\RMA.Service.Audit.Contracts\RMA.Service.Audit.Contracts.csproj">
+      <Project>{A69FFCF8-78F4-4201-BA0F-EE9D183896CE}</Project>
+      <Name>RMA.Service.Audit.Contracts</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\Billing\RMA.Service.Billing.Contracts\RMA.Service.Billing.Contracts.csproj">
+      <Project>{DA2EE1AE-A96F-447A-98C8-C2F65651478C}</Project>
+      <Name>RMA.Service.Billing.Contracts</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\ClientCare\RMA.Service.ClientCare.Contracts\RMA.Service.ClientCare.Contracts.csproj">
+      <Project>{aeab775a-a0fe-497b-8947-14fe5ac961d1}</Project>
+      <Name>RMA.Service.ClientCare.Contracts</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\DigiCare\RMA.Service.DigiCare.Contracts\RMA.Service.DigiCare.Contracts.csproj">
+      <Project>{34EABD0E-0F2D-495A-9D33-CE0AA125A5A6}</Project>
+      <Name>RMA.Service.DigiCare.Contracts</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\FinCare\RMA.Service.FinCare.Contracts\RMA.Service.FinCare.Contracts.csproj">
+      <Project>{d989a1cf-e3c8-4ac9-a110-bd658869c9bd}</Project>
+      <Name>RMA.Service.FinCare.Contracts</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\FinCare\RMA.Service.FinCare.Contracts\RMA.Service.FinCare.Contracts.csproj">
+      <Project>{d989a1cf-e3c8-4ac9-a110-bd658869c9bd}</Project>
+      <Name>RMA.Service.FinCare.Contracts</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\Integrations\RMA.Service.Integrations.Contracts\RMA.Service.Integrations.Contracts.csproj">
+      <Project>{66928FA0-0AA5-4E2A-842C-61A1EC14960C}</Project>
+      <Name>RMA.Service.Integrations.Contracts</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\MediCare\RMA.Service.MediCare.Contracts\RMA.Service.MediCare.Contracts.csproj">
+      <Project>{540e9736-429e-45d6-b0b3-703d40cec04a}</Project>
+      <Name>RMA.Service.MediCare.Contracts</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\MediCare\RMA.Service.MediCare.RuleTasks\RMA.Service.MediCare.RuleTasks.csproj">
+      <Project>{df9b6c4b-e888-4edf-a022-7b815abf36b0}</Project>
+      <Name>RMA.Service.MediCare.RuleTasks</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\PensCare\RMA.Service.PensCare.Contracts\RMA.Service.PensCare.Contracts.csproj">
+      <Project>{C93CFCF6-4469-4202-A33A-3FD9D779B856}</Project>
+      <Name>RMA.Service.PensCare.Contracts</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\ScanCare\RMA.Service.ScanCare.Contracts\RMA.Service.ScanCare.Contracts.csproj">
+      <Project>{42AFAB1F-7719-4AFC-9DD4-76AD32A045A5}</Project>
+      <Name>RMA.Service.ScanCare.Contracts</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\RMA.Service.ClaimCare.Contracts\RMA.Service.ClaimCare.Contracts.csproj">
+      <Project>{1cb03ded-41d2-40f8-960d-60b78d6e0ee1}</Project>
+      <Name>RMA.Service.ClaimCare.Contracts</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\RMA.Service.ClaimCare.Database\RMA.Service.ClaimCare.Database.csproj">
+      <Project>{4a9b3096-5701-40ba-9d26-d08ce1db9258}</Project>
+      <Name>RMA.Service.ClaimCare.Database</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\RMA.Service.ClaimCare.RuleTasks\RMA.Service.ClaimCare.RuleTasks.csproj">
+      <Project>{69DA7B03-349E-4368-BED0-526CF2B1E92B}</Project>
+      <Name>RMA.Service.ClaimCare.RuleTasks</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="ContainerConfiguration.tt">
+      <Generator>TextTemplatingFileGenerator</Generator>
+      <LastGenOutput>ContainerConfiguration1.cs</LastGenOutput>
+    </Content>
+  </ItemGroup>
+  <ItemGroup>
+    <Service Include="{508349B6-6B84-4DF5-91F0-309BEEBAD82D}" />
+  </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="Autofac">
+      <Version>4.9.4</Version>
+    </PackageReference>
+    <PackageReference Include="AutoMapper">
+      <Version>8.0.0</Version>
+    </PackageReference>
+    <PackageReference Include="CommonServiceLocator">
+      <Version>2.0.7</Version>
+    </PackageReference>
+    <PackageReference Include="EntityFramework">
+      <Version>6.4.4</Version>
+    </PackageReference>
+    <PackageReference Include="Microsoft.CodeAnalysis.FxCopAnalyzers">
+      <Version>3.3.2</Version>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+      <PrivateAssets>all</PrivateAssets>
+    </PackageReference>
+    <PackageReference Include="Microsoft.CodeAnalysis.VersionCheckAnalyzer">
+      <Version>3.3.2</Version>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+      <PrivateAssets>all</PrivateAssets>
+    </PackageReference>
+    <PackageReference Include="Microsoft.CodeQuality.Analyzers">
+      <Version>3.3.2</Version>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+      <PrivateAssets>all</PrivateAssets>
+    </PackageReference>
+    <PackageReference Include="Microsoft.DependencyValidation.Analyzers">
+      <Version>0.11.0</Version>
+    </PackageReference>
+    <PackageReference Include="Microsoft.NetFramework.Analyzers">
+      <Version>3.3.2</Version>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+      <PrivateAssets>all</PrivateAssets>
+    </PackageReference>
+    <PackageReference Include="Microsoft.ServiceFabric.Actors">
+      <Version>3.4.664</Version>
+    </PackageReference>
+    <PackageReference Include="Microsoft.VisualStudio.Threading.Analyzers">
+      <Version>16.3.52</Version>
+    </PackageReference>
+    <PackageReference Include="Roslynator.Analyzers">
+      <Version>2.1.0</Version>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+      <PrivateAssets>all</PrivateAssets>
+    </PackageReference>
+    <PackageReference Include="TinyCsvParser">
+      <Version>2.7.0</Version>
+    </PackageReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Services\Document\" />
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>

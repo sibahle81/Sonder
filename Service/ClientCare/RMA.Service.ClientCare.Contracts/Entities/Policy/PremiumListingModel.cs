@@ -1,0 +1,43 @@
+﻿namespace RMA.Service.ClientCare.Contracts.Entities.Policy
+{
+    public class PremiumListingModel
+    {
+        public int Id { get; set; } // Id (Primary key)
+        public System.Guid FileIdentifier { get; set; } // FileIdentifier
+        public string Company { get; set; } // Company (length: 256)
+        public string PolicyNumber { get; set; } // PolicyNumber (length: 64)
+        public string ClientReference { get; set; } // ClientReference (length: 64)
+        public string JoinDate { get; set; } // JoinDate (length: 32)
+        public string ClientType { get; set; } // ClientType (length: 32)
+        public string FirstName { get; set; } // FirstName (length: 256)
+        public string Surname { get; set; } // Surname (length: 256)
+        public string MainMemberId { get; set; } // MainMemberID (length: 32)
+        public string IdNumber { get; set; } // IdNumber (length: 32)
+        public string PassportNumber { get; set; } // PassportNumber (length: 32)
+        public string DateOfBirth { get; set; } // DateOfBirth (length: 32)
+        public string BenefitName { get; set; } // BenefitName (length: 128)
+        public string Address1 { get; set; } // Address1 (length: 256)
+        public string Address2 { get; set; } // Address2 (length: 256)
+        public string City { get; set; } // City (length: 256)
+        public string Province { get; set; } // Province (length: 256)
+        public string Country { get; set; } // Country (length: 256)
+        public string PostalCode { get; set; } // PostalCode (length: 8)
+        public string PostalAddress1 { get; set; } // PostalAddress1 (length: 256)
+        public string PostalAddress2 { get; set; } // PostalAddress2 (length: 256)
+        public string PostalCity { get; set; } // PostalCity (length: 256)
+        public string PostalProvince { get; set; } // PostalProvince (length: 256)
+        public string PostalCountry { get; set; } // PostalCountry (length: 256)
+        public string PostalPostCode { get; set; } // PostalPostCode (length: 8)
+        public string Telephone { get; set; } // Telephone (length: 24)
+        public string Mobile { get; set; } // Mobile (length: 24)
+        public string Email { get; set; } // Email (length: 128)
+        public string PreferredCommunication { get; set; } // PreferredCommunication (length: 24)
+        public string PreviousInsurer { get; set; } // PreviousInsurer (length: 256)
+        public string PreviousInsurerStartDate { get; set; } // PreviousInsurerStartDate (length: 32)
+        public string PreviousInsurerEndDate { get; set; } // PreviousInsurerEndDate (length: 32)
+        public string PreviousInsurerPolicyNumber { get; set; } // PreviousInsurerPolicyNumber (length: 50)
+        public string ExcelRowNumber { get; set; } // ExcelRowNumber (length: 50)
+        public string RetirementAge { get; set; } // RetirementAge (lenght: 8)
+        public string CoverAmount { get; set; }
+    }
+}

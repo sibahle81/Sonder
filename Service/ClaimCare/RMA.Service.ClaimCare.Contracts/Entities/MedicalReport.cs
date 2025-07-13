@@ -1,0 +1,63 @@
+﻿using RMA.Service.Admin.MasterDataManager.Contracts.Enums;
+
+namespace RMA.Service.ClaimCare.Contracts.Entities
+{
+    public class MedicalReport
+    {
+        public int MedicalReportId { get; set; } // MedicalReportId (Primary key)
+        public int PersonEventId { get; set; } // PersonEventId
+        public int PersonId { get; set; } // PersonId
+        public System.DateTime ReportDate { get; set; } // ReportDate
+        public MedicalReportTypeEnum MedicalReportType { get; set; } // MedicalReportTypeId
+        public System.DateTime? FirstConsultationDate { get; set; } // FirstConsultationDate
+        public bool IsStabilised { get; set; } // IsStabilised
+        public System.DateTime? StabilisedDate { get; set; } // StabilisedDate
+        public string NotStabilisedReason { get; set; } // NotStabilisedReason (length: 1024)
+        public string ClinicalDescription { get; set; } // ClinicalDescription (length: 2048)
+        public bool IsInjuryConsistent { get; set; } // IsInjuryConsistent
+        public bool IsContributingCauses { get; set; } // IsContributingCauses
+        public string ContributingDescription { get; set; } // ContributingDescription (length: 2048)
+        public bool IsPreExistingDefect { get; set; } // IsPreExistingDefect
+        public string PreExistingDefectDescription { get; set; } // PreExistingDefectDescription (length: 2048)
+        public bool IsUnfitForWork { get; set; } // IsUnfitForWork
+        public bool IsUnfitForWorkAuth { get; set; } // IsUnfitForWorkAuth
+        public System.DateTime? FirstDayOff { get; set; } // FirstDayOff
+        public decimal? EstimatedDaysOff { get; set; } // EstimatedDaysOff
+        public System.DateTime? LastDayOff { get; set; } // LastDayOff
+        public string ReferralHistory { get; set; } // ReferralHistory (length: 255)
+        public string RadiologicalExaminations { get; set; } // RadiologicalExaminations (length: 255)
+        public string OperationsProcedures { get; set; } // OperationsProcedures (length: 255)
+        public string PhysioTherapyDetails { get; set; } // PhysioTherapyDetails (length: 255)
+        public bool IsRefusedCompensation { get; set; } // IsRefusedCompensation
+        public string DetailedImpairmentEval { get; set; } // DetailedImpairmentEval (length: 255)
+        public int? MedicalServiceProviderId { get; set; } // MedicalServiceProviderId
+        public string PatientNumber { get; set; } // PatientNumber (length: 50)
+        public System.DateTime? DateAssurerNotified { get; set; } // DateAssurerNotified
+        public MedicalReportCategoryEnum MedicalReportCategory { get; set; } // MedicalReportCategoryId
+        public string MedicalReportCategoryXml { get; set; } // MedicalReportCategoryXml
+        public bool IsActive { get; set; } // IsActive
+        public bool IsDeleted { get; set; } // IsDeleted
+        public string CreatedBy { get; set; } // CreatedBy (length: 50)
+        public System.DateTime CreatedDate { get; set; } // CreatedDate
+        public string ModifiedBy { get; set; } // ModifiedBy (length: 50)
+        public System.DateTime ModifiedDate { get; set; } // ModifiedDate
+        public int? ReportStatus { get; set; } // ReportStatus
+        public string RejectionReason { get; set; } // RejectionReason (length: 2048)
+        public int? AssessmentTypeId { get; set; } // AssessmentTypeId
+        public System.DateTime? TreatmentDate { get; set; } // TreatmentDate
+        public string Icd10Codes { get; set; } // ICD10Codes (length: 255)
+        public int? RejectPendReasonId { get; set; } // RejectPendReasonId
+        public int? MedicalReportFormId { get; set; } // MedicalReportFormId
+
+        public int MedicalReportTypeId
+        {
+            get => (int)MedicalReportType;
+            set => MedicalReportType = (MedicalReportTypeEnum)value;
+        }
+        public int MedicalReportCategoryId
+        {
+            get => (int)MedicalReportCategory;
+            set => MedicalReportCategory = (MedicalReportCategoryEnum)value;
+        }
+    }
+}

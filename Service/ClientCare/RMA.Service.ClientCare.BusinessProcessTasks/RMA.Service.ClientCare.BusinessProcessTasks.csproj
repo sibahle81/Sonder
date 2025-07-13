@@ -1,0 +1,246 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{C03927C8-83BB-43C4-A405-76E3DE6FB686}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>RMA.Service.ClientCare.BusinessProcessTasks</RootNamespace>
+    <AssemblyName>RMA.Service.ClientCare.BusinessProcessTasks</AssemblyName>
+    <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <Deterministic>true</Deterministic>
+    <NuGetPackageImportStamp>
+    </NuGetPackageImportStamp>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>..\..\Output\BusinessProcessTasks\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>..\..\Output\BusinessProcessTasks\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x64'">
+    <DebugSymbols>true</DebugSymbols>
+    <OutputPath>bin\x64\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <DebugType>full</DebugType>
+    <PlatformTarget>x64</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>..\..\..\Solution Items\RMA.ruleset</CodeAnalysisRuleSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x64'">
+    <OutputPath>bin\x64\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <Optimize>true</Optimize>
+    <DebugType>pdbonly</DebugType>
+    <PlatformTarget>x64</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>..\..\..\Solution Items\RMA.ruleset</CodeAnalysisRuleSet>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Agents\LinkAgentWizard.cs" />
+    <Compile Include="BenefitWizard\BenefitWizard.cs" />
+    <Compile Include="Agents\ManageAgentWizard.cs" />
+    <Compile Include="BrokerageWizard\BinderPartnerWizard.cs" />
+    <Compile Include="BrokerageWizard\BrokerageWizard.cs" />
+    <Compile Include="BrokerageWizard\FSPEImportNotificationTask.cs" />
+    <Compile Include="CancelGroupPolicyWizard\CancelGroupPolicyWizard.cs" />
+    <Compile Include="CancelIndividualPolicyWizard\CancelIndividualPolicyWizard.cs" />
+    <Compile Include="CancelPolicy\CancelPolicy.cs" />
+    <Compile Include="CancelPolicy\StartWizard.cs" />
+    <Compile Include="CancelPolicy\SubmitWizard.cs" />
+    <Compile Include="ChangePolicyStatusWizard\ChangePolicyStatus.cs" />
+    <Compile Include="ClientCareNotification\ClientCareNotificationTask.cs" />
+    <Compile Include="CommissionPaymentRejectionNotifications\CommissionPaymentBankingUpdatedNotification.cs" />
+    <Compile Include="CommissionPaymentRejectionNotifications\CommissionPaymentRejectedNotificationTask.cs" />
+    <Compile Include="ConsolidatedFuneralOnboarding\ConsolidatedFuneralOnboarding.cs" />
+    <Compile Include="ContinuePolicyWizard\ContinuePolicyWizard.cs" />
+    <Compile Include="Declarations\DeclarationAssistanceWizard.cs" />
+    <Compile Include="ExpenseBasedPolicyWizard\ReinstateExpenseBasedPolicyWizard.cs" />
+    <Compile Include="ExpenseBasedPolicyWizard\MaintainExpenseBasedPolicyWizard.cs" />
+    <Compile Include="GroupRiskOnboarding\ManageGroupRiskPoliciesWizard.cs" />
+    <Compile Include="GroupRiskOnboarding\GroupRiskOnboarding.cs" />
+    <Compile Include="IndustryClassDeclarationConfigurationWizard\IndustryClassDeclarationConfigurationWizard.cs" />
+    <Compile Include="ManageGroupRiskPremiumRates\ManageGroupRiskPremiumRates.cs" />
+    <Compile Include="RolePlayerOnboarding\RolePlayerOnboardingWizard.cs" />
+    <Compile Include="MyValuePlusOnboarding\MyValuePlusOnboarding.cs" />
+    <Compile Include="PolicyPremiumPayback\PolicyPremiumPayback.cs" />
+    <Compile Include="PolicyPremiumPayback\PolicyPremiumPaybackErrors.cs" />
+    <Compile Include="Policy\RMARMLMaintainPolicyWizard.cs" />
+    <Compile Include="Policy\RMARMLReinstatePolicyWizard.cs" />
+    <Compile Include="Policy\RMALifeAssurancePolicyWizard.cs" />
+    <Compile Include="Policy\RMAMutualAssurancePolicyWizard.cs" />
+    <Compile Include="Policy\RMARMLCancelPolicyWizard.cs" />
+    <Compile Include="PremiumListingSchedules\PremiumListingSchedules.cs" />
+    <Compile Include="Quotation\RMLMutualAssuranceQuotationWizard.cs" />
+    <Compile Include="Quotation\RMAMutualAssuranceQuotationWizard.cs" />
+    <Compile Include="WhatsappCompanyList\WhatsappCompanyList.cs" />
+    <Compile Include="RateAdjustmentWizard\RateAdjusmentWizard.cs" />
+    <Compile Include="Declarations\DeclarationVarianceWizard.cs" />
+    <Compile Include="InsuredLives\InsuredLives.cs" />
+    <Compile Include="InterBankTransfer\InterBankTransfer.cs" />
+    <Compile Include="InterBankTransfer\Model\InterBankTransfer.cs" />
+    <Compile Include="InterBankTransfer\Model\StartWizardRequest.cs" />
+    <Compile Include="InterBankTransfer\StartWizard.cs" />
+    <Compile Include="InterBankTransfer\SubmitWizard.cs" />
+    <Compile Include="LapsePolicy\LapsePolicyWizard.cs" />
+    <Compile Include="MovePolicyScheme\MovePolicySchemeWizard.cs" />
+    <Compile Include="IndustryClassRenewalWizard\IndustryClassRenewalWizard.cs" />
+    <Compile Include="Member\MemberWizard.cs" />
+    <Compile Include="ManagePolicyGroupMemberWizard\ManagePolicyGroupMember.cs" />
+    <Compile Include="ManagePolicyGroupWizard\ManagePolicyGroup.cs" />
+    <Compile Include="ManagePolicyIndividualWizard\ManagePolicyIndividual.cs" />
+    <Compile Include="MoveBrokerPolicy\MoveBrokerPolicyWizard.cs" />
+    <Compile Include="MemberRelations\MemberRelationsWizard.cs" />
+    <Compile Include="NewBusinessGroup\NewBusinessGroupWizard.cs" />
+    <Compile Include="PremiumListing\PremiumListing.cs" />
+    <Compile Include="NewBusinessIndividual\NewBusinessIndividualWizard.cs" />
+    <Compile Include="ProductOptionWizard\ProductOptionWizard.cs" />
+    <Compile Include="ProductWizard\ProductWizard.cs" />
+    <Compile Include="ProcessServiceRegistry.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="ReinstatePolicyWizard\ReinstatePolicyWizard.cs" />
+    <Compile Include="UpgradeDowngradePolicy\UpgradeDowngradePolicy.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <AdditionalFiles Include="..\..\..\Solution Items\RMA.DependencyValidation\ServicePlatform.layerdiagram">
+      <Link>ServicePlatform.layerdiagram</Link>
+      <Visible>False</Visible>
+    </AdditionalFiles>
+    <None Include="app.config" />
+  </ItemGroup>
+  <ItemGroup />
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\Common\RMA.Common.Database\RMA.Common.Database.csproj">
+      <Project>{5A742FB8-0332-42DE-9D56-07315B898B32}</Project>
+      <Name>RMA.Common.Database</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\..\Common\RMA.Common.Service\RMA.Common.Service.csproj">
+      <Project>{4AA3772E-D3D5-458C-BC16-99D93DF9185A}</Project>
+      <Name>RMA.Common.Service</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\..\Common\RMA.Common\RMA.Common.csproj">
+      <Project>{C30FB382-556D-41E4-B987-DEA4F962059A}</Project>
+      <Name>RMA.Common</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\Admin\RMA.Service.Admin.BusinessProcessManager.Contracts\RMA.Service.Admin.BusinessProcessManager.Contracts.csproj">
+      <Project>{9FF86F02-EA7C-4921-8B87-79C21FFC38E7}</Project>
+      <Name>RMA.Service.Admin.BusinessProcessManager.Contracts</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\Admin\RMA.Service.Admin.MasterDataManager.Contracts\RMA.Service.Admin.MasterDataManager.Contracts.csproj">
+      <Project>{81ABD00C-262F-48DF-A933-63E3730F0245}</Project>
+      <Name>RMA.Service.Admin.MasterDataManager.Contracts</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\Admin\RMA.Service.Admin.MasterDataManager\RMA.Service.Admin.MasterDataManager.csproj">
+      <Project>{6821E4F6-C533-4381-8CB1-394237617F98}</Project>
+      <Name>RMA.Service.Admin.MasterDataManager</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\Admin\RMA.Service.Admin.RulesManager.Contracts\RMA.Service.Admin.RulesManager.Contracts.csproj">
+      <Project>{19B2A261-514C-4887-9930-2378A6DB7381}</Project>
+      <Name>RMA.Service.Admin.RulesManager.Contracts</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\Admin\RMA.Service.Admin.SecurityManager.Contracts\RMA.Service.Admin.SecurityManager.Contracts.csproj">
+      <Project>{05202D9C-BE63-4105-8CE4-A9BFA19413D8}</Project>
+      <Name>RMA.Service.Admin.SecurityManager.Contracts</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\Billing\RMA.Service.Billing.Contracts\RMA.Service.Billing.Contracts.csproj">
+      <Project>{DA2EE1AE-A96F-447A-98C8-C2F65651478C}</Project>
+      <Name>RMA.Service.Billing.Contracts</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\Billing\RMA.Service.Billing\RMA.Service.Billing.csproj">
+      <Project>{B17FA106-08B2-4037-B168-75422AFD2DCE}</Project>
+      <Name>RMA.Service.Billing</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\ClaimCare\RMA.Service.ClaimCare.Contracts\RMA.Service.ClaimCare.Contracts.csproj">
+      <Project>{1CB03DED-41D2-40F8-960D-60B78D6E0EE1}</Project>
+      <Name>RMA.Service.ClaimCare.Contracts</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\FinCare\RMA.Service.FinCare.Contracts\RMA.Service.FinCare.Contracts.csproj">
+      <Project>{D989A1CF-E3C8-4AC9-A110-BD658869C9BD}</Project>
+      <Name>RMA.Service.FinCare.Contracts</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\Integrations\RMA.Service.Integrations.Contracts\RMA.Service.Integrations.Contracts.csproj">
+      <Project>{66928FA0-0AA5-4E2A-842C-61A1EC14960C}</Project>
+      <Name>RMA.Service.Integrations.Contracts</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\ScanCare\RMA.Service.ScanCare.Contracts\RMA.Service.ScanCare.Contracts.csproj">
+      <Project>{42AFAB1F-7719-4AFC-9DD4-76AD32A045A5}</Project>
+      <Name>RMA.Service.ScanCare.Contracts</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\RMA.Service.ClientCare.Contracts\RMA.Service.ClientCare.Contracts.csproj">
+      <Project>{AEAB775A-A0FE-497B-8947-14FE5AC961D1}</Project>
+      <Name>RMA.Service.ClientCare.Contracts</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\RMA.Service.ClientCare.Database\RMA.Service.ClientCare.Database.csproj">
+      <Project>{A2DE3936-B91B-4E93-9136-A92CB603C558}</Project>
+      <Name>RMA.Service.ClientCare.Database</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\RMA.Service.ClientCare\RMA.Service.ClientCare.csproj">
+      <Project>{1F759A08-7763-4FFF-AEC4-4A1C33DD11F4}</Project>
+      <Name>RMA.Service.ClientCare</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="Autofac">
+      <Version>4.9.4</Version>
+    </PackageReference>
+    <PackageReference Include="AutoMapper">
+      <Version>8.0.0</Version>
+    </PackageReference>
+    <PackageReference Include="CommonServiceLocator">
+      <Version>2.0.7</Version>
+    </PackageReference>
+    <PackageReference Include="Microsoft.CodeAnalysis.FxCopAnalyzers">
+      <Version>3.3.2</Version>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+      <PrivateAssets>all</PrivateAssets>
+    </PackageReference>
+    <PackageReference Include="Microsoft.CodeAnalysis.VersionCheckAnalyzer">
+      <Version>3.3.2</Version>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+      <PrivateAssets>all</PrivateAssets>
+    </PackageReference>
+    <PackageReference Include="Microsoft.CodeQuality.Analyzers">
+      <Version>3.3.2</Version>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+      <PrivateAssets>all</PrivateAssets>
+    </PackageReference>
+    <PackageReference Include="Microsoft.DependencyValidation.Analyzers">
+      <Version>0.11.0</Version>
+    </PackageReference>
+    <PackageReference Include="Microsoft.NetFramework.Analyzers">
+      <Version>3.3.2</Version>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+      <PrivateAssets>all</PrivateAssets>
+    </PackageReference>
+    <PackageReference Include="Microsoft.ServiceFabric.Actors">
+      <Version>3.4.664</Version>
+    </PackageReference>
+    <PackageReference Include="Microsoft.VisualStudio.Threading.Analyzers">
+      <Version>16.3.52</Version>
+    </PackageReference>
+    <PackageReference Include="Roslynator.Analyzers">
+      <Version>2.1.0</Version>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+      <PrivateAssets>all</PrivateAssets>
+    </PackageReference>
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+</Project>

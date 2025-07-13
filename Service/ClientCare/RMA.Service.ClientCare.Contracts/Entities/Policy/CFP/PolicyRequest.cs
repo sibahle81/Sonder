@@ -1,0 +1,41 @@
+﻿using System;
+using System.Collections.Generic;
+
+namespace RMA.Service.ClientCare.Contracts.Entities.Policy.CFP
+{
+    public class PolicyRequest
+    {
+        public string Product { get; set; } = "Funeral";
+        public string PolicyNumber { get; set; } = "";
+        public string RepresentativeID { get; set; }
+
+        public string RequestGUID { get; set; }
+
+        public Common.Member MainMember { get; set; }
+        public Common.Member Spouse { get; set; }
+        public List<Common.Member> Children { get; set; }
+        public List<Common.Member> Parents { get; set; }
+        public List<Common.Member> Extended { get; set; }
+        public List<Common.Member> Beneficiaries { get; set; }
+
+        public Common.Address PhysicalAddress { get; set; }
+        public Common.Address PostalAddress { get; set; }
+
+        public Common.EmployerDetails EmployerDetails { get; set; }
+
+        public Common.BankingDetails BankingDetails { get; set; }
+
+        public string AffordabilityStatus { get; set; } = "";
+        public string ProductOption { get; set; }
+        public string AnnualIncreaseOption { get; set; }
+        public int IncreaseMonth { get; set; } = 0;
+        public int DebitOrderDay { get; set; } = 0;
+        public string PaymentMethod { get; set; } = "";
+
+        //Properties for TimeSeries Report
+        public DateTime LeadSubmittedDate { get; set; }
+        public DateTime LeadAPIReceivedDate { get; set; }
+        public DateTime LeadServiceBusQueuedDate { get; set; }
+
+    }
+}

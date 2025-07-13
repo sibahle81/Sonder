@@ -1,0 +1,190 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<ApplicationManifest xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" ApplicationTypeName="RMA.ServiceFabric.ClaimCare" ApplicationTypeVersion="1.0.0" xmlns="http://schemas.microsoft.com/2011/01/fabric">
+  <Parameters>
+    <Parameter Name="ASPNETCORE_ENVIRONMENT" DefaultValue="Development" />
+    <Parameter Name="APPINSIGHTS_INSTRUMENTATIONKEY" DefaultValue="7fcf47fb-0942-4335-949f-715116aaabf5" />
+    <Parameter Name="Diagnostics_LogLevel" DefaultValue="Warning" />
+    <Parameter Name="Api_InstanceCount" DefaultValue="1" />
+    <Parameter Name="Service_InstanceCount" DefaultValue="1" />
+    <Parameter Name="Port" DefaultValue="80" />
+    <Parameter Name="EnvName" DefaultValue="Local." />
+    <Parameter Name="OpenId.Authority" DefaultValue="http://localhost/auth" />
+    <Parameter Name="clm.OpenId.RmaApiClientId" DefaultValue="RmaSF.ClaimCareApi" />
+    <Parameter Name="clm.OpenId.RmaApiClientSecret" DefaultValue="y6yodmzpb42c98rmvggcfa97yh0fto29x7t0wilfoidqo" />
+    <Parameter Name="CLM_DBConnection" DefaultValue="data source=azt-mcc-sql-01.rma.msft;initial catalog=AZD-MCC;user id=RMAAdmin;password=RMA@dmin@001;MultipleActiveResultSets=True;App=EntityFramework" />
+    <Parameter Name="CLM_DataMaskDBConnection" DefaultValue="data source=azt-mcc-sql-01.rma.msft;initial catalog=AZD-MCC;user id=RMAMaskedUser;password=RMA@Masked5User@0%$#R;MultipleActiveResultSets=True;App=EntityFramework" />
+    <Parameter Name="DIAG_DBConnection" DefaultValue="data source=azt-mcc-sql-01.rma.msft;initial catalog=AZD-MCC;user id=RMAAdmin;password=RMA@dmin@001;MultipleActiveResultSets=True" />
+    <Parameter Name="SBConnectionString" DefaultValue="Endpoint=sb://azd-mcc-sbus-01.servicebus.windows.net/;SharedAccessKeyName=RootManageSharedAccessKey;SharedAccessKey=Z9P2achony0fqap2ixono7tNWcyMKbvHE3AnGIhE8OU=" />
+    <Parameter Name="IntegrationsSBConnectionString" DefaultValue="Endpoint=sb://azq-int-sbus-01.servicebus.windows.net/;SharedAccessKeyName=Modernization;SharedAccessKey=NauehDw9UlYI9KKNdn3/HMMESc7h2OgS7D5hO/IDabI=" />
+    <Parameter Name="SmtpMailServer" DefaultValue="smtp.office365.com" />
+    <Parameter Name="SmtpMailPort" DefaultValue="587" />
+    <Parameter Name="SmtpUsername" DefaultValue="modtest@randmutual.co.za" />
+    <Parameter Name="SmtpPassword" DefaultValue="RMA@Pa$$1234" />
+    <Parameter Name="SmtpEnableSsl" DefaultValue="true" />
+  </Parameters>
+  <!-- Import the ServiceManifest from the ServicePackage. The ServiceManifestName and ServiceManifestVersion 
+       should match the Name and Version attributes of the ServiceManifest element defined in the 
+       ServiceManifest.xml file. -->
+  <ServiceManifestImport>
+    <ServiceManifestRef ServiceManifestName="RMA.Service.ClaimCare.ApiPkg" ServiceManifestVersion="1.0.0" />
+    <ConfigOverrides />
+    <ResourceOverrides>
+      <Endpoints>
+        <Endpoint Name="ServiceEndpoint" Port="[Port]" Protocol="http" Type="Input" />
+      </Endpoints>
+    </ResourceOverrides>
+    <EnvironmentOverrides CodePackageRef="code">
+      <EnvironmentVariable Name="ASPNETCORE_ENVIRONMENT" Value="[ASPNETCORE_ENVIRONMENT]" />
+      <EnvironmentVariable Name="APPINSIGHTS_INSTRUMENTATIONKEY" Value="[APPINSIGHTS_INSTRUMENTATIONKEY]" />
+      <EnvironmentVariable Name="DIAG_DBConnection" Value="[DIAG_DBConnection]" />
+      <EnvironmentVariable Name="Diagnostics_LogLevel" Value="[Diagnostics_LogLevel]" />
+      <EnvironmentVariable Name="EnvName" Value="[EnvName]" />
+      <EnvironmentVariable Name="OpenId.Authority" Value="[OpenId.Authority]" />
+      <EnvironmentVariable Name="OpenId.RmaApiClientId" Value="[clm.OpenId.RmaApiClientId]" />
+      <EnvironmentVariable Name="OpenId.RmaApiClientSecret" Value="[clm.OpenId.RmaApiClientSecret]" />
+    </EnvironmentOverrides>
+  </ServiceManifestImport>
+  <ServiceManifestImport>
+    <ServiceManifestRef ServiceManifestName="RMA.Service.ClaimCarePkg" ServiceManifestVersion="1.0.0" />
+    <ConfigOverrides />
+    <EnvironmentOverrides CodePackageRef="code">
+      <EnvironmentVariable Name="APPINSIGHTS_INSTRUMENTATIONKEY" Value="[APPINSIGHTS_INSTRUMENTATIONKEY]" />
+      <EnvironmentVariable Name="DIAG_DBConnection" Value="[DIAG_DBConnection]" />
+      <EnvironmentVariable Name="Diagnostics_LogLevel" Value="[Diagnostics_LogLevel]" />
+      <EnvironmentVariable Name="EnvName" Value="[EnvName]" />
+      <EnvironmentVariable Name="DB" Value="[CLM_DBConnection]" />
+      <EnvironmentVariable Name="DataMaskDBConn" Value="[CLM_DataMaskDBConnection]" />
+      <EnvironmentVariable Name="SBConnectionString" Value="[SBConnectionString]" />
+      <EnvironmentVariable Name="IntegrationsSBConnectionString" Value="[IntegrationsSBConnectionString]" />
+      <EnvironmentVariable Name="SmtpMailServer" Value="[SmtpMailServer]" />
+      <EnvironmentVariable Name="SmtpMailPort" Value="[SmtpMailPort]" />
+      <EnvironmentVariable Name="SmtpUsername" Value="[SmtpUsername]" />
+      <EnvironmentVariable Name="SmtpPassword" Value="[SmtpPassword]" />
+      <EnvironmentVariable Name="SmtpEnableSsl" Value="[SmtpEnableSsl]" />
+    </EnvironmentOverrides>
+  </ServiceManifestImport>
+  <DefaultServices>
+    <!--Generated by T4 Template-->
+    <Service Name="RMA.Service.ClaimCare.Api" ServicePackageActivationMode="ExclusiveProcess">
+      <StatelessService ServiceTypeName="RMA.Service.ClaimCare.ApiType" InstanceCount="[Api_InstanceCount]">
+        <SingletonPartition />
+      </StatelessService>
+    </Service>
+    <!--Remoting Services-->
+    <Service Name="claim/IAccidentService">
+      <StatelessService ServiceTypeName="claim/IAccidentService" InstanceCount="[Service_InstanceCount]">
+        <SingletonPartition />
+      </StatelessService>
+    </Service>
+    <Service Name="claim/IAuditLogService">
+      <StatelessService ServiceTypeName="claim/IAuditLogService" InstanceCount="[Service_InstanceCount]">
+        <SingletonPartition />
+      </StatelessService>
+    </Service>
+    <Service Name="claim/IBillingInterfaceService">
+      <StatelessService ServiceTypeName="claim/IBillingInterfaceService" InstanceCount="[Service_InstanceCount]">
+        <SingletonPartition />
+      </StatelessService>
+    </Service>
+    <Service Name="claim/IClaimCommunicationListener">
+      <StatelessService ServiceTypeName="claim/IClaimCommunicationListener" InstanceCount="[Service_InstanceCount]">
+        <SingletonPartition />
+      </StatelessService>
+    </Service>
+    <Service Name="claim/IClaimCommunicationService">
+      <StatelessService ServiceTypeName="claim/IClaimCommunicationService" InstanceCount="[Service_InstanceCount]">
+        <SingletonPartition />
+      </StatelessService>
+    </Service>
+    <Service Name="claim/IClaimDisabilityService">
+      <StatelessService ServiceTypeName="claim/IClaimDisabilityService" InstanceCount="[Service_InstanceCount]">
+        <SingletonPartition />
+      </StatelessService>
+    </Service>
+    <Service Name="claim/IClaimEarningService">
+      <StatelessService ServiceTypeName="claim/IClaimEarningService" InstanceCount="[Service_InstanceCount]">
+        <SingletonPartition />
+      </StatelessService>
+    </Service>
+    <Service Name="claim/IClaimFinalizedIntegrationService">
+      <StatelessService ServiceTypeName="claim/IClaimFinalizedIntegrationService" InstanceCount="[Service_InstanceCount]">
+        <SingletonPartition />
+      </StatelessService>
+    </Service>
+    <Service Name="claim/IClaimIntegrationService">
+      <StatelessService ServiceTypeName="claim/IClaimIntegrationService" InstanceCount="[Service_InstanceCount]">
+        <SingletonPartition />
+      </StatelessService>
+    </Service>
+    <Service Name="claim/IClaimInvoiceService">
+      <StatelessService ServiceTypeName="claim/IClaimInvoiceService" InstanceCount="[Service_InstanceCount]">
+        <SingletonPartition />
+      </StatelessService>
+    </Service>
+    <Service Name="claim/IClaimRequirementService">
+      <StatelessService ServiceTypeName="claim/IClaimRequirementService" InstanceCount="[Service_InstanceCount]">
+        <SingletonPartition />
+      </StatelessService>
+    </Service>
+    <Service Name="claim/IClaimService">
+      <StatelessService ServiceTypeName="claim/IClaimService" InstanceCount="[Service_InstanceCount]">
+        <SingletonPartition />
+      </StatelessService>
+    </Service>
+    <Service Name="claim/IDiseaseService">
+      <StatelessService ServiceTypeName="claim/IDiseaseService" InstanceCount="[Service_InstanceCount]">
+        <SingletonPartition />
+      </StatelessService>
+    </Service>
+    <Service Name="claim/IFatalService">
+      <StatelessService ServiceTypeName="claim/IFatalService" InstanceCount="[Service_InstanceCount]">
+        <SingletonPartition />
+      </StatelessService>
+    </Service>
+    <Service Name="claim/IMedicalEstimatesService">
+      <StatelessService ServiceTypeName="claim/IMedicalEstimatesService" InstanceCount="[Service_InstanceCount]">
+        <SingletonPartition />
+      </StatelessService>
+    </Service>
+    <Service Name="claim/IMedicalInvoiceClaimService">
+      <StatelessService ServiceTypeName="claim/IMedicalInvoiceClaimService" InstanceCount="[Service_InstanceCount]">
+        <SingletonPartition />
+      </StatelessService>
+    </Service>
+    <Service Name="claim/INoteService">
+      <StatelessService ServiceTypeName="claim/INoteService" InstanceCount="[Service_InstanceCount]">
+        <SingletonPartition />
+      </StatelessService>
+    </Service>
+    <Service Name="claim/IPreAuthClaimService">
+      <StatelessService ServiceTypeName="claim/IPreAuthClaimService" InstanceCount="[Service_InstanceCount]">
+        <SingletonPartition />
+      </StatelessService>
+    </Service>
+    <Service Name="claim/ISuspiciousTransactionModelService">
+      <StatelessService ServiceTypeName="claim/ISuspiciousTransactionModelService" InstanceCount="[Service_InstanceCount]">
+        <SingletonPartition />
+      </StatelessService>
+    </Service>
+    <Service Name="claim/IUnclaimedBenefitService">
+      <StatelessService ServiceTypeName="claim/IUnclaimedBenefitService" InstanceCount="[Service_InstanceCount]">
+        <SingletonPartition />
+      </StatelessService>
+    </Service>
+    <Service Name="cost/ICostService">
+      <StatelessService ServiceTypeName="cost/ICostService" InstanceCount="[Service_InstanceCount]">
+        <SingletonPartition />
+      </StatelessService>
+    </Service>
+    <Service Name="event/IEventService">
+      <StatelessService ServiceTypeName="event/IEventService" InstanceCount="[Service_InstanceCount]">
+        <SingletonPartition />
+      </StatelessService>
+    </Service>
+    <Service Name="event/INoteService">
+      <StatelessService ServiceTypeName="event/INoteService" InstanceCount="[Service_InstanceCount]">
+        <SingletonPartition />
+      </StatelessService>
+    </Service>
+  </DefaultServices>
+</ApplicationManifest>

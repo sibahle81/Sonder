@@ -1,0 +1,18 @@
+﻿using Microsoft.ServiceFabric.Services.Remoting;
+
+using RMA.Common.Entities;
+
+using System.Collections.Generic;
+using System.Threading.Tasks;
+
+namespace RMA.Service.ClientCare.Contracts.Interfaces.Broker
+{
+    public interface IBrokerageNoteService : IService
+    {
+        Task<Note> GetNote(int id);
+        Task<int> AddNote(Note noteModel);
+        Task EditNote(Note noteModel);
+        Task<List<Note>> GetNotes(int brokerageId);
+    }
+}
+
