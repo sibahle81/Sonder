@@ -1,0 +1,269 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="14.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">x64</Platform>
+    <ProjectGuid>{049DA500-9A18-4BB5-8F97-CB11F3FE012E}</ProjectGuid>
+    <OutputType>Exe</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>RMA.Service.Admin.BusinessProcessManager</RootNamespace>
+    <AssemblyName>RMA.Service.Admin.BusinessProcessManager</AssemblyName>
+    <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
+    <NuGetPackageImportStamp>
+    </NuGetPackageImportStamp>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|AnyCPU'">
+    <DebugSymbols>true</DebugSymbols>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <DebugType>full</DebugType>
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>..\..\..\Solution Items\RMA.ruleset</CodeAnalysisRuleSet>
+    <Prefer32Bit>true</Prefer32Bit>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|AnyCPU'">
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <Optimize>true</Optimize>
+    <DebugType>pdbonly</DebugType>
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>..\..\..\Solution Items\RMA.ruleset</CodeAnalysisRuleSet>
+    <Prefer32Bit>true</Prefer32Bit>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|x64' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\x64\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <PlatformTarget>x64</PlatformTarget>
+    <CodeAnalysisRuleSet>..\..\..\Solution Items\RMA.ruleset</CodeAnalysisRuleSet>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|x64' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\x64\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <PlatformTarget>x64</PlatformTarget>
+    <CodeAnalysisRuleSet>..\..\..\Solution Items\RMA.ruleset</CodeAnalysisRuleSet>
+  </PropertyGroup>
+  <PropertyGroup>
+    <AdditionalFileItemNames>$(AdditionalFileItemNames);None</AdditionalFileItemNames>
+  </PropertyGroup>
+  <PropertyGroup>
+    <IsServiceFabricServiceProject>true</IsServiceFabricServiceProject>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="AutoMapperConfiguration.cs" />
+    <Compile Include="ContainerConfiguration.cs" />
+    <Compile Include="Mappers\BusinessProcessManagerMappingProfile.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Program.cs" />
+    <Compile Include="SDK\WizardContext.cs" />
+    <Compile Include="ContainerConfiguration1.cs">
+      <DependentUpon>ContainerConfiguration.tt</DependentUpon>
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+    </Compile>
+    <Compile Include="Services\ApprovalTypeFacade.cs" />
+    <Compile Include="Services\ApprovalFacade.cs" />
+    <Compile Include="Services\AuditLogFacade.cs" />
+    <Compile Include="SDK\WizardHost.cs" />
+    <Compile Include="Services\NoteFacade.cs" />
+    <Compile Include="Services\WizardConfigurationFacade.cs" />
+    <Compile Include="Services\WizardConfigurationRouteSettingFacade.cs" />
+    <Compile Include="Services\WizardFacade.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <AdditionalFiles Include="..\..\..\Solution Items\RMA.DependencyValidation\ServicePlatform.layerdiagram">
+      <Link>ServicePlatform.layerdiagram</Link>
+      <Visible>False</Visible>
+    </AdditionalFiles>
+    <None Include="PackageRoot\Config\Settings.xml" />
+    <None Include="PackageRoot\ServiceManifest.xml" />
+    <None Include="App.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\Common\RMA.Common.Database\RMA.Common.Database.csproj">
+      <Project>{5a742fb8-0332-42de-9d56-07315b898b32}</Project>
+      <Name>RMA.Common.Database</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\..\Common\RMA.Common.Service\RMA.Common.Service.csproj">
+      <Project>{4AA3772E-D3D5-458C-BC16-99D93DF9185A}</Project>
+      <Name>RMA.Common.Service</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\..\Common\RMA.Common\RMA.Common.csproj">
+      <Project>{c30fb382-556d-41e4-b987-dea4f962059a}</Project>
+      <Name>RMA.Common</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\Audit\RMA.Service.Audit.Contracts\RMA.Service.Audit.Contracts.csproj">
+      <Project>{A69FFCF8-78F4-4201-BA0F-EE9D183896CE}</Project>
+      <Name>RMA.Service.Audit.Contracts</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\Billing\RMA.Service.Billing.Contracts\RMA.Service.Billing.Contracts.csproj">
+      <Project>{DA2EE1AE-A96F-447A-98C8-C2F65651478C}</Project>
+      <Name>RMA.Service.Billing.Contracts</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\ClaimCare\RMA.Service.ClaimCare.BusinessProcessTasks\RMA.Service.ClaimCare.BusinessProcessTasks.csproj">
+      <Project>{d18077d8-d931-4967-b8b1-2f7c82e69fc2}</Project>
+      <Name>RMA.Service.ClaimCare.BusinessProcessTasks</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\ClaimCare\RMA.Service.ClaimCare.Contracts\RMA.Service.ClaimCare.Contracts.csproj">
+      <Project>{1CB03DED-41D2-40F8-960D-60B78D6E0EE1}</Project>
+      <Name>RMA.Service.ClaimCare.Contracts</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\ClientCare\RMA.Service.ClientCare.BusinessProcessTasks\RMA.Service.ClientCare.BusinessProcessTasks.csproj">
+      <Project>{c03927c8-83bb-43c4-a405-76e3de6fb686}</Project>
+      <Name>RMA.Service.ClientCare.BusinessProcessTasks</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\DigiCare\RMA.Service.DigiCare.BusinessProcessTasks\RMA.Service.DigiCare.BusinessProcessTasks.csproj">
+      <Project>{faf5189b-b0e3-4c24-83ac-5560e9984930}</Project>
+      <Name>RMA.Service.DigiCare.BusinessProcessTasks</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\DigiCare\RMA.Service.DigiCare.Contracts\RMA.Service.DigiCare.Contracts.csproj">
+      <Project>{34eabd0e-0f2d-495a-9d33-ce0aa125a5a6}</Project>
+      <Name>RMA.Service.DigiCare.Contracts</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\FinCare\RMA.Service.FinCare.BusinessProcessTasks\RMA.Service.FinCare.BusinessProcessTasks.csproj">
+      <Project>{b56fd4b8-d219-4ef5-8502-3b7309e58cde}</Project>
+      <Name>RMA.Service.FinCare.BusinessProcessTasks</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\ClientCare\RMA.Service.ClientCare.Contracts\RMA.Service.ClientCare.Contracts.csproj">
+      <Project>{AEAB775A-A0FE-497B-8947-14FE5AC961D1}</Project>
+      <Name>RMA.Service.ClientCare.Contracts</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\MediCare\RMA.Service.MediCare.BusinessProcessTasks\RMA.Service.MediCare.BusinessProcessTasks.csproj">
+      <Project>{8a5ffcf4-7e3f-4d4a-93e6-b51bf44a440e}</Project>
+      <Name>RMA.Service.MediCare.BusinessProcessTasks</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\MediCare\RMA.Service.MediCare.Contracts\RMA.Service.MediCare.Contracts.csproj">
+      <Project>{540e9736-429e-45d6-b0b3-703d40cec04a}</Project>
+      <Name>RMA.Service.MediCare.Contracts</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\MemberPortal\RMA.Service.MemberPortal.BusinessProcessTasks\RMA.Service.MemberPortal.BusinessProcessTasks.csproj">
+      <Project>{712e97e1-9653-46c9-a1ce-7deb0159cde0}</Project>
+      <Name>RMA.Service.MemberPortal.BusinessProcessTasks</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\MemberPortal\RMA.Service.MemberPortal.Contracts\RMA.Service.MemberPortal.Contracts.csproj">
+      <Project>{e7172b50-77ed-4bd5-93e2-9f8a2ba2a8c7}</Project>
+      <Name>RMA.Service.MemberPortal.Contracts</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\PensCare\RMA.Service.PensCare.BusinessProcessTasks\RMA.Service.PensCare.BusinessProcessTasks.csproj">
+      <Project>{3099c713-bb57-40da-a436-328b68bf7b05}</Project>
+      <Name>RMA.Service.PensCare.BusinessProcessTasks</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\PensCare\RMA.Service.PensCare.Contracts\RMA.Service.PensCare.Contracts.csproj">
+      <Project>{C93CFCF6-4469-4202-A33A-3FD9D779B856}</Project>
+      <Name>RMA.Service.PensCare.Contracts</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\RMA.Service.Admin.BusinessProcessManager.Contracts\RMA.Service.Admin.BusinessProcessManager.Contracts.csproj">
+      <Project>{9ff86f02-ea7c-4921-8b87-79c21ffc38e7}</Project>
+      <Name>RMA.Service.Admin.BusinessProcessManager.Contracts</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\RMA.Service.Admin.BusinessProcessManager.Database\RMA.Service.Admin.BusinessProcessManager.Database.csproj">
+      <Project>{24f39e4a-5f4b-43b4-a55c-faa8c2edaf9d}</Project>
+      <Name>RMA.Service.Admin.BusinessProcessManager.Database</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\RMA.Service.Admin.CampaignManager.Contracts\RMA.Service.Admin.CampaignManager.Contracts.csproj">
+      <Project>{D530D89B-C158-40DB-8999-2D476155A8B2}</Project>
+      <Name>RMA.Service.Admin.CampaignManager.Contracts</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\RMA.Service.Admin.MasterDataManager.Contracts\RMA.Service.Admin.MasterDataManager.Contracts.csproj">
+      <Project>{81abd00c-262f-48df-a933-63e3730f0245}</Project>
+      <Name>RMA.Service.Admin.MasterDataManager.Contracts</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\RMA.Service.Admin.RulesManager.Contracts\RMA.Service.Admin.RulesManager.Contracts.csproj">
+      <Project>{19B2A261-514C-4887-9930-2378A6DB7381}</Project>
+      <Name>RMA.Service.Admin.RulesManager.Contracts</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\RMA.Service.Admin.SecurityManager.Contracts\RMA.Service.Admin.SecurityManager.Contracts.csproj">
+      <Project>{05202D9C-BE63-4105-8CE4-A9BFA19413D8}</Project>
+      <Name>RMA.Service.Admin.SecurityManager.Contracts</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <WCFMetadata Include="Connected Services\" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="ContainerConfiguration.tt">
+      <Generator>TextTemplatingFileGenerator</Generator>
+      <LastGenOutput>ContainerConfiguration1.cs</LastGenOutput>
+    </Content>
+  </ItemGroup>
+  <ItemGroup>
+    <Service Include="{508349B6-6B84-4DF5-91F0-309BEEBAD82D}" />
+  </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="Autofac">
+      <Version>4.9.4</Version>
+    </PackageReference>
+    <PackageReference Include="AutoMapper">
+      <Version>8.0.0</Version>
+    </PackageReference>
+    <PackageReference Include="CommonServiceLocator">
+      <Version>2.0.7</Version>
+    </PackageReference>
+    <PackageReference Include="EntityFramework">
+      <Version>6.4.4</Version>
+    </PackageReference>
+    <PackageReference Include="Microsoft.CodeAnalysis.FxCopAnalyzers">
+      <Version>3.3.2</Version>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+      <PrivateAssets>all</PrivateAssets>
+    </PackageReference>
+    <PackageReference Include="Microsoft.CodeAnalysis.VersionCheckAnalyzer">
+      <Version>3.3.2</Version>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+      <PrivateAssets>all</PrivateAssets>
+    </PackageReference>
+    <PackageReference Include="Microsoft.CodeQuality.Analyzers">
+      <Version>3.3.2</Version>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+      <PrivateAssets>all</PrivateAssets>
+    </PackageReference>
+    <PackageReference Include="Microsoft.DependencyValidation.Analyzers">
+      <Version>0.11.0</Version>
+    </PackageReference>
+    <PackageReference Include="Microsoft.NetFramework.Analyzers">
+      <Version>3.3.2</Version>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+      <PrivateAssets>all</PrivateAssets>
+    </PackageReference>
+    <PackageReference Include="Microsoft.ServiceFabric.Actors">
+      <Version>3.4.664</Version>
+    </PackageReference>
+    <PackageReference Include="Microsoft.VisualStudio.Threading.Analyzers">
+      <Version>16.3.52</Version>
+    </PackageReference>
+    <PackageReference Include="Newtonsoft.Json">
+      <Version>13.0.3</Version>
+    </PackageReference>
+    <PackageReference Include="Roslynator.Analyzers">
+      <Version>2.1.0</Version>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+      <PrivateAssets>all</PrivateAssets>
+    </PackageReference>
+    <PackageReference Include="Serilog">
+      <Version>2.8.0</Version>
+    </PackageReference>
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>

@@ -1,0 +1,17 @@
+﻿namespace RMA.Service.Admin.MasterDataManager.Contracts.Entities
+{
+    public class Period
+    {
+        public int Id { get; set; } // Id (Primary key)
+        public System.DateTime StartDate { get; set; } // StartDate
+        public System.DateTime EndDate { get; set; } // EndDate
+        public string Status { get; set; } // Status (length: 50)
+        public bool IsActive { get; set; } // IsActive
+        public bool IsDeleted { get; set; } // IsDeleted
+        public string CreatedBy { get; set; } // CreatedBy (length: 50)
+        public System.DateTime CreatedDate { get; set; } // CreatedDate
+        public string ModifiedBy { get; set; } // ModifiedBy (length: 50)
+        public System.DateTime ModifiedDate { get; set; } // ModifiedDate
+
+    }
+}
